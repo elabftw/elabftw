@@ -9,8 +9,7 @@
 
 namespace Elabftw\Factories;
 
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
@@ -22,16 +21,13 @@ class EntityFactoryTest extends \PHPUnit\Framework\TestCase
     public function testGetEntity(): void
     {
         $Users = new Users(1, 1);
-        $factory = new EntityFactory($Users, AbstractEntity::TYPE_EXPERIMENTS);
+        $factory = new EntityFactory($Users, EntityType::Experiments);
         $this->assertInstanceOf(Experiments::class, $factory->getEntity());
-        $factory = new EntityFactory($Users, AbstractEntity::TYPE_ITEMS);
+        $factory = new EntityFactory($Users, EntityType::Items);
         $this->assertInstanceOf(Items::class, $factory->getEntity());
-        $factory = new EntityFactory($Users, AbstractEntity::TYPE_TEMPLATES);
+        $factory = new EntityFactory($Users, EntityType::Templates);
         $this->assertInstanceOf(Templates::class, $factory->getEntity());
-        $factory = new EntityFactory($Users, AbstractEntity::TYPE_ITEMS_TYPES);
+        $factory = new EntityFactory($Users, EntityType::ItemsTypes);
         $this->assertInstanceOf(ItemsTypes::class, $factory->getEntity());
-        $factory = new EntityFactory($Users, 'kenobi');
-        $this->expectException(ImproperActionException::class);
-        $factory->getEntity();
     }
 }

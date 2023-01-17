@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\InsertTagsTrait;
@@ -25,7 +26,7 @@ class Items extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->type = parent::TYPE_ITEMS;
+        $this->type = EntityType::Items->value;
         $this->page = 'database';
         parent::__construct($users, $id);
     }
@@ -33,7 +34,7 @@ class Items extends AbstractConcreteEntity
     // special case for items where the page property is not the correct endpoint
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/', parent::TYPE_ITEMS);
+        return sprintf('api/v2/%s/', EntityType::Items->value);
     }
 
     public function create(int $template, array $tags = array()): int

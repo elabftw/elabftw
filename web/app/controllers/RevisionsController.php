@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -29,7 +31,7 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../experiments.php');
 
 try {
-    $Entity = (new EntityFactory($App->Users, (string) $Request->query->get('type')))->getEntity();
+    $Entity = (new EntityFactory($App->Users, EntityType::from((string) $Request->query->get('type'))))->getEntity();
     $entityId = $Request->query->getInt('item_id');
     $Entity->setId($entityId);
     $Entity->canOrExplode('write');

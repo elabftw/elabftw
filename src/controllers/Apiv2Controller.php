@@ -10,6 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -212,7 +213,7 @@ class Apiv2Controller extends AbstractApiController
             case 'items':
             case 'experiments_templates':
             case 'items_types':
-                return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
+                return (new EntityFactory($this->Users, EntityType::from($this->endpoint), $this->id))->getEntity();
                 // for a single event, the id is the id of the event
             case 'event':
                 return new Scheduler(new Items($this->Users), $this->id);

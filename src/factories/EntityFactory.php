@@ -9,7 +9,7 @@
 
 namespace Elabftw\Factories;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -22,23 +22,17 @@ use Elabftw\Models\Users;
  */
 class EntityFactory
 {
-    public function __construct(private Users $users, private string $type, private ?int $itemId = null)
+    public function __construct(private Users $users, private EntityType $type, private ?int $itemId = null)
     {
     }
 
     public function getEntity(): AbstractEntity
     {
-        switch ($this->type) {
-            case AbstractEntity::TYPE_EXPERIMENTS:
-                return new Experiments($this->users, $this->itemId);
-            case AbstractEntity::TYPE_ITEMS:
-                return new Items($this->users, $this->itemId);
-            case AbstractEntity::TYPE_TEMPLATES:
-                return new Templates($this->users, $this->itemId);
-            case AbstractEntity::TYPE_ITEMS_TYPES:
-                return new ItemsTypes($this->users, $this->itemId);
-            default:
-                throw new ImproperActionException('Incorrect entity type');
-        }
+        return match ($this->type) {
+            EntityType::Experiments => new Experiments($this->users, $this->itemId),
+            EntityType::Items => new Items($this->users, $this->itemId),
+            EntityType::Templates => new Templates($this->users, $this->itemId),
+            EntityType::ItemsTypes => new ItemsTypes($this->users, $this->itemId),
+        };
     }
 }

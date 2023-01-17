@@ -11,6 +11,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\EntityFactory;
@@ -111,7 +112,7 @@ class AddMissingLinks extends Command
 
                     // don't set entity id yet, user has userData['team'] == 0 at this point
                     // this will result in permission issues during setId -> readOne -> canOrExplode('read') -> hasCommonTeamWithCurrent()
-                    $entity = (new EntityFactory($User, $table))->getEntity();
+                    $entity = (new EntityFactory($User, EntityType::from($table)))->getEntity();
 
                     // make sure we can access all entries with write access
                     $entity->bypassWritePermission = true;

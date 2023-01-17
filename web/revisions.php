@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -30,7 +31,7 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $Entity = (new EntityFactory($App->Users, (string) $App->Request->query->get('type')))->getEntity();
+    $Entity = (new EntityFactory($App->Users, EntityType::from((string) $App->Request->query->get('type'))))->getEntity();
     $Entity->setId($App->Request->query->getInt('item_id'));
     $Entity->canOrExplode('read');
 

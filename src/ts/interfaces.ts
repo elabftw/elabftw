@@ -91,7 +91,7 @@ enum Model {
   User2Team = 'user2team',
 }
 
-// Match TYPE_ consts in AbstractEntity
+// Match php enum EntityType
 enum EntityType {
   Experiment = 'experiments',
   Item = 'items',

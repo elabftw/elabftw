@@ -84,7 +84,7 @@ class TeamTags implements RestInterface
     }
 
     /**
-     * Read all the tags from team
+     * Read all the tags from team. This one can be called from api and will filter based on q param in query
      */
     public function readAll(): array
     {
@@ -97,6 +97,21 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * This is to get the full list of the tags in the team no matter what
+     */
+    public function readFull(): array
+    {
+        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
+            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            WHERE team = :team GROUP BY tags.id ORDER BY item_count DESC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

@@ -11,8 +11,7 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\Db;
-use Elabftw\Factories\StorageFactory;
-use Elabftw\Models\Uploads;
+use Elabftw\Enums\Storage;
 use League\Flysystem\FilesystemOperator;
 use PDO;
 
@@ -32,7 +31,7 @@ class UploadsMigrator
     {
         $sql = 'UPDATE uploads SET storage = :storage WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':storage', StorageFactory::S3);
+        $req->bindValue(':storage', Storage::S3->value);
 
         $localFiles = $this->findLocal();
         foreach ($localFiles as $upload) {
@@ -54,7 +53,7 @@ class UploadsMigrator
     {
         $sql = 'SELECT * FROM uploads WHERE storage = :storage';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':storage', StorageFactory::LOCAL);
+        $req->bindValue(':storage', Storage::LOCAL->value);
         $this->Db->execute($req);
 
         return $req->fetchAll();

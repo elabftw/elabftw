@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\TimestampResponse;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\StorageFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;
@@ -40,7 +40,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_limit' => '0',
         );
         $this->dataPath = dirname(__DIR__, 2) . '/_data/';
-        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = Storage::FIXTURES->getStorage()->getFs();
     }
 
     public function testTimestampLimitReached(): void

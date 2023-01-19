@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
@@ -29,7 +30,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->type = parent::TYPE_ITEMS_TYPES;
+        $this->type = EntityType::ItemsTypes->value;
         $this->Db = Db::getConnection();
         $this->ItemsLinks = new ItemsLinks($this);
         $this->countableTable = 'items';

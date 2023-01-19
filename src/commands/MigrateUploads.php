@@ -9,7 +9,7 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use Elabftw\Services\UploadsMigrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,8 +43,8 @@ class MigrateUploads extends Command
             ));
         }
         $migrator = new UploadsMigrator(
-            (new StorageFactory(StorageFactory::LOCAL))->getStorage()->getFs(),
-            (new StorageFactory(StorageFactory::S3))->getStorage()->getFs(),
+            Storage::LOCAL->getStorage()->getFs(),
+            Storage::S3->getStorage()->getFs(),
         );
         $number = $migrator->migrate();
         if ($output->isVerbose()) {

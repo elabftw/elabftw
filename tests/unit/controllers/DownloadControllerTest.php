@@ -9,7 +9,7 @@
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -19,7 +19,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->fs = (new StorageFactory(StorageFactory::MEMORY))->getStorage()->getFs();
+        $this->fs = Storage::MEMORY->getStorage()->getFs();
     }
 
     public function testGetResponse(): void

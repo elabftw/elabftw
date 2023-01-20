@@ -256,6 +256,10 @@ class Experiments extends AbstractConcreteEntity
         );
         $tsResponse = $TimestampUtils->timestamp();
         $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
+
+        // decrement the balance
+        $Config->decrementTsBalance();
+
         return $this->readOne();
     }
 

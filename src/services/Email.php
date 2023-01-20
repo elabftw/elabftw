@@ -15,7 +15,6 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
 use Monolog\Logger;
 use PDO;
 use const SECRET_KEY;
@@ -114,6 +113,32 @@ class Email
         ->text($body . $this->footer);
 
         return $this->send($message);
+    }
+
+    public function notifySysadminsTsBalance(int $tsBalance): void
+    {
+        $emails = $this->getSysadminEmails();
+        $subject = '[eLabFTW] Warning: timestamp balance low!';
+        $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
+        $message = (new Memail())
+            ->subject($subject)
+            ->from($this->from)
+            ->to(...$emails)
+            ->text($body . $this->footer);
+        $this->send($message);
+    }
+
+    private function getSysadminEmails(): array
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users WHERE validated = 1 AND archived = 0 AND usergroup = 1';
+        $req = $Db->prepare($sql);
+        $Db->execute($req);
+        $emails = array();
+        foreach ($req->fetchAll() as $user) {
+            $emails[] = new Address($user['email'], $user['fullname']);
+        }
+        return $emails;
     }
 
     /**

@@ -421,11 +421,11 @@ class QueryBuilderVisitor implements Visitor
         $bindValues = array();
         foreach ($filteredSearchArr as $value) {
             $param = $this->getUniqueID();
-            $queryParts[] = 'entity.canread LIKE ' . $param;
+            $queryParts[] = "JSON_EXTRACT(entity.canread, '$.base') = " . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $value,
-                'type' => PDO::PARAM_STR,
+                'type' => PDO::PARAM_INT,
             );
         }
 

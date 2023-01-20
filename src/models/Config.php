@@ -87,6 +87,7 @@ final class Config implements RestInterface
             ('smtp_port', '587'),
             ('smtp_username', ''),
             ('ts_authority', 'dfn'),
+            ('ts_balance', '0'),
             ('ts_login', NULL),
             ('ts_password', NULL),
             ('ts_url', 'NULL'),
@@ -186,6 +187,15 @@ final class Config implements RestInterface
     public function readOne(): array
     {
         return $this->readAll();
+    }
+
+    public function decrementTsBalance(): array
+    {
+        $tsBalance = (int) $this->configArr['ts_balance'];
+        if ($tsBalance > 0) {
+            return $this->patch(Action::Update, array('ts_balance' => (string) ($tsBalance - 1)));
+        }
+        return $this->readOne();
     }
 
     public function readAll(): array

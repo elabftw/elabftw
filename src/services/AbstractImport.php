@@ -10,9 +10,9 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
@@ -45,7 +45,7 @@ abstract class AbstractImport implements ImportInterface
         [$type, $id] = explode(':', $target);
         $this->targetNumber = (int) $id;
         $this->setTargetUsers($type);
-        $this->Entity = (new EntityFactory($this->Users, $type))->getEntity();
+        $this->Entity = EntityType::from($type)->toInstance($this->Users);
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
@@ -62,12 +62,12 @@ abstract class AbstractImport implements ImportInterface
     protected function setTargetUsers(string $type): void
     {
         switch ($type) {
-            case AbstractEntity::TYPE_TEMPLATES:
+            case EntityType::Templates->value:
                 // for templates we can only import for our user, so there is no target and nothing to check
-            case AbstractEntity::TYPE_ITEMS:
+            case EntityType::Items->value:
                 // Note: here we don't check that the category belongs to our team as editing the request and setting an incorrect category number isn't really an issue
                 return;
-            case AbstractEntity::TYPE_EXPERIMENTS:
+            case EntityType::Experiments->value:
                 // check that we can import stuff in experiments of target user
                 if ($this->targetNumber !== (int) $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
                     throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');

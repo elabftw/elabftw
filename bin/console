@@ -19,6 +19,7 @@ $Application = new Application();
 
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase());
+$Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new UpdateDatabase());
 $Application->add(new UpdateTo3());

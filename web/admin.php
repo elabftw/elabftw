@@ -77,7 +77,7 @@ try {
 
 
     // all the tags for the team
-    $tagsArr = $Tags->readAll();
+    $tagsArr = $Tags->readFull();
 
     $template = 'admin.html';
     $renderArr = array(

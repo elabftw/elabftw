@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\CleanerInterface;
 use PDO;
@@ -21,7 +22,7 @@ class EntityPruner implements CleanerInterface
 {
     private Db $Db;
 
-    public function __construct(private string $type)
+    public function __construct(private EntityType $type)
     {
         $this->Db = Db::getConnection();
     }
@@ -32,7 +33,7 @@ class EntityPruner implements CleanerInterface
      */
     public function cleanup(): int
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE state = :state';
+        $sql = 'SELECT id FROM ' . $this->type->value . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
 
@@ -40,7 +41,7 @@ class EntityPruner implements CleanerInterface
         $req1 = $this->Db->prepare($sql);
         $sql = 'DELETE FROM items_links WHERE link_id = :link_id';
         $req2 = $this->Db->prepare($sql);
-        $sql = 'DELETE FROM pin_' . $this->type . '2users WHERE entity_id = :entity_id';
+        $sql = 'DELETE FROM pin_' . $this->type->value . '2users WHERE entity_id = :entity_id';
         $req3 = $this->Db->prepare($sql);
 
         $this->Db->execute($req);
@@ -59,7 +60,7 @@ class EntityPruner implements CleanerInterface
 
     private function deleteFromDb(): bool
     {
-        $sql = 'DELETE FROM ' . $this->type . ' WHERE state = :state';
+        $sql = 'DELETE FROM ' . $this->type->value . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         return $this->Db->execute($req);

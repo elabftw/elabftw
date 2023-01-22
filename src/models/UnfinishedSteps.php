@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\UsersHelper;
@@ -54,8 +55,8 @@ class UnfinishedSteps implements RestInterface
 
     public function readAll(): array
     {
-        $experimentsSteps = $this->cleanUpResult($this->getSteps(AbstractEntity::TYPE_EXPERIMENTS));
-        $itemsSteps = $this->cleanUpResult($this->getSteps(AbstractEntity::TYPE_ITEMS));
+        $experimentsSteps = $this->cleanUpResult($this->getSteps(EntityType::Experiments));
+        $itemsSteps = $this->cleanUpResult($this->getSteps(EntityType::Items));
         return array('experiments' => $experimentsSteps, 'items' => $itemsSteps);
     }
 
@@ -64,15 +65,15 @@ class UnfinishedSteps implements RestInterface
         return false;
     }
 
-    private function getSteps(string $model): array
+    private function getSteps(EntityType $model): array
     {
         $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
-            FROM ' . $model . " as entity
+            FROM ' . $model->value . " as entity
             CROSS JOIN (
                 SELECT item_id, finished,
                 GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
                 GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
-                FROM " . $model . '_steps as entity_steps
+                FROM " . $model->value . '_steps as entity_steps
                 WHERE finished = 0 GROUP BY item_id
             ) AS stepst ON (stepst.item_id = entity.id)';
 
@@ -111,9 +112,9 @@ class UnfinishedSteps implements RestInterface
         return $res;
     }
 
-    private function getTeamWhereClause(string $model): string
+    private function getTeamWhereClause(EntityType $model): string
     {
-        $sql =  'WHERE ' . ($model === AbstractEntity::TYPE_ITEMS ? 'entity.team = :teamid ' : '1 = 1 ');
+        $sql =  'WHERE ' . ($model === EntityType::Items ? 'entity.team = :teamid ' : '1 = 1 ');
         // add pub/org/team filter
         $sqlPublicOrg = sprintf("( (JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         $sql .= sprintf(" AND  %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, BasePermissions::User->value);

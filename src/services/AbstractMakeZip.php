@@ -10,7 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Models\Items;
@@ -77,7 +77,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $file['real_name'] = $realName;
 
             // add files to archive
-            $storageFs = (new StorageFactory((int) $file['storage']))->getStorage()->getFs();
+            $storageFs = Storage::from((int) $file['storage'])->getStorage()->getFs();
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
         return $filesArr;

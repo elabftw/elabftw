@@ -31,7 +31,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use function explode;
@@ -53,14 +52,6 @@ abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
 
-    public const TYPE_EXPERIMENTS = 'experiments';
-
-    public const TYPE_ITEMS = 'items';
-
-    public const TYPE_ITEMS_TYPES = 'items_types';
-
-    public const TYPE_TEMPLATES = 'experiments_templates';
-
     public const CONTENT_HTML = 1;
 
     public const CONTENT_MD = 2;
@@ -79,7 +70,7 @@ abstract class AbstractEntity implements RestInterface
 
     public Pins $Pins;
 
-    // some TYPE_ const
+    // string representation of EntityType
     public string $type = '';
 
     // use that to ignore the canOrExplode calls
@@ -674,7 +665,7 @@ abstract class AbstractEntity implements RestInterface
         $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $PermissionsHelper->getAssociativeArray(),
+            $PermissionsHelper->getExtendedSearchAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

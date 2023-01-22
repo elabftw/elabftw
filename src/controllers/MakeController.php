@@ -10,8 +10,9 @@
 namespace Elabftw\Controllers;
 
 use function count;
+
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
@@ -113,13 +114,13 @@ class MakeController implements ControllerInterface
 
     private function populateIdArr(): void
     {
-        $this->Entity = (new EntityFactory($this->Users, (string) $this->Request->query->get('type')))->getEntity();
+        $this->Entity = EntityType::from((string) $this->Request->query->get('type'))->toInstance($this->Users);
         // generate the id array
         if ($this->Request->query->has('category')) {
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
-            if (!$this->Users->userData['is_admin'] && $this->Request->query->get('owner') !== $this->Users->userData['userid']) {
+            if (!$this->Users->userData['is_admin'] && $this->Request->query->getInt('owner') !== $this->Users->userData['userid']) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user

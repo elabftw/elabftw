@@ -43,6 +43,10 @@ class Install extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /**
+          * @psalm-suppress MissingFile
+          * That this is necessary is probably a bug in psalm
+          */
         require_once dirname(__DIR__, 2) . '/config.php';
         $Db = Db::getConnection();
 

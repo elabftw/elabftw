@@ -21,7 +21,7 @@ use function str_replace;
 
 class VisibilityFieldHelper
 {
-    public string $possibleInput;
+    public string $possibleInput = '';
 
     public function __construct(private string $userInput, private array $visArr)
     {

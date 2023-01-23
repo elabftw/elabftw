@@ -205,7 +205,7 @@ final class Config implements RestInterface
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
 
-        return array_map(function ($v) {
+        return array_map(function ($v): mixed {
             return $v[0];
         }, $config);
     }

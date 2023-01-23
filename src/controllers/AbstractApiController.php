@@ -78,6 +78,7 @@ abstract class AbstractApiController implements ControllerInterface
 
         // assign the id if there is one
         if (Check::id((int) ($req[4] ?? 0)) !== false) {
+            /** @psalm-suppress PossiblyUndefinedArrayOffset */
             $this->id = (int) $req[4];
         }
         // allow using "me" to refer to the current logged in user

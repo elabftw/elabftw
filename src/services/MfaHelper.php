@@ -69,7 +69,6 @@ class MfaHelper
         return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 
-    /** @psalm-suppress PossiblyNullArgument */
     public function saveSecret(): bool
     {
         return $this->toggleSecret($this->secret);
@@ -80,7 +79,6 @@ class MfaHelper
         return $this->toggleSecret();
     }
 
-    /** @psalm-suppress PossiblyNullArgument */
     public function verifyCode(string $code): bool
     {
         if ($this->secret === null) {

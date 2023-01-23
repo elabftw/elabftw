@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
-            docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --build-arg BASE_IMAGE_VERSION=${CIRCLE_BRANCH} -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull

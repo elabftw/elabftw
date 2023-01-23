@@ -14,6 +14,7 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;
@@ -23,7 +24,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use League\Flysystem\Filesystem;
-use const SECRET_KEY;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,7 +50,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_limit' => '-1',
         );
         $this->expectException(ImproperActionException::class);
-        $Maker = new MakeDfnTimestamp($configArr, $this->getFreshTimestampableEntity());
+        new MakeDfnTimestamp($configArr, $this->getFreshTimestampableEntity());
     }
 
     public function testGetFileName(): void
@@ -65,7 +65,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'proxy' => '',
             'ts_limit' => '0',
             'ts_login' => '',
-            'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY)),
+            'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))),
             'ts_url' => 'https://ts.example.com',
             'ts_cert' => 'dummy.crt',
             'ts_hash' => 'sha1337',
@@ -107,7 +107,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config = array(
             'ts_login' => 'fakelogin@example.com',
             // create a fake encrypted password
-            'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY)),
+            'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))),
         );
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
@@ -150,7 +150,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
         $config['ts_login'] = 'fakelogin@example.com';
         // create a fake encrypted password
-        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(SECRET_KEY));
+        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
         // create a custom response object with fixture token

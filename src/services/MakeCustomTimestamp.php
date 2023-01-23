@@ -11,7 +11,7 @@ namespace Elabftw\Services;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use const SECRET_KEY;
+use Elabftw\Models\Config;
 
 /**
  * RFC3161 timestamping with a custom TSA
@@ -32,7 +32,7 @@ class MakeCustomTimestamp extends AbstractMakeTimestamp
 
         $password = '';
         if (($config['ts_password'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         }
 
         $hash = $config['ts_hash'];

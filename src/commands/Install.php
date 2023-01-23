@@ -9,13 +9,14 @@
 
 namespace Elabftw\Commands;
 
-use const DB_NAME;
 use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
-use Elabftw\Services\DatabaseInstaller;
-use const SITE_URL;
+use Elabftw\Models\Config;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
+use Elabftw\Enums\Action;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Install extends Command
 {
     // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'start';
+    protected static $defaultName = 'db:install';
 
     protected function configure(): void
     {
@@ -43,10 +44,9 @@ class Install extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        require_once dirname(__DIR__, 2) . '/config.php';
         $Db = Db::getConnection();
 
-        $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . DB_NAME . '"');
+        $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . Config::fromEnv('DB_NAME') . '"');
         $res = $req->fetch();
         if ((int) $res['cnt'] > 1 && !$input->getOption('reset')) {
             $output->writeln('<info>→ Database structure already present. Skipping initialization.</info>');
@@ -73,17 +73,19 @@ class Install extends Command
 
         if ($input->getOption('reset')) {
             $output->writeln('<info>→ Resetting MySQL database...</info>');
-            $Db->q('DROP DATABASE ' . DB_NAME);
-            $Db->q('CREATE DATABASE ' . DB_NAME . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci');
-            $Db->q('USE ' . DB_NAME);
+            $Db->q('DROP DATABASE ' . Config::fromEnv('DB_NAME'));
+            $Db->q('CREATE DATABASE ' . Config::fromEnv('DB_NAME') . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci');
+            $Db->q('USE ' . Config::fromEnv('DB_NAME'));
         }
 
         $output->writeln('<info>→ Initializing MySQL database...</info>');
         $sqlFs = FsTools::getFs(dirname(__DIR__) . '/sql');
-        $Installer = new DatabaseInstaller(new Sql($sqlFs));
-        $Installer->install();
+        (new Sql($sqlFs))->execFile('structure.sql');
+        // now create the default team
+        $Teams = new Teams(new Users());
+        $Teams->postAction(Action::Create, array('name' => 'Default team'));
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
-        $output->writeln('<info>→ Register your Sysadmin account here: ' . SITE_URL . '/register.php</info>');
+        $output->writeln('<info>→ Register your Sysadmin account here: ' . Config::fromEnv('SITE_URL') . '/register.php</info>');
         $output->writeln('<info>→ Subscribe to the low volume newsletter to stay informed about new releases: http://eepurl.com/bTjcMj</info>');
         return 0;
     }

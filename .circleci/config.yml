@@ -110,7 +110,7 @@ jobs:
           command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
-          command: docker exec -it elabtmp bin/install start -r
+          command: docker exec -it elabtmp bin/console db:install -r
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml

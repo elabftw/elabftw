@@ -71,7 +71,7 @@ class MakeBloxberg extends AbstractMake
                 'json' => $certifyResponse,
             ));
         } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+            throw new ImproperActionException($e->getMessage(), $e->getCode(), $e);
         }
 
         // the binary response is a zip archive that contains the certificate in pdf format

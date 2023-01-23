@@ -26,7 +26,7 @@
         </ignoreFiles>
     </projectFiles>
     <globals>
-          <var name="App" type="Elabftw\Elabftw\App" />
+        <var name="App" type="Elabftw\Elabftw\App" />
     </globals>
 
     <issueHandlers>

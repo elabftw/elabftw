@@ -40,7 +40,7 @@ try {
 
     // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {
-        $email = $Request->request->get('email');
+        $email = (string) $Request->request->get('email');
 
         // check email is valid. Input field is of type email so browsers should not let users send invalid email.
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -96,7 +96,7 @@ try {
     if ($Request->request->has('password')) {
         // verify the key received is valid
         // we get the Users object from the email encrypted in the key
-        $Users = $ResetPasswordKey->validate($Request->request->get('key'));
+        $Users = $ResetPasswordKey->validate((string) $Request->request->get('key'));
         // Replace new password in database
         $Users->patch(Action::Update, array('password' => $Request->request->get('password')));
         $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));

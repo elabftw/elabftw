@@ -35,8 +35,8 @@ try {
     if ($Request->request->has('emailTeam')) {
         $Email = new Email($App->Config, $App->Log);
         $sent = $Email->massEmail(
-            $Request->request->get('subject'),
-            $Request->request->get('body'),
+            (string) $Request->request->get('subject'),
+            (string) $Request->request->get('body'),
             $App->Users->userData['team'],
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));

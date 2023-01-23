@@ -56,7 +56,7 @@ trait TwigTrait
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
-            function ($context, $string) {
+            function (array $context, string $string): string {
                 return Translation::transGetText($string, $context);
             },
             array('needs_context' => true)

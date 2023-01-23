@@ -289,8 +289,10 @@ class MakePdf extends AbstractMakePdf
         return $this->mpdf;
     }
 
-    // This part of the code will look for links to experiments or database made with the # autocompletion and thus relative.
-    // We need to make them absolute or they will end up wrong.
+    /**
+     * Look for links to experiments or database made with the # autocompletion and thus relative.
+     * We need to make them absolute or they will end up wrong.
+     */
     private function fixLocalLinks(string $body): string
     {
         $matches = array();
@@ -332,13 +334,15 @@ class MakePdf extends AbstractMakePdf
             }
             $res = array();
             parse_str($query, $res);
+            // @phpstan-ignore-next-line
+            $longname = (string) $res['f'];
             // there might be no storage value. In this case get it from the uploads table via the long name
-            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
+            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
             $storageFs = Storage::from($storage)->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
-            $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
-            $body = str_replace($src, 'var:' . $res['f'], $body);
+            $this->mpdf->imageVars[$longname] = $storageFs->read($longname);
+            $body = str_replace($src, 'var:' . $longname, $body);
         }
 
         return $this->fixLocalLinks($body);

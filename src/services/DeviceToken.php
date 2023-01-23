@@ -12,12 +12,12 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
+use Elabftw\Models\Config;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use const SECRET_KEY;
 
 /**
  * DeviceToken generator
@@ -51,7 +51,7 @@ class DeviceToken
 
     public static function getConfig(): Configuration
     {
-        $secretKey = Key::loadFromAsciiSafeString(SECRET_KEY);
+        $secretKey = Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'));
         /** @psalm-suppress ArgumentTypeCoercion */
         $config = Configuration::forSymmetricSigner(
             new Sha256(),

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,18 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use const DB_CERT_PATH;
-use const DB_HOST;
-use const DB_NAME;
-use const DB_PASSWORD;
-use const DB_PORT;
-use const DB_USER;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Config;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -49,21 +43,16 @@ final class Db
         $pdo_options[PDO::ATTR_PERSISTENT] = true;
         // only return a named array
         $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        // @phpstan-ignore-next-line
-        if (defined('DB_CERT_PATH') && !empty(DB_CERT_PATH)) {
-            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = DB_CERT_PATH;
-        }
-
-        // be backward compatible
-        if (!defined('DB_PORT')) {
-            define('DB_PORT', '3306');
+        if (!empty(Config::fromEnv('DB_CERT_PATH'))) {
+            /** @psalm-suppress UndefinedConstant */
+            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = Config::fromEnv('DB_CERT_PATH');
         }
 
         $this->connection = new PDO(
-            'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' .
-            DB_NAME,
-            DB_USER,
-            DB_PASSWORD,
+            'mysql:host=' . Config::fromEnv('DB_HOST') . ';port=' . Config::fromEnv('DB_PORT') . ';dbname=' .
+            Config::fromEnv('DB_NAME'),
+            Config::fromEnv('DB_USER'),
+            Config::fromEnv('DB_PASSWORD'),
             $pdo_options
         );
     }

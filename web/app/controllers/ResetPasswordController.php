@@ -17,14 +17,13 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use function nl2br;
 use function random_int;
-use const SECRET_KEY;
-use const SITE_URL;
 use function sleep;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mime\Address;
@@ -34,7 +33,7 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('../../login.php');
-$ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
+$ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {
     $Email = new Email($App->Config, $App->Log);
@@ -68,7 +67,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = SITE_URL . '/change-pass.php?key=' . $key;
+        $resetLink = Config::fromEnv('SITE_URL') . '/change-pass.php?key=' . $key;
         $htmlResetLink = '<a href="' . $resetLink . '">' . _('Reset password') . '</a>';
 
         $rawBody = _('Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes.');

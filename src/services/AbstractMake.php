@@ -13,8 +13,8 @@ use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
-use const SITE_URL;
 
 /**
  * Mother class of the Make* services
@@ -72,7 +72,7 @@ abstract class AbstractMake
     {
         return sprintf(
             '%s/%s.php?mode=view&id=%d',
-            SITE_URL,
+            Config::fromEnv('SITE_URL'),
             $this->Entity->page,
             $entityId ?? $this->Entity->id ?? 0,
         );

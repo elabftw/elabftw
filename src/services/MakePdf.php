@@ -27,7 +27,6 @@ use function implode;
 use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
 use setasign\Fpdi\FpdiException;
-use const SITE_URL;
 use function str_replace;
 use function strtolower;
 
@@ -257,8 +256,8 @@ class MakePdf extends AbstractMakePdf
             'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
             'url' => $this->getURL(),
             'linkBaseUrl' => array(
-                'items' => SITE_URL . '/database.php',
-                'experiments' => SITE_URL . '/experiments.php',
+                'items' => Config::fromEnv('SITE_URL') . '/database.php',
+                'experiments' => Config::fromEnv('SITE_URL') . '/experiments.php',
             ),
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
@@ -300,7 +299,7 @@ class MakePdf extends AbstractMakePdf
         preg_match_all('/href="(experiments|database).php/', $body, $matches);
         $i = 0;
         foreach ($matches[0] as $match) {
-            $body = str_replace($match, 'href="' . SITE_URL . '/' . $matches[1][$i] . '.php', $body);
+            $body = str_replace($match, 'href="' . Config::fromEnv('SITE_URL') . '/' . $matches[1][$i] . '.php', $body);
             $i += 1;
         }
         return $body;

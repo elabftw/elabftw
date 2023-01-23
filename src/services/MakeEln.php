@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use League\Flysystem\UnableToReadFile;
-use const SITE_URL;
 use ZipStream\ZipStream;
 
 /**
@@ -91,7 +91,7 @@ class MakeEln extends MakeStreamZip
             $mentions = array();
             foreach ($e['items_links'] as $link) {
                 $mentions[] = array(
-                    '@id' => SITE_URL . '/database.php?mode=view&id=' . $link['itemid'],
+                    '@id' => Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
                     'name' => $link['category'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
@@ -99,7 +99,7 @@ class MakeEln extends MakeStreamZip
             }
             foreach ($e['experiments_links'] as $link) {
                 $mentions[] = array(
-                    '@id' => SITE_URL . '/experiments.php?mode=view&id=' . $link['itemid'],
+                    '@id' => Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
                     'name' => $link['category'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
@@ -184,7 +184,7 @@ class MakeEln extends MakeStreamZip
                 'keywords' => $keywords,
                 'name' => $e['title'],
                 'text' => $e['body'] ?? '',
-                'url' => SITE_URL . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+                'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
                 'hasPart' => $hasPart,
                 'mentions' => $mentions,
             );

@@ -13,7 +13,7 @@ use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-require_once dirname(__DIR__, 2) . '/config.php';
+
 $Notifications = new Notifications(new Users(1));
 $body = array(
     'experiment_id' => 32,

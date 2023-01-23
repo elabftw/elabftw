@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for CI image
-FROM elabftw/elabimg:hypernext
+# we allow specifying a base image branch so the build will happen on the corresponding branch of elabimg
+ARG BASE_IMAGE_VERSION=hypernext
+FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # Set versions of used tools
 ARG PHPSTAN_VERSION=1.9.14

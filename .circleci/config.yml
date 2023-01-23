@@ -39,8 +39,6 @@ jobs:
           command: |
             sed -i '\#volumes:#D' tests/docker-compose.yml
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
-            # the DB_HOST is set here because the elabftw-user.env file will not override the docker-compose.yml env value
-            sed -i 's/DB_HOST=mysqltmp/DB_HOST=127.0.0.1/' tests/docker-compose.yml
       - run:
           name: Build elabtmp image and start containers
           command: |

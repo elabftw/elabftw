@@ -71,9 +71,6 @@ class SamlAuth implements AuthInterface
     {
         $now = new DateTimeImmutable();
         $config = self::getJWTConfig();
-        /**
-         * @psalm-suppress PossiblyFalseArgument
-         */
         $token = $config->builder()
                 // Configures the audience (aud claim)
                 ->permittedFor('saml-session')

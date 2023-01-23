@@ -28,9 +28,6 @@ class DeviceToken
     {
         $now = new DateTimeImmutable();
         $config = self::getConfig();
-        /**
-         * @psalm-suppress PossiblyFalseArgument
-         */
         $token = $config->builder()
                 // Configures the issuer (iss claim)
                 //->issuedBy('https://elab.local:3148')

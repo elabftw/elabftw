@@ -59,7 +59,6 @@ class Uploads implements RestInterface
 
     /**
      * Main method for normal file upload
-     * @psalm-suppress UndefinedClass
      */
     public function create(CreateUploadParamsInterface $params): int
     {

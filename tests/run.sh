@@ -33,11 +33,6 @@ if [ ! -f tests/elabftw-user.env ]; then
     fi
 fi
 
-# in CI the mysql server is localhost, not mysqltmp
-if ($ci); then
-    printf "DB_HOST=127.0.0.1\n" >> tests/elabftw-user.env
-fi
-
 # launch a fresh environment if needed
 if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
     if ($ci); then
@@ -72,11 +67,13 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 if ($ci); then
     # fix permissions on test output and cache folders
     sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-    sudo chown -R scrutinizer:scrutinizer cache
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
-    sudo chown -R scrutinizer:scrutinizer uploads
     sudo chmod -R 777 uploads
+    if (${SCRUTINIZER:-false}); then
+        sudo chown -R scrutinizer:scrutinizer cache
+        sudo chown -R scrutinizer:scrutinizer uploads
+    fi
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then

@@ -39,7 +39,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
         # Use the freshly built elabtmp image
         # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
-        docker build --build-arg BASE_IMAGE_VERSION=$(git rev-parse --abbrev-ref HEAD) -q -t elabtmp -f tests/elabtmp.Dockerfile .
+        docker build --build-arg BASE_IMAGE_VERSION=${SCRUTINIZER_PR_SOURCE_BRANCH:-hypernext} -q -t elabtmp -f tests/elabtmp.Dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start

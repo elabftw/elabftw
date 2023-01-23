@@ -31,10 +31,11 @@ if [ ! -f tests/elabftw-user.env ]; then
     if (${SCRUTINIZER:-false}); then
         printf "ELABFTW_USER=scrutinizer\nELABFTW_GROUP=scrutinizer\nELABFTW_USERID=1001\nELABFTW_GROUPID=1001\n" > tests/elabftw-user.env
     fi
-    # in CI the mysql server is localhost, not mysqltmp
-    if (${CI:-false}); then
-        printf "DB_HOST=127.0.0.1\n" >> tests/elabftw-user.env
-    fi
+fi
+
+# in CI the mysql server is localhost, not mysqltmp
+if ($ci); then
+    printf "DB_HOST=127.0.0.1\n" >> tests/elabftw-user.env
 fi
 
 # launch a fresh environment if needed

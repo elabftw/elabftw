@@ -2669,7 +2669,7 @@ paths:
     patch:
       tags: ['Tags']
       summary: |
-        Actions on a tag.
+        Actions on a tag (like removing it from the entity).
       operationId: patch-tag
       requestBody:
         description: Parameters for modifying a tag
@@ -2691,12 +2691,12 @@ paths:
                 $ref: '#/components/schemas/tag'
     delete:
       tags: ['Tags']
-      summary: Delete a tag.
-      description: The tag gets deleted.
+      summary: Delete all tags.
+      description: All the tags from that entity get removed.
       operationId: delete-tag
       responses:
         '204':
-          description: The tag was deleted.
+          description: The tags were deleted.
 
 
   # UPLOADS

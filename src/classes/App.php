@@ -95,8 +95,8 @@ class App
                     $this->Session->get('team'),
                 ));
             }
-        // maybe the team in session is not valid anymore because sysadmin changed team, so logout user
-        // see #4051
+            // maybe the team in session is not valid anymore because sysadmin changed team, so logout user
+            // see #4051
         } catch (IllegalActionException) {
             $this->Session->invalidate();
             throw new UnauthorizedException();

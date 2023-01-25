@@ -188,8 +188,7 @@ final class Config implements RestInterface
      */
     public static function fromEnv(string $confName): string
     {
-        /** @psalm-suppress PossiblyInvalidCast */
-        return (string) getEnv($confName);
+        return (string) getenv($confName);
     }
 
     public function readOne(): array

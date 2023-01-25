@@ -12,26 +12,16 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\TimestampResponse;
-use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-use League\Flysystem\Filesystem;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
     private string $dataPath;
-
-    private Filesystem $fixturesFs;
 
     protected function setUp(): void
     {
@@ -40,7 +30,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_limit' => '0',
         );
         $this->dataPath = dirname(__DIR__, 2) . '/_data/';
-        $this->fixturesFs = Storage::FIXTURES->getStorage()->getFs();
     }
 
     public function testTimestampLimitReached(): void
@@ -76,8 +65,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDfnTimestamp(): void
     {
-        $mockResponse = $this->fixturesFs->read('dfn.asn1');
-        $client = $this->getClient($mockResponse);
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
         $this->assertIsArray($Maker->getTimestampParameters());
@@ -89,8 +76,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDigicertTimestamp(): void
     {
-        $mockResponse = $this->fixturesFs->read('digicert.asn1');
-        $client = $this->getClient($mockResponse);
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
         $Maker->generatePdf();
         $this->assertIsArray($Maker->getTimestampParameters());
@@ -102,8 +87,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testUniversignTimestamp(): void
     {
-        $mockResponse = $this->fixturesFs->read('universign.asn1');
-        $client = $this->getClient($mockResponse);
         $config = array(
             'ts_login' => 'fakelogin@example.com',
             // create a fake encrypted password
@@ -159,18 +142,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'universign.asn1');
         $this->expectException(ImproperActionException::class);
         $Maker->saveTimestamp($this->dataPath . 'universign.pdf', $tsResponseMock);
-    }
-
-    private function getClient(string $mockResponse): Client
-    {
-        // don't use the real guzzle client, but use a mock
-        // https://docs.guzzlephp.org/en/stable/testing.html
-        $mock = new MockHandler(array(
-            new Response(200, array(), $mockResponse),
-            new RequestException('Server is down?', new Request('GET', 'test')),
-        ));
-        $handlerStack = HandlerStack::create($mock);
-        return new Client(array('handler' => $handlerStack));
     }
 
     private function getFreshTimestampableEntity(): Experiments

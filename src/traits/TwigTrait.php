@@ -56,7 +56,7 @@ trait TwigTrait
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
-            function ($context, $string) {
+            function (array $context, string $string): string {
                 return Translation::transGetText($string, $context);
             },
             array('needs_context' => true)
@@ -108,8 +108,10 @@ trait TwigTrait
         $TwigEnvironment->addFunction($ext2icon);
         $TwigEnvironment->addFunction($sortIcon);
 
-        // add the version as a global var so we can have it for the ?v=x.x.x for js files
-        $TwigEnvironment->addGlobal('v', App::INSTALLED_VERSION);
+        // use the image BUILD_ID to use as parameter for loading assets
+        // this helps with busting the cache in browsers
+        $elabimgBuildId = getenv('ELABIMG_BUILD_ID') ?: App::INSTALLED_VERSION;
+        $TwigEnvironment->addGlobal('v', $elabimgBuildId);
 
         return $TwigEnvironment;
     }

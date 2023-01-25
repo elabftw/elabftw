@@ -34,7 +34,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
 
         $PermissionsHelper = new PermissionsHelper();
-        $this->visibilityList = $PermissionsHelper->getAssociativeArray();
+        $this->visibilityList = $PermissionsHelper->getExtendedSearchAssociativeArray();
         $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
     }
 

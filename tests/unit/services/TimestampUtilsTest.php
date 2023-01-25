@@ -10,7 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\TimestampResponse;
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;
@@ -27,7 +27,7 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->fixturesFs = (new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs();
+        $this->fixturesFs = Storage::FIXTURES->getStorage()->getFs();
     }
 
     public function testTimestamp(): void

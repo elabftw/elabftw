@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      ApiC.patch(`${EntityType.Experiment}/${entity.id}`, {'action': Action.Bloxberg})
+      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
         .then(() => reloadElement('filesdiv'))
         // remove overlay in all cases

@@ -41,13 +41,13 @@ try {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('IllegalAction' => $e)));
+    $App->Log->notice('', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
-    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Error' => $e)));
+    $App->Log->error('', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('Error' => $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {
-    $App->Log->error('', array(array('ip' => $_SERVER['REMOTE_ADDR']), array('Exception' => $e)));
+    $App->Log->error('', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('Exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 } finally {
     $Response->send();

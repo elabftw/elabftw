@@ -10,7 +10,7 @@
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use League\Flysystem\Visibility;
 
 /**
@@ -27,7 +27,7 @@ trait UploadTrait
         $hash = FsTools::getUniqueString();
         $folder = substr($hash, 0, 2);
         // create a subfolder if it doesn't exist
-        $storageFs = (new StorageFactory(StorageFactory::LOCAL))->getStorage()->getFs();
+        $storageFs = Storage::LOCAL->getStorage()->getFs();
         $storageFs->createDirectory($folder);
         $storageFs->setVisibility($folder, Visibility::PRIVATE);
         return $folder . '/' . $hash;

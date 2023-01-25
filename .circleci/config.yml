@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
-            docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --build-arg BASE_IMAGE_VERSION=${CIRCLE_BRANCH} -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
@@ -98,19 +98,11 @@ jobs:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
       - run:
-          name: Prepare php.ini
-          # allow tmpfile, used by phpstan
-          # extend open_basedir
-          # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
-          # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
-          command: |
-            docker exec -it elabtmp sed -i 's/tmpfile, //' /etc/php81/php.ini
-      - run:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
-          command: docker exec -it elabtmp bin/install start -r
+          command: docker exec -it elabtmp bin/console db:install -r
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
@@ -155,3 +147,4 @@ workflows:
             branches:
               ignore:
                 - demo
+                - ird

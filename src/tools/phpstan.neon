@@ -1,8 +1,6 @@
 parameters:
   level: 7
   checkMissingIterableValueType: false
-  bootstrapFiles:
-    - %currentWorkingDirectory%/config.php
   ignoreErrors:
     -
       message: '#Variable \$App might not be defined.*#'

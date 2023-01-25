@@ -33,3 +33,7 @@
 <label for='ts_limit'>{{ 'Number of allowed timestamps per month (0 means no limit):'|trans }}</label>
 <input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_limit' type='number' value='{{ App.Config.configArr.ts_limit }}' id='ts_limit' autocomplete='off' />
 <p class='smallgray'>{{ 'Number of timestamps over the last 30 days: %d'|trans|format(timestampLastMonth) }}</p>
+
+<label for='ts_balance'>{{ 'Available timestamps left (0 means no balance):'|trans }}</label>
+<input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_balance' type='number' value='{{ App.Config.configArr.ts_balance }}' id='ts_balance' autocomplete='off' />
+<p class='smallgray'>{{ 'You can set a number of available timestamps here and it will be decremented by 1 on every timestamp.'|trans }}</p>

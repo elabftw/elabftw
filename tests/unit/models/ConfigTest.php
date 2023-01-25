@@ -55,4 +55,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Config->destroy());
     }
+
+    public function testDecrementTsBalance(): void
+    {
+        $this->Config->patch(Action::Update, array('ts_balance' => 43));
+        $result = $this->Config->decrementTsBalance();
+        $this->assertEquals('42', $result['ts_balance']);
+    }
 }

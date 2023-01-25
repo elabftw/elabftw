@@ -10,8 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Factories\StorageFactory;
 use function error_reporting;
 use Exception;
 use function set_time_limit;
@@ -38,7 +38,7 @@ try {
     if ($storage === 0) {
         $storage = 1;
     }
-    $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
+    $storageFs = Storage::from($storage)->getStorage()->getFs();
 
     $DownloadController = new DownloadController(
         $storageFs,

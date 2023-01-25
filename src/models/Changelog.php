@@ -34,7 +34,7 @@ class Changelog
         // we don't store the full body, let the revisions system handle that
         $content = $params->getContent();
         if ($params->getTarget() === 'body') {
-            $content = 'Body was changed, but diff is not recorded because it is not implemented!';
+            $content = 'The change in the body is recorded in the revisions.';
         }
         $sql = 'INSERT INTO ' . $this->entity->type . '_changelog (entity_id, users_id, target, content) VALUES (:entity_id, :users_id, :target, :content)';
         $req = $this->Db->prepare($sql);

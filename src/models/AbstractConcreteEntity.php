@@ -12,6 +12,8 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
+use Elabftw\Services\MakeBloxberg;
+use GuzzleHttp\Client;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -25,5 +27,24 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
             Action::Duplicate => $this->duplicate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
+    }
+
+    public function patch(Action $action, array $params): array
+    {
+        return match ($action) {
+            Action::Bloxberg => $this->bloxberg(),
+            default => parent::patch($action, $params),
+        };
+    }
+
+    protected function bloxberg(): array
+    {
+        $Config = Config::getConfig();
+        $config = $Config->configArr;
+        if ($config['blox_enabled'] !== '1') {
+            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
+        }
+        (new MakeBloxberg(new Client(), $this))->timestamp();
+        return $this->readOne();
     }
 }

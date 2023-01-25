@@ -10,8 +10,9 @@
 namespace Elabftw\Controllers;
 
 use function count;
+
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
@@ -113,7 +114,7 @@ class MakeController implements ControllerInterface
 
     private function populateIdArr(): void
     {
-        $this->Entity = (new EntityFactory($this->Users, (string) $this->Request->query->get('type')))->getEntity();
+        $this->Entity = EntityType::from((string) $this->Request->query->get('type'))->toInstance($this->Users);
         // generate the id array
         if ($this->Request->query->has('category')) {
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));

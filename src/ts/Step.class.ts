@@ -7,6 +7,7 @@
  */
 import { Model, Target, Entity } from './interfaces';
 import { Api } from './Apiv2.class';
+import { getEditor } from './Editor.class';
 
 export default class Step {
   entity: Entity;
@@ -26,6 +27,14 @@ export default class Step {
   update(id: number, content: string|null, target = Target.Body): Promise<Response> {
     const params = {};
     params[target] = content;
+    // if we edit the body of the step, also change it in the editor body
+    if (target === Target.Body) {
+      const editor = getEditor();
+      // read the old step and replace it in the entity body
+      this.api.getJson(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`).then(json => {
+        editor.replaceContent(editor.getContent().replace(json.body, content));
+      });
+    }
     return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
   }
 

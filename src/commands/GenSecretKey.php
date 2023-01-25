@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GenSecretKey extends Command
 {
     // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'genkey';
+    protected static $defaultName = 'tools:genkey';
 
     /**
      * Set the help messages

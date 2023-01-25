@@ -23,7 +23,6 @@ use function in_array;
 use Monolog\Logger;
 use PDOException;
 use function setcookie;
-use const SITE_URL;
 use function stripos;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -50,9 +49,6 @@ $Session->start();
 $Request->setSession($Session);
 
 try {
-    // Load config.php created by prepare.sh during container initialization
-    require_once dirname(__DIR__, 2) . '/config.php';
-
     // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
@@ -60,8 +56,7 @@ try {
     } catch (DatabaseErrorException | PDOException $e) {
         throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
     }
-    /** @psalm-suppress TypeDoesNotContainType */
-    if (SITE_URL === '') { // @phpstan-ignore-line
+    if (Config::fromEnv('SITE_URL') === '') {
         throw new ImproperActionException('<h1>Could not find mandatory <code>SITE_URL</code> variable! Please <a href="https://doc.elabftw.net/changelog.html#version-4-3-0">have a look at the changelog</a>.</h1>');
     }
 
@@ -148,7 +143,7 @@ try {
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
-        $url = SITE_URL . '/app/logout.php?keep_redirect=1';
+        $url = Config::fromEnv('SITE_URL') . '/app/logout.php?keep_redirect=1';
         header('Location: ' . $url);
     }
     exit;

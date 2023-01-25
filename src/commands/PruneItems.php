@@ -9,7 +9,7 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Enums\EntityType;
 use Elabftw\Services\EntityPruner;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,7 +42,7 @@ class PruneItems extends Command
                 '=============',
             ));
         }
-        $Cleaner = new EntityPruner(AbstractEntity::TYPE_ITEMS);
+        $Cleaner = new EntityPruner(EntityType::Items);
         $cleanedNumber = $Cleaner->cleanup();
         if ($output->isVerbose()) {
             $output->writeln(sprintf('Removed %d items', $cleanedNumber));

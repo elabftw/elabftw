@@ -15,11 +15,8 @@ use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
 use Monolog\Logger;
 use PDO;
-use const SECRET_KEY;
-use const SITE_URL;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -116,6 +113,32 @@ class Email
         return $this->send($message);
     }
 
+    public function notifySysadminsTsBalance(int $tsBalance): void
+    {
+        $emails = $this->getSysadminEmails();
+        $subject = '[eLabFTW] Warning: timestamp balance low!';
+        $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
+        $message = (new Memail())
+            ->subject($subject)
+            ->from($this->from)
+            ->to(...$emails)
+            ->text($body . $this->footer);
+        $this->send($message);
+    }
+
+    private function getSysadminEmails(): array
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users WHERE validated = 1 AND archived = 0 AND usergroup = 1';
+        $req = $Db->prepare($sql);
+        $Db->execute($req);
+        $emails = array();
+        foreach ($req->fetchAll() as $user) {
+            $emails[] = new Address($user['email'], $user['fullname']);
+        }
+        return $emails;
+    }
+
     /**
      * Get email for all active users
      */
@@ -141,7 +164,7 @@ class Email
 
     private function makeFooter(): string
     {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), SITE_URL);
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Config::fromEnv('SITE_URL'));
     }
 
     /**
@@ -155,7 +178,7 @@ class Email
             $username = $this->Config->configArr['smtp_username'];
             $password = Crypto::decrypt(
                 $this->Config->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(SECRET_KEY)
+                Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))
             );
         }
 

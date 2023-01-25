@@ -1,47 +1,112 @@
 ---
-
 name: Bug report
 about: If something isn't working as expected.
+labels: bug
+body:
+- type: markdown
+  attributes:
+    value: |
+      ## Welcome!
+      You are about to *report a bug* you encountered in eLabFTW. Please use the 'Feature Request' template if you want to propose a new feature instead.
 
----
+      This issue tracker is used to track actual bugs. Please use [the discussions](https://github.com/elabftw/elabftw/discussions/) or [chat](https://gitter.im/elabftw/elabftw) if you have a question, e.g. to get help with configuration of your instance. This bug report form is mainly addressed to Sysadmins with shell access to the instance server.
 
-# Describe the bug
-<!-- Before reporting an issue please check that you are using the latest eLabFTW version!
+- type: textarea
+  id: description
+  attributes:
+    label: Detailed description of the problem
+    description: |
+      In this section, please try to concentrate on observations. Only describe what you observed directly.
+    validations:
+      required: true
 
-Please describe precisely your problem here. It is better to give more information than not enough!
+- type: textarea
+  id: expected-behavior
+  attributes:
+    label: Expected Behavior
+    description: |
+      Explain why you consider the described behavior (above) to be wrong. What did you expect instead?
+    validations:
+      required: true
 
-You can post your configuration file content by displaying it like this:
+- type: textarea
+  id: steps
+  attributes:
+  label: Steps to reproduce the behavior
+  description: |
+    The more time you spend describing an easy way to reproduce the behavior (if this is possible), the easier it is for the project developers to fix it! Don't hesitate to add screenshots.
+  placeholder: |
+    1.
+    2.
+    3.
+  validations:
+    required: true
 
-grep -vE "^[[:blank:]]*#|^[[:blank:]]*$" /etc/elabftw.yml | grep -vE "PASSWORD|SECRET_KEY"
+- type: textarea
+  id: possible-cause
+  attributes:
+    label: Do you have any idea what may have caused this?
+    description: |
+      Simply leave this empty if you do not.
 
-!!! VERY SUPER VERY IMPORTANT!!! => wrap your code/logs between `~~~` and write the command executed along with its output
-  Example:
+- type: textarea
+  id: possible-solution
+  attributes:
+    label: Do you have an idea how to solve the issue?
+    description: |
+      Simply leave this empty if you do not.
 
-  ~~~
-  docker logs elabftw | tail
-  [some pasted logs with long lines]
-  [some pasted logs with long lines]
-  [some pasted logs with long lines]
-  ~~~
+- type: textarea
+  id: configuration
+  attributes:
+    label: What is your docker-compose configuration?
+    description: |
+      Generate a password-less configuration with `grep -vE "^[[:blank:]]*#|^[[:blank:]]*$" /etc/elabftw.yml | grep -vE "PASSWORD|SECRET_KEY"`
+    render: yaml
+  validations:
+    required: true
 
-  Example with syntax highlighting
+- type: textarea
+  id: uname
+  attributes:
+    label: 'Output of `uname -a`'
+    description: |
+      Please run `uname -a` and paste the output into this field.
+    render: plain
+  validations:
+    required: true
 
-  ~~~javascript
-  $('some').js();
-  ~~~
+- type: textarea
+  id: os-release
+  attributes:
+    label: 'Output of `cat /etc/os-release`'
+    description: |
+      Please run `cat /etc/os-release` and paste the output into this field.
+    render: plain
+  validations:
+    required: true
 
-  -->
+- type: textarea
+  id: docker-info
+  attributes:
+    label: 'Output of `docker info`'
+    description: |
+      Please run `docker info` and paste the output into this field.
+    render: plain
+  validations:
+    required: true
 
-# Steps to reproduce
+- type: textarea
+  id: php-logs
+  attributes:
+    label: Relevant php error log entry
+    description: |
+      If the bug triggers an error in the PHP error log, paste it here. Use `docker logs elabftw 1>/dev/null` to see errors from the logs.
+    render: plain
 
-<!-- A reproducible bug is always much easier to fix! -->
-
-# Information
-
-<!-- Please make sure to fill this information! -->
-
-- Version of eLabFTW (visible in bottom right of a page):
-- Server operating system (e.g: Ubuntu, CentOS):
-- Docker (yes/no):
-- Client operating system (e.g: MacOS, Windows, GNU+Linux):
-- Browser (e.g. firefox, chrome):
+- type: textarea
+  id: additional
+  attributes:
+    label: Additional information
+    description: |
+      Any additional information about your environment that may be useful to know about. Like the browser type/version if it is a client issue.

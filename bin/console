@@ -13,12 +13,14 @@ use Symfony\Component\Console\Application;
 use function dirname;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
-require_once dirname(__DIR__) . '/config.php';
 
 $Application = new Application();
 
+$Application->add(new Install());
+$Application->add(new GenSecretKey());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase());
+$Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new UpdateDatabase());
 $Application->add(new UpdateTo3());

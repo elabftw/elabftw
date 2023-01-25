@@ -10,12 +10,8 @@
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
-use function array_combine;
-use function array_filter;
-use function array_flip;
 use function array_intersect_key;
 use function array_keys;
-use function array_map;
 use function array_unique;
 use function array_values;
 use function implode;
@@ -25,7 +21,7 @@ use function str_replace;
 
 class VisibilityFieldHelper
 {
-    public string $possibleInput;
+    public string $possibleInput = '';
 
     public function __construct(private string $userInput, private array $visArr)
     {
@@ -33,18 +29,15 @@ class VisibilityFieldHelper
 
     public function getArr(): array
     {
-        // Convert team groups names to the corresponding IDs for SQL query.
-        $visArrFlipped = array_flip(array_map('strtolower', $this->visArr));
-        $onlyStringsArr = array_filter($visArrFlipped, 'is_string');
-        $searchArr = $visArrFlipped + array_combine($onlyStringsArr, $onlyStringsArr);
-        $this->possibleInput = "'" . implode("', '", array_keys($searchArr)) . "'";
+        // ToDo: add back team groups, add teams and users
+        $this->possibleInput = "'" . implode("', '", array_keys($this->visArr)) . "'";
 
         // Emulate SQL LIKE search functionality so the user can use the same placeholders
         $pattern = '/^' . str_replace(array('%', '_'), array('.*', '.'), preg_quote($this->userInput, '/')) . '$/i';
         // Filter visibility entries based on user input
-        $filteredArr = preg_grep($pattern, array_keys($searchArr)) ?: array();
+        $filteredArr = preg_grep($pattern, array_keys($this->visArr)) ?: array();
 
         // Return a unique list of visibility entries that can be used in the SQL where clause
-        return array_unique(array_intersect_key(array_values($searchArr), $filteredArr));
+        return array_unique(array_intersect_key(array_values($this->visArr), $filteredArr));
     }
 }

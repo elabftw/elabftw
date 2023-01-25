@@ -13,9 +13,12 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <p><i class='fas fa-exclamation-triangle'></i>
-          {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
-        </p>
+        <p>{{ 'Timestamping your experiment is like taking a snapshot of your experiment at this instant, and storing it on the side, in an immutable archive. This snapshot is validated (timestamped) by a trusted third party.'|trans }}</p>
+        {% if App.Config.configArr.ts_authority == 'universign' or App.Config.configArr.ts_authority == 'custom' %}
+          <p><i class='fas fa-exclamation-triangle'></i>
+            {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
+          </p>
+        {% endif %}
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>

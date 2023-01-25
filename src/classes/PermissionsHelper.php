@@ -9,6 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use function array_flip;
+use function array_map;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -55,5 +57,25 @@ final class PermissionsHelper
             $base[BasePermissions::UserOnly->value] = BasePermissions::UserOnly->toHuman();
         }
         return $base;
+    }
+
+    /**
+     * Builds an array used by extended search
+     */
+    public function getExtendedSearchAssociativeArray(): array
+    {
+        $flipped = array_flip(array_map('strtolower', $this->getAssociativeArray()));
+        $englishBase = array(
+            'public' => BasePermissions::Full->value,
+            'organization' => BasePermissions::Organization->value,
+            'myteams' => BasePermissions::MyTeams->value,
+            'user' => BasePermissions::User->value,
+        );
+        // add the only me setting only if it is allowed by main config
+        $Config = Config::getConfig();
+        if ($Config->configArr['allow_useronly'] === '1') {
+            $englishBase['useronly'] = BasePermissions::UserOnly->value;
+        }
+        return $flipped + $englishBase;
     }
 }

@@ -10,11 +10,11 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Factories\EntityFactory;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
@@ -38,7 +38,6 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use JsonException;
-use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -158,7 +157,7 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['comment'] = $this->Request->request->get('comment');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getPage(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getPage(), $id)));
     }
 
     private function getArray(): array
@@ -212,7 +211,7 @@ class Apiv2Controller extends AbstractApiController
             case 'items':
             case 'experiments_templates':
             case 'items_types':
-                return (new EntityFactory($this->Users, $this->endpoint, $this->id))->getEntity();
+                return EntityType::from($this->endpoint)->toInstance($this->Users, $this->id);
                 // for a single event, the id is the id of the event
             case 'event':
                 return new Scheduler(new Items($this->Users), $this->id);

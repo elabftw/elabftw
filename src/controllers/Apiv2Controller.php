@@ -80,6 +80,7 @@ class Apiv2Controller extends AbstractApiController
                 default => new Response('Invalid HTTP request method!', Response::HTTP_METHOD_NOT_ALLOWED, array('Allow' => implode(', ', $this->allowedMethods)))
             };
         } catch (IllegalActionException $e) {
+            var_dump($e);die;
             $error = array(
                 'code' => 403,
                 'message' => 'Access Forbidden',

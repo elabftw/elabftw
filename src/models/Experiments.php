@@ -210,7 +210,6 @@ class Experiments extends AbstractConcreteEntity
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
         return match ($action) {
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
@@ -232,6 +231,7 @@ class Experiments extends AbstractConcreteEntity
 
     private function timestamp(): array
     {
+        $this->canOrExplode('write');
         $Config = Config::getConfig();
         $Maker = $this->getTimestampMaker($Config->configArr);
         $pdfBlob = $Maker->generatePdf();

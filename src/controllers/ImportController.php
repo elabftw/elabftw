@@ -11,8 +11,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Services\ImportCsv;
@@ -66,7 +66,7 @@ class ImportController implements ControllerInterface
                     $canread->toJson(),
                     $canwrite->toJson(),
                     $uploadedFile,
-                    (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+                    Storage::CACHE->getStorage()->getFs(),
                 );
             case 'zip':
                 return new ImportZip(
@@ -75,7 +75,7 @@ class ImportController implements ControllerInterface
                     $canread->toJson(),
                     $canwrite->toJson(),
                     $uploadedFile,
-                    (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs(),
+                    Storage::CACHE->getStorage()->getFs(),
                 );
             case 'csv':
                 return new ImportCsv(

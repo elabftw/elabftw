@@ -49,7 +49,7 @@ try {
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
-            $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
+            $LocalAuth = new LocalAuth($App->Users->userData['email'], (string) $Request->request->get('currpass'));
             try {
                 $LocalAuth->tryAuth();
             } catch (InvalidCredentialsException $e) {

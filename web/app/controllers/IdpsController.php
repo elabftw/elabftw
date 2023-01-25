@@ -36,39 +36,39 @@ try {
     // CREATE IDP
     if ($Request->request->has('idpsCreate')) {
         $Idps->create(
-            $Request->request->get('name'),
-            $Request->request->get('entityid'),
-            $Request->request->get('ssoUrl'),
-            $Request->request->get('ssoBinding'),
-            $Request->request->get('sloUrl'),
-            $Request->request->get('sloBinding'),
-            $Request->request->get('x509'),
-            $Request->request->get('x509_new'),
-            $Request->request->get('active'),
-            $Request->request->get('email_attr'),
-            $Request->request->get('team_attr'),
-            $Request->request->get('fname_attr'),
-            $Request->request->get('lname_attr')
+            (string) $Request->request->get('name'),
+            (string) $Request->request->get('entityid'),
+            (string) $Request->request->get('ssoUrl'),
+            (string) $Request->request->get('ssoBinding'),
+            (string) $Request->request->get('sloUrl'),
+            (string) $Request->request->get('sloBinding'),
+            (string) $Request->request->get('x509'),
+            (string) $Request->request->get('x509_new'),
+            (string) $Request->request->get('active'),
+            (string) $Request->request->get('email_attr'),
+            (string) $Request->request->get('team_attr'),
+            (string) $Request->request->get('fname_attr'),
+            (string) $Request->request->get('lname_attr'),
         );
     }
 
     // UPDATE IDP
     if ($Request->request->has('idpsUpdate')) {
         $Idps->update(
-            (int) $Request->request->get('id'),
-            $Request->request->get('name'),
-            $Request->request->get('entityid'),
-            $Request->request->get('ssoUrl'),
-            $Request->request->get('ssoBinding'),
-            $Request->request->get('sloUrl'),
-            $Request->request->get('sloBinding'),
-            $Request->request->get('x509'),
-            $Request->request->get('x509_new'),
-            $Request->request->get('active'),
-            $Request->request->get('email_attr'),
-            $Request->request->get('team_attr'),
-            $Request->request->get('fname_attr'),
-            $Request->request->get('lname_attr')
+            $Request->request->getInt('id'),
+            (string) $Request->request->get('name'),
+            (string) $Request->request->get('entityid'),
+            (string) $Request->request->get('ssoUrl'),
+            (string) $Request->request->get('ssoBinding'),
+            (string) $Request->request->get('sloUrl'),
+            (string) $Request->request->get('sloBinding'),
+            (string) $Request->request->get('x509'),
+            (string) $Request->request->get('x509_new'),
+            (string) $Request->request->get('active'),
+            (string) $Request->request->get('email_attr'),
+            (string) $Request->request->get('team_attr'),
+            (string) $Request->request->get('fname_attr'),
+            (string) $Request->request->get('lname_attr'),
         );
     }
 

@@ -18,9 +18,9 @@ use Elabftw\Elabftw\UploadParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
@@ -78,7 +78,7 @@ class Uploads implements RestInterface
         // where we want to store it
         $Config = Config::getConfig();
         $storage = (int) $Config->configArr['uploads_storage'];
-        $storageFs = (new StorageFactory($storage))->getStorage()->getFs();
+        $storageFs = Storage::from($storage)->getStorage()->getFs();
 
         $tmpFilename = basename($params->getFilePath());
         $filesize = $sourceFs->filesize($tmpFilename);
@@ -188,7 +188,7 @@ class Uploads implements RestInterface
      */
     public function readBinary(): Response
     {
-        $storageFs = (new StorageFactory($this->uploadData['storage']))->getStorage()->getFs();
+        $storageFs = Storage::from($this->uploadData['storage'])->getStorage()->getFs();
 
         $DownloadController = new DownloadController(
             $storageFs,

@@ -282,7 +282,7 @@ class TeamGroups implements RestInterface
     private function updateMember(array $params): array
     {
         if ($params['how'] === Action::Add->value) {
-            $sql = 'INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
+            $sql = 'INSERT IGNORE INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
         } elseif ($params['how'] === Action::Unreference->value) {
             $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
         } else {

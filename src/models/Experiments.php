@@ -14,10 +14,10 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
-use Elabftw\Services\MakeBloxberg;
 use Elabftw\Services\MakeCustomTimestamp;
 use Elabftw\Services\MakeDfnTimestamp;
 use Elabftw\Services\MakeDigicertTimestamp;
@@ -39,8 +39,8 @@ class Experiments extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->page = parent::TYPE_EXPERIMENTS;
-        $this->type = parent::TYPE_EXPERIMENTS;
+        $this->page = EntityType::Experiments->value;
+        $this->type = EntityType::Experiments->value;
         parent::__construct($users, $id);
     }
 
@@ -210,23 +210,10 @@ class Experiments extends AbstractConcreteEntity
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
         return match ($action) {
-            Action::Bloxberg => $this->bloxberg(),
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
-    }
-
-    private function bloxberg(): array
-    {
-        $Config = Config::getConfig();
-        $config = $Config->configArr;
-        if ($config['blox_enabled'] !== '1') {
-            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
-        }
-        (new MakeBloxberg(new Client(), $this))->timestamp();
-        return $this->readOne();
     }
 
     private function getTimestampMaker(array $config): MakeTimestampInterface
@@ -244,6 +231,7 @@ class Experiments extends AbstractConcreteEntity
 
     private function timestamp(): array
     {
+        $this->canOrExplode('write');
         $Config = Config::getConfig();
         $Maker = $this->getTimestampMaker($Config->configArr);
         $pdfBlob = $Maker->generatePdf();
@@ -255,6 +243,10 @@ class Experiments extends AbstractConcreteEntity
         );
         $tsResponse = $TimestampUtils->timestamp();
         $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
+
+        // decrement the balance
+        $Config->decrementTsBalance();
+
         return $this->readOne();
     }
 

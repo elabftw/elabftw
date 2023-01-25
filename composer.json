@@ -23,7 +23,7 @@
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.4.5",
     "symfony/http-foundation": "^6.0",
-    "twig/twig": "^3.3.8",
+    "twig/twig": "^3.5.0",
     "monolog/monolog": "^3.1.0",
     "maennchen/zipstream-php": "^2.0.0",
     "league/csv": "^9.4",
@@ -51,7 +51,7 @@
     "codeception/codeception": "^5.0.1",
     "pyrech/composer-changelogs": "^1.8.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
-    "codeception/module-db": "^3.0.0",
+    "codeception/module-db": "^3.1.0",
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",
@@ -75,9 +75,6 @@
       ],
       "Elabftw\\Enums\\": [
         "src/enums"
-      ],
-      "Elabftw\\Factories\\": [
-        "src/factories"
       ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"

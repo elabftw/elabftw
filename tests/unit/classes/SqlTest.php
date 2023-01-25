@@ -9,7 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Factories\StorageFactory;
+use Elabftw\Enums\Storage;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\UnableToReadFile;
 
@@ -19,7 +19,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Sql = new Sql((new StorageFactory(StorageFactory::FIXTURES))->getStorage()->getFs());
+        $this->Sql = new Sql(Storage::FIXTURES->getStorage()->getFs());
     }
 
     public function testExecFile(): void

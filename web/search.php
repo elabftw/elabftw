@@ -30,7 +30,7 @@ $App->pageTitle = _('Search');
 
 $Experiments = new Experiments($App->Users);
 $Database = new Items($App->Users);
-$Tags = new TeamTags($App->Users, $App->Users->userData['team']);
+$TeamTags = new TeamTags($App->Users, $App->Users->userData['team']);
 
 $itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
 $categoryArr = $statusArr = (new Status(new Teams($App->Users, $App->Users->team)))->readAll();
@@ -59,7 +59,7 @@ $renderArr = array(
     'Database' => $Database,
     'categoryArr' => $categoryArr,
     'itemsTypesArr' => $itemsTypesArr,
-    'tagsArr' => $Tags->readAll(),
+    'tagsArr' => $TeamTags->readFull(),
     'statusArr' => $statusArr,
     'usersArr' => $usersArr,
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),

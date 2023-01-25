@@ -11,8 +11,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\StorageFactory;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Traits\ProcessTrait;
@@ -46,7 +46,7 @@ class TimestampUtils
     ) {
         // save the data inside a temporary file so openssl can act on it
         $pdfPath = FsTools::getCacheFile() . '.pdf';
-        $this->cacheFs = (new StorageFactory(StorageFactory::CACHE))->getStorage()->getFs();
+        $this->cacheFs = Storage::CACHE->getStorage()->getFs();
         $this->cacheFs->write(basename($pdfPath), $data);
         $this->dataPath = $pdfPath;
         $this->trash[] = basename($this->dataPath);
@@ -142,7 +142,7 @@ class TimestampUtils
         try {
             return $this->client->request('POST', $this->tsConfig['ts_url'], $options);
         } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+            throw new ImproperActionException($e->getMessage(), $e->getCode(), $e);
         }
     }
 

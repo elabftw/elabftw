@@ -31,7 +31,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use function explode;
@@ -42,7 +41,6 @@ use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
 use PDO;
 use PDOStatement;
-use const SITE_URL;
 use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -52,14 +50,6 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
-
-    public const TYPE_EXPERIMENTS = 'experiments';
-
-    public const TYPE_ITEMS = 'items';
-
-    public const TYPE_ITEMS_TYPES = 'items_types';
-
-    public const TYPE_TEMPLATES = 'experiments_templates';
 
     public const CONTENT_HTML = 1;
 
@@ -79,7 +69,7 @@ abstract class AbstractEntity implements RestInterface
 
     public Pins $Pins;
 
-    // some TYPE_ const
+    // string representation of EntityType
     public string $type = '';
 
     // use that to ignore the canOrExplode calls
@@ -557,7 +547,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', SITE_URL, $this->page, $this->id, $this->entityData['access_key'] ?? '');
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $this->entityData['access_key'] ?? '');
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
@@ -674,7 +664,7 @@ abstract class AbstractEntity implements RestInterface
         $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $PermissionsHelper->getAssociativeArray(),
+            $PermissionsHelper->getExtendedSearchAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

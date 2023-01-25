@@ -41,12 +41,12 @@ try {
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Email->testemailSend($Request->request->get('email'));
+        $Email->testemailSend((string) $Request->request->get('email'));
     }
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email->massEmail($Request->request->get('subject'), $Request->request->get('body'));
+        $Email->massEmail((string) $Request->request->get('subject'), (string) $Request->request->get('body'));
     }
 
     // DESTROY IDP

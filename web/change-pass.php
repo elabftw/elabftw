@@ -10,9 +10,9 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
-use const SECRET_KEY;
 use Symfony\Component\HttpFoundation\Response;
 use function time;
 
@@ -35,7 +35,7 @@ try {
     }
 
     // validate the key to show error if the key is expired
-    $ResetPasswordKey = new ResetPasswordKey(time(), SECRET_KEY);
+    $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
     $ResetPasswordKey->validate($Request->query->getAlnum('key'));
 
     $template = 'change-pass.html';

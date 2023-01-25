@@ -1464,6 +1464,18 @@ paths:
       tags: ['Experiments templates']
       summary: Modify an experiment template
       operationId: patch-experiment_template
+      requestBody:
+        description: Parameters for modifying an experiment template
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['lock', 'pin', 'update']
+                - $ref: '#/components/schemas/experiment_template'
       responses:
         '200':
           description: The patched experiment template
@@ -2657,7 +2669,7 @@ paths:
     patch:
       tags: ['Tags']
       summary: |
-        Actions on a tag.
+        Actions on a tag (like removing it from the entity).
       operationId: patch-tag
       requestBody:
         description: Parameters for modifying a tag
@@ -2679,12 +2691,12 @@ paths:
                 $ref: '#/components/schemas/tag'
     delete:
       tags: ['Tags']
-      summary: Delete a tag.
-      description: The tag gets deleted.
+      summary: Delete all tags.
+      description: All the tags from that entity get removed.
       operationId: delete-tag
       responses:
         '204':
-          description: The tag was deleted.
+          description: The tags were deleted.
 
 
   # UPLOADS

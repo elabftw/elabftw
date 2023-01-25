@@ -1,4 +1,4 @@
--- schema 110
+-- schema 111
 -- tags2entity remove row if tag does not exists
 DELETE `tags2entity`
   FROM `tags2entity`

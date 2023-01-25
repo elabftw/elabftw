@@ -147,3 +147,4 @@ workflows:
             branches:
               ignore:
                 - demo
+                - ird

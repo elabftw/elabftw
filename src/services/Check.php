@@ -72,7 +72,6 @@ class Check
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || mb_strlen($color) !== 6) {
-            debug_print_backtrace();
             throw new ImproperActionException('Bad color');
         }
         return $color;

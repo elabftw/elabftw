@@ -258,6 +258,7 @@ class Teams implements RestInterface
 
     private function create(string $name): int
     {
+        $this->canWriteOrExplode();
         $name = Filter::title($name);
 
         $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';

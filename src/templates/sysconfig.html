@@ -2,7 +2,7 @@
 
 {% block body %}
 <!-- display current and latest version -->
-<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ v }}</span>
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</span>
 <br>
 {{ 'Latest stable version:'|trans }} <span id='latestVersion'></span>
 

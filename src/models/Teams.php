@@ -322,6 +322,7 @@ class Teams implements RestInterface
     {
         $Config = Config::getConfig();
         if ($Config->configArr['saml_team_create']) {
+            $this->bypassWritePermission = true;
             return $this->postAction(Action::Create, array('name' => $name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');

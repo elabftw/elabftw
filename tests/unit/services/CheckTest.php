@@ -75,11 +75,4 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->expectException(IllegalActionException::class);
         Check::token('blah');
     }
-
-    public function testOrcid(): void
-    {
-        Check::orcid('0000-0123-4346-1337');
-        $this->expectException(ImproperActionException::class);
-        Check::orcid('0000-1249-abcd');
-    }
 }

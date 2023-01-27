@@ -128,15 +128,6 @@ class Check
         return Filter::sanitize($token);
     }
 
-    public static function orcid(string $orcid): string
-    {
-        if (preg_match('/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}/', $orcid) === 1) {
-            return $orcid;
-        }
-        // note: the input field should prevent any incorrect value from being submitted in the first place
-        throw new ImproperActionException('Incorrect value for orcid!');
-    }
-
     public static function accessKey(string $ak): string
     {
         if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i', $ak) === 1) {

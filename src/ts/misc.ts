@@ -56,7 +56,7 @@ export function collectForm(form: HTMLElement): object {
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
       }
-      if (el.dataset.ignore !== '1') {
+      if (el.dataset.ignore !== '1' && el.disabled === false) {
         params = Object.assign(params, {[input.name]: input.value});
       }
       if (el.name === 'password') {

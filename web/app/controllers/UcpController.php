@@ -56,8 +56,8 @@ try {
                 throw new ImproperActionException('The current password is not valid!');
             }
             // update the email if necessary
-            if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
-                $App->Users->patch(Action::Update, array('email' => $params['email']));
+            if (isset($postData['email']) && ($postData['email'] !== $App->Users->userData['email'])) {
+                $App->Users->patch(Action::Update, array('email' => $postData['email']));
             }
         }
 

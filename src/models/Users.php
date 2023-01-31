@@ -382,6 +382,10 @@ class Users implements RestInterface
         }
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+            // we can only edit our own email, or be sysadmin
+            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
+                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
+            }
             Filter::email($params->getContent());
         }
 

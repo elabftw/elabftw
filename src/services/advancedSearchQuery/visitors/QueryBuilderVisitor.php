@@ -415,7 +415,7 @@ class QueryBuilderVisitor implements Visitor
 
     private function visitFieldVisibility(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
-        $filteredSearchArr = (new VisibilityFieldHelper($searchTerm, $parameters->getVisArr()))->getArr();
+        $filteredSearchArr = (new VisibilityFieldHelper($searchTerm))->getArr();
 
         $queryParts = array();
         $bindValues = array();

@@ -20,23 +20,22 @@ checks:
     symfony_request_injection: false
     no_exit: false
 build:
-    environment:
-        docker:
-            remote_engine: true
-
-    nodes:
-        tests:
-            dependencies:
-                override:
-                    - echo do nothing here
-                before:
-                    - echo do nothing here
-
+  environment:
+    docker:
+      remote_engine: true
+    php:
+      version: 8.1
+  nodes:
     tests:
+      dependencies:
         override:
-            - command: tests/run.sh
-              idle_timeout: 500
-              coverage:
-                  file: coverage.xml
-                  format: clover
-
+          - echo do nothing here
+        before:
+          - echo do nothing here
+  tests:
+    override:
+      - command: tests/run.sh
+        idle_timeout: 500
+        coverage:
+          file: coverage.xml
+          format: clover

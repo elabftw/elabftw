@@ -697,6 +697,9 @@ paths:
       summary: Delete an API key.
       description: Delete an API key
       operationId: delete-apikey
+      requestBody:
+        content:
+          application/json: {}
       parameters:
         - name: id
           in: path
@@ -741,6 +744,9 @@ paths:
       tags: ['Config']
       summary: Reset the config to default values
       operationId: delete-config
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The config was reset.
@@ -940,6 +946,9 @@ paths:
       tags: ['Experiments']
       summary: Delete an experiment.
       description: The experiment gets soft-deleted.
+      requestBody:
+        content:
+          application/json: {}
       operationId: delete-experiment
       responses:
         '204':
@@ -1116,6 +1125,9 @@ paths:
       summary: Delete an item.
       description: The item gets soft-deleted.
       operationId: delete-item
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The key was deleted
@@ -1227,6 +1239,9 @@ paths:
       summary: Delete an entity comment.
       description: The comment gets deleted.
       operationId: delete-entity-comment
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The comment was deleted
@@ -1312,6 +1327,9 @@ paths:
       summary: Delete an item link.
       description: The link gets deleted.
       operationId: delete-entitiy-items-link
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The link was deleted.
@@ -1397,6 +1415,9 @@ paths:
       summary: Delete an experiment link.
       description: The link gets deleted.
       operationId: delete-entity-experiments-link
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The link was deleted.
@@ -1488,6 +1509,9 @@ paths:
       summary: Delete an experiment template.
       description: The experiment template gets soft-deleted.
       operationId: delete-experiment_template
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The key was deleted
@@ -1567,6 +1591,9 @@ paths:
       summary: Delete an item type.
       description: The item gets soft-deleted.
       operationId: delete-items_type
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The item type was deleted.
@@ -1691,6 +1718,9 @@ paths:
       tags: ['Events']
       summary: Delete a booking slot.
       operationId: delete-event
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The event was deleted.
@@ -1751,6 +1781,9 @@ paths:
       tags: ['Favorite tags']
       summary: Unfavorite a tag.
       operationId: delete-favtag
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The favorite tag was removed.
@@ -1876,6 +1909,9 @@ paths:
       tags: ['Team tags']
       summary: Delete a tag.
       operationId: delete-team_tag
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The tag was removed.
@@ -2055,6 +2091,9 @@ paths:
       tags: ['Status']
       summary: Delete a status.
       operationId: delete-status
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The status was removed.
@@ -2167,6 +2206,9 @@ paths:
       tags: ['Teamgroups']
       summary: Delete a teamgroup.
       operationId: delete-teamgroup
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The teamgroup was removed.
@@ -2255,6 +2297,9 @@ paths:
       tags: ['Todolist']
       summary: Delete a todoitem.
       operationId: delete-todoitem
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The todoitem was removed.
@@ -2422,6 +2467,9 @@ paths:
       summary: Delete all notifications of the user.
       description: All notifications for the user are deleted.
       operationId: delete-notifications
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The notifications were deleted.
@@ -2576,6 +2624,9 @@ paths:
       summary: Delete a step.
       description: The step gets deleted.
       operationId: delete-step
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The step was deleted.
@@ -2694,6 +2745,9 @@ paths:
       summary: Delete all tags.
       description: All the tags from that entity get removed.
       operationId: delete-tag
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The tags were deleted.
@@ -2851,6 +2905,9 @@ paths:
       summary: Delete an upload.
       description: The upload gets deleted.
       operationId: delete-upload
+      requestBody:
+        content:
+          application/json: {}
       responses:
         '204':
           description: The upload was deleted.

@@ -26,6 +26,10 @@ build:
     php:
       version: 8.1
   nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
     tests:
       dependencies:
         override:

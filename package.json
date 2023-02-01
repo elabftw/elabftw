@@ -14,7 +14,7 @@
     "@fullcalendar/bootstrap": "^5.1.0",
     "@fullcalendar/core": "^5.1.0",
     "@fullcalendar/daygrid": "^5.1.0",
-    "@fullcalendar/interaction": "^5.1.0",
+    "@fullcalendar/interaction": "^5.11.4",
     "@fullcalendar/list": "^5.1.0",
     "@fullcalendar/timegrid": "^5.1.0",
     "bio-parsers": "^9.0.1",

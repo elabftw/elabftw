@@ -78,7 +78,7 @@
       {% set alt = 'Lock/Unlock item'|trans %}
       {% if Entity.entityData.locked %}
           {% set lockIcon = 'fa-lock' %}
-          {% set alt = Entity.entityData.lockedwhen %}
+          {% set alt = Entity.entityData.locked_at %}
       {% endif %}
       <div class='hl-hover-gray d-inline p-2 rounded'>
         <a class='elab-tooltip' href='#' data-action='lock-entity'>
@@ -121,8 +121,9 @@
       <!-- Download / Export menu -->
       <div class='hl-hover-gray d-inline p-2 rounded'>
         <div class='dropdown d-inline'>
-          <a data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Export'|trans }}' aria-label='{{ 'Export'|trans }}' role='button'>
-            <i class='fas fa-download fa-2x'></i>
+          <a class='elab-tooltip' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' role='button'>
+            <span>{{ 'Export'|trans }}</span>
+            <i title='{{ 'Export'|trans }}' class='fas fa-download fa-2x'></i>
           </a>
           <span class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
             <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>

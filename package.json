@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "3dmol": "^1.4.0",
+    "3dmol": "^2.0.0",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
     "@deltablot/malle": "^1.0.1",
     "@deltablot/open-vector-editor-umd": "^18.0.0",

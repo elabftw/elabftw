@@ -124,18 +124,18 @@
   resolved "https://registry.yarnpkg.com/@fancyapps/fancybox/-/fancybox-3.5.7.tgz#12f8734663ec6eae7f9236b92ca236e6e07fdfd5"
   integrity sha512-rcEtu8t+WnmqIDV/Wfm1yvy/nDdwc7YV25j9HLxGC2/WOsUhk9rcWg2nB8g1BrjRt9zaoADdjHTU6ILYTJzBBg==
 
-"@fullcalendar/bootstrap@^5.1.0":
-  version "5.11.3"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-5.11.3.tgz#12b0cc736562075b2270e2735ba970c9b16294e2"
-  integrity sha512-qCcNIz4F5YcTfpc1l2kKMtNpC2Lu/Al5/WaCASoLgqx1ukOunGuSh6WmooYrHCg/fwUJR4NOp85Qe4lggyEuSg==
+"@fullcalendar/bootstrap@^5.11.4":
+  version "5.11.4"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/bootstrap/-/bootstrap-5.11.4.tgz#8870915e5f4dd3fedd95c83bf14fd1a1f8d3d34f"
+  integrity sha512-IfBtsixKtDyludqxtiYtzlQ6Ozmaipovgl1Fz7EhjUDsm3wZ+So7YVu4yWSJL3DnFB40YjsyP8nqLTG+qPNIaA==
   dependencies:
-    "@fullcalendar/common" "~5.11.3"
+    "@fullcalendar/common" "~5.11.4"
     tslib "^2.1.0"
 
-"@fullcalendar/common@~5.11.3":
-  version "5.11.3"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.11.3.tgz#6d555a06925b8a6d1556570c9f039960539908d5"
-  integrity sha512-welVwyfQOXQQGfDwBMSfYEPbiO1cPfUD+C7jd3ZoweJR+dSO11ddFugxIQ7dGfABAGZ63oq/+LW9FsmAJezVNg==
+"@fullcalendar/common@~5.11.3", "@fullcalendar/common@~5.11.4":
+  version "5.11.4"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.11.4.tgz#3541f4605bac9ea9a28bb939173f49d0c54a301b"
+  integrity sha512-wjy+EZgZIPWq1Z5qeB/pV2dmsXwzTJ2teNh5bjlVeHsvDYwERXSZEG2CdoF/NCTJaYeQY93xu1cj9Jw/0KXywA==
   dependencies:
     tslib "^2.1.0"
 

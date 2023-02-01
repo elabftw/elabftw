@@ -11,7 +11,7 @@
     "@deltablot/malle": "^1.0.1",
     "@deltablot/open-vector-editor-umd": "^18.0.0",
     "@fancyapps/fancybox": "3.5.*",
-    "@fullcalendar/bootstrap": "^5.1.0",
+    "@fullcalendar/bootstrap": "^5.11.4",
     "@fullcalendar/core": "^5.1.0",
     "@fullcalendar/daygrid": "^5.1.0",
     "@fullcalendar/interaction": "^5.1.0",

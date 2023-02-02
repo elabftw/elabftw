@@ -116,7 +116,7 @@ class EmailNotifications
                 $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $notifBody['actor'], $url, $notifBody['event']['start'], $notifBody['event']['end']);
                 break;
             case Notifications::USER_CREATED:
-                $subject .= _('New user added to your team');
+                $subject .= sprintf(_('New user added to team: %s'), $notifBody['team']);
                 $user = new Users((int) $notifBody['userid']);
                 $body = sprintf(
                     _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
@@ -125,7 +125,7 @@ class EmailNotifications
                 );
                 break;
             case Notifications::USER_NEED_VALIDATION:
-                $subject .= _('[ACTION REQUIRED]') . ' ' . _('New user added to your team');
+                $subject .= sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $notifBody['team']);
                 $user = new Users((int) $notifBody['userid']);
                 $base = sprintf(
                     _('Hi. A new user registered an account on eLabFTW: %s (%s).'),

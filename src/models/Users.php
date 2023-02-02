@@ -146,7 +146,7 @@ class Users implements RestInterface
         $Users2Teams = new Users2Teams();
         $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($alertAdmin && !$isFirstUser) {
-            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
+            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }
         if ($validated === 0) {
             $Notifications = new Notifications(new self($userid));
@@ -443,10 +443,11 @@ class Users implements RestInterface
         return $this->userData;
     }
 
-    private function notifyAdmins(array $admins, int $userid, int $validated): void
+    private function notifyAdmins(array $admins, int $userid, int $validated, string $team): void
     {
         $body = array(
             'userid' => $userid,
+            'team' => $team,
         );
         $notifCat = Notifications::USER_CREATED;
         if ($validated === 0) {

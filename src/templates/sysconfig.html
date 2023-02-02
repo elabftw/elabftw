@@ -369,6 +369,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
           </p>
         {% endif %}
 
+        <label for='smtp-verify'>Verify TLS certificate</label>
+        <select class='form-control col-md-4' id='smtp-verify' name='smtp_verify_cert'>
+          <option value='1'{{ App.Config.configArr.smtp_verify_cert == '1' ? ' selected' }}>Yes</option>
+          <option value='0'{{ App.Config.configArr.smtp_verify_cert == '0' ? ' selected' }}>No</option>
+        </select>
+
       <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>

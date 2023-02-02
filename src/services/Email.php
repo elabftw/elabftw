@@ -190,6 +190,10 @@ class Email
             $this->Config->configArr['smtp_port'],
         );
 
+        if ($this->Config->configArr['smtp_verify_cert'] === '0') {
+            $dsn .= '?verify_peer=0';
+        }
+
         return new Mailer(Transport::fromDsn($dsn));
     }
 }

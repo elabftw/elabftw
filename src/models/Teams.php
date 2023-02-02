@@ -181,7 +181,25 @@ class Teams implements RestInterface
             throw new ImproperActionException('The team is not empty! Aborting deletion!');
         }
 
-        // foreign keys will take care of deleting associated data (like status or experiments_templates)
+        /*
+         * foreign keys will take care of deleting associated data (like status or experiments_templates)
+         * IMPORTANT NOTE: the deletion of status will delete the experiments that have this status, too!
+         * so even if the experiments have been moved around, if the status still belongs to the deleted team,
+         * the experiment will get deleted.
+         * so don't rely on fk to delete the status, but run it through the Status->delete first,
+         * it will check if experiemnts have the status and show an error
+         */
+        $sql = 'SELECT id FROM status WHERE team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $statusArr = $req->fetchAll();
+        $Status = new Status($this);
+        foreach ($statusArr as $status) {
+            $Status->setId($status['id']);
+            $Status->destroy();
+        }
+
         $sql = 'DELETE FROM teams WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

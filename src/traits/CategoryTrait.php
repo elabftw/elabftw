@@ -10,7 +10,6 @@
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Models\ItemsTypes;
 use PDO;
 
 /**

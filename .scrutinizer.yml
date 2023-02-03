@@ -23,9 +23,6 @@ build:
   environment:
     docker:
       remote_engine: true
-    php:
-      version: 8.1
-    node: v16.19.0
   nodes:
     analysis:
       dependencies:

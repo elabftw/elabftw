@@ -135,4 +135,17 @@ class Check
         }
         throw new ImproperActionException('Incorrect value for access key!');
     }
+
+    /**
+     * Check digit according to ISO/IEC 7064:2003, MOD 11-2
+     */
+    public static function digit(string $base, int $checksum): bool
+    {
+        $sum = 0;
+        for ($c = 0; $c < strlen($base); $c++) {
+            $sum = ($sum + intval($base[$c])) * 2;
+        }
+        $remainder = $sum % 11;
+        return $checksum === ((12 - $remainder) % 11);
+    }
 }

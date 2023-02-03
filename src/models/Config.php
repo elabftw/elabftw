@@ -85,6 +85,7 @@ final class Config implements RestInterface
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
+            ('smtp_verify_cert', '1'),
             ('ts_authority', 'dfn'),
             ('ts_balance', '0'),
             ('ts_login', NULL),

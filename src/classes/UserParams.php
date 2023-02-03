@@ -92,10 +92,27 @@ final class UserParams extends ContentParams implements ContentParamsInterface
 
     private function filterOrcid(): string
     {
-        if (preg_match('/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]/', $this->content) === 1) {
-            return $this->content;
-        }
+        // first check basic structure
         // note: the input field should prevent any incorrect value from being submitted in the first place
-        throw new ImproperActionException('Incorrect value for orcid.');
+        if (preg_match('/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]/', $this->content) === 0) {
+            throw new ImproperActionException('Incorrect orcid: invalid format.');
+        }
+        // now check the sum
+        $baseNumbers = str_replace('-', '', substr($this->content, 0, -1));
+        if (Check::digit($baseNumbers, $this->getChecksumFromOrcid($this->content)) === false) {
+            throw new ImproperActionException('Invalid orcid: checksum failed.');
+        }
+        return $this->content;
+    }
+
+    private function getChecksumFromOrcid(string $orcid): int
+    {
+        // it is the last character
+        $checksum = $orcid[strlen($orcid) - 1];
+        // X means 10
+        if ($checksum === 'X') {
+            return 10;
+        }
+        return (int) $checksum;
     }
 }

@@ -75,4 +75,20 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->expectException(IllegalActionException::class);
         Check::token('blah');
     }
+
+    public function testAk(): void
+    {
+        $ak = '4da7ac2a-a3f0-11ed-bb95-0242ac160008';
+        $this->assertEquals($ak, Check::accessKey($ak));
+        $this->expectException(ImproperActionException::class);
+        Check::accessKey('pwet');
+    }
+
+    public function testDigit(): void
+    {
+        $this->assertTrue(Check::digit('000000027494555', 5));
+        $this->assertTrue(Check::digit('000000021825009', 7));
+        $this->assertTrue(Check::digit('000000021694233', 10));
+        $this->assertFalse(Check::digit('100000021825009', 7));
+    }
 }

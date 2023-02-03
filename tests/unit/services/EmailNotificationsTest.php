@@ -27,10 +27,9 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         );
         $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
 
-        $body = array('userid' => 3);
+        $body = array('userid' => 3, 'team' => 'Some team name');
         $Notifications->create(new CreateNotificationParams(Notifications::USER_CREATED, $body));
 
-        $body = array('userid' => 3);
         $Notifications->create(new CreateNotificationParams(Notifications::USER_NEED_VALIDATION, $body));
         $Notifications->create(new CreateNotificationParams(Notifications::SELF_NEED_VALIDATION));
         $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));

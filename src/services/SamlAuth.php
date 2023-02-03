@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -33,7 +34,6 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
-use const SECRET_KEY;
 
 /**
  * SAML auth service
@@ -55,7 +55,7 @@ class SamlAuth implements AuthInterface
 
     public static function getJWTConfig(): Configuration
     {
-        $secretKey = Key::loadFromAsciiSafeString(SECRET_KEY);
+        $secretKey = Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'));
         /** @psalm-suppress ArgumentTypeCoercion */
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
@@ -71,9 +71,6 @@ class SamlAuth implements AuthInterface
     {
         $now = new DateTimeImmutable();
         $config = self::getJWTConfig();
-        /**
-         * @psalm-suppress PossiblyFalseArgument
-         */
         $token = $config->builder()
                 // Configures the audience (aud claim)
                 ->permittedFor('saml-session')

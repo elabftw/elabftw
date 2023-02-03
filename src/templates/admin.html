@@ -38,6 +38,11 @@
   <div class='box form-group'>
     <h3>{{ 'Configure your Team'|trans }}</h3>
     <hr>
+
+    <label for='announcement'>{{ 'Announcement'|trans }}</label>
+    <p class='smallgray'>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
+    <input class='form-control col-md-4' type='text' id='announcement' name='announcement' value='{{ teamConfigArr.announcement }}' />
+
     <label for='deletable_xp'>{{ 'Users can delete experiments:'|trans }}</label>
     <select class='form-control col-md-4' name='deletable_xp' id='deletable_xp'>
       <option value='1'{{ teamConfigArr.deletable_xp ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>

@@ -43,8 +43,13 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             'link_href' => 'https://example.com',
             'link_name' => 'Example',
             'name' => 'Another name',
+            'announcement' => '',
         );
         $this->Teams->setId(4);
+        $this->assertIsArray($this->Teams->patch(Action::Update, $params));
+        $params = array(
+            'announcement' => 'yep',
+        );
         $this->assertIsArray($this->Teams->patch(Action::Update, $params));
     }
 

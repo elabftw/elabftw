@@ -226,8 +226,14 @@
 {% for warning in App.warning %}
   {{ warning|msg('warning') }}
 {% endfor %}
-<!-- ANNOUNCEMENT -->
+<!-- ANNOUNCEMENTS -->
+{# general sysconfig announcement #}
 {% if App.Config.configArr.announcement %}
   {{ App.Config.configArr.announcement|msg('warning') }}
+{% endif %}
+
+{# team level announcement #}
+{% if App.teamArr.announcement %}
+  {{ App.teamArr.announcement|msg('warning') }}
 {% endif %}
 <div id='output'></div>

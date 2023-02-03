@@ -10,7 +10,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
@@ -22,8 +21,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     private TeamGroups $TeamGroups;
 
-    private array $visibilityList;
-
     private array $groups;
 
     protected function setUp(): void
@@ -33,8 +30,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->TeamGroups->setId($this->groupId);
         $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Add->value));
 
-        $PermissionsHelper = new PermissionsHelper();
-        $this->visibilityList = $PermissionsHelper->getExtendedSearchAssociativeArray();
         $this->groups = $this->TeamGroups->readGroupsWithUsersFromUser();
     }
 
@@ -64,7 +59,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            $this->visibilityList,
             $this->groups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
@@ -75,7 +69,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query = 'category:"only meaningful with items but no error"';
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'items',
-            $this->visibilityList,
             $this->groups,
         ));
         $whereClause = $advancedSearchQuery->getWhereClause();
@@ -89,7 +82,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            $this->visibilityList,
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
@@ -103,7 +95,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         // Depth of abstract syntax tree is set to 1 with the last parameter
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            $this->visibilityList,
             $this->groups,
         ), 1);
         $advancedSearchQuery->getWhereClause();
@@ -125,7 +116,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
-            $this->visibilityList,
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
@@ -143,7 +133,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'itmes',
-            $this->visibilityList,
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();

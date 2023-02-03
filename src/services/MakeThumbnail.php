@@ -55,10 +55,8 @@ final class MakeThumbnail
 
     /**
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
-     *
-     * @param bool $force force regeneration of thumbnail even if file exist (useful if upload was replaced)
      */
-    public function makeThumb($force = false): ?string
+    public function makeThumb(): ?string
     {
         // verify mime type
         if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {

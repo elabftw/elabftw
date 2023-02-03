@@ -38,7 +38,6 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use JsonException;
-use const SITE_URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -158,7 +157,7 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['comment'] = $this->Request->request->get('comment');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', SITE_URL, $this->Model->getPage(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getPage(), $id)));
     }
 
     private function getArray(): array

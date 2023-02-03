@@ -1,21 +1,50 @@
+filter:
+  excluded_paths:
+    - tests/*
+    - src/commands/PopulateDatabase.php
+  dependency_paths:
+    - vendor/
+checks:
+  php:
+    simplify_boolean_return: true
+    return_doc_comments: true
+    return_doc_comment_if_not_inferrable: true
+    remove_extra_empty_lines: true
+    properties_in_camelcaps: true
+    parameters_in_camelcaps: true
+    parameter_doc_comments: true
+    param_doc_comment_if_not_inferrable: true
+    no_goto: true
+    more_specific_types_in_doc_comments: true
+    fix_line_ending: true
+    symfony_request_injection: false
+    no_exit: false
 build:
-    environment:
-        docker:
-            remote_engine: true
-
-    nodes:
-        tests:
-            dependencies:
-                override:
-                    - echo do nothing here
-                before:
-                    - echo do nothing here
-
-    tests:
+  environment:
+    docker:
+      remote_engine: true
+    php:
+      version: 8.1
+  nodes:
+    analysis:
+      dependencies:
         override:
-            - command: tests/run.sh
-              idle_timeout: 500
-              coverage:
-                  file: coverage.xml
-                  format: clover
-
+          - echo do nothing here
+        before:
+          - echo do nothing here
+      tests:
+        override:
+          - php-scrutinizer-run
+    tests:
+      dependencies:
+        override:
+          - echo do nothing here
+        before:
+          - echo do nothing here
+  tests:
+    override:
+      - command: tests/run.sh
+        idle_timeout: 500
+        coverage:
+          file: coverage.xml
+          format: clover

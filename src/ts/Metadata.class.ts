@@ -271,7 +271,7 @@ export class Metadata {
   }
 
   /**
-   * In view mode, display the extra fields
+   * In view mode, display the extra fields, currently only used with toggle body function
    */
   view(): Promise<void> {
     return this.read().then(json => {

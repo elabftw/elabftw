@@ -13,6 +13,7 @@ use function basename;
 use function bindtextdomain;
 use function dirname;
 use Elabftw\Enums\Language;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
@@ -43,7 +44,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.5.0-beta3';
+    public const INSTALLED_VERSION = '4.5.1';
 
     public Users $Users;
 
@@ -87,11 +88,18 @@ class App
     public function boot(): void
     {
         // load the Users with a userid if we are auth and not anon
-        if ($this->Session->has('is_auth') && $this->Session->get('userid') !== 0) {
-            $this->loadUser(new AuthenticatedUser(
-                $this->Session->get('userid'),
-                $this->Session->get('team'),
-            ));
+        try {
+            if ($this->Session->has('is_auth') && $this->Session->get('userid') !== 0) {
+                $this->loadUser(new AuthenticatedUser(
+                    $this->Session->get('userid'),
+                    $this->Session->get('team'),
+                ));
+            }
+            // maybe the team in session is not valid anymore because sysadmin changed team, so logout user
+            // see #4051
+        } catch (IllegalActionException) {
+            $this->Session->invalidate();
+            throw new UnauthorizedException();
         }
 
         // ANONYMOUS

@@ -14,13 +14,13 @@ use function count;
 use function dirname;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Notifications;
 use Elabftw\Models\Users;
 use function json_decode;
 use PDO;
 use function putenv;
 use function setlocale;
-use const SITE_URL;
 use function sprintf;
 use Symfony\Component\Mime\Address;
 use function textdomain;
@@ -101,7 +101,7 @@ class EmailNotifications
             case Notifications::COMMENT_CREATED:
                 $subject .= _('New comment posted');
                 $commenter = new Users((int) $notifBody['commenter_userid']);
-                $url = SITE_URL . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
+                $url = Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
 
                 $body = sprintf(
                     _('Hi. %s left a comment on your experiment. Have a look: %s'),
@@ -112,11 +112,11 @@ class EmailNotifications
             case Notifications::EVENT_DELETED:
                 $info = _('A booked slot was deleted from the scheduler.');
                 $subject .= $info;
-                $url = SITE_URL . '/team.php?item=' . $notifBody['event']['item'];
+                $url = Config::fromEnv('SITE_URL') . '/team.php?item=' . $notifBody['event']['item'];
                 $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $notifBody['actor'], $url, $notifBody['event']['start'], $notifBody['event']['end']);
                 break;
             case Notifications::USER_CREATED:
-                $subject .= _('New user added to your team');
+                $subject .= sprintf(_('New user added to team: %s'), $notifBody['team']);
                 $user = new Users((int) $notifBody['userid']);
                 $body = sprintf(
                     _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
@@ -125,14 +125,14 @@ class EmailNotifications
                 );
                 break;
             case Notifications::USER_NEED_VALIDATION:
-                $subject .= _('[ACTION REQUIRED]') . ' ' . _('New user added to your team');
+                $subject .= sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $notifBody['team']);
                 $user = new Users((int) $notifBody['userid']);
                 $base = sprintf(
                     _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
                     $user->userData['fullname'],
                     $user->userData['email'],
                 );
-                $url = SITE_URL . '/admin.php';
+                $url = Config::fromEnv('SITE_URL') . '/admin.php';
                 $body = $base . ' ' . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
                 break;
             case Notifications::SELF_NEED_VALIDATION:
@@ -141,12 +141,12 @@ class EmailNotifications
                 break;
             case Notifications::SELF_IS_VALIDATED:
                 $subject .= _('Account validated');
-                $url = SITE_URL . '/login.php';
+                $url = Config::fromEnv('SITE_URL') . '/login.php';
                 $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
                 break;
             case Notifications::STEP_DEADLINE:
                 $subject .= _('A step deadline is approaching');
-                $url = SITE_URL . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'] . '&highlightstep=' . $notifBody['step_id'] . '#step_view_' . $notifBody['step_id'];
+                $url = Config::fromEnv('SITE_URL') . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'] . '&highlightstep=' . $notifBody['step_id'] . '#step_view_' . $notifBody['step_id'];
                 $body = _('Hello. A step deadline is approaching: ') . $url;
                 break;
             default:

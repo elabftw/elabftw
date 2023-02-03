@@ -142,7 +142,7 @@ class TimestampUtils
         try {
             return $this->client->request('POST', $this->tsConfig['ts_url'], $options);
         } catch (RequestException $e) {
-            throw new ImproperActionException($e->getMessage(), (int) $e->getCode(), $e);
+            throw new ImproperActionException($e->getMessage(), $e->getCode(), $e);
         }
     }
 

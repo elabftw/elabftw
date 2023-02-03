@@ -27,7 +27,6 @@ use function implode;
 use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
 use setasign\Fpdi\FpdiException;
-use const SITE_URL;
 use function str_replace;
 use function strtolower;
 
@@ -257,8 +256,8 @@ class MakePdf extends AbstractMakePdf
             'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
             'url' => $this->getURL(),
             'linkBaseUrl' => array(
-                'items' => SITE_URL . '/database.php',
-                'experiments' => SITE_URL . '/experiments.php',
+                'items' => Config::fromEnv('SITE_URL') . '/database.php',
+                'experiments' => Config::fromEnv('SITE_URL') . '/experiments.php',
             ),
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
@@ -290,15 +289,17 @@ class MakePdf extends AbstractMakePdf
         return $this->mpdf;
     }
 
-    // This part of the code will look for links to experiments or database made with the # autocompletion and thus relative.
-    // We need to make them absolute or they will end up wrong.
+    /**
+     * Look for links to experiments or database made with the # autocompletion and thus relative.
+     * We need to make them absolute or they will end up wrong.
+     */
     private function fixLocalLinks(string $body): string
     {
         $matches = array();
         preg_match_all('/href="(experiments|database).php/', $body, $matches);
         $i = 0;
         foreach ($matches[0] as $match) {
-            $body = str_replace($match, 'href="' . SITE_URL . '/' . $matches[1][$i] . '.php', $body);
+            $body = str_replace($match, 'href="' . Config::fromEnv('SITE_URL') . '/' . $matches[1][$i] . '.php', $body);
             $i += 1;
         }
         return $body;
@@ -333,13 +334,15 @@ class MakePdf extends AbstractMakePdf
             }
             $res = array();
             parse_str($query, $res);
+            // @phpstan-ignore-next-line
+            $longname = (string) $res['f'];
             // there might be no storage value. In this case get it from the uploads table via the long name
-            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($res['f']));
+            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
             $storageFs = Storage::from($storage)->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
-            $this->mpdf->imageVars[$res['f']] = $storageFs->read($res['f']);
-            $body = str_replace($src, 'var:' . $res['f'], $body);
+            $this->mpdf->imageVars[$longname] = $storageFs->read($longname);
+            $body = str_replace($src, 'var:' . $longname, $body);
         }
 
         return $this->fixLocalLinks($body);

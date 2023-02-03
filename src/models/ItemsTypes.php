@@ -110,7 +110,7 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         // don't allow deletion of an item type with items
         if ($this->countEntities() > 0) {
-            throw new ImproperActionException(_('Remove all database items with this type before deleting this type.'));
+            throw new ImproperActionException(_('There are still items associated with this type. Make sure to remove them completely with bin/console prune:items command so even deleted ones are removed.'));
         }
         return parent::destroy();
     }

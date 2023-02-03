@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -14,6 +13,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MfaHelper;
@@ -37,7 +37,7 @@ try {
     // if we are not in https, die saying we work only in https
     if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
-        $url = SITE_URL;
+        $url = Config::fromEnv('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);

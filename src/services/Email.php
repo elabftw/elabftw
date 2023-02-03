@@ -17,8 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Monolog\Logger;
 use PDO;
-use const SECRET_KEY;
-use const SITE_URL;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
@@ -166,7 +164,7 @@ class Email
 
     private function makeFooter(): string
     {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), SITE_URL);
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Config::fromEnv('SITE_URL'));
     }
 
     /**
@@ -180,7 +178,7 @@ class Email
             $username = $this->Config->configArr['smtp_username'];
             $password = Crypto::decrypt(
                 $this->Config->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(SECRET_KEY)
+                Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))
             );
         }
 
@@ -191,6 +189,8 @@ class Email
             $this->Config->configArr['smtp_address'],
             $this->Config->configArr['smtp_port'],
         );
+
+        $dsn .= '?verify_peer=' . $this->Config->configArr['smtp_verify_cert'];
 
         return new Mailer(Transport::fromDsn($dsn));
     }

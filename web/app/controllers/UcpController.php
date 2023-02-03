@@ -49,15 +49,15 @@ try {
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
-            $LocalAuth = new LocalAuth($App->Users->userData['email'], $Request->request->get('currpass'));
+            $LocalAuth = new LocalAuth($App->Users->userData['email'], (string) $Request->request->get('currpass'));
             try {
                 $LocalAuth->tryAuth();
             } catch (InvalidCredentialsException $e) {
                 throw new ImproperActionException('The current password is not valid!');
             }
             // update the email if necessary
-            if (isset($params['email']) && ($params['email'] !== $App->Users->userData['email'])) {
-                $App->Users->patch(Action::Update, array('email' => $params['email']));
+            if (isset($postData['email']) && ($postData['email'] !== $App->Users->userData['email'])) {
+                $App->Users->patch(Action::Update, array('email' => $postData['email']));
             }
         }
 

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Commands;
 
-use const DB_NAME;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
@@ -156,9 +155,9 @@ class PopulateDatabase extends Command
     {
         $Db = Db::getConnection();
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
-        $Db->q('DROP database ' . DB_NAME);
-        $Db->q('CREATE database ' . DB_NAME);
-        $Db->q('USE ' . DB_NAME);
+        $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
+        $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
+        $Db->q('USE ' . Config::fromEnv('DB_NAME'));
 
         // load structure
         $Sql->execFile('structure.sql');

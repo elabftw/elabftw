@@ -2,7 +2,7 @@
 
 {% block body %}
 <!-- display current and latest version -->
-<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ v }}</span>
+<p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</span>
 <br>
 {{ 'Latest stable version:'|trans }} <span id='latestVersion'></span>
 
@@ -26,7 +26,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <li data-action='switch-tab' data-tabtarget='7'>SAML</li>
   <li data-action='switch-tab' data-tabtarget='8'>{{ 'Privacy policy'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='9'>{{ 'External auth'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='10'>LDAP</li><span class='beta'>beta</span>
+  <li data-action='switch-tab' data-tabtarget='10'>LDAP</li>
   <li data-action='switch-tab' data-tabtarget='11'>{{ 'Uploads'|trans }}</li>
 </ul>
 
@@ -368,6 +368,12 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
             <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
           </p>
         {% endif %}
+
+        <label for='smtp-verify'>Verify TLS certificate</label>
+        <select class='form-control col-md-4' id='smtp-verify' name='smtp_verify_cert'>
+          <option value='1'{{ App.Config.configArr.smtp_verify_cert == '1' ? ' selected' }}>Yes</option>
+          <option value='0'{{ App.Config.configArr.smtp_verify_cert == '0' ? ' selected' }}>No</option>
+        </select>
 
       <div class='mt-4 text-center'>
         <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>

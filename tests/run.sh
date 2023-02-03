@@ -19,19 +19,11 @@ set -eu
 # the both define a CI bool, so let's use that
 ci=${CI:-false}
 
-# when the script stops (or is stopped), replace the test config with the dev config
+# when the script stops (or is stopped), say goodbye
 cleanup() {
-    if (! $ci); then
-        cp -v config.php.dev config.php
-    fi
+    echo "Buh bye!"
 }
 trap cleanup EXIT
-
-# make a backup of the current (dev) config
-if (! $ci); then
-    cp -v config.php config.php.dev
-fi
-cp -v tests/config-home.php config.php
 
 # if there are no custom env_file, touch one, as this will trigger an error
 if [ ! -f tests/elabftw-user.env ]; then
@@ -65,7 +57,7 @@ if ($ci); then
 fi
 # install the database
 echo "Initializing the database..."
-docker exec -it elabtmp bin/install start -r -q
+docker exec -it elabtmp bin/console db:install -r -q
 if ($ci); then
     docker exec -it elabtmp yarn static
 fi
@@ -75,11 +67,13 @@ docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
 if ($ci); then
     # fix permissions on test output and cache folders
     sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-    sudo chown -R scrutinizer:scrutinizer cache
     sudo chmod -R 777 cache
     sudo chmod -R 777 tests/_output
-    sudo chown -R scrutinizer:scrutinizer uploads
     sudo chmod -R 777 uploads
+    if (${SCRUTINIZER:-false}); then
+        sudo chown -R scrutinizer:scrutinizer cache
+        sudo chown -R scrutinizer:scrutinizer uploads
+    fi
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then

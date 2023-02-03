@@ -17,7 +17,6 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -41,7 +40,6 @@ use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
 use PDO;
 use PDOStatement;
-use const SITE_URL;
 use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -548,7 +546,7 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', SITE_URL, $this->page, $this->id, $this->entityData['access_key'] ?? '');
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $this->entityData['access_key'] ?? '');
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
@@ -662,10 +660,8 @@ abstract class AbstractEntity implements RestInterface
 
     private function processExtendedQuery(string $extendedQuery): void
     {
-        $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $PermissionsHelper->getExtendedSearchAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

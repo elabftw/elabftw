@@ -20,7 +20,6 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
  * but were not deleted because of a bug fixed in 2.0.7
  */
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-require_once dirname(__DIR__, 2) . '/config.php';
 
 try {
     $uploadsDir = dirname(__DIR__, 2) . '/uploads';

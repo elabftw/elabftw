@@ -18,7 +18,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use PDO;
-use const SECRET_KEY;
 
 /**
  * The general config table
@@ -86,6 +85,7 @@ final class Config implements RestInterface
             ('smtp_password', ''),
             ('smtp_port', '587'),
             ('smtp_username', ''),
+            ('smtp_verify_cert', '1'),
             ('ts_authority', 'dfn'),
             ('ts_balance', '0'),
             ('ts_login', NULL),
@@ -184,6 +184,14 @@ final class Config implements RestInterface
         return self::$instance;
     }
 
+    /**
+     * Get a core config value from php-fpm env
+     */
+    public static function fromEnv(string $confName): string
+    {
+        return (string) getenv($confName);
+    }
+
     public function readOne(): array
     {
         return $this->readAll();
@@ -205,7 +213,7 @@ final class Config implements RestInterface
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
 
-        return array_map(function ($v) {
+        return array_map(function ($v): mixed {
             return $v[0];
         }, $config);
     }
@@ -223,7 +231,7 @@ final class Config implements RestInterface
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
-                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(SECRET_KEY));
+                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
             // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);

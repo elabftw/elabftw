@@ -143,7 +143,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid'])) {
+        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->userData['is_admin']) {
             return false;
         }
 

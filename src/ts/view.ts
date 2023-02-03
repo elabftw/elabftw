@@ -7,9 +7,8 @@
  */
 import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
-import { Metadata } from './Metadata.class';
 import { Api } from './Apiv2.class';
-import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText, generateMetadataLink } from './misc';
+import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
 import { EntityType, Action, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import EntityClass from './Entity.class';
@@ -34,13 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
-
-  // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity);
-  MetadataC.display('view').then(() => {
-    // go over all the type: url elements and create a link dynamically
-    generateMetadataLink();
-  });
 
   // EDIT SHORTCUT
   key(about.scedit, () => window.location.href = `?mode=edit&id=${entity.id}`);
@@ -116,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loading.appendChild(ring);
       overlay.appendChild(loading);
       document.getElementById('container').append(overlay);
-      ApiC.patch(`${EntityType.Experiment}/${entity.id}`, {'action': Action.Bloxberg})
+      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
         .then(() => reloadElement('filesdiv'))
         // remove overlay in all cases

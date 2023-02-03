@@ -148,7 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     // on click activate modal window
     eventClick: function(info): void {
-      if (!editable) { return; }
+      if (!editable) {
+        // load page with selected item + correct start depending on current view
+        window.location.replace(`team.php?tab=1&item=${info.event.extendedProps.items_id}&start=${calendar.view.activeStart.toISOString()}`);
+        return;
+      }
+
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
       // delete button in modal

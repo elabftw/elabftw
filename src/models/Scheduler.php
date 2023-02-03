@@ -131,6 +131,7 @@ class Scheduler implements RestInterface
             CONCAT('#', items_types.color) AS color,
             team_events.experiment,
             items.category AS items_category,
+            items.id AS items_id,
             experiments.title AS experiment_title,
             team_events.item_link,
             items_linkt.title AS item_link_title

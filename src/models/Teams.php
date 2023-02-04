@@ -187,7 +187,7 @@ class Teams implements RestInterface
          * so even if the experiments have been moved around, if the status still belongs to the deleted team,
          * the experiment will get deleted.
          * so don't rely on fk to delete the status, but run it through the Status->delete first,
-         * it will check if experiemnts have the status and show an error
+         * it will check if experiments have the status and show an error
          */
         $sql = 'SELECT id FROM status WHERE team = :team';
         $req = $this->Db->prepare($sql);

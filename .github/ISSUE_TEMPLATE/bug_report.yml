@@ -98,9 +98,3 @@ body:
       label: Additional information
       description: |
         Any additional information about your environment that may be useful to know about. Like the browser type/version if it is a client issue.
-  - type: textarea
-    id: possible-cause
-    attributes:
-      label: Do you have any idea what may have caused this?
-      description: |
-        Simply leave this empty if you do not.

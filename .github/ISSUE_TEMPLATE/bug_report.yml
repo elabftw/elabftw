@@ -3,6 +3,7 @@ description: Bug report form for issues related to the full software suite, its 
 labels: [bug]
 body:
   - type: markdown
+    id: welcome
     attributes:
       value: "Hello"
   - type: textarea

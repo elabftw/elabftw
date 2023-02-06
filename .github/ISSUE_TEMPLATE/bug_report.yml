@@ -43,3 +43,9 @@ body:
       label: Do you have any idea what may have caused this?
       description: |
         Simply leave this empty if you do not.
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: Do you have an idea how to solve the issue?
+      description: |
+        Simply leave this empty if you do not.

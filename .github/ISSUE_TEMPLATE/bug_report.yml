@@ -25,3 +25,15 @@ body:
         Explain why you consider the described behavior (above) to be wrong. What did you expect instead?
     validations:
       required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce the behavior
+      description: |
+        The more time you spend describing an easy way to reproduce the behavior (if this is possible), the easier it is for the project developers to fix it! Don't hesitate to add screenshots.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true

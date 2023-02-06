@@ -49,3 +49,12 @@ body:
       label: Do you have an idea how to solve the issue?
       description: |
         Simply leave this empty if you do not.
+  - type: textarea
+    id: configuration
+    attributes:
+      label: What is your docker-compose configuration?
+      description: |
+        Generate a password-less configuration with `grep -vE "^[[:blank:]]*#|^[[:blank:]]*$" /etc/elabftw.yml | grep -vE "PASSWORD|SECRET_KEY"`
+      render: yaml
+    validations:
+      required: true

@@ -7,9 +7,10 @@ body:
     attributes:
       label: Describe your feature request precisely
   - type: checkboxes
-    id: prosupport
+    id: pro-support
     attributes:
-      label: Do you have PRO Support or are using the PRO Hosted version?
+      label: a
       options:
         - label: Yes
         - label: No
+        - label: I don't know

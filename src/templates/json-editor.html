@@ -8,7 +8,7 @@
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral'>{{ 'Load metadata'|trans }}</button>
     <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='btn btn-primary'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+    <button type='button' data-action='json-import-file' class='btn btn-primary'>{{ 'Import from file'|trans }}</button>
     {% if mode == 'edit' %}
       <div class='btn-group'>
         <button type='button' data-action='json-save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
@@ -26,6 +26,11 @@
     {% if mode == 'edit-template' %}
       <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='{{ templateData.id|default(Entity.id) }}' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
     {% endif %}
+    <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+    <div hidden id='jsonImportFileDiv'>
+      <input type='file' name='file' accept='.json' id='jsonImportFileInput' />
+      <button type='submit' data-action='json-upload-file' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
+    </div>
     <h6 id='jsonEditorTitle'></h6>
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>

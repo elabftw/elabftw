@@ -1,4 +1,3 @@
----
 name: Bug report (sysadmin)
 about: Bug report form for issues related to the full software suite, its installation, maintenance, etc... Use this if you are a Sysadmin with shell access.
 labels: bug

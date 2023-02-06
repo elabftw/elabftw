@@ -1,4 +1,3 @@
----
 name: Bug report (user)
 about: For user facing bugs, reported by users without Sysadmin/console access
 labels: bug

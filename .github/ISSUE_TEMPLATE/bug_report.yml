@@ -2,6 +2,20 @@ name: Bug report (sysadmin)
 description: Bug report form for issues related to the full software suite, its installation, maintenance, etc... Use this if you are a Sysadmin with shell access.
 labels: [bug]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        You are about to *report a bug* you encountered in eLabFTW. Please use the 'Feature Request' template if you want to propose a new feature instead.
+
+        This issue tracker is used to track actual bugs. Please use [the discussions](https://github.com/elabftw/elabftw/discussions/) or [chat](https://gitter.im/elabftw/elabftw) if you have a question, e.g. to get help with configuration of your instance. This bug report form is mainly addressed to Sysadmins with shell access to the instance server.
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed description of the problem
+      description: |
+        In this section, please try to concentrate on observations. Only describe what you observed directly.
+      validations:
+        required: true
   - type: textarea
     id: possible-cause
     attributes:

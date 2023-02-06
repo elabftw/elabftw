@@ -6,11 +6,8 @@ body:
     id: description
     attributes:
       label: Describe your feature request precisely
-  - type: checkboxes
+  - type: input
     id: pro-support
     attributes:
-      label: a
-      options:
-        - label: Yes
-        - label: No
-        - label: I don't know
+      label: Pro Support
+      description: "Do you have PRO Support or are using the PRO Hosted version?"

@@ -296,6 +296,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </select>
     <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
 
+    <label for='enforce_mfa'>{{ 'Enforce 2FA'|trans }}</label>
+    <select class='form-control col-md-4' name='enforce_mfa' id='enforce_mfa'>
+      {% for value, human in enforceMfaArr %}
+        <option value='{{ value }}' {{ App.Config.configArr.enforce_mfa == value ? " selected" }}>{{ human }}</option>
+      {% endfor %}
+    </select>
+
     <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
     <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' />
     <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}<br>

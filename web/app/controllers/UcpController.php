@@ -13,6 +13,7 @@ use function dirname;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -69,6 +70,8 @@ try {
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
         $MfaHelper = new MfaHelper($App->Users->userData['userid']);
+        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $App->Config->configArr['enforce_mfa']);
+        $isAdmin = $App->Users->userData['is_admin'];
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
@@ -79,14 +82,22 @@ try {
             $App->Session->set('mfa_auth_required', true);
             $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
             $App->Session->set('enable_mfa', true);
+            $App->Session->set('mfa_redirect_origin', '../../ucp.php?tab=2');
 
             // This will redirect user right away to verify mfa code
             $Response = new RedirectResponse('../../login.php');
             $Response->send();
             exit;
 
-        // Disable MFA
-        } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
+        // Disable MFA if not enforced
+        } elseif (!$useMFA
+            && $App->Users->userData['mfa_secret']
+            && (
+                (!$isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+                || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+                || $EnforceMfaSetting === EnforceMfa::Disabled
+            )
+        ) {
             $MfaHelper->removeSecret();
         }
     }

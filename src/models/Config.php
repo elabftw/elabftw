@@ -164,7 +164,8 @@ final class Config implements RestInterface
             ('s3_region', ''),
             ('s3_endpoint', ''),
             ('blox_anon', '0'),
-            ('blox_enabled', '1')";
+            ('blox_enabled', '1'),
+            ('enforce_mfa', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

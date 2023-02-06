@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -92,6 +93,13 @@ try {
             );
     }
 
+    // logic to figure out whether to show MFA setting
+    $EnforceMfaSetting = EnforceMfa::tryFrom((int) $App->Config->configArr['enforce_mfa']);
+    $isAdmin = $App->Users->userData['is_admin'];
+    $showMfa = (!$isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+        || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+        || $EnforceMfaSetting === EnforceMfa::Disabled;
+
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
@@ -105,6 +113,7 @@ try {
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
+        'showMFA' => $showMfa,
     );
 } catch (ImproperActionException $e) {
     // show message to user

@@ -12,7 +12,9 @@ namespace Elabftw\Controllers;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Saml;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -62,40 +64,10 @@ class LoginController implements ControllerInterface
     {
         // ENABLE MFA FOR OUR USER
         if ($this->App->Session->has('enable_mfa')) {
-            $flashBag = $this->App->Session->getBag('flashes');
-            $flashKey = 'ko';
-            $flashValue = _('Two Factor Authentication was not enabled!');
-
-            // Only save if user didn't click Cancel button
-            if ($this->App->Request->request->get('Submit') === 'submit') {
-                $MfaHelper = new MfaHelper(
-                    (int) $this->App->Users->userData['userid'],
-                    $this->App->Session->get('mfa_secret'),
-                );
-
-                // check the input code against the secret stored in session
-                if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
-                    if ($flashBag instanceof FlashBag) {
-                        $flashBag->add($flashKey, _('The code you entered is not valid!'));
-                    }
-                    return new RedirectResponse('../../login.php');
-                }
-
-                // all good, save the secret in the database now that we now the user can authenticate against it
-                $MfaHelper->saveSecret();
-                $flashKey = 'ok';
-                $flashValue = _('Two Factor Authentication is now enabled!');
+            $location = $this->enableMFA();
+            if ($location !== '') {
+                return new RedirectResponse($location);
             }
-
-            if ($flashBag instanceof FlashBag) {
-                $flashBag->add($flashKey, $flashValue);
-            }
-
-            $this->App->Session->remove('enable_mfa');
-            $this->App->Session->remove('mfa_auth_required');
-            $this->App->Session->remove('mfa_secret');
-
-            return new RedirectResponse('../../ucp.php?tab=2');
         }
 
         // get our Auth service
@@ -117,25 +89,17 @@ class LoginController implements ControllerInterface
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
 
         // INITIAL TEAM SELECTION
-        if ($authType === 'teaminit' && $this->App->Session->get('initial_team_selection_required')) {
-            // create a user in the requested team
-            $newUser = ExistingUser::fromScratch(
-                $this->App->Session->get('teaminit_email'),
-                array((int) $this->App->Request->request->get('team_id')),
-                (string) $this->App->Request->request->get('teaminit_firstname'),
-                (string) $this->App->Request->request->get('teaminit_lastname'),
-            );
-            $this->App->Session->set('teaminit_done', true);
-            // will display the appropriate message to user
-            $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
-            $this->App->Session->remove('initial_team_selection_required');
-            $location = '../../login.php';
-            echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
-            exit;
-        }
+        $this->initTeamSelection($authType);
 
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
+
+        /////////////////
+        // ENFORCE MFA //
+        /////////////////
+        if ($this->enforceMFA($AuthResponse)) {
+            return new RedirectResponse('../../login.php');
+        }
 
         /////////
         // MFA //
@@ -151,6 +115,7 @@ class LoginController implements ControllerInterface
         if ($AuthResponse->hasVerifiedMfa) {
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
+            $this->App->Session->remove('enforce_mfa');
         }
 
         ////////////////////
@@ -290,6 +255,107 @@ class LoginController implements ControllerInterface
 
             default:
                 throw new ImproperActionException('Could not determine which authentication service to use.');
+        }
+    }
+
+    private function enableMFA(): string
+    {
+        $flashBag = $this->App->Session->getBag('flashes');
+        $flashKey = 'ko';
+        $flashValue = _('Two Factor Authentication was not enabled!');
+
+        // Only save if user didn't click Cancel button
+        if ($this->App->Request->request->get('Submit') === 'submit') {
+            $userid = isset($this->App->Users->userData['userid'])
+                ? (int) $this->App->Users->userData['userid']
+                : $this->App->Session->get('auth_userid');
+            $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
+
+            // check the input code against the secret stored in session
+            if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
+                if ($flashBag instanceof FlashBag) {
+                    $flashBag->add($flashKey, _('The code you entered is not valid!'));
+                }
+                return '../../login.php';
+            }
+
+            // all good, save the secret in the database now that we now the user can authenticate against it
+            $MfaHelper->saveSecret();
+            $flashKey = 'ok';
+            $flashValue = _('Two Factor Authentication is now enabled!');
+        }
+
+        if ($flashBag instanceof FlashBag) {
+            $flashBag->add($flashKey, $flashValue);
+        }
+
+        $location = $this->App->Session->get('mfa_redirect_origin', '');
+
+        if (!$this->App->Session->get('enforce_mfa')) {
+            $this->App->Session->remove('enable_mfa');
+            $this->App->Session->remove('mfa_auth_required');
+            $this->App->Session->remove('mfa_secret');
+            $this->App->Session->remove('mfa_redirect_origin');
+        }
+
+        return $location;
+    }
+
+    /**
+     * Do we enfore MFA for this user? If yes, provide secret to user.
+     */
+    private function enforceMFA(AuthResponse $AuthResponse): bool
+    {
+        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $this->App->Config->configArr['enforce_mfa']);
+        // If MFA is enforced for local auth by Sysadmin the user has to set it up
+        if ((int) $this->App->Session->get('auth_service') === self::AUTH_LOCAL
+            // Anon can still get access
+            && !$this->App->Session->get('is_anon')
+            // only if there is no secret stored
+            && !$AuthResponse->mfaSecret
+            // enforce for Admins or Users or Everyone?
+            && (
+                ($AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+                || (!$AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+                || $EnforceMfaSetting === EnforceMfa::Everyone
+            )
+        ) {
+            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
+            // so we will require mfa, redirect the user to login
+            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
+            // and after that we redirect back to login to cleanup
+            // the mfa_secret is not yet saved to the DB
+            $this->App->Session->set('enforce_mfa', true);
+            $this->App->Session->set('enable_mfa', true);
+            $this->App->Session->set('mfa_auth_required', true);
+            $this->App->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    private function initTeamSelection(string $authType): void
+    {
+        if ($authType === 'teaminit'
+            && $this->App->Session->get('initial_team_selection_required')
+        ) {
+            // create a user in the requested team
+            $newUser = ExistingUser::fromScratch(
+                $this->App->Session->get('teaminit_email'),
+                array((int) $this->App->Request->request->get('team_id')),
+                (string) $this->App->Request->request->get('teaminit_firstname'),
+                (string) $this->App->Request->request->get('teaminit_lastname'),
+            );
+            $this->App->Session->set('teaminit_done', true);
+            // will display the appropriate message to user
+            $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
+            $this->App->Session->remove('initial_team_selection_required');
+            $location = '../../login.php';
+            echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+            exit;
         }
     }
 }

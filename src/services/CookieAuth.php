@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 
@@ -28,7 +30,7 @@ class CookieAuth implements AuthInterface
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $token, string $tokenTeam)
+    public function __construct(string $token, string $tokenTeam, private array $configArr)
     {
         $this->Db = Db::getConnection();
         $this->token = Check::token($token);
@@ -39,7 +41,11 @@ class CookieAuth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         // compare the provided token with the token saved in SQL database
-        $sql = 'SELECT userid, mfa_secret FROM users WHERE token = :token LIMIT 1';
+        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`, `groups`.`is_admin`
+            FROM `users`
+            LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
+            WHERE `token` = :token
+            LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $this->token);
         $this->Db->execute($req);
@@ -48,10 +54,25 @@ class CookieAuth implements AuthInterface
         }
         $res = $req->fetch();
         $userid = (int) $res['userid'];
+        $isAdmin = (bool) $res['is_admin'];
+
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
         $TeamsHelper = new TeamsHelper($this->tokenTeam);
         if (!$TeamsHelper->isUserInTeam($userid)) {
+            throw new UnauthorizedException();
+        }
+
+        // force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
+        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $this->configArr['enforce_mfa']);
+        if ($res['auth_service'] === LoginController::AUTH_LOCAL
+            && !$res['mfa_secret']
+            && (
+                ($isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+                || (!$isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+                || $EnforceMfaSetting === EnforceMfa::Everyone
+            )
+        ) {
             throw new UnauthorizedException();
         }
 

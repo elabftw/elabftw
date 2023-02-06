@@ -76,3 +76,12 @@ body:
       render: plain
     validations:
       required: true
+  - type: textarea
+    id: docker-info
+    attributes:
+      label: 'Output of `docker info`'
+      description: |
+        Please run `docker info` and paste the output into this field.
+      render: plain
+    validations:
+      required: true

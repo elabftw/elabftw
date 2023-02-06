@@ -13,4 +13,3 @@ body:
       options:
         - label: Yes
         - label: No
-        - label: "I don't know"

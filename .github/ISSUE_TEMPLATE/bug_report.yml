@@ -5,7 +5,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Welcome!
         You are about to *report a bug* you encountered in eLabFTW. Please use the 'Feature Request' template if you want to propose a new feature instead.
   - type: textarea
     id: description

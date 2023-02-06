@@ -147,15 +147,16 @@
       <hr>
       <h3>{{ 'Existing groups'|trans }}</h3>
       {% for teamGroup in teamGroupsArr %}
-        {# not sure why lh-lg doesn't work here, so add a style attribute directly #}
-        <div class='box' style='line-height: 250%'>
+        <div class='box'>
           <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </a>
           <h3 class='editable mb-2 teamgroup_name' data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}'><span class='hl-hover'>{{ teamGroup.name|raw }}</span></h3>
-          {% for user in teamGroup.users %}
-            <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
-          {% endfor %}
+          <div class='d-flex flex-wrap'>
+            {% for user in teamGroup.users %}
+              <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
+            {% endfor %}
+          </div>
           <input aria-label='{{ 'Add user'|trans }}' class='form-control col-md-4 autocompleteUsers d-block mt-2' data-teamid='{{ App.Users.userData.team }}' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
         </div>
       {% endfor %}

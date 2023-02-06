@@ -1,6 +1,7 @@
 name: Bug report (sysadmin)
 description: Bug report form for issues related to the full software suite, its installation, maintenance, etc... Use this if you are a Sysadmin with shell access.
-labels: bug
+labels:
+- 'bug'
 body:
 - type: markdown
   attributes:

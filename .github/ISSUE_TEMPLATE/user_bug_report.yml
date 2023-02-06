@@ -1,6 +1,7 @@
 name: Bug report (user)
 description: For user facing bugs, reported by users without Sysadmin/console access
-labels: bug
+labels:
+- 'bug'
 body:
 - type: markdown
   attributes:

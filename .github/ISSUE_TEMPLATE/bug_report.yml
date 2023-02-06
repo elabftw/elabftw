@@ -37,3 +37,9 @@ body:
         3.
     validations:
       required: true
+  - type: textarea
+    id: possible-cause
+    attributes:
+      label: Do you have any idea what may have caused this?
+      description: |
+        Simply leave this empty if you do not.

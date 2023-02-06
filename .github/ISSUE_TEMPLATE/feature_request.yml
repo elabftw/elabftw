@@ -1,18 +1,16 @@
----
 name: Feature request
 about: I have a suggestion!
-labels:
-- 'feature request'
+labels: [feature request]
 body:
-- type: textarea
-  id: description
-  attributes:
-    label: Describe your feature request precisely
-- type: checkboxes
-  id: pro-support
-  attributes:
-    label: Do you have PRO Support or are using the PRO Hosted version?
-    options:
-      - label: Yes
-      - label: No
-      - label: I don't know
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your feature request precisely
+  - type: checkboxes
+    id: pro-support
+    attributes:
+      label: Do you have PRO Support or are using the PRO Hosted version?
+      options:
+        - label: Yes
+        - label: No
+        - label: I don't know

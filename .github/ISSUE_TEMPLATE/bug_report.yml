@@ -7,14 +7,6 @@ body:
     attributes:
       value: "Hello"
   - type: textarea
-    id: description
-    attributes:
-      label: Detailed description of the problem
-      description: |
-        In this section, please try to concentrate on observations. Only describe what you observed directly.
-      validations:
-        required: true
-  - type: textarea
     id: possible-cause
     attributes:
       label: Do you have any idea what may have caused this?

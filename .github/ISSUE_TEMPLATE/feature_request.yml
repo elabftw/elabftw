@@ -2,10 +2,6 @@ name: Feature request
 description: I have a suggestion!
 labels: ['feature request']
 body:
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe your feature request precisely
   - type: checkboxes
     id: pro-support
     attributes:

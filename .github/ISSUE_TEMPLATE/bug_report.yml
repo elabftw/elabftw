@@ -58,3 +58,12 @@ body:
       render: yaml
     validations:
       required: true
+  - type: textarea
+    id: uname
+    attributes:
+      label: 'Output of `uname -a`'
+      description: |
+        Please run `uname -a` and paste the output into this field.
+      render: plain
+    validations:
+      required: true

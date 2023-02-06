@@ -67,3 +67,12 @@ body:
       render: plain
     validations:
       required: true
+  - type: textarea
+    id: os-release
+    attributes:
+      label: 'Output of `cat /etc/os-release`'
+      description: |
+        Please run `cat /etc/os-release` and paste the output into this field.
+      render: plain
+    validations:
+      required: true

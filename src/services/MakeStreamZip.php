@@ -90,7 +90,7 @@ class MakeStreamZip extends AbstractMakeZip
         $this->Entity->setId($id);
         try {
             $permissions = $this->Entity->getPermissions();
-        } catch (IllegalActionException $e) {
+        } catch (IllegalActionException) {
             return;
         }
         if ($permissions['read']) {
@@ -100,8 +100,9 @@ class MakeStreamZip extends AbstractMakeZip
 
             if (!empty($uploadedFilesArr)) {
                 try {
-                    $this->addAttachedFiles($uploadedFilesArr);
-                } catch (UnableToReadFile $e) {
+                    // we overwrite the uploads array with what the function returns so we have correct real_names
+                    $entityArr['uploads'] = $this->addAttachedFiles($uploadedFilesArr);
+                } catch (UnableToReadFile) {
                     return;
                 }
             }

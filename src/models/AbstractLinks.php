@@ -58,11 +58,12 @@ abstract class AbstractLinks implements RestInterface
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
             LEFT JOIN ' . $this->getCategoryTable() . ' AS category ON (entity.category = category.id)
-            WHERE ' . $this->getTable() . '.item_id = :id
+            WHERE ' . $this->getTable() . '.item_id = :id AND entity.state = :state
             ORDER by category.title ASC, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Uploads;
 use function is_readable;
 use function json_decode;
 use League\Flysystem\UnableToReadFile;
@@ -64,12 +65,13 @@ class ImportZip extends AbstractImportZip
      */
     private function dbInsert($item): void
     {
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
-            VALUES(:team, :title, :date, :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
+        // the body is updated after it has been fixed by the uploaded files with correct long_name
+        $sql = 'INSERT INTO items(team, title, date, userid, category, canread, canwrite, elabid, metadata)
+            VALUES(:team, :title, :date, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT into experiments(title, date, body, userid, canread, canwrite, category, elabid, metadata)
-                VALUES(:title, :date, :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
+            $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, elabid, metadata)
+                VALUES(:title, :date, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
@@ -81,7 +83,6 @@ class ImportZip extends AbstractImportZip
         }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
-        $req->bindParam(':body', $item['body']);
         $req->bindValue(':canread', $this->canread);
         $req->bindValue(':canwrite', $this->canwrite);
         $req->bindParam(':elabid', $elabid);
@@ -139,11 +140,11 @@ class ImportZip extends AbstractImportZip
     }
 
     /**
-     * Loop the json and import the items.
+     * Loop the json and import the items. We need to first create the entity with an empty body, then add the uploaded files and update the body.
      */
     private function importAll(array $json): void
     {
-        foreach ($json as $item) {
+        foreach ($json as &$item) {
             $this->dbInsert($item);
 
             // upload the attached files
@@ -162,9 +163,13 @@ class ImportZip extends AbstractImportZip
                     if (!is_readable($filePath)) {
                         throw new ImproperActionException(sprintf('Tried to import a file but it was not present in the zip archive: %s.', basename($filePath)));
                     }
-                    $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
+                    $newUploadId = $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
+                    // read the newly created upload so we can get the long_name to replace the old in the body
+                    $Uploads = new Uploads($this->Entity, $newUploadId);
+                    $item['body'] = str_replace($file['long_name'], $Uploads->uploadData['long_name'], $item['body']);
                 }
             }
+            $this->Entity->patch(Action::Update, array('body' => $item['body']));
             ++$this->inserted;
         }
     }

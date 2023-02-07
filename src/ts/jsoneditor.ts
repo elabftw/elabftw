@@ -8,7 +8,7 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { getEntity } from './misc';
+import { getEntity, notifError } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 
 // JSON editor related stuff
@@ -59,6 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // need the stopPropagation here to toggle #json-save-dropdown when save button is pressed
         event.stopPropagation();
         JsonEditorHelperC.save();
+      } else if (el.matches('[data-action="json-import-file"]')) {
+        document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
+      } else if (el.matches('[data-action="json-upload-file"]')) {
+        const file = (document.getElementById('jsonImportFileInput') as HTMLInputElement).files[0];
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function() {
+          try {
+            JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
+          } catch (error) {
+            notifError(error);
+          }
+        };
       } else if (el.matches('[data-action="json-clear"]')) {
         JsonEditorHelperC.clear();
       }

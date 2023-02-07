@@ -428,6 +428,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1337);
       el.innerText = 'Copied!';
 
+    // CHECK MAX SIZE
+    } else if (el.matches('[data-action="check-max-size"]')) {
+      const input = document.getElementById(el.dataset.input) as HTMLInputElement;
+      const maxsize = parseInt(el.dataset.maxsize, 10) * 1024;
+      if (input.files[0].size > maxsize) {
+        document.getElementById('errorHolder').innerText = 'Error: file is too large!';
+        // prevent the form from being submitted
+        event.preventDefault();
+      }
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

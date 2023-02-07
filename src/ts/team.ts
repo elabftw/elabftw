@@ -11,6 +11,7 @@ import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
+import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
@@ -166,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // FILL THE BOUND DIV
 
       // title
-      document.getElementById('eventTitle').innerText = info.event.title;
+      const eventTitle = document.getElementById('eventTitle');
+      eventTitle.innerText = info.event.extendedProps.title_only;
+      // set the event id on the title
+      eventTitle.dataset.eventid = info.event.id;
 
       // start and end inputs
       const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
@@ -270,6 +274,22 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.render();
     calendar.updateSize();
   }
+  // UPDATE MALLEABLE event title
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const eventid = parseInt(original.dataset.eventid, 10);
+      const params = {'target': 'title', 'content': value};
+      ApiC.patch(`event/${eventid}`, params);
+      return value;
+    },
+    listenOn: '#eventTitle',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {

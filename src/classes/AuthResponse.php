@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,10 +6,10 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\UsersHelper;
 
 /**
@@ -46,8 +46,11 @@ class AuthResponse
         $this->selectableTeams = $UsersHelper->getTeamsFromUserid();
 
         // if the user only has access to one team, use this one directly
-        if (count($this->selectableTeams) === 1) {
+        $teamCount = count($this->selectableTeams);
+        if ($teamCount === 1) {
             $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
+        } elseif ($teamCount === 0) {
+            throw new ImproperActionException('Could not find a team!');
         } else {
             $this->isInSeveralTeams = true;
         }

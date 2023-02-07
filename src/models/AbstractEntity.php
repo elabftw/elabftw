@@ -85,6 +85,8 @@ abstract class AbstractEntity implements RestInterface
 
     public bool $isReadOnly = false;
 
+    public bool $isAnon = false;
+
     // inserted in sql
     public array $extendedValues = array();
 
@@ -240,6 +242,10 @@ abstract class AbstractEntity implements RestInterface
         if ($this instanceof Items) {
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
+        // for anon add an AND base = full (public)
+        if ($this->isAnon) {
+            $sql .= sprintf(" AND JSON_EXTRACT(entity.canread, '$.base') = %s ", BasePermissions::Full->value);
+        }
         // add pub/org/team filter
         $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         if ($this->Users->userData['show_public']) {
@@ -257,8 +263,10 @@ abstract class AbstractEntity implements RestInterface
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        foreach ($teamsOfUser as $team) {
-            $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+        if (!empty($teamsOfUser)) {
+            foreach ($teamsOfUser as $team) {
+                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+            }
         }
         // look for teamgroups
         // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match

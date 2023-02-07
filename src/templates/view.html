@@ -139,9 +139,6 @@
 
 <section class='item' id='main_section' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='d-flex'>
-
-
-
     <div class='mr-auto'>
       <!-- CATEGORY AND RATING -->
       <div>
@@ -322,6 +319,7 @@
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-team='{{ App.Users.userData.team }}'
+    data-isanon='{{ App.Session.get('is_anon') }}'
     data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'

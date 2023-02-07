@@ -130,6 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  if (about.isanon) {
+    return;
+  }
+
   // UPDATE MALLEABLE COMMENT
   const malleableComments = new Malle({
     cancel : i18next.t('cancel'),

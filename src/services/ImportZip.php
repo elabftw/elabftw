@@ -159,11 +159,6 @@ class ImportZip extends AbstractImportZip
                             $item['category'] . ' - ' . $titlePath . ' - ' . $shortElabid . '/' . $file['real_name'];
                     }
 
-                    /**
-                     * Ok so right now if you have several files with the same name, the real_name in the json will be
-                     * the same, but the extracted file will have a 1_ in front of the name. So here we will skip the
-                     * import but this should be handled. One day. Maybe.
-                     */
                     if (!is_readable($filePath)) {
                         throw new ImproperActionException(sprintf('Tried to import a file but it was not present in the zip archive: %s.', basename($filePath)));
                     }

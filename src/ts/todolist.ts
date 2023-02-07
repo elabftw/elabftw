@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let unfinishedStepsScope = 'user';
   // unfinished steps scopeSwitch i.e. user (0) or team (1)
   let scopeSwitch = document.getElementById(Model.Todolist + 'StepsShowTeam') as HTMLInputElement;
+  // anon user
+  if (scopeSwitch === null) {
+    return;
+  }
   const storageScopeSwitch = localStorage.getItem(Model.Todolist + 'StepsShowTeam');
   // adjust scope from localStorage
   if (scopeSwitch.checked && storageScopeSwitch === '0') {

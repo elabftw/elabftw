@@ -36,7 +36,7 @@ class ImportZip extends AbstractImportZip
         $file = '/.elabftw.json';
         try {
             $content = $this->fs->read($this->tmpDir . $file);
-        } catch (UnableToReadFile $e) {
+        } catch (UnableToReadFile) {
             throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
         }
         $this->importAll(json_decode($content, true, 512, JSON_THROW_ON_ERROR));

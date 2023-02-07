@@ -38,6 +38,8 @@ class AuthResponse
 
     public ?bool $isAdmin = null;
 
+    public ?bool $isSysAdmin = null;
+
     public bool $hasVerifiedMfa = false;
 
     public function setTeams(): void

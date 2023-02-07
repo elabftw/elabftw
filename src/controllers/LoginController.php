@@ -313,10 +313,10 @@ class LoginController implements ControllerInterface
             && !$this->App->Session->get('is_anon')
             // only if there is no secret stored
             && !$AuthResponse->mfaSecret
-            // enforce for Admins or Users or Everyone?
+            // enforce for SysAdmins or Admins or Everyone?
             && (
-                ($AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
-                || (!$AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+                ($AuthResponse->isSysAdmin && $EnforceMfaSetting === EnforceMfa::SysAdmins)
+                || ($AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
                 || $EnforceMfaSetting === EnforceMfa::Everyone
             )
         ) {

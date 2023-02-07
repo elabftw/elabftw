@@ -95,9 +95,8 @@ try {
 
     // logic to figure out whether to show MFA setting
     $EnforceMfaSetting = EnforceMfa::tryFrom((int) $App->Config->configArr['enforce_mfa']);
-    $isAdmin = $App->Users->userData['is_admin'];
-    $showMfa = (!$isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
-        || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+    $showMfa = (!$App->Users->userData['is_sysadmin'] && $EnforceMfaSetting === EnforceMfa::SysAdmins)
+        || (!$App->Users->userData['is_admin'] && $EnforceMfaSetting === EnforceMfa::Admins)
         || $EnforceMfaSetting === EnforceMfa::Disabled;
 
     $template = 'ucp.html';

@@ -139,7 +139,8 @@ class LocalAuth implements AuthInterface
 
     private function authWithModernAlgo(): void
     {
-        $sql = 'SELECT `users`.`password_hash`, `users`.`mfa_secret`, `groups`.`is_admin`
+        $sql = 'SELECT `users`.`password_hash`, `users`.`mfa_secret`,
+                `groups`.`is_admin`, `groups`.`is_sysadmin`
             FROM `users`
             LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
             WHERE `userid` = :userid;';
@@ -163,6 +164,7 @@ class LocalAuth implements AuthInterface
 
         $this->AuthResponse->userid = $this->userid;
         $this->AuthResponse->isAdmin = (bool) $res['is_admin'];
+        $this->AuthResponse->isSysAdmin = (bool) $res['is_sysadmin'];
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->setTeams();
     }

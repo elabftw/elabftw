@@ -17,17 +17,17 @@ use function array_map;
 enum EnforceMfa: int
 {
     case Disabled = 0;
-    case Admins = 1;
-    case Users = 2;
+    case SysAdmins = 1;
+    case Admins = 2;
     case Everyone = 3;
 
     public static function toHuman(self $case): string
     {
         return match ($case) {
             EnforceMfa::Disabled => _('Disabled'),
+            EnforceMfa::SysAdmins => _('Sysadmins'),
             EnforceMfa::Admins => _('Admins'),
-            EnforceMfa::Users => _('Users'),
-            EnforceMfa::Everyone  => _('Admins and users'),
+            EnforceMfa::Everyone  => _('Everyone'),
         };
     }
 

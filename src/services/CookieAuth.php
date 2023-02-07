@@ -41,7 +41,8 @@ class CookieAuth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         // compare the provided token with the token saved in SQL database
-        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`, `groups`.`is_admin`
+        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`,
+                `groups`.`is_admin`, `groups`.`is_sysadmin`
             FROM `users`
             LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
             WHERE `token` = :token
@@ -54,7 +55,6 @@ class CookieAuth implements AuthInterface
         }
         $res = $req->fetch();
         $userid = (int) $res['userid'];
-        $isAdmin = (bool) $res['is_admin'];
 
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
@@ -68,8 +68,8 @@ class CookieAuth implements AuthInterface
         if ($res['auth_service'] === LoginController::AUTH_LOCAL
             && !$res['mfa_secret']
             && (
-                ($isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
-                || (!$isAdmin && $EnforceMfaSetting === EnforceMfa::Users)
+                ($res['is_sysadmin'] && $EnforceMfaSetting === EnforceMfa::SysAdmins)
+                || ($res['is_admin'] && $EnforceMfaSetting === EnforceMfa::Admins)
                 || $EnforceMfaSetting === EnforceMfa::Everyone
             )
         ) {

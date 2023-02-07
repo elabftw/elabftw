@@ -63,7 +63,19 @@ class CookieAuth implements AuthInterface
             throw new UnauthorizedException();
         }
 
-        // force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
+        $this->enforceMfa($res);
+
+        $this->AuthResponse->userid = $userid;
+        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->selectedTeam = $this->tokenTeam;
+        return $this->AuthResponse;
+    }
+
+    /**
+     * Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
+     */
+    private function enforceMfa(array $res): void
+    {
         $EnforceMfaSetting = EnforceMfa::tryFrom((int) $this->configArr['enforce_mfa']);
         if ($res['auth_service'] === LoginController::AUTH_LOCAL
             && !$res['mfa_secret']
@@ -75,10 +87,5 @@ class CookieAuth implements AuthInterface
         ) {
             throw new UnauthorizedException();
         }
-
-        $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
-        $this->AuthResponse->selectedTeam = $this->tokenTeam;
-        return $this->AuthResponse;
     }
 }

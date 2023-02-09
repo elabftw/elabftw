@@ -431,7 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHECK MAX SIZE
     } else if (el.matches('[data-action="check-max-size"]')) {
       const input = document.getElementById(el.dataset.input) as HTMLInputElement;
-      const maxsize = parseInt(el.dataset.maxsize, 10) * 1024;
+      // file.size from input will be in bytes, maxsize will be in Mb
+      const maxsize = parseInt(el.dataset.maxsize, 10) * 1024 * 1024;
       if (input.files[0].size > maxsize) {
         document.getElementById('errorHolder').innerText = 'Error: file is too large!';
         // prevent the form from being submitted

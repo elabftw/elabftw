@@ -23,7 +23,7 @@
       </div>
     {% endif %}
     {% if mode == 'edit-template' %}
-      <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='{{ templateData.id|default(Entity.id) }}' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+      <button type='button' data-action='json-save-metadata' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
     {% endif %}
     <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
     <div hidden id='jsonImportFileDiv'>

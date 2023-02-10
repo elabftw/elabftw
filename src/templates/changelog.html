@@ -26,7 +26,7 @@
       <td>{{ change.created_at }}</td>
       <td>{{ change.fullname }}</td>
       <td>{{ change.target }}</td>
-      <td>{{ change.content }}</td>
+      <td>{{ change.target == 'body' ? change.content|raw : change.content }}</td>
     </tr>
     {% endfor %}
   </tbody>

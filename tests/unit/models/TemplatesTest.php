@@ -42,11 +42,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Templates->postAction(Action::Duplicate, array()));
     }
 
-    public function testReadForUser(): void
-    {
-        $this->assertIsArray($this->Templates->readForUser());
-    }
-
     public function testUpdate(): void
     {
         $this->Templates->setId(1);

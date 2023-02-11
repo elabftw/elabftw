@@ -327,10 +327,8 @@ class Users implements RestInterface
         if ($UsersHelper->cannotBeDeleted()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
         }
-        $sql = 'DELETE FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        // currently, let's disable this entirely. Next step will be to give this a state and set it to deleted.
+        return false;
     }
 
     /**

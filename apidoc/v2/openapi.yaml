@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
   title: eLabFTW REST API v2 Documentation
-  description: Some description of the api.
+  description: |
+    This document describes all available endpoints and methods for eLabFTW's API version 2.
   version: 2.0.0
 servers:
   - url: https://elab.local:3148/api/v2

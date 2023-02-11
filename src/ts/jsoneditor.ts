@@ -29,13 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
 
-    if (about.type == 'experiments_templates') {
-      const entityWithId = {
-        type: entity.type,
-        id: parseInt(about.id, 10),
-      };
-      JsonEditorHelperC.loadMetadataFromId(entityWithId);
-      document.getElementById('templateJsonSave').dataset.id = about.id;
+    // check if id is present, as it might not be the case in ucp/exp_templates or admin/items_types
+    if (entity.id) {
+      JsonEditorHelperC.loadMetadataFromId(entity);
     }
 
     // LISTENERS
@@ -47,12 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
       } else if (el.matches('[data-action="json-save-metadata"]')) {
         JsonEditorHelperC.saveMetadata();
-      } else if (el.matches('[data-action="json-save-metadata-from-id"]')) {
-        const entityWithId = {
-          type: entity.type,
-          id: parseInt(document.getElementById('templateJsonSave').dataset.id, 10),
-        };
-        JsonEditorHelperC.saveMetadataFromId(entityWithId);
       } else if (el.matches('[data-action="json-save-file"]')) {
         JsonEditorHelperC.saveNewFile();
       } else if (el.matches('[data-action="json-save"]')) {

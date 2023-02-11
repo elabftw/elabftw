@@ -466,13 +466,18 @@ abstract class AbstractEntity implements RestInterface
         if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
-        // maybe user was deleted!
-        try {
-            $timestamper = new Users($this->entityData['timestampedby']);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
+        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
+    }
+
+    /**
+     * Get locker full name for display in view mode
+     */
+    public function getLockerFullname(): string
+    {
+        if ($this->entityData['locked'] === 0) {
+            return 'Unknown';
         }
-        return $timestamper->userData['fullname'];
+        return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
     /**
@@ -604,6 +609,17 @@ abstract class AbstractEntity implements RestInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function getFullnameFromUserid(int $userid): string
+    {
+        // maybe user was deleted!
+        try {
+            $user = new Users($userid);
+        } catch (ResourceNotFoundException) {
+            return 'User not found!';
+        }
+        return $user->userData['fullname'];
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

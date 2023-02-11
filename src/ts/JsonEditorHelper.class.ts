@@ -130,11 +130,6 @@ export default class JsonEditorHelper {
     }
   }
 
-  saveMetadataFromId(entity: Entity): void {
-    const MetadataC = new Metadata(entity);
-    MetadataC.update(this.editor.get());
-  }
-
   // save a file or metadata depending on what was loaded
   save(): void {
     if (this.editorDiv.dataset.what === 'file') {

@@ -142,13 +142,17 @@ class Templates extends AbstractTemplateEntity
         $TeamGroups = new TeamGroups($this->Users);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
 
-        return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser) {
+        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+
+        return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser, $teamsOfUser) {
             $canwrite = json_decode($t['canwrite'], true, 3, JSON_THROW_ON_ERROR);
             return $canwrite['base'] === BasePermissions::Full->value || $canwrite['base'] === BasePermissions::Organization->value ||
                 ($canwrite['base'] === BasePermissions::MyTeams->value && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($canwrite['base'] === BasePermissions::User->value && $t['userid'] === $this->Users->userData['userid']) ||
                 ($canwrite['base'] === BasePermissions::UserOnly->value && $t['userid'] === $this->Users->userData['userid']) ||
-                (in_array($canwrite['teamgroups'], $teamgroupsOfUser, true));
+                (!empty(array_intersect($canwrite['teams'], $teamsOfUser))) ||
+                (!empty(array_intersect($canwrite['teamgroups'], $teamgroupsOfUser)));
         });
     }
 

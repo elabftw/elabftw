@@ -151,6 +151,7 @@ class Templates extends AbstractTemplateEntity
                 ($canwrite['base'] === BasePermissions::MyTeams->value && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
                 ($canwrite['base'] === BasePermissions::User->value && $t['userid'] === $this->Users->userData['userid']) ||
                 ($canwrite['base'] === BasePermissions::UserOnly->value && $t['userid'] === $this->Users->userData['userid']) ||
+                (!empty(array_intersect($canwrite['users'], array($this->Users->userData['userid'])))) ||
                 (!empty(array_intersect($canwrite['teams'], $teamsOfUser))) ||
                 (!empty(array_intersect($canwrite['teamgroups'], $teamgroupsOfUser)));
         });

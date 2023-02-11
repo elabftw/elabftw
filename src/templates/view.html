@@ -44,6 +44,12 @@
 </div>
 {% endif %}
 
+{% if Entity.entityData.locked %}
+<div class='alert alert-success'><i class='fas fa-info-circle'></i>
+  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw }}
+</div>
+{% endif %}
+
     <div class='mb-2'>
       {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <div class='hl-hover-gray d-inline p-2 rounded'>

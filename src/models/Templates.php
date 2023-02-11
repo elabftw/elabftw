@@ -212,18 +212,6 @@ class Templates extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
-    /**
-     * Read the templates for the user (in ucp or create new menu)
-     * depending on the user preference, we filter out on the owner or not
-     */
-    public function readForUser(): array
-    {
-        if ($this->Users->userData['show_team_templates'] === 0) {
-            $this->addFilter('experiments_templates.userid', $this->Users->userData['userid']);
-        }
-        return $this->readAll();
-    }
-
     public function destroy(): bool
     {
         // delete from pinned too

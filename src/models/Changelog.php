@@ -29,11 +29,15 @@ class Changelog
     {
         // edge case when creating team with non existing user during populate action for dev
         if (empty($this->entity->Users->userData['userid'])) {
-            return true;
+            return false;
         }
         // we don't store the full body, let the revisions system handle that
         $content = $params->getContent();
         if ($params->getTarget() === 'body') {
+            // skip creation if the new body is the same as old body
+            if ($this->entity->entityData['body'] === (string) $content) {
+                return false;
+            }
             /** @psalm-suppress PossiblyNullArgument */
             $content = sprintf('Depending on your instance configuration, the change in the body is possibly recorded in the revisions. <a href="revisions.php?type=%s&item_id=%d">See revisions page.</a>', $this->entity->type, $this->entity->id);
         }

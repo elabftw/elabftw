@@ -43,9 +43,9 @@
             <td class='tags mathjax-ignore'>
             {% set itemtagsArr = tagsArr[item.id] %}
               {% if itemtagsArr|length > 0 %}
-                <span class='tags'>
+                <span class='d-flex flex-wrap'>
                   {% for tag in itemtagsArr %}
-                    <a class='tag' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+                    <a class='tag margin-1px' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
                   {% endfor %}
                 </span>
             {% endif %}

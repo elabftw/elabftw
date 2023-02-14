@@ -173,6 +173,17 @@ class Permissions
             }
         }
 
+        // check for teams
+        if (!empty($this->canread['teams'])) {
+            $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+            foreach ($this->canread['teams'] as $team) {
+                if (in_array($team, $teamsOfUser, true)) {
+                    return true;
+                }
+            }
+        }
+
         // check for teamgroups
         if (!empty($this->canwrite['teamgroups'])) {
             foreach ($this->canwrite['teamgroups'] as $teamgroup) {

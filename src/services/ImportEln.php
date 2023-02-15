@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Uploads;
 use function hash_file;
 use function json_decode;
 use League\Flysystem\UnableToReadFile;
@@ -168,7 +169,15 @@ class ImportEln extends AbstractImportZip
         if (isset($file['sha256'])) {
             $this->checksum($filepath, $file['sha256']);
         }
-        $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        $newUploadId = $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        // the alternateName holds the previous long_name of the file
+        if (isset($file['alternateName'])) {
+            // read the newly created upload so we can get the new long_name to replace the old in the body
+            $Uploads = new Uploads($this->Entity, $newUploadId);
+            $currentBody = $this->Entity->readOne()['body'];
+            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            $this->Entity->patch(Action::Update, array('body' => $newBody));
+        }
         // special case for export-elabftw.json
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));

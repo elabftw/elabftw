@@ -171,11 +171,11 @@ class Users implements RestInterface
     public function readFromQuery(string $query, int $teamId = 0): array
     {
         $teamFilterSql = '';
-        $rollColumns = '';
+        $roleColumns = '';
         if ($teamId > 0) {
             $teamFilterSql = ' AND u2t.teams_id = :team';
             // only one team is selected at a time so we can use MIN to get the values
-            $rollColumns = 'MIN(u2t.is_owner) as is_owner, MIN(u2t.is_admin) AS is_admin,';
+            $roleColumns = 'MIN(u2t.is_owner) as is_owner, MIN(u2t.is_admin) AS is_admin,';
         }
 
         // Side effect: User is shown in team with lowest id
@@ -184,7 +184,7 @@ class Users implements RestInterface
             users.validated, users.is_sysadmin, users.archived, users.last_login, users.valid_until,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service,
-            ". $rollColumns ."
+            ". $roleColumns ."
             JSON_ARRAYAGG(JSON_OBJECT('id', u2t.teams_id, 'name',
                 teams.name, 'is_owner', u2t.is_owner, 'is_admin', u2t.is_admin
             )) AS teams
@@ -366,7 +366,7 @@ class Users implements RestInterface
 
     private function updateWrapper(array $params): void
     {
-        // first handle user role changes and unset user roll related elements
+        // first handle user role changes and unset user role related elements
         (new UserUpdateRoles($this, $this->requester, $params))->update();
         unset($params['is_admin'], $params['admin_of_teams'], $params['is_sysadmin']);
 

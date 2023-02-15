@@ -146,7 +146,7 @@ final class UserUpdateRoles
     }
 
     /**
-     * Is user roll related value provided in params array
+     * Is user role related value provided in params array
      */
     private function paramExists(array $params, string $key, string $type): mixed
     {

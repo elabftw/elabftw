@@ -186,6 +186,8 @@ class ImportEln extends AbstractImportZip
             if ($json['metadata'] !== null) {
                 $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
+            // adjust the date
+            $this->Entity->patch(Action::Update, array('date' => $json['date']));
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {

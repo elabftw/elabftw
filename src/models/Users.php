@@ -24,7 +24,7 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Services\UserUpdateRolls;
+use Elabftw\Services\UserUpdateRoles;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use function time;
@@ -367,7 +367,7 @@ class Users implements RestInterface
     private function updateWrapper(array $params): void
     {
         // first handle user role changes and unset user roll related elements
-        (new UserUpdateRolls($this, $this->requester, $params))->update();
+        (new UserUpdateRoles($this, $this->requester, $params))->update();
         unset($params['is_admin'], $params['admin_of_teams'], $params['is_sysadmin']);
 
         foreach ($params as $target => $content) {

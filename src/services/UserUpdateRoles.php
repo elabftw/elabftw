@@ -17,7 +17,7 @@ use PDO;
 use PDOStatement;
 use function settype;
 
-final class UserUpdateRolls
+final class UserUpdateRoles
 {
     protected Db $Db;
 

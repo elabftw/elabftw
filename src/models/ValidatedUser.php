@@ -16,11 +16,17 @@ class ValidatedUser extends ExistingUser
 {
     public static function fromExternal(string $email, array $teams, string $firstname, string $lastname): Users
     {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, null, true);
+        return parent::fromScratch($email, $teams, $firstname, $lastname, false, false, true);
     }
 
-    public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, int $usergroup): Users
-    {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, $usergroup, true, false);
+    public static function fromAdmin(
+        string $email,
+        array $teams,
+        string $firstname,
+        string $lastname,
+        bool $isAdmin = false,
+        bool $isSysadmin = false,
+    ): Users {
+        return parent::fromScratch($email, $teams, $firstname, $lastname, $isAdmin, $isSysadmin, true, false);
     }
 }

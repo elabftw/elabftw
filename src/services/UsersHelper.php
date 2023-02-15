@@ -73,8 +73,10 @@ class UsersHelper
      */
     public function getTeamsFromUserid(): array
     {
-        $sql = 'SELECT DISTINCT teams.id, teams.name FROM teams
-            CROSS JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = teams.id)';
+        $sql = 'SELECT teams.id, teams.name, users2teams.is_admin, users2teams.is_owner
+            FROM users2teams
+            LEFT JOIN teams ON (users2teams.teams_id = teams.id)
+            WHERE users2teams.users_id = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);

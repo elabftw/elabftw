@@ -312,6 +312,13 @@
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"
   integrity sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==
 
+"@types/bootstrap-select@^1.13.4":
+  version "1.13.4"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap-select/-/bootstrap-select-1.13.4.tgz#b95e72a70ebadb1cc2c0630e86472c6156fe4d5e"
+  integrity sha512-jpmfCyF/DETb7P9Ob1htDoSGwSNvdddmBEe47iAbLttWGAGbEzE/Ks6/eGzKzEbDDLbL/melqSW8RkqTpa60Gw==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/bootstrap@^5.0.17":
   version "5.2.6"
   resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-5.2.6.tgz#e861b3aa1f4a1434da0bf50fbaa372b6f7e64d2f"

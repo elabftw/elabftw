@@ -123,7 +123,7 @@ class Populate
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, false, false, true, false);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 

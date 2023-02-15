@@ -19,6 +19,7 @@ use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function file_get_contents;
@@ -47,6 +48,7 @@ try {
     $Idps = new Idps();
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
+    $Users2Teams = new Users2Teams();
     $teamsArr = $Teams->readAll();
     $teamsStats = $Teams->getAllStats();
     $Experiments = new Experiments($App->Users);
@@ -97,6 +99,7 @@ try {
         'teamsStats' => $teamsStats,
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
+        'users2teams' => $Users2Teams,
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

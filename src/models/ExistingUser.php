@@ -37,12 +37,13 @@ class ExistingUser extends Users
         array $teams,
         string $firstname,
         string $lastname,
-        ?int $usergroup = null,
+        bool $isAdmin = false,
+        bool $isSysadmin = false,
         bool $forceValidation = false,
         bool $alertAdmin = true,
     ): Users {
         $Users = new self();
-        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
+        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $isAdmin, $isSysadmin, $forceValidation, $alertAdmin);
         $fresh = new self($userid);
         // we need to report the needValidation flag into the new object
         $fresh->needValidation = $Users->needValidation;

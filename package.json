@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.0.17",
+    "@types/bootstrap-select": "^1.13.4",
     "@types/dropzone": "^5.7.4",
     "@types/fancybox": "^3.5.2",
     "@types/file-saver": "^2.0.1",

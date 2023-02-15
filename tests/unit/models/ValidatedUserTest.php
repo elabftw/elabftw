@@ -18,7 +18,6 @@ class ValidatedUserTest extends \PHPUnit\Framework\TestCase
             array('Alpha'),
             'valid',
             'user',
-            4,
         );
         $this->assertInstanceOf(ExistingUser::class, $User);
     }

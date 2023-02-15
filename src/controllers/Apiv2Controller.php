@@ -274,7 +274,7 @@ class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
-        if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
+        if ($this->Model instanceof Config && !$this->Users->userData['is_sysadmin']) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 

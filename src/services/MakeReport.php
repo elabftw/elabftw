@@ -50,12 +50,12 @@ class MakeReport extends AbstractMakeCsv
             'lastname',
             'email',
             'validated',
-            'usergroup',
+            'is_sysadmin',
             'archived',
             'last_login',
             'valid_until',
-            'full_name',
-            'team(s)',
+            'fullname',
+            'teams',
             'diskusage_in_bytes',
             'diskusage_formatted',
             'exp_total',
@@ -71,8 +71,6 @@ class MakeReport extends AbstractMakeCsv
         $allUsers = $this->Teams->Users->readFromQuery('');
         foreach ($allUsers as $key => $user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
-            // get the teams of user
-            $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage((int) $user['userid']);
 
@@ -89,7 +87,18 @@ class MakeReport extends AbstractMakeCsv
                 unset($allUsers[$key][$column]);
             }
 
-            $allUsers[$key]['team(s)'] = $teams;
+            $teams = implode(', ', array_map(function (array $team): string {
+                $attributes = array();
+                foreach (array('admin', 'owner') as $value) {
+                    if ($team['is_' . $value] === 1) {
+                        $attributes[] = $value;
+                    }
+                }
+                $attributes = implode(', ', $attributes);
+                return sprintf('%s%s', $team['team_name'], $attributes ? ' (' . $attributes . ')' : '');
+            }, $user['teams']));
+
+            $allUsers[$key]['teams'] = $teams;
             $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
             $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
             $allUsers[$key]['exp_total'] = $UsersHelper->countExperiments();

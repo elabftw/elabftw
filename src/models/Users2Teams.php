@@ -29,13 +29,15 @@ class Users2Teams
     /**
      * Add one user to one team
      */
-    public function create(int $userid, int $teamid): bool
+    public function create(int $userid, int $teamid, bool $isAdmin = false, bool $isOwner = false): bool
     {
         // primary key will take care of ensuring there are no duplicate tuples
-        $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
+        $sql = 'INSERT IGNORE INTO users2teams (`users_id`, `teams_id`, `is_admin`, `is_owner`) VALUES (:userid, :team, :admin, :owner);';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
+        $req->bindValue(':admin', $isAdmin, PDO::PARAM_INT);
+        $req->bindValue(':owner', $isOwner, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -44,10 +46,10 @@ class Users2Teams
      *
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      */
-    public function addUserToTeams(int $userid, array $teamIdArr): void
+    public function addUserToTeams(int $userid, array $teamIdArr, bool $isAdmin = false, bool $isOwner = false): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->create($userid, (int) $teamId);
+            $this->create($userid, (int) $teamId, $isAdmin, $isOwner);
         }
     }
 
@@ -78,5 +80,32 @@ class Users2Teams
         foreach ($teamIdArr as $teamId) {
             $this->destroy($userid, (int) $teamId);
         }
+    }
+
+    public function getUsersFromTeam(int $teamId): array
+    {
+        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+                users2teams.*
+            FROM users2teams
+            LEFT JOIN users ON (users2teams.users_id = users.userid)
+            WHERE users2teams.teams_id = :teamid
+            ORDER BY fullname ASC";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':teamid', $teamId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    public function getTeamsOfUser(int $userId): array
+    {
+        $sql = 'SELECT teams.*, users2teams.*
+            FROM users2teams
+            LEFT JOIN teams ON (users2teams.teams_id = teams.id)
+            WHERE users2teams.users_id = :userid
+            ORDER BY teams.name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $userId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 }

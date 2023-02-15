@@ -50,20 +50,25 @@ export function relativeMoment(): void {
  */
 export function collectForm(form: HTMLElement): object {
   let params = {};
-  ['input', 'select'].forEach(inp => {
-    form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input as HTMLInputElement;
-      if (el.reportValidity() === false) {
-        throw new Error('Invalid input found! Aborting.');
-      }
-      if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: input.value});
-      }
-      if (el.name === 'password') {
-        // clear a password field once collected
-        el.value = '';
-      }
-    });
+  form.querySelectorAll('input, select').forEach((el: HTMLInputElement|HTMLSelectElement) => {
+    let value: string|string[] = el.value;
+    if (el instanceof HTMLSelectElement && el.multiple) {
+      value = Array.from(el.selectedOptions).map(v => v.value);
+    }
+    if (el.reportValidity() === false) {
+      throw new Error('Invalid input found! Aborting.');
+    }
+    // check name is 
+    if (el.dataset.ignore !== '1'
+      && el.disabled === false
+      && el.hasAttribute('name') === true
+    ) {
+      params = Object.assign(params, {[el.name]: value});
+    }
+    if (el.name === 'password') {
+      // clear a password field once collected
+      el.value = '';
+    }
   });
   // don't send an empty password
   if (params['password'] === '') {
@@ -256,6 +261,14 @@ export async function reloadElement(elementId: string): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+}
+
+export async function reloadEditUsersBox(): Promise<void> {
+  return reloadElement('editUsersBox')
+    .then(() => {
+      ($('#editUsersBox .selectpicker') as JQuery<HTMLSelectElement>).selectpicker();
+      return;
+    });
 }
 
 /**

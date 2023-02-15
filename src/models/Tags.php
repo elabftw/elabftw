@@ -157,7 +157,7 @@ class Tags implements RestInterface
             // check if we can actually create tags (for non-admins)
             $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
             $teamConfigArr = $Teams->readOne();
-            if ($teamConfigArr['user_create_tag'] === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
+            if ($teamConfigArr['user_create_tag'] === 0 && !$this->Entity->Users->userData['is_admin']) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 

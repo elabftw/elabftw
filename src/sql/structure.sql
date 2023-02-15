@@ -309,29 +309,13 @@ CREATE TABLE `favtags2users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
--- Table structure for table `groups`
+-- RELATIONSHIPS FOR TABLE `favtags2users`:
+--   `users_id`
+--       `users` -> `userid`
+--   `tag_id`
+--       `tags` -> `id`
 --
 
-CREATE TABLE `groups` (
-  `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `is_sysadmin` tinyint UNSIGNED NOT NULL,
-  `is_admin` tinyint UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `groups`:
---
-
---
--- Dumping data for table `groups`
---
-
-INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`) VALUES
-(1, 'Sysadmins', 1, '1'),
-(2, 'Admins', 0, '1'),
-(4, 'Users', 0, '0');
 
 -- --------------------------------------------------------
 
@@ -794,7 +778,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
   `mfa_secret` varchar(32) DEFAULT NULL,
-  `usergroup` tinyint UNSIGNED NOT NULL,
+  `is_sysadmin` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -847,8 +831,6 @@ CREATE TABLE `users` (
 
 --
 -- RELATIONSHIPS FOR TABLE `users`:
---   `usergroup`
---       `groups` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -879,6 +861,8 @@ CREATE TABLE `users2team_groups` (
 CREATE TABLE `users2teams` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
+  `is_admin` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `is_owner` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`users_id`, `teams_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
@@ -1072,7 +1056,10 @@ ALTER TABLE `todolist`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD KEY `fk_users_groups_id` (`usergroup`);
+  ADD KEY `idx_users_is_sysadmin` (`is_sysadmin`),
+  ADD KEY `idx_users_email` (`email`),
+  ADD KEY `idx_users_archived` (`archived`),
+  ADD KEY `idx_users_validated` (`validated`);
 
 --
 -- Indexes for table `experiments2experiments`
@@ -1291,7 +1278,9 @@ CREATE TABLE `experiments_templates_links` (
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
-  ADD KEY `fk_users2teams_users_id` (`users_id`);
+  ADD KEY `fk_users2teams_users_id` (`users_id`),
+  ADD KEY `idx_users2teams_is_admin` (`is_admin`),
+  ADD KEY `idx_users2teams_is_owner` (`is_owner`);
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -1305,12 +1294,6 @@ ALTER TABLE `users2team_groups`
 ALTER TABLE `users2team_groups`
   ADD CONSTRAINT `fk_users2team_groups_groupid` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments2experiments`

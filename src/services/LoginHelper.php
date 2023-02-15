@@ -136,7 +136,7 @@ class LoginHelper
 
         // NORMAL LOGIN
         // load the permissions
-        $Users = new Users($this->AuthResponse->userid);
+        $Users = new Users($this->AuthResponse->userid, $this->AuthResponse->selectedTeam);
         $this->Session->set('is_admin', $Users->userData['is_admin']);
         $this->Session->set('is_sysadmin', $Users->userData['is_sysadmin']);
     }

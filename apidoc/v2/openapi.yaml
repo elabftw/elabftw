@@ -628,7 +628,7 @@ components:
           type: string
         validated:
           type: integer
-        usergroup:
+        is_sysadmin:
           type: integer
         archived:
           type: integer
@@ -640,7 +640,19 @@ components:
           type: string
         auth_service:
           type: integer
-
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              is_admin:
+                type: integer
+              is_owner:
+                type: integer
 
 security:
   - token:
@@ -1615,7 +1627,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/event'
-
   /events/{id}:
     parameters:
       - name: id

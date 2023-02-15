@@ -395,7 +395,7 @@ class Scheduler implements RestInterface
 
         // if it's not, we need to be admin in the same team as the event/user
         $TeamsHelper = new TeamsHelper($event['team']);
-        return $TeamsHelper->isUserInTeam($this->Items->Users->userData['userid']) && $this->Items->Users->userData['usergroup'] <= 2;
+        return $TeamsHelper->isUserInTeam($this->Items->Users->userData['userid']) && $this->Items->Users->userData['is_admin'];
     }
 
     private function canWriteOrExplode(): void

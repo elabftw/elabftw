@@ -22,7 +22,7 @@ use Elabftw\Services\Filter;
 
 final class UserParams extends ContentParams implements ContentParamsInterface
 {
-    public function __construct(string $target, string $content, private int $isSysadmin = 0, private int $isAdmin = 0, private int $targetIsSysadmin = 0)
+    public function __construct(string $target, string $content)
     {
         parent::__construct($target, $content);
     }
@@ -42,7 +42,6 @@ final class UserParams extends ContentParams implements ContentParamsInterface
                     return Filter::sanitize($this->content);
                 }
             )(),
-            'usergroup' => (string) $this->checkUserGroup((int) $this->content),
             // return the hash of the password
             'password' => password_hash(Check::passwordLength($this->content), PASSWORD_DEFAULT),
             'orcid' => $this->filterOrcid(),
@@ -66,28 +65,6 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'password' => 'password_hash',
             default => $this->target,
         };
-    }
-
-    private function checkUserGroup(int $usergroup): int
-    {
-        $usergroup = Check::usergroup($usergroup);
-        // a sysadmin can do what they want, no need to check further
-        if ($this->isSysadmin === 1) {
-            return $usergroup;
-        }
-        // prevent an admin from promoting a user to sysadmin
-        if ($this->isAdmin === 1 && $usergroup === 1) {
-            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
-        }
-        // a non sysadmin cannot demote a sysadmin
-        if ($usergroup !== 1 && $this->targetIsSysadmin) {
-            throw new ImproperActionException('Only a sysadmin can demote another sysadmin.');
-        }
-        // if requester is not admin the only valid usergroup is 4 (user)
-        if ($this->isAdmin !== 1) {
-            return 4;
-        }
-        return $usergroup;
     }
 
     private function filterOrcid(): string

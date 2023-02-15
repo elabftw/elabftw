@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, reloadElement, removeEmpty } from './misc';
+import { collectForm, notif, reloadElement, reloadEditUsersBox, removeEmpty } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'name': (document.getElementById('teamName_' + id) as HTMLInputElement).value,
         'orgid': (document.getElementById('teamOrgid_' + id) as HTMLInputElement).value,
         'visible': (document.getElementById('teamVisible_' + id) as HTMLSelectElement).value,
+        'is_owner': (document.getElementById('teamOwner_' + id) as HTMLSelectElement).value,
       };
       ApiC.patch(`${Model.Team}/${id}`, removeEmpty(params));
     // ARCHIVE TEAM
@@ -112,16 +113,19 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => reloadElement('teamsDiv'));
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
-      const selectEl = (el.previousElementSibling as HTMLSelectElement);
-      const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
       const userid = parseInt(el.dataset.userid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement('editUsersBox'));
+      const selectEl = document.getElementById(`addUser2Team_${userid}`) as HTMLSelectElement;
+      const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
+      const isAdmin = (document.getElementById(`addUser2TeamIsAdmin_${userid}`) as HTMLInputElement).checked;
+      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team, 'is_admin': isAdmin})
+        .then(() => reloadEditUsersBox());
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const userid = parseInt(el.dataset.userid, 10);
         const team = parseInt(el.dataset.teamid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement('editUsersBox'));
+        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team})
+          .then(() => reloadEditUsersBox());
       }
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {

@@ -17,6 +17,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
@@ -157,13 +158,7 @@ class Teams implements RestInterface
 
         match ($action) {
             Action::Archive => throw new ImproperActionException('Feature not implemented.'),
-            Action::Update => (
-                function () use ($params) {
-                    foreach ($params as $key => $value) {
-                        $this->update(new TeamParam($key, (string) $value));
-                    }
-                }
-            )(),
+            Action::Update => $this->updateWrapper($params),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -316,12 +311,39 @@ class Teams implements RestInterface
         return $newId;
     }
 
+    private function updateWrapper(array $params): void
+    {
+        // first handle owner changes and unset its parameter
+        if (array_key_exists('is_owner', $params)) {
+            if (Check::id($params['is_owner'])) {
+                $this->updateOwner((int) $params['is_owner']);
+            }
+            unset($params['is_owner']);
+        }
+
+        foreach ($params as $key => $value) {
+            $this->update(new TeamParam($key, (string) $value));
+        }
+    }
+
     private function update(TeamParam $params): bool
     {
         $sql = 'UPDATE teams SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updateOwner(int $userid): bool
+    {
+        $sql = 'UPDATE users2teams SET is_owner = 0
+            WHERE teams_id = :teams_id;';
+        $sql .= 'UPDATE users2teams SET is_owner = 1
+            WHERE users_id = :users_id AND teams_id = :teams_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $userid, PDO::PARAM_INT);
+        $req->bindValue(':teams_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

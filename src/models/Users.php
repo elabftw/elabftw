@@ -24,6 +24,7 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Services\UserUpdateRolls;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use function time;
@@ -64,7 +65,8 @@ class Users implements RestInterface
         string $firstname = '',
         string $lastname = '',
         string $passwordHash = '',
-        ?int $group = null,
+        bool $isAdmin = false,
+        bool $isSysadmin = false,
         bool $forceValidation = false,
         bool $alertAdmin = true,
         ?string $validUntil = null,
@@ -86,13 +88,19 @@ class Users implements RestInterface
         // Registration date is stored in epoch
         $registerDate = time();
 
-        // get the group for the new user
-        if ($group === null) {
-            $group = $TeamsHelper->getGroup();
+        $isOwner = false;
+        $isFirstUser = $TeamsHelper->isFirstUser();
+        if ($isFirstUser) {
+            $isAdmin = true;
+            $isSysadmin = true;
+            $isOwner = true;
+        } elseif ($TeamsHelper->isFirstUserInTeam()) {
+            $isAdmin = true;
+            $isOwner = true;
         }
 
         // will new user be validated?
-        $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
+        $validated = $Config->configArr['admin_validate'] && !$isAdmin ? 0 : 1;
         if ($forceValidation) {
             $validated = 1;
         }
@@ -105,7 +113,7 @@ class Users implements RestInterface
             `password_hash`,
             `firstname`,
             `lastname`,
-            `usergroup`,
+            `is_sysadmin`,
             `register_date`,
             `validated`,
             `lang`,
@@ -117,7 +125,7 @@ class Users implements RestInterface
             :password_hash,
             :firstname,
             :lastname,
-            :usergroup,
+            :is_sysadmin,
             :register_date,
             :validated,
             :lang,
@@ -132,7 +140,7 @@ class Users implements RestInterface
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':register_date', $registerDate);
         $req->bindParam(':validated', $validated, PDO::PARAM_INT);
-        $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
+        $req->bindParam(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':default_read', $defaultRead);
@@ -140,11 +148,8 @@ class Users implements RestInterface
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
-        // check if the team is empty before adding the user to the team
-        $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
-        $Users2Teams = new Users2Teams();
-        $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'));
+        (new Users2Teams())->addUserToTeams($userid, array_column($teams, 'id'), $isAdmin, $isOwner);
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }
@@ -166,30 +171,31 @@ class Users implements RestInterface
     public function readFromQuery(string $query, int $teamId = 0): array
     {
         $teamFilterSql = '';
+        $rollColumns = '';
         if ($teamId > 0) {
-            $teamFilterSql = ' AND users2teams.teams_id = :team';
+            $teamFilterSql = ' AND u2t.teams_id = :team';
+            // only one team is selected at a time so we can use MIN to get the values
+            $rollColumns = 'MIN(u2t.is_owner) as is_owner, MIN(u2t.is_admin) AS is_admin,';
         }
 
-        // Assures to get every user only once
-        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id
-            FROM users2teams
-            GROUP BY users_id) AS';
-        // unless we use a specific team
-        if ($teamId > 0) {
-            $tmpTable = '';
-        }
-
-        // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
             users.firstname, users.lastname, users.email, users.mfa_secret,
-            users.validated, users.usergroup, users.archived, users.last_login, users.valid_until,
+            users.validated, users.is_sysadmin, users.archived, users.last_login, users.valid_until,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.orcid, users.auth_service
+            users.orcid, users.auth_service,
+            ". $rollColumns ."
+            JSON_ARRAYAGG(JSON_OBJECT('id', u2t.teams_id, 'name',
+                teams.name, 'is_owner', u2t.is_owner, 'is_admin', u2t.is_admin
+            )) AS teams
             FROM users
-            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
+            LEFT JOIN users2teams AS u2t ON (u2t.users_id = users.userid " . $teamFilterSql . ')
+            LEFT JOIN teams ON (u2t.teams_id = teams.id)
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
+                AND teams.id IS NOT NULL
+            GROUP BY users.userid
+            ORDER BY MIN(u2t.teams_id) ASC, users.is_sysadmin DESC, MAX(u2t.is_owner) DESC,
+                MAX(u2t.is_admin) DESC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         if ($teamId > 0) {
@@ -197,7 +203,11 @@ class Users implements RestInterface
         }
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $users = $req->fetchAll();
+        foreach ($users as &$user) {
+            $user['teams'] = json_decode($user['teams'], true, 512, JSON_THROW_ON_ERROR);
+        }
+        return $users;
     }
 
     /**
@@ -231,11 +241,7 @@ class Users implements RestInterface
     {
         $this->canReadOrExplode();
         $userData = $this->readOneFull();
-        unset($userData['password']);
-        unset($userData['password_hash']);
-        unset($userData['salt']);
-        unset($userData['mfa_secret']);
-        unset($userData['token']);
+        unset($userData['password'], $userData['password_hash'], $userData['salt'], $userData['mfa_secret'], $userData['token']);
         return $userData;
     }
 
@@ -261,24 +267,10 @@ class Users implements RestInterface
     {
         $this->canWriteOrExplode();
         match ($action) {
-            Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Add => $this->addUser2Team($params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
-            Action::Update => (
-                function () use ($params) {
-                    $isSysadmin = 0;
-                    $isAdmin = 0;
-                    $targetIsSysadmin = 0;
-                    if ($this->requester instanceof self) {
-                        $isSysadmin = $this->requester->userData['is_sysadmin'];
-                        $isAdmin = $this->requester->userData['is_admin'];
-                        $targetIsSysadmin = $this->userData['is_sysadmin'];
-                    }
-                    foreach ($params as $target => $content) {
-                        $this->update(new UserParams($target, (string) $content, $isSysadmin, $isAdmin, $targetIsSysadmin));
-                    }
-                }
-            )(),
+            Action::Update => $this->updateWrapper($params),
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
@@ -338,11 +330,11 @@ class Users implements RestInterface
     {
         // consider that we are admin of ourselves
         // consider that a sysadmin is admin of all users
-        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1) {
+        if ($this->userid === $userid || $this->userData['is_sysadmin']) {
             return true;
         }
         $TeamsHelper = new TeamsHelper($this->userData['team']);
-        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'] === 1;
+        return $TeamsHelper->isUserInTeam($userid) && $this->userData['is_admin'];
     }
 
     /**
@@ -363,12 +355,23 @@ class Users implements RestInterface
             // it's ourself
             return;
         }
-        if ($this->requester->userData['is_admin'] !== 1 && $this->userid !== $this->userData['userid']) {
+        if (!$this->requester->userData['is_admin'] && $this->userid !== $this->userData['userid']) {
             throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
         }
         // check we edit user of our team, unless we are sysadmin and we can access it
         if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
             throw new IllegalActionException('User tried to access user from other team.');
+        }
+    }
+
+    private function updateWrapper(array $params): void
+    {
+        // first handle user role changes and unset user roll related elements
+        (new UserUpdateRolls($this, $this->requester, $params))->update();
+        unset($params['is_admin'], $params['admin_of_teams'], $params['is_sysadmin']);
+
+        foreach ($params as $target => $content) {
+            $this->update(new UserParams($target, (string) $content));
         }
     }
 
@@ -381,7 +384,7 @@ class Users implements RestInterface
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
             // we can only edit our own email, or be sysadmin
-            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
+            if (($this->requester->userData['userid'] !== $this->userData['userid']) && (!$this->requester->userData['is_sysadmin'])) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
             Filter::email($params->getContent());
@@ -392,6 +395,28 @@ class Users implements RestInterface
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function addUser2Team(array $params): bool
+    {
+        $teamProperties = array_filter(
+            $this->requester->userData['teams'],
+            function (array $requesterTeam) use ($params): bool {
+                return $requesterTeam['id'] === (int) $params['team'];
+            }
+        );
+
+        // requester needs to be sysadmin or admin in target team
+        $isAdmin = isset($teamProperties[0]['is_admin']) && $teamProperties[0]['is_admin'];
+        if (!$this->requester->userData['is_sysadmin'] && !$isAdmin) {
+            throw new IllegalActionException(Tools::error(true));
+        }
+
+        return (new Users2Teams())->create(
+            $this->userData['userid'],
+            (int) $params['team'],
+            (bool) $params['is_admin'],
+        );
     }
 
     /**
@@ -426,12 +451,13 @@ class Users implements RestInterface
     {
         $sql = "SELECT users.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            groups.is_admin, groups.is_sysadmin
+            IFNULL(users2teams.is_admin, 0) AS is_admin, IFNULL(users2teams.is_owner, 0) AS is_owner
             FROM users
-            LEFT JOIN `groups` ON groups.id = users.usergroup
+            LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
             WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->userData = $this->Db->fetch($req);

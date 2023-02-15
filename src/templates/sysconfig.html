@@ -187,8 +187,10 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
         <div class='box'>
             <h3>{{ 'Add a New Team'|trans }}</h3>
             <hr>
-            <input class='form-control custom-control-inline col-md-4' required type='text' placeholder='Pasteur lab' id='teamsName' />
-            <button data-action='create-team' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+            <div class='form-inline'>
+              <input class='form-control col-md-4 mr-2' required type='text' placeholder='Pasteur lab' id='teamsName' />
+              <button data-action='create-team' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+            </div>
         </div>
 
         <!-- DISPLAY TEAMS -->
@@ -203,32 +205,40 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
                   <li class='list-inline-item mb-2'>
                     {% set count = Teams.getStats(team.id) %}
                     <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
-                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
+                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
                   </li>
 
                   <li class='list-inline-item mb-2'>
                     <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
-                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+                  </li>
+
+                  <li class='list-inline-item mb-2'>
+                    <label for='teamOwner_{{ team.id }}'>{{ 'Team Owner'|trans }}</label>
+                    <select class='form-control' name='teamOwner' id='teamOwner_{{ team.id }}'>
+                      {% for user in users2teams.getUsersFromTeam(team.id) %}
+                        <option value='{{ user.userid }}' {{- user.is_owner ? ' selected' }}>{{ user.fullname }} {{- user.is_admin ? ' (admin)' }}</option>
+                      {% endfor %}
+                    </select>
                   </li>
 
                   <li class='list-inline-item mb-2'>
                     {% if count.totusers == 0 and team.id != App.Users.userData.team %}
-                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
+                      <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
                         {{ 'Delete'|trans }}
-                    </button>
+                      </button>
                     {% else %}
-                    <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
-                      {{ 'Archive'|trans }}
-                    </button>
+                      <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
+                        {{ 'Archive'|trans }}
+                      </button>
+                    {% endif %}
                   </li>
-
-                  {% endif %}
 
                   <li class='list-inline-item mb-2'>
                     <label for='teamVisible_{{ team.id }}'>{{ 'Visible on registration page'|trans }}</label>
                     <select class='form-control' name='teamsVisible' id='teamVisible_{{ team.id }}'>
-                      <option value='1'{{ team.visible ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                      <option value='0'{{ not team.visible ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+                      <option value='1' {{- team.visible ? ' selected' }}>{{ 'Yes'|trans }}</option>
+                      <option value='0' {{- not team.visible ? ' selected' }}>{{ 'No'|trans }}</option>
                     </select>
                   </li>
 

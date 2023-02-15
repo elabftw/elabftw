@@ -22,13 +22,16 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $this->TeamsHelper = new TeamsHelper(1);
     }
 
-    public function testGetGroup(): void
+    public function testIsFirstUser(): void
     {
-        $this->assertEquals(4, $this->TeamsHelper->getGroup());
-        // now create a new team and try to get group
+        $this->assertFalse($this->TeamsHelper->isFirstUser());
+    }
+
+    public function testIsFirstUserInTeam(): void
+    {
         $Teams = new Teams(new Users(1));
         $team = $Teams->postAction(Action::Create, array('name' => 'New team'));
         $TeamsHelper = new TeamsHelper($team);
-        $this->assertEquals(2, $TeamsHelper->getGroup());
+        $this->assertTrue($TeamsHelper->isFirstUserInTeam());
     }
 }

@@ -119,7 +119,7 @@ class TeamTags implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        if ($this->Users->userData['is_admin'] !== 1) {
+        if (!$this->Users->userData['is_admin']) {
             throw new IllegalActionException('Only an admin can do this!');
         }
         return match ($action) {
@@ -134,7 +134,7 @@ class TeamTags implements RestInterface
      */
     public function destroy(): bool
     {
-        if ($this->Users->userData['is_admin'] !== 1) {
+        if (!$this->Users->userData['is_admin']) {
             throw new IllegalActionException('Only an admin can delete a tag!');
         }
         // first unreference the tag

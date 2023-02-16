@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use function implode;
+use function is_array;
 
 /**
  * Twig filters
@@ -96,6 +98,11 @@ class TwigFilters
                     $newTab = '';
                 }
                 $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+            }
+
+            // multi select will be an array
+            if (is_array($value)) {
+                $value = implode(', ', $value);
             }
 
             $final .= sprintf('<h4 class="m-0">%s</h4>%s<p>%s</p>', $key, $description, $value);

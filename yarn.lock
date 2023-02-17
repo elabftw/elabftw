@@ -139,14 +139,12 @@
   dependencies:
     tslib "^2.1.0"
 
-"@fullcalendar/core@^5.1.0":
-  version "5.11.4"
-  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-5.11.4.tgz#1ea0e3f8bee45d0c8dc82f9b018b8c074263cbd0"
-  integrity sha512-p1/GRIageomlyJpsMVi+Ig5TNo9t2sEYsLHe6zvtCLtpXK/l03veZukYyM/jou8VzT0VJp1f7yN8irc5VBgqxw==
+"@fullcalendar/core@^6.1.4":
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/core/-/core-6.1.4.tgz#bfc67bf4ad0c8d99a7e1258b24b5b241c6f48ed1"
+  integrity sha512-ZDD0Owv0LezAk14nsRNaOc9nbowItGmT0mnjOhEw+L6B8P5eads8yYaNA9itn70MWoOjiAG8xqD7Yk1iJGxqgQ==
   dependencies:
-    "@fullcalendar/common" "~5.11.4"
     preact "^10.0.5"
-    tslib "^2.1.0"
 
 "@fullcalendar/daygrid@^5.1.0", "@fullcalendar/daygrid@~5.11.4":
   version "5.11.4"

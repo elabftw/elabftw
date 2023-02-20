@@ -16,7 +16,8 @@
     <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
   {% endif %}
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
-  <link rel='icon' type='image/ico' href='app/img/favicon.ico' />
+  <link rel='icon' type='image/ico' sizes="16x16" href='app/img/favicon.ico' />
+  <link rel='icon' type="image/png" sizes="32x32" href='app/img/favicon-32.png' />
   <link rel='apple-touch-icon' href='app/img/apple-touch-icon.png' />
   <link rel='apple-touch-icon-precomposed' href='app/img/apple-touch-icon-precomposed.png'>
   <title>{{ block('title') }} - eLabFTW</title>

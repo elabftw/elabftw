@@ -1491,7 +1491,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - type: object
                   properties:
                     action:

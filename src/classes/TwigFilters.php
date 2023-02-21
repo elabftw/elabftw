@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use function implode;
+use function is_array;
 
 /**
  * Twig filters
@@ -66,7 +68,7 @@ class TwigFilters
     }
 
     /**
-     * Process the metadata json string into a displayable array
+     * Process the metadata json string into html
      */
     public static function formatMetadata(string $json): string
     {
@@ -75,11 +77,35 @@ class TwigFilters
         if ($extraFields === null) {
             return $final;
         }
+        // sort the elements based on the position attribute. If not set, will be at the end.
+        uasort($extraFields, function (array $a, array $b): int {
+            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
+        });
         foreach ($extraFields as $key => $properties) {
             $description = isset($properties[MetadataEnum::Description->value])
                 ? sprintf('<h5>%s</h5>', $properties[MetadataEnum::Description->value])
                 : '';
-            $final .= sprintf('<h4>%s</h4>%s<p>%s</p>', $key, $description, $properties[MetadataEnum::Value->value]);
+            $value = $properties[MetadataEnum::Value->value];
+            // checkbox is a special case
+            if ($properties[MetadataEnum::Type->value] === 'checkbox') {
+                $checked = $properties[MetadataEnum::Value->value] === 'on' ? 'checked' : '';
+                $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
+            }
+            // url is another special case
+            if ($properties[MetadataEnum::Type->value] === 'url') {
+                $newTab = 'target="_blank" rel="noopener"';
+                if (($properties['open_in_current_tab'] ?? false) === true) {
+                    $newTab = '';
+                }
+                $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+            }
+
+            // multi select will be an array
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+
+            $final .= sprintf('<h4 class="m-0">%s</h4>%s<p>%s</p>', $key, $description, $value);
         }
         return $final;
     }

@@ -9,8 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\ImproperActionException;
-
 class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
     private UsersHelper $UsersHelper;
@@ -44,8 +42,7 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
     public function testGetTeamsFromNotFoundUserid(): void
     {
         $UsersHelper = new UsersHelper(1337);
-        $this->expectException(ImproperActionException::class);
-        $UsersHelper->getTeamsFromUserid();
+        $this->assertEmpty($UsersHelper->getTeamsFromUserid());
     }
 
     public function testgetTeamsNameFromUserid(): void

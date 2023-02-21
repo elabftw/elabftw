@@ -17,7 +17,6 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -85,6 +84,8 @@ abstract class AbstractEntity implements RestInterface
     public string $idFilter = '';
 
     public bool $isReadOnly = false;
+
+    public bool $isAnon = false;
 
     // inserted in sql
     public array $extendedValues = array();
@@ -241,6 +242,10 @@ abstract class AbstractEntity implements RestInterface
         if ($this instanceof Items) {
             $teamFilter = ' AND users2teams.teams_id = entity.team';
         }
+        // for anon add an AND base = full (public)
+        if ($this->isAnon) {
+            $sql .= sprintf(" AND JSON_EXTRACT(entity.canread, '$.base') = %s ", BasePermissions::Full->value);
+        }
         // add pub/org/team filter
         $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
         if ($this->Users->userData['show_public']) {
@@ -258,8 +263,10 @@ abstract class AbstractEntity implements RestInterface
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        foreach ($teamsOfUser as $team) {
-            $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+        if (!empty($teamsOfUser)) {
+            foreach ($teamsOfUser as $team) {
+                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+            }
         }
         // look for teamgroups
         // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
@@ -459,13 +466,18 @@ abstract class AbstractEntity implements RestInterface
         if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
-        // maybe user was deleted!
-        try {
-            $timestamper = new Users($this->entityData['timestampedby']);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
+        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
+    }
+
+    /**
+     * Get locker full name for display in view mode
+     */
+    public function getLockerFullname(): string
+    {
+        if ($this->entityData['locked'] === 0) {
+            return 'Unknown';
         }
-        return $timestamper->userData['fullname'];
+        return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
     /**
@@ -599,6 +611,17 @@ abstract class AbstractEntity implements RestInterface
         return $this->Db->execute($req);
     }
 
+    private function getFullnameFromUserid(int $userid): string
+    {
+        // maybe user was deleted!
+        try {
+            $user = new Users($userid);
+        } catch (ResourceNotFoundException) {
+            return 'User not found!';
+        }
+        return $user->userData['fullname'];
+    }
+
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
     {
         $this->extendedFilter .= $extendedFilter . ' ';
@@ -661,10 +684,8 @@ abstract class AbstractEntity implements RestInterface
 
     private function processExtendedQuery(string $extendedQuery): void
     {
-        $PermissionsHelper = new PermissionsHelper();
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->type,
-            $PermissionsHelper->getExtendedSearchAssociativeArray(),
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

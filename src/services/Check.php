@@ -72,7 +72,6 @@ class Check
     {
         $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
         if ($color === false || mb_strlen($color) !== 6) {
-            debug_print_backtrace();
             throw new ImproperActionException('Bad color');
         }
         return $color;
@@ -129,20 +128,24 @@ class Check
         return Filter::sanitize($token);
     }
 
-    public static function orcid(string $orcid): string
-    {
-        if (preg_match('/[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}/', $orcid) === 1) {
-            return $orcid;
-        }
-        // note: the input field should prevent any incorrect value from being submitted in the first place
-        throw new ImproperActionException('Incorrect value for orcid!');
-    }
-
     public static function accessKey(string $ak): string
     {
         if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i', $ak) === 1) {
             return $ak;
         }
         throw new ImproperActionException('Incorrect value for access key!');
+    }
+
+    /**
+     * Check digit according to ISO/IEC 7064:2003, MOD 11-2
+     */
+    public static function digit(string $base, int $checksum): bool
+    {
+        $sum = 0;
+        for ($c = 0; $c < strlen($base); $c++) {
+            $sum = ($sum + intval($base[$c])) * 2;
+        }
+        $remainder = $sum % 11;
+        return $checksum === ((12 - $remainder) % 11);
     }
 }

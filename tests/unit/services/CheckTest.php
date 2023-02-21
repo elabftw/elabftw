@@ -76,10 +76,19 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::token('blah');
     }
 
-    public function testOrcid(): void
+    public function testAk(): void
     {
-        Check::orcid('0000-0123-4346-1337');
+        $ak = '4da7ac2a-a3f0-11ed-bb95-0242ac160008';
+        $this->assertEquals($ak, Check::accessKey($ak));
         $this->expectException(ImproperActionException::class);
-        Check::orcid('0000-1249-abcd');
+        Check::accessKey('pwet');
+    }
+
+    public function testDigit(): void
+    {
+        $this->assertTrue(Check::digit('000000027494555', 5));
+        $this->assertTrue(Check::digit('000000021825009', 7));
+        $this->assertTrue(Check::digit('000000021694233', 10));
+        $this->assertFalse(Check::digit('100000021825009', 7));
     }
 }

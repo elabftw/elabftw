@@ -143,7 +143,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid'])) {
+        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->userData['is_admin']) {
             return false;
         }
 
@@ -170,6 +170,17 @@ class Permissions
             // check if we have a team in common
             if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return true;
+            }
+        }
+
+        // check for teams
+        if (!empty($this->canread['teams'])) {
+            $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+            foreach ($this->canread['teams'] as $team) {
+                if (in_array($team, $teamsOfUser, true)) {
+                    return true;
+                }
             }
         }
 

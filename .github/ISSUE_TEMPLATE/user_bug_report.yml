@@ -1,0 +1,65 @@
+name: Bug report (user)
+description: Use this if you are a user without Sysadmin/console access
+labels: [bug]
+body:
+  - type: markdown
+    id: intro
+    attributes:
+      value: |
+        ## Welcome!
+        You are about to *report a bug* you encountered in eLabFTW. Please use the 'Feature Request' template if you want to propose a new feature instead.
+        This issue tracker is used to track actual bugs. Please use [the discussions](https://github.com/elabftw/elabftw/discussions/) or [chat](https://gitter.im/elabftw/elabftw) if you have a question, e.g. to get help with configuration of your instance. This bug report form is for users without Sysadmin/console access.
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed description of the problem
+      description: |
+        In this section, please try to concentrate on observations. Only describe what you observed directly.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: |
+        Explain why you consider the described behavior (above) to be wrong. What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce the behavior
+      description: |
+        The more time you spend describing an easy way to reproduce the behavior (if this is possible), the easier it is for the project developers to fix it! Don't hesitate to add screenshots.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: elabftw-version
+    attributes:
+      label: What eLabFTW version are you using? Visible in bottom right of a page.
+      description: |
+        If you're not running the latest version, try and reproduce the bug on the demo instance at https://demo.elabftw.net
+    validations:
+      required: true
+  - type: textarea
+    id: possible-cause
+    attributes:
+      label: Do you have any idea what may have caused this?
+      description: |
+        Simply leave this empty if you do not.
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: Do you have an idea how to solve the issue?
+      description: |
+        Simply leave this empty if you do not.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional information
+      description: |
+        Any additional information about your environment that may be useful to know about. Like the browser type/version if it is a client issue.

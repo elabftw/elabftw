@@ -76,7 +76,6 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        'Scheduler' => $Scheduler,
         'allItems' => $allItems,
         'bookableCategoryArr' => $bookableCategoryArr,
         'itemsArr' => $Items->readShow($DisplayParams),

@@ -1,0 +1,13 @@
+name: Feature request
+description: I have a suggestion!
+labels: ['feature request']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your feature request precisely
+  - type: input
+    id: pro-support
+    attributes:
+      label: Pro Support
+      description: "Do you have PRO Support or are using the PRO Hosted version?"

@@ -83,6 +83,7 @@ class Install extends Command
         (new Sql($sqlFs))->execFile('structure.sql');
         // now create the default team
         $Teams = new Teams(new Users());
+        $Teams->bypassWritePermission = true;
         $Teams->postAction(Action::Create, array('name' => 'Default team'));
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
         $output->writeln('<info>→ Register your Sysadmin account here: ' . Config::fromEnv('SITE_URL') . '/register.php</info>');

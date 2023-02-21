@@ -106,7 +106,7 @@ try {
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
-        'myTeamsArr' => $Teams->readMyTeams(),
+        'teamsArr' => $Teams->readAll(),
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'templatesArr' => $templatesArr,

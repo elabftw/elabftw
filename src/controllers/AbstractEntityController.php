@@ -196,6 +196,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            'lockerFullname' => $this->Entity->getLockerFullname(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );

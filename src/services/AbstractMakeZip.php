@@ -33,6 +33,8 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 
     protected string $extension = '.zip';
 
+    protected string $hashAlgorithm = 'sha256';
+
     /**
      * Folder and zip file name begins with date for experiments
      */
@@ -75,9 +77,14 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $realNamesSoFar[] = $realName;
             // modify the real_name in place
             $file['real_name'] = $realName;
+            $storageFs = Storage::from((int) $file['storage'])->getStorage()->getFs();
+
+            // make sure we have a hash
+            if (empty($file['hash'])) {
+                $file['hash'] = hash($this->hashAlgorithm, $storageFs->read($file['long_name']));
+            }
 
             // add files to archive
-            $storageFs = Storage::from((int) $file['storage'])->getStorage()->getFs();
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
         return $filesArr;

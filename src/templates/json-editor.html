@@ -3,7 +3,6 @@
 
 <section class='box' id='json-editor'>
   <h3 data-action='toggle-next' data-icon='jsonEditorIcon' class='d-inline'><i id='jsonEditorIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ 'JSON Editor'|trans }}</h3>
-    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral'>{{ 'Load metadata'|trans }}</button>
@@ -24,13 +23,14 @@
       </div>
     {% endif %}
     {% if mode == 'edit-template' %}
-      <button type='button' id='templateJsonSave' data-action='json-save-metadata-from-id' data-id='{{ templateData.id|default(Entity.id) }}' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
+      <button type='button' data-action='json-save-metadata' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
     {% endif %}
     <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
     <div hidden id='jsonImportFileDiv'>
       <input type='file' name='file' accept='.json' id='jsonImportFileInput' />
       <button type='submit' data-action='json-upload-file' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
     </div>
+    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>

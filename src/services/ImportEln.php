@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Uploads;
 use function hash_file;
 use function json_decode;
 use League\Flysystem\UnableToReadFile;
@@ -165,10 +166,19 @@ class ImportEln extends AbstractImportZip
     {
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
-        if (isset($file['sha256'])) {
-            $this->checksum($filepath, $file['sha256']);
+        // checksum is mandatory for import
+        if (!isset($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
+            throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
-        $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        $newUploadId = $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        // the alternateName holds the previous long_name of the file
+        if (isset($file['alternateName'])) {
+            // read the newly created upload so we can get the new long_name to replace the old in the body
+            $Uploads = new Uploads($this->Entity, $newUploadId);
+            $currentBody = $this->Entity->readOne()['body'];
+            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            $this->Entity->patch(Action::Update, array('body' => $newBody));
+        }
         // special case for export-elabftw.json
         if (basename($filepath) === 'export-elabftw.json') {
             $fs = FsTools::getFs(dirname($filepath));
@@ -177,6 +187,8 @@ class ImportEln extends AbstractImportZip
             if ($json['metadata'] !== null) {
                 $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
+            // adjust the date
+            $this->Entity->patch(Action::Update, array('date' => $json['date']));
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {
@@ -184,13 +196,6 @@ class ImportEln extends AbstractImportZip
                 }
             }
             // TODO handle links: linked items should be included as datasets in the .eln, with a relationship to the main entry, and they should be imported as links
-        }
-    }
-
-    private function checksum(string $filepath, string $sha256sum): void
-    {
-        if (hash_file('sha256', $filepath) !== $sha256sum) {
-            throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
     }
 

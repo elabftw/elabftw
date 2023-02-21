@@ -204,6 +204,10 @@ abstract class AbstractLinks implements RestInterface
      */
     protected function create(): int
     {
+        // don't insert a link to the same entity
+        if ($this->Entity->id === $this->id) {
+            return 0;
+        }
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);

@@ -37,6 +37,14 @@ body:
         3.
     validations:
       required: true
+  - type: input
+    id: elabftw-version
+    attributes:
+      label: What eLabFTW version are you using? Visible in bottom right of a page.
+      description: |
+        If you're not running the latest version, try and reproduce the bug on the demo instance at https://demo.elabftw.net
+    validations:
+      required: true
   - type: textarea
     id: possible-cause
     attributes:

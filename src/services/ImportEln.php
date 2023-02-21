@@ -166,8 +166,9 @@ class ImportEln extends AbstractImportZip
     {
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
-        if (isset($file['sha256'])) {
-            $this->checksum($filepath, $file['sha256']);
+        // checksum is mandatory for import
+        if (!isset($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
+            throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
         // the alternateName holds the previous long_name of the file
@@ -195,13 +196,6 @@ class ImportEln extends AbstractImportZip
                 }
             }
             // TODO handle links: linked items should be included as datasets in the .eln, with a relationship to the main entry, and they should be imported as links
-        }
-    }
-
-    private function checksum(string $filepath, string $sha256sum): void
-    {
-        if (hash_file('sha256', $filepath) !== $sha256sum) {
-            throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
     }
 

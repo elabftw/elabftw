@@ -44,7 +44,7 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? v }}<br>
+    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}<br>
     {% if App.Config.configArr.privacy_policy %}
       <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
     {% endif %}

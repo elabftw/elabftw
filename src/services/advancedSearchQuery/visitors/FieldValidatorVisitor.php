@@ -235,7 +235,7 @@ class FieldValidatorVisitor implements Visitor
 
     private function visitFieldVisibility(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
-        $visibilityFieldHelper = new VisibilityFieldHelper($searchTerm, $parameters->getVisArr());
+        $visibilityFieldHelper = new VisibilityFieldHelper($searchTerm);
         if (!$visibilityFieldHelper->getArr()) {
             $message = sprintf(
                 'visibility:%s. Valid values are %s.',

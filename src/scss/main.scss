@@ -537,7 +537,6 @@ table th {
 
     .tags {
         max-width: 20ch;
-        overflow: hidden;
     }
 
     // Force item-info and item-date not to break into two lines
@@ -550,6 +549,10 @@ table th {
     .item-date {
         white-space: nowrap;
     }
+}
+
+.margin-1px {
+    margin: 1px;
 }
 
 /* color one row every other row */

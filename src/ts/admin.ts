@@ -5,13 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement, collectForm, permissionsToJson } from './misc';
+import { getEntity, notif, notifError, reloadElement, collectForm, permissionsToJson } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { MdEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
+import { Metadata } from './Metadata.class';
 import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
@@ -30,6 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
   tinymce.init(getTinymceBaseConfig('admin'));
   // and for md
   (new MdEditor()).init();
+
+  const entity = getEntity();
+  if (entity.id) {
+    // add extra fields elements from metadata json
+    const MetadataC = new Metadata(entity);
+    MetadataC.display('edit');
+  }
 
   $('#teamGroupCreateBtn').on('click', function() {
     const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);

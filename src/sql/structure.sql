@@ -672,13 +672,14 @@ CREATE TABLE `teams` (
   `link_name` varchar(255) NOT NULL,
   `link_href` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `orgid` varchar(255) DEFAULT NULL,
+  `orgid` varchar(255) NULL DEFAULT NULL,
   `public_db` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` JSON NOT NULL,
   `force_canwrite` JSON NOT NULL,
   `do_force_canread` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `do_force_canwrite` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
+  `announcement` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

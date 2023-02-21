@@ -8,7 +8,7 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { getEntity } from './misc';
+import { getEntity, notifError } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 
 // JSON editor related stuff
@@ -29,13 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const JsonEditorHelperC = new JsonEditorHelper(entity);
     JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
 
-    if (about.type == 'experiments_templates') {
-      const entityWithId = {
-        type: entity.type,
-        id: parseInt(about.id, 10),
-      };
-      JsonEditorHelperC.loadMetadataFromId(entityWithId);
-      document.getElementById('templateJsonSave').dataset.id = about.id;
+    // check if id is present, as it might not be the case in ucp/exp_templates or admin/items_types
+    if (entity.id) {
+      JsonEditorHelperC.loadMetadataFromId(entity);
     }
 
     // LISTENERS
@@ -47,18 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
         JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
       } else if (el.matches('[data-action="json-save-metadata"]')) {
         JsonEditorHelperC.saveMetadata();
-      } else if (el.matches('[data-action="json-save-metadata-from-id"]')) {
-        const entityWithId = {
-          type: entity.type,
-          id: parseInt(document.getElementById('templateJsonSave').dataset.id, 10),
-        };
-        JsonEditorHelperC.saveMetadataFromId(entityWithId);
       } else if (el.matches('[data-action="json-save-file"]')) {
         JsonEditorHelperC.saveNewFile();
       } else if (el.matches('[data-action="json-save"]')) {
         // need the stopPropagation here to toggle #json-save-dropdown when save button is pressed
         event.stopPropagation();
         JsonEditorHelperC.save();
+      } else if (el.matches('[data-action="json-import-file"]')) {
+        document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
+      } else if (el.matches('[data-action="json-upload-file"]')) {
+        const file = (document.getElementById('jsonImportFileInput') as HTMLInputElement).files[0];
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = function() {
+          try {
+            JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
+          } catch (error) {
+            notifError(error);
+          }
+        };
       } else if (el.matches('[data-action="json-clear"]')) {
         JsonEditorHelperC.clear();
       }

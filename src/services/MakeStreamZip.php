@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use function json_encode;
 use League\Flysystem\UnableToReadFile;
@@ -63,22 +62,6 @@ class MakeStreamZip extends AbstractMakeZip
         $this->Zip->finish();
     }
 
-    protected function getCsv(int $id): StringMakerInterface
-    {
-        return new MakeCsv($this->Entity, array($id));
-    }
-
-    /**
-     * Add a CSV file to the ZIP archive
-     *
-     * @param int $id The id of the item we are zipping
-     */
-    protected function addCsv(int $id): void
-    {
-        $MakeCsv = $this->getCsv($id);
-        $this->Zip->addFile($this->folder . '/' . $this->folder . '.csv', $MakeCsv->getFileContent());
-    }
-
     /**
      * This is where the magic happens
      * Note the different try catch blocks to skip issues that would stop the zip generation
@@ -90,7 +73,7 @@ class MakeStreamZip extends AbstractMakeZip
         $this->Entity->setId($id);
         try {
             $permissions = $this->Entity->getPermissions();
-        } catch (IllegalActionException $e) {
+        } catch (IllegalActionException) {
             return;
         }
         if ($permissions['read']) {
@@ -100,12 +83,12 @@ class MakeStreamZip extends AbstractMakeZip
 
             if (!empty($uploadedFilesArr)) {
                 try {
-                    $this->addAttachedFiles($uploadedFilesArr);
-                } catch (UnableToReadFile $e) {
+                    // we overwrite the uploads array with what the function returns so we have correct real_names
+                    $entityArr['uploads'] = $this->addAttachedFiles($uploadedFilesArr);
+                } catch (UnableToReadFile) {
                     return;
                 }
             }
-            $this->addCsv($id);
             $this->addPdf();
             // add an entry to the json file
             $this->jsonArr[] = $entityArr;

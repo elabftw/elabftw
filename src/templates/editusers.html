@@ -59,52 +59,57 @@
 
 
                 <div class='form-group'>
+                  <!-- you need to be sysadmin to edit things like firstname/lastname/email -->
                   <!-- FIRSTNAME -->
                   <li class='list-inline-item'>
                     {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
                     <label for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
-                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
+                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
                   </li>
 
                   <!-- LASTNAME -->
                   <li class='list-inline-item'>
                     <label for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
-                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
+                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
                   </li>
 
                   <!-- EMAIL -->
                   <li class='list-inline-item'>
                     <label for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
-                    <input autocomplete='off' class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
+                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
                   </li>
 
                   <!-- PERMISSION GROUP -->
                   <li class='list-inline-item'>
                     <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Permission group'|trans }}</label>
-                    <select class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
-                      <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
+                    <select {{ App.Users.userData.usergroup != '1' and user.usergroup == '1' ? 'disabled' }} class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
+                      {% if App.Users.userData.usergroup == '1' %}
+                        <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
+                      {% endif %}
                       <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
                       <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
                     </select>
                   </li>
 
-                  <!-- RESET PASSWORD -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                      <p class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</p>
-                    </label>
-                    <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
-                    <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                    <input type='text' data-ignore='1' hidden>
-                    <input type='password' data-ignore='1' hidden>
-                    {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-                    <div class='input-group'>
-                      <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
-                      <div class='input-group-append'>
-                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                  {% if App.Users.userData.usergroup == '1' %}
+                    <!-- RESET PASSWORD -->
+                    <li class='list-inline-item'>
+                      <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
+                        <p class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</p>
+                      </label>
+                      <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
+                      <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
+                      <input type='text' data-ignore='1' hidden>
+                      <input type='password' data-ignore='1' hidden>
+                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
+                      <div class='input-group'>
+                        <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
+                        <div class='input-group-append'>
+                          <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                        </div>
                       </div>
-                    </div>
-                  </li>
+                    </li>
+                  {% endif %}
 
                   <!-- ACTIVE ACCOUNT -->
                   <li class='list-inline-item'>
@@ -135,10 +140,12 @@
                     {% endif %}
                   </li>
 
-                  <!-- DESTROY USER -->
-                  <li class='list-inline-item'>
-                    <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
-                 </li>
+                  {% if App.Users.userData.usergroup == '1' %}
+                    <!-- DESTROY USER -->
+                    <li class='list-inline-item'>
+                      <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
+                   </li>
+                 {% endif %}
                 <hr>
               </ul>
             </li>

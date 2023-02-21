@@ -146,7 +146,7 @@ class Users implements RestInterface
         $Users2Teams = new Users2Teams();
         $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'));
         if ($alertAdmin && !$isFirstUser) {
-            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated);
+            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }
         if ($validated === 0) {
             $Notifications = new Notifications(new self($userid));
@@ -327,10 +327,8 @@ class Users implements RestInterface
         if ($UsersHelper->cannotBeDeleted()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
         }
-        $sql = 'DELETE FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        // currently, let's disable this entirely. Next step will be to give this a state and set it to deleted.
+        return false;
     }
 
     /**
@@ -382,6 +380,10 @@ class Users implements RestInterface
         }
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+            // we can only edit our own email, or be sysadmin
+            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
+                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
+            }
             Filter::email($params->getContent());
         }
 
@@ -439,10 +441,11 @@ class Users implements RestInterface
         return $this->userData;
     }
 
-    private function notifyAdmins(array $admins, int $userid, int $validated): void
+    private function notifyAdmins(array $admins, int $userid, int $validated, string $team): void
     {
         $body = array(
             'userid' => $userid,
+            'team' => $team,
         );
         $notifCat = Notifications::USER_CREATED;
         if ($validated === 0) {

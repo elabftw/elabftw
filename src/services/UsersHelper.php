@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 
 use function array_column;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use PDO;
 
@@ -80,11 +79,7 @@ class UsersHelper
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $res = $req->fetchAll();
-        if (empty($res)) {
-            throw new ImproperActionException('Could not find a team for this user!');
-        }
-        return $res;
+        return $req->fetchAll();
     }
 
     /**

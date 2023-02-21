@@ -44,6 +44,12 @@
 </div>
 {% endif %}
 
+{% if Entity.entityData.locked %}
+<div class='alert alert-success'><i class='fas fa-info-circle'></i>
+  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw }}
+</div>
+{% endif %}
+
     <div class='mb-2'>
       {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
       <div class='hl-hover-gray d-inline p-2 rounded'>
@@ -78,7 +84,7 @@
       {% set alt = 'Lock/Unlock item'|trans %}
       {% if Entity.entityData.locked %}
           {% set lockIcon = 'fa-lock' %}
-          {% set alt = Entity.entityData.lockedwhen %}
+          {% set alt = Entity.entityData.locked_at %}
       {% endif %}
       <div class='hl-hover-gray d-inline p-2 rounded'>
         <a class='elab-tooltip' href='#' data-action='lock-entity'>
@@ -121,8 +127,9 @@
       <!-- Download / Export menu -->
       <div class='hl-hover-gray d-inline p-2 rounded'>
         <div class='dropdown d-inline'>
-          <a data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Export'|trans }}' aria-label='{{ 'Export'|trans }}' role='button'>
-            <i class='fas fa-download fa-2x'></i>
+          <a class='elab-tooltip' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' role='button'>
+            <span>{{ 'Export'|trans }}</span>
+            <i title='{{ 'Export'|trans }}' class='fas fa-download fa-2x'></i>
           </a>
           <span class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
             <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
@@ -138,9 +145,6 @@
 
 <section class='item' id='main_section' style='padding:15px;border-left: 6px solid #{{ Entity.entityData.color }}'>
   <div class='d-flex'>
-
-
-
     <div class='mr-auto'>
       <!-- CATEGORY AND RATING -->
       <div>
@@ -151,7 +155,7 @@
           {% endif %}
         <!-- build the tag array -->
         {% if Entity.entityData.tags|length > 0 %}
-          <span class='tags mathjax-ignore'>
+          <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
             <i class='fas fa-tags mr-2'></i>
             {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
             {% set tagsValueArr = Entity.entityData.tags|split('|') %}
@@ -235,7 +239,13 @@
       <div id='body_view' class='pt-2' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
   {% endif %}
 
-  <div id='metadataDiv' class='col-md-6'></div>
+  <!-- METADATA view -->
+  {% if Entity.entityData.metadata %}
+    <div class='box col-md-12'>
+      <h4>{{ 'Extra fields'|trans }}</h4>
+      {{ Entity.entityData.metadata|formatMetadata }}
+    </div>
+  {% endif %}
 
 </section>
 
@@ -315,6 +325,7 @@
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-team='{{ App.Users.userData.team }}'
+    data-isanon='{{ App.Session.get('is_anon') }}'
     data-scedit='{{ Entity.Users.userData.sc_edit }}'>
 </div>
 <div id='shortcuts'

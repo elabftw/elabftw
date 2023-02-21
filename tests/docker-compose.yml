@@ -57,12 +57,22 @@ services:
             - ..:/elabftw
         networks:
             - elabftw-net
+        # make sure we wait for mysql to be available before starting
+        # note: the mysql container needs an healthcheck block for this to work
         depends_on:
-          - mysql
+            mysql:
+                condition: service_healthy
 
     mysql:
         image: mysql:8.0
         container_name: mysqltmp
+        # add an healthcheck block so the web container knows when it is ready to accept connections
+        # use double $ here so env vars are correctly found
+        healthcheck:
+            test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute 'SHOW DATABASES;'"
+            interval: 2s
+            timeout: 5s
+            retries: 20
         # drop some capabilities
         cap_drop:
             - AUDIT_WRITE

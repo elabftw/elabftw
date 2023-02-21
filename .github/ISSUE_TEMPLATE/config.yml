@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community forum
+    url: https://github.com/elabftw/elabftw/discussions/
+    about: Please ask and answer questions here.
+  - name: Chat
+    url: https://gitter.im/elabftw/elabftw
+    about: Join the chat to discuss with other users.

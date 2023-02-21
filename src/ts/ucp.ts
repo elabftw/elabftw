@@ -11,6 +11,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
+import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
@@ -30,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   const entity = getEntity();
+  if (entity.id) {
+    // add extra fields elements from metadata json
+    const MetadataC = new Metadata(entity);
+    MetadataC.display('edit');
+  }
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
@@ -143,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'file': (event.target as HTMLInputElement).files[0],
       'target': 'experiments_templates:0',
     };
+    // TODO check for file size here too, like the other import modal
     (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
       window.location.reload();
     });

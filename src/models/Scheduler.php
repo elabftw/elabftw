@@ -131,6 +131,7 @@ class Scheduler implements RestInterface
             CONCAT('#', items_types.color) AS color,
             team_events.experiment,
             items.category AS items_category,
+            items.id AS items_id,
             experiments.title AS experiment_title,
             team_events.item_link,
             items_linkt.title AS item_link_title
@@ -162,6 +163,7 @@ class Scheduler implements RestInterface
             'end' => $this->updateEnd($params['delta']),
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
+            'title' => $this->updateTitle($params['content']),
             'start_epoch' => $this->updateEpoch('start', $params['epoch']),
             'end_epoch' => $this->updateEpoch('end', $params['epoch']),
             default => throw new ImproperActionException('Incorrect target parameter.'),
@@ -312,6 +314,16 @@ class Scheduler implements RestInterface
         $req->bindValue(':end', $newEnd->format('c'));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updateTitle(string $title): bool
+    {
+        $title = Filter::title($title);
+        $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':title', $title, PDO::PARAM_STR);
         return $this->Db->execute($req);
     }
 

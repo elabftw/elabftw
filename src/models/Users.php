@@ -328,7 +328,7 @@ class Users implements RestInterface
             throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
         }
         // currently, let's disable this entirely. Next step will be to give this a state and set it to deleted.
-        return false;
+        throw new ImproperActionException('Complete user deletion is temporarily deactivated. Use Archive button instead.');
     }
 
     /**

@@ -209,7 +209,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Admin = new Users(4, 2);
         $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
         $Target = new Users($id, 2, $Admin);
-        $this->assertFalse($Target->destroy());
+        $this->expectException(ImproperActionException::class);
+        $Target->destroy();
+        // correct one $this->assertTrue($Target->destroy());
     }
 
     public function testDestroyWithExperiments(): void

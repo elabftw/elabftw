@@ -140,7 +140,8 @@
                     {% endif %}
                   </li>
 
-                  {% if App.Users.userData.usergroup == '1' %}
+                  {# this is disabled for now, so remove the button by adding "and false" #}
+                  {% if App.Users.userData.usergroup == '1' and false %}
                     <!-- DESTROY USER -->
                     <li class='list-inline-item'>
                       <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>

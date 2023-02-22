@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { Api } from './Apiv2.class';
 import Todolist from './Todolist.class';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TodolistC = new Todolist();
+  const ApiC = new Api();
   TodolistC.unfinishedStepsScope = unfinishedStepsScope;
 
   // TOGGLE
@@ -85,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const malleableTodoitem = new Malle({
     inputClasses: ['form-control'],
     fun: async (value, original) => {
-      return TodolistC.update(parseInt(original.dataset.todoitemid, 10), value)
+      return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
         .then(resp => resp.json()).then(json => json.body);
     },
     listenOn: '.todoItem',

@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
-    fun: (value, original) => {
-      ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${original.dataset.id}`, {'name': value}).then(() => reloadElement('team_groups_div'));
-      return value;
+    fun: async (value, original) => {
+      return ApiC.patch(`${Model.Team}/${original.dataset.teamid}/${Model.TeamGroup}/${original.dataset.id}`, {'name': value})
+        .then(resp => resp.json()).then(json => json.name);
     },
-    listenOn: '.teamgroup_name.editable',
+    listenOn: '.malleableTeamgroupName',
     tooltip: i18next.t('click-to-edit'),
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],

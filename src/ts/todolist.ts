@@ -84,9 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // UPDATE TODOITEM
   const malleableTodoitem = new Malle({
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      TodolistC.update(parseInt(original.dataset.todoitemid, 10), value);
-      return value;
+    fun: async (value, original) => {
+      return TodolistC.update(parseInt(original.dataset.todoitemid, 10), value)
+        .then(resp => resp.json()).then(json => json.body);
     },
     listenOn: '.todoItem',
     tooltip: i18next.t('click-to-edit'),

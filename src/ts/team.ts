@@ -279,11 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      const eventid = parseInt(original.dataset.eventid, 10);
+    fun: async (value, original) => {
       const params = {'target': 'title', 'content': value};
-      ApiC.patch(`event/${eventid}`, params);
-      return value;
+      return ApiC.patch(`event/${original.dataset.eventid}`, params)
+        .then(resp => resp.json()).then(json => json.title);
     },
     listenOn: '#eventTitle',
     submit : i18next.t('save'),

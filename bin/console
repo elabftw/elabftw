@@ -1,4 +1,4 @@
-#!/usr/bin/env phpwithenv
+#!/usr/bin/env php
 <?php
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>

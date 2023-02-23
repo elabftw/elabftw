@@ -84,9 +84,9 @@ FieldTimestamp
   }
 
 FieldId
-  = 'id'i ':' strict:('s:' {return true;})? id:$(Digit19 Digit*)
+  = 'id'i ':' id:$(Digit19 Digit*)
   {
-    return new Field('id', new SimpleValueWrapper($id), $strict)
+    return new Field('id', new SimpleValueWrapper($id));
   }
 
 FieldDate

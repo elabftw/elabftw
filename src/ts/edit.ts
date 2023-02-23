@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // check if there is some local data with this id to recover
   if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
     const bodyRecovery = $('<div></div>', {
-      'class' : 'alert alert-warning',
+      class : 'alert alert-warning',
+      id: 'recoveryDiv',
       html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
     });
     $('#main_section').before(bodyRecovery);
@@ -103,15 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // RECOVER YES
   $(document).on('click', '.recover-yes', function() {
     EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
+      editor.replaceContent(localStorage.getItem('body'));
       localStorage.clear();
-      document.location.reload();
+      document.getElementById('recoveryDiv').remove();
     });
   });
 
   // RECOVER NO
   $(document).on('click', '.recover-no', function() {
     localStorage.clear();
-    document.location.reload();
+    document.getElementById('recoveryDiv').remove();
   });
 
   // END DATA RECOVERY

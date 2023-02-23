@@ -476,8 +476,8 @@ github issue #52 */
 }
 
 /* prettier tables in mceditable area */
-.txt table,
-.txt table td {
+#body_view table:not([border]),
+#body_view table td:not([border]) {
     border: 1px solid $maingray;
 }
 

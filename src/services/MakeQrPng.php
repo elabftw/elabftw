@@ -98,7 +98,6 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     private function getQrCode(): string
     {
         $qrCode = new QrCode($this->entity->entityData['sharelink']);
-        // save black on white PNG image 100 px wide to filename.png. Colors are RGB arrays.
         $output = new Output\Png();
         return $output->output($qrCode, $this->size, $this->backgroundColor, $this->foregroundColor);
     }

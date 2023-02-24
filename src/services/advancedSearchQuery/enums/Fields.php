@@ -18,6 +18,7 @@ enum Fields: string
     case Category = 'category';
     case Elabid = 'elabid';
     case Group = 'group';
+    case Id = 'id';
     case Locked = 'locked';
     case Rating = 'rating';
     case Status = 'status';

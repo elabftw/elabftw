@@ -51,11 +51,15 @@ class Tags implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT DISTINCT tag, tags2entity.tag_id FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            WHERE item_id = :item_id AND item_type = :item_type';
+        $sql = sprintf(
+            'SELECT DISTINCT tag, tags2%1$s.tag_id
+                FROM tags2%1$s
+                LEFT JOIN tags ON (tags2%1$s.tag_id = tags.id)
+                WHERE item_id = :item_id',
+            $this->Entity->type,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':item_type', $this->Entity->type);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -69,17 +73,17 @@ class Tags implements RestInterface
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
         $tags = $this->readAll();
-        $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
-        $insertReq = $this->Db->prepare($insertSql);
         $type = $this->Entity->type;
         // an experiment template transforms into an experiment
         if ($toExperiments) {
             $type = 'experiments';
         }
 
+        $insertSql = sprintf('INSERT INTO tags2%1$s (%1$s_id, tag_id) VALUES (:item_id, :tag_id)', $type);
+        $insertReq = $this->Db->prepare($insertSql);
+
         foreach ($tags as $tag) {
             $insertReq->bindParam(':item_id', $newId, PDO::PARAM_INT);
-            $insertReq->bindParam(':item_type', $type);
             $insertReq->bindParam(':tag_id', $tag['tag_id'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
         }
@@ -100,10 +104,9 @@ class Tags implements RestInterface
      */
     public function destroy(): bool
     {
-        $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
+        $sql = sprintf('DELETE FROM tags2%1$s WHERE %1$s_id = :id', $this->Entity->type);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
     }
 
@@ -125,10 +128,15 @@ class Tags implements RestInterface
         // look for item ids that have all the tags not only one of them
         // note: you can't have a parameter for the IN clause
         // the HAVING COUNT is necessary to make an AND search between tags
-        $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
-            AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
+        $sql = sprintf(
+            'SELECT %1$s_id
+                FROM tags2%1$s
+                WHERE tag_id IN (' . implode(',', $tagIds) . ')
+                GROUP BY %1$s_id
+                HAVING COUNT(DISTINCT tag_id) = :count',
+            $this->Entity->type,
+        );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
         // note: we count on the number of provided tags, not the result of the first query as the same tag can appear mutiple times (from different teams)
         $req->bindValue(':count', count($tags), PDO::PARAM_INT);
         $req->execute();
@@ -142,7 +150,11 @@ class Tags implements RestInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $insertSql2 = sprintf(
+            'INSERT INTO tags2%1$s (%1$s_id, tag_id)
+                VALUES (:item_id, :tag_id)',
+            $this->Entity->type,
+        );
         $insertReq2 = $this->Db->prepare($insertSql2);
         // check if the tag doesn't exist already for the team
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
@@ -170,7 +182,6 @@ class Tags implements RestInterface
         }
         // now reference it
         $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $insertReq2->bindParam(':item_type', $this->Entity->type);
         $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $this->Db->execute($insertReq2);
 
@@ -184,16 +195,23 @@ class Tags implements RestInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
+        $sql = sprintf(
+            'DELETE FROM tags2%1$s
+                WHERE tags_id = :tags_id AND %1$s_id = :entity_id',
+            $this->Entity->type,
+        );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
+        $sqlfragments = array_map(function (string $type): string {
+            return 'SELECT tags_id FROM tags2' . $type . ' WHERE tags_id = :tags_id';
+        }, array('items', 'experiments', 'experiments_templates'));
+        $sql = implode(' UNION ALL ', $sqlfragments);
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $tags = $req->fetchAll();
 

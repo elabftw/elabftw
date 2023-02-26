@@ -8,7 +8,7 @@
       <div id='tags_div_{{ Entity.id }}' class='mb-2 mb-sm-0'>
         <!--  build the tag array -->
         {% if Entity.entityData.tags|length > 0 %}
-          {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+          {% set tagsIdArr = Entity.entityData.tags_ids|split(',') %}
           {% set tagsValueArr = Entity.entityData.tags|split('|') %}
           {% for key, tag in tagsValueArr -%}
             {#- the key allows to get the id stored in tagsIdArr -#}

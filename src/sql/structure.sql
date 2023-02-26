@@ -637,20 +637,60 @@ CREATE TABLE `tags` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags2entity`
+-- Table structure for table `tags2items`
 --
 
-CREATE TABLE `tags2entity` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `tag_id` int(10) UNSIGNED NOT NULL,
-  `item_type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `tags2items` (
+  `items_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`items_id`, `tags_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
--- RELATIONSHIPS FOR TABLE `tags2entity`:
---   `tag_id`
+-- RELATIONSHIPS FOR TABLE `tags2items`:
+--   `items_id`
+--       `items` -> `id`
+--   `tags_id`
+--       `tags` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags2experiments`
+--
+
+CREATE TABLE `tags2experiments` (
+  `experiments_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`experiments_id`, `tags_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tags2experiments`:
+--   `experiments_id`
+--       `experiments` -> `id`
+--   `tags_id`
+--       `tags` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags2experiments_templates`
+--
+
+CREATE TABLE `tags2experiments_templates` (
+  `experiments_templates_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`experiments_templates_id`, `tags_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tags2experiments_templates`:
+--   `experiments_templates_id`
+--       `experiments_templates` -> `id`
+--   `tags_id`
 --       `tags` -> `id`
 --
 
@@ -1087,6 +1127,28 @@ ALTER TABLE `experiments2experiments`
 ALTER TABLE `items2experiments`
   ADD KEY `fk_items2experiments_item_id` (`item_id`),
   ADD KEY `fk_items2experiments_link_id` (`link_id`);
+
+--
+-- Indexes for table `tags2items`
+--
+ALTER TABLE `tags2items`
+  ADD KEY `fk_tags2items_items_id` (`items_id`),
+  ADD KEY `fk_tags2items_tags_id` (`tags_id`);
+
+--
+-- Indexes for table `tags2experiments`
+--
+ALTER TABLE `tags2experiments`
+  ADD KEY `fk_tags2experiments_experiments_id` (`experiments_id`),
+  ADD KEY `fk_tags2experiments_tags_id` (`tags_id`);
+
+--
+-- Indexes for table `tags2experiments_templates`
+--
+ALTER TABLE `tags2experiments_templates`
+  ADD KEY `fk_tags2experiments_templates_experiments_templates_id` (`experiments_templates_id`),
+  ADD KEY `fk_tags2experiments_templates_tags_id` (`tags_id`);
+
 --
 -- Constraints for table `api_keys`
 --
@@ -1375,6 +1437,39 @@ ALTER TABLE `pin_items2users`
 ALTER TABLE `pin_items2users`
   ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tags2items`
+--
+ALTER TABLE `tags2items`
+  ADD CONSTRAINT `fk_tags2items_items_id`
+    FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tags2items_tags_id`
+    FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tags2experiments`
+--
+ALTER TABLE `tags2experiments`
+  ADD CONSTRAINT `fk_tags2experiments_experiments_id`
+    FOREIGN KEY (`experiments_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tags2experiments_tags_id`
+    FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tags2experiments_templates`
+--
+ALTER TABLE `tags2experiments_templates`
+  ADD CONSTRAINT `fk_tags2experiments_templates_experiments_templates_id`
+    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tags2experiments_templates_tags_id`
+    FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

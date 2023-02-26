@@ -146,7 +146,7 @@
         <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
           <!--  build the tag array -->
           {% if Entity.entityData.tags|length > 0 %}
-            {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+            {% set tagsIdArr = Entity.entityData.tags_ids|split(',') %}
             {% set tagsValueArr = Entity.entityData.tags|split('|') %}
             {% for tag in tagsValueArr -%}
               <a class='tag margin-1px hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>

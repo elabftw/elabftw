@@ -657,6 +657,26 @@ CREATE TABLE `tags2items` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tags2items_types`
+--
+
+CREATE TABLE `tags2items_types` (
+  `items_types_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`items_types_id`, `tags_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tags2items_types`:
+--   `items_types_id`
+--       `items_types` -> `id`
+--   `tags_id`
+--       `tags` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tags2experiments`
 --
 
@@ -1136,6 +1156,13 @@ ALTER TABLE `tags2items`
   ADD KEY `fk_tags2items_tags_id` (`tags_id`);
 
 --
+-- Indexes for table `tags2items_types`
+--
+ALTER TABLE `tags2items_types`
+  ADD KEY `fk_tags2items_types_items_types_id` (`items_types_id`),
+  ADD KEY `fk_tags2items_types_tags_id` (`tags_id`);
+
+--
 -- Indexes for table `tags2experiments`
 --
 ALTER TABLE `tags2experiments`
@@ -1446,6 +1473,17 @@ ALTER TABLE `tags2items`
     FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_tags2items_tags_id`
+    FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `tags2items_types`
+--
+ALTER TABLE `tags2items_types`
+  ADD CONSTRAINT `fk_tags2items_types_items_types_id`
+    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tags2items_types_tags_id`
     FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE;
 

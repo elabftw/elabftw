@@ -12,6 +12,12 @@ DELETE tags2entity
   LEFT JOIN items
     ON (tags2entity.item_id = items.id)
   WHERE tags2entity.item_type LIKE 'items' AND items.id IS NULL;
+-- tags2entity remove row if items_types does not exist
+DELETE tags2entity
+  FROM tags2entity
+  LEFT JOIN items_types
+    ON (tags2entity.item_id = items_types.id)
+  WHERE tags2entity.item_type LIKE 'items_types' AND items_types.id IS NULL;
 -- tags2entity remove row if experiment does not exist
 DELETE tags2entity
   FROM tags2entity
@@ -47,6 +53,29 @@ ALTER TABLE `tags2items`
 INSERT INTO tags2items (items_id, tags_id)
   SELECT DISTINCT item_id, tag_id
   FROM tags2entity WHERE item_type LIKE 'items';
+
+-- create tags2items_types
+CREATE TABLE `tags2items_types` (
+  `items_types_id` int UNSIGNED NOT NULL,
+  `tags_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`items_types_id`, `tags_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+-- tags2items_types add FKs
+ALTER TABLE `tags2items_types`
+  ADD KEY `fk_tags2items_types_items_types_id` (`items_types_id`),
+  ADD KEY `fk_tags2items_types_tags_id` (`tags_id`);
+-- tags2items_types add constraints
+ALTER TABLE `tags2items_types`
+  ADD CONSTRAINT `fk_tags2items_types_items_types_id`
+    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tags2items_types_tags_id`
+    FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+-- tags2items_types copy data, avoid duplications
+INSERT INTO tags2items_types (items_types_id, tags_id)
+  SELECT DISTINCT item_id, tag_id
+  FROM tags2entity WHERE item_type LIKE 'items_types';
 
 -- create tags2experiments
 CREATE TABLE `tags2experiments` (

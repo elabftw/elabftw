@@ -151,7 +151,7 @@
           <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </a>
-          <h3 class='editable mb-2 teamgroup_name' data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}'><span class='hl-hover'>{{ teamGroup.name|raw }}</span></h3>
+          <h3 class='mb-2'><span data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name|raw }}</span></h3>
           <div class='d-flex flex-wrap'>
             {% for user in teamGroup.users %}
               <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>

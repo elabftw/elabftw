@@ -51,10 +51,6 @@ export default class Todolist extends SidePanel {
     });
   }
 
-  update(id: number, content: string): Promise<Response> {
-    return this.api.patch(`${this.model}/${id}`, {'content': content});
-  }
-
   toggleUnfinishedStepsScope(): void {
     localStorage.setItem(this.model + 'StepsShowTeam', (localStorage.getItem(this.model + 'StepsShowTeam') === '1' ? '0' : '1'));
     this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');

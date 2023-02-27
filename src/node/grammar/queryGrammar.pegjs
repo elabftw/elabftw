@@ -69,6 +69,7 @@ Fields
   / FieldBoolean
   / FieldRating
   / FieldAttachment
+  / FieldId
 
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
@@ -80,6 +81,12 @@ FieldTimestamp
   = field:('created_at'i / 'locked_at'i / 'timestamped_at'i) ':' date:(DateBetween / DateSimple)
   {
     return new TimestampField(strtolower($field), $date);
+  }
+
+FieldId
+  = 'id'i ':' id:$(Digit19 Digit*)
+  {
+    return new Field('id', new SimpleValueWrapper($id));
   }
 
 FieldDate

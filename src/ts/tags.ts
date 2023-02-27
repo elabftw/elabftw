@@ -91,9 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelClasses: ['button', 'btn', 'btn-danger', 'ml-1'],
     inputClasses: ['form-control'],
     formClasses: ['d-inline-flex'],
-    fun: (value, original) => {
-      ApiC.patch(`${Model.TeamTags}/${original.dataset.id}`, {'action': Action.UpdateTag, 'tag': value});
-      return value;
+    fun: async (value, original) => {
+      const resp = await ApiC.patch(`${Model.TeamTags}/${original.dataset.id}`, {'action': Action.UpdateTag, 'tag': value});
+      const json = await resp.json();
+      // the response contains all the tags, so we need to find the correct one to display the updated value
+      return json.find((tag: Record<string, string|number>) => tag.id === parseInt(original.dataset.id, 10)).tag;
     },
     listenOn: '.tag.editable',
     tooltip: i18next.t('click-to-edit'),

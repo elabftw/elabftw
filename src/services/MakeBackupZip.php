@@ -9,8 +9,7 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
+use Elabftw\Models\AbstractConcreteEntity;
 use ZipStream\ZipStream;
 
 /**
@@ -18,7 +17,7 @@ use ZipStream\ZipStream;
  */
 class MakeBackupZip extends AbstractMakeZip
 {
-    public function __construct(protected ZipStream $Zip, Experiments | Items $entity, private string $period)
+    public function __construct(protected ZipStream $Zip, AbstractConcreteEntity $entity, private string $period)
     {
         parent::__construct($entity);
     }

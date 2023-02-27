@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // make file comments editable
   const malleableFilecomment = new Malle({
     formClasses: ['d-inline-flex'],
-    fun: (value, original) => {
+    fun: async (value, original) => {
       const uploadid = parseInt(original.dataset.id, 10);
-      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value});
-      return value;
+      return ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value})
+        .then(resp => resp.json()).then(json => json.comment);
     },
     inputClasses: ['form-control'],
     listenOn: '.file-comment.editable',

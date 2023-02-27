@@ -139,9 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value}).then(() => reloadElement('commentsDiv'));
-      return value;
+    fun: async (value, original) => {
+      const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
+      const json = await resp.json();
+      // we reload all so the edition date is also reloaded
+      reloadElement('commentsDiv');
+      return json.comment;
     },
     inputType: InputType.Textarea,
     listenOn: '.comment.editable',

@@ -16,9 +16,11 @@
     <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
   {% endif %}
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
-  <link rel='icon' type='image/ico' href='app/img/favicon.ico' />
-  <link rel='apple-touch-icon' href='app/img/apple-touch-icon.png' />
-  <link rel='apple-touch-icon-precomposed' href='app/img/apple-touch-icon-precomposed.png'>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="app/img/favicon.ico" sizes="any"><!-- 32×32 -->
+  <link rel="icon" href="app/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="app/img/apple-touch-icon.png"><!-- 180×180 -->
+
   <title>{{ block('title') }} - eLabFTW</title>
   <!-- load open vector editor -->
   <link rel='stylesheet' type='text/css' href='assets/ove/main.css?v={{ v }}'>

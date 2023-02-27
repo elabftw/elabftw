@@ -19,7 +19,6 @@ class MakeQrPdfTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Entity = new Experiments(new Users(1, 1), 1);
-        $Entity->canOrExplode('read');
         $MpdfProvider = new MpdfProvider('Toto');
         $this->MakePdf = new MakeQrPdf($MpdfProvider, $Entity, array('1', '2', '3'));
     }

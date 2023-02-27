@@ -56,6 +56,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' timestamped_at:!=2022,12,09';
         $query .= ' created_at:>2022,12.09';
         $query .= ' locked_at:<20221209';
+        $query .= ' id:1';
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',

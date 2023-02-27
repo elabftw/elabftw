@@ -78,15 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      StepC.update(
-        parseInt(original.dataset.stepid, 10),
-        value,
-        original.dataset.target as Target,
-      ).then(() => {
-        reloadElement('stepsDiv');
-      });
-      return value;
+    fun: async (value, original) => {
+      return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
+        .then(resp => resp.json()).then(json => json.body);
     },
     listenOn: '.step.editable',
     submit : i18next.t('save'),

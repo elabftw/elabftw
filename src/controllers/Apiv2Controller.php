@@ -182,6 +182,7 @@ class Apiv2Controller extends AbstractApiController
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::QrPdf,
+            ExportFormat::QrPng,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,

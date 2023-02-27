@@ -154,9 +154,11 @@ class Apiv1Controller extends AbstractApiController
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
         switch ($this->endpoint) {
+            case 'backupzip':
+                $this->Entity = new Experiments($this->Users);
+                break;
             case 'experiments':
             case 'uploads':
-            case 'backupzip':
             case 'tags':
                 $this->Entity = new Experiments($this->Users, $this->id);
                 break;

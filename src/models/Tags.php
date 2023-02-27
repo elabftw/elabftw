@@ -81,7 +81,7 @@ class Tags implements RestInterface
             $type = 'experiments';
         }
 
-        $insertSql = sprintf('INSERT INTO tags2%1$s (%1$s_id, tags_id) VALUES (:entity_id, :tags_id)', $type);
+        $insertSql = sprintf('INSERT IGNORE INTO tags2%1$s (%1$s_id, tags_id) VALUES (:entity_id, :tags_id)', $type);
         $insertReq = $this->Db->prepare($insertSql);
 
         foreach ($tags as $tag) {
@@ -153,7 +153,7 @@ class Tags implements RestInterface
         $this->Entity->canOrExplode('write');
 
         $insertSql2 = sprintf(
-            'INSERT INTO tags2%1$s (%1$s_id, tags_id)
+            'INSERT IGNORE INTO tags2%1$s (%1$s_id, tags_id)
                 VALUES (:entity_id, :tags_id)',
             $this->Entity->type,
         );

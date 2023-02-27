@@ -42,7 +42,7 @@ abstract class AbstractNotifications
             $isAck = 0;
         }
 
-        $jsonBody = $this->getJsonBody($this->getBody());
+        $jsonBody = json_encode($this->getBody(), JSON_THROW_ON_ERROR, 5);
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
@@ -90,14 +90,6 @@ abstract class AbstractNotifications
     }
 
     abstract protected function getBody(): array;
-
-    protected function getJsonBody(?array $body): string
-    {
-        if ($body === null) {
-            return '{}';
-        }
-        return json_encode($body, JSON_THROW_ON_ERROR, 5);
-    }
 
     /**
      * @return array<int, int>

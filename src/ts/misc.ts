@@ -352,24 +352,28 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
-export function updateCategory(entity: Entity, value: string): string {
-  const ApiC = new Api();
-  ApiC.patch(`${entity.type}/${entity.id}`, {'category': value}).then(resp => {
-    resp.json().then(json => {
-      // change the color of the item border
-      // we first remove any status class
-      $('#main_section').css('border', null);
-      // and we add our new border color
-      // first : get what is the color of the new status
-      const css = '6px solid #' + json.color;
-      $('#main_section').css('border-left', css);
-      const params = new URLSearchParams(document.location.search);
-      if (params.get('mode') === 'view') {
-        reloadElement('main_section');
-      }
-    });
-  });
-  return value;
+export async function updateCategory(entity: Entity, value: string): Promise<string> {
+  const resp = await (new Api()).patch(`${entity.type}/${entity.id}`, {'category': value});
+  const json = await resp.json();
+  // change the color of the item border
+  // we first remove any status class
+  $('#main_section').css('border', null);
+  // and we add our new border color
+  // first : get what is the color of the new status
+  const css = '6px solid #' + json.color;
+  $('#main_section').css('border-left', css);
+
+  // we also need to change the category next to the title for db items
+  const title = document.getElementById('documentTitle');
+  // it's only there is view mode, and for database items
+  const url = new URL(document.location.href);
+  if (title && url.pathname.split('/').pop() === 'database.php') {
+    const categoryName = (title.firstElementChild as HTMLElement);
+    categoryName.innerText = json.category;
+    // also adjust to the new color
+    categoryName.style.color = `#${json.color}`;
+  }
+  return json.category;
 }
 
 export function showContentPlainText(el: HTMLElement): void {

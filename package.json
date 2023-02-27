@@ -8,7 +8,7 @@
   "dependencies": {
     "3dmol": "^1.4.0",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
-    "@deltablot/malle": "^1.0.1",
+    "@deltablot/malle": "^2.0.0",
     "@deltablot/open-vector-editor-umd": "^18.0.0",
     "@fancyapps/fancybox": "3.5.*",
     "@fullcalendar/bootstrap": "^5.1.0",

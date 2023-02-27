@@ -13,6 +13,7 @@ use function count;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
@@ -28,6 +29,7 @@ use Elabftw\Services\MakeJson;
 use Elabftw\Services\MakeMultiPdf;
 use Elabftw\Services\MakePdf;
 use Elabftw\Services\MakeQrPdf;
+use Elabftw\Services\MakeQrPng;
 use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeSchedulerReport;
 use Elabftw\Services\MakeStreamZip;
@@ -86,6 +88,10 @@ class MakeController implements ControllerInterface
             case 'qrpdf':
                 $this->populateIdArr();
                 return $this->makeQrPdf();
+
+            case 'qrpng':
+                $this->populateIdArr();
+                return $this->makeQrPng();
 
             case 'report':
                 if (!$this->Users->userData['is_sysadmin']) {
@@ -169,6 +175,15 @@ class MakeController implements ControllerInterface
     private function makeQrPdf(): Response
     {
         return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
+    }
+
+    private function makeQrPng(): Response
+    {
+        // only works for 1 entry
+        if (count($this->idArr) !== 1) {
+            throw new ImproperActionException('QR PNG format is only suitable for one ID.');
+        }
+        return $this->getFileResponse(new MakeQrPng($this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
     }
 
     private function makeReport(): Response

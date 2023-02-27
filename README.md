@@ -31,11 +31,26 @@ It is accessed _via_ the browser. Several research teams can be hosted on the sa
 Click the image below to see it in bigger size:
 [![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://gfycat.com/tangibleequatorialbrant)
 
+## Features
+
+* Lab notebook for experiments
+* Database for lab reagents, equipments, storage, cell lines, etc...
+* Trusted timestamping
+* Import and export in various formats
+* Calendar to manage booking of equipments
+* Support for various scientific file formats
+* Molecule/equation editor
+* LaTeX support
+* Todolist
+* Use the REST HTTP API to access it from a program
+* Available in 17 languages
+* Advanced permissions system
+
+## How it works
+
 **eLabFTW** is designed to be installed on a server, and people from the team can log in from their browser.
 
 ![server client](https://i.imgur.com/BcfFgQS.gif)
-
-Without a server, even an old computer with 1 GB of RAM and an old CPU can be used. Make sure to install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation
 

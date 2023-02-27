@@ -9,12 +9,12 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
@@ -194,16 +194,13 @@ class Steps implements RestInterface
         $step = $req->fetch();
 
         // now create a notification if none exist for this step id already
-        $Notifications = new Notifications($this->Entity->Users);
-        $Notifications->createIfNotExists(new CreateNotificationParams(
-            Notifications::STEP_DEADLINE,
-            array(
-                'step_id' => $this->id,
-                'entity_id' => $this->Entity->entityData['id'],
-                'entity_page' => $this->Entity->page,
-                'deadline' => $step['deadline'],
-            ),
-        ));
+        $Notifications = new StepDeadline(
+            $this->id,
+            $this->Entity->entityData['id'],
+            $this->Entity->page,
+            $step['deadline'],
+        );
+        $Notifications->createIfNotExists($this->Entity->Users->userData['userid'], $this->id);
 
         // update the deadline_notif column so we now if this step has a notif set for deadline or not
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';

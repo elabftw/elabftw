@@ -59,7 +59,7 @@ abstract class AbstractMake
      */
     protected function getCss(): string
     {
-        $assetsFs = FsTools::getFs(dirname(__DIR__, 2) . '/web/assets');
+        $assetsFs = FsTools::getFs(dirname(__DIR__, 3) . '/web/assets');
         return $assetsFs->read('pdf.min.css');
     }
 

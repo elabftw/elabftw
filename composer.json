@@ -83,7 +83,11 @@
         "src/models"
       ],
       "Elabftw\\Services\\": [
-        "src/services"
+        "src/services",
+        "src/services/auth",
+        "src/services/import",
+        "src/services/make",
+        "src/services/storage"
       ],
       "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
         "src/services/advancedSearchQuery/collectors"

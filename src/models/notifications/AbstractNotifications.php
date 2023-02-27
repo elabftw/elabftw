@@ -89,7 +89,14 @@ abstract class AbstractNotifications
         return count($useridArr);
     }
 
-    abstract protected function getBody(): array;
+    /**
+     * The "body" of a notification is an array of the required data for that particular notification
+     * Some notifications don't need one, some will have several variables. It is stored as JSON.
+     */
+    protected function getBody(): array
+    {
+        return array();
+    }
 
     /**
      * @return array<int, int>

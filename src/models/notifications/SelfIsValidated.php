@@ -28,9 +28,4 @@ class SelfIsValidated extends AbstractNotifications implements MailableInterface
         $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
         return array('subject' => $subject, 'body' => $body);
     }
-
-    protected function getBody(): array
-    {
-        return array();
-    }
 }

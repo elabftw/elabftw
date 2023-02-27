@@ -17,9 +17,4 @@ use Elabftw\Enums\Notifications;
 class PdfGenericError extends AbstractNotifications
 {
     protected Notifications $category = Notifications::PdfGenericError;
-
-    protected function getBody(): array
-    {
-        return array();
-    }
 }

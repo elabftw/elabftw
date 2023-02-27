@@ -12,12 +12,14 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -91,9 +93,18 @@ class TeamTags implements RestInterface
         // TODO move this out of here
         $Request = Request::createFromGlobals();
         $query = Filter::sanitize((string) $Request->query->get('q'));
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
-            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
-            WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY item_count DESC';
+        $joins = array();
+        $count = array();
+        foreach (EntityType::getAllValues() as $entityType) {
+            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tag_id = tags.id', $entityType);
+            $count[] = 'COUNT(tags2' . $entityType . '.id)';
+        }
+        $sql = 'SELECT tag, tags.id, ' . implode('+', $count) . ' AS item_count
+            FROM tags
+            ' . implode(' ', $joins) . '
+            WHERE team = :team AND tags.tag LIKE :query
+            GROUP BY tags.id
+            ORDER BY item_count DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
@@ -107,9 +118,19 @@ class TeamTags implements RestInterface
      */
     public function readFull(): array
     {
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
-            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
-            WHERE team = :team GROUP BY tags.id ORDER BY item_count DESC';
+        $joins = array();
+        $count = array();
+        foreach (EntityType::getAllValues() as $entityType) {
+            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tag_id = tags.id', $entityType);
+            $count[] = 'COUNT(tags2' . $entityType . '.id)';
+        }
+
+        $sql = 'SELECT tags.tag, tags.id, ' . implode('+', $count) . ' AS item_count
+            FROM tags
+            ' . implode(' ', $joins) . '
+            WHERE team = :team
+            GROUP BY tags.id
+            ORDER BY item_count DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -180,7 +201,20 @@ class TeamTags implements RestInterface
         // pop one out and keep this one
         $idToKeep = array_pop($idsArr);
 
-        $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
+        // create multiple-table update
+        $entityTypes = EntityType::getAllValues();
+        $sql = sprintf(
+            'UPDATE IGNORE %s SET %s WHERE %s',
+            implode(', ', array_map(function ($entityType) {
+                return 'tags2' . $entityType;
+            }, $entityTypes)),
+            implode(', ', array_map(function ($entityType) {
+                return 'tags2' . $entityType . '.tag_id = :target_tag_id';
+            }, $entityTypes)),
+            implode('AND ', array_map(function ($entityType) {
+                return 'tags2' . $entityType . '.tag_id = :tag_id';
+            }, $entityTypes)),
+        );
         $updateReq = $this->Db->prepare($sql);
         $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
         $sql = 'DELETE FROM tags WHERE id = :id';

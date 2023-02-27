@@ -32,4 +32,9 @@ enum EntityType: string
             $this::ItemsTypes => new ItemsTypes($users, $entityId),
         };
     }
+
+    public static function getAllValues(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 }

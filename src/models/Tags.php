@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -206,9 +207,9 @@ class Tags implements RestInterface
         $this->Db->execute($req);
 
         // now check if another entity is referencing it, if not, remove it from the tags table
-        $sqlfragments = array_map(function (string $type): string {
-            return 'SELECT tags_id FROM tags2' . $type . ' WHERE tags_id = :tags_id';
-        }, array('items', 'experiments', 'experiments_templates'));
+        $sqlfragments = array_map(function (string $entityType): string {
+            return 'SELECT tags_id FROM tags2' . $entityType . ' WHERE tags_id = :tags_id';
+        }, EntityType::getAllValues());
         $sql = implode(' UNION ALL ', $sqlfragments);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);

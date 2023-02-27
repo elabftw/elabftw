@@ -36,9 +36,9 @@ class AuthResponse
 
     public ?string $mfaSecret = null;
 
-    public ?bool $isAdmin = null;
+    public bool $isAdmin = false;
 
-    public ?bool $isSysAdmin = null;
+    public bool $isSysAdmin = false;
 
     public bool $hasVerifiedMfa = false;
 

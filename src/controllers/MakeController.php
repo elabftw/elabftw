@@ -38,7 +38,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
@@ -148,10 +147,7 @@ class MakeController implements ControllerInterface
 
     private function getZipStreamLib(): ZipStream
     {
-        $opt = new ArchiveOptions();
-        // crucial option for a stream output
-        $opt->setZeroHeader(true);
-        return new ZipStream(null, $opt);
+        return new ZipStream(sendHttpHeaders:false);
     }
 
     private function makeEln(): Response

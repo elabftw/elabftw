@@ -31,7 +31,7 @@ enum EnforceMfa: int
         };
     }
 
-    public static function getArray(): array
+    public static function getAssociativeArray(): array
     {
         return array_combine(
             array_column(self::cases(), 'value'),

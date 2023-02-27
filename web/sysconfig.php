@@ -98,7 +98,7 @@ try {
         'teamsStats' => $teamsStats,
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
-        'enforceMfaArr' => EnforceMfa::getArray(),
+        'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

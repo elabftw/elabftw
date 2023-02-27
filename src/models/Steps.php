@@ -200,7 +200,7 @@ class Steps implements RestInterface
             $this->Entity->page,
             $step['deadline'],
         );
-        $Notifications->createIfNotExists($this->Entity->Users->userData['userid'], $this->id);
+        $Notifications->create($this->Entity->Users->userData['userid']);
 
         // update the deadline_notif column so we now if this step has a notif set for deadline or not
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';

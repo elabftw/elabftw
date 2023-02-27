@@ -184,7 +184,13 @@ class Scheduler implements RestInterface
         // send a notification to all team admins
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
         $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
-        $Notif->createMultiUsers($TeamsHelper->getAllAdminsUserid(), $this->Items->Users->userData['userid']);
+        $admins = $TeamsHelper->getAllAdminsUserid();
+        array_map(function ($userid) use ($Notif) {
+            if ($userid === $this->Items->Users->userData['userid']) {
+                return;
+            }
+            $Notif->create($userid);
+        }, $admins);
         return $this->Db->execute($req);
     }
 

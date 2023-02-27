@@ -56,39 +56,6 @@ abstract class AbstractNotifications
         return $this->Db->lastInsertId();
     }
 
-    public function createIfNotExists(int $userid, int $stepId): int
-    {
-        // check if a similar notification is not already there
-        $sql = 'SELECT id FROM notifications WHERE category = :category AND JSON_EXTRACT(body, "$.step_id") = :step_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
-        $req->bindValue(':step_id', $stepId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // if there is a notification for this step id, delete it
-        if ($req->rowCount() > 0) {
-            $sql = 'DELETE FROM notifications WHERE id = :id';
-            $reqDel = $this->Db->prepare($sql);
-            $reqDel->bindValue(':id', $req->fetch()['id'], PDO::PARAM_INT);
-            $reqDel->execute();
-            return 0;
-        }
-        // otherwise, create a notification for it
-        return $this->create($userid);
-    }
-
-    public function createMultiUsers(array $useridArr, int $selfUserid): int
-    {
-        foreach ($useridArr as $userid) {
-            $userid = (int) $userid;
-            // don't self notify this action
-            if ($userid === $selfUserid) {
-                continue;
-            }
-            $this->create($userid);
-        }
-        return count($useridArr);
-    }
-
     /**
      * The "body" of a notification is an array of the required data for that particular notification
      * Some notifications don't need one, some will have several variables. It is stored as JSON.

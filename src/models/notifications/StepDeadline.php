@@ -12,6 +12,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
+use PDO;
 
 class StepDeadline extends AbstractNotifications implements MailableInterface
 {
@@ -26,6 +27,29 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         private string $deadline,
     ) {
         parent::__construct();
+    }
+
+    /**
+     * For step notification, we first need to check if there isn't one already existing before creating a new one for this step
+     */
+    public function create(int $userid): int
+    {
+        // check if a similar notification is not already there
+        $sql = 'SELECT id FROM notifications WHERE category = :category AND JSON_EXTRACT(body, "$.step_id") = :step_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
+        $req->bindValue(':step_id', $this->stepId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        // if there is a notification for this step id, delete it
+        if ($req->rowCount() > 0) {
+            $sql = 'DELETE FROM notifications WHERE id = :id';
+            $reqDel = $this->Db->prepare($sql);
+            $reqDel->bindValue(':id', $req->fetch()['id'], PDO::PARAM_INT);
+            $reqDel->execute();
+            return 0;
+        }
+        // otherwise, create a notification for it
+        return parent::create($userid);
     }
 
     public function getEmail(): array

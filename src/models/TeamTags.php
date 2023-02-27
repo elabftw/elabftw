@@ -96,8 +96,8 @@ class TeamTags implements RestInterface
         $joins = array();
         $count = array();
         foreach (EntityType::getAllValues() as $entityType) {
-            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tag_id = tags.id', $entityType);
-            $count[] = 'COUNT(tags2' . $entityType . '.id)';
+            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
+            $count[] = sprintf('COUNT(tags2%1$s.%1$s_id)', $entityType);
         }
         $sql = 'SELECT tag, tags.id, ' . implode('+', $count) . ' AS item_count
             FROM tags
@@ -121,8 +121,8 @@ class TeamTags implements RestInterface
         $joins = array();
         $count = array();
         foreach (EntityType::getAllValues() as $entityType) {
-            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tag_id = tags.id', $entityType);
-            $count[] = 'COUNT(tags2' . $entityType . '.id)';
+            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
+            $count[] = sprintf('COUNT(tags2%1$s.%1$s_id)', $entityType);
         }
 
         $sql = 'SELECT tags.tag, tags.id, ' . implode('+', $count) . ' AS item_count
@@ -159,9 +159,9 @@ class TeamTags implements RestInterface
             throw new IllegalActionException('Only an admin can delete a tag!');
         }
 
-        $sql = 'DELETE FROM tags WHERE id = :tag_id';
+        $sql = 'DELETE FROM tags WHERE id = :tags_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -209,20 +209,20 @@ class TeamTags implements RestInterface
                 return 'tags2' . $entityType;
             }, $entityTypes)),
             implode(', ', array_map(function ($entityType) {
-                return 'tags2' . $entityType . '.tag_id = :target_tag_id';
+                return 'tags2' . $entityType . '.tags_id = :target_tags_id';
             }, $entityTypes)),
-            implode('AND ', array_map(function ($entityType) {
-                return 'tags2' . $entityType . '.tag_id = :tag_id';
+            implode(' AND ', array_map(function ($entityType) {
+                return 'tags2' . $entityType . '.tags_id = :tags_id';
             }, $entityTypes)),
         );
         $updateReq = $this->Db->prepare($sql);
-        $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
+        $updateReq->bindParam(':target_tags_id', $idToKeep, PDO::PARAM_INT);
         $sql = 'DELETE FROM tags WHERE id = :id';
         $deleteReq = $this->Db->prepare($sql);
 
         foreach ($idsArr as $id) {
             // update the references with the id that we keep
-            $updateReq->bindParam(':tag_id', $id, PDO::PARAM_INT);
+            $updateReq->bindParam(':tags_id', $id, PDO::PARAM_INT);
             $this->Db->execute($updateReq);
 
             // and delete that id from the tags table

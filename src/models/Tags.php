@@ -18,6 +18,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
+use function sprintf;
 
 /**
  * All about the tag
@@ -53,14 +54,14 @@ class Tags implements RestInterface
     public function readAll(): array
     {
         $sql = sprintf(
-            'SELECT DISTINCT tag, tags2%1$s.tag_id
+            'SELECT DISTINCT tag, tags2%1$s.tags_id
                 FROM tags2%1$s
-                LEFT JOIN tags ON (tags2%1$s.tag_id = tags.id)
-                WHERE item_id = :item_id',
+                LEFT JOIN tags ON (tags2%1$s.tags_id = tags.id)
+                WHERE %1$s_id = :entity_id',
             $this->Entity->type,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -80,12 +81,12 @@ class Tags implements RestInterface
             $type = 'experiments';
         }
 
-        $insertSql = sprintf('INSERT INTO tags2%1$s (%1$s_id, tag_id) VALUES (:item_id, :tag_id)', $type);
+        $insertSql = sprintf('INSERT INTO tags2%1$s (%1$s_id, tags_id) VALUES (:entity_id, :tags_id)', $type);
         $insertReq = $this->Db->prepare($insertSql);
 
         foreach ($tags as $tag) {
-            $insertReq->bindParam(':item_id', $newId, PDO::PARAM_INT);
-            $insertReq->bindParam(':tag_id', $tag['tag_id'], PDO::PARAM_INT);
+            $insertReq->bindParam(':entity_id', $newId, PDO::PARAM_INT);
+            $insertReq->bindParam(':tags_id', $tag['tags_id'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
         }
     }
@@ -132,9 +133,9 @@ class Tags implements RestInterface
         $sql = sprintf(
             'SELECT %1$s_id
                 FROM tags2%1$s
-                WHERE tag_id IN (' . implode(',', $tagIds) . ')
+                WHERE tags_id IN (' . implode(',', $tagIds) . ')
                 GROUP BY %1$s_id
-                HAVING COUNT(DISTINCT tag_id) = :count',
+                HAVING COUNT(DISTINCT tags_id) = :count',
             $this->Entity->type,
         );
         $req = $this->Db->prepare($sql);
@@ -152,8 +153,8 @@ class Tags implements RestInterface
         $this->Entity->canOrExplode('write');
 
         $insertSql2 = sprintf(
-            'INSERT INTO tags2%1$s (%1$s_id, tag_id)
-                VALUES (:item_id, :tag_id)',
+            'INSERT INTO tags2%1$s (%1$s_id, tags_id)
+                VALUES (:entity_id, :tags_id)',
             $this->Entity->type,
         );
         $insertReq2 = $this->Db->prepare($insertSql2);
@@ -182,8 +183,8 @@ class Tags implements RestInterface
             $tagId = $this->Db->lastInsertId();
         }
         // now reference it
-        $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $insertReq2->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $insertReq2->bindParam(':tags_id', $tagId, PDO::PARAM_INT);
         $this->Db->execute($insertReq2);
 
         return $tagId;

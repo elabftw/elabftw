@@ -178,7 +178,7 @@ class Templates extends AbstractTemplateEntity
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
                 LEFT JOIN teams ON (teams.id = experiments_templates.team)
                 LEFT JOIN tags2" . $this->type . ' ON (experiments_templates.id = tags2' . $this->type . '.' . $this->type . '_id)
-                LEFT JOIN tags ON (tags2' . $this->type . ".tag_id = tags.id)
+                LEFT JOIN tags ON (tags2' . $this->type . ".tags_id = tags.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)
                 WHERE experiments_templates.userid != 0 AND experiments_templates.state = :state AND (
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR

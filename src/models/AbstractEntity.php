@@ -323,7 +323,7 @@ abstract class AbstractEntity implements RestInterface
     public function getTags(array $items): array
     {
         $sql = sprintf(
-            'SELECT DISTINCT tag2%1$s.tags_id, tags2%1$s.%1$s_id, tags.tag FROM tags2%1$s
+            'SELECT DISTINCT tags2%1$s.tags_id, tags2%1$s.%1$s_id, tags.tag FROM tags2%1$s
                 LEFT JOIN tags ON (tags2%1$s.tags_id = tags.id)
                 WHERE tags2%1$s.%1$s_id IN (%2$s)',
             $this->type,

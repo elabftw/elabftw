@@ -76,11 +76,17 @@
       "Elabftw\\Enums\\": [
         "src/enums"
       ],
+      "Elabftw\\Factories\\": [
+        "src/factories"
+      ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],
       "Elabftw\\Models\\": [
         "src/models"
+      ],
+      "Elabftw\\Models\\Notifications\\": [
+        "src/models/notifications"
       ],
       "Elabftw\\Services\\": [
         "src/services"

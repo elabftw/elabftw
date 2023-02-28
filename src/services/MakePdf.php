@@ -11,7 +11,6 @@ namespace Elabftw\Services;
 
 use function date;
 use DateTimeImmutable;
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
@@ -19,7 +18,9 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\MathjaxFailed;
+use Elabftw\Models\Notifications\PdfAppendmentFailed;
+use Elabftw\Models\Notifications\PdfGenericError;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
@@ -92,8 +93,8 @@ class MakePdf extends AbstractMakePdf
     {
         $output = $this->generate()->Output('', 'S');
         if ($this->errors && $this->notifications) {
-            $Notifications = new Notifications($this->Entity->Users);
-            $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
+            $Notifications = new PdfGenericError();
+            $Notifications->create($this->Entity->Users->userData['userid']);
         }
         return $output;
     }
@@ -118,13 +119,8 @@ class MakePdf extends AbstractMakePdf
 
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
-            $this->errors[] = array(
-                'type' => Notifications::MATHJAX_FAILED,
-                'body' => array(
-                    'entity_id' => $this->Entity->id,
-                    'entity_page' => $this->Entity->page,
-                ),
-            );
+            /** @psalm-suppress PossiblyNullArgument */
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->page);
         }
         $this->contentSize = mb_strlen($content);
         return $content;
@@ -276,14 +272,8 @@ class MakePdf extends AbstractMakePdf
         if ($this->Entity->Users->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
             if ($this->failedAppendPdfs) {
-                $this->errors[] = array(
-                    'type' => Notifications::PDF_APPENDMENT_FAILED,
-                    'body' => array(
-                        'entity_id' => $this->Entity->id,
-                        'entity_page' => $this->Entity->page,
-                        'file_names' => implode(', ', $this->failedAppendPdfs),
-                    ),
-                );
+                /** @psalm-suppress PossiblyNullArgument */
+                $this->errors[] = new PdfAppendmentFailed($this->Entity->id, $this->Entity->page, implode(', ', $this->failedAppendPdfs));
             }
         }
         return $this->mpdf;

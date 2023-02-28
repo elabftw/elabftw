@@ -10,11 +10,11 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CommentParam;
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -131,13 +131,10 @@ class Comments implements RestInterface
             return;
         }
 
-        $body = array(
-            'experiment_id' => $this->Entity->id,
-            'commenter_userid' => (int) $this->Entity->Users->userData['userid'],
-        );
-
-        // create notifications object with the userid of the owner
-        $Notifications = new Notifications(new Users((int) $this->Entity->entityData['userid']));
-        $Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
+        // TODO: have a AbstractConcreteEntityWithId
+        /** @psalm-suppress PossiblyNullArgument */
+        $Notif = new CommentCreated($this->Entity->id, (int) $this->Entity->Users->userData['userid']);
+        // target user is the owner of the experiment
+        $Notif->create($this->Entity->entityData['userid']);
     }
 }

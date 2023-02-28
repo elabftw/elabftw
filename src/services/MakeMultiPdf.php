@@ -9,11 +9,11 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\PdfAppendmentFailed;
+use Elabftw\Models\Notifications\PdfGenericError;
 
 /**
  * Make a PDF from several experiments or db items
@@ -50,8 +50,8 @@ class MakeMultiPdf extends AbstractMakePdf
             }
         }
         if ($this->errors) {
-            $Notifications = new Notifications($this->Entity->Users);
-            $Notifications->create(new CreateNotificationParams(Notifications::PDF_GENERIC_ERROR));
+            $Notifications = new PdfGenericError();
+            $Notifications->create($this->Entity->Users->userData['userid']);
         }
 
         return $this->mpdf->Output('', 'S');
@@ -78,13 +78,11 @@ class MakeMultiPdf extends AbstractMakePdf
             if ($this->Entity->Users->userData['append_pdfs']) {
                 $currentEntity->appendPdfs($currentEntity->getAttachedPdfs(), $this->mpdf);
                 if ($currentEntity->failedAppendPdfs) {
-                    $currentEntity->errors[] = array(
-                        'type' => Notifications::PDF_APPENDMENT_FAILED,
-                        'body' => array(
-                            'entity_id' => $currentEntity->Entity->id,
-                            'entity_page' => $currentEntity->Entity->page,
-                            'file_names' => implode(', ', $currentEntity->failedAppendPdfs),
-                        ),
+                    /** @psalm-suppress PossiblyNullArgument */
+                    $currentEntity->errors[] = new PdfAppendmentFailed(
+                        $currentEntity->Entity->id,
+                        $currentEntity->Entity->page,
+                        implode(', ', $currentEntity->failedAppendPdfs),
                     );
                 }
             }

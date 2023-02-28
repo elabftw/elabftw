@@ -14,7 +14,7 @@ use Elabftw\Enums\Notifications;
 /**
  * When an attached PDF file cannot be appended during PDF export
  */
-class PdfAppendmentFailed extends AbstractNotifications
+class PdfAppendmentFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::PdfAppendmentFailed;
 

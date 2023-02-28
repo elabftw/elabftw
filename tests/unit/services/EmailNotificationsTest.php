@@ -11,6 +11,9 @@ namespace Elabftw\Services;
 
 use DateTime;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Notifications\EventDeleted;
+use Elabftw\Models\Notifications\MathjaxFailed;
+use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\StepDeadline;
@@ -32,11 +35,25 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notifications->create(1);
         $Notifications = new SelfIsValidated();
         $Notifications->create(1);
+        $Notifications = new MathjaxFailed(1, 'experiments');
+        $Notifications->create(1);
+        $Notifications = new PdfAppendmentFailed(1, 'experiments', 'file1.pdf, file2.pdf');
+        $Notifications->create(1);
+
+        $d = new DateTime();
+
+        $Notifications = new EventDeleted(
+            array('item' => 12, 'start' => $d->format('Y-m-d H:i:s'), 'end' => $d->format('Y-m-d H:i:s')),
+            'Daniel Balavoine',
+        );
+        $Notifications->create(1);
 
         // create a deadline close to now
-        $d = new DateTime();
         $d->modify('+ 5 min');
         $Notifications = new StepDeadline(1, 1, 'experiments', $d->format('Y-m-d H:i:s'));
+        $Notifications->create(1);
+        // create it several times to toggle it and go in all code paths
+        $Notifications->create(1);
         $Notifications->create(1);
 
         $stub = $this->createStub(Email::class);

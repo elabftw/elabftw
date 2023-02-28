@@ -9,15 +9,16 @@
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
 class UserNeedValidation extends UserCreated implements MailableInterface
 {
-    protected const CATEGORY = 12;
-
     protected const PREF = 'notif_user_need_validation';
+
+    protected Notifications $category = Notifications::UserNeedValidation;
 
     public function __construct(private int $userid, private string $team)
     {

@@ -14,7 +14,7 @@ use Elabftw\Enums\Notifications;
 /**
  * When there was an error during pdf generation because of MathJax
  */
-class MathjaxFailed extends AbstractNotifications
+class MathjaxFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::MathjaxFailed;
 

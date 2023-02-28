@@ -9,12 +9,14 @@
 
 namespace Elabftw\Models\Notifications;
 
-use Elabftw\Enums\Notifications;
-
 /**
- * When there is a problem with the PDF creation
+ * For notifications that only appear in web and email is not sent
  */
-class PdfGenericError extends WebOnlyNotifications
+class WebOnlyNotifications extends AbstractNotifications
 {
-    protected Notifications $category = Notifications::PdfGenericError;
+    protected function getPref(int $userid): array
+    {
+        // not mailable
+        return array(1, 0);
+    }
 }

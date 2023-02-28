@@ -270,14 +270,14 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <hr>
   <label for='blox_enabled'>{{ 'Enable blockchain timestamping with Bloxberg:'|trans }}</label>
   <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_enabled' id='blox_enabled' autocomplete='off'>
-    <option value='1' {{ App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'Yes'|trans }}</option>
-    <option value='0' {{ not App.Config.configArr.blox_enabled ? 'selected' }}>{{ 'No'|trans }}</option>
+    <option value='1' {{- App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{- not App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'No'|trans }}</option>
   </select>
 
   <label for='blox_anon'>{{ 'Anonymize author for GDPR compliance:'|trans }}</label>
   <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_anon' id='blox_anon' autocomplete='off'>
-    <option value='1' {{ App.Config.configArr.blox_anon ? ' selected' }}>{{ 'Yes'|trans }}</option>
-    <option value='0' {{ not App.Config.configArr.blox_anon ? 'selected' }}>{{ 'No'|trans }}</option>
+    <option value='1' {{- App.Config.configArr.blox_anon ? ' selected' }}>{{ 'Yes'|trans }}</option>
+    <option value='0' {{- not App.Config.configArr.blox_anon ? ' selected' }}>{{ 'No'|trans }}</option>
   </select>
 </div>
 
@@ -291,15 +291,15 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
     <label for='admin_validate'>{{ 'Users need validation by admin after registration:'|trans }}</label>
     <select class='form-control col-md-4' name='admin_validate' id='admin_validate'>
-      <option value='1' {{ App.Config.configArr.admin_validate ? " selected" }}>{{ 'Yes'|trans }}</option>
-      <option value='0' {{ not App.Config.configArr.admin_validate ? " selected" }}>{{ 'No'|trans }}</option>
+      <option value='1' {{- App.Config.configArr.admin_validate ? ' selected' }}>{{ 'Yes'|trans }}</option>
+      <option value='0' {{- not App.Config.configArr.admin_validate ? ' selected' }}>{{ 'No'|trans }}</option>
     </select>
     <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
 
     <label for='enforce_mfa'>{{ 'Enforce 2FA'|trans }}</label>
     <select class='form-control col-md-4' name='enforce_mfa' id='enforce_mfa'>
       {% for value, human in enforceMfaArr %}
-        <option value='{{ value }}' {{ App.Config.configArr.enforce_mfa == value ? " selected" }}>{{ human }}</option>
+        <option value='{{ value }}' {{- App.Config.configArr.enforce_mfa == value ? ' selected' }}>{{ human }}</option>
       {% endfor %}
     </select>
 
@@ -327,13 +327,13 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     <h3>{{ 'Bruteforce login protection' }}</h3>
     <div class='mb-1'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='clear-nologinusers' {{ nologinUsersCount == 0 ? 'disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled'}} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
 
     </div>
 
     <div>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clear-lockoutdevices' {{ lockoutDevicesCount == 0 ? 'disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clear-lockoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
   </div>
 </div>

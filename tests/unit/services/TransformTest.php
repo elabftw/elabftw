@@ -9,7 +9,7 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Notifications;
+use Elabftw\Enums\Notifications;
 
 class TransformTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,8 +26,8 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $expected .= 'There was a problem during PDF creation.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
-            'category' => Notifications::PDF_GENERIC_ERROR,
-            'id' => '1',
+            'category' => Notifications::PdfGenericError->value,
+            'id' => 1,
             'created_at' => 'test',
         ));
         $this->assertEquals($expected, $actual);
@@ -39,12 +39,12 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $expected .= 'Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
-            'category' => Notifications::MATHJAX_FAILED,
-            'id' => '1',
+            'category' => Notifications::MathjaxFailed->value,
+            'id' => 1,
             'created_at' => 'test',
             'body' => array(
                 'entity_page' => 'experiment',
-                'entity_id' => '2',
+                'entity_id' => 2,
             ),
         ));
         $this->assertEquals($expected, $actual);
@@ -56,12 +56,12 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $expected .= 'Some attached PDFs could not be appended. (file1.pdf, file2.pdf)';
         $expected .= '</span><br><span class="relative-moment" title="TIMESTAMP"></span>';
         $actual = Transform::notif(array(
-            'category' => Notifications::PDF_APPENDMENT_FAILED,
-            'id' => '1',
+            'category' => Notifications::PdfAppendmentFailed->value,
+            'id' => 1,
             'created_at' => 'TIMESTAMP',
             'body' => array(
                 'entity_page' => 'experiment',
-                'entity_id' => '2',
+                'entity_id' => 2,
                 'file_names' => 'file1.pdf, file2.pdf',
             ),
         ));

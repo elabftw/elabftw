@@ -2,17 +2,14 @@
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2021 Nicolas CARPi
+ * @copyright 2023 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
 
 namespace Elabftw\Interfaces;
 
-/**
- * Interface for creating a notification
- */
-interface CreateNotificationParamsInterface extends ContentParamsInterface
+interface MailableInterface
 {
-    public function getCategory(): int;
+    public function getEmail(): array;
 }

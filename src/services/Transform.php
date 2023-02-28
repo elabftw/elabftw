@@ -30,10 +30,9 @@ class Transform
     // generate html for a notification to show on web interface
     public static function notif(array $notif): string
     {
-        $Notifications = Notifications::from($notif['category']);
         $relativeMoment = '<br><span class="relative-moment" title="%s"></span>';
 
-        return match ($Notifications) {
+        return match (Notifications::from($notif['category'])) {
             Notifications::CommentCreated =>
                 sprintf(
                     '<span data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&id=%d">%s</span>' . $relativeMoment,

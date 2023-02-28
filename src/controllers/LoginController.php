@@ -28,7 +28,6 @@ use Elabftw\Services\ExternalAuth;
 use Elabftw\Services\LdapAuth;
 use Elabftw\Services\LocalAuth;
 use Elabftw\Services\LoginHelper;
-use Elabftw\Services\LoginMfaHelper;
 use Elabftw\Services\MfaAuth;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\SamlAuth;
@@ -38,6 +37,7 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
  * For all your authentication/login needs
@@ -60,10 +60,9 @@ class LoginController implements ControllerInterface
 
     public function getResponse(): Response
     {
-        $LoginMfaHelper = new LoginMfaHelper($this->App);
         // ENABLE MFA FOR OUR USER
         if ($this->App->Session->has('enable_mfa')) {
-            $location = $LoginMfaHelper->enableMFA();
+            $location = $this->enableMFA();
             if ($location !== '') {
                 return new RedirectResponse($location);
             }
@@ -97,8 +96,11 @@ class LoginController implements ControllerInterface
         // ENFORCE MFA //
         /////////////////
         // If MFA is enforced by Sysadmin (only for local auth) the user has to set it up
-        if ((int) $this->App->Session->get('auth_service') === self::AUTH_LOCAL
-            && $LoginMfaHelper->enforceMfaForUser($AuthResponse, (int) $this->App->Config->configArr['enforce_mfa'])
+        if ($authType === 'local'
+            && LocalAuth::enforceMfa(
+                $AuthResponse,
+                (int) $this->App->Config->configArr['enforce_mfa']
+            )
         ) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
             // so we will require mfa, redirect the user to login
@@ -291,5 +293,48 @@ class LoginController implements ControllerInterface
             echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
             exit;
         }
+    }
+
+    private function enableMFA(): string
+    {
+        $flashBag = $this->App->Session->getBag('flashes');
+        $flashKey = 'ko';
+        $flashValue = _('Two Factor Authentication was not enabled!');
+
+        // Only save if user didn't click Cancel button
+        if ($this->App->Request->request->get('Submit') === 'submit') {
+            $userid = isset($this->App->Users->userData['userid'])
+                ? (int) $this->App->Users->userData['userid']
+                : $this->App->Session->get('auth_userid');
+            $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
+
+            // check the input code against the secret stored in session
+            if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
+                if ($flashBag instanceof FlashBag) {
+                    $flashBag->add($flashKey, _('The code you entered is not valid!'));
+                }
+                return '../../login.php';
+            }
+
+            // all good, save the secret in the database now that we now the user can authenticate against it
+            $MfaHelper->saveSecret();
+            $flashKey = 'ok';
+            $flashValue = _('Two Factor Authentication is now enabled!');
+        }
+
+        if ($flashBag instanceof FlashBag) {
+            $flashBag->add($flashKey, $flashValue);
+        }
+
+        $location = $this->App->Session->get('mfa_redirect_origin', '');
+
+        if (!$this->App->Session->get('enforce_mfa')) {
+            $this->App->Session->remove('enable_mfa');
+            $this->App->Session->remove('mfa_auth_required');
+            $this->App->Session->remove('mfa_secret');
+            $this->App->Session->remove('mfa_redirect_origin');
+        }
+
+        return $location;
     }
 }

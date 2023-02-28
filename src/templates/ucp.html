@@ -254,8 +254,8 @@
           <div class='col-md-6'>
             <label for='use_mfa'>{{ 'Use two-factor authentication?'|trans }}</label>
             <select class='form-control' autocomplete='off' name='use_mfa' id='use_mfa'>
-              <option value='on'{{ App.Users.userData.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
-              <option value='off'{{ not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
+              <option value='on' {{- App.Users.userData.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
+              <option value='off' {{- not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
             </select>
           </div>
         </div>

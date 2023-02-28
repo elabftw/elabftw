@@ -20,7 +20,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
-use Elabftw\Services\LoginMfaHelper;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -90,9 +89,9 @@ try {
         // Disable MFA if not enforced
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
-            && !LoginMfaHelper::isMfaEnforcedForUser(
-                $App->Users->userData['is_admin'],
-                $App->Users->userData['is_sysadmin'],
+            && !LocalAuth::isMfaEnforced(
+                (bool) $App->Users->userData['is_admin'],
+                (bool) $App->Users->userData['is_sysadmin'],
                 (int) $App->Config->configArr['enforce_mfa'],
             )
         ) {

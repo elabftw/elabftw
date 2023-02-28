@@ -11,13 +11,13 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Users;
 use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
@@ -57,6 +57,36 @@ class LocalAuth implements AuthInterface
         }
         $this->authWithModernAlgo();
         return $this->AuthResponse;
+    }
+
+    /**
+     * Enforce MFA for user if there is no secret stored?
+     */
+    public static function enforceMfa(
+        AuthResponse $AuthResponse,
+        int $enforceMfa
+    ): bool {
+        return (!$AuthResponse->mfaSecret
+            && self::isMfaEnforced(
+                $AuthResponse->isAdmin,
+                $AuthResponse->isSysAdmin,
+                $enforceMfa,
+            )
+        );
+    }
+
+    /**
+     * Is MFA enforced for a given user (SysAdmin or Admin or Everyone)?
+     */
+    public static function isMfaEnforced(
+        bool $isAdmin,
+        bool $isSysAdmin,
+        int $enforceMfa
+    ): bool {
+        $EnforceMfaSetting = EnforceMfa::tryFrom($enforceMfa);
+        return ($isSysAdmin && $EnforceMfaSetting === EnforceMfa::SysAdmins)
+            || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+            || $EnforceMfaSetting === EnforceMfa::Everyone;
     }
 
     /**

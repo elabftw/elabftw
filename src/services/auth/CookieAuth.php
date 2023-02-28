@@ -69,7 +69,7 @@ class CookieAuth implements AuthInterface
 
         // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
         if ($res['auth_service'] === LoginController::AUTH_LOCAL
-            && LoginMfaHelper::enforceMfaForUser($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
+            && LocalAuth::enforceMfa($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
         ) {
             throw new UnauthorizedException();
         }

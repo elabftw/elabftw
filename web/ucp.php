@@ -20,7 +20,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
-use Elabftw\Services\LoginMfaHelper;
+use Elabftw\Services\LocalAuth;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -93,9 +93,9 @@ try {
             );
     }
 
-    $showMfa = !LoginMfaHelper::isMfaEnforcedForUser(
-        $App->Users->userData['is_admin'],
-        $App->Users->userData['is_sysadmin'],
+    $showMfa = !LocalAuth::isMfaEnforced(
+        (bool) $App->Users->userData['is_admin'],
+        (bool) $App->Users->userData['is_sysadmin'],
         (int) $App->Config->configArr['enforce_mfa'],
     );
 

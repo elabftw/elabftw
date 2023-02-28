@@ -10,7 +10,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Enums\EnforceMfa;
@@ -69,38 +68,28 @@ class LoginMfaHelper
     }
 
     /**
-     * Do we enfore MFA for this user? If yes, provide secret to user.
+     * Do we enfore MFA for this user?
      */
-    public function enforceMFA(AuthResponse $AuthResponse): bool
+    public static function enforceMfaForUser(AuthResponse $AuthResponse, int $enforceMfa): bool
     {
-        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $this->App->Config->configArr['enforce_mfa']);
-        // If MFA is enforced for local auth by Sysadmin the user has to set it up
-        if ((int) $this->App->Session->get('auth_service') === LoginController::AUTH_LOCAL
-            // Anon can still get access
-            && !$this->App->Session->get('is_anon')
-            // only if there is no secret stored
-            && !$AuthResponse->mfaSecret
-            // enforce for SysAdmins or Admins or Everyone?
-            && (
-                ($AuthResponse->isSysAdmin && $EnforceMfaSetting === EnforceMfa::SysAdmins)
-                || ($AuthResponse->isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
-                || $EnforceMfaSetting === EnforceMfa::Everyone
+        // only if there is no secret stored; enforce for SysAdmins or Admins or Everyone?
+        return (!$AuthResponse->mfaSecret
+            && self::isMfaEnforcedForUser(
+                $AuthResponse->isAdmin,
+                $AuthResponse->isSysAdmin,
+                $enforceMfa,
             )
-        ) {
-            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
-            // so we will require mfa, redirect the user to login
-            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
-            // and after that we redirect back to login to cleanup
-            // the mfa_secret is not yet saved to the DB
-            $this->App->Session->set('enforce_mfa', true);
-            $this->App->Session->set('enable_mfa', true);
-            $this->App->Session->set('mfa_auth_required', true);
-            $this->App->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+        );
+    }
 
-            return true;
-        }
-
-        return false;
+    /**
+     * Is Mfa enforced for a given user?
+     */
+    public static function isMfaEnforcedForUser(bool $isAdmin, bool $isSysAdmin, int $enforceMfa): bool
+    {
+        $EnforceMfaSetting = EnforceMfa::tryFrom($enforceMfa);
+        return ($isSysAdmin && $EnforceMfaSetting === EnforceMfa::SysAdmins)
+            || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
+            || $EnforceMfaSetting === EnforceMfa::Everyone;
     }
 }

@@ -13,7 +13,6 @@ use function dirname;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -21,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Services\Filter;
 use Elabftw\Services\LocalAuth;
+use Elabftw\Services\LoginMfaHelper;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -70,7 +70,6 @@ try {
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
         $MfaHelper = new MfaHelper($App->Users->userData['userid']);
-        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $App->Config->configArr['enforce_mfa']);
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
@@ -91,10 +90,10 @@ try {
         // Disable MFA if not enforced
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
-            && (
-                (!$App->Users->userData['is_sysadmin'] && $EnforceMfaSetting === EnforceMfa::SysAdmins)
-                || (!$App->Users->userData['is_admin'] && $EnforceMfaSetting === EnforceMfa::Admins)
-                || $EnforceMfaSetting === EnforceMfa::Disabled
+            && !LoginMfaHelper::isMfaEnforcedForUser(
+                $App->Users->userData['is_admin'],
+                $App->Users->userData['is_sysadmin'],
+                (int) $App->Config->configArr['enforce_mfa'],
             )
         ) {
             $MfaHelper->removeSecret();

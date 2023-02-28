@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -21,6 +20,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Services\LoginMfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -93,11 +93,11 @@ try {
             );
     }
 
-    // logic to figure out whether to show MFA setting
-    $EnforceMfaSetting = EnforceMfa::tryFrom((int) $App->Config->configArr['enforce_mfa']);
-    $showMfa = (!$App->Users->userData['is_sysadmin'] && $EnforceMfaSetting === EnforceMfa::SysAdmins)
-        || (!$App->Users->userData['is_admin'] && $EnforceMfaSetting === EnforceMfa::Admins)
-        || $EnforceMfaSetting === EnforceMfa::Disabled;
+    $showMfa = !LoginMfaHelper::isMfaEnforcedForUser(
+        $App->Users->userData['is_admin'],
+        $App->Users->userData['is_sysadmin'],
+        (int) $App->Config->configArr['enforce_mfa'],
+    );
 
     $template = 'ucp.html';
     $renderArr = array(

@@ -96,7 +96,21 @@ class LoginController implements ControllerInterface
         /////////////////
         // ENFORCE MFA //
         /////////////////
-        if ($LoginMfaHelper->enforceMFA($AuthResponse)) {
+        // If MFA is enforced by Sysadmin (only for local auth) the user has to set it up
+        if ((int) $this->App->Session->get('auth_service') === self::AUTH_LOCAL
+            && $LoginMfaHelper->enforceMfaForUser($AuthResponse, (int) $this->App->Config->configArr['enforce_mfa'])
+        ) {
+            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
+            // so we will require mfa, redirect the user to login
+            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
+            // and after that we redirect back to login to cleanup
+            // the mfa_secret is not yet saved to the DB
+            $this->App->Session->set('enforce_mfa', true);
+            $this->App->Session->set('enable_mfa', true);
+            $this->App->Session->set('mfa_auth_required', true);
+            $this->App->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+
             return new RedirectResponse('../../login.php');
         }
 

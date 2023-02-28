@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 
@@ -62,29 +61,19 @@ class CookieAuth implements AuthInterface
             throw new UnauthorizedException();
         }
 
-        $this->enforceMfa($res);
-
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->selectedTeam = $this->tokenTeam;
-        return $this->AuthResponse;
-    }
+        $this->AuthResponse->isAdmin = (bool) $res['is_admin'];
+        $this->AuthResponse->isSysAdmin = (bool) $res['is_sysadmin'];
 
-    /**
-     * Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
-     */
-    private function enforceMfa(array $res): void
-    {
-        $EnforceMfaSetting = EnforceMfa::tryFrom((int) $this->configArr['enforce_mfa']);
+        // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
         if ($res['auth_service'] === LoginController::AUTH_LOCAL
-            && !$res['mfa_secret']
-            && (
-                ($res['is_sysadmin'] && $EnforceMfaSetting === EnforceMfa::SysAdmins)
-                || ($res['is_admin'] && $EnforceMfaSetting === EnforceMfa::Admins)
-                || $EnforceMfaSetting === EnforceMfa::Everyone
-            )
+            && LoginMfaHelper::enforceMfaForUser($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
         ) {
             throw new UnauthorizedException();
         }
+
+        return $this->AuthResponse;
     }
 }

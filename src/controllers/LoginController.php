@@ -128,9 +128,9 @@ class LoginController implements ControllerInterface
             return new RedirectResponse('../../login.php');
         }
         if ($AuthResponse->hasVerifiedMfa) {
+            $this->App->Session->remove('enforce_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
-            $this->App->Session->remove('enforce_mfa');
         }
 
         ////////////////////
@@ -320,6 +320,7 @@ class LoginController implements ControllerInterface
             $MfaHelper->saveSecret();
             $flashKey = 'ok';
             $flashValue = _('Two Factor Authentication is now enabled!');
+            $this->App->Session->remove('enable_mfa');
         }
 
         if ($flashBag instanceof FlashBag) {
@@ -329,7 +330,6 @@ class LoginController implements ControllerInterface
         $location = $this->App->Session->get('mfa_redirect_origin', '');
 
         if (!$this->App->Session->get('enforce_mfa')) {
-            $this->App->Session->remove('enable_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
             $this->App->Session->remove('mfa_redirect_origin');

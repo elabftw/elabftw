@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuthFail;
@@ -97,6 +98,7 @@ try {
         'teamsStats' => $teamsStats,
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
+        'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

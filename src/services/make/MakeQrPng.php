@@ -61,7 +61,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         // Create a drawing object
         $draw = new ImagickDraw();
         $draw->setTextAlignment(Imagick::ALIGN_LEFT);
-        $draw->setFont(dirname(__DIR__, 2) . '/web/assets/fonts/lato-medium-webfont.ttf');
+        $draw->setFont(dirname(__DIR__, 3) . '/web/assets/fonts/lato-medium-webfont.ttf');
         $draw->setFontSize($this->fontSize);
 
         $splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());

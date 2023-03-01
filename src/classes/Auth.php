@@ -70,7 +70,11 @@ class Auth implements AuthInterface
         switch ($authType) {
             // AUTH WITH COOKIE
             case 'cookie':
-                return new CookieAuth((string) $this->Request->cookies->get('token'), $this->Request->cookies->getDigits('token_team'));
+                return new CookieAuth(
+                    (string) $this->Request->cookies->get('token'),
+                    $this->Request->cookies->getDigits('token_team'),
+                    $this->Config->configArr,
+                );
             case 'access_key':
                 // now we need to know in which team we autologin the user
                 $TeamFinder = new TeamFinder($this->Request->getScriptName(), (string) ($this->Request->query->get('access_key') ?? ''));

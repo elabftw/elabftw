@@ -82,7 +82,7 @@ class Tex2Svg
         file_put_contents($tmpFile, $content);
 
         // absolute path to tex2svg app
-        $appDir = dirname(__DIR__, 2) . '/src/node';
+        $appDir = dirname(__DIR__, 3) . '/src/node';
 
         // convert tex to svg with mathjax nodejs script
         // returns nothing if there is no tex

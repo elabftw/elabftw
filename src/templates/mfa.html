@@ -9,7 +9,13 @@
     <input type='hidden' name='auth_type' value='mfa'>
     {{ App.Session.get('csrf')|csrf }}
     {% if App.Session.has('enable_mfa') %}
-      <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
+      <p>
+        {% if App.Session.has('enforce_mfa') %}
+          {{ 'It is mandatory to activate 2FA.'|trans }}
+          <br>
+        {% endif %}
+        {{ 'Open your authenticator application and scan the QR code.'|trans }}
+      </p>
       <p><img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' /></p>
 
       <div class='text-center col-md-5 mx-auto'>

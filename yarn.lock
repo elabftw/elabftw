@@ -4186,10 +4186,10 @@ ve-range-utils@^2.6.3:
   dependencies:
     lodash "^4.17.4"
 
-ve-sequence-utils@^5.1.6:
-  version "5.2.9"
-  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.2.9.tgz#e131efdbe523ee97c95d1f5a84b391214070c664"
-  integrity sha512-sLEL2oYgWsE0hCicGNualL85BgEkSuAueL/QethDfbAf3+ciQyu50MKLu8lERvYGIyzcJCGh4l36JFG22stFjA==
+ve-sequence-utils@^5.2.14:
+  version "5.2.14"
+  resolved "https://registry.yarnpkg.com/ve-sequence-utils/-/ve-sequence-utils-5.2.14.tgz#97a719e0043729129c94ab7bc669cba38d77da79"
+  integrity sha512-jfSCgwdomCZvWRGh2EpvU2IAC/wlXsQX/23m6pKn+HFPLj7cOpGr06XwKIuj4HIhSBxRzQAQJakTzMOhawYmXw==
   dependencies:
     bson-objectid "^1.1.1"
     escape-string-regexp "^1.0.5"

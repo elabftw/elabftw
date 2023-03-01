@@ -33,7 +33,7 @@
     "league/commonmark": "^2.0",
     "symfony/filesystem": "^6.0",
     "symfony/mime": "^6.0",
-    "robthree/twofactorauth": "^1.7.0",
+    "robthree/twofactorauth": "^2.0.0",
     "directorytree/ldaprecord": "^2.0.3",
     "league/flysystem": "^3.1",
     "league/flysystem-memory": "^3.0",

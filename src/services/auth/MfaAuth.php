@@ -10,7 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 
@@ -31,7 +31,7 @@ class MfaAuth implements AuthInterface
         $Users = new Users($this->MfaHelper->userid);
 
         if (!$this->MfaHelper->verifyCode($this->code)) {
-            throw new InvalidCredentialsException($this->MfaHelper->userid);
+            throw new InvalidMfaCodeException($this->MfaHelper->userid);
         }
 
         $this->AuthResponse->hasVerifiedMfa = true;

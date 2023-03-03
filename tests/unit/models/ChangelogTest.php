@@ -26,4 +26,15 @@ class ChangelogTest extends \PHPUnit\Framework\TestCase
         $params = new EntityParams('body', $body);
         $this->assertFalse($Changelog->create($params));
     }
+
+    public function testReadAllWithAbsoluteUrls(): void
+    {
+        $Experiments = new Experiments(new Users(1, 1));
+        $id = $Experiments->create();
+        $Experiments->setId($id);
+        $body = 'initial body';
+        $Experiments->patch(Action::Update, array('body' => $body));
+        $Changelog = new Changelog($Experiments);
+        $this->assertIsArray($Changelog->readAllWithAbsoluteUrls());
+    }
 }

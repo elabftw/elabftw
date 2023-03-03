@@ -848,7 +848,7 @@ the form-control fails to do that so we do the border ourselves */
     margin: 0 20px 0 0;
     overflow-wrap: break-word;
     padding-left: 20px;
-    word-wrap: break-word;
+    word-break: break-word;
 
     a {
         color: $maingray;

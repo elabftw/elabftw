@@ -159,9 +159,7 @@ class Tools
      * A better print_r()
      * Used for debugging only
      *
-     * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
      * @param array<mixed> $arr
-     * @return string
      */
     public static function printArr(array $arr): string
     {

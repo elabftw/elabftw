@@ -59,7 +59,6 @@ final class Db
 
     /**
      * Disallow cloning the class
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
      */
     private function __clone()
     {
@@ -67,7 +66,6 @@ final class Db
 
     /**
      * Disallow wakeup also
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
      */
     public function __wakeup()
     {

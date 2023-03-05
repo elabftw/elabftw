@@ -62,6 +62,18 @@ class TwigFunctions
         return memory_get_usage();
     }
 
+    public static function getExtendedSearchExample(): string
+    {
+        $examples = array(
+            '"search term in quotes"',
+            'termA AND date:>2023-01-01',
+            'title:something OR body:"something else"',
+            '(locked:yes OR timestamped:yes) AND author:"Firstname Lastname"',
+            '"western blot" AND rating:5',
+        );
+        return $examples[array_rand($examples)];
+    }
+
     public static function getNumberOfQueries(): int
     {
         $Db = Db::getConnection();

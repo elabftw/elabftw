@@ -19,6 +19,7 @@ use Elabftw\Models\ValidatedUser;
 use function explode;
 use function is_array;
 use LdapRecord\Connection;
+use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;
 
 /**
@@ -40,10 +41,9 @@ class LdapAuth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         $record = $this->getRecord();
-        $dn = $record['distinguishedname'] ?? $record['dn'];
-        // sometimes it might be an array, make sure we give a string to auth
-        if (is_array($dn)) {
-            $dn = $dn[0];
+        $dn = $record->getDn();
+        if ($dn === null) {
+            throw new ImproperActionException('Error finding the dn!');
         }
         if (!$this->connection->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException(0);
@@ -108,7 +108,7 @@ class LdapAuth implements AuthInterface
     }
 
     // split the search attributes and search the user with them
-    private function getRecord(): array
+    private function getRecord(): Model
     {
         $attributes = explode(',', $this->configArr['ldap_search_attr']);
         foreach ($attributes as $attribute) {
@@ -120,24 +120,25 @@ class LdapAuth implements AuthInterface
         throw new InvalidCredentialsException(0);
     }
 
-    private function findUserByAttribute(string $attribute): ?array
+    private function findUserByAttribute(string $attribute): ?Model
     {
         $query = $this->connection->query()->setDn($this->configArr['ldap_base_dn']);
         try {
-            /** @var array */
+            // BUG will return an array!!!
             return $query->findbyOrFail(trim($attribute), $this->login);
         } catch (ObjectNotFoundException) {
             return null;
         }
     }
 
-    private function getEmailFromRecord(array $record): string
+    private function getEmailFromRecord(Model $record): string
     {
         // if the login input is the email, we have it already
         if ($this->configArr['ldap_search_attr'] === 'mail') {
             return $this->login;
         }
-        $email = $record[$this->configArr['ldap_email']];
+        $email = $record->getAttribute($this->configArr['ldap_email']);
+        // TODO possibly useless?
         if (is_array($email)) {
             return $email[0];
         }

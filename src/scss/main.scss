@@ -463,6 +463,9 @@ button:disabled {
 github issue #52 */
 #body_view p {
     color: #000;
+    // break super long words, see #4169
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* fix for big images uploaded in the text */

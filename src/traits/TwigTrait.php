@@ -74,6 +74,8 @@ trait TwigTrait
         $minPasswordLength = new TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
         $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
+        $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
+
 
 
         // load the i18n extension for using the translation tag for twig
@@ -107,6 +109,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($minPasswordLength);
         $TwigEnvironment->addFunction($ext2icon);
         $TwigEnvironment->addFunction($sortIcon);
+        $TwigEnvironment->addFunction($getExtendedSearchExample);
 
         // use the image BUILD_ID to use as parameter for loading assets
         // this helps with busting the cache in browsers

@@ -159,7 +159,8 @@
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
-        <td>{{ change.content }}</td>
+        {# use of raw to make the link to revisions page work #}
+        <td>{{ change.content|raw }}</td>
       </tr>
       {% endfor %}
     </tbody>

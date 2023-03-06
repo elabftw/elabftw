@@ -240,7 +240,7 @@ class MakePdf extends AbstractMakePdf
 
         $renderArr = array(
             'body' => $this->getBody(),
-            'changes' => $Changelog->readAll(),
+            'changes' => $Changelog->readAllWithAbsoluteUrls(),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,

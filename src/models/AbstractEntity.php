@@ -518,6 +518,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function destroy(): bool
     {
+        $this->canOrExplode('write');
         if ($this instanceof AbstractConcreteEntity) {
             // mark all uploads related to that entity as deleted
             $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';

@@ -49,7 +49,7 @@
   "require-dev": {
     "roave/security-advisories": "dev-master",
     "codeception/codeception": "^5.0",
-    "pyrech/composer-changelogs": "^1.8.0",
+    "pyrech/composer-changelogs": "^2.0.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
     "codeception/module-db": "^3.1.0",
     "codeception/module-asserts": "^3.0.0",

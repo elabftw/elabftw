@@ -5,8 +5,12 @@
 # @license AGPL-3.0
 # @package elabftw
 
-# Bring all the test containers down and remove them
+# Bring all the test containers down
 docker stop elabtmp
-docker rm elabtmp
 docker stop mysqltmp
+# Remove them
+docker rm elabtmp
 docker rm mysqltmp
+# Remove elabtmp image
+docker image rm elabtmp
+# we keep mysql image because it's the official one

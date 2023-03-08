@@ -19,7 +19,7 @@ class MakeQrPngTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Entity = new Experiments(new Users(1, 1), 1);
-        $this->Maker = new MakeQrPng($Entity, 1, 250);
+        $this->Maker = new MakeQrPng(new MpdfQrProvider(), $Entity, 1, 250);
     }
 
     public function testGetFileContent(): void
@@ -31,7 +31,7 @@ class MakeQrPngTest extends \PHPUnit\Framework\TestCase
     {
         $Entity = new Experiments(new Users(1, 1), 1);
 
-        $Maker = new MakeQrPng($Entity, 1, 4);
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $Entity, 1, 4);
         $this->assertIsString($Maker->getFileContent());
     }
 

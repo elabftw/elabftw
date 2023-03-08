@@ -25,7 +25,7 @@ use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -266,7 +266,7 @@ class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
-                'notifications' => new Notifications($this->Users, $this->subId),
+                'notifications' => new UserNotifications($this->Model, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }

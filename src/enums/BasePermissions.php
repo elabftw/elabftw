@@ -9,8 +9,6 @@
 
 namespace Elabftw\Enums;
 
-use Elabftw\Exceptions\ImproperActionException;
-
 enum BasePermissions: int
 {
     case Full = 50;
@@ -27,7 +25,6 @@ enum BasePermissions: int
             $this::MyTeams => _('All the teams I am part of'),
             $this::User  => _('Only me and admins'),
             $this::UserOnly => _('Only me'),
-            default => throw new ImproperActionException('Invalid base parameter for permissions'),
         };
     }
 

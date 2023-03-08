@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
@@ -18,6 +17,10 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\SelfIsValidated;
+use Elabftw\Models\Notifications\SelfNeedValidation;
+use Elabftw\Models\Notifications\UserCreated;
+use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
@@ -149,8 +152,8 @@ class Users implements RestInterface
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }
         if ($validated === 0) {
-            $Notifications = new Notifications(new self($userid));
-            $Notifications->create(new CreateNotificationParams(Notifications::SELF_NEED_VALIDATION));
+            $Notifications = new SelfNeedValidation();
+            $Notifications->create($userid);
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
@@ -414,8 +417,8 @@ class Users implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
-        $Notifications = new Notifications($this);
-        $Notifications->create(new CreateNotificationParams(Notifications::SELF_IS_VALIDATED));
+        $Notifications = new SelfIsValidated();
+        $Notifications->create($this->userData['userid']);
         return $this->readOne();
     }
 
@@ -443,17 +446,12 @@ class Users implements RestInterface
 
     private function notifyAdmins(array $admins, int $userid, int $validated, string $team): void
     {
-        $body = array(
-            'userid' => $userid,
-            'team' => $team,
-        );
-        $notifCat = Notifications::USER_CREATED;
+        $Notifications = new UserCreated($userid, $team);
         if ($validated === 0) {
-            $notifCat = Notifications::USER_NEED_VALIDATION;
+            $Notifications = new UserNeedValidation($userid, $team);
         }
         foreach ($admins as $admin) {
-            $Notifications = new Notifications(new self((int) $admin));
-            $Notifications->create(new CreateNotificationParams($notifCat, $body));
+            $Notifications->create((int) $admin);
         }
     }
 }

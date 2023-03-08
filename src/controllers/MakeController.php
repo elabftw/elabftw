@@ -34,11 +34,11 @@ use Elabftw\Services\MakeReport;
 use Elabftw\Services\MakeSchedulerReport;
 use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Services\MpdfQrProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
@@ -148,10 +148,7 @@ class MakeController implements ControllerInterface
 
     private function getZipStreamLib(): ZipStream
     {
-        $opt = new ArchiveOptions();
-        // crucial option for a stream output
-        $opt->setZeroHeader(true);
-        return new ZipStream(null, $opt);
+        return new ZipStream(sendHttpHeaders:false);
     }
 
     private function makeEln(): Response
@@ -187,7 +184,7 @@ class MakeController implements ControllerInterface
         if (count($this->idArr) !== 1) {
             throw new ImproperActionException('QR PNG format is only suitable for one ID.');
         }
-        return $this->getFileResponse(new MakeQrPng($this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
+        return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
     }
 
     private function makeReport(): Response

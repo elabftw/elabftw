@@ -37,7 +37,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
@@ -155,9 +154,11 @@ class Apiv1Controller extends AbstractApiController
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
         switch ($this->endpoint) {
+            case 'backupzip':
+                $this->Entity = new Experiments($this->Users);
+                break;
             case 'experiments':
             case 'uploads':
-            case 'backupzip':
             case 'tags':
                 $this->Entity = new Experiments($this->Users, $this->id);
                 break;
@@ -407,10 +408,7 @@ class Apiv1Controller extends AbstractApiController
         if (!$this->Users->userData['is_sysadmin']) {
             throw new IllegalActionException('Only a sysadmin can use this endpoint!');
         }
-        $opt = new ArchiveOptions();
-        // crucial option for a stream input
-        $opt->setZeroHeader(true);
-        $Zip = new ZipStream(null, $opt);
+        $Zip = new ZipStream();
         $Make = new MakeBackupZip($Zip, $this->Entity, $this->param);
         $Response = new StreamedResponse();
         $Response->setCallback(function () use ($Make) {

@@ -9,16 +9,15 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Notifications;
-use Elabftw\Models\Users;
+use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Notifications\UserCreated;
+use Elabftw\Models\Notifications\UserNeedValidation;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
-$Notifications = new Notifications(new Users(1));
-$body = array(
-    'experiment_id' => 32,
-    'commenter_userid' => 2,
-);
-$Notifications->create(new CreateNotificationParams(Notifications::COMMENT_CREATED, $body));
-$Notifications->create(new CreateNotificationParams(Notifications::USER_CREATED, array('userid' => 3)));
-$Notifications->create(new CreateNotificationParams(Notifications::USER_NEED_VALIDATION, array('userid' => 3)));
+$Notifications = new CommentCreated(32, 2);
+$Notifications->create(1);
+$Notifications = new UserCreated(3, 'Some team name');
+$Notifications->create(1);
+$Notifications = new UserNeedValidation(3, 'Some team name');
+$Notifications->create(1);

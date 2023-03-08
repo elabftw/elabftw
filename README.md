@@ -11,6 +11,7 @@
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
@@ -31,11 +32,26 @@ It is accessed _via_ the browser. Several research teams can be hosted on the sa
 Click the image below to see it in bigger size:
 [![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://gfycat.com/tangibleequatorialbrant)
 
+## Features
+
+* Lab notebook for experiments
+* Database for lab reagents, equipments, storage, cell lines, etc...
+* Trusted timestamping
+* Import and export in various formats
+* Calendar to manage booking of equipments
+* Support for various scientific file formats
+* Molecule/equation editor
+* LaTeX support
+* Todolist
+* Use the REST HTTP API to access it from a program
+* Available in 17 languages
+* Advanced permissions system
+
+## How it works
+
 **eLabFTW** is designed to be installed on a server, and people from the team can log in from their browser.
 
 ![server client](https://i.imgur.com/BcfFgQS.gif)
-
-Without a server, even an old computer with 1 GB of RAM and an old CPU can be used. Make sure to install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation
 
@@ -49,11 +65,9 @@ The documentation explains everything:
 
 **eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/contributing.html) to see how you can help with translation or code.
 
-If you have found a security issue, please report it by email to the address associated to my GPG key:
+# Security
 
-~~~bash
-gpg --search-keys "Nicolas CARPi"
-~~~
+See [SECURITY.md](./SECURITY.md).
 
 # Support
 

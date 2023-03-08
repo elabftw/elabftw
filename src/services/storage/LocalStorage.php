@@ -21,6 +21,6 @@ class LocalStorage extends AbstractStorage
 
     protected function getAdapter(): FilesystemAdapter
     {
-        return new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/' . static::FOLDER);
+        return new LocalFilesystemAdapter(dirname(__DIR__, 3) . '/' . static::FOLDER);
     }
 }

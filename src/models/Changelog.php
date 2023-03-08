@@ -60,4 +60,17 @@ class Changelog
         $this->Db->execute($req);
         return $req->fetchAll();
     }
+
+    /**
+     * This function exists to convert the revisions.php url into absolute url for pdf export.
+     * We don't store the absolute url directly so it doesn't break on url change in web mode.
+     */
+    public function readAllWithAbsoluteUrls(): array
+    {
+        $changes = $this->readAll();
+        foreach ($changes as &$change) {
+            $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Config::fromEnv('SITE_URL')), $change['content']);
+        }
+        return $changes;
+    }
 }

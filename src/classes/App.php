@@ -18,7 +18,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
@@ -44,7 +44,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.5.7';
+    public const INSTALLED_VERSION = '4.5.10';
 
     public Users $Users;
 
@@ -173,7 +173,7 @@ class App
         $Teams = new Teams($this->Users);
         $this->teamArr = $Teams->readOne();
         // Notifs
-        $Notifications = new Notifications($this->Users);
+        $Notifications = new UserNotifications($this->Users);
         $this->notifsArr = $Notifications->readAll();
     }
 

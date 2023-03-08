@@ -79,14 +79,22 @@ try {
             $App->Session->set('mfa_auth_required', true);
             $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
             $App->Session->set('enable_mfa', true);
+            $App->Session->set('mfa_redirect_origin', '../../ucp.php?tab=2');
 
             // This will redirect user right away to verify mfa code
             $Response = new RedirectResponse('../../login.php');
             $Response->send();
             exit;
 
-        // Disable MFA
-        } elseif (!$useMFA && $App->Users->userData['mfa_secret']) {
+        // Disable MFA if not enforced
+        } elseif (!$useMFA
+            && $App->Users->userData['mfa_secret']
+            && !LocalAuth::isMfaEnforced(
+                (bool) $App->Users->userData['is_admin'],
+                (bool) $App->Users->userData['is_sysadmin'],
+                (int) $App->Config->configArr['enforce_mfa'],
+            )
+        ) {
             $MfaHelper->removeSecret();
         }
     }

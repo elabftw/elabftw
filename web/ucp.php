@@ -20,6 +20,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Services\LocalAuth;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -92,6 +93,12 @@ try {
             );
     }
 
+    $showMfa = !LocalAuth::isMfaEnforced(
+        (bool) $App->Users->userData['is_admin'],
+        (bool) $App->Users->userData['is_sysadmin'],
+        (int) $App->Config->configArr['enforce_mfa'],
+    );
+
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
@@ -105,6 +112,7 @@ try {
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
+        'showMFA' => $showMfa,
     );
 } catch (ImproperActionException $e) {
     // show message to user

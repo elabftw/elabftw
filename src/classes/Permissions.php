@@ -174,10 +174,10 @@ class Permissions
         }
 
         // check for teams
-        if (!empty($this->canread['teams'])) {
+        if (!empty($this->canwrite['teams'])) {
             $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
             $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-            foreach ($this->canread['teams'] as $team) {
+            foreach ($this->canwrite['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
                     return true;
                 }

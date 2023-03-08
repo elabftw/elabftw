@@ -50,7 +50,6 @@ final class Config implements RestInterface
 
     /**
      * Disallow cloning the class
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
      */
     private function __clone()
     {
@@ -58,7 +57,6 @@ final class Config implements RestInterface
 
     /**
      * Disallow wakeup also
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
      */
     public function __wakeup()
     {
@@ -164,7 +162,8 @@ final class Config implements RestInterface
             ('s3_region', ''),
             ('s3_endpoint', ''),
             ('blox_anon', '0'),
-            ('blox_enabled', '1')";
+            ('blox_enabled', '1'),
+            ('enforce_mfa', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

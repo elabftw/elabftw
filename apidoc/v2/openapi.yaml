@@ -2436,6 +2436,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/users'
 
+    patch:
+      tags: ['Users']
+      summary: Modify a user.
+      description: |
+        Note: it is possible to use "me" instead of the userid to access the user of the API key.
+      operationId: patch-user
+      requestBody:
+        description: Parameters for modifying a user.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/users'
+                - type: object
+                  description: Add or remove a user from a team.
+                  properties:
+                    action:
+                      enum: ['add', 'unreference']
+                      type: string
+                    team:
+                      type: integer
+                      description: ID of the team
+      responses:
+        '200':
+          description: Public properties of a user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:

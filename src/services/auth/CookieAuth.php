@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -28,7 +28,7 @@ class CookieAuth implements AuthInterface
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $token, string $tokenTeam)
+    public function __construct(string $token, string $tokenTeam, private array $configArr)
     {
         $this->Db = Db::getConnection();
         $this->token = Check::token($token);
@@ -39,7 +39,12 @@ class CookieAuth implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         // compare the provided token with the token saved in SQL database
-        $sql = 'SELECT userid, mfa_secret FROM users WHERE token = :token LIMIT 1';
+        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`,
+                `groups`.`is_admin`, `groups`.`is_sysadmin`
+            FROM `users`
+            LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
+            WHERE `token` = :token
+            LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $this->token);
         $this->Db->execute($req);
@@ -48,6 +53,7 @@ class CookieAuth implements AuthInterface
         }
         $res = $req->fetch();
         $userid = (int) $res['userid'];
+
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
         $TeamsHelper = new TeamsHelper($this->tokenTeam);
@@ -58,6 +64,16 @@ class CookieAuth implements AuthInterface
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->selectedTeam = $this->tokenTeam;
+        $this->AuthResponse->isAdmin = (bool) $res['is_admin'];
+        $this->AuthResponse->isSysAdmin = (bool) $res['is_sysadmin'];
+
+        // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
+        if ($res['auth_service'] === LoginController::AUTH_LOCAL
+            && LocalAuth::enforceMfa($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
+        ) {
+            throw new UnauthorizedException();
+        }
+
         return $this->AuthResponse;
     }
 }

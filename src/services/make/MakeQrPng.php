@@ -14,8 +14,7 @@ use Elabftw\Models\AbstractEntity;
 use Imagick;
 use ImagickDraw;
 use ImagickPixel;
-use Mpdf\QrCode\Output;
-use Mpdf\QrCode\QrCode;
+use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 
 /**
  * Make a PNG from one or several experiments or db items showing only minimal info with QR codes
@@ -33,11 +32,10 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     private int $fontSize = 16;
 
     public function __construct(
+        private IQRCodeProvider $qrCodeProvider,
         private AbstractEntity $entity,
         private int $id,
         private int $size,
-        private array $backgroundColor = array(255, 255, 255), // white
-        private array $foregroundColor = array(0, 0, 0), // black
     ) {
         $this->entity->setId($this->id);
         // 0 means no query parameter for size
@@ -59,11 +57,11 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     {
         $qrCode = new Imagick();
         $qrCode->setBackgroundColor('white');
-        $qrCode->readImageBlob($this->getQrCode());
+        $qrCode->readImageBlob($this->qrCodeProvider->getQRCodeImage($this->entity->entityData['sharelink'], $this->size));
         // Create a drawing object
         $draw = new ImagickDraw();
         $draw->setTextAlignment(Imagick::ALIGN_LEFT);
-        $draw->setFont(dirname(__DIR__, 2) . '/web/assets/fonts/lato-medium-webfont.ttf');
+        $draw->setFont(dirname(__DIR__, 3) . '/web/assets/fonts/lato-medium-webfont.ttf');
         $draw->setFontSize($this->fontSize);
 
         $splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());
@@ -93,12 +91,5 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
             return 1;
         }
         return $res;
-    }
-
-    private function getQrCode(): string
-    {
-        $qrCode = new QrCode($this->entity->entityData['sharelink']);
-        $output = new Output\Png();
-        return $output->output($qrCode, $this->size, $this->backgroundColor, $this->foregroundColor);
     }
 }

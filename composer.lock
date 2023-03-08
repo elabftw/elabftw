@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7fcf2516f07341141714dac6b605321",
+    "content-hash": "fae71b8094c593980a25903f85cd9afd",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7335,27 +7335,28 @@
         },
         {
             "name": "pyrech/composer-changelogs",
-            "version": "v1.8.2",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pyrech/composer-changelogs.git",
-                "reference": "a8df6ab2aff265c4950146c1c779efac9db4497f"
+                "reference": "14b08841efd3ba1d113fd999db5fa0001318c2fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/a8df6ab2aff265c4950146c1c779efac9db4497f",
-                "reference": "a8df6ab2aff265c4950146c1c779efac9db4497f",
+                "url": "https://api.github.com/repos/pyrech/composer-changelogs/zipball/14b08841efd3ba1d113fd999db5fa0001318c2fc",
+                "reference": "14b08841efd3ba1d113fd999db5fa0001318c2fc",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0 || ^2.0",
-                "php": ">=7.1.0"
+                "ext-json": "*",
+                "php": ">=7.4"
             },
             "require-dev": {
-                "composer/composer": "^1.0.0-alpha10@dev || ^2.0@dev",
-                "composer/semver": "^1.2 || ^2.0 || ^3.2",
+                "composer/composer": "^1.1 || ^2.0",
                 "friendsofphp/php-cs-fixer": "^3.0",
-                "symfony/phpunit-bridge": "^5.2"
+                "phpstan/phpstan": "^1.9",
+                "symfony/phpunit-bridge": "^6.2"
             },
             "type": "composer-plugin",
             "extra": {
@@ -7385,9 +7386,9 @@
             ],
             "support": {
                 "issues": "https://github.com/pyrech/composer-changelogs/issues",
-                "source": "https://github.com/pyrech/composer-changelogs/tree/v1.8.2"
+                "source": "https://github.com/pyrech/composer-changelogs/tree/v2.0.0"
             },
-            "time": "2022-11-08T22:37:12+00:00"
+            "time": "2023-02-04T15:44:22+00:00"
         },
         {
             "name": "rector/rector",

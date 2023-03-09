@@ -1,54 +1,55 @@
 <div class='side-panel' id='todolistPanel' hidden>
-  <a class='float-right mr-2 mt-2' data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
-    <i class='fas fa-chevron-left fa-2x'></i>
-  </a>
-  <div class='mx-2 mt-2'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todolistToggleIcon'><i id='todolistToggleIcon' class='fas fa-chevron-circle-down'></i> {{ 'Todolist'|trans }}</h3>
+  <div class='float-right bounce-left mr-2 mt-2'>
+    <a data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
+      <i class='fas fa-chevron-left fa-2x'></i>
+    </a>
+  </div>
 
-    <div data-save-hidden='todolistMainDiv'>
-      <div class='input-group mt-2 mb-3'>
-        <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'New item'|trans }}'>
-        <div class='input-group-append'>
-          <button class='btn btn-outline-secondary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
-            <i class='fas fa-plus-circle fa-fw' title='{{ 'Add'|trans }}'></i>
-          </button>
-        </div>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todolistToggleIcon' class='p-2'><i id='todolistToggleIcon' class='fas fa-chevron-circle-down'></i> {{ 'Todolist'|trans }}</h3>
+
+  <div data-save-hidden='todolistMainDiv'>
+    <div class='input-group mt-2 mb-3 p-2'>
+      <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'New item'|trans }}'>
+      <div class='input-group-append'>
+        <button class='btn btn-outline-secondary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
+          <i class='fas fa-plus-circle fa-fw' title='{{ 'Add'|trans }}'></i>
+        </button>
       </div>
-
-      <!-- this list will be filled with the to-do items by js -->
-      <ul id='todoItems' class='sortable' data-axis='y' data-table='todolist'></ul>
     </div>
+
+    <!-- this will be filled with the to-do items by js -->
+    <div id='todoItems' class='sortable d-flex flex-column' data-axis='y' data-table='todolist'></div>
   </div>
 
   <div class='clear'><hr></div>
-  <div class='d-flex mx-2'>
+  <div class='d-flex mx-2 mb-1'>
     <div class='mr-auto'>
-    <h3 class='mr-auto'>{{ 'Unfinished steps'|trans }}</h3>
+      <h3 class='mr-auto'>{{ 'Unfinished steps'|trans }}</h3>
     </div>
-    <div class='d-inline-flex justify-content-center switch-btn'>
-      <div class='switch-label'>{{ 'User'|trans }}</div>
-      <div class='custom-control custom-switch' style='padding-left: 1.3rem'>
-        <input type='checkbox' id='todolistStepsShowTeam' class='custom-control-input'
-          autocomplete='off'
-          aria-label='{{ 'Show items steps for team'|trans }}'>
-        <label class='custom-control-label' for='todolistStepsShowTeam' style='margin-top: 3px;'></label>
-      </div>
-      <div class='switch-label'>{{ 'Team'|trans }}</div>
+
+    <!-- Toggle scope User/Team switch -->
+    <div class='d-inline-flex rounded white-border p-1'>
+      <div class='mr-1'>{{ 'User'|trans }}</div>
+      <label class='switch'>
+        <input type='checkbox' id='todolistStepsShowTeam' autocomplete='off' aria-label='{{ 'Show steps for team'|trans }}'>
+        <span class='slider'></span>
+      </label>
+      <div class='ml-1'>{{ 'Team'|trans }}</div>
     </div>
   </div>
 
-  <!-- toggle visibility of experiment steps -->
-  <div class='d-inline-block mx-2 mt-2 w-100'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsExperimentIcon'><i id='todoStepsExperimentIcon' class='fas fa-chevron-circle-down'></i> {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
-    <!-- id is needed to fill it -->
-    <ul id='todoStepsExperiments' class='mt-2' data-save-hidden='todoStepsExperiment'></ul>
+  <!-- EXPERIMENT STEPS -->
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsExperimentIcon' class='p-2'><i id='todoStepsExperimentIcon' class='fas fa-chevron-circle-down'></i> {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
+  <div data-save-hidden='todoStepsExperiments'><!-- this div is here as a target of the toggle-next, because for some reason 'hidden' doesn't work on a flex container -->
+    <!-- id is needed to fill it from Todolist.class.ts -->
+    <div id='todoStepsExperiments' class='d-flex flex-column'></div>
   </div>
 
-  <div class='clear'></div>
-  <div class='d-inline-block mx-2 mt-2 w-100'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsItemIcon'><i id='todoStepsItemIcon' class='fas fa-chevron-circle-down'></i> {{ 'Items'|trans }}</h3>
-    <!-- id is needed to fill it -->
-    <ul id='todoStepsItems' class='mt-2' data-save-hidden='todoStepsItem'></ul>
+  <!-- ITEMS STEPS -->
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todoStepsItemIcon' class='p-2'><i id='todoStepsItemIcon' class='fas fa-chevron-circle-down'></i> {{ 'Items'|trans }}</h3>
+  <div data-save-hidden='todoStepsItem'><!-- this div is here as a target of the toggle-next, because for some reason 'hidden' doesn't work on a flex container -->
+    <!-- id is needed to fill it from Todolist.class.ts -->
+    <div id='todoStepsItems' class='d-flex flex-column'></div>
   </div>
 </div>
 

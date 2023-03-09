@@ -39,6 +39,7 @@ $text-muted: $lightgray;
 @import './fontawesome/brands';
 @import './fontawesome/regular';
 
+@import 'animations';
 @import 'autocomplete';
 @import 'chemdoodle';
 @import 'footer';
@@ -46,7 +47,6 @@ $text-muted: $lightgray;
 @import 'jquery-rating';
 @import 'jsoneditor';
 @import 'ove';
-@import 'todolist';
 @import 'search-syntax-highlighting';
 
 /* Font is Lato */
@@ -638,6 +638,7 @@ tr:nth-child(odd) {
 .side-panel {
     background: $darkgray;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    color: $lightwhite;
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -658,28 +659,25 @@ tr:nth-child(odd) {
         color: $lightwhite;
     }
 
-    ul {
-        padding-left: 0;
-    }
-
-    li {
+    .side-panel-item {
         background-color: $lightgray;
-        color: $lightwhite;
-        font-size: 18px;
-        list-style-type: none;
+        font-size: 110%;
         padding: 5px 0 5px 10px;
-        text-align: left;
 
-        /* see why this line is lint-disabled: https://github.com/stylelint/stylelint/issues/5020 */
-        &.selected { /* stylelint-disable-line selector-no-qualifying-type */
+        /* Favtags will show up as selected */
+        &.selected {
             background-color: $elabblue;
-            color: $lightwhite;
             cursor: initial;
         }
 
         &:hover:not(.selected) {
             background-color: $maingray;
         }
+    }
+
+    /* Make the titles that you can click on to toggle the steps visibly clickable */
+    [data-action='toggle-next']:hover {
+        background-color: $maingray;
     }
 }
 
@@ -1233,33 +1231,8 @@ input[type='color'] {
     }
 }
 
-.switch-btn {
+.white-border {
     border: 1px solid $lightwhite;
-    border-radius: 5px;
-    padding: 3px;
-}
-
-/* loading spinner */
-.lds-dual-ring::after {
-    animation: lds-dual-ring 1.3s linear infinite;
-    border: 8px solid $elabblue;
-    border-color: $elabblue transparent $elabblue transparent;
-    border-radius: 50%;
-    content: ' ';
-    display: block;
-    height: 150px;
-    margin: 4px;
-    width: 150px;
-}
-
-@keyframes lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 /* notifications */
@@ -1280,19 +1253,55 @@ input[type='color'] {
     }
 }
 
-/* To generate a path, use Inkscape and draw Bezier curves and save as svg */
-.moving-bug {
-    animation: crawl 3s forwards linear;
-    offset-path: path('M 0.32956666,-0.05334692 C 12.665605,11.589579 11.928138,3.2275405 17.89012,3.9059119 22.510445,4.4316258 31.215218,-0.63454953 31.84037,3.9733749 32.752011,10.692973 42.510567,21.856688 46.363102,20.322735 52.62615,17.828995 55.24992,-0.95807772 60.359661,0.99422564 67.355357,3.6671046 74.588748,22.375307 80.733546,25.741014 99.56382,36.054972 110.72842,20.776429 103.01153,15.283795 c -6.77062,-4.819109 15.68715,-14.31937313 21.1714,-8.0753273 5.97593,6.8038503 12.04769,-6.92044453 18.96241,-6.66581506 7.76736,0.28602767 13.62434,13.59179536 19.12289,6.81266596 6.21245,-7.65928702 10.26095,14.2467484 17.98362,12.7003124 4.57794,-0.916714 28.94474,12.145381 28.94474,12.145381');
-    transform: rotate(90deg);
+
+/* The switch - the box around the slider */
+.switch {
+    display: inline-block;
+    height: 22px;
+    position: relative;
+    width: 42px;
+
+    /* Hide default HTML checkbox */
+    input {
+        height: 0;
+        opacity: 0;
+        width: 0;
+    }
 }
 
-@keyframes crawl {
-    0% {
-        offset-distance: 0%;
-    }
+/* The slider */
+.slider {
+    background-color: $lightgraybutnottoolight;
+    border-radius: 34px;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 355ms;
 
-    100% {
-        offset-distance: 100%;
+    &::before {
+        background-color: $white;
+        border-radius: 50%;
+        bottom: 2px;
+        content: '';
+        height: 18px;
+        left: 2px;
+        position: absolute;
+        transition: 355ms;
+        width: 18px;
     }
+}
+
+input:checked + .slider {
+    background-color: $elabblue;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px $elabblue;
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
 }

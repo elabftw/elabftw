@@ -8,7 +8,7 @@
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
-import { notif, reloadElement } from './misc';
+import { notif, reloadElement, getEntity } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -183,6 +183,30 @@ export default class JsonEditorHelper {
     fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
       method: 'POST',
       body: formData,
+    });
+  }
+
+  toggleDisplayMainText(): void {
+    const entity = getEntity();
+    const MetadataC = new Metadata(entity);
+    let json = {};
+    // get the current metadata
+    MetadataC.read().then(metadata => {
+      if (metadata) {
+        json = metadata;
+      }
+      // add the namespace object 'elabftw' if it's not there
+      if (!Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
+        json['elabftw'] = {};
+      }
+      // if it's not present, set it to false
+      if (!Object.prototype.hasOwnProperty.call(json['elabftw'], 'display_main_text')) {
+        json['elabftw']['display_main_text'] = false;
+      } else {
+        json['elabftw']['display_main_text'] = !json['elabftw']['display_main_text'];
+      }
+      this.editor.set(json);
+      this.saveMetadata();
     });
   }
 

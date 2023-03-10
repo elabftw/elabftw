@@ -26,6 +26,16 @@
       <button type='button' data-action='json-save-metadata' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
     {% endif %}
     <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+
+    <!-- Display main text switch -->
+    <div class='d-inline-flex p-1'>
+      <div class='mr-1'>{{ 'Display main text'|trans }}</div>
+      <label class='switch'>
+        <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+        <span class='slider'></span>
+      </label>
+    </div>
+
     <div hidden id='jsonImportFileDiv'>
       <input type='file' name='file' accept='.json' id='jsonImportFileInput' />
       <button type='submit' data-action='json-upload-file' class='button btn btn-primary'>{{ 'Import'|trans }}</button>

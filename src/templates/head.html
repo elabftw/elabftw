@@ -153,9 +153,11 @@
 </nav>
 
 <!-- SHOW FAVTAGS PANEL -->
-<a class='float-left' data-action='toggle-favtags' id='favtags-opener' title='{{ 'Open favorite tags'|trans }}' hidden>
-  <i class='fas fa-chevron-right fa-2x'></i>
-</a>
+<div class='pr-2 float-left bounce-right' id='favtags-opener' hidden>
+  <a data-action='toggle-favtags' title='{{ 'Open favorite tags'|trans }}'>
+    <i class='fas fa-chevron-right fa-2x'></i>
+  </a>
+</div>
 <div class='real-container'>
 
 <noscript><!-- show warning if javascript is disabled -->

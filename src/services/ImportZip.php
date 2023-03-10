@@ -149,7 +149,9 @@ class ImportZip extends AbstractImportZip
 
             // upload the attached files
             if (is_array($item['uploads'])) {
-                $titlePath = Filter::forFilesystem($item['title']);
+                // The substr is important for experiment titles that have their name truncated!
+                // see https://github.com/elabftw/elabftw/commit/b2a4a060f3052abe3edfb0a468e0f35df54046de
+                $titlePath = substr(Filter::forFilesystem($item['title']), 0, 100);
                 $shortElabid = Tools::getShortElabid($item['elabid']);
                 foreach ($item['uploads'] as $file) {
                     if ($this->Entity instanceof Experiments) {

@@ -57,10 +57,7 @@ Wrapper
   / Literal
 
 Parenthesis 'expression in parenthesis'
-  = '(' e:OrExpression _* ')'
-    {
-      return $e;
-    }
+  = '(' @OrExpression _* ')'
 
 Fields
   = Field
@@ -72,13 +69,16 @@ Fields
   / FieldId
 
 Field
-  = field:('author'i / 'body'i / 'category'i / 'elabid'i / 'group'i / 'status'i / 'title'i / 'visibility'i) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
+  = field:('author'i / 'body'i / 'category'i / 'elabid'i
+      / 'group'i / 'status'i / 'title'i / 'visibility'i
+    ) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
   {
     return new Field(strtolower($field), $term, $strict);
   }
 
 FieldTimestamp
-  = field:('created_at'i / 'locked_at'i / 'timestamped_at'i) ':' date:(DateBetween / DateSimple)
+  = field:('created_at'i / 'locked_at'i / 'timestamped_at'i)
+    ':' date:(DateBetween / DateSimple)
   {
     return new TimestampField(strtolower($field), $date);
   }
@@ -116,7 +116,7 @@ DateSimple
   }
 
 Date
-  = year:YYYY DateSeparator? month:MM DateSeparator? day:DD
+  = year:$(Digit|4|) DateSeparator? month:MM DateSeparator? day:DD
   {
     return $year . $month . $day;
   }
@@ -124,23 +124,11 @@ Date
 DateSeparator
   = [.,/-]
 
-YYYY
-  = year:$(Digit Digit Digit Digit)
-  {
-    return $year;
-  }
-
 MM
-  = month:$('0' Digit19 / '1' [0-2] )
-  {
-    return $month;
-  }
+  = @$('0' Digit19 / '1' [0-2])
 
 DD
-  = day:$('0' Digit19 / [1-2] Digit / '3' [01])
-  {
-    return $day;
-  }
+  = @$('0' Digit19 / [1-2] Digit / '3' [01])
 
 FieldBoolean
   = field:('locked'i / 'timestamped'i) ':' term:Boolean
@@ -172,10 +160,7 @@ FieldAttachment
       {
         return new SimpleValueWrapper($bool);
       }
-    / terms:(List / LiteralInField)
-      {
-        return $terms;
-      }
+    / @(List / LiteralInField)
   )
   {
     return new Field('attachment', $term, $strict);
@@ -188,34 +173,22 @@ List 'quoted term'
   }
 
 List1
-  = "'" wordList:ListString1 "'"
-  {
-    return $wordList;
-  }
+  = "'" @ListString1 "'"
 
 ListString1
-  = chars:(
+  = @$((
     [^\n\r\f\\']
     / Escape
-  )+
-  {
-    return join("", $chars);
-  }
+  )+)
 
 List2
-  = '"' wordList:ListString2 '"'
-  {
-    return $wordList;
-  }
+  = '"' @ListString2 '"'
 
 ListString2
-  = chars:(
+  = @$((
     [^\n\r\f\\"]
     / Escape
-  )+
-  {
-    return join("", $chars);
-  }
+  )+)
 
 LiteralInField 'term'
   = literal:String
@@ -237,13 +210,10 @@ Literal 'term'
   }
 
 String
-  = chars:(
+  = @$((
     [^\n\r\f\\"'|&!() ]
     / Escape
-  )+
-  {
-    return join("", $chars);
-  }
+  )+)
 
 Escape
   = $('\\' [%_]) // Escape MySQL wildcard characters

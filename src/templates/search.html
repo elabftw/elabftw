@@ -392,6 +392,7 @@
     <div class='row'>
       <div class='col-md-8 mb-2'>
         <h5><label for='extendedArea'><i class='fas fa-search'></i> {{ 'Search query'|trans }}</label></h5>
+        <p class='smallgray'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}</p>
         {# next div is wrapper to position pre below textarea #}
         <div style='position:relative;'>
           <textarea
@@ -399,9 +400,9 @@
             name='q'
             rows='10'
             class='form-control'
-            placeholder='author:"{{ App.Users.userData.fullname|raw }}" status:"Running"'
+            placeholder="{{ 'Enter search query, e.g.: %s'|trans|format(getExtendedSearchExample()) }}"
             spellcheck='false'
-          >{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim : 'author:"' ~ App.Users.userData.fullname ~ '" ' }}</textarea>
+          >{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim }}</textarea>
           <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
 
         </div>

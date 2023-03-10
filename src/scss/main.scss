@@ -463,6 +463,9 @@ button:disabled {
 github issue #52 */
 #body_view p {
     color: #000;
+    // break super long words, see #4169
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* fix for big images uploaded in the text */
@@ -848,7 +851,7 @@ the form-control fails to do that so we do the border ourselves */
     margin: 0 20px 0 0;
     overflow-wrap: break-word;
     padding-left: 20px;
-    word-wrap: break-word;
+    word-break: break-word;
 
     a {
         color: $maingray;

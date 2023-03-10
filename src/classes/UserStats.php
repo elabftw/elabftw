@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\State;
 use Elabftw\Models\Status;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -49,9 +50,11 @@ class UserStats
         $sql = 'SELECT COUNT(id)
             FROM experiments
             WHERE userid = :userid
-            AND category = :category';
+            AND category = :category
+            AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
 
         // populate arrays
         foreach ($statusArr as $status) {

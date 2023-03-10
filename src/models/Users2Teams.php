@@ -32,7 +32,7 @@ class Users2Teams
     public function create(int $userid, int $teamid): bool
     {
         // primary key will take care of ensuring there are no duplicate tuples
-        $sql = 'INSERT INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
+        $sql = 'INSERT IGNORE INTO users2teams (`users_id`, `teams_id`) VALUES (:userid, :team);';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);

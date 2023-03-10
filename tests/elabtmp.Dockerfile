@@ -5,12 +5,9 @@ ARG BASE_IMAGE_VERSION=hypernext
 FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # Set versions of used tools
-ARG PHPSTAN_VERSION=1.9.14
 ARG PSALM_VERSION=5.5.0
 ARG PHAN_VERSION=5.4.1
 
-# phpStan
-ADD --chmod=755 https://github.com/phpstan/phpstan/releases/download/$PHPSTAN_VERSION/phpstan.phar /usr/bin/phpstan
 # allow tmpfile, used by phpstan
 RUN sed -i 's/tmpfile, //' /etc/php81/php.ini
 

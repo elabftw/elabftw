@@ -42,7 +42,7 @@ abstract class AbstractNotifications
             $isAck = 0;
         }
 
-        $jsonBody = json_encode($this->getBody(), JSON_THROW_ON_ERROR, 5);
+        $jsonBody = json_encode($this->getBody(), JSON_THROW_ON_ERROR|JSON_FORCE_OBJECT, 5);
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);

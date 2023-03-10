@@ -33,9 +33,13 @@
               <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
               <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
               <div class='separator'></div>
-              <div class='custom-control custom-checkbox'>
-                <input type='checkbox' class='custom-control-input' id='newFieldBlankOnDuplicate'>
-                <label class='custom-control-label' for='newFieldBlankOnDuplicate'>{{ 'Blank value on duplicate?'|trans }}</label>
+              <!-- Blank value on duplicate switch -->
+              <div class='d-inline-flex flex-row'>
+                <div class='d-inline mr-1' for='blankValueOnDuplicateSwitch'><p>{{ 'Blank value on duplicate'|trans }}</p></div>
+                <label class='switch'>
+                  <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
+                  <span class='slider'></span>
+                </label>
               </div>
             </div>
 

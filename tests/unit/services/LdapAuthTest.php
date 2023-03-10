@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use LdapRecord\LdapRecordException;
+use LdapRecord\Models\Entry;
 use LdapRecord\Testing\ConnectionFake;
 use LdapRecord\Testing\LdapFake;
 
@@ -37,7 +38,8 @@ class LdapAuthTest extends \PHPUnit\Framework\TestCase
             'use_tls' => false,
         );
         $connection = new ConnectionFake($ldapConfig, new LdapFake());
-        $this->AuthService = new LdapAuth($connection, $configArr, 'phpunit@example.com', 'phpunitftw');
+
+        $this->AuthService = new LdapAuth($connection, new Entry(), $configArr, 'phpunit@example.com', 'phpunitftw');
     }
 
     public function testTryAuth(): void

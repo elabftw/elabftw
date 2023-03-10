@@ -33,6 +33,7 @@ use Elabftw\Services\MfaHelper;
 use Elabftw\Services\SamlAuth;
 use Elabftw\Services\TeamAuth;
 use LdapRecord\Connection;
+use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -219,7 +220,8 @@ class LoginController implements ControllerInterface
                     'use_tls' => (bool) $c['ldap_use_tls'],
                 );
                 $connection = new Connection($ldapConfig);
-                return new LdapAuth($connection, $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
+                // use a generic Entry object https://ldaprecord.com/docs/core/v2/models/#entry-model
+                return new LdapAuth($connection, new Entry(), $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
                 // AUTH WITH LOCAL DATABASE
             case 'local':

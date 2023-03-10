@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
           field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
         }
         // deal with the blank_on_value
-        if ((document.getElementById('newFieldBlankOnDuplicate') as HTMLInputElement).checked) {
+        if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
         }
         // deal with the multi select

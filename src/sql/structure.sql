@@ -815,7 +815,7 @@ CREATE TABLE `users` (
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `default_read` JSON NOT NULL,
   `default_write` JSON NOT NULL,
-  `single_column_layout` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `single_column_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `cjk_fonts` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `orderby` varchar(255) NOT NULL DEFAULT 'date',
   `sort` varchar(255) NOT NULL DEFAULT 'desc',

@@ -1,16 +1,24 @@
-<form class='row'>
-  <div class='col-md-11'>
-    <input type='hidden' name='tab' value='3' />
-    <select class='form-control selectpicker' name='templateid' required data-show-subtext='true' data-live-search='true'>
+<div class='pl-3 mt-3'>
+  <table id='tplTable' class='table' aria-describedby='templates table' data-table-sort='true'>
+    <thead>
+      <tr>
+        <th scope='col'>{{ 'Team'|trans }}</th>
+        <th scope='col'>{{ 'Owner'|trans }}</th>
+        <th scope='col'>{{ 'Last modification date'|trans }}</th>
+        <th scope='col'>{{ 'Name'|trans }}</th>
+        <th scope='col'>{{ 'Action'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
       {% for template in templatesArr %}
-      <option value='{{ template.id }}'{{ App.Request.query.get('templateid') == template.id ? ' selected' }}>{{ template.team_name }} - {{ template.fullname|raw }} - {{ template.title|raw }} {{ template.is_pinned ? '(pinned)'|trans }}</option>
+        <tr>
+          <td>{{ template.team_name }}</td>
+          <td>{{ template.fullname|raw }}</td>
+          <td>{{ template.modified_at }}</td>
+          <td>{% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
+          <td><a href='?tab=3&templateid={{ template.id }}'><button class='btn btn-primary'>{{ 'Load'|trans }}</button></a></td>
+        </tr>
       {% endfor %}
-    </select>
-  </div>
-
-  <div class='col-md-1'>
-    <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
-  </div>
-
-</form>
-<hr>
+    </tbody>
+  </table>
+</div>

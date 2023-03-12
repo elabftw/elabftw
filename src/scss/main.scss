@@ -484,21 +484,33 @@ github issue #52 */
     border: 1px solid $maingray;
 }
 
+/* UCP keyboard shortcut table */
+.ucp-shortcuts-table {
+    text-align: center;
+
+    tr {
+        border-bottom: 1px solid $verylightgray;
+    }
+
+    td,
+    th {
+        /* stylelint-disable-next-line shorthand-property-no-redundant-values */
+        padding: 10px 0 15px 0;
+    }
+
+    .align-left {
+        text-align: left;
+    }
+}
+
 table td {
     padding: 0 5px;
 }
 
-table td input {
-    width: 100%;
-}
-
 table th {
-    background-color: $bordersgray;
     color: $maingray;
     font-size: 90%;
     padding: 0 5px;
-    text-align: left;
-    text-transform: uppercase;
 }
 
 /* TABLE SHOW MODE */
@@ -558,13 +570,9 @@ table th {
     margin: 1px;
 }
 
-/* color one row every other row */
-tr:nth-child(even) {
-    background-color: #fff;
-}
-
-tr:nth-child(odd) {
-    background-color: $verylightgray;
+.vertical-separator {
+    border-right: 1px solid $verylightgray;
+    margin: 0 15px;
 }
 
 /* OVERLAY */
@@ -753,10 +761,6 @@ tr:nth-child(odd) {
 
 .box section {
     margin-bottom: 15px;
-}
-
-.box label {
-    margin: 0 10px 0 0;
 }
 
 /* stylelint-disable-next-line selector-no-qualifying-type */
@@ -1267,6 +1271,11 @@ input[type='color'] {
         opacity: 0;
         width: 0;
     }
+
+    /* align the slider to the label in ucp */
+    &.ucp-align {
+        margin-top: 0.5rem;
+    }
 }
 
 /* The slider */
@@ -1304,4 +1313,9 @@ input:focus + .slider {
 
 input:checked + .slider::before {
     transform: translateX(20px);
+}
+
+.section-title {
+    background-color: $verylightgray;
+    font-size: 120%;
 }

@@ -25,11 +25,13 @@
     margin-right: 15px;
     /* fix navbar height getting smaller on profile/ucp/admin/… pages */
     min-height: 43px;
-    /* we want the border bottom to be same width as the text */
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    line-height: 43px;
+    /* we want the border bottom to be same width as the text
+       and the text centered on the bar */
+    padding: 0 !important;
     text-decoration: none;
     text-transform: uppercase;
+    text-align: center;
 
     /* blue on hover */
     &:hover,
@@ -40,7 +42,10 @@
 
     /* selected nav entry */
     &.active {
-        border-bottom: 6px $elabblue solid;
+	background-image: linear-gradient(to top, $elabblue 0%, $elabblue 100%);
+	background-repeat: no-repeat;
+	background-size: 100% 6px;
+	background-position: center bottom;
     }
 }
 

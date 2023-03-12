@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, notifError, reloadElement, collectForm, permissionsToJson } from './misc';
+import { getEntity, notif, notifError, reloadElement, permissionsToJson } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.delete(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
     }
   });
+
 
   $('#team_groups_div').on('keypress blur', '.autocompleteUsers', function(e) {
     // Enter is ascii code 13
@@ -117,6 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // END ITEMS TYPES
 
+  // enforce permissions selects
+  $('.forceCanSelect').on('change', function() {
+    const params = {};
+    params[$(this).data('target')] = permissionsToJson(parseInt(($(this).val() as string), 10), []);
+    ApiC.patch(`${Model.Team}/${$(this).data('id')}`, params);
+  });
+
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
@@ -139,7 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
     // CREATE STATUS
     } else if (el.matches('[data-action="create-status"]')) {
-      const content = (document.getElementById('statusName') as HTMLInputElement).value;
+      const nameInput = (document.getElementById('statusName') as HTMLInputElement);
+      const content = nameInput.value;
+      if (!content) {
+        notifError(new Error('Invalid status name'));
+        // set the border in red to bring attention
+        nameInput.style.borderColor = 'red';
+        return false;
+      }
       const color = (document.getElementById('statusColor') as HTMLInputElement).value;
       return ApiC.post(`${Model.Team}/${el.dataset.teamid}/${Model.Status}`, {'name': content, 'color': color}).then(() => reloadElement('statusBox'));
     // UPDATE STATUS
@@ -168,12 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tagInput.value = '';
         reloadElement('tagMgrDiv');
       });
-    } else if (el.matches('[data-action="patch-team-admin"]')) {
-      const params = collectForm(el.closest('div.form-group'));
-      params['force_canread'] = permissionsToJson(parseInt(params['force_canread'], 10), []);
-      params['force_canwrite'] = permissionsToJson(parseInt(params['force_canwrite'], 10), []);
-      // the tinymce won't get collected
+    } else if (el.matches('[data-action="patch-team-common-template"]')) {
+      const params = {};
       params['common_template'] = tinymce.get('common_template').getContent();
+      params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
+      ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
+    } else if (el.matches('[data-action="patch-team-common-template-md"]')) {
+      const params = {};
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
       ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
     } else if (el.matches('[data-action="export-scheduler"]')) {

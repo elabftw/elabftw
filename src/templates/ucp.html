@@ -412,7 +412,7 @@
   <div class='pl-3'>
   {% for notif in notificationsSettings %}
     <div class='d-flex justify-content-between'>
-      <div>{{ notif.designation }}</div>
+      <label class='col-form-label'>{{ notif.designation }}</label>
       <div class='d-flex flex-column align-items-end'>
         <div class='d-flex align-self-center'>
           <label class='col-form-label px-2 link-like' for='{{ notif.setting }}'>{{ 'Web'|trans }}</label>

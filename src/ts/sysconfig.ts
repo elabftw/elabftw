@@ -149,9 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         content = '';
       }
       ApiC.patch('config', {'privacy_policy': content});
-    // PATCH STORAGE
-    } else if (el.matches('[data-action="patch-storage"]')) {
-      return ApiC.patch('config', collectForm(el.closest('div.form-group')));
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);

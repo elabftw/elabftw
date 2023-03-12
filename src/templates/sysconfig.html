@@ -930,33 +930,49 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <input class='form-control col-md-3' type='text' id='ldap-lastname' placeholder='sn' data-trigger='blur' data-model='config' data-target='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
     </div>
     <hr>
+  </div>
 </div>
 
 <!-- TAB 11 Uploads -->
 <div data-tabcontent='11' hidden>
-  <div class='box form-group'>
-    <label for='uploads_storage'>{{ 'Where user uploaded files are stored:'|trans }}</label>
-    <select id='uploads_storage' name='uploads_storage' class='form-control col-md-4'>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Uploaded files configuration'|trans }}</h3>
+
+  <div class='pl-3 mt-2 mb-5'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='uploads_storage' class='col-form-label'>{{ 'Where user uploaded files are stored:'|trans }}</label>
+      <select id='uploads_storage' data-trigger='change' data-model='config' data-target='uploads_storage' class='form-control col-md-3'>
         <option {{ App.Config.configArr.uploads_storage == '1' ? ' selected' }} value='1'>{{ 'Local filesystem'|trans }}</option>
         <option {{ App.Config.configArr.uploads_storage == '2' ? ' selected' }} value='2'>{{ 'S3 bucket'|trans }}</option>
-    </select>
-    <p class='smallgray'>{{ 'You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage.'|trans }}</p>
-
-    <label for='s3_bucket_name'>S3 bucket name</label>
-    <input class='form-control col-md-4' type='text' id='s3_bucket_name' placeholder='some-bucket-name' name='s3_bucket_name' value='{{ App.Config.configArr.s3_bucket_name }}' />
-
-    <label for='s3_region'>S3 region</label>
-    <input class='form-control col-md-4' type='text' id='s3_region' placeholder='uploads' name='s3_region' value='{{ App.Config.configArr.s3_region }}' />
-
-    <label for='s3_endpoint'>S3 endpoint</label>
-    <input class='form-control col-md-4' type='url' id='s3_endpoint' placeholder='uploads' name='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
-
-    <label for='s3_path_prefix'>S3 path prefix (optional)</label>
-    <input class='form-control col-md-4' type='text' id='s3_path_prefix' placeholder='uploads' name='s3_path_prefix' value='{{ App.Config.configArr.s3_path_prefix }}' />
-
-    <div class='mt-4 text-center'>
-      <button data-action='patch-storage' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      </select>
     </div>
+    <p class='smallgray'>{{ 'You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage.'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_bucket_name' class='col-form-label'>S3 bucket name</label>
+      <input class='form-control col-md-3' type='text' id='s3_bucket_name' placeholder='some-bucket-name' data-trigger='blur' data-model='config' data-target='s3_bucket_name' value='{{ App.Config.configArr.s3_bucket_name }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_region' class='col-form-label'>S3 region</label>
+      <input class='form-control col-md-3' type='text' id='s3_region' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_region' value='{{ App.Config.configArr.s3_region }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_endpoint' class='col-form-label'>S3 endpoint</label>
+      <input class='form-control col-md-3' type='url' id='s3_endpoint' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_path_prefix' class='col-form-label'>S3 path prefix (optional)</label>
+      <input class='form-control col-md-3' type='text' id='s3_path_prefix' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_path_prefix' value='{{ App.Config.configArr.s3_path_prefix }}' />
+    </div>
+    <hr>
+
   </div>
 </div>
 

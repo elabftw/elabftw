@@ -399,7 +399,7 @@
           <td>{{ key.name }}</td>
           <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td>{{ key.created_at }}</td>
-          <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><button class='btn btn-danger'>{{ 'Delete'|trans }}</button></a></td>
+          <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt'></i></a></td>
         </tr>
       {% endfor %}
     </tbody>
@@ -415,14 +415,14 @@
       <label class='col-form-label'>{{ notif.designation }}</label>
       <div class='d-flex flex-column align-items-end'>
         <div class='d-flex align-self-center'>
-          <label class='col-form-label px-2 link-like' for='{{ notif.setting }}'>{{ 'Web'|trans }}</label>
+          <label class='col-form-label px-2' for='{{ notif.setting }}'>{{ 'Web'|trans }}</label>
           <label class='switch ucp-align'>
             <input type='checkbox' id='{{ notif.setting }}' data-trigger='change' data-model='users/me' data-target='{{ notif.setting }}' {{ App.Users.userData[notif.setting] == 1 ? " checked='checked'" }}>
             <span class='slider'></span>
           </label>
         </div>
         <div class='d-flex align-self-center'>
-          <label class='col-form-label px-2 link-like' for='{{ notif.setting }}_email'>{{ 'Email'|trans }}</label>
+          <label class='col-form-label px-2' for='{{ notif.setting }}_email'>{{ 'Email'|trans }}</label>
           <label class='switch ucp-align'>
             <input type='checkbox' id='{{ notif.setting }}_email' data-trigger='change' data-model='users/me' data-target='{{ notif.setting }}_email' {{ App.Users.userData[notif.setting ~ '_email'] == 1 ? " checked='checked'" }}>
             <span class='slider'></span>

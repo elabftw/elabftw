@@ -5,7 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import i18next from 'i18next';
 import { collectForm, reloadElement } from './misc';
+import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -48,4 +50,24 @@ document.addEventListener('DOMContentLoaded', () => {
     (document.getElementById('searchUsers') as HTMLInputElement).value = '';
     (document.getElementById('userSearchForm') as HTMLFormElement).submit();
   });
+
+  // UPDATE MALLEABLE USERGROUP
+  const malleableUsergroup = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => ApiC.patch(`users/${original.dataset.userid}`, {'usergroup': value})
+      .then(res => res.json())
+      .then(json => json.usergroup),
+    inputType: InputType.Select,
+    selectOptions: [{value: '1', text: 'Sysadmin'}, {value: '2', text: 'Admin'}, {value: '4', text: 'User'}],
+    listenOn: '.malleableUsergroup',
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  new MutationObserver(() => {
+    malleableUsergroup.listen();
+  }).observe(document.getElementById('usersTable'), {childList: true});
 });

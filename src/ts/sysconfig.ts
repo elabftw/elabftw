@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, reloadElement, removeEmpty } from './misc';
+import { notif, reloadElement, removeEmpty } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';

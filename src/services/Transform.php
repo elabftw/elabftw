@@ -27,6 +27,15 @@ class Transform
         return sprintf("<input type='hidden' name='csrf' value='%s' />", $token);
     }
 
+    public static function usergroupToHuman(string $usergroup): string
+    {
+        return match ($usergroup) {
+            '1' => 'Sysadmin',
+            '2' => 'Admin',
+            '4' => 'User',
+        };
+    }
+
     // generate html for a notification to show on web interface
     public static function notif(array $notif): string
     {

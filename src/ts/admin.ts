@@ -39,14 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     MetadataC.display('edit');
   }
 
-  $('#teamGroupCreateBtn').on('click', function() {
-    const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
-    ApiC.post(`${Model.Team}/${input.dataset.teamid}/${Model.TeamGroup}`, {'name': input.value}).then(() => {
-      reloadElement('team_groups_div');
-      input.value = '';
-    });
-  });
-
   $('#team_groups_div').on('click', '.teamGroupDelete', function() {
     if (confirm(i18next.t('generic-delete-warning'))) {
       ApiC.delete(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
@@ -54,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
+  /*
   $('#team_groups_div').on('keypress blur', '.autocompleteUsers', function(e) {
     // Enter is ascii code 13
     if (e.which === 13 || e.type === 'focusout') {
@@ -68,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+ */
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
@@ -145,6 +139,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
+    // CREATE TEAM GROUP
+    } else if (el.matches('[data-action="create-teamgroup"]')) {
+      const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
+      ApiC.post(`${Model.Team}/${input.dataset.teamid}/${Model.TeamGroup}`, {'name': input.value}).then(() => {
+        reloadElement('team_groups_div');
+        input.value = '';
+      });
+    // ADD USER TO TEAM GROUP
+    } else if (el.matches('[data-action="adduser-teamgroup"]')) {
+      const user = parseInt(el.parentNode.parentNode.querySelector('input').value as string, 10);
+      if (isNaN(user)) {
+        notifError(new Error('Use the autocompletion menu to add users.'));
+        return;
+      }
+      ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
     // CREATE STATUS
     } else if (el.matches('[data-action="create-status"]')) {
       const nameInput = (document.getElementById('statusName') as HTMLInputElement);

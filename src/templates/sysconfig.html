@@ -11,9 +11,6 @@
     {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
-<p>Docker image version: {{ elabimgVersion }}<br />
-MySQL database structure version: {{ App.Config.configArr.schema }}</p>
-
 <div id='versionNotifZone'></div>
 
 <ul class='tabbed-menu'>
@@ -28,6 +25,7 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
   <li data-action='switch-tab' data-tabtarget='9'>{{ 'External auth'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='10'>LDAP</li>
   <li data-action='switch-tab' data-tabtarget='11'>{{ 'Uploads'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='12'>{{ 'Communication'|trans }}</li>
 </ul>
 
 <!-- loading spinner -->
@@ -37,222 +35,236 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 
 <!-- TAB 1 SERVER -->
 <div data-tabcontent='1' hidden>
-    <!-- STATS -->
-    <div class='box'>
-      <h3>{{ 'Usage Statistics'|trans }}</h3>
-      <hr>
-      <p>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</p>
-      <hr>
-      <a href='make.php?format=report' class='button btn btn-primary'>{{ 'Generate report'|trans }}</a>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <div class='d-flex justify-content-between'>
+      <div>{{ 'Teams'|trans }}: {{ teamsStats.totteams }} - {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}</div>
+      <div><a href='make.php?format=report' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
     </div>
+  </div>
 
-    <div class='box'>
-      <h3>{{ 'Announcement'|trans }}</h3>
-      <hr>
-      <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
-      <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
-      <div class='mt-4 text-center'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
-      </div>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Settings'|trans }}</h3>
+  <div class='pl-3'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='lang' class='col-form-label'>{{ 'Language'|trans }}</label>
+      <select id='lang' data-trigger='change' data-model='config' data-target='lang' class='form-control col-md-3' autocomplete='off'>
+        {% for lang, text in langsArr|sort %}
+        <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
+        {% endfor %}
+      </select>
     </div>
+    <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
+    <hr>
 
-    <div class='box'>
-      <h3>{{ 'Login page announcement'|trans }}</h3>
-      <hr>
-      <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
-      <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
-      <div class='mt-4 text-center'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
-      </div>
+    <div class='d-flex justify-content-between'>
+      <label for='proxy' class='col-form-label'>{{ 'Address of the Proxy'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='proxy' type='text' value='{{ App.Config.configArr.proxy }}' id='proxy' />
     </div>
+    <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
+    <hr>
 
-    <form class='box' method='post' action='app/controllers/SysconfigController.php'>
-        {{ App.Session.get('csrf')|csrf }}
-        <h3>{{ 'Settings'|trans }}</h3>
-        <hr>
-        <div class='form-group'>
-          <input type='hidden' name='updateConfig' value='true' />
-          <label for='lang'>{{ 'Language:'|trans }}</label>
-          <select id='lang' name='lang' class='form-control col-md-4' autocomplete='off'>
-              {% for lang, text in langsArr|sort %}
-              <option {{ App.Config.configArr.lang == lang ? ' selected' }} value='{{ lang }}'>{{ text }}</option>
-              {% endfor %}
-          </select>
-          <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='deletable_xp' class='col-form-label'>{{ 'Admins can always delete experiments'|trans }}</label>
+      <label class='switch ucp-align' class='col-form-label'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='deletable_xp' {{ App.Config.configArr.deletable_xp ? 'checked="checked"' }} id='deletable_xp'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
+    <hr>
 
-          <label for='proxy'>{{ 'Address of the Proxy:'|trans }}</label>
-          <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.proxy }}' name='proxy' id='proxy' />
-          <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='allow_useronly' class='col-form-label'>{{ 'Allow the base permission setting «Only me»'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='allow_useronly' {{ App.Config.configArr.allow_useronly ? 'checked="checked"' }} id='allow_useronly'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
 
-          <label for='deletable_xp'>{{ 'Admins can always delete experiments:'|trans }}</label>
-          <select id='deletable_xp' name='deletable_xp' class='form-control col-md-4' autocomplete='off'>
-              <option {{ App.Config.configArr.deletable_xp == 1 ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.deletable_xp == 0 ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
-          <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='max_revisions' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' id='max_revisions' />
+    </div>
+    <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
+    <hr>
 
-          <label for='allow_useronly'>{{ 'Allow the base permission setting «Only me»'|trans }}</label>
-          <select id='allow_useronly' name='allow_useronly' class='form-control col-md-4'>
-              <option {{ App.Config.configArr.allow_useronly == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.allow_useronly == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
+    <div class='d-flex justify-content-between'>
+      <label for='min_delta_revisions' class='col-form-label'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry'|trans }}</label>
+      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' data-trigger='blur' data-model='config' data-target='min_delta_revisions' id='min_delta_revisions' />
+    </div>
+    <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
+    <hr>
 
-          <label for='max_revisions'>{{ 'Maximum number of stored revisions per entry:'|trans }}</label>
-          <input class='form-control col-md-4' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' name='max_revisions' id='max_revisions' />
-          <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='min_days_revisions' class='col-form-label'>{{ 'Number of days between changes to automatically create a revision'|trans }}</label>
+      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_days_revisions }}' data-trigger='blur' data-model='config' data-target='min_days_revisions' id='min_days_revisions' />
+    </div>
+    <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
+    <hr>
 
-          <label for='min_delta_revisions'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry:'|trans }}</label>
-          <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' name='min_delta_revisions' id='min_delta_revisions' />
-          <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='support_url' class='col-form-label'>{{ 'URL where the Support menu entry from Help dropdown points'|trans }}</label>
+      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.support_url }}' data-trigger='blur' data-model='config' data-target='support_url' id='support_url' />
+    </div>
+    <hr>
 
-          <label for='min_days_revisions'>{{ 'Number of days between changes to automatically create a revision:'|trans }}</label>
-          <input class='form-control col-md-4' type='number' min='1' max='999' value='{{ App.Config.configArr.min_days_revisions }}' name='min_days_revisions' id='min_days_revisions' />
-          <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
+  </div>
 
-          <h3>{{ 'Registration and authentication configuration'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
+  <div class='pl-3'>
 
-          <label for='anon_users'>{{ 'Allow anonymous visitors to login and see Public experiments:'|trans }}</label>
-          <select class='form-control col-md-4' name='anon_users' id='anon_users'>
-              <option value='1'{{ App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-              <option value='0'{{ not App.Config.configArr.anon_users ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-          </select>
-          <p class='smallgray'>{{ 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='anon_users' class='col-form-label'>{{ 'Allow anonymous visitors to login and see Public experiments'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='anon_users' {{ App.Config.configArr.anon_users ? 'checked="checked"' }} id='anon_users'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <p class='smallgray'>{{ 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans }}</p>
+    <hr>
 
-          <label for='open_science'>{{ 'Switch this instance in open science mode:'|trans }}</label>
-          <select id='open_science' name='open_science' class='form-control col-md-4'>
-              <option {{ App.Config.configArr.open_science == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.open_science == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
-          <p class='smallgray'>{{ 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='open_science' class='col-form-label'>{{ 'Switch this instance in open science mode'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='open_science' {{ App.Config.configArr.open_science ? 'checked="checked"' }} id='open_science'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <p class='smallgray'>{{ 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans }}</p>
+    <hr>
 
-          <label for='open_team'>{{ 'Select which team will be open to the world in open science mode:'|trans }}</label>
-          <select id='open_team' name='open_team' class='form-control col-md-4'>
-              {% for team in teamsArr %}
-              <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
-              {% endfor %}
-          </select>
-          <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
+      <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
+        {% for team in teamsArr %}
+          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
+    <hr>
 
-          <label for='local_register'>{{ 'Enable local account creation:'|trans }}</label>
-          <select id='local_register' name='local_register' class='form-control col-md-4'>
-              <option {{ App.Config.configArr.local_register == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.local_register == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
+    <div class='d-flex justify-content-between'>
+      <label for='local_register' class='col-form-label'>{{ 'Enable local account creation'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='local_register' {{ App.Config.configArr.local_register ? 'checked="checked"' }} id='local_register'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
 
-          <label for='admins_create_users'>{{ 'Admins can create local accounts:'|trans }}</label>
-          <select id='admins_create_users' name='admins_create_users' class='form-control col-md-4'>
-              <option {{ App.Config.configArr.admins_create_users == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.admins_create_users == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
+    <div class='d-flex justify-content-between'>
+      <label for='admins_create_users' class='col-form-label'>{{ 'Admins can create local accounts'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='admins_create_users' {{ App.Config.configArr.admins_create_users ? 'checked="checked"' }} id='admins_create_users'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
 
-          <label for='local_login'>{{ 'Show local login form:'|trans }}</label>
-          <select id='local_login' name='local_login' class='form-control col-md-4'>
-              <option {{ App.Config.configArr.local_login == '1' ? ' selected' }} value='1'>{{ 'Yes'|trans }}</option>
-              <option {{ App.Config.configArr.local_login == '0' ? ' selected' }} value='0'>{{ 'No'|trans }}</option>
-          </select>
-          <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='local_login' class='col-form-label'>{{ 'Show local login form'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='local_login' {{ App.Config.configArr.local_login ? 'checked="checked"' }} id='local_login'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
+    <hr>
+  </div>
 
-          <label for='support_url'>{{ 'URL where the Support menu entry from Help dropdown points:'|trans }}</label>
-          <input class='form-control col-md-4' type='url' value='{{ App.Config.configArr.support_url }}' name='support_url' id='support_url' />
-
-          <div class='mt-4 text-center'>
-              <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-          </div>
-        </div>
-    </form>
-
-    <div class='box'>
-      <h3>{{ 'Information'|trans }}</h3>
-      <hr>
-      <ul class='list-group'>
-        <li class='list-group-item'>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</li>
-        <li class='list-group-item'>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</li>
-        <li class='list-group-item'>{{ 'MySQL Version'|trans }}: {{ phpInfos.6 }}</li>
-        <li class='list-group-item'>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</li>
-        <li class='list-group-item'>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</li>
-        <li class='list-group-item'>{{ 'Maximum file size for uploaded files'|trans }}: {{ phpInfos.4 }}</li>
-        {% if phpInfos.5|length > 1 %}
-          <li class='list-group-item'>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</li>
-        {% endif %}
-      </ul>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
+  <div class='pl-3'>
+    <ul class='list-group'>
+      <li class='list-group-item'>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</li>
+      <li class='list-group-item'>{{ 'Docker image version'|trans }}: {{ elabimgVersion }}</li>
+      <li class='list-group-item'>{{ 'PHP Version'|trans }}: {{ phpInfos.1 }}</li>
+      <li class='list-group-item'>{{ 'MySQL Version'|trans }}: {{ phpInfos.6 }}</li>
+      <li class='list-group-item'>{{ 'MySQL database structure version'|trans }}: {{ App.Config.configArr.schema }}</li>
+      <li class='list-group-item'>{{ 'Largest integer supported'|trans }}: {{ phpInfos.2 }}</li>
+      <li class='list-group-item'>{{ 'PHP configuration directory'|trans }}: {{ phpInfos.3 }}</li>
+      <li class='list-group-item'>{{ 'Maximum file size for uploaded files'|trans }}: {{ phpInfos.4 }}</li>
+      {% if phpInfos.5|length > 1 %}
+        <li class='list-group-item'>{{ 'Timezone'|trans }}: {{ phpInfos.5 }}</li>
+      {% endif %}
+    </ul>
   </div>
 </div>
 
 <!-- TAB 2 TEAMS -->
 <div data-tabcontent='2' hidden>
-    <div id='teamsDiv' class='form-group'>
-        <!-- CREATE TEAM -->
-        <div class='box'>
-            <h3>{{ 'Add a New Team'|trans }}</h3>
-            <hr>
-            <input class='form-control custom-control-inline col-md-4' required type='text' placeholder='Pasteur lab' id='teamsName' />
-            <button data-action='create-team' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-        </div>
-
-        <!-- DISPLAY TEAMS -->
-        <div class='box'>
-          <h3>{{ 'Edit Existing Teams'|trans }}</h3>
-          <hr>
-
-          <ul class='list-group'>
-            {% for team in teamsArr %}
-              <li class='list-group-item'>
-                <ul class='list-inline'>
-                  <li class='list-inline-item mb-2'>
-                    {% set count = Teams.getStats(team.id) %}
-                    <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
-                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
-                  </li>
-
-                  <li class='list-inline-item mb-2'>
-                    <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
-                    <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
-                  </li>
-
-                  <li class='list-inline-item mb-2'>
-                    {% if count.totusers == 0 and team.id != App.Users.userData.team %}
-                    <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
-                        {{ 'Delete'|trans }}
-                    </button>
-                    {% else %}
-                    <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
-                      {{ 'Archive'|trans }}
-                    </button>
-                  </li>
-
-                  {% endif %}
-
-                  <li class='list-inline-item mb-2'>
-                    <label for='teamVisible_{{ team.id }}'>{{ 'Visible on registration page'|trans }}</label>
-                    <select class='form-control' name='teamsVisible' id='teamVisible_{{ team.id }}'>
-                      <option value='1'{{ team.visible ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                      <option value='0'{{ not team.visible ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                    </select>
-                  </li>
-
-                  <li class='list-inline-item mb-2'>
-                    <button data-id='{{ team.id }}' data-action='patch-team-sysadmin' class='button btn btn-primary'>
-                      {{ 'Save'|trans }}
-                    </button>
-                  </li>
-
-                  <li class='list-inline-item mb-2'>
-                    <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
-                    {% trans %}
-                    Experiment
-                    {% plural count.totxp %}
-                    Experiments
-                    {% endtrans %}
-                    : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.created_at }}<p>
-                  </li>
-                </ul>
-              </li>
-            {% endfor %}
-        </ul>
+  <!-- CREATE TEAM -->
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Create a team'|trans }}</h3>
+  <div id='teamsDiv' class='pl-3 mb-5'>
+    <div class='input-group'>
+      <input type='text' required placeholder='{{ 'Enter team name'|trans }}' id='teamsName' class='form-control' placeholder='{{ 'Add a group'|trans }}' aria-label='{{ 'Add a group'|trans }}'>
+      <div class='input-group-append'>
+        <button class='btn btn-primary' data-action='create-team' type='button'>{{ 'Create'|trans }}</button>
       </div>
     </div>
+  </div>
+
+  <!-- DISPLAY TEAMS -->
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams list'|trans }}</h3>
+  <div class='pl-3'>
+    <ul class='list-group'>
+      {% for team in teamsArr %}
+        <li class='list-group-item'>
+          <ul class='list-inline'>
+            <li class='list-inline-item mb-2'>
+              {% set count = Teams.getStats(team.id) %}
+              <label for='teamName_{{ team.id }}'>{{ 'Team Name'|trans }}</label>
+              <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamName_{{ team.id }}' type='text' value='{{ team.name }}' />
+            </li>
+
+            <li class='list-inline-item mb-2'>
+              <label for='teamOrgid_{{ team.id }}'>{{ 'Team Organisation ID'|trans }}</label>
+              <input autocomplete='off' data-id='{{ team.id }}' class='form-control custom-control-inline' id='teamOrgid_{{ team.id }}' type='text' value='{{ team.orgid }}' />
+            </li>
+
+            <li class='list-inline-item mb-2'>
+              {% if count.totusers == 0 and team.id != App.Users.userData.team %}
+              <button data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='button btn btn-danger'>
+                  {{ 'Delete'|trans }}
+              </button>
+              {% else %}
+              <button data-id='{{ team.id }}' data-action='archive-team' class='button btn btn-neutral'>
+                {{ 'Archive'|trans }}
+              </button>
+            </li>
+
+            {% endif %}
+
+            <li class='list-inline-item mb-2'>
+              <label for='teamVisible_{{ team.id }}'>{{ 'Visible on registration page'|trans }}</label>
+              <select class='form-control' name='teamsVisible' id='teamVisible_{{ team.id }}'>
+                <option value='1'{{ team.visible ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
+                <option value='0'{{ not team.visible ? " selected='selected'" }}>{{ 'No'|trans }}</option>
+              </select>
+            </li>
+
+            <li class='list-inline-item mb-2'>
+              <button data-id='{{ team.id }}' data-action='patch-team-sysadmin' class='button btn btn-primary'>
+                {{ 'Save'|trans }}
+              </button>
+            </li>
+
+            <li class='list-inline-item mb-2'>
+              <p class='smallgray'>{{ 'Members'|trans }}: {{ count.totusers }} −
+              {% trans %}
+              Experiment
+              {% plural count.totxp %}
+              Experiments
+              {% endtrans %}
+              : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }} − {{ 'Created'|trans }}: {{ team.created_at }}<p>
+            </li>
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 
 <!-- TAB 3 USERS -->
@@ -261,153 +273,166 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 4 TIMESTAMP -->
-<div class='box' data-tabcontent='4' hidden>
-  <h3>{{ 'Timestamping Configuration'|trans }}</h3>
-  <hr>
-  {% include 'ts-config.html' %}
+<div data-tabcontent='4' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Timestamping Configuration'|trans }}</h3>
+  <div class='pl-3'>
+    {% include 'ts-config.html' %}
+  </div>
 
-  <h3 class='mt-3'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
-  <hr>
-  <label for='blox_enabled'>{{ 'Enable blockchain timestamping with Bloxberg:'|trans }}</label>
-  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_enabled' id='blox_enabled' autocomplete='off'>
-    <option value='1' {{- App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'Yes'|trans }}</option>
-    <option value='0' {{- not App.Config.configArr.blox_enabled ? ' selected' }}>{{ 'No'|trans }}</option>
-  </select>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
+  <div class='pl-3'>
 
-  <label for='blox_anon'>{{ 'Anonymize author for GDPR compliance:'|trans }}</label>
-  <select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='blox_anon' id='blox_anon' autocomplete='off'>
-    <option value='1' {{- App.Config.configArr.blox_anon ? ' selected' }}>{{ 'Yes'|trans }}</option>
-    <option value='0' {{- not App.Config.configArr.blox_anon ? ' selected' }}>{{ 'No'|trans }}</option>
-  </select>
+    <div class='d-flex justify-content-between'>
+      <label for='blox_enabled' class='col-form-label'>{{ 'Enable blockchain timestamping with Bloxberg'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='blox_enabled' {{ App.Config.configArr.blox_enabled ? 'checked="checked"' }} id='blox_enabled'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='blox_anon' class='col-form-label'>{{ 'Anonymize author for GDPR compliance'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='blox_anon' {{ App.Config.configArr.blox_anon ? 'checked="checked"' }} id='blox_anon'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
+
+  </div>
 </div>
 
 <!-- TAB 5 SECURITY -->
-<div class='box' data-tabcontent='5' hidden>
-  <h3>{{ 'Security Settings'|trans }}</h3>
-  <hr>
-  <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
-    {{ App.Session.get('csrf')|csrf }}
-    <input type='hidden' name='updateConfig' value='true' />
+<div data-tabcontent='5' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h3>
+  <div class='pl-3'>
 
-    <label for='admin_validate'>{{ 'Users need validation by admin after registration:'|trans }}</label>
-    <select class='form-control col-md-4' name='admin_validate' id='admin_validate'>
-      <option value='1' {{- App.Config.configArr.admin_validate ? ' selected' }}>{{ 'Yes'|trans }}</option>
-      <option value='0' {{- not App.Config.configArr.admin_validate ? ' selected' }}>{{ 'No'|trans }}</option>
-    </select>
-    <p class='smallgray'>{{ 'Set to yes for added security.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='admin_validate' class='col-form-label'>{{ 'Users need validation by admin after registration'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='admin_validate' {{ App.Config.configArr.admin_validate ? 'checked="checked"' }} id='admin_validate'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
 
-    <label for='enforce_mfa'>{{ 'Enforce 2FA'|trans }}</label>
-    <select class='form-control col-md-4' name='enforce_mfa' id='enforce_mfa'>
-      {% for value, human in enforceMfaArr %}
-        <option value='{{ value }}' {{- App.Config.configArr.enforce_mfa == value ? ' selected' }}>{{ human }}</option>
-      {% endfor %}
-    </select>
+    <div class='d-flex justify-content-between'>
+      <label for='enforce_mfa' class='col-form-label'>{{ 'Enforce 2FA'|trans }}</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='enforce_mfa' id='enforce_mfa'>
+        {% for value, human in enforceMfaArr %}
+          <option value='{{ value }}' {{- App.Config.configArr.enforce_mfa == value ? ' selected' }}>{{ human }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <hr>
 
-    <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
-    <input id='email_domain' name='email_domain' class='form-control col-md-4' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' />
+    <div class='d-flex justify-content-between'>
+      <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
+      <input id='email_domain' class='form-control col-md-3' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' data-trigger='blur' data-model='config' data-target='email_domain' />
+    </div>
     <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}<br>
     {{ 'You can add several domains by separating them with a comma.'|trans }}</p>
+    <hr>
 
-    <label for='login_tries'>{{ 'Number of allowed login attempts:'|trans }}</label>
-    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.login_tries }}' name='login_tries' id='login_tries' />
+    <div class='d-flex justify-content-between'>
+      <label for='login_tries' class='col-form-label'>{{ 'Number of allowed login attempts:'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.login_tries }}' data-trigger='blur' data-model='config' data-target='login_tries' id='login_tries' />
+    </div>
     <p class='smallgray'>{{ '3 might be too few. See for yourself :)'|trans }}</p>
+    <hr>
 
-    <label for='autologout_time'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds):'|trans }}</label>
-    <input class='form-control col-md-4' type='number' value='{{ App.Config.configArr.autologout_time }}' name='autologout_time' id='autologout_time' />
-    <p class='smallgray'>
-      {{ 'Set to 0 to disable this feature.'|trans }}
-    </p>
-    <div class='mt-4 text-center'>
-      <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+    <div class='d-flex justify-content-between'>
+      <label for='autologout_time' class='col-form-label'>{{ 'Time after which inactive sessions are invalidated (force logout) (in seconds)'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.autologout_time }}' data-trigger='blur' data-model='config' data-target='autologout_time' id='autologout_time' />
     </div>
-  </form>
+    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
+    <hr>
+  </div>
 
-  <hr>
-  <div id='bruteforceDiv'>
-    <h3>{{ 'Bruteforce login protection' }}</h3>
-    <div class='mb-1'>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection' }}</h3>
+  <div id='bruteforceDiv' class='pl-3'>
+    <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled'}} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
-
+      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled'}} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
+    <hr>
 
-    <div>
+    <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clear-lockoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='button btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clear-lockoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
+    <hr>
   </div>
 </div>
 
-
 <!-- TAB 6 EMAIL -->
 <div data-tabcontent='6' hidden>
-  <div class='box' id='emailSettings'>
-    <h3>{{ 'E-mail Settings'|trans }}</h3>
+  <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'E-mail Settings'|trans }}</h3>
+  <div class='pl-3' id='emailSettings'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='smtp_address' class='col-form-label'>{{ 'Address of the SMTP server'|trans }}</label>
+      <input class='form-control col-md-3' type='text' value='{{ App.Config.configArr.smtp_address }}' placeholder='mail.smtp2go.com' data-trigger='blur' data-model='config' data-target='smtp_address' id='smtp_address' />
+    </div>
     <hr>
-    <form class='form-group' method='post' action='app/controllers/SysconfigController.php'>
-      {{ App.Session.get('csrf')|csrf }}
-      <input type='hidden' name='updateConfig' value='true' />
-      <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
 
-        <label for='mail_from'>{{ 'Sender address:'|trans }}</label>
-        <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.mail_from }}' name='mail_from' id='mail_from' />
+    <div class='d-flex justify-content-between'>
+      <label for='smtp_port' class='col-form-label'>{{ 'SMTP Port'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' data-trigger='blur' data-model='config' data-target='smtp_port' id='smtp_port' />
+    </div>
+    <p class='smallgray'>{{ 'Default is 587.'|trans }}</p>
+    <hr>
 
-        <label for='smtp_address'>{{ 'Address of the SMTP server:'|trans }}</label>
-        <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.smtp_address }}' placeholder='mail.smtp2go.com' name='smtp_address' id='smtp_address' />
+    <div class='d-flex justify-content-between'>
+      <label for='smtp_username' class='col-form-label'>{{ 'SMTP username'|trans }}</label>
+      <input class='form-control col-md-3' type='text' value='{{ App.Config.configArr.smtp_username }}' data-trigger='blur' data-model='config' data-target='smtp_username' id='smtp_username' />
+    </div>
+    <hr>
 
-        <label for='smtp_port'>{{ 'SMTP Port:'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' name='smtp_port' id='smtp_port' />
-        <span class='smallgray'>{{ 'Default is 587.'|trans }}</span>
+    <div class='d-flex justify-content-between'>
+      <label for='smtp_password' class='col-form-label'>{{ 'SMTP password'|trans }}</label>
+      {% if App.Config.configArr.smtp_password|length == 0 %}
+        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
+      {% else %}
+        <p>
+          {{ 'A password is already set.'|trans }}
+          {{ '%sClear it%s or change it below:'|trans|format("
+              <span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>",
+              "</span>"
+          )|raw }}
+          <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+          <input class='form-control col-md-3' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
+        </p>
+      {% endif %}
+    </div>
+    <hr>
 
-        <label for='smtp_username'>{{ 'SMTP username:'|trans }}</label>
-        <input class='form-control col-md-4' type='text' value='{{ App.Config.configArr.smtp_username }}' name='smtp_username' id='smtp_username' />
-        <label for='smtp_password'>{{ 'SMTP password'|trans }}</label>
-        {% if App.Config.configArr.smtp_password|length == 0 %}
-          <input class='form-control col-md-4' type='password' name='smtp_password' id='smtp_password' autocomplete='off' />
-        {% else %}
-          <p>
-            {{ 'A password is already set.'|trans }}
-            {{ '%sClear it%s or change it below:'|trans|format("
-                <span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>",
-                "</span>"
-            )|raw }}
-            <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-            <input class='form-control col-md-4' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
-          </p>
-        {% endif %}
+    <div class='d-flex justify-content-between'>
+      <label for='mail_from' class='col-form-label'>{{ 'Sender address'|trans }}</label>
+      <input class='form-control col-md-3' type='text' value='{{ App.Config.configArr.mail_from }}' data-trigger='blur' data-model='config' data-target='mail_from' id='mail_from' />
+    </div>
+    <hr>
 
-        <label for='smtp-verify'>Verify TLS certificate</label>
-        <select class='form-control col-md-4' id='smtp-verify' name='smtp_verify_cert'>
-          <option value='1'{{ App.Config.configArr.smtp_verify_cert == '1' ? ' selected' }}>Yes</option>
-          <option value='0'{{ App.Config.configArr.smtp_verify_cert == '0' ? ' selected' }}>No</option>
-        </select>
-
-      <div class='mt-4 text-center'>
-        <button type='submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      </div>
-    </form>
+    <div class='d-flex justify-content-between'>
+      <label for='smtp_verify_cert' class='col-form-label'>{{ 'Verify TLS certificate'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='smtp_verify_cert' {{ App.Config.configArr.smtp_verify_cert ? 'checked="checked"' }} id='smtp_verify_cert'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
   </div>
 
   <!-- TEST EMAIL -->
-  <div class='box form-group'>
-    <label for='testemailEmail'>{{ 'Send a test email'|trans }}</label>
-    <input class='form-control col-md-4' type='email' value='{{ App.Users.userData.email }}' id='testemailEmail' />
-    <div class='mt-4 text-center'>
-      <button data-action='send-test-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
-    </div>
-  </div>
-
-  <!-- MASS EMAIL -->
-  <div class='box form-group'>
-    <h3>{{ 'Send a Mass Email'|trans }}</h3>
-    <hr>
-    <label for='massSubject'>{{ 'Email Subject'|trans }}</label>
-    <input class='form-control col-md-4' type='text' id='massSubject' size='45' />
-
-    <label for='massBody'>{{ 'Email Body'|trans }}</label>
-    <textarea class='form-control col-md-4' id='massBody'></textarea>
-    <div class='mt-4 text-center'>
-      <button data-action='send-mass-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='input-group'>
+      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' />
+      <div class='input-group-append'>
+        <button class='btn btn-primary' data-action='send-test-email' type='button'>{{ 'Send'|trans }}</button>
+      </div>
     </div>
   </div>
 
@@ -728,82 +753,98 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
 </div>
 
 <!-- TAB 8 PRIVACY POLICY -->
-<div class='box' data-tabcontent='8' hidden>
-  <h3>{{ 'Adjust your privacy policy notice'|trans }}</h3>
-  <hr>
-  {% if App.Config.configArr.privacy_policy is null %}
-    {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-  {% endif %}
-
-  <textarea id='privacyPolicyInput' class='mceditable'>
-    {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
-  </textarea>
-  <div class='mt-4 text-center'>
-    <button data-action='patch-policy' data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-    <button data-action='patch-policy' data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+<div data-tabcontent='8' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Adjust your privacy policy notice'|trans }}</h3>
+  <div class='pl-3'>
+    {% if not App.Config.configArr.privacy_policy %}
+      {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
+    {% endif %}
+    <textarea id='privacyPolicyInput' class='mceditable'>
+      {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
+    </textarea>
+    <div class='mt-4 text-center'>
+      <button data-action='patch-policy' data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-policy' data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+    </div>
   </div>
 </div>
 
 <!-- TAB 9 EXTERNAL AUTH -->
-<div class='box' data-tabcontent='9' hidden>
-    <form method='post' action='app/controllers/SysconfigController.php'>
-      {{ App.Session.get('csrf')|csrf }}
-      <div class='form-group'>
-        <h3>{{ 'External authentication mapping'|trans }}</h3>
-        <hr>
-        <input type='hidden' name='updateConfig' value='true' />
+<div data-tabcontent='9' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
+  <div class='pl-3'>
+    <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
 
-          <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
+    <div class='d-flex justify-content-between'>
+      <label for='extauth_remote_user' class='col-form-label'>{{ 'Remote user'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' data-trigger='blur' data-model='config' data-target='extauth_remote_user' id='extauth_remote_user' />
+    </div>
+    <hr>
 
-        <label for='extauth_remote_user'>{{ 'Remote user'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' name='extauth_remote_user' id='extauth_remote_user' />
+    <div class='d-flex justify-content-between'>
+      <label for='extauth_firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='MELLON_givenName' value='{{ App.Config.configArr.extauth_firstname }}' data-trigger='blur' data-model='config' data-target='extauth_firstname' id='extauth_firstname' />
+    </div>
+    <hr>
 
-        <label for='extauth_firstname'>{{ 'Firstname'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='MELLON_givenName' value='{{ App.Config.configArr.extauth_firstname }}' name='extauth_firstname' id='extauth_firstname' />
+    <div class='d-flex justify-content-between'>
+      <label for='extauth_lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='MELLON_sn' value='{{ App.Config.configArr.extauth_lastname }}' data-trigger='blur' data-model='config' data-target='extauth_lastname' id='extauth_lastname' />
+    </div>
+    <hr>
 
-        <label for='extauth_lastname'>{{ 'Lastname'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='MELLON_sn' value='{{ App.Config.configArr.extauth_lastname }}' name='extauth_lastname' id='extauth_lastname' />
+    <div class='d-flex justify-content-between'>
+      <label for='extauth_email' class='col-form-label'>{{ 'Email'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='MELLON_mail' value='{{ App.Config.configArr.extauth_email }}' data-trigger='blur' data-model='config' data-target='extauth_email' id='extauth_email' />
+    </div>
+    <hr>
 
-        <label for='extauth_email'>{{ 'Email'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='MELLON_mail' value='{{ App.Config.configArr.extauth_email }}' name='extauth_email' id='extauth_email' />
+    <div class='d-flex justify-content-between'>
+      <label for='extauth_teams' class='col-form-label'>{{ 'Teams'|trans }}</label>
+      <input class='form-control col-md-3' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' data-trigger='blur' data-model='config' data-target='extauth_teams' id='extauth_teams' />
+    </div>
+    <hr>
 
-        <label for='extauth_teams'>{{ 'Teams'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='MELLON_ou' value='{{ App.Config.configArr.extauth_teams }}' name='extauth_teams' id='extauth_teams' />
+    <div class='d-flex justify-content-between'>
+      <label for='logout_url' class='col-form-label'>{{ 'Logout URL'|trans }}</label>
+      <input class='form-control col-md-3' type='url' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' data-trigger='blur' data-model='config' data-target='logout_url' id='logout_url' />
+    </div>
+    <hr>
 
-        <label for='logout_url'>{{ 'Logout URL'|trans }}</label>
-        <input class='form-control col-md-4' type='text' placeholder='https://idp.example.edu/saml/logout' value='{{ App.Config.configArr.logout_url }}' name='logout_url' id='logout_url' />
+    <div class='d-flex justify-content-between'>
+      <label for='extauth-team-default' class='col-form-label'>If no team attribute is found, to which team user is assigned?</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_team_default' id='extauth-team-default'>
+        {% for team in teamsArr %}
+          <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+        {% endfor %}
+        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+      </select>
+    </div>
+    <hr>
 
-        <label for='extauth-team-default'>If no team attribute is found, to which team user is assigned?</label>
-        <select class='form-control col-md-4' name='saml_team_default' id='extauth-team-default'>
-          {% for team in teamsArr %}
-            <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
-          {% endfor %}
-          <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
-        </select>
+    <div class='d-flex justify-content-between'>
+      <label for='extauth-user-default' class='col-form-label'>If the user doesn't exist yet, what to do?</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_user_default' id='extauth-user-default'>
+        <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
+        <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
+      </select>
+    </div>
+    <hr>
 
-        <label for='extauth-user-default'>If the user doesn't exist yet, what to do?</label>
-        <select class='form-control col-md-4' name='saml_user_default' id='extauth-user-default'>
-          <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
-          <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
-        </select>
-
-
-        <label for='extauth-team-create'>Create team sent by server if it doesn't exist already:</label>
-        <select class='form-control col-md-4' id='extauth-team-create' name='saml_team_create'>
-            <option value='1'{{ App.Config.configArr.saml_team_create == '1' ? ' selected' }}>Yes</option>
-            <option value='0'{{ App.Config.configArr.saml_team_create == '0' ? ' selected' }}>No</option>
-        </select>
-
-
-        <div class='mt-4 text-center'>
-          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-        </div>
-      </div>
-    </form>
+    <div class='d-flex justify-content-between'>
+      <label for='extauth-team-create' class='col-form-label'>Create team sent by server if it doesn't exist already</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_team_create' {{ App.Config.configArr.saml_team_create ? 'checked="checked"' }} id='saml_team_create'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <hr>
+  </div>
 </div>
 
 <!-- TAB 10 LDAP -->
 <div data-tabcontent='10' id='ldapSettings' hidden>
+  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
@@ -829,6 +870,15 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_port' placeholder='389' value='{{ App.Config.configArr.ldap_port }}' id='ldap_port' />
     </div>
     <p class='smallgray'>{{ 'Default: 389 LDAPS: 636'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='ldap_use_tls' class='col-form-label'>{{ 'Use TLS'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' data-trigger='change' data-model='config' data-target='ldap_use_tls' {{ App.Config.configArr.ldap_use_tls == 1 ? 'checked="checked"' }} id='ldap_use_tls'>
+        <span class='slider'></span>
+      </label>
+    </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
@@ -861,15 +911,11 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='ldap_use_tls' class='col-form-label'>{{ 'Use TLS'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='config' data-target='ldap_use_tls' {{ App.Config.configArr.ldap_use_tls == 1 ? 'checked="checked"' }} id='ldap_use_tls'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+  </div>
 
+  <h3 class='p-2 pl-3 section-title'>{{ 'eLabFTW LDAP configuration'|trans }}</h3>
+
+  <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='ldap_search_attr' class='col-form-label'>By which LDAP attribute the user will be found (default is 'mail').</label>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_search_attr' placeholder='mail' value='{{ App.Config.configArr.ldap_search_attr }}' id='ldap_search_attr' />
@@ -973,6 +1019,50 @@ MySQL database structure version: {{ App.Config.configArr.schema }}</p>
     </div>
     <hr>
 
+  </div>
+</div>
+
+<!-- TAB 12 - Communication -->
+<div data-tabcontent='12' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Announcement'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
+    <div class='input-group'>
+      <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
+      <div class='input-group-append'>
+        <button data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+      <div class='input-group-append'>
+        <button data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
+    </div>
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Login page announcement'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
+    <div class='input-group'>
+      <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
+      <div class='input-group-append'>
+        <button data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+      <div class='input-group-append'>
+        <button data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MASS EMAIL -->
+  <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
+  <div class='pl-3 mt-2 mb-5'>
+    <label for='massSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
+    <input class='form-control col-md-12' type='text' id='massSubject' size='45' />
+
+    <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
+    <textarea class='form-control col-md-12' id='massBody'></textarea>
+    <div class='mt-4 text-center'>
+      <button data-action='send-mass-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+    </div>
   </div>
 </div>
 

@@ -518,20 +518,9 @@ table th {
 .item-table {
     width: 100%;
 
-    th {
-        border-left: solid $darkgray;
-        border-right: solid $darkgray;
-    }
-
-    th:first-child {
-        // So that the title has the left part matching
-        // the experiments
-        border-left: solid $darkgray 6px;
-    }
-
     td {
-        border-left: solid $bordersgray;
-        border-right: solid $bordersgray;
+        border-left: 1px solid $bordersgray;
+        border-right: 1px solid $bordersgray;
     }
 
     .title {
@@ -1139,11 +1128,7 @@ input[type='color'] {
 }
 
 .user-badge {
-    border: 1px solid #c0c0c0;
-    border-radius: 5px;
-    font-size: 110%;
-    margin-right: 5px;
-    padding: 5px;
+    background-color: $lightblue;
 }
 
 .color-white {
@@ -1280,7 +1265,7 @@ input[type='color'] {
 
 /* The slider */
 .slider {
-    background-color: $lightgraybutnottoolight;
+    background-color: $lightgray;
     border-radius: 34px;
     bottom: 0;
     cursor: pointer;
@@ -1301,6 +1286,10 @@ input[type='color'] {
         transition: 355ms;
         width: 18px;
     }
+}
+
+.slider-label-deactivated {
+    color: $lightgray;
 }
 
 input:checked + .slider {

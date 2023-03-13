@@ -84,15 +84,10 @@
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='public_db' class='col-form-label'>{{ 'Anonymous visitors can see database items'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='public_db' {{ teamConfigArr.public_db == 1 ? 'checked="checked"' }} id='public_db'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+  </div>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
 
+  <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
       <input class='form-control col-md-4' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_name' type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
@@ -102,6 +97,20 @@
     <div class='d-flex justify-content-between'>
       <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
       <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_href' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
+    </div>
+    <hr>
+
+  </div>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Permissions'|trans }}</h3>
+
+  <div class='pl-3 mt-2'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='public_db' class='col-form-label'>{{ 'Anonymous visitors can see database items'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='public_db' {{ teamConfigArr.public_db == 1 ? 'checked="checked"' }} id='public_db'>
+        <span class='slider'></span>
+      </label>
     </div>
     <hr>
 
@@ -145,6 +154,10 @@
     <p class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</p>
     <hr>
 
+  </div>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Common templates'|trans }}</h3>
+
+  <div class='pl-3 mt-2'>
     <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
     <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
         {{ teamConfigArr.common_template|raw }}
@@ -171,14 +184,12 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Create a group'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
-    <div class='d-flex justify-content-between'>
-      <!-- CREATE A GROUP -->
-      <label for='teamGroupCreate' class='col-form-label'>{{ 'Name'|trans }}</label>
-      <input class='form-control col-md-4' id='teamGroupCreate' type='text' />
-    </div>
-    <hr>
-    <div class='mt-2 text-center'>
-      <button type='submit' data-action='create-teamgroup' data-teamid='{{ App.Users.userData.team }}' id='teamGroupCreateBtn' class='button btn btn-primary'>{{ 'Create'|trans }}</button>
+    <!-- CREATE A GROUP -->
+    <div class='input-group'>
+      <input type='text' id='teamGroupCreate' class='form-control' placeholder='{{ 'Add a group'|trans }}' aria-label='{{ 'Add a group'|trans }}'>
+      <div class='input-group-append'>
+        <button class='btn btn-primary' data-action='create-teamgroup' data-teamid='{{ App.Users.userData.team }}' type='button'>{{ 'Create'|trans }}</button>
+      </div>
     </div>
     <!-- END CREATE GROUP -->
   </div>
@@ -186,20 +197,32 @@
   <!-- SHOW EXISTING GROUPS -->
   <div id='team_groups_div'>
     <h3 class='p-2 pl-3 section-title'>{{ 'Existing groups'|trans }}</h3>
-    {% for teamGroup in teamGroupsArr %}
-      <div class='box'>
-        <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
-          <i class='fas fa-trash-alt'></i>
-        </a>
-        <h3 class='mb-2'><span data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name|raw }}</span></h3>
-        <div class='d-flex flex-wrap'>
-          {% for user in teamGroup.users %}
-            <span class='user-badge clickable rmUserFromGroup hover-danger' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>{{ user.fullname|raw }}</span>
-          {% endfor %}
+    <div class='pl-3'>
+      {% for teamGroup in teamGroupsArr %}
+        <div class='box'>
+          <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+            <i class='fas fa-trash-alt'></i>
+          </a>
+          <h5><i class='fas fa-users'></i> <span data-teamid='{{ App.Users.userData.team }}' data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name|raw }}</span></h5>
+          <hr>
+          <div class='d-flex flex-wrap'>
+            {% for user in teamGroup.users %}
+            <div class='user-badge rounded px-2 py-1 mr-2 mt-2'>{{ user.fullname|raw }} <span title='{{ 'Delete'|trans }}' class='clickable rmUserFromGroup m-1' data-user='{{ user.userid }}' data-teamid='{{ App.Users.userData.team }}' data-group='{{ teamGroup.id }}'><i class='fas fa-xmark' style='color:#29AEB9' ></i></span></div>
+            {% endfor %}
+          </div>
+          <!-- ADD USER -->
+          <div class='input-group mt-3'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+            </div>
+            <input type='text' class='form-control autocompleteUsers' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
+            <div class='input-group-append'>
+              <button class='btn btn-primary' data-action='adduser-teamgroup' data-teamid='{{ App.Users.userData.team }}' data-groupid='{{ teamGroup.id }}' type='button'>{{ 'Add user'|trans }}</button>
+            </div>
+          </div>
         </div>
-        <input aria-label='{{ 'Add user'|trans }}' class='form-control col-md-4 autocompleteUsers d-block mt-2' data-teamid='{{ App.Users.userData.team }}' autocomplete='off' data-group={{ teamGroup.id }} placeholder='{{ 'Add user'|trans }}' type='text' />
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
 </div>
 <!-- END TEAM GROUPS -->
@@ -273,33 +296,38 @@
 
 <!-- TAB 5 ITEMS TYPES-->
 <div data-tabcontent='5' hidden>
-  <div class='box' style='min-height: 600px;'>
-    <div class='row'>
-      <div class='col'>
-        <h3>{{ 'Database Items Types'|trans }}</h3>
-      </div>
-      <!-- CREATE NEW BUTTON -->
-      <div class='col text-right'>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Database Items Types'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='mb-2 d-flex justify-content-between'>
+      <p>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
+      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      <div>
         <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>
       </div>
     </div>
 
-    <form class='row'>
-      <div class='col-md-10'>
-        <input type='hidden' name='tab' value='5' />
-        <select class='form-control selectpicker' name='templateid' required data-show-subtext='true' data-live-search='true'>
-          {% for template in itemsCategoryArr %}
-            <option value='{{ template.category_id }}'{{ App.Request.query.get('templateid') == template.category_id ? ' selected' }}>{{ template.category|raw }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class='col-md-2'>
-        <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
-      </div>
-
-    </form>
-    <hr>
+  {% if App.Request.query.has('templateid') %}
+    <a href='?tab=5'>
+      <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
+    </a>
+  {% else %}
+    <table id='itemsTypesTable' class='table' aria-describedby='TODO' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'Name'|trans }}</th>
+          <th scope='col'>{{ 'Action'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for template in itemsCategoryArr %}
+          <tr>
+            <td>{{ template.category|raw }}</td>
+            <td><a href='?tab=5&templateid={{ template.category_id }}'><i class='fas fa-pencil-alt'></i></a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
     <!-- templateData will be loaded with content from an item type if templateid is present is url -->
     {% if Entity.entityData %}
@@ -354,75 +382,98 @@
   </div>
 
   <!-- SORT ITEMS TYPES -->
-  <div class='box'>
-    <h3>{{ 'Sort items types'|trans }}</h3>
-    <hr>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Sort items types'|trans }}</h3>
+  <div class='pl-3'>
+    <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
     <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
       {% for itemType in itemsCategoryArr %}
-      <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-sort fa-2x'></i></span>{{ itemType.category | raw }}</li>
+      <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw fa-2x'></i></span>{{ itemType.category | raw }}</li>
       {% endfor %}
     </ul>
   </div>
-
 </div>
+
 
 <!-- TAB 6 EXPORT -->
 <div data-tabcontent='6' hidden>
-  <div class='box'>
-    <h3>{{ 'Export database items'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export database items'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='d-flex justify-content-between'>
+      <label for='categoryExport' class='col-form-label'>{{ 'Select what to export'|trans }}</label>
+      <select class='form-control col-md-3' id='categoryExport' autocomplete='off'>
+        {% for itemsType in itemsCategoryArr %}
+          <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <hr>
-    <label for='categoryExport'>{{ 'Select what to export:'|trans }}</label>
-    <select class='form-control col-md-4' id='categoryExport' autocomplete='off'>
-      {% for itemsType in itemsCategoryArr %}
-        <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
-      {% endfor %}
-    </select>
-    <label for='categoryExportFormat'>{{ 'Select export format:'|trans }}</label>
-    <select class='form-control col-md-4' id='categoryExportFormat' autocomplete='off'>
-      <option value='eln'>{{ 'ELN Archive'|trans }}</option>
-      <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
-      <option value='csv'>{{ 'CSV File'|trans }}</option>
-      <option value='multipdf'>{{ 'PDF File'|trans }}</option>
-      <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
-      <option value='json'>{{ 'JSON'|trans }}</option>
-    </select>
 
+    <div class='d-flex justify-content-between'>
+      <label for='categoryExportFormat' class='col-form-label'>{{ 'Select export format'|trans }}</label>
+      <select class='form-control col-md-3' id='categoryExportFormat' autocomplete='off'>
+        <option value='eln'>{{ 'ELN Archive'|trans }}</option>
+        <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
+        <option value='csv'>{{ 'CSV File'|trans }}</option>
+        <option value='multipdf'>{{ 'PDF File'|trans }}</option>
+        <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
+        <option value='json'>{{ 'JSON'|trans }}</option>
+      </select>
+    </div>
+    <hr>
 
-    <div class='mt-2'>
+    <div class='my-2 text-center'>
       <button data-action='export-category' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
+  </div>
 
-    <h3 class='mt-3'>{{ 'Export experiments of user'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export experiments of user'|trans }}</h3>
+  <div class='pl-3'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='userExport' class='col-form-label'>{{ 'Select user'|trans }}</label>
+      <select class='form-control col-md-3' id='userExport' autocomplete='off'>
+        {% for user in allTeamUsersArr %}
+          <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <hr>
-    <label for='userExport'>{{ 'Select user:'|trans }}</label>
-    <select class='form-control col-md-4' id='userExport' autocomplete='off'>
-      {% for user in allTeamUsersArr %}
-        <option value='{{ user.userid }}'>{{ user.fullname }}</option>
-      {% endfor %}
-    </select>
-    <label for='userExportFormat'>{{ 'Select export format:'|trans }}</label>
-    <select class='form-control col-md-4' id='userExportFormat' autocomplete='off'>
-      <option value='eln'>{{ 'ELN Archive'|trans }}</option>
-      <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
-      <option value='csv'>{{ 'CSV File'|trans }}</option>
-      <option value='multipdf'>{{ 'PDF File'|trans }}</option>
-      <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
-      <option value='json'>{{ 'JSON'|trans }}</option>
-    </select>
 
+    <div class='d-flex justify-content-between'>
+      <label for='userExportFormat' class='col-form-label'>{{ 'Select export format'|trans }}</label>
+      <select class='form-control col-md-3' id='userExportFormat' autocomplete='off'>
+        <option value='eln'>{{ 'ELN Archive'|trans }}</option>
+        <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
+        <option value='csv'>{{ 'CSV File'|trans }}</option>
+        <option value='multipdf'>{{ 'PDF File'|trans }}</option>
+        <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
+        <option value='json'>{{ 'JSON'|trans }}</option>
+      </select>
+    </div>
+    <hr>
 
-    <div class='mt-2'>
+    <div class='mt-2 text-center'>
       <button data-action='export-user' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
 
-    <h3 class='mt-3'>{{ 'Export bookings'|trans }}</h3>
-    <hr>
-    <label for='schedulerDateFrom'>{{ 'Date from'|trans }}</label>
-    <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-4' value='{{ "1 month ago"|date('Y-m-d') }}'/>
-    <label for='schedulerDateTo'>{{ 'Date to'|trans }}</label>
-    <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-4' value='{{ "now"|date('Y-m-d') }}'/>
+  </div>
 
-    <div class='mt-2'>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export bookings'|trans }}</h3>
+  <div class='pl-3'>
+
+    <div class='d-flex justify-content-between'>
+      <label for='schedulerDateFrom' class='col-form-label'>{{ 'Date from'|trans }}</label>
+      <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-3' value='{{ "1 month ago"|date('Y-m-d') }}'/>
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='schedulerDateTo' class='col-form-label'>{{ 'Date to'|trans }}</label>
+      <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-3' value='{{ "now"|date('Y-m-d') }}'/>
+    </div>
+    <hr>
+
+    <div class='mt-2 text-center'>
       <button data-action='export-scheduler' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
   </div>
@@ -430,16 +481,20 @@
 
 <!-- TAB 7 TAG MANAGER -->
 <div data-tabcontent='7' hidden>
-  <div class='box'>
-    <h3>{{ 'Manage tags of the team'|trans }}</h3>
-    <hr>
-    <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
-    <div class='form-group'>
-    <label for='adminAddTagInput'>{{ 'Add a tag'|trans }}</label>
-    <input class='form-control col-md-4 custom-control-inline' id='adminAddTagInput'>
-    <button class='button btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='admin-add-tag'>{{ 'Save'|trans }}</button>
+  <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add a tag'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <div class='input-group'>
+      <input type='text' id='adminAddTagInput' class='form-control' placeholder='{{ 'Add a tag'|trans }}' aria-label='{{ 'Add a tag'|trans }}'>
+      <div class='input-group-append'>
+        <button class='btn btn-primary' data-action='admin-add-tag' data-teamid='{{ App.Users.userData.team }}' type='button'>{{ 'Save'|trans }}</button>
+      </div>
     </div>
-    <hr>
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Manage tags of the team'|trans }}</h3>
+  <div class='pl-3'>
+
     <button class='button btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
       {% for tag in tagsArr %}

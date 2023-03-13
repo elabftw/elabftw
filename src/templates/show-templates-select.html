@@ -1,5 +1,5 @@
 <div class='pl-3 mt-3'>
-  <table id='tplTable' class='table' aria-describedby='templates table' data-table-sort='true'>
+  <table id='tplTable' class='table' aria-describedby='TODO' data-table-sort='true'>
     <thead>
       <tr>
         <th scope='col'>{{ 'Team'|trans }}</th>
@@ -16,7 +16,7 @@
           <td>{{ template.fullname|raw }}</td>
           <td>{{ template.modified_at }}</td>
           <td>{% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
-          <td><a href='?tab=3&templateid={{ template.id }}'><button class='btn btn-primary'>{{ 'Load'|trans }}</button></a></td>
+          <td><a href='?tab=3&templateid={{ template.id }}'><i class='fas fa-pencil-alt'></i></a></td>
         </tr>
       {% endfor %}
     </tbody>

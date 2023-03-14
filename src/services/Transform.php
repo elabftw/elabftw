@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Enums\Notifications;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function sprintf;
@@ -29,11 +30,7 @@ class Transform
 
     public static function usergroupToHuman(string $usergroup): string
     {
-        return match ($usergroup) {
-            '1' => 'Sysadmin',
-            '2' => 'Admin',
-            '4' => 'User',
-        };
+        return Usergroup::from((int) $usergroup)->toHuman();
     }
 
     // generate html for a notification to show on web interface

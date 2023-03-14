@@ -166,7 +166,7 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0, $includeArchived = false): array
+    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false): array
     {
         $teamFilterSql = '';
         if ($teamId > 0) {

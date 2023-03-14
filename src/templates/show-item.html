@@ -12,7 +12,7 @@
   <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
 {% endif %}
 
-  <section class='item item-show item-show-{{ App.Users.userData.display_size }} {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
+  <section class='item item-show' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
     {% if isPinned %}
       <p class='float-right d-inline'>
         <a class='elab-tooltip ml-2' data-action='toggle-pin' data-id='{{ item.id }}' href='#'>

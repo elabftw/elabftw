@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\DisplayMode;
-use Elabftw\Enums\DisplaySize;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\PdfFormat;
@@ -47,7 +46,6 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'password' => password_hash(Check::passwordLength($this->content), PASSWORD_DEFAULT),
             'orcid' => $this->filterOrcid(),
             'limit_nb' => (string) Check::limit((int) $this->content),
-            'display_size' => (DisplaySize::tryFrom($this->content) ?? DisplaySize::Large)->value,
             'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,

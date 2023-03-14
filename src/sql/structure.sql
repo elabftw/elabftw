@@ -825,7 +825,6 @@ CREATE TABLE `users` (
   `append_pdfs` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `archived` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
-  `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
   `allow_untrusted` tinyint UNSIGNED NOT NULL DEFAULT 1,

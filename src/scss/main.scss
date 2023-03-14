@@ -678,15 +678,6 @@ table th {
     }
 }
 
-/* display_size stuff */
-
-.item-show-xs {
-    &:not(.item-show-last) {
-        /* stylelint-disable-next-line declaration-property-value-disallowed-list */
-        border-bottom: none !important;
-    }
-}
-
 .item-info {
     padding-left: 20px;
 }
@@ -715,24 +706,6 @@ table th {
     .item-next,
     .item-info {
         padding-left: 0;
-    }
-}
-
-.item-show-xs {
-    @include item-show-inline;
-    margin: 0 !important;
-    padding: 0 !important;
-
-    .title {
-        font-size: 100%;
-    }
-}
-
-.item-show-md {
-    @include item-show-inline;
-
-    .title {
-        font-size: 130%;
     }
 }
 

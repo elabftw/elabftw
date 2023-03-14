@@ -51,16 +51,6 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='display_size' class='col-form-label'>{{ 'Display size'|trans }}</label>
-      <select id='display_size' data-trigger='change' data-model='users/me' data-target='display_size' class='form-control col-md-3'>
-          <option value='lg' {{ App.Users.userData.display_size == 'lg' ? ' selected' }}>{{ 'Large (default)'|trans }}</option>
-          <option value='md' {{ App.Users.userData.display_size == 'md' ? ' selected' }}>{{ 'Medium'|trans }}</option>
-          <option value='xs' {{ App.Users.userData.display_size == 'xs' ? ' selected' }}>{{ 'Small'|trans }}</option>
-      </select>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
       <label for='display_mode' class='col-form-label'>{{ 'Display mode'|trans }}</label>
       <select id='display_mode' data-trigger='change' data-model='users/me' data-target='display_mode' class='form-control col-md-3'>
           <option value='it' {{ App.Users.userData.display_mode == 'it' ? ' selected' }}>{{ 'Item list (default)'|trans }}</option>

@@ -59,7 +59,7 @@
           <tbody>
             {% for user in usersArr %}
               <tr {{ user.archived ? "class='bg-lightgray'" }}>
-                <td><span class='elab-tooltip badge badge-secondary'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span></td>
+                <td><span class='elab-tooltip badge badge-secondary {{ user.archived ? 'alert-danger' }}'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span></td>
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
@@ -85,9 +85,9 @@
                     {% endif %}
                   {% endif %}
                 </td>
-                <td>{{ user.firstname|raw }}</td>
-                <td>{{ user.lastname|raw }}</td>
-                <td>{{ user.email }}</td>
+                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span></td>
+                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span></td>
+                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span></td>
                 <td>{{ user.last_login|default('Never'|trans) }}</td>
                 <td>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</td>
                 <td>
@@ -124,11 +124,6 @@
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
                         </div>
-                      {% endif %}
-                      {% if user.validated %}
-                        <div class='dropdown-item'><i class='fas fa-fw fa-user-xmark mr-1'></i>{{ 'Deactivate account'|trans }}</div>
-                      {% else %}
-                        <div class='dropdown-item'><i class='fas fa-fw fa-check mr-1'></i>{{ 'Activate account'|trans }}</div>
                       {% endif %}
                       <div class='dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'><i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}</div>
                     </div>

@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE TEAM
     } else if (el.matches('[data-action="create-team"]')) {
-      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
+      const name = (document.getElementById('newTeamName') as HTMLInputElement).value;
       ApiC.post(Model.Team, {'name': name}).then(() => reloadElement('teamsDiv'));
     // UPDATE TEAM
     } else if (el.matches('[data-action="patch-team-sysadmin"]')) {

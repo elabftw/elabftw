@@ -299,8 +299,8 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Database Items Types'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
-      <div class='mb-2 d-flex justify-content-between'>
-        <p>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
+      <div class='d-flex justify-content-between'>
+        <p class='col-form-label'>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
         <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
         <div>
           <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>

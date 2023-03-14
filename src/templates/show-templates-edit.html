@@ -2,10 +2,15 @@
 
 <!-- CREATE NEW AND IMPORT BUTTONS -->
 <div class='pl-3 mt-3 mb-5'>
-  <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
-  <div class='vertical-separator d-inline'></div>
-  <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
-  <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2 col-md-3'>
+  <div class='mb-2 d-flex justify-content-between'>
+    <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can edit.'|trans }}</p>
+    <div>
+      <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
+      <div class='vertical-separator d-inline'></div>
+      <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
+      <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2 col-md-3'>
+    </div>
+  </div>
 </div>
 
   {% if App.Request.query.has('templateid') %}

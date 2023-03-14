@@ -59,7 +59,8 @@ try {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             filter_var($App->Request->query->get('q'), FILTER_SANITIZE_STRING),
-            (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT)
+            (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT),
+            $App->Request->query->getBoolean('includeArchived'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
@@ -67,6 +68,23 @@ try {
         }
     }
 
+
+    $samlSecuritySettings = array(
+        array('slug' => 'saml_nameidencrypted', 'label' => 'Encrypt the nameID of the samlp:logoutRequest sent by this SP (nameIdEncrypted)'),
+        array('slug' => 'saml-authnrequestssigned', 'label' => 'Sign the samlp:AuthnRequest messages sent (authnRequestsSigned)'),
+        array('slug' => 'saml-logoutrequestsigned', 'label' => 'Sign the samlp:logoutRequest messages sent (logoutRequestSigned)'),
+        array('slug' => 'saml-logoutresponsesigned', 'label' => 'Sign the samlp:logoutResponse messages sent (logoutresponsesigned)'),
+        array('slug' => 'saml-signmetadata', 'label' => 'Sign the metadata (signMetadata)'),
+        array('slug' => 'saml-wantmessagessigned', 'label' => 'Require the samlp:Response to be signed (wantMessagesSigned)'),
+        array('slug' => 'saml-wantassertionsencrypted', 'label' => 'Require the saml:Assertion to be encrypted (wantAssertionsEncrypted)'),
+        array('slug' => 'saml-wantassertionssigned', 'label' => 'Require the saml:Assertion to be signed (wantAssertionsSigned)'),
+        array('slug' => 'saml-wantnameid', 'label' => 'Require the NameID element on the SAMLResponse received (wantNameId)'),
+        array('slug' => 'saml-wantnameidencrypted', 'label' => 'Require the NameID element received to be encrypted (wantNameIdEncrypted)'),
+        array('slug' => 'saml-wantxmlvalidation', 'label' => 'Validate all received xmls (strict mode must be activated) (wantXMLValidation)'),
+        array('slug' => 'saml-relaxdestinationvalidation', 'label' => 'SAMLResponse with an empty value as its Destination will not be rejected for this fact. (relaxDestinationValidation)'),
+        array('slug' => 'saml-lowercaseurlencoding', 'label' => 'ADFS compatibility on signature verification (lowercaseUrlEncoding)'),
+        array('slug' => 'saml-allowrepeatattributename', 'label' => 'Allow attribute elements with name duplicated'),
+    );
 
     $phpInfos = array(
         PHP_OS,
@@ -93,6 +111,7 @@ try {
         'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
+        'samlSecuritySettings' => $samlSecuritySettings,
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'teamsStats' => $teamsStats,

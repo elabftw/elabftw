@@ -1,0 +1,9 @@
+{# use this template to generate a binary setting for instance config. Set a "setting" with "slug" and "label" keys. #}
+<div class='d-flex justify-content-between'>
+  <label for='{{ setting.slug }}' class='col-form-label'>{{ setting.label }}</label>
+  <label class='switch ucp-align'>
+    <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='{{ setting.slug }}' {{ App.Config.configArr[setting.slug] ? 'checked="checked"' }} id='{{ setting.slug }}'>
+    <span class='slider'></span>
+  </label>
+</div>
+<hr>

@@ -904,6 +904,11 @@ the form-control fails to do that so we do the border ourselves */
 
 }
 
+/* light gray background for archived users */
+.bg-lightgray {
+    background-color: $verylightgray;
+}
+
 /* print only the main div */
 @media print {
     /* overwrite bootstrap defaults

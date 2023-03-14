@@ -1,33 +1,3 @@
-<!-- Modal for reset user password -->
-<div class='modal fade' id='resetPasswordModal' tabindex='-1' role='dialog' aria-labelledby='resetPasswordModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='resetePasswordModalLabel'>{{ 'Reset user password'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        <div class='d-flex justify-content-between'>
-          <div class='input-group'>
-            {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-            <input class='form-control' placeholder='{{ 'Enter new password'|trans }}' id='new_user_password' type='password' autocomplete='new-password' pattern='{{ pattern }}' required />
-            <div class='input-group-append'>
-              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='new_user_password'><i class='fas fa-eye' aria-hidden='true'></i></span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='update-user-password' data-userid='' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- end modal for updating password -->
-
 <h3 class='p-2 pl-3 section-title'>{{ 'Search users'|trans }}</h3>
 <div class='pl-3'>
   <div class='form-group'>
@@ -56,6 +26,11 @@
         <div class='input-group-append'>
           <button class='btn btn-secondary' id='editusersShowAll' type='button'>{{ 'Show all'|trans }}</button>
         </div>
+        <div class='input-group-append'>
+          <div class="input-group-text">
+            <input type='checkbox' class='mr-1' name='includeArchived'>{{ 'Include archived'|trans }}
+          </div>
+        </div>
       </div>
     </form>
   </div>
@@ -83,7 +58,7 @@
           </thead>
           <tbody>
             {% for user in usersArr %}
-              <tr {{ user.archived ? "style='opacity:.6'" }}>
+              <tr {{ user.archived ? "class='bg-lightgray'" }}>
                 <td><span class='elab-tooltip badge badge-secondary'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span></td>
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
@@ -120,15 +95,27 @@
                 </td>
                 <td>{% if user.mfa_secret %}<span class='elab-tooltip'><span>{{ '2FA enabled'|trans }}</span><i title='' class='fas fa-user-shield'></i></span>{% endif %}</td>
                 <td>
+                  {% if App.Users.userData.usergroup == '1' %}
+                    <div class='clickable p-2 hl-hover-gray text-center rounded' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>
+                      <i class='fas fa-fw fa-key mr-1'></i>
+                    </div>
+                    <div hidden class='input-group'>
+                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
+                      <input class='form-control' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ pattern }}' />
+                      <div class='input-group-append'>
+                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                      </div>
+                      <div class='input-group-append'>
+                        <button data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+                      </div>
+                    </div>
+                  {% endif %}
                   <div class='dropdown'>
                     <div class='clickable p-2 hl-hover-gray text-center rounded' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
                       <i class='fas fa-ellipsis-v'></i>
                     </div>
                     <!-- Archive user -->
                     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-                      {% if App.Users.userData.usergroup == '1' %}
-                        <div class='dropdown-item' data-action='toggle-modal' data-target='resetPasswordModal'><i class='fas fa-fw fa-key mr-1'></i>{{ 'Reset user password'|trans }}</div>
-                      {% endif %}
                       {% if user.archived %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
@@ -164,10 +151,10 @@
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
-    <div class='row'>
+    <div class='row mb-2'>
       <!-- TEAM -->
       <div class='col-md-6'>
-        <label for='create-user-team'>{{ 'Team'|trans }}</label>
+        <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
         <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
           {% for team in teamsArr %}
             <option value='{{ team.id }}' {{ App.Users.userData.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
@@ -177,7 +164,7 @@
 
       <!-- GROUP -->
       <div class='col-md-6'>
-        <label for='create-user-group'>{{ 'Permission group'|trans }}</label>
+        <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
           {% if App.Session.get('is_sysadmin') %}
             <option value='1'>Sysadmins</option>
@@ -187,24 +174,24 @@
         </select>
       </div>
     </div>
-    <div class='row'>
+    <div class='row mb-2'>
       <!-- FIRSTNAME -->
       <div class='col-md-6'>
-        <label for='firstname'>{{ 'Firstname'|trans }}</label>
+        <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
         <input name='firstname' class='form-control' type='text' id='firstname' required />
       </div>
 
       <!-- LASTNAME -->
       <div class='col-md-6'>
-        <label for='lastname'>{{ 'Lastname'|trans }}</label>
+        <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
         <input name='lastname' class='form-control' type='text' id='lastname' required />
       </div>
     </div>
 
-    <div class='row'>
+    <div class='row mb-2'>
       <!-- EMAIL -->
       <div class='col-md-12'>
-        <label for='email'>{{ 'Email'|trans }}</label>
+        <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
         <input name='email' class='form-control' type='email' id='email' required />
       </div>
     </div>

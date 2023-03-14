@@ -112,7 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
       el.addEventListener(el.dataset.trigger, event => {
         event.preventDefault();
         // for a checkbox element, look at the checked attribute, not the value
-        const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+        let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+        if (el.dataset.transform === 'permissionsToJson') {
+          value = permissionsToJson(parseInt(value, 10), []);
+        }
         const params = {};
         params[el.dataset.target] = value;
         ApiC.patch(`${el.dataset.model}`, params).then(() => {

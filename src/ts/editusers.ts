@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
       return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
+    // SET PASSWORD (from sysadmin page)
+    } else if (el.matches('[data-action="reset-user-password"]')) {
+      const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
+      return ApiC.patch(`users/${el.dataset.userid}`, {'password': password});
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {

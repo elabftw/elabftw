@@ -144,11 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // PATCH POLICY - save or clear
     } else if (el.matches('[data-action="patch-policy"]')) {
-      let content = tinymce.get('privacyPolicyInput').getContent();
+      let content = tinymce.get(el.dataset.textarea).getContent();
       if (el.dataset.operation === 'clear') {
         content = '';
       }
-      ApiC.patch('config', {'privacy_policy': content});
+      const params = {};
+      params[el.dataset.confname] = content;
+      ApiC.patch('config', params);
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);

@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 use function dirname;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -33,16 +32,6 @@ $Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
 
 $postData = $Request->request->all();
 try {
-    // TAB 1 : PREFERENCES
-    if ($Request->request->has('lang')) {
-        // the csrf is of course not a column that needs patching so remove it
-        unset($postData['csrf']);
-        $postData['default_read'] = (BasePermissions::tryFrom($Request->request->getInt('default_read')) ?? BasePermissions::MyTeams)->toJson();
-        $postData['default_write'] = (BasePermissions::tryFrom($Request->request->getInt('default_write')) ?? BasePermissions::User)->toJson();
-        $App->Users->patch(Action::Update, $postData);
-    }
-    // END TAB 1
-
     // TAB 2 : ACCOUNT
     if ($Request->request->has('use_mfa')) {
         $tab = 2;

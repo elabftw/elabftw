@@ -125,7 +125,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4 forceCanSelect' data-id='{{ App.Users.userData.team }}' data-target='force_canread' id='force_canread'>
+      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canread' id='force_canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ teamConfigArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
@@ -145,7 +145,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4 forceCanSelect' data-id='{{ App.Users.userData.team }}' data-target='force_canwrite' id='force_canwrite'>
+      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canwrite' id='force_canwrite'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ teamConfigArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
@@ -298,11 +298,13 @@
 <div data-tabcontent='5' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Database Items Types'|trans }}</h3>
   <div class='pl-3'>
-    <div class='mb-2 d-flex justify-content-between'>
-      <p>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
-      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
-      <div>
-        <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>
+    <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
+      <div class='mb-2 d-flex justify-content-between'>
+        <p>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
+        <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+        <div>
+          <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>
+        </div>
       </div>
     </div>
 
@@ -311,22 +313,12 @@
       <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
     </a>
   {% else %}
-    <table id='itemsTypesTable' class='table' aria-describedby='TODO' data-table-sort='true'>
-      <thead>
-        <tr>
-          <th scope='col'>{{ 'Name'|trans }}</th>
-          <th scope='col'>{{ 'Action'|trans }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for template in itemsCategoryArr %}
-          <tr>
-            <td>{{ template.category|raw }}</td>
-            <td><a href='?tab=5&templateid={{ template.category_id }}'><i class='fas fa-pencil-alt'></i></a></td>
-          </tr>
+      <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
+        {% for itemType in itemsCategoryArr %}
+        <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=5&templateid={{ itemType.category_id }}' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.category | raw }}</li>
         {% endfor %}
-      </tbody>
-    </table>
+      </ul>
+      <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
   {% endif %}
 
     <!-- templateData will be loaded with content from an item type if templateid is present is url -->
@@ -373,7 +365,7 @@
       <!-- METADATA editor for items types -->
       {% include 'json-editor.html' %}
 
-      <div class='text-center'>
+      <div class='text-center mt-3'>
         <button class='button btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
         <button class='button btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
       </div>
@@ -381,23 +373,13 @@
 
   </div>
 
-  <!-- SORT ITEMS TYPES -->
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Sort items types'|trans }}</h3>
-  <div class='pl-3'>
-    <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
-    <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
-      {% for itemType in itemsCategoryArr %}
-      <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw fa-2x'></i></span>{{ itemType.category | raw }}</li>
-      {% endfor %}
-    </ul>
-  </div>
 </div>
 
 
 <!-- TAB 6 EXPORT -->
 <div data-tabcontent='6' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export database items'|trans }}</h3>
-  <div class='pl-3'>
+  <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
       <label for='categoryExport' class='col-form-label'>{{ 'Select what to export'|trans }}</label>
       <select class='form-control col-md-3' id='categoryExport' autocomplete='off'>
@@ -427,7 +409,7 @@
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export experiments of user'|trans }}</h3>
-  <div class='pl-3'>
+  <div class='pl-3 mb-5'>
 
     <div class='d-flex justify-content-between'>
       <label for='userExport' class='col-form-label'>{{ 'Select user'|trans }}</label>

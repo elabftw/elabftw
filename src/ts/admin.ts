@@ -46,22 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  /*
-  $('#team_groups_div').on('keypress blur', '.autocompleteUsers', function(e) {
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      const user = parseInt($(this).val() as string, 10);
-      if (isNaN(user)) {
-        notifError(new Error('Use the autocompletion menu to add users.'));
-        return;
-      }
-      const group = $(this).data('group');
-      if (e.target.value !== e.target.defaultValue) {
-        ApiC.patch(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${group}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
-      }
-    }
-  });
- */
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
@@ -111,13 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
   }
   // END ITEMS TYPES
-
-  // enforce permissions selects
-  $('.forceCanSelect').on('change', function() {
-    const params = {};
-    params[$(this).data('target')] = permissionsToJson(parseInt(($(this).val() as string), 10), []);
-    ApiC.patch(`${Model.Team}/${$(this).data('id')}`, params);
-  });
 
   // randomize the input of the color picker so even if user doesn't change the color it's a different one!
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/

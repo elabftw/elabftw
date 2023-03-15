@@ -184,13 +184,14 @@ class ImportEln extends AbstractImportZip
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
             if ($this->Entity instanceof AbstractConcreteEntity) {
+                // rating
                 $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
+                // adjust the date
+                $this->Entity->patch(Action::Update, array('date' => $json['date']));
             }
             if ($json['metadata'] !== null) {
                 $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
             }
-            // adjust the date
-            $this->Entity->patch(Action::Update, array('date' => $json['date']));
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {

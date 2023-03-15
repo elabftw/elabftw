@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, reloadElement, removeEmpty } from './misc';
+import { collectForm, notif, notifError, reloadElement, removeEmpty } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
       warningDiv.appendChild(text);
       const updateLink = document.createElement('a');
       updateLink.href = 'https://doc.elabftw.net/how-to-update.html';
-      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       updateLink.innerText = 'Update elabftw';
       const changelogLink = document.createElement('a');
       changelogLink.href = 'https://doc.elabftw.net/changelog.html';
-      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       changelogLink.innerText = 'Read changelog';
       warningDiv.appendChild(updateLink);
       warningDiv.appendChild(changelogLink);
@@ -77,6 +77,26 @@ document.addEventListener('DOMContentLoaded', () => {
       latestVersionDiv.appendChild(successIcon);
     }
   }).catch(error => latestVersionDiv.append(error));
+
+
+  document.querySelectorAll('[data-action="load-file-on-change"]').forEach(input => {
+    input.addEventListener('change', (event) => {
+      const el = (event.target as HTMLInputElement);
+      const file = el.files[0];
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function() {
+        try {
+          const target = (document.getElementById(el.dataset.target) as HTMLInputElement);
+          target.value = (reader.result as string);
+          // trigger blur so it is saved if it is a save trigger
+          target.dispatchEvent(new Event('blur'));
+        } catch (error) {
+          notifError(error);
+        }
+      };
+    });
+  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -170,6 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
         { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
+    } else if (el.matches('[data-action="create-idp"]')) {
+      const params = collectForm(document.getElementById('createIdpForm'));
+      ApiC.post(Model.Idp, params).then(() => {
+        $('#createIdpModal').modal('hide');
+        reloadElement('idpsDiv');
+      });
     } else if (el.matches('[data-action="destroy-idp"]')) {
       event.preventDefault();
       if (confirm(i18next.t('generic-delete-warning'))) {

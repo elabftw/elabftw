@@ -23,6 +23,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\Idps;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Notifications\UserNotifications;
@@ -208,6 +209,8 @@ class Apiv2Controller extends AbstractApiController
                 return new ApiKeys($this->Users, $this->id);
             case 'config':
                 return Config::getConfig();
+            case 'idps':
+                return new Idps($this->id);
             case 'experiments':
             case 'items':
             case 'experiments_templates':
@@ -275,7 +278,7 @@ class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
-        if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
+        if (($this->Model instanceof Config || $this->Model instanceof Idps) && $this->Users->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 

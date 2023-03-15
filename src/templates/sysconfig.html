@@ -2,6 +2,8 @@
 
 {% block body %}
 
+{% include('create-idp-modal.html') %}
+
 <!-- Modal for team creation -->
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
@@ -664,19 +666,28 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
+      <div>
+        <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
+        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' />
+      </div>
       <textarea class='form-control col-md-3' id='x509' data-trigger='blur' data-model='config' data-target='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='saml_privatekey' class='col-form-label'>x509 Certificate private key</label>
+      <div>
+        <label for='saml_privatekey' class='col-form-label'>x509 Certificate private key</label>
+        <input type='file' data-action='load-file-on-change' data-target='saml_privatekey' class='form-control' />
+      </div>
       <textarea class='form-control col-md-3' id='saml_privatekey' data-trigger='blur' data-model='config' data-target='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='x509_new' class='col-form-label'>Rollover x509 Certificate in PEM format (only published in metadata, not used)</label>
+      <div>
+        <label for='x509_new' class='col-form-label'>Rollover x509 Certificate in PEM format (only published in metadata, not used)</label>
+        <input type='file' data-action='load-file-on-change' data-target='x509_new' class='form-control' />
+      </div>
       <textarea class='form-control col-md-3' id='x509_new' data-trigger='blur' data-model='config' data-target='saml_x509_new'>{{ App.Config.configArr.saml_x509_new }}</textarea>
     </div>
     <hr>
@@ -734,178 +745,127 @@
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>Identity Providers Configuration</h3>
-  <div class='pl-3 mb-5' id='idpsDiv'>
-
-        {% if idpsArr|length > 0 %}
-            <h4>Existing Identity Providers</h4>
-            {% for idp in idpsArr %}
-              <div class='box'>
-                  <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
-                      <i class='fas fa-trash-alt fa-2x'></i>
-                  </a>
-                  <h4>{{ idp.name|upper }} ({{ idp.entityid }})</h4>
-                  <form method='post' action='app/controllers/IdpsController.php'>
-                    {{ App.Session.get('csrf')|csrf }}
-                    <div class='form-group'>
-                      <input type='hidden' name='idpsUpdate' />
-                      <input type='hidden' name='id' value='{{ idp.id }}' />
-
-                      <label for='editIdpName_{{ idp.id }}'>Friendly name:</label>
-                      <input class='form-control col-md-6' type='text' id='editIdpName_{{ idp.id }}' name='name' value='{{ idp.name }}' />
-                      <label for='entityId_{{ idp.id }}'>EntityId:</label>
-                      <input class='form-control col-md-6' type='url' id='entityId_{{ idp.id }}' name='entityid' value='{{ idp.entityid }}' />
-                      <label for='ssoUrl_{{ idp.id }}'>Single Sign-On URL:</label>
-                      <input class='form-control col-md-6' type='url' id='ssoUrl_{{ idp.id }}' name='ssoUrl' value='{{ idp.sso_url }}' />
-                      <label for='ssoBinding_{{ idp.id }}'>Single Sign-On binding (only Redirect is supported):</label>
-                      <select class='form-control col-md-6' id='ssoBinding_{{ idp.id }}' name='ssoBinding'>
-                        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-                        <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest' {{ idp.sso_binding == 'urn:mace:shibboleth:1.0:profiles:AuthnRequest' ? 'selected' }}>Shibboleth AuthnRequest</option>
-                      </select>
-                      <label for='sloUrl_{{ idp.id }}'>Single Log Out URL:</label>
-                      <input class='form-control col-md-6' type='url' id='sloUrl_{{ idp.id }}' name='sloUrl' value='{{ idp.slo_url }}' />
-                      <label for='sloBinding_{{ idp.id }}'>Single Log Out binding (only Redirect is supported):</label>
-                      <select class='form-control col-md-6' id='sloBinding_{{ idp.id }}' name='sloBinding'>
-                        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-                      </select>
-
-                      <label for='x509_{{ idp.id }}'>x509cert:</label>
-                      <textarea class='form-control col-md-6' name='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
-
-                      <label for='x509_new_{{ idp.id }}'>x509cert (additional for rollover):</label>
-                      <textarea class='form-control col-md-6' name='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
-
-                      <label for='saml-email_{{ idp.id }}'>What attribute to look for the email:</label>
-                      <input class='form-control col-md-6' type='text' id='saml-email_{{ idp.id }}' name='email_attr' value='{{ idp.email_attr }}' />
-
-                      <label for='saml-team_{{ idp.id }}'>What attribute to look for the team name:</label>
-                      <input class='form-control col-md-6' type='text' id='saml-team_{{ idp.id }}' name='team_attr' value='{{ idp.team_attr }}' />
-
-                      <label for='saml-firstname_{{ idp.id }}'>What attribute to look for the firstname:</label>
-                      <input class='form-control col-md-6' type='text' id='saml-firstname_{{ idp.id }}' name='fname_attr' value='{{ idp.fname_attr }}' />
-
-                      <label for='saml-lastname_{{ idp.id }}'>What attribute to look for the lastname:</label>
-                      <input class='form-control col-md-6' type='text' id='saml-lastname_{{ idp.id }}' name='lname_attr' value='{{ idp.lname_attr }}' />
-
-                      <label for='active_{{ idp.id }}'>Active</label>
-                      <select class='form-control col-md-6 col-md-4' autocomplete='off' id='active_{{ idp.id }}' name='active'>
-                          <option value='1' {{ idp.active ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                          <option value='0' {{ not idp.active ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                      </select>
-                      <div class='mt-4 text-center'>
-                          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-            {% endfor %}
-        {% endif %}
-  </div>
-
-  <!-- TODO maybe have just a create idp button that asks for a name and that's all, then user can configure from the list, add use a POST in api for idps! -->
-  <h3 class='mb-3 p-2 pl-3 section-title'>Add new Identity Provider</h4>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity Providers list'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <form method='post' action='app/controllers/IdpsController.php'>
-      {{ App.Session.get('csrf')|csrf }}
-      <div class='form-group'>
-        <input type='hidden' name='idpsCreate' />
-
-        <div class='d-flex justify-content-between'>
-          <label for='name' class='col-form-label'>{{ 'Friendly Name'|trans }}</label>
-          <input class='form-control col-md-3' type='text' id='name' name='name' required />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='entityid' class='col-form-label'>EntityId</label>
-          <input class='form-control col-md-3' type='url' id='entityid' name='entityid' required />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='ssoUrl' class='col-form-label'>Single Sign-On URL</label>
-          <input class='form-control col-md-3' type='url' id='ssoUrl' name='ssoUrl' required />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='ssoBinding' class='col-form-label'>Single Sign-On Binding (only Redirect is supported)</label>
-          <select class='form-control col-md-3' id='ssoBinding' name='ssoBinding'>
-            <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'>Redirect</option>
-            <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'>POST</option>
-            <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest'>Shibboleth AuthnRequest</option>
-          </select>
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='sloUrl' class='col-form-label'>Single Log Out URL</label>
-          <input class='form-control col-md-3' type='url' id='sloUrl' name='sloUrl' />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='sloBinding' class='col-form-label'>Single Log Out Binding (only Redirect is supported)</label>
-          <select class='form-control col-md-3' id='sloBinding' name='sloBinding'>
-            <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'>Redirect</option>
-            <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'>POST</option>
-          </select>
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='x509_idp' class='col-form-label'>x509 Certificate</label>
-          <textarea class='form-control col-md-3' id='x509_idp' name='x509' required></textarea>
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='x509_new_idp' class='col-form-label'>x509 Certificate (additional for rollover)</label>
-          <textarea class='form-control col-md-3' id='x509_new_idp' name='x509_new' required></textarea>
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='newidp-email_attr' class='col-form-label'>What attribute to look for the email</label>
-          <input class='form-control col-md-3' type='text' id='newidp-email_attr' name='email_attr' />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='newidp-team_attr' class='col-form-label'>What attribute to look for the team name</label>
-          <input class='form-control col-md-3' type='text' id='newidp-team_attr' name='team_attr' />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='newidp-fname_attr' class='col-form-label'>What attribute to look for the firstname</label>
-          <input class='form-control col-md-3' type='text' id='newidp-fname_attr' name='fname_attr' />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='newidp-lname_attr' class='col-form-label'>What attribute to look for the lastname</label>
-          <input class='form-control col-md-3' type='text' id='newidp-lname_attr' name='lname_attr' />
-        </div>
-        <hr>
-
-        <div class='d-flex justify-content-between'>
-          <label for='active' class='col-form-label'>Active</label>
-          <select class='form-control col-md-3' id='active' autocomplete='off' name='active'>
-              <option value='1' selected='selected'>{{ 'Yes'|trans }}</option>
-              <option value='0'>{{ 'No'|trans }}</option>
-          </select>
-        </div>
-        <hr>
-
-        <div class='mt-4 text-center'>
-          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-        </div>
+    <div class='mb-3 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
+      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      <div>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createIdpModal'>{{ 'Add new IDP'|trans }}</button>
       </div>
-    </form>
+    </div>
+    <div id='idpsDiv'>
+      {% for idp in idpsArr %}
+        <div class='my-2'>
+          <h4 data-action='toggle-next' data-icon='idpIcon_{{ idp.id }}' class='d-inline'><i id='idpIcon_{{ idp.id }}' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ idp.name|upper }} ({{ idp.entityid }})
+
+            <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
+                <i class='fas fa-trash-alt'></i>
+            </a>
+          </h4>
+
+          <div class='m-2' hidden>
+
+            <div class='d-flex justify-content-between'>
+              <label for='enabled_{{ idp.id }}' class='col-form-label'>{{ 'Enabled'|trans }}</label>
+              <label class='switch ucp-align'>
+                <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
+                <span class='slider'></span>
+              </label>
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='editIdpName_{{ idp.id }}' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
+              <input class='form-control col-md-3' type='text' id='editIdpName_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='name' value='{{ idp.name }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='entityId_{{ idp.id }}' class='col-form-label'>EntityId</label>
+              <input class='form-control col-md-3' type='url' id='entityId_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='entityid' value='{{ idp.entityid }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='ssoUrl_{{ idp.id }}' class='col-form-label'>Single Sign-On URL</label>
+              <input class='form-control col-md-3' type='url' id='ssoUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='sso_url' value='{{ idp.sso_url }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding (only Redirect is supported)</label>
+              <select class='form-control col-md-3' id='ssoBinding_{{ idp.id }}' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='sso_binding'>
+                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
+                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
+                <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest' {{ idp.sso_binding == 'urn:mace:shibboleth:1.0:profiles:AuthnRequest' ? 'selected' }}>Shibboleth AuthnRequest</option>
+              </select>
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='sloUrl_{{ idp.id }}' class='col-form-label'>Single Log Out URL</label>
+              <input class='form-control col-md-3' type='url' id='sloUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_url' value='{{ idp.slo_url }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='sloBinding_{{ idp.id }}' class='col-form-label'>Single Log Out binding (only Redirect is supported)</label>
+              <select class='form-control col-md-3' id='sloBinding_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_binding'>
+                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
+                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
+              </select>
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <div>
+                <label for='x509_{{ idp.id }}' class='col-form-label'>x509cert</label>
+                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control' />
+              </div>
+              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <div>
+                <label for='x509_new_{{ idp.id }}' class='col-form-label'>x509cert (additional for rollover)</label>
+                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' />
+              </div>
+              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='saml-email_{{ idp.id }}' class='col-form-label'>What attribute to look for the email</label>
+              <input class='form-control col-md-3' type='text' id='saml-email_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='email_attr' value='{{ idp.email_attr }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='saml-firstname_{{ idp.id }}' class='col-form-label'>What attribute to look for the firstname</label>
+              <input class='form-control col-md-3' type='text' id='saml-firstname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='fname_attr' value='{{ idp.fname_attr }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='saml-lastname_{{ idp.id }}' class='col-form-label'>What attribute to look for the lastname</label>
+              <input class='form-control col-md-3' type='text' id='saml-lastname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='lname_attr' value='{{ idp.lname_attr }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='saml-team_{{ idp.id }}' class='col-form-label'>What attribute to look for the team name (optional)</label>
+              <input class='form-control col-md-3' type='text' id='saml-team_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='team_attr' value='{{ idp.team_attr }}' />
+            </div>
+            <hr>
+
+          </div>
+        {% endfor %}
+      </div>
+    </div>
   </div>
+
 </div>
 
 <!-- TAB 11 LDAP -->

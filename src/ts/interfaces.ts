@@ -75,6 +75,7 @@ enum Model {
   Comment = 'comments',
   Config = 'config',
   FavTag = 'favtags',
+  Idp = 'idps',
   Link = 'links',
   Notification = 'notifications',
   PrivacyPolicy = 'privacypolicy',

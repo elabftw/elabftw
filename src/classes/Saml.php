@@ -26,13 +26,13 @@ class Saml
      * Get the settings array
      * On login we don't have an id but we don't need the settings
      * from a particular idp (just the service provider)
-     * So getActive will just grab the first active one
+     * So getEnabled will just grab the first enabled one
      *
      * @param int|null $id id of the selected idp
      */
     public function getSettings(?int $id = null): array
     {
-        $idp = $this->Idps->getActive($id);
+        $idp = $this->Idps->getEnabled($id);
 
         return $this->getSettingsByIdp($idp);
     }
@@ -44,7 +44,7 @@ class Saml
      */
     public function getSettingsByEntityId(string $entId): array
     {
-        $idp = $this->Idps->getActiveByEntityId($entId);
+        $idp = $this->Idps->getEnabledByEntityId($entId);
 
         return $this->getSettingsByIdp($idp);
     }

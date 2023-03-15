@@ -50,7 +50,7 @@ export function relativeMoment(): void {
  */
 export function collectForm(form: HTMLElement): object {
   let params = {};
-  ['input', 'select'].forEach(inp => {
+  ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
       const el = input as HTMLInputElement;
       if (el.reportValidity() === false) {

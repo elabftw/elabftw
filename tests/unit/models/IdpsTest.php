@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {
     private Idps $Idps;
@@ -18,49 +20,47 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->Idps= new Idps();
     }
 
-    public function testCreateReadUpdateDestroy(): void
+    public function testGetPage(): void
     {
-        $id = $this->Idps->create(
-            'Test idp',
-            'https://test.example.org',
-            'https://test.example.org/sso',
-            'sso:binding',
-            'https://test.example.org/slo',
-            'slo:binding',
-            'x509',
-            'x509_new',
-            '1',
-            'emailattr',
-            'teamattr',
-            'fnameattr',
-            'lnameattr'
+        $this->assertEquals('api/v2/idps/', $this->Idps->getPage());
+    }
+
+    public function testCreate(): void
+    {
+        $params = array(
+            'name' => 'testidp',
+            'entityid' => 'https://app.onelogin.com/',
+            'sso_url' => 'https://onelogin.com/',
+            'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+            'slo_url' => 'https://onelogin.com/',
+            'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'x509' => 'yep',
+            'x509_new' => '',
+            'email_attr' => 'User.email',
+            'team_attr' => 'User.team',
+            'fname_attr' => 'User.FirstName',
+            'lname_attr' => 'User.LastName',
         );
-        $this->Idps->update(
-            $id,
-            'Updated',
-            'https://test.example.org',
-            'https://test.example.org/sso',
-            'sso:binding',
-            'https://test.example.org/slo',
-            'slo:binding',
-            'x509',
-            'x509_new',
-            '1',
-            'emailattr',
-            'teamattr',
-            'fnameattr',
-            'lnameattr'
-        );
-        $idp = $this->Idps->getActive($id);
-        $this->assertEquals('Updated', $idp['name']);
-        $this->assertEquals('x509', $idp['x509']);
-        $this->assertEquals('x509_new', $idp['x509_new']);
+        $id = $this->Idps->postAction(Action::Create, $params);
+        $this->assertIsInt($id);
         $this->Idps->setId($id);
-        $this->Idps->destroy();
+        $newValue = 'new idp name';
+        $response = $this->Idps->patch(Action::Update, array('name' => $newValue));
+        $this->assertEquals($newValue, $response['name']);
     }
 
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Idps->readAll());
+    }
+
+    public function testGetActiveByEntityId(): void
+    {
+        $this->assertIsArray($this->Idps->getEnabledByEntityId('https://app.onelogin.com/'));
+    }
+
+    public function testDestroy(): void
+    {
+        $this->assertTrue($this->Idps->destroy());
     }
 }

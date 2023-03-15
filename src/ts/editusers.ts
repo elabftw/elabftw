@@ -71,7 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  new MutationObserver(() => {
-    malleableUsergroup.listen();
-  }).observe(document.getElementById('usersTable'), {childList: true});
+
+  if (document.getElementById('usersTable')) {
+    new MutationObserver(() => {
+      malleableUsergroup.listen();
+    }).observe(document.getElementById('usersTable'), {childList: true});
+  }
 });

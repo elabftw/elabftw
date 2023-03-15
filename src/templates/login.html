@@ -164,7 +164,7 @@
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
           <select name='idpId' class='form-control' id='idp_login_select'>
             {% for idp in idpsArr %}
-              {% if idp.active %}
+              {% if idp.enabled %}
                 <option value='{{ idp.id }}'>{{ idp.name }}</option>
               {% endif %}
             {% endfor %}

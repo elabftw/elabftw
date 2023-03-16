@@ -201,7 +201,7 @@
 
   <!-- TITLE : click on it to go to edit mode only if we are not in read only mode -->
   {% set isEditable = not Entity.isReadOnly and not Entity.entityData.locked %}
-  <h1 id='documentTitle' class='mb-2 overflow-break-word {{ isEditable ? 'hover-action' }}' {{ isEditable ? 'data-action="edit"' }}>
+  <h1 id='documentTitle' class='mb-2 title {{ isEditable ? 'hover-action' }}' {{ isEditable ? 'data-action="edit"' }}>
       {% if Entity.type == 'items' %}
           <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
       {% endif %}

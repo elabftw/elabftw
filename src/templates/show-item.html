@@ -18,8 +18,8 @@
     <div class='d-flex align-items-center'>
       {# lock icon #}
       {% if item.locked %}
-        <div class='lock-icon-show p-2 rounded mr-2' style='background-color:#{{ item.color }}'>
-          <i class='fas fa-lock fa-fw fa-2x'></i>
+        <div class='lock-icon-show rounded mr-3' style='background-color:#{{ item.color }}'>
+          <i class='fas fa-lock fa-fw'></i>
         </div>
       {% endif %}
     </div>
@@ -30,7 +30,7 @@
       <div>
         {# rating #}
         {% if item.rating > 0 %}
-          <span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>{{ item.rating }}</span>
+          <span class='rating-show rounded px-1 mr-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
         {% endif %}
         {# category #}
         <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>
@@ -46,12 +46,12 @@
       {% if item.next_step|length > 0 %}
         {% set stepsArr = item.next_step|split('|') %}
         {% set next = stepsArr|first %}
-        <p class='item-next'>
-          {{ 'Next step'|trans }}: <span class='item-next-step'>{{ next|raw }}</span>
+        <p class='item-next my-2'>
+        <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='item-next-step'>{{ next|raw }}</span>
         </p>
       {% endif %}
 
-      <p>
+      <p class='my-1'>
         {# checkbox #}
         <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
         {# timestamp icon #}
@@ -90,7 +90,7 @@
       <div class='d-flex flex-column ml-auto'>
         {# date and pinned icon #}
         <div>
-          <span class='item-date'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
+          <span class='item-date'>{{ item.date|date('Y-m-d') }}</span>
           {% if isPinned %}
             <a class='elab-tooltip ml-2' data-action='toggle-pin' data-id='{{ item.id }}' href='#'>
               <span>{{ 'Toggle pin'|trans }}</span>

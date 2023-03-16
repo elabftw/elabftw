@@ -578,6 +578,8 @@ table th {
 }
 
 .lock-icon-show {
+    padding: 8px 10px;
+
     i {
         color: $white;
     }
@@ -660,6 +662,16 @@ table th {
     p {
         margin-bottom: 0;
     }
+
+    .fa-pencil-alt,
+    .fa-square-plus {
+        color: $darkgray;
+    }
+
+    .fa-comments,
+    .fa-tags {
+        color: $secondlevel;
+    }
 }
 
 /* SIDE PANEL */
@@ -714,6 +726,12 @@ table th {
 }
 
 .item-next {
+    .next-step-text {
+        color: $secondlevel;
+        font-size: 80%;
+        text-transform: uppercase;
+    }
+
     .item-next-step {
         color: #000;
     }
@@ -722,20 +740,6 @@ table th {
 .item-category {
     font-size: 80%;
     text-transform: uppercase;
-}
-
-@mixin item-show-inline {
-    .title,
-    .item-next,
-    .item-info,
-    .item-date {
-        display: inline;
-    }
-
-    .item-next,
-    .item-info {
-        padding-left: 0;
-    }
 }
 
 .item a p:hover {
@@ -754,11 +758,6 @@ table th {
     margin-bottom: 15px;
 }
 
-/* stylelint-disable-next-line selector-no-qualifying-type */
-input[type='checkbox'] {
-    position: relative;
-}
-
 /* EXPERIMENT STEPS */
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
@@ -772,31 +771,14 @@ the form-control fails to do that so we do the border ourselves */
     color: $green;
 }
 
-.col-md-6 label {
-    margin: 0;
-}
-
 .draggable {
     cursor: move;
-}
-
-/*
- * fix the white space when columned items don't have the same height
- * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643
- */
-.row.display-flex {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.row.display-flex > [class*='col-'] {
-    display: flex;
-    flex-direction: column;
 }
 
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
     overflow: hidden;
+    overflow-wrap: break-word;
 }
 
 .thumb {
@@ -805,15 +787,6 @@ the form-control fails to do that so we do the border ourselves */
     min-height: 50px;
     min-width: 50px;
     width: 100px;
-}
-
-/* EDITABLE */
-.editable:hover {
-    cursor: pointer;
-}
-
-.comment-header {
-    background-color: $firstgray;
 }
 
 /* highlight on hover: for editable/malleable elements
@@ -827,12 +800,18 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $firstgray;
 }
 
+/* COMMENTS */
 #commentsCreateArea {
     border-radius: 5px;
     margin: 10px 0;
     padding: 20px;
     width: 100%;
 }
+
+.comment-header {
+    background-color: $firstgray;
+}
+
 
 /* END COMMENTS */
 
@@ -841,26 +820,21 @@ the form-control fails to do that so we do the border ourselves */
 .title {
     font-size: 160%;
     hyphens: auto;
+    line-height: 110%;
     overflow-wrap: break-word;
     word-break: break-word;
 
     a {
-        color: $maingray;
+        color: $darkgray;
 
         &:hover {
-            color: $elabblue !important;
-            transition-duration: 500ms;
+            color: $secondlevel;
         }
     }
 }
 
-.overflow-break-word {
-    overflow-wrap: break-word;
-}
-
 .item-date {
     color: $maingray;
-    padding: 0 5px;
 }
 
 .smallgray {
@@ -890,10 +864,6 @@ the form-control fails to do that so we do the border ourselves */
     overflow-wrap: break-word;
 }
 
-.thumbnail {
-    overflow-wrap: break-word;
-}
-
 /* TAGS */
 .tag {
     background-color: $secondlevel;
@@ -902,6 +872,10 @@ the form-control fails to do that so we do the border ourselves */
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     padding: 2px 5px;
 
+    &:hover {
+        background-color: $elabblue;
+        color: $white;
+    }
 }
 
 .box {
@@ -1083,6 +1057,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .clickable:hover,
+.editable:hover,
 [data-action] {
     cursor: pointer;
 }

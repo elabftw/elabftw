@@ -61,10 +61,7 @@ class TwigFilters
      */
     public static function showStars(int $rating): string
     {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
+        return sprintf("<span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>%d</span>", $rating);
     }
 
     /**

@@ -62,6 +62,10 @@ $text-muted: $lightgray;
         url('fonts/lato-medium-webfont.svg#webfont') format('svg');
 }
 
+body {
+    background: $verylightgray;
+}
+
 /* little shadow on top of the screen for no reasons */
 body::before {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
@@ -76,7 +80,6 @@ body::before {
 
 /* this is the big white thing that holds everything */
 #container {
-    background: #fff;
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 500;
     padding: 0;
@@ -489,7 +492,7 @@ github issue #52 */
     text-align: center;
 
     tr {
-        border-bottom: 1px solid $verylightgray;
+        border-bottom: 1px solid $lightgray;
     }
 
     td,
@@ -560,8 +563,24 @@ table th {
 }
 
 .vertical-separator {
-    border-right: 1px solid $verylightgray;
+    border-right: 1px solid $lightgray;
     margin: 0 15px;
+}
+
+/* SHOW MODE */
+.rating-show {
+    background-color: $lightgold;
+    font-size: 70%;
+
+    i {
+        color: $gold;
+    }
+}
+
+.lock-icon-show {
+    i {
+        color: $white;
+    }
 }
 
 /* OVERLAY */
@@ -618,6 +637,7 @@ table th {
 
 /* ITEMS */
 .item {
+    background-color: $white;
     border: 1px solid $bordersgray;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
@@ -683,8 +703,6 @@ table th {
 }
 
 .item-next {
-    padding-left: 20px;
-
     .item-next-step {
         color: #000;
     }
@@ -784,7 +802,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .comment-header {
-    background-color: $verylightgray;
+    background-color: $firstgray;
 }
 
 /* highlight on hover: for editable/malleable elements
@@ -795,7 +813,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .hl-hover-gray:hover {
-    background-color: $verylightgray;
+    background-color: $firstgray;
 }
 
 #commentsCreateArea {
@@ -812,9 +830,7 @@ the form-control fails to do that so we do the border ourselves */
 .title {
     font-size: 160%;
     hyphens: auto;
-    margin: 0 20px 0 0;
     overflow-wrap: break-word;
-    padding-left: 20px;
     word-break: break-word;
 
     a {
@@ -879,7 +895,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* light gray background for archived users */
 .bg-lightgray {
-    background-color: $verylightgray;
+    background-color: $lightgray;
 }
 
 /* print only the main div */
@@ -1204,7 +1220,7 @@ input[type='color'] {
 
 /* notifications */
 .notification {
-    border-top: 1px solid $verylightgray;
+    border-top: 1px solid $lightgray;
 
     .relative-moment {
         color: $lightgray;
@@ -1283,6 +1299,6 @@ input:checked + .slider::before {
 }
 
 .section-title {
-    background-color: $verylightgray;
+    background-color: $firstgray;
     font-size: 120%;
 }

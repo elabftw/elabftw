@@ -1,7 +1,6 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
-{# here the item-show-{lg-md-xs} is always lg #}
-<tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
+<tr class='item item-show' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
 
   {# DATE #}
   <td class='item-date'>

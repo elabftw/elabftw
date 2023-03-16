@@ -30,7 +30,7 @@
       <div>
         {# rating #}
         {% if item.rating > 0 %}
-          {{ item.rating|stars|raw }}
+          <span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>{{ item.rating }}</span>
         {% endif %}
         {# category #}
         <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>

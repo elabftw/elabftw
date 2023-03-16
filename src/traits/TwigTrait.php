@@ -47,7 +47,6 @@ trait TwigTrait
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new TwigFilter('msg', '\Elabftw\Elabftw\TwigFilters::displayMessage', $filterOptions);
         $mdFilter = new TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\TwigFilters::showStars', $filterOptions);
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
@@ -92,7 +91,6 @@ trait TwigTrait
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);
-        $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
         $TwigEnvironment->addFilter($metadataFilter);

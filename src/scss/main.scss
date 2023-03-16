@@ -644,7 +644,7 @@ table th {
     margin: 5px auto;
     min-width: 100%;
     opacity: var(--opacity);
-    padding: 5px 10px 0 5px;
+    padding: 5px 10px 5px 5px;
 
     p {
         margin-bottom: 0;
@@ -885,12 +885,16 @@ the form-control fails to do that so we do the border ourselves */
 
 /* TAGS */
 .tag {
-    border: 1px solid $maingray;
+    background-color: $secondlevel;
     border-radius: 5px;
-    color: $maingray;
+    color: $white;
     font: bold 13px Verdana, Arial, Helvetica, sans-serif;
     padding: 2px 5px;
 
+}
+
+.box {
+    background-color: $white;
 }
 
 /* light gray background for archived users */

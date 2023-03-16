@@ -54,17 +54,6 @@ class TwigFilters
     }
 
     /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        return sprintf("<span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>%d</span>", $rating);
-    }
-
-    /**
      * Process the metadata json string into html
      */
     public static function formatMetadata(string $json): string

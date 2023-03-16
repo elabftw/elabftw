@@ -757,7 +757,7 @@
     <div id='idpsDiv'>
       {% for idp in idpsArr %}
         <div class='my-2'>
-          <h4 data-action='toggle-next' data-icon='idpIcon_{{ idp.id }}' class='d-inline'><i id='idpIcon_{{ idp.id }}' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ idp.name|upper }} ({{ idp.entityid }})
+          <h4 data-action='toggle-next' data-icon='idpIcon_{{ idp.id }}' class='d-inline'><i id='idpIcon_{{ idp.id }}' class='fas fa-chevron-circle-down'></i>  {{ idp.name|upper }} ({{ idp.entityid }})
 
             <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                 <i class='fas fa-trash-alt'></i>

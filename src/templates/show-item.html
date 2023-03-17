@@ -4,7 +4,7 @@
 {% set bgcolor = 'fff' %}
 {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
   {% set bgcolor = 'f4f6f7' %}
-  {% set owner = "<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname) %}
+  {% set owner = "%s <a href='?owner=%s'>%s</a>"|trans|format('by', item.userid, item.fullname) %}
 {% endif %}
 {% if Entity.Users.userData.single_column_layout %}
   <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
@@ -22,15 +22,24 @@
 
         {# lock icon #}
         {% if item.locked %}
-          <div class='left-icon rounded mr-3 my-1' style='background-color:#{{ item.color }}'>
+          <div class='left-icon rounded mr-3 my-1 bgnd-gray'>
             <i class='fas fa-lock fa-fw'></i>
           </div>
         {% else %}
           {# edit icon #}
           {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-            <div class='left-icon rounded mr-3 my-1 bg-dark'>
-              <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil fa-fw'></i></a>
-            </div>
+            <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'>
+              <div class='left-icon rounded mr-3 my-1 bgnd-dark'>
+                <i class='fas fa-pencil fa-fw'></i>
+              </div>
+            </a>
+          {% else %}
+          {# eye icon #}
+            <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}' title='{{ 'View'|trans }}'>
+              <div class='left-icon rounded mr-3 my-1 bgnd-dark'>
+                <i class='fas fa-eye fa-fw'></i>
+              </div>
+            </a>
           {% endif %}
         {% endif %}
       </div>
@@ -53,6 +62,11 @@
       <div class='d-flex justify-content-between title'>
         <p><a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a></p>
       </div>
+      {# owner #}
+      <div class='owner'>
+        {{ owner|raw }}
+      </div>
+
       {# end second line #}
 
       {% if item.next_step|length > 0 %}
@@ -64,8 +78,6 @@
       {% endif %}
 
       <p class='my-1'>
-        {{ owner|raw }}
-
         {% set itemtagsArr = tagsArr[item.id] %}
         {% if itemtagsArr|length > 0 %}
           <span class='d-inline-flex flex-wrap'><i class='fas fa-tags mr-1 fa-fw'></i>

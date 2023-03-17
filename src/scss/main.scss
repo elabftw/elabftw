@@ -687,29 +687,42 @@ table th {
         margin-top: 3px;
     }
 
-    .left-icon {
-        padding: 8px 10px;
+    .owner {
+        a {
+            color: $maingray;
 
-        i {
-            color: $white;
+            &:hover {
+                color: $secondlevel;
+            }
         }
     }
 
-    /*
-    input[type="checkbox"] {
-        display: none;
-    }
+    .left-icon {
+        padding: 8px 10px;
 
-    &:hover input[type="checkbox"] {
-        display: block;
-        top: 100px;
+        i:not(.fa-lock) {
+            color: $white;
+        }
+
+        .fa-lock {
+            background-color: $firstgray;
+            color: $maingray;
+        }
+
+        &.bgnd-dark {
+            background-color: $darkgray;
+
+            &:hover {
+                background-color: $secondlevel;
+            }
+        }
+
+        &.bgnd-gray {
+            background-color: $firstgray;
+        }
     }
-    */
 }
 
-.bg-dark {
-    background-color: $darkgray;
-}
 
 /* SIDE PANEL */
 .side-panel {

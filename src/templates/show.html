@@ -167,36 +167,40 @@
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' -%}
-        <table id='itemList' class='item-table' aria-describedby='pageTitle'>
-          <tr>
-            <th>
-              {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
-            </th>
-            <th class='title-item-table'>
-              {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
-            </th>
-            <th class='step-item-table'>
-              {{ 'Next step'|trans }}
-            </th>
-            <th class='category-item-table'>
-              {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
-            </th>
-            <th class='tags-item-table'>
-              {{ 'Tags'|trans }}
-            </th>
-            <th class='actions-item-table'>
-              {{ 'Actions'|trans }}
-            </th>
-            <th class='actions-item-rating'>
-              {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
-            </th>
-            <th class='actions-item-owner'>
-              {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
-            </th>
-          </tr>
-        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include 'show-item-table.html' %}
-        {% endfor %}
+        <table id='itemList' class='table item-table' aria-describedby='pageTitle'>
+          <thead>
+            <tr>
+              <th>
+                {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
+              </th>
+              <th class='title-item-table col-8'>
+                {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
+              </th>
+              <th class='step-item-table col-2'>
+                {{ 'Next step'|trans }}
+              </th>
+              <th class='category-item-table w-20'>
+                {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
+              </th>
+              <th class='tags-item-table w-20'>
+                {{ 'Tags'|trans }}
+              </th>
+              <th class='actions-item-table w-10'>
+                {{ 'Actions'|trans }}
+              </th>
+              <th class='actions-item-rating w-10'>
+                {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
+              </th>
+              <th class='actions-item-owner col-2'>
+                {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+              {% include 'show-item-table.html' %}
+            {% endfor %}
+          </tbody>
         </table>
       {% endif %}
 

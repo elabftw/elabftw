@@ -74,9 +74,9 @@
 </tr>
 {# container to hold the body of the entity if it is toggled with the +/- icon #}
 {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-<tr style='border-left: 4px solid #{{ item.color }}'>
+<tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.color }}'>
   <td colspan='100%'>
-    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+    <div style='overflow:auto;margin: 10px 0 0 20px'></div>
   </td>
 </tr>
 

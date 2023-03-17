@@ -511,37 +511,20 @@ github issue #52 */
     }
 }
 
-table td {
-    padding: 0 5px;
-}
-
-table th {
-    color: $maingray;
-    font-size: 90%;
-    padding: 0 5px;
+.table tbody {
+    background-color: $white;
 }
 
 /* TABLE SHOW MODE */
 
 .item-table {
-    width: 100%;
-
     td {
         border-left: 1px solid $bordersgray;
         border-right: 1px solid $bordersgray;
     }
 
-    tr {
-        padding-bottom: 50px;
-    }
-
-    tr:not(:first-child) {
-        background-color: $white;
-    }
-
     .title {
         font-size: 100%;
-        min-width: 400px;
     }
 
     .actions-item-table {
@@ -571,7 +554,8 @@ table th {
         white-space: nowrap;
     }
 
-    .item-date {
+    .item-date,
+    th {
         white-space: nowrap;
     }
 }
@@ -660,7 +644,7 @@ table th {
 
 /* ITEMS */
 .item {
-    background-color: var(--bg-color);
+    background-color: $white;
     border: 1px solid $bordersgray;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;

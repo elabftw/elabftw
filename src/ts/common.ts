@@ -469,12 +469,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
-        plusMinusIcon.classList.remove('fa-plus-circle');
-        plusMinusIcon.classList.add('fa-minus-circle');
+        plusMinusIcon.classList.remove('fa-square-plus');
+        plusMinusIcon.classList.add('fa-square-minus');
         action = 'show';
       } else {
-        plusMinusIcon.classList.add('fa-plus-circle');
-        plusMinusIcon.classList.remove('fa-minus-circle');
+        plusMinusIcon.classList.add('fa-square-plus');
+        plusMinusIcon.classList.remove('fa-square-minus');
       }
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
@@ -482,6 +482,8 @@ document.addEventListener('DOMContentLoaded', () => {
         bodyDiv.toggleAttribute('hidden');
         return;
       }
+
+      const contentDiv = bodyDiv.querySelector('div');
 
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
@@ -495,19 +497,19 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
           // add extra fields elements from metadata json
           const MetadataC = new Metadata({type: entityType, id: entityId});
-          MetadataC.metadataDiv = bodyDiv;
+          MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
-            bodyDiv.classList.remove('col-md-12');
-            bodyDiv.style.border = '0';
-            bodyDiv.style.padding = '0 20px';
-            bodyDiv.firstChild.remove();
+            contentDiv.classList.remove('col-md-12');
+            contentDiv.style.border = '0';
+            contentDiv.style.padding = '0 20px';
+            contentDiv.firstChild.remove();
 
             // go over all the type: url elements and create a link dynamically
             generateMetadataLink();
           });
         } else {
           // add html content
-          bodyDiv.innerHTML = json.body_html;
+          contentDiv.innerHTML = json.body_html;
 
           // adjust the width of the children
           // get the width of the parent. The -30 is to make it smaller than parent even with the margins

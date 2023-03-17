@@ -60,15 +60,6 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='layout' class='col-form-label'>{{ 'Use single column layout'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='single_column_layout' {{ App.Users.userData.single_column_layout == 1 ? 'checked="checked"' }} id='layout'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
       <label for='orderby' class='col-form-label'>{{ 'Order by'|trans }}</label>
       <select id='orderby' data-trigger='change' data-model='users/me' data-target='orderby' class='form-control col-md-3'>
           <option value='cat' {{ App.Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>

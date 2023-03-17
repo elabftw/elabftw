@@ -162,8 +162,13 @@ select {
     z-index: 3;
 }
 
+/* fix bootstrap setting it to nowrap, it results in long content making the whole thing super wide */
+.dropdown-item.wrap {
+    white-space: normal;
+}
+
 .dropdown-item > a {
-    color: #000;
+    color: $linkindropdown;
 }
 
 .dropdown-item:hover a {
@@ -526,6 +531,14 @@ table th {
         border-right: 1px solid $bordersgray;
     }
 
+    tr {
+        padding-bottom: 50px;
+    }
+
+    tr:not(:first-child) {
+        background-color: $white;
+    }
+
     .title {
         font-size: 100%;
         min-width: 400px;
@@ -544,6 +557,11 @@ table th {
 
     .tags {
         max-width: 20ch;
+    }
+
+    .item-rating {
+        min-width: 66px;
+        text-align: center;
     }
 
     // Force item-info and item-date not to break into two lines
@@ -574,14 +592,6 @@ table th {
 
     i {
         color: $gold;
-    }
-}
-
-.lock-icon-show {
-    padding: 8px 10px;
-
-    i {
-        color: $white;
     }
 }
 
@@ -650,7 +660,7 @@ table th {
 
 /* ITEMS */
 .item {
-    background-color: $white;
+    background-color: var(--bg-color);
     border: 1px solid $bordersgray;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
@@ -663,15 +673,42 @@ table th {
         margin-bottom: 0;
     }
 
-    .fa-pencil-alt,
     .fa-square-plus {
         color: $darkgray;
     }
 
     .fa-comments,
+    .fa-paperclip,
     .fa-tags {
         color: $secondlevel;
     }
+
+    .fa-tags {
+        margin-top: 3px;
+    }
+
+    .left-icon {
+        padding: 8px 10px;
+
+        i {
+            color: $white;
+        }
+    }
+
+    /*
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    &:hover input[type="checkbox"] {
+        display: block;
+        top: 100px;
+    }
+    */
+}
+
+.bg-dark {
+    background-color: $darkgray;
 }
 
 /* SIDE PANEL */
@@ -869,7 +906,7 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $secondlevel;
     border-radius: 5px;
     color: $white;
-    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    font: bold 80% Verdana, Arial, Helvetica, sans-serif;
     padding: 2px 5px;
 
     &:hover {

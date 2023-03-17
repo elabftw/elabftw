@@ -7,6 +7,7 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
+import { Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -165,6 +166,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
+
+    // TOGGLE DISPLAY
+    } else if (el.matches('[data-action="toggle-items-layout"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.getJson(`${Model.User}/me`).then(json => {
+        let target = 'it';
+        if (json['display_mode'] === 'it') {
+          target = 'tb';
+        }
+        ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
+          reloadElement('showModeContent');
+        });
+      });
 
     // TOGGLE text input to add a new favorite tag
     } else if (el.matches('[data-action="toggle-addfav"]')) {

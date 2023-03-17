@@ -1,9 +1,9 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
-{% set opacity = '1' %}
 {% set owner = '' %}
+{% set bgcolor = 'fff' %}
 {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
-  {% set opacity = '0.7' %}
+  {% set bgcolor = 'f4f6f7' %}
   {% set owner = "<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname) %}
 {% endif %}
 {% if Entity.Users.userData.single_column_layout %}
@@ -12,25 +12,37 @@
   <div class='col-xs-12 col-sm-6 col-md-6 col-lg-4'>
 {% endif %}
 
-  <section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--opacity:{{ opacity }}; --left-color: #{{ item.color }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--bg-color: #{{ bgcolor }}; --left-color: #{{ item.color }};'>
 
-    {# left part: lock icon #}
+    {# left part, full height: checkbox #}
     <div class='d-flex align-items-center'>
-      {# lock icon #}
-      {% if item.locked %}
-        <div class='lock-icon-show rounded mr-3' style='background-color:#{{ item.color }}'>
-          <i class='fas fa-lock fa-fw'></i>
-        </div>
-      {% endif %}
+      {# checkbox #}
+      <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' class='mr-3' />
+      <div class='d-flex'>
+
+        {# lock icon #}
+        {% if item.locked %}
+          <div class='left-icon rounded mr-3 my-1' style='background-color:#{{ item.color }}'>
+            <i class='fas fa-lock fa-fw'></i>
+          </div>
+        {% else %}
+          {# edit icon #}
+          {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+            <div class='left-icon rounded mr-3 my-1 bg-dark'>
+              <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil fa-fw'></i></a>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
     </div>
 
     {# middle part: category, title, icons and tags #}
     <div>
       {# first line #}
       <div>
-        {# rating #}
-        {% if item.rating > 0 %}
-          <span class='rating-show rounded px-1 mr-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
+        {# timestamp icon #}
+        {% if item.timestamped %}
+          <i style='color:#{{ item.color }}' class='far fa-calendar-check fa-fw'></i>
         {% endif %}
         {# category #}
         <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category }}</a></span>
@@ -52,21 +64,6 @@
       {% endif %}
 
       <p class='my-1'>
-        {# checkbox #}
-        <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;vertical-align:0.5px;' />
-        {# timestamp icon #}
-        {% if item.timestamped %}
-          <i class='far fa-calendar-check fa-fw'></i>
-        {% endif %}
-
-        {# show attached if there is a file attached #}
-        {% if item.has_attachment %}
-          <i class='fas fa-paperclip fa-fw'></i>
-        {% endif %}
-        {% if item.has_comment %}
-          <i class='fas fa-comments fa-fw'></i>
-        {% endif %}
-
         {{ owner|raw }}
 
         {% set itemtagsArr = tagsArr[item.id] %}
@@ -88,8 +85,12 @@
     <div class='d-flex justify-content-end ml-auto'>
       {# column for date and icons #}
       <div class='d-flex flex-column ml-auto'>
-        {# date and pinned icon #}
+        {# rating, date and pinned icon #}
         <div>
+          {# rating #}
+          {% if item.rating > 0 %}
+            <span class='rating-show rounded px-1 mr-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
+          {% endif %}
           <span class='item-date'>{{ item.date|date('Y-m-d') }}</span>
           {% if isPinned %}
             <a class='elab-tooltip ml-2' data-action='toggle-pin' data-id='{{ item.id }}' href='#'>
@@ -99,10 +100,6 @@
           {% endif %}
         </div>
         <div class='ml-auto'>
-          {# edit icon #}
-          {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-            <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt fa-fw link-like mr-3'></i></a>
-          {% endif %}
           {# toggle body #}
           <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
             <i class='fas fa-square-plus fa-fw'></i>

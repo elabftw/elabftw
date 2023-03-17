@@ -11,7 +11,7 @@
             {% if templatesArr|length > 0 %}
               <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
               {% for tpl in templatesArr %}
-                <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item'>
+                <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item wrap'>
                   {{ tpl.title|raw }}
                 </a>
               {% endfor %}

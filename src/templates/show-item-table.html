@@ -1,6 +1,6 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
-<tr class='item item-show' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
+<tr class='item' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
 
   {# DATE #}
   <td class='item-date'>
@@ -57,17 +57,8 @@
     {% endif %}
     {# toggle body #}
     <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-      <i class='fas fa-plus-circle link-like'></i>
+      <i class='fas fa-square-plus link-like'></i>
     </span>
-
-    {# show attached if there is a file attached #}
-    {% if item.has_attachment %}
-      <i class='fas fa-paperclip'></i>
-    {% endif %}
-    {% if item.has_comment %}
-      <i class='fas fa-comments'></i>
-    {% endif %}
-
   </td>
 
   <td class='item-rating'>

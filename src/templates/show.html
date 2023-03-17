@@ -18,26 +18,33 @@
       </span>
     </p>
 
-    <!-- ORDER -->
-    <div class='form-group'>
-      <div class='btn-group'>
-        <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}'>{{ 'Sort'|trans }}</button>
-        <div class='dropdown-menu dropdown-menu-right'>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='date-desc' href='#'>{{ 'Newest'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='date-asc' href='#'>{{ 'Oldest'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='lastchange-desc' href='#'>{{ 'Recently modified'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc')? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='cat-desc' href='#'>{{ 'Category'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='cat-asc' href='#'>{{ 'Category (inverted)'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='id-desc' href='#'>{{ 'Highest ID'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='id-asc' href='#'>{{ 'Lowest ID'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='comment-desc' href='#'>{{ 'Recently commented'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='title-asc' href='#'>{{ 'Title (alphabetical)'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='title-desc' href='#'>{{ 'Title (inverted)'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='user-asc' href='#'>{{ 'User (alphabetical)'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='user-desc' href='#'>{{ 'User (inverted)'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='rating-desc' href='#'>{{ 'Highest rating'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='rating-asc' href='#'>{{ 'Lowest rating'|trans }}</a>
+    <div class='d-flex align-items-center'>
+      <div class='hl-hover-gray rounded p-1 align-self-baseline mr-1' data-action='toggle-items-layout'>
+        <i class='fas fa-fw fa-list'></i>
+        <i class='fas fa-fw fa-table'></i>
+      </div>
+
+      <!-- ORDER -->
+      <div class='form-group'>
+        <div class='btn-group'>
+          <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}'>{{ 'Sort'|trans }}</button>
+          <div class='dropdown-menu dropdown-menu-right'>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='date-desc' href='#'>{{ 'Newest'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='date-asc' href='#'>{{ 'Oldest'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='lastchange-desc' href='#'>{{ 'Recently modified'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc')? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='cat-desc' href='#'>{{ 'Category'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='cat-asc' href='#'>{{ 'Category (inverted)'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='id-desc' href='#'>{{ 'Highest ID'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='id-asc' href='#'>{{ 'Lowest ID'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='comment-desc' href='#'>{{ 'Recently commented'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='title-asc' href='#'>{{ 'Title (alphabetical)'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='title-desc' href='#'>{{ 'Title (inverted)'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='user-asc' href='#'>{{ 'User (alphabetical)'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='user-desc' href='#'>{{ 'User (inverted)'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='rating-desc' href='#'>{{ 'Highest rating'|trans }}</a>
+            <a class='dropdown-item {{ (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='rating-asc' href='#'>{{ 'Lowest rating'|trans }}</a>
+          </div>
         </div>
       </div>
     </div>

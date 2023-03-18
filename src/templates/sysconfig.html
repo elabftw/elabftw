@@ -88,24 +88,9 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='deletable_xp' class='col-form-label'>{{ 'Admins can always delete experiments'|trans }}</label>
-      <label class='switch ucp-align' class='col-form-label'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='deletable_xp' {{ App.Config.configArr.deletable_xp ? 'checked="checked"' }} id='deletable_xp'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments', 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='allow_useronly' class='col-form-label'>{{ 'Allow the base permission setting «Only me»'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='allow_useronly' {{ App.Config.configArr.allow_useronly ? 'checked="checked"' }} id='allow_useronly'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only me»', 'slug': 'allow_useronly'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
@@ -139,25 +124,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='anon_users' class='col-form-label'>{{ 'Allow anonymous visitors to login and see Public experiments'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='anon_users' {{ App.Config.configArr.anon_users ? 'checked="checked"' }} id='anon_users'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments', 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='open_science' class='col-form-label'>{{ 'Switch this instance in open science mode'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='open_science' {{ App.Config.configArr.open_science ? 'checked="checked"' }} id='open_science'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode', 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
@@ -170,34 +139,9 @@
     <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='local_register' class='col-form-label'>{{ 'Enable local account creation'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='local_register' {{ App.Config.configArr.local_register ? 'checked="checked"' }} id='local_register'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='admins_create_users' class='col-form-label'>{{ 'Admins can create local accounts'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='admins_create_users' {{ App.Config.configArr.admins_create_users ? 'checked="checked"' }} id='admins_create_users'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='local_login' class='col-form-label'>{{ 'Show local login form'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='local_login' {{ App.Config.configArr.local_login ? 'checked="checked"' }} id='local_login'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'You can still show the local login form by appending ?letmein to the login page URL.'|trans }}</p>
-    <hr>
-  </div>
+    {% include 'binary-setting.html' with {'label': 'Enable local account creation', 'slug': 'local_register'} %}
+    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts', 'slug': 'admins_create_users'} %}
+    {% include 'binary-setting.html' with {'label': 'Show local login form', 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'} %}
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
   <div class='pl-3'>
@@ -373,14 +317,7 @@
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='smtp_verify_cert' class='col-form-label'>{{ 'Verify TLS certificate'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='smtp_verify_cert' {{ App.Config.configArr.smtp_verify_cert ? 'checked="checked"' }} id='smtp_verify_cert'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate', 'slug': 'smtp_verify_cert'} %}
   </div>
 
   <!-- TEST EMAIL -->
@@ -400,14 +337,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='admin_validate' class='col-form-label'>{{ 'Users need validation by admin after registration'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='admin_validate' {{ App.Config.configArr.admin_validate ? 'checked="checked"' }} id='admin_validate'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Users need validation by admin after registration', 'slug': 'admin_validate'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='enforce_mfa' class='col-form-label'>{{ 'Enforce 2FA'|trans }}</label>
@@ -559,23 +489,8 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='blox_enabled' class='col-form-label'>{{ 'Enable blockchain timestamping with Bloxberg'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='blox_enabled' {{ App.Config.configArr.blox_enabled ? 'checked="checked"' }} id='blox_enabled'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='blox_anon' class='col-form-label'>{{ 'Anonymize author for GDPR compliance'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='blox_anon' {{ App.Config.configArr.blox_anon ? 'checked="checked"' }} id='blox_anon'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Enable blockchain timestamping with Bloxberg', 'slug': 'blox_enabled'} %}
+    {% include 'binary-setting.html' with {'label': 'Anonymize author for GDPR compliance', 'slug': 'blox_anon'} %}
 
   </div>
 </div>
@@ -597,32 +512,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'General settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='saml_toggle' class='col-form-label'>{{ 'Enable SAML authentication'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_toggle' {{ App.Config.configArr.saml_toggle ? 'checked="checked"' }} id='saml_toggle'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='saml_strict' class='col-form-label'>{{ 'Strict mode'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_strict' {{ App.Config.configArr.saml_strict ? 'checked="checked"' }} id='saml_strict'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='saml_debug' class='col-form-label'>{{ 'Debug mode'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_debug' {{ App.Config.configArr.saml_debug ? 'checked="checked"' }} id='saml_debug'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Enable SAML authentication', 'slug': 'saml_toggle'} %}
+    {% include 'binary-setting.html' with {'label': 'Strict mode', 'slug': 'saml_strict'} %}
+    {% include 'binary-setting.html' with {'label': 'Debug mode', 'slug': 'saml_debug'} %}
 
   </div>
 
@@ -697,23 +589,8 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='saml_sync_teams' class='col-form-label'>{{ 'Synchronize the local teams with the teams sent by IDP'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_sync_teams' {{ App.Config.configArr.saml_sync_teams ? 'checked="checked"' }} id='saml_sync_teams'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='samlpanel_team_create' class='col-form-label'>{{ "Create team sent by IDP if it doesn't exist already"|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_team_create' {{ App.Config.configArr.saml_team_create ? 'checked="checked"' }} id='samlpanel_team_create'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP', 'slug': 'saml_sync_teams'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already", 'slug': 'saml_team_create'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='saml_team_default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -741,7 +618,7 @@
   <div class='pl-3 mb-5'>
 
     {% for setting in samlSecuritySettings %}
-      {% include('binary-settings.html') %}
+      {% include 'binary-setting.html' with {'label': setting.label, 'slug': setting.slug} %}
     {% endfor %}
   </div>
 
@@ -875,14 +752,7 @@
 
   <div class='pl-3 mt-2 mb-5'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='ldap_toggle' class='col-form-label'>{{ 'Toggle LDAP login'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='config' data-target='ldap_toggle' {{ App.Config.configArr.ldap_toggle == 1 ? 'checked="checked"' }} id='ldap_toggle'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Toggle LDAP login', 'slug': 'ldap_toggle'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_host' class='col-form-label'>{{ 'LDAP Host'|trans }}</label>
@@ -898,14 +768,7 @@
     <p class='smallgray'>{{ 'Default: 389 LDAPS: 636'|trans }}</p>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='ldap_use_tls' class='col-form-label'>{{ 'Use TLS'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='config' data-target='ldap_use_tls' {{ App.Config.configArr.ldap_use_tls == 1 ? 'checked="checked"' }} id='ldap_use_tls'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': 'Use TLS', 'slug': 'ldap_use_tls'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_base_dn' class='col-form-label'>LDAP Base DN</label>
@@ -955,14 +818,7 @@
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='ldap-team-create' class='col-form-label'>Create team sent by server if it doesn't exist already:</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='config' data-target='saml_team_create' {{ App.Config.configArr.saml_team_create == 1 ? 'checked="checked"' }} id='ldap-team-create'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already", 'slug': 'saml_team_create'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>If no team attribute is found, to which team user is assigned?</label>
@@ -1067,14 +923,7 @@
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='extauth-team-create' class='col-form-label'>Create team sent by server if it doesn't exist already</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='config' data-target='saml_team_create' {{ App.Config.configArr.saml_team_create ? 'checked="checked"' }} id='saml_team_create'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already", 'slug': 'saml_team_create'} %}
   </div>
 </div>
 

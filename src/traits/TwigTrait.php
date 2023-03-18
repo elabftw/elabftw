@@ -77,8 +77,6 @@ trait TwigTrait
         $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
         $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
 
-
-
         // load the i18n extension for using the translation tag for twig
         // {% trans %}my string{% endtrans %}
         $TwigEnvironment->addExtension(new Translation());

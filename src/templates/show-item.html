@@ -83,7 +83,8 @@
 
     {# container to hold the body of the entity if it is toggled with the +/- icon #}
     {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+    {# with a div inside to hold the content, similar to how it is in table mode #}
+    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
   </div>
 
   {# third part: end container #}

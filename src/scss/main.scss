@@ -1170,6 +1170,12 @@ input[type='color'] {
     }
 }
 
+/* to make the pie smaller */
+.pie-chart-container {
+    max-width: 450px;
+    padding: 66px;
+}
+
 /* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */
 .pie-chart {
     background: conic-gradient(var(--pie-data));
@@ -1182,24 +1188,11 @@ input[type='color'] {
 
 .pie-percent {
     background: var(--bg);
-    color: #fff;
+    border-radius: 5px;
+    color: $white;
     padding: 10px;
     text-align: center;
     text-shadow: 0 0 1px #000;
-}
-
-.pie-legend {
-    border-collapse: separate;
-    display: table;
-    list-style: none;
-
-    > li {
-        display: table-row;
-
-        > * {
-            display: table-cell;
-        }
-    }
 }
 
 .fa-2x {
@@ -1325,4 +1318,9 @@ input:checked + .slider::before {
 .section-title {
     background-color: $firstgray;
     font-size: 120%;
+}
+
+/* PROFILE page */
+.counter {
+    color: $secondlevel;
 }

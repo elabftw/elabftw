@@ -1,68 +1,88 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<!-- USER INFOS -->
-<h3 class='p-2 pl-3 section-title'><i class='fas fa-user mr-1'></i>{{ 'Info'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5'>
-    <h4>{{ App.Users.userData.fullname|raw }} ({{ App.Users.userData.email }})</h4>
-    <!-- TEAM -->
-    <h5>{{ 'Member of:'|trans }}
+<hr>
+<!-- PROFILE PAGE -->
+<h4>{{ App.Users.userData.fullname|raw }}</h4>
+<p class='smallgray'>{{ App.Users.userData.email }}</p>
+
+<div class='d-flex mb-4'>
+
+  <!-- TEAMS -->
+  <div class='col-md-6 mr-2 box bg-white'>
+    <div class='mb-4'>
+      <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
+    </div>
     {% for team in teamsArr %}
-      <span class='btn btn-secondary disabled'>{{ team.name }}</span>
+      <span class=''>{{ team.name }}</span>
+      <hr>
     {% endfor %}
-    </h5>
-    {% if teamGroupsArr %}
-      <h5>{{ 'Groups'|trans }}:
-      <ul>
-        {% for teamGroup in teamGroupsArr %}
-          <li class='mt-2'>{{ teamGroup.name|raw }}
-          {% for user in teamGroup.users %}
-            <span class='btn btn-secondary disabled'>{{ user.fullname|raw }}</span>
-          {% endfor %}
-          </li>
-        {% endfor %}
-      </ul>
-      </h5>
-    {% endif %}
-    <p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
   </div>
 
+  <!-- GROUPS -->
+  <div class='col-md-6 box bg-white'>
+    <div class='mb-4'>
+      <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
+    </div>
+    {% for teamGroup in teamGroupsArr %}
+      <details>
+        <summary class='mb-3'>{{ teamGroup.name|raw }}</summary>
+        <ul>
+      {% for user in teamGroup.users %}
+        <li class='list-unstyled text-muted'>{{ user.fullname|raw }}</li>
+      {% endfor %}
+        </ul>
+      </details>
+      <hr>
+    {% endfor %}
+  </div>
+</div>
+
+<p><a href='ucp.php'>{% trans %}Go to user control panel{% endtrans %}</a>
+
 <!-- STATUS STAT -->
-<h3 class='p-2 pl-3 section-title'><i class='fas fa-chart-pie mr-1'></i>{{ 'Statistics'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5'>
+<div class='mb-4 box'>
   {% if count == 0 %}
     {{ 'No statistics available yet.'|trans }}
   {% else %}
-    <h4>{% trans %}
+    <div class='mb-4'>
+      <h5 class='d-inline mr-2'>{% trans %}
           Experiment
           {% plural 2 %}
           Experiments
-          {% endtrans %}</h4>
-    <p>{{ count }} {% trans %}
-        experiments done since
-        {% endtrans %} {{ App.Users.userData.register_date|date("l jS \\of F Y") }}</p>
-    <div class='row'>
-      <div class='col col-md-3'>
-        <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+          {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
+    </div>
+
+    <!-- TODO show register date back -->
+    <div class='d-flex'>
+      <div class='col-md-6 mr-2'>
+        <div class='pie-chart-container'>
+          <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+        </div>
       </div>
-      <div class='col col-md-3'>
-        <ul class='pie-legend'>
-          {% for status in pieData %}
-          <li style='color: {{ status.color }}'><span class='pie-percent' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>{{ status.name }} ({{ status.count }})</li>
-          {% endfor %}
-        </ul>
+      <div class='col-md-6 flex-column'>
+        {% for status in pieData %}
+          <div class='d-flex font-weight-bold'>
+            <span class='pie-percent mr-3' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>
+            <span class='align-self-center'>{{ status.name }}</span>
+            <span class='align-self-center ml-auto'>{{ status.count }}</span>
+          </div>
+          {% if not loop.last %}
+            <hr>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
   {% endif %}
-</div>
 
-<!-- EXPORT EXPERIMENTS -->
-<h3 class='p-2 pl-3 section-title'><i class='fas fa-download mr-1'></i>{{ 'Export all your experiments'|trans }}</h3>
-<div class='pl-3 mt-2 mb-5'>
-  <div class='d-flex justify-content-between'>
-    <input hidden id='userExport' value='{{ App.Users.userData.userid }}'>
-    <label for='userExportFormat' class='col-form-label'>{{ 'Select export format'|trans }}</label>
-    <select class='form-control col-md-3' id='userExportFormat' autocomplete='off'>
+  <hr class='mt-5'>
+
+  <!-- EXPORT EXPERIMENTS -->
+  <h4>{{ 'Export all your experiments'|trans }}</h4>
+  <p class='smallgray mb-4'>{{ 'Select an export format'|trans }}</p>
+
+  <div class='input-group mb-4'>
+    <select class='form-control' id='userExportFormat' autocomplete='off'>
       <option value='eln'>{{ 'Make an ELN'|trans }}</option>
       <option value='zip'>{{ 'Make Zip'|trans }}</option>
       <option value='csv'>{{ 'Make Csv'|trans }}</option>
@@ -70,9 +90,11 @@
       <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
       <option value='json'>{{ 'Make JSON'|trans }}</option>
     </select>
-  </div>
-  <div class='mt-2 text-center'>
-    <button data-action='export-user' class='button btn btn-primary'>{{ 'Export'|trans }}</button>
+    <div class='input-group-append'>
+      <span class='btn btn-light input-border' data-action='export-user' data-userid='{{ App.Users.userData.userid }}'>
+        <i class='fas fa-download'></i>
+      </span>
+    </div>
   </div>
 </div>
 

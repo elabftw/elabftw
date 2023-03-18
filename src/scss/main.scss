@@ -511,8 +511,14 @@ github issue #52 */
     }
 }
 
-.table tbody {
-    background-color: $white;
+.table {
+    tbody {
+        background-color: $white;
+    }
+
+    th {
+        white-space: nowrap;
+    }
 }
 
 /* TABLE SHOW MODE */
@@ -551,11 +557,6 @@ github issue #52 */
     .item-info {
         // Overwrite this
         padding-left: 5px;
-        white-space: nowrap;
-    }
-
-    .item-date,
-    th {
         white-space: nowrap;
     }
 }

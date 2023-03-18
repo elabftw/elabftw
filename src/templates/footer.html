@@ -22,13 +22,13 @@
 
     <span>
       {%- if App.Config.configArr.privacy_policy -%}
-        <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a>
+        <a href='#' data-policy='privacy' data-action='show-policy'>{{ 'Privacy policy'|trans }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.terms_of_service -%}
-        <a href='#' data-action='show-terms-of-service'>{{ 'Terms of service'|trans }}</a>
+        <a href='#' data-policy='tos' data-action='show-policy'>{{ 'Terms of service'|trans }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.a11y_statement -%}
-        <a href='#' data-action='show-a11y-statement'>{{ 'Accessibility statement'|trans }}</a>
+        <a href='#' data-policy='a11y' data-action='show-policy'>{{ 'Accessibility statement'|trans }}</a>
       {%- endif -%}
     </span>
   </p>
@@ -59,17 +59,17 @@
   <div id='is-auth'></div>
 {% endif %}
 
-<!-- Modal for privacy policy -->
-<div class='modal fade' id='privacyModal' tabindex='-1' role='dialog' aria-labelledby='privacyModalLabel' aria-hidden='true'>
+<!-- Modal for policies -->
+<div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='privacyModalLabel'>{{ 'Privacy policy'|trans }}</h5>
+        <h5 class='modal-title' id='policiesModalLabel'></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' id='privacyModalBody'>
+      <div class='modal-body' id='policiesModalBody'>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -77,7 +77,7 @@
     </div>
   </div>
 </div>
-<!-- end privacy policy modal -->
+<!-- end policies policy modal -->
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

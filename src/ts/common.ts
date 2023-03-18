@@ -217,15 +217,25 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
-    if (el.matches('[data-action="show-privacy-policy"]')) {
+    if (el.matches('[data-action="show-policy"]')) {
       fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
-        let policy = json.privacy_policy;
-        if (!policy) {
-          policy = 'No privacy policy is set.';
+        const policy = json[el.dataset.policy];
+        let title: string;
+        // TODO i18n
+        switch (el.dataset.policy) {
+        case 'tos':
+          title = 'Terms of Service';
+          break;
+        case 'a11y':
+          title = 'Accessibility Statement';
+          break;
+        default:
+          'Privacy Policy';
         }
-        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
+        (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
+        (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#privacyModal') as JQuery).modal('toggle');
+        ($('#policiesModal') as JQuery).modal('toggle');
       });
 
     // SCROLL TO TOP

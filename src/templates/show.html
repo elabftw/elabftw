@@ -161,7 +161,7 @@
       {% endif %}
 
       {% if App.Users.userData.display_mode == 'it' %}
-        <div class='row display-flex' id='itemList'>
+        <div class='d-flex flex-column' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include 'show-item.html' %}
         {% endfor %}

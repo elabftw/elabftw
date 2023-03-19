@@ -553,6 +553,11 @@ button:disabled {
     border-right: 1px solid $secondlevel;
     height: 1.8rem;
     margin: 0 15px;
+
+    /* separator disappears on small screens */
+    @media (max-width: 550px) {
+        display: none;
+    }
 }
 
 /* SHOW MODE */

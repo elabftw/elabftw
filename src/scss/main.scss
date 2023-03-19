@@ -511,10 +511,6 @@ button:disabled {
         font-size: 100%;
     }
 
-    .actions-item-table {
-        width: auto;
-    }
-
     .item-next {
         max-width: 14ch;
         overflow: hidden;
@@ -552,7 +548,6 @@ button:disabled {
 .vertical-separator {
     border-right: 1px solid $secondlevel;
     height: 1.8rem;
-    margin: 0 15px;
 
     /* separator disappears on small screens */
     @media (max-width: 550px) {

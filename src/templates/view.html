@@ -59,7 +59,7 @@
 <hr>
 
 <!-- TOP TOOLBAR -->
-<div class='d-flex align-items-center'>
+<div class='d-flex align-items-center flex-wrap'>
   <!-- BACK TO LINK -->
   {% if App.Session.has('lastquery') %}
     {% set lastquery = App.Session.get('lastquery') %}
@@ -73,11 +73,11 @@
     </div>
   </a>
 
-  <div class='vertical-separator'></div>
+  <div class='vertical-separator mx-3'></div>
 
   {% if not (Entity.isReadOnly or Entity.entityData.locked) %}
     {# EDIT #}
-    <a class='mr-3' title='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}'>
+    <a class='mr-2' title='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}'>
       <div class='hl-hover-gray p-2 rounded main-action-button'>
         <i class='fas fa-pencil fa-fw'></i>
       </div>
@@ -87,14 +87,14 @@
   {% if not App.Session.has('is_anon') %}
 
     {# DUPLICATE #}
-    <div class='mr-3'>
+    <div class='mr-2'>
       <div title='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='hl-hover-gray p-2 rounded'>
         <i class='fas fa-copy fa-fw'></i>
       </div>
     </div>
 
     {% if Entity.type == 'items' and Entity.entityData.bookable %}
-      <a class='mr-3' title='{{ 'Book item'|trans }}' href='team.php?idtem={{ Entity.id }}'>
+      <a class='mr-2' title='{{ 'Book item'|trans }}' href='team.php?idtem={{ Entity.id }}'>
         <div class='hl-hover-gray p-2 rounded'>
           <i class='fas fa-calendar-plus fa-fw'></i>
         </div>
@@ -105,7 +105,7 @@
 
   {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users and Entity.entityData.access_key %}
     {# SHARE #}
-    <div class='mr-3'>
+    <div>
       <div title='{{ 'Share'|trans }}' data-action='share' class='hl-hover-gray p-2 rounded'>
         <i class='fas fa-share-alt fa-fw'></i>
       </div>
@@ -113,11 +113,11 @@
     <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
   {% endif %}
 
-  <div class='vertical-separator'></div>
+  <div class='vertical-separator mx-2'></div>
 
   {# TIMESTAMP EXPERIMENT #}
   {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
-    <div class='mr-3'>
+    <div class='mr-2'>
       <div title='{{ 'Timestamp Experiment'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='hl-hover-gray p-2 rounded'>
         <i class='fas fa-calendar-check fa-fw'></i>
       </div>
@@ -126,18 +126,18 @@
 
   {# BLOXBERG TIMESTAMP #}
   {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
-    <div class='mr-3'>
+    <div class='mr-2'>
       <div title='{{ 'Add to blockchain'|trans }}' data-action='bloxberg' class='hl-hover-gray p-2 rounded'>
         <i class='fas fa-cubes fa-fw'></i>
       </div>
     </div>
   {% endif %}
 
-  <div class='vertical-separator'></div>
+  <div class='vertical-separator mx-2'></div>
 
   {# DOWNLOAD / EXPORT MENU #}
   <div class='dropdown'>
-    <div class='hl-hover-gray d-inline p-2 rounded mr-3' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' role='button'>
+    <div class='hl-hover-gray d-inline p-2 rounded mr-2' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' role='button'>
       <i class='fas fa-download fa-fw'></i>
     </div>
     <div class='dropdown-menu' aria-label='{{ 'Export'|trans }}'>
@@ -153,10 +153,9 @@
 
   {% if not App.Session.has('is_anon') %}
 
-    {# flex-nowrap to avoid going to two lines #}
-    <div class='ml-auto d-flex flex-nowrap'>
+    <div class='ml-auto d-flex'>
       {# TOGGLE PIN #}
-      <div class='mr-3'>
+      <div class='mr-2'>
         <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='hl-hover-gray p-2 rounded'>
           <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
         </div>
@@ -205,7 +204,7 @@
   {# CATEGORY #}
   <div class='d-flex mb-2 align-items-center'>
     <div class='edit-mode-label'>
-      <i aria-hidden='true' class='fas fa-folder'></i> {{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
+      <i aria-hidden='true' class='fas fa-folder mr-1'></i>{{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
     </div>
     <span style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category}}</span>
   </div>
@@ -214,7 +213,7 @@
   <div class='d-flex mb-2 align-items-center'>
     {% if Entity.entityData.tags|length > 0 %}
       <div class='edit-mode-label'>
-        <i class='fas fa-tags mr-2'></i> {{ 'Tags'|trans }}
+        <i class='fas fa-tags mr-1'></i>{{ 'Tags'|trans }}
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
         {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}

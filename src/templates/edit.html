@@ -13,13 +13,13 @@
 
 {% embed 'view-edit.html' %}
   {% block createnew %}
-  <div class='d-flex'>
-    <!-- TODO replace 'entry' with experiment|item -->
-    <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
-    <div class='ml-auto'>
-      {% include 'create-new.html' %}
+    <div class='d-flex'>
+      <!-- TODO replace 'entry' with experiment|item -->
+      <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
+      <div class='ml-auto'>
+        {% include 'create-new.html' %}
+      </div>
     </div>
-  </div>
   {% endblock %}
   {% block createmodal %}
     {% include 'show-view-edit.html' %}
@@ -92,11 +92,11 @@
     </div>
   </div>
 
-  <!-- flex-nowrap to avoid going to two lines -->
+  {# flex-nowrap to avoid going to two lines #}
   <div class='ml-auto d-flex flex-nowrap'>
     <!-- TOGGLE PIN -->
     <div data-action='toggle-pin' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded mr-3'>
-      <i id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}'></i>
+      <i id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'color-weak' }}'></i>
     </div>
 
     <!-- MORE OPTIONS -->

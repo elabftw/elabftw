@@ -1,135 +1,130 @@
 <!-- STEPS -->
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
-  <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon' class='d-inline'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-check-square'></i> {{ 'Steps'|trans }}</h3>
-    <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
-      <ul class='list-group ml-3' id='steps_div_{{ Entity.id }}' >
-          {% for step in Entity.entityData.steps %}
-          <li id='step_view_{{ step.id }}' class='list-group-item {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'active' }}'>
-            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
-      {% if step.finished %}
-      <span class='mr-2 text-muted'>
-          {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-      </span>
-      {% endif %}
-      {% if step.deadline %}
-      <span class='mr-2 text-muted'>
-          {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
-      </span>
-      {% endif %}
-          </li>
-          {% endfor %}
-      </ul>
-    </div>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='stepsIcon' class='d-inline'><i id='stepsIcon' class='fas fa-chevron-circle-down'></i> {{ 'Steps'|trans }}</h3>
+  <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
+    <ul class='list-group ml-3' id='steps_div_{{ Entity.id }}' >
+        {% for step in Entity.entityData.steps %}
+        <li id='step_view_{{ step.id }}' class='list-group-item {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'active' }}'>
+          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-1' id='stepCheckbox_{{ step.id }}' />{{ step.body|raw }}
+    {% if step.finished %}
+    <span class='mr-2 text-muted'>
+        {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+    </span>
+    {% endif %}
+    {% if step.deadline %}
+    <span class='mr-2 text-muted'>
+        {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+    </span>
+    {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
   </div>
+  <hr>
 {% endif %}
 </div>
 
 <!-- EXPERIMENTS LINKS -->
 {% if Entity.entityData.experiments_links %}
-  <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}
-      Linked experiment
-      {% plural 2 %}
-      Linked experiments
-      {% endtrans %}</h3>
-    <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
-      <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.experiments_links %}
-          {% set randomId = random() %}
-          <li class='list-group-item' id='parent_{{ randomId }}'>
-            <i class='fas fa-link mr-1'></i>
-            <!-- toggle body -->
-            <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-              <i class='fas fa-plus-circle'></i>
-            </span>
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
-                {{ link.title|raw }}</a>
-            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedExperimentsIcon' class='d-inline'><i id='linkedExperimentsIcon' class='fas fa-chevron-circle-down'></i> {% trans %}
+    Linked experiment
+    {% plural 2 %}
+    Linked experiments
+    {% endtrans %}</h3>
+  <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
+    <ul class='list-group ml-3'>
+      {% for link in Entity.entityData.experiments_links %}
+        {% set randomId = random() %}
+        <li class='list-group-item' id='parent_{{ randomId }}'>
+          <i class='fas fa-link mr-1'></i>
+          <!-- toggle body -->
+          <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+            <i class='fas fa-plus-circle'></i>
+          </span>
+          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+              {{ link.title|raw }}</a>
+          <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+          <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+          <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
+  <hr>
 {% endif %}
 
 <!-- ITEMS LINKS -->
 {% if Entity.entityData.items_links %}
-  <div class='box'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Linked items'|trans }}</h3>
-    <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
-      <ul class='list-group ml-3'>
-        {% for link in Entity.entityData.items_links %}
-          {% set randomId = random() %}
-          <li class='list-group-item' id='parent_{{ randomId }}'>
-            <i class='fas fa-link mr-1'></i>
-            <!-- toggle body -->
-            <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-              <i class='fas fa-plus-circle'></i>
-            </span>
-            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
-                {{ link.title|raw }}</a>
-            <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-            <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-            <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='linkedItemsIcon' class='d-inline'><i id='linkedItemsIcon' class='fas fa-chevron-circle-down'></i> {{ 'Linked items'|trans }}</h3>
+  <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+    <ul class='list-group ml-3'>
+      {% for link in Entity.entityData.items_links %}
+        {% set randomId = random() %}
+        <li class='list-group-item' id='parent_{{ randomId }}'>
+          <i class='fas fa-link mr-1'></i>
+          <!-- toggle body -->
+          <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+            <i class='fas fa-plus-circle'></i>
+          </span>
+          {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+          <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+              {{ link.title|raw }}</a>
+          <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
+          <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+          <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
+  <hr>
 {% endif %}
-
 
 <!-- RELATED ITEMS/EXPERIMENTS -->
 {% if Entity.type == 'items' or Entity.type == 'experiments' %}
   {% if relatedItemsArr %}
-    <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon' class='d-inline'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related items'|trans }}</h3>
-      <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-        <ul class='list-group ml-3'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedItemsIcon' class='d-inline'><i id='relatedItemsIcon' class='fas fa-chevron-circle-down'></i> {{ 'Related items'|trans }}</h3>
+    <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
+      <ul class='list-group ml-3'>
+        <li class='list-group-item'>
+          <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>
+          <a href='database.php?mode=show&related={{ Entity.id }}' class='align-middle'>
+            <span>{{ 'Show linked items'|trans }}</span>
+          </a>
+        </li>
+        {% for link in relatedItemsArr %}
           <li class='list-group-item'>
-            <i title='{{ 'Show linked items'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>
-            <a href='database.php?mode=show&related={{ Entity.id }}' class='align-middle'>
-              <span>{{ 'Show linked items'|trans }}</span>
-            </a>
+            <i class='fas fa-link mr-1'></i>
+            {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
+            <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
+                {{ link.title|raw }}</a>
           </li>
-          {% for link in relatedItemsArr %}
-            <li class='list-group-item'>
-              <i class='fas fa-link mr-1'></i>
-              {% if link.bookable %}<i class='far fa-calendar-alt'></i>{% endif %}
-              <span class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</span> - <a href='database.php?mode=view&id={{ link.entityid }}'>
-                  {{ link.title|raw }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
+        {% endfor %}
+      </ul>
     </div>
+    <hr>
   {% endif %}
 
+
   {% if relatedExperimentsArr %}
-    <div class='box'>
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon' class='d-inline'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {{ 'Related experiments'|trans }}</h3>
-      <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
-        <ul class='list-group ml-3'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='relatedExperimentsIcon' class='d-inline'><i id='relatedExperimentsIcon' class='fas fa-chevron-circle-down'></i> {{ 'Related experiments'|trans }}</h3>
+    <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
+      <ul class='list-group ml-3'>
+        <li class='list-group-item'>
+          <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>
+          <a href='experiments.php?mode=show&related={{ Entity.id }}' class='align-middle'>
+            <span>{{ 'Show related'|trans }}</span>
+          </a>
+        </li>
+        {% for link in relatedExperimentsArr %}
           <li class='list-group-item'>
-            <i title='{{ 'Show related'|trans }}' class='fas fa-external-link-square-alt fa-2x mr-1 align-middle'></i>
-            <a href='experiments.php?mode=show&related={{ Entity.id }}' class='align-middle'>
-              <span>{{ 'Show related'|trans }}</span>
-            </a>
+            <i class='fas fa-link mr-1'></i>
+            <a href='experiments.php?mode=view&id={{ link.entityid }}'>
+                {{ link.title|raw }}</a>
           </li>
-          {% for link in relatedExperimentsArr %}
-            <li class='list-group-item'>
-              <i class='fas fa-link mr-1'></i>
-              <a href='experiments.php?mode=view&id={{ link.entityid }}'>
-                  {{ link.title|raw }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
+        {% endfor %}
+      </ul>
     </div>
+    <hr>
   {% endif %}
 {% endif %}

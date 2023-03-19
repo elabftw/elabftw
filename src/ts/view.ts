@@ -44,10 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="duplicate-entity"]')) {
       EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&id=${resp.headers.get('location').split('/').pop()}`);
 
-    // EDIT
-    } else if (el.matches('[data-action="edit"]')) {
-      window.location.href = `?mode=edit&id=${entity.id}`;
-
     // TOGGLE LOCK
     } else if (el.matches('[data-action="lock-entity"]')) {
       // reload the page to change the icon and make the edit button disappear (#1897)
@@ -76,14 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
       EntityC.read(entity.id).then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = json.sharelink;
-        link.hidden = false;
+        link.toggleAttribute('hidden');
         link.focus();
         link.select();
       });
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => document.getElementById('toggle-pin-icon').classList.toggle('grayed-out'));
+      EntityC.pin(entity.id).then(() => document.getElementById('toggle-pin-icon').classList.toggle('color-weak'));
 
     // TIMESTAMP button in modal
     } else if (el.matches('[data-action="timestamp"]')) {
@@ -163,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const malleableCategory = new Malle({
     cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: value => updateCategory(entity, value),
     inputType: InputType.Select,
@@ -172,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOptions: category.then(categoryArr => categoryArr),
     listenOn: '.malleableCategory',
     submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
 

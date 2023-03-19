@@ -123,6 +123,15 @@ a:hover,
     margin: 0;
 }
 
+/* a toolbar button in blue */
+.main-action-button {
+    background-color: $elabblue;
+
+    i {
+        color: $white;
+    }
+}
+
 /* input and select */
 /* TODO this is a bit too wide: padding will apply to jsoneditor search bar for instance */
 input,
@@ -761,13 +770,13 @@ github issue #52 */
     padding-left: 20px;
 }
 
-.item-next {
-    .next-step-text {
-        color: $secondlevel;
-        font-size: 80%;
-        text-transform: uppercase;
-    }
+.next-step-text {
+    color: $maingray;
+    font-size: 80%;
+    text-transform: uppercase;
+}
 
+.item-next {
     .item-next-step {
         color: #000;
     }
@@ -869,6 +878,20 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
+.color-strong {
+    color: $black;
+}
+
+/* for icons such as pin, need important to override default icon color */
+.color-weak {
+    color: $secondlevel !important;
+}
+
+.category-button {
+    background-color: var(--bg);
+    color: $white;
+}
+
 .item-date {
     color: $maingray;
 }
@@ -882,10 +905,6 @@ the form-control fails to do that so we do the border ourselves */
 #currpass {
     background-color: $lightblue;
     border: 1px solid $elabblue;
-}
-
-.maingray {
-    color: $maingray;
 }
 
 .edit-mode-label {
@@ -1100,11 +1119,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .fa-bell.active {
     color: $elabblue;
-}
-
-/* for icons such as pin */
-.grayed-out {
-    color: $lightgraybutnottoolight;
 }
 
 /* caption for tinymce */

@@ -99,15 +99,14 @@
         {% endif %}
         <span class='item-date'>{{ item.date|date('Y-m-d') }}</span>
         {% if isPinned %}
-          <a class='elab-tooltip ml-2' data-action='toggle-pin' data-id='{{ item.id }}' href='#'>
-            <span>{{ 'Toggle pin'|trans }}</span>
-            <i class='fas fa-thumbtack fa-fw'title="{{ 'Pinned'|trans }}"></i>
-          </a>
+          <span title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='hl-hover-gray p-1 rounded'>
+            <i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw'></i>
+          </span>
         {% endif %}
       </div>
       <div class='ml-auto'>
         {# toggle body #}
-        <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+        <span class='p-1 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
           <i class='fas fa-square-plus fa-fw'></i>
         </span>
       </div>

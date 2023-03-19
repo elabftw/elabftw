@@ -150,7 +150,7 @@
 
       <!-- PINNED ENTITIES -->
       {% if pinnedArr and not searchPage %}
-        <div id='pinned-entities' class='row display-flex'>
+        <div id='pinned-entities' class='d-flex'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
             {% include 'show-item.html' %}

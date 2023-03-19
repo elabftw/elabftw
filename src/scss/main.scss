@@ -566,7 +566,8 @@ github issue #52 */
 }
 
 .vertical-separator {
-    border-right: 1px solid $lightgray;
+    border-right: 1px solid $secondlevel;
+    height: 1.8rem;
     margin: 0 15px;
 }
 
@@ -883,14 +884,16 @@ the form-control fails to do that so we do the border ourselves */
     border: 1px solid $elabblue;
 }
 
-/* title on editXP */
-#title_input {
-    margin: 0 0 15px;
-    width: 100%;
-}
-
 .maingray {
     color: $maingray;
+}
+
+.edit-mode-label {
+    min-width: 93px;
+
+    @media (max-width: 992px) {
+        min-width: 0;
+    }
 }
 
 /* elabid */
@@ -1058,28 +1061,13 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* fix dropzone css */
+/* make dropzone blue border on hover */
 .dropzone {
-    border: 1px solid #fff;
-    border-radius: 5px;
-}
+    border: 1px solid $white;
 
-.dropzone:hover {
-    border: 1px solid $elabblue;
-    border-radius: 5px;
-}
-
-/* doodle canvas */
-.doodle {
-    border: 1px solid $bordersgray;
-    border-radius: 5px;
-    display: block;
-    margin: 10px 0;
-}
-
-#doodleStrokeWidthContainer {
-    align-items: center;
-    display: flex;
+    &:hover {
+        border: 1px solid $elabblue;
+    }
 }
 
 /* don't register clicks with the fontawesome icons

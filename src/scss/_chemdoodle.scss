@@ -11,6 +11,9 @@
     border: 1px solid #dcdddc;
 }
 
-.chemdoodle div label {
-    margin: 0;
+.chemdoodle {
+    div label,
+    button img {
+        margin: 0;
+    }
 }

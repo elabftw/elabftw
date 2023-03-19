@@ -1,11 +1,13 @@
 {# required vars: rw, can: coming from canread or canwrite with canToHuman filter #}
 {% include('permissions-edit-modal.html') %}
-<div id='{{ rw }}Div' style='line-height: 90%' class='mr-2'>
-  <h5 class='d-inline'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</h5>
-  {% if not Entity.isReadOnly %}
-    <button class='button-small btn btn-primary align-top' data-action='toggle-modal' data-target='permModal-{{ rw }}'>{{ 'edit'|trans }}</button>
-  {% endif %}
-  <div>
+<label  class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }} mr-1' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</label>
+{% if not Entity.isReadOnly %}
+  <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+    <i class='fas fa-fw fa-square-plus fa-2x'></i>
+  </div>
+{% endif %}
+<div class='vertical-separator'></div>
+<div id='{{ rw }}Div'>
   {{ can.base }}
   {% if can.teams %}
     <details><summary>{{ 'Teams'|trans }}</summary>
@@ -34,5 +36,4 @@
       </ul>
     </details>
   {% endif %}
-  </div>
 </div>

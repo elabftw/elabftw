@@ -33,6 +33,13 @@
         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
     {% endif %}
 
+    <!-- LOAD IN JSON EDITOR -->
+    {% if ext matches '/(json)$/i' %}
+      <a class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file'>
+        <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
+      </a>
+    {% endif %}
+
     <!-- Save mol file as png -->
     {% if ext matches '/(mol)$/i' %}
       <a class='dropdown-item clickable' data-action='save-mol-as-png' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name }}'>

@@ -12,13 +12,14 @@
 
 
 {% embed 'view-edit.html' %}
-  {% block backtoview %}
-    <a href='?mode=view&id={{ Entity.id }}'>
-      <i class='fas fa-chevron-left mr-1'></i>{{ 'View mode'|trans }}
-    </a>
-  {% endblock %}
   {% block createnew %}
-    {% include 'create-new.html' %}
+  <div class='d-flex'>
+    <!-- TODO replace 'entry' with experiment|item -->
+    <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
+    <div class='ml-auto'>
+      {% include 'create-new.html' %}
+    </div>
+  </div>
   {% endblock %}
   {% block createmodal %}
     {% include 'show-view-edit.html' %}
@@ -59,61 +60,84 @@
   {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
 {% endif %}
 
-<section class='box' id='main_section' style='border-left: 6px solid #{{ Entity.entityData.color }}'>
-  <div class='dropdown'>
-    <a class='clickable float-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
-      <i class='fas fa-ellipsis-v fa-2x'></i>
-    </a>
-    <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-      <!-- TRANSFER OWNERSHIP -->
-      {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
-        <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
-      {% endif %}
-      <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
-      <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
-      <!-- REVISIONS -->
-      {% if revNum > 0 %}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
-      {% endif %}
 
-      <div class='dropdown-divider'></div>
-      <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+<hr>
+
+<!-- TOP TOOLBAR -->
+<div class='d-flex align-items-center'>
+  <!-- BACK TO LINK -->
+  {% if App.Session.has('lastquery') %}
+    {% set lastquery = App.Session.get('lastquery') %}
+  {% else %}
+    {% set lastquery = 'mode=show' %}
+  {% endif %}
+
+  <a title='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}'>
+    <div class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-arrow-left fa-fw'></i>
+    </div>
+  </a>
+
+  <div class='vertical-separator'></div>
+
+  <a class='mr-3' title='{{ 'View mode'|trans }}' href='?mode=view&id={{ Entity.id }}'>
+    <div class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-eye fa-fw'></i>
+    </div>
+  </a>
+
+  <div class='mr-3'>
+    <div title='{{ 'Save'|trans }}' data-action='update-entity-body' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-floppy-disk fa-fw'></i>
     </div>
   </div>
-  <p id='toggle-pin-icon-div' class='float-right mr-3 d-inline'>
-    <a class='elab-tooltip ml-2' data-action='toggle-pin' href='#'>
-      <span>{{ 'Toggle pin'|trans }}</span>
-      <i title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }} fa-2x'></i>
-    </a>
-  </p>
 
-  <!-- DATE -->
-  <div class='row mb-2 form-inline'>
-    <i class='far fa-calendar-alt mr-1 fa-fw'></i><label for='date_input'>{{ 'Started on'|trans }}</label>
-    <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
-    <input name='date' id='date_input' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control px-2' />
-  </div>
-
-  <div class='row align-items-center'>
-    <!-- CATEGORIES (status for exp and itemstypes for items) -->
-    <div class='col-md-3 mb-2 form-inline'>
-      <i class='fas fa-clipboard-check fa-fw mr-1'></i>
-      <label for='category_select'>
-      {% if Entity.type == 'experiments' %}
-        {% trans %}Status{% plural 1 %}Status{% endtrans %}
-      {% else %}
-        {{ 'Category'|trans }}
-      {% endif %}
-      </label>
-      <select id='category_select' class='form-control'>
-        {% for category in categoryArr %}
-          <option value='{{ category.category_id }}'
-          {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
-        {% endfor %}
-      </select>
+  <!-- flex-nowrap to avoid going to two lines -->
+  <div class='ml-auto d-flex flex-nowrap'>
+    <!-- TOGGLE PIN -->
+    <div data-action='toggle-pin' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded mr-3'>
+      <i id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'grayed-out' }}'></i>
     </div>
-    <!-- STAR RATING -->
-    <div class='col-md-3 mb-2'>
+
+    <!-- MORE OPTIONS -->
+    <div class='dropdown'>
+      <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded'>
+        <i class='fas fa-ellipsis-v'></i>
+      </div>
+
+      <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+        <!-- TRANSFER OWNERSHIP -->
+        {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Session.get('is_admin')) %}
+          <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
+        {% endif %}
+        <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
+        <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+        <!-- REVISIONS -->
+        {% if revNum > 0 %}
+          <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+        {% endif %}
+        <!-- CHANGELOG -->
+        <a class='dropdown-item' href='?id={{ Entity.id }}&mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+
+        <div class='dropdown-divider'></div>
+        <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<hr>
+<section id='main_section'>
+
+  <!-- DATE and RATING -->
+  <div class='d-flex mb-2'>
+    <div class='form-inline'>
+      <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
+      <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
+      <input id='date_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
+    </div>
+    <div class='ml-auto align-self-baseline'>
       <fieldset>
         <legend class='sr-only'>{{ 'Rating'|trans }}</legend>
         {% for i in range(1, 5) %}
@@ -121,118 +145,156 @@
         {% endfor %}
       </fieldset>
     </div>
-
-    <div class='d-flex align-items-start justify-content-around col-md-6'>
-      <!-- CAN READ -->
-      {% set rw = 'canread' %}
-      {% set can = Entity.entityData.canread|canToHuman %}
-      {% include('view-permissions.html') %}
-      <!-- CAN WRITE -->
-      {% set rw = 'canwrite' %}
-      {% set can = Entity.entityData.canwrite|canToHuman %}
-      {% include('view-permissions.html') %}
-    </div>
   </div>
 
   <!-- TITLE -->
-  <label for='title_input'>{{ 'Title'|trans }}</label>
-  <input id='title_input' class='form-control' type='text' name='title' value='{{ Entity.entityData.title|raw }}' required />
+  <div class='d-flex mb-2 justify-content-between align-items-center'>
+    <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
+    <!-- no data-trigger here because custom code in edit.ts -->
+    <input id='title_input' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
+  </div>
+
+  <!-- CATEGORIES (status for exp and itemstypes for items) -->
+  <div class='d-flex mb-2 align-items-center'>
+    <label for='category_select' class='col-form-label mr-3 edit-mode-label'>
+    {% if Entity.type == 'experiments' %}
+      {% trans %}Status{% plural 1 %}Status{% endtrans %}
+    {% else %}
+      {{ 'Category'|trans }}
+    {% endif %}
+    </label>
+    <select id='category_select' class='form-control col-md-3'>
+      <!-- TODO add a box with color -->
+      {% for category in categoryArr %}
+        <option value='{{ category.category_id }}'
+        {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
+      {% endfor %}
+    </select>
+  </div>
 
   <!-- TAGS -->
-  <div class='row mb-2 mathjax-ignore'>
-    <div class='col'>
-      <i class='fas fa-tags fa-fw mr-1'></i><label for='createTagInput'>{{ 'Tags'|trans }}</label>
-      <div class='tags form-inline'>
-        <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
-          <!--  build the tag array -->
-          {% if Entity.entityData.tags|length > 0 %}
-            {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
-            {% set tagsValueArr = Entity.entityData.tags|split('|') %}
-            {% for tag in tagsValueArr -%}
-              <a class='tag margin-1px hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
-            {%- endfor -%}
-          {% endif %}
-        </div>
+  <div class='d-flex mb-2 align-items-center mathjax-ignore'>
+    <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
+    <div class='tags form-inline'>
+      <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
+        <!--  build the tag array -->
+        {% if Entity.entityData.tags|length > 0 %}
+          {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+          {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+          {% for tag in tagsValueArr -%}
+            <a class='tag margin-1px hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
+          {%- endfor -%}
+        {% endif %}
       </div>
-      <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control col-md-2' placeholder='{{ 'Add a tag'|trans }}' />
+      <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control col-md-3 ml-2' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 
+  <hr>
+
+  <!-- PERMISSIONS -->
+  <div class='d-flex mb-2 align-items-center'>
+    <!-- CAN READ -->
+    {% set rw = 'canread' %}
+    {% set can = Entity.entityData.canread|canToHuman %}
+    {% include('view-permissions.html') %}
+  </div>
+  <div class='d-flex mb-2 align-items-center'>
+    <!-- CAN WRITE -->
+    {% set rw = 'canwrite' %}
+    {% set can = Entity.entityData.canwrite|canToHuman %}
+    {% include('view-permissions.html') %}
+  </div>
+
+  <hr>
+
+
   <!-- BODY -->
-  {% if editor == 'md' %}
-  <div {{ not displayMainText ? 'hidden' }}>
-    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+  <div class='mt-4' {{ not displayMainText ? 'hidden' }}>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+    {% if editor == 'md' %}
+      <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+    {% else %}
+    {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+      <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
+    {% endif %}
   </div>
-  {% else %}
-  {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-  <div {{ not displayMainText ? 'hidden' }}>{# << this div is added around the textarea to fix an issue on mobile editor. See #3107 #}
-    <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body' rows='15' cols='80'>{{ Entity.entityData.body }}</textarea>
-  </div>
-  {% endif %}
+
 
   <div class='mt-4 text-center'>
-    <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-    <button data-action='update-entity-body' data-redirect='view' class='button btn btn-primary'>{{ 'Save and go back'|trans }}</button>
+    <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
   </div>
 
-  <div id='metadataDiv' class='col-md-6'></div>
+  <div id='metadataDiv' class='col-md-6 mt-4'></div>
 
+  <hr>
+  {# STEPS #}
   {% include 'steps-links-edit.html' %}
 </section>
 
+<hr>
 <!-- UPLOAD FORM -->
-<section class='box'>
-  <h3 class='d-inline'><i class='fas fa-fw fa-paperclip'></i> {{ 'Attach a file'|trans }}</h3>
-  <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone mt-2' id='elabftw-dropzone'></form>
-</section>
+<h3 class='mb-3' data-action='toggle-next' data-icon='attachFileIcon' class='d-inline'><i id='attachFileIcon' class='fas fa-chevron-circle-down'></i> {{ 'Attach a file'|trans }}</h3>
+<form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' data-save-hidden='elabftw-dropzone'></form>
+
+<hr>
 
 {% include 'uploads.html' %}
 
+<hr>
+
 {% include 'json-editor.html' %}
 
+<hr>
+
 <!-- DOODLE -->
-<section class='box'>
-  <h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paint-brush'></i> {{ 'Draw something'|trans }}</h3>
-  <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
-    <div class='row'>
+<h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> {{ 'Draw something'|trans }}</h3>
+<div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
+  <div class='row flex-nowrap'>
+    <div class='col-md-6 mr-2'>
+      <canvas class='bg-white w-100 rounded' id='doodleCanvas'></canvas>
+    </div>
+
+    <div class='col-md-6'>
+      <hr>
       <div>
-        <canvas class='doodle' id='doodleCanvas' width='600' height='600'></canvas>
+        <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
+        <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
       </div>
 
-      <div class='col-xs-12 col-sm-6 col-md-4 col-lg-4' id='doodle_controls'>
-        <div id='doodleStrokeWidthContainer'>
-          <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
-          <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
-        </div>
+      <hr>
 
-        <p>
-          <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
-          <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
-        </p>
-
-        <p>
-          <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}</label>
-        </p>
-
-        <p>
-          <button id='clearCanvas' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
-          <button id='saveCanvas' class='button btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
-        <p>
-        <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+      <div id='doodleStrokeWidthContainer'>
+        <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
+        <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
       </div>
+
+      <hr>
+
+      <div>
+        <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}</label>
+      </div>
+
+      <div>
+        <button id='clearCanvas' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button id='saveCanvas' class='button btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+      </div>
+      <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
     </div>
   </div>
-</section>
+</div>
+
+<hr>
 
 <!-- CHEM EDITOR -->
-<div class='box chemdoodle'>
-  <h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-dna'></i> {{ 'Molecule editor'|trans }}</h3>
-  <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 text-center'>
-    <div class='text-center mb-2'>
-      <button class='btn btn-primary' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
-      <button class='btn btn-primary' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
-    </div>
+<h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> {{ 'Molecule editor'|trans }}</h3>
+<div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
+  <div>
     <canvas id='sketcher'></canvas>
+  </div>
+  <div class='mt-3'>
+    <button class='btn btn-primary mr-3' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
+    <button class='btn btn-primary' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
   </div>
 </div>
 

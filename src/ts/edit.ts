@@ -459,11 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
     editor.setContent(content);
   });
 
-  $(document).on('blur', '#date_input', function() {
-    const content = (document.getElementById('date_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Date, content);
-  });
-
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesdiv').addEventListener('submit', event => {
     const el = event.target as HTMLElement;

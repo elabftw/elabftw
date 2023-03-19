@@ -165,9 +165,11 @@
 
 {# EXTRA FIELDS #}
 <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
-{# this div is filled in JS by Metadata.class.ts edit() #}
-<div id='metadataDiv' data-save-hidden='metadataDiv' class='col-md-6 mt-4'></div>
-<button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-primary mt-3'>{{ 'Add field'|trans }}</button>
+<div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
+  {# this div is filled in JS by Metadata.class.ts edit() #}
+  <div id='metadataDiv'></div>
+  <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-primary mt-3 row'>{{ 'Add field'|trans }}</button>
+</div>
 <hr>
 
 {# STEPS #}

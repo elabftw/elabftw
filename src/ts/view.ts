@@ -85,6 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
     category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json));
   }
   const malleableCategory = new Malle({
+    // use the after hook to change the background color of the new element
+    after: (original, _, value) => {
+      category.then(categoryArr => {
+        const cat = categoryArr.find(cat => cat.category === value);
+        original.style.setProperty('--bg', `#${cat.color}`);
+      });
+      return true;
+    },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],

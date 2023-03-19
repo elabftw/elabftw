@@ -9,7 +9,7 @@ import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectFor
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Model, Target } from './interfaces';
+import { Action, EntityType, Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(parseInt(el.dataset.id)).then(() => {
+      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => {
         reloadElement('templatesDiv').then(() => {
           addAutocompleteToTagInputs();
           tinymce.remove();

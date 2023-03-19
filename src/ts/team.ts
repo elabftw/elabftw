@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import EntityClass from './Entity.class';
-import { EntityType } from './interfaces';
+import { Action, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import { DateTime } from 'luxon';
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
       TemplateC.duplicate(parseInt(el.dataset.id));
     // TOGGLE TPL PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      TemplateC.pin(parseInt(el.dataset.id))
+      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin})
         .then(() => window.location.replace('team.php?tab=3'));
 
     // DESTROY TEMPLATE

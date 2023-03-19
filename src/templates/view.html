@@ -60,7 +60,7 @@
     <div class='edit-mode-label'>
       <i aria-hidden='true' class='fas fa-folder mr-1'></i>{{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
     </div>
-    <span style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category}}</span>
+    <span id='categoryView' style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category | raw}}</span>
   </div>
 
   {# TAGS #}

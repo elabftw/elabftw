@@ -1,8 +1,3 @@
 {% block createnew %}{% endblock %}
 
-<!-- show message if we are not owner -->
-{% if Entity.entityData.userid != Entity.Users.userData.userid %}
-  {{ 'Owned by %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
-{% endif %}
-
 {% block createmodal %}{% endblock %}

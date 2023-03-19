@@ -17,7 +17,7 @@ $theme-colors: (
     'neutral': $medium,
 );
 /* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: $firstlevel;
+$navbar-dark-color: $secondlevel;
 $text-muted: $medium;
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select';

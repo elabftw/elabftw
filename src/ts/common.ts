@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
   document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = document.getElementById(el.dataset.icon);
+    const iconEl = el.querySelector('i');
     let contentDiv: HTMLElement;
     if (el.dataset.iconTarget) {
       contentDiv = document.getElementById(el.dataset.iconTarget);
@@ -201,11 +201,11 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv = el.nextElementSibling as HTMLElement;
     }
     if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-chevron-circle-down');
-      iconEl.classList.add('fa-chevron-circle-right');
+      iconEl.classList.remove('fa-caret-down');
+      iconEl.classList.add('fa-caret-right');
     } else {
-      iconEl.classList.add('fa-chevron-circle-down');
-      iconEl.classList.remove('fa-chevron-circle-right');
+      iconEl.classList.add('fa-caret-down');
+      iconEl.classList.remove('fa-caret-right');
     }
   });
 
@@ -322,14 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
         targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
-      if (el.dataset.icon) {
-        const iconEl = document.getElementById(el.dataset.icon);
+      const iconEl = el.querySelector('i');
+      if (iconEl) {
         if (targetEl.hasAttribute('hidden')) {
-          iconEl.classList.remove('fa-chevron-circle-down');
-          iconEl.classList.add('fa-chevron-circle-right');
+          iconEl.classList.remove('fa-caret-down');
+          iconEl.classList.add('fa-caret-right');
         } else {
-          iconEl.classList.add('fa-chevron-circle-down');
-          iconEl.classList.remove('fa-chevron-circle-right');
+          iconEl.classList.add('fa-caret-down');
+          iconEl.classList.remove('fa-caret-right');
         }
       }
       // save the hidden state of the target element in localStorage

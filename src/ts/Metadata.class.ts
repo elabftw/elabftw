@@ -238,18 +238,6 @@ export class Metadata {
   }
 
   /**
-   * Create the "Extra fields" header
-   */
-  getHeaderDiv(): Element {
-    const headerDiv = document.createElement('div');
-    headerDiv.classList.add('row');
-    const header = document.createElement('h4');
-    header.innerText = i18next.t('extra-fields');
-    headerDiv.append(header);
-    return headerDiv;
-  }
-
-  /**
    * Main public function to call to display the metadata in view or edit mode
    */
   display(mode: string): Promise<void> {
@@ -279,8 +267,7 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
-      this.metadataDiv.append(this.getHeaderDiv());
-      this.metadataDiv.classList.add('col-md-12', 'box');
+      this.metadataDiv.classList.add('col-md-12');
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, properties] of Object.entries(json.extra_fields)) {
@@ -320,7 +307,6 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
-      this.metadataDiv.append(this.getHeaderDiv());
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, properties] of Object.entries(json.extra_fields)) {

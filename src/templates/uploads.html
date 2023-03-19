@@ -24,13 +24,14 @@
   {% if Entity.entityData.uploads %}
     <div class='d-flex justify-content-between'>
       <div><!-- necessary div for flex -->
-        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-icon-target='uploadsDiv' data-icon='uploadedFilesIcon' class='d-inline'><i id='uploadedFilesIcon' class='fas fa-chevron-circle-down'></i> {% trans %}Attached file
+        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-icon-target='uploadsDiv' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
           {% plural Entity.entityData.uploads|length %}
           Attached files
           {% endtrans %}
         </h3>
       </div>
 
+      <!-- TODO mask this too -->
       <div class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>

@@ -86,7 +86,8 @@
   <!-- KEYBOARD SHORTCUTS -->
   <h3 id='keyboardShortcuts' class='p-2 pl-3 section-title'>{{ 'Keyboard Shortcuts'|trans }}</h3>
   <div class='pl-3 mt-2 mb-5'>
-    <table aria-describedby='keyboardShortcuts' class='col-md-12 ucp-shortcuts-table'>
+    <table aria-describedby='keyboardShortcuts' class='table col-md-12'>
+      <thead>
       <tr>
         <th class='align-left'>{{ 'Action'|trans }}</th>
         <th>{{ 'Create'|trans }}</th>
@@ -94,24 +95,27 @@
         <th>{{ 'Submit'|trans }}</th>
         <th>{{ 'TODO list'|trans }}</th>
       </tr>
+      </thead>
+      <tbody class='bgnd-transparent'>
       <tr>
-        <td class='align-left'>{{ 'Shortcut'|trans }}</td>
+        <td>{{ 'Shortcut'|trans }}</td>
         <td>
-          <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
+          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>
 
         <td>
-          <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
+          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
         </td>
 
         <td>
-          <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_submit }}' data-trigger='blur' data-model='users/me' data-target='sc_submit' />
+          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_submit }}' data-trigger='blur' data-model='users/me' data-target='sc_submit' />
         </td>
 
         <td>
-          <input type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
+          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
         </td>
       </tr>
+      </tbody>
     </table>
     <p class='smallgray mt-2'>{{ 'Only lowercase letters are allowed.'|trans }}</p>
   </div>
@@ -121,7 +125,7 @@
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
       <label for='pdf_format' class='col-form-label'>{{ 'Select paper format for PDF'|trans }}</label>
-      <select id='pdf_format' data-trigger='change' data-model='users/me' data-target='pdf_format'>
+      <select id='pdf_format' class='form-control col-md-3' data-trigger='change' data-model='users/me' data-target='pdf_format'>
           <option value='A4'{{ App.Users.userData.pdf_format == 'A4' ? ' selected' : '' }}>A4</option>
           <option value='LETTER'{{ App.Users.userData.pdf_format == 'LETTER' ? ' selected' : '' }}>Letter</option>
           <option value='ROYAL'{{ App.Users.userData.pdf_format == 'ROYAL' ? ' selected' : '' }}>Royal</option>
@@ -217,7 +221,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='default-read-select' class='col-form-label'>{{ 'Default visibility for new experiments'|trans }}</label>
-      <select id='default-read-select' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_read'>
+      <select id='default-read-select' class='form-control col-md-3' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_read'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ App.Users.userData.default_read|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
@@ -227,7 +231,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='default-write-select' class='col-form-label'>{{ 'Default write permission for new experiments'|trans }}</label>
-      <select id='default-write-select' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_write'>
+      <select id='default-write-select' class='form-control col-md-3' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_write'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ App.Users.userData.default_write|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}

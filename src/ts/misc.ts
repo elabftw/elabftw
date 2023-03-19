@@ -265,11 +265,16 @@ export async function reloadElement(elementId: string): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
     const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
+    const caretIcon = el.previousElementSibling.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
+      caretIcon.classList.remove('fa-caret-down');
+      caretIcon.classList.add('fa-caret-right');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
+      caretIcon.classList.remove('fa-caret-right');
+      caretIcon.classList.add('fa-caret-down');
     }
   });
 }

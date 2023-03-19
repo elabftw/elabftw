@@ -132,32 +132,9 @@ a:hover,
     }
 }
 
-/* input and select */
-/* TODO this is a bit too wide: padding will apply to jsoneditor search bar for instance */
-input,
-select,
-textarea {
-    border: 1px solid #e3e3e3;
-    border-radius: 4px;
-    color: $medium;
-    padding: 7px;
-}
-
 select {
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -moz-appearance: none;
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -webkit-appearance: none;
-    background: #fff url('images/ico-arrow.png') no-repeat 93% 56%;
-    padding-right: 31px;
-}
-
-.form-control {
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -moz-appearance: none;
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -webkit-appearance: none;
-    padding-right: 31px;
+    appearance: none;
+    background: #fff url('images/ico-arrow.png') no-repeat 97% 56%;
 }
 
 #dropdownMenu1 {
@@ -476,33 +453,20 @@ button:disabled {
     overflow: auto;
 }
 
-/* UCP keyboard shortcut table */
-.ucp-shortcuts-table {
-    text-align: center;
-
-    tr {
-        border-bottom: 1px solid $medium;
-    }
-
-    td,
-    th {
-        /* stylelint-disable-next-line shorthand-property-no-redundant-values */
-        padding: 10px 0 15px 0;
-    }
-
-    .align-left {
-        text-align: left;
-    }
-}
-
 .table {
     tbody {
         background-color: $white;
+
+        /* stylelint-disable-next-line selector-no-qualifying-type */
+        &.bgnd-transparent {
+            background-color: $mainbackground;
+        }
     }
 
     th {
         white-space: nowrap;
     }
+
 }
 
 /* TABLE SHOW MODE */
@@ -851,6 +815,17 @@ the form-control fails to do that so we do the border ourselves */
     color: $secondlevel !important;
 }
 
+.color-medium {
+    color: $medium;
+}
+
+.togglable-section-title {
+    color: $medium;
+    font-size: 100%;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 .category-button {
     background-color: var(--bg);
     color: $white;
@@ -1106,7 +1081,7 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* stylelint-disable selector-no-qualifying-type */
+/* stylelint-disable-next-line selector-no-qualifying-type */
 input[type='color'] {
     padding: 5px 10px;
 }

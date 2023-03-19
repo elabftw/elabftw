@@ -218,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const doodleDiv = document.getElementById('doodleDiv');
       doodleDiv.removeAttribute('hidden');
       doodleDiv.scrollIntoView();
-      // adjust chevron icon
+      // adjust caret icon
       const doodleDivIcon = document.getElementById('doodleDivIcon');
-      doodleDivIcon.classList.remove('fa-chevron-circle-right');
-      doodleDivIcon.classList.add('fa-chevron-circle-down');
+      doodleDivIcon.classList.remove('fa-caret-right');
+      doodleDivIcon.classList.add('fa-caret-down');
 
       const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
       const img = new Image();

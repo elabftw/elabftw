@@ -98,7 +98,7 @@
       {{ 'Category'|trans }}
     {% endif %}
     </label>
-    <select id='category_select' class='form-control col-md-3'>
+    <select id='category_select' class='form-control col-md-2'>
       <!-- TODO add a box with color -->
       {% for category in categoryArr %}
         <option value='{{ category.category_id }}'
@@ -110,18 +110,18 @@
   <!-- TAGS -->
   <div class='d-flex mb-2 align-items-center mathjax-ignore'>
     <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
-    <div class='tags form-inline'>
+    <div class='tags form-inline mr-2'>
       <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
         <!--  build the tag array -->
         {% if Entity.entityData.tags|length > 0 %}
           {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
           {% set tagsValueArr = Entity.entityData.tags|split('|') %}
           {% for tag in tagsValueArr -%}
-            <a class='tag margin-1px hover-danger' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
+            <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }}' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
           {%- endfor -%}
         {% endif %}
       </div>
-      <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control col-md-3 ml-2' placeholder='{{ 'Add a tag'|trans }}' />
+      <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
 
@@ -160,30 +160,31 @@
     <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
   </div>
 
-  <div id='metadataDiv' class='col-md-6 mt-4'></div>
 
-  <hr>
-  {# STEPS #}
-  {% include 'steps-links-edit.html' %}
 </section>
 
+{# EXTRA FIELDS #}
+<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+{# this div is filled in JS by Metadata.class.ts edit() #}
+<div id='metadataDiv' data-save-hidden='metadataDiv' class='col-md-6 mt-4'></div>
+<button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-primary mt-3'>{{ 'Add field'|trans }}</button>
 <hr>
-<!-- UPLOAD FORM -->
-<h3 class='mb-3' data-action='toggle-next' data-icon='attachFileIcon' class='d-inline'><i id='attachFileIcon' class='fas fa-chevron-circle-down'></i> {{ 'Attach a file'|trans }}</h3>
-<form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' data-save-hidden='elabftw-dropzone'></form>
 
-<hr>
+{# STEPS #}
+{% include 'steps-links-edit.html' %}
+
+{# UPLOAD FORM: not togglable or dropzone doesn't register #}
+<h3 class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Attach a file'|trans }}</h3>
+<form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
 
 {% include 'uploads.html' %}
-
-<hr>
 
 {% include 'json-editor.html' %}
 
 <hr>
 
 <!-- DOODLE -->
-<h3 data-action='toggle-next' data-icon='doodleDivIcon' class='d-inline'><i id='doodleDivIcon' class='fas fa-chevron-circle-down'></i> {{ 'Draw something'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='row flex-nowrap'>
     <div class='col-md-6 mr-2'>
@@ -222,7 +223,7 @@
 <hr>
 
 <!-- CHEM EDITOR -->
-<h3 data-action='toggle-next' data-icon='chemDivIcon' class='d-inline'><i id='chemDivIcon' class='fas fa-chevron-circle-down'></i> {{ 'Molecule editor'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
 <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
   <div>
     <canvas id='sketcher'></canvas>

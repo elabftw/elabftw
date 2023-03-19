@@ -2,7 +2,7 @@
 {% include('field-builder-modal.html') %}
 
 <section id='json-editor'>
-  <h3 data-action='toggle-next' data-icon='jsonEditorIcon' class='d-inline'><i id='jsonEditorIcon' class='fas fa-chevron-circle-down'></i> {{ 'JSON Editor'|trans }}</h3>
+  <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral'>{{ 'Load metadata'|trans }}</button>

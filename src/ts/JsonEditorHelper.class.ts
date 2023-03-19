@@ -62,8 +62,8 @@ export default class JsonEditorHelper {
   focus(): void {
     // toggle the arrow icon
     const iconEl = document.getElementById('jsonEditorIcon');
-    iconEl.classList.add('fa-chevron-circle-down');
-    iconEl.classList.remove('fa-chevron-circle-right');
+    iconEl.classList.add('fa-caret-down');
+    iconEl.classList.remove('fa-caret-right');
     const jsonEditorDiv = document.getElementById('jsonEditorDiv');
     // make sure it's not hidden
     jsonEditorDiv.toggleAttribute('hidden', false);

@@ -686,11 +686,11 @@ button:disabled {
                 background-color: $secondlevel;
             }
         }
-
-        &.bgnd-gray {
-            background-color: $firstlevel;
-        }
     }
+}
+
+.bgnd-gray {
+    background-color: $firstlevel;
 }
 
 

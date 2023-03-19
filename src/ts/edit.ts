@@ -254,20 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return editor.setContent(content);
       });
 
-    // DESTROY ENTITY
-    } else if (el.matches('[data-action="destroy"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
-      }
-
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
-
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => reloadElement('toggle-pin-icon-div'));
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {

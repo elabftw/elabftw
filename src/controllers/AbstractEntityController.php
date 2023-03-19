@@ -184,6 +184,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),

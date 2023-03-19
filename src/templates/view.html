@@ -270,7 +270,8 @@
           {% set body = Entity.entityData.body %}
       {% endif %}
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-      <div id='body_view' class='pt-2' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
+      {# body in view mode is color-strong for more lisibility see github issue #52 #}
+      <div id='body_view' class='pt-2 color-strong' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
   {% endif %}
 
   <!-- METADATA view -->
@@ -321,12 +322,15 @@
         {% endfor %}
 
         <!-- CREATE COMMENT INPUT -->
-        <textarea id='commentsCreateArea' class='form-control' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
-        <div id='commentsCreateButtonDiv' class='mt-4 text-center'>
-          <button class='button btn btn-primary' data-action='create-comment'>{{ 'Save'|trans }}</button>
+        <div class='input-group my-1 rounded'>
+          <textarea id='commentsCreateArea' class='form-control p-2 brr-none' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
+          <div class='input-group-append'>
+            <button class='btn btn-primary' type='button' data-action='create-comment'><i class='fas fa-paper-plane color-white'></i></button>
+          </div>
         </div>
       </div>
     </div>
+    <hr>
   {% endif %}
 </div>
 

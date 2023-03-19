@@ -63,7 +63,7 @@
     </div>
     <div class='row d-flex'>
       <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
-        <button class='button btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+        <button class='btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
       </a>
     </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
@@ -138,12 +138,12 @@
             </div>
           </div>
 
-          <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          <button data-action='lock-selected-entities' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
           {% if Entity.type == 'experiments' %}
-            <button data-action='timestamp-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+            <button data-action='timestamp-selected-entities' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
           {% endif %}
           {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-            <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+            <button data-action='destroy-selected-entities' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
           {% endif %}
         </div>
       </div>
@@ -207,10 +207,10 @@
       <!-- PREVIOUS/NEXT PAGE buttons -->
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
-          <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
+          <button class='btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
         {% endif %}
         {% if DisplayParams.limit < itemsArr|length %}
-          <button class='button btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
+          <button class='btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
         {% endif %}
       </div>
 

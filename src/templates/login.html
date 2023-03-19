@@ -16,7 +16,7 @@
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
           <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
           <div class='text-center'>
-            <button class='button btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+            <button class='btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
           </div>
         </form>
       </div>
@@ -60,7 +60,7 @@
 
         <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
         <input class='form-control' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
-        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
+        <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
       </div>
     </form>
   <!-- Show message when initial team selection is done -->
@@ -69,7 +69,7 @@
       {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
     {% else %}
       {{ 'Your account has been created and is now active. Try logging in again.'|trans|msg('ok') }}
-      <a href='login.php?rm_teaminit=1'><button class='button btn btn-primary'>{{ 'Continue'|trans }}</button></a>
+      <a href='login.php?rm_teaminit=1'><button class='btn btn-primary'>{{ 'Continue'|trans }}</button></a>
     {% endif %}
 
   {% elseif App.Session.has('team_selection_required') %}
@@ -84,7 +84,7 @@
           {% endfor %}
         </select>
       </div>
-      <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
+      <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
   {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
     <!-- user is already authed with external auth, so just present a continue button
@@ -94,7 +94,7 @@
         <input type='hidden' name='auth_type' value='external'>
         <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
         <br>
-        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
+        <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
       </form>
     {% else %}
 
@@ -143,7 +143,7 @@
         {% endif %}
 
         <!-- Login button -->
-        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
+        <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
       {% if App.Config.configArr.local_register %}
       <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
@@ -174,7 +174,7 @@
             <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme-2' />
             <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
           </div>
-          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+          <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>
     {% endif %}
@@ -198,7 +198,7 @@
               {% endfor %}
             </select>
           </div>
-          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+          <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>
     {% endif %}

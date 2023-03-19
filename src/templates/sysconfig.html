@@ -264,7 +264,7 @@
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-12' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button data-action='send-mass-email' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 </div>
@@ -305,7 +305,7 @@
               <span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>",
               "</span>"
           )|raw }}
-          <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
           <input class='form-control col-md-3' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
         </p>
       {% endif %}
@@ -401,8 +401,8 @@
       {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
     </textarea>
     <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
     </div>
   </div>
 
@@ -416,8 +416,8 @@
       {{ App.Config.configArr.termsOfService|default('TODO')|raw }}
     </textarea>
     <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput' data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput'  data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
     </div>
   </div>
 
@@ -431,8 +431,8 @@
       {{ App.Config.configArr.a11y_statement|default('TODO')|raw }}
     </textarea>
     <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='save' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='clear' class='button btn btn-danger'>{{ 'Clear'|trans }}</button>
+      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
     </div>
   </div>
 </div>
@@ -794,7 +794,7 @@
               <span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>",
               "</span>"
           )|raw }}
-          <span data-action='toggle-next' class='button btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
+          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
           <input class='form-control col-md-3' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
         </p>
       {% endif %}

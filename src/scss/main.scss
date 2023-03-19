@@ -261,7 +261,7 @@ label {
 
 /*  MENU is below main nav */
 .tabbed-menu {
-    border-bottom: 1px solid $bordersgray;
+    border-bottom: 1px solid $firstgray;
     line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
@@ -427,19 +427,8 @@ label {
 
 
 /* BUTTONS */
-.button {
-    border-radius: 25px;
-    color: #fff;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 10px 20px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
 .button-small {
-    border-radius: 25px;
-    color: #fff;
+    color: $white;
     font-size: 10px;
     letter-spacing: 1px;
     padding: 5px 10px;
@@ -452,7 +441,7 @@ button:disabled {
 }
 
 .separator {
-    border-bottom: 1px solid $bordersgray;
+    border-bottom: 1px solid $firstgray;
     margin: 20px 0;
     padding-bottom: 30px;
 }
@@ -476,10 +465,7 @@ button:disabled {
     transform: rotate(35deg);
 }
 
-/* body in view mode is black for more lisibility
-github issue #52 */
 #body_view p {
-    color: #000;
     // break super long words, see #4169
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -488,17 +474,6 @@ github issue #52 */
 /* fix for big images uploaded in the text */
 .item .txt {
     overflow: auto;
-}
-
-/* size of the editable box in edit mode */
-.mceditable {
-    height: 500px;
-}
-
-/* prettier tables in mceditable area */
-#body_view table:not([border]),
-#body_view table td:not([border]) {
-    border: 1px solid $maingray;
 }
 
 /* UCP keyboard shortcut table */
@@ -531,11 +506,10 @@ github issue #52 */
 }
 
 /* TABLE SHOW MODE */
-
 .item-table {
     td {
-        border-left: 1px solid $bordersgray;
-        border-right: 1px solid $bordersgray;
+        border-left: 1px solid $firstgray;
+        border-right: 1px solid $firstgray;
     }
 
     .title {
@@ -656,7 +630,7 @@ github issue #52 */
 /* ITEMS */
 .item {
     background-color: $white;
-    border: 1px solid $bordersgray;
+    border: 1px solid $firstgray;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
     margin: 5px auto;
@@ -792,7 +766,7 @@ github issue #52 */
 }
 
 .box {
-    border: 1px solid $bordersgray;
+    border: 1px solid $firstgray;
     border-radius: 5px;
     margin-top: 10px;
     overflow: auto;
@@ -807,7 +781,7 @@ github issue #52 */
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
 .step-static {
-    border: 1px solid $bordersgray;
+    border: 1px solid $firstgray;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -846,13 +820,6 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* COMMENTS */
-#commentsCreateArea {
-    border-radius: 5px;
-    margin: 10px 0;
-    padding: 20px;
-    width: 100%;
-}
-
 .comment-header {
     background-color: $firstgray;
 }

@@ -14,11 +14,11 @@
 $theme-colors: (
     'primary': $elabblue,
     'danger': $dangerred,
-    'neutral': $maingray,
+    'neutral': $medium,
 );
 /* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: $nottoodarkgray;
-$text-muted: $lightgray;
+$navbar-dark-color: $firstlevel;
+$text-muted: $medium;
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select';
 @import '../../node_modules/prismjs/themes/prism';
@@ -139,7 +139,7 @@ select,
 textarea {
     border: 1px solid #e3e3e3;
     border-radius: 4px;
-    color: $maingray;
+    color: $medium;
     padding: 7px;
 }
 
@@ -177,7 +177,7 @@ select {
 }
 
 .dropdown-item > a {
-    color: $linkindropdown;
+    color: $strongest;
 }
 
 .dropdown-item:hover a {
@@ -210,38 +210,38 @@ blockquote::before {
 
 /* TITLES */
 h1 {
-    color: $maingray;
+    color: $medium;
     font-size: 200%;
     font-weight: normal;
     margin-top: 0;
 }
 
 h2 {
-    color: $maingray;
+    color: $medium;
     font-size: 180%;
     font-weight: normal;
     margin-top: 0;
 }
 
 h3 {
-    color: $maingray;
+    color: $medium;
     font-size: 160%;
     margin: 0 auto;
 }
 
 h4 {
-    color: $maingray;
+    color: $medium;
     font-size: 150%;
     font-weight: normal;
 }
 
 h5 {
-    color: $maingray;
+    color: $medium;
     font-size: 130%;
 }
 
 label {
-    color: $maingray;
+    color: $medium;
     font-size: 120%;
     font-weight: normal;
 }
@@ -261,13 +261,13 @@ label {
 
 /*  MENU is below main nav */
 .tabbed-menu {
-    border-bottom: 1px solid $firstgray;
+    border-bottom: 1px solid $firstlevel;
     line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
 
     li {
-        color: $maingray;
+        color: $medium;
         cursor: pointer;
         display: inline;
         margin-right: 2%;
@@ -287,7 +287,7 @@ label {
 
 .alert a,
 .alert a:hover {
-    color: $darkgray;
+    color: $mediumstrong;
 }
 
 .alert-success {
@@ -350,7 +350,7 @@ label {
 }
 
 .elab-tooltip:hover span {
-    background: $darkgray;
+    background: $mediumstrong;
     color: #fff;
     display: inline;
     left: 50%;
@@ -363,7 +363,7 @@ label {
 
 .elab-tooltip span::after {
     border: 4px solid transparent;
-    border-bottom-color: $darkgray;
+    border-bottom-color: $mediumstrong;
     bottom: 100%;
     content: ' ';
     height: 0;
@@ -400,7 +400,7 @@ label {
 }
 
 .elab-tooltip-top:hover span {
-    background: $darkgray;
+    background: $mediumstrong;
     bottom: 0;
     color: #fff;
     display: inline;
@@ -413,7 +413,7 @@ label {
 
 .elab-tooltip-top span::after {
     border: solid transparent;
-    border-top-color: $darkgray;
+    border-top-color: $mediumstrong;
     border-width: 4px;
     content: ' ';
     height: 0;
@@ -441,7 +441,7 @@ button:disabled {
 }
 
 .separator {
-    border-bottom: 1px solid $firstgray;
+    border-bottom: 1px solid $firstlevel;
     margin: 20px 0;
     padding-bottom: 30px;
 }
@@ -481,7 +481,7 @@ button:disabled {
     text-align: center;
 
     tr {
-        border-bottom: 1px solid $lightgray;
+        border-bottom: 1px solid $medium;
     }
 
     td,
@@ -508,8 +508,8 @@ button:disabled {
 /* TABLE SHOW MODE */
 .item-table {
     td {
-        border-left: 1px solid $firstgray;
-        border-right: 1px solid $firstgray;
+        border-left: 1px solid $firstlevel;
+        border-right: 1px solid $firstlevel;
     }
 
     .title {
@@ -565,12 +565,12 @@ button:disabled {
 }
 
 .left-panel-opener {
-    background-color: $darkgray;
+    background-color: $mediumstrong;
     border-radius: 0 5px 5px 0;
     padding: 10px 5px;
 
     i {
-        color: $firstgray;
+        color: $firstlevel;
     }
 
 }
@@ -630,7 +630,7 @@ button:disabled {
 /* ITEMS */
 .item {
     background-color: $white;
-    border: 1px solid $firstgray;
+    border: 1px solid $firstlevel;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
     margin: 5px auto;
@@ -643,7 +643,7 @@ button:disabled {
     }
 
     .fa-square-plus {
-        color: $darkgray;
+        color: $mediumstrong;
     }
 
     .fa-comments,
@@ -658,7 +658,7 @@ button:disabled {
 
     .owner {
         a {
-            color: $maingray;
+            color: $medium;
 
             &:hover {
                 color: $secondlevel;
@@ -674,12 +674,12 @@ button:disabled {
         }
 
         .fa-lock {
-            background-color: $firstgray;
-            color: $maingray;
+            background-color: $firstlevel;
+            color: $medium;
         }
 
         &.bgnd-dark {
-            background-color: $darkgray;
+            background-color: $mediumstrong;
 
             &:hover {
                 background-color: $secondlevel;
@@ -687,7 +687,7 @@ button:disabled {
         }
 
         &.bgnd-gray {
-            background-color: $firstgray;
+            background-color: $firstlevel;
         }
     }
 }
@@ -695,9 +695,9 @@ button:disabled {
 
 /* SIDE PANEL */
 .side-panel {
-    background: $darkgray;
+    background: $mediumstrong;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-    color: $lightwhite;
+    color: $mainbackground;
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -708,18 +708,18 @@ button:disabled {
     width: max(22%, 300px);
 
     hr {
-        background-color: $lightwhite;
+        background-color: $mainbackground;
     }
 
     h2,
     h3,
     .fas,
     .far {
-        color: $lightwhite;
+        color: $mainbackground;
     }
 
     .side-panel-item {
-        background-color: $lightgray;
+        background-color: $medium;
         font-size: 110%;
         padding: 5px 0 5px 10px;
 
@@ -730,13 +730,13 @@ button:disabled {
         }
 
         &:hover:not(.selected) {
-            background-color: $maingray;
+            background-color: $medium;
         }
     }
 
     /* Make the titles that you can click on to toggle the steps visibly clickable */
     [data-action='toggle-next']:hover {
-        background-color: $maingray;
+        background-color: $medium;
     }
 }
 
@@ -745,7 +745,7 @@ button:disabled {
 }
 
 .next-step-text {
-    color: $maingray;
+    color: $medium;
     font-size: 80%;
     text-transform: uppercase;
 }
@@ -766,7 +766,7 @@ button:disabled {
 }
 
 .box {
-    border: 1px solid $firstgray;
+    border: 1px solid $firstlevel;
     border-radius: 5px;
     margin-top: 10px;
     overflow: auto;
@@ -781,7 +781,7 @@ button:disabled {
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
 .step-static {
-    border: 1px solid $firstgray;
+    border: 1px solid $firstlevel;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -816,12 +816,12 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .hl-hover-gray:hover {
-    background-color: $firstgray;
+    background-color: $firstlevel;
 }
 
 /* COMMENTS */
 .comment-header {
-    background-color: $firstgray;
+    background-color: $firstlevel;
 }
 
 
@@ -837,7 +837,7 @@ the form-control fails to do that so we do the border ourselves */
     word-break: break-word;
 
     a {
-        color: $darkgray;
+        color: $mediumstrong;
 
         &:hover {
             color: $secondlevel;
@@ -846,7 +846,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-strong {
-    color: $black;
+    color: $strongest;
 }
 
 /* for icons such as pin, need important to override default icon color */
@@ -860,11 +860,11 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .item-date {
-    color: $maingray;
+    color: $medium;
 }
 
 .smallgray {
-    color: $lightgray;
+    color: $medium;
     font-size: 80%;
 }
 
@@ -884,7 +884,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* elabid */
 .elabid {
-    color: $maingray;
+    color: $medium;
     overflow-wrap: break-word;
 }
 
@@ -906,9 +906,9 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $white;
 }
 
-/* light gray background for archived users */
-.bg-lightgray {
-    background-color: $lightgray;
+/* background for archived users */
+.bg-medium {
+    background-color: $secondlevel;
 }
 
 /* print only the main div */
@@ -1026,7 +1026,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .eye-overlay:hover::after {
-    background-color: $maingray;
+    background-color: $medium;
     color: $white;
     content: '\f06e';
     display: block;
@@ -1081,7 +1081,7 @@ the form-control fails to do that so we do the border ourselves */
 .far,
 .fas,
 .fab {
-    color: $maingray;
+    color: $medium;
 }
 
 .fa-bell.active {
@@ -1091,7 +1091,7 @@ the form-control fails to do that so we do the border ourselves */
 /* caption for tinymce */
 .image {
     background: #f5f2f0;
-    border: 1px solid $maingray;
+    border: 1px solid $medium;
     display: inline-block;
     margin: 0 2px 0 1px;
 }
@@ -1201,16 +1201,16 @@ input[type='color'] {
     }
 }
 
-.white-border {
-    border: 1px solid $lightwhite;
+.border-white {
+    border: 1px solid $mainbackground;
 }
 
 /* notifications */
 .notification {
-    border-top: 1px solid $lightgray;
+    border-top: 1px solid $medium;
 
     .relative-moment {
-        color: $lightgray;
+        color: $medium;
         font-size: 80%;
     }
 }
@@ -1219,7 +1219,7 @@ input[type='color'] {
     background-color: $elabblue;
 
     span {
-        color: $lightwhite;
+        color: $mainbackground;
     }
 }
 
@@ -1246,7 +1246,7 @@ input[type='color'] {
 
 /* The slider */
 .slider {
-    background-color: $lightgray;
+    background-color: $medium;
     border-radius: 34px;
     bottom: 0;
     cursor: pointer;
@@ -1270,7 +1270,7 @@ input[type='color'] {
 }
 
 .slider-label-deactivated {
-    color: $lightgray;
+    color: $medium;
 }
 
 input:checked + .slider {
@@ -1286,7 +1286,7 @@ input:checked + .slider::before {
 }
 
 .section-title {
-    background-color: $firstgray;
+    background-color: $firstlevel;
     font-size: 120%;
 }
 

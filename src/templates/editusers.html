@@ -28,7 +28,7 @@
         </div>
         <div class='input-group-append'>
           <div class="input-group-text">
-            <input type='checkbox' class='mr-1' name='includeArchived'>{{ 'Include archived'|trans }}
+            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
           </thead>
           <tbody>
             {% for user in usersArr %}
-              <tr {{ user.archived ? "class='bg-lightgray'" }}>
+              <tr {{ user.archived ? "class='bg-medium'" }}>
                 <td><span class='elab-tooltip badge badge-secondary {{ user.archived ? 'alert-danger' }}'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span></td>
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>

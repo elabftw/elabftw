@@ -32,8 +32,7 @@
     text-transform: uppercase;
 
     /* blue on hover */
-    &:hover,
-    svg:hover {
+    &:hover {
         color: $elabblue !important;
         transition-duration: 500ms;
     }

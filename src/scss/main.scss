@@ -507,11 +507,6 @@ button:disabled {
 
 /* TABLE SHOW MODE */
 .item-table {
-    td {
-        border-left: 1px solid $firstlevel;
-        border-right: 1px solid $firstlevel;
-    }
-
     .title {
         font-size: 100%;
     }
@@ -536,11 +531,17 @@ button:disabled {
         text-align: center;
     }
 
-    // Force item-info and item-date not to break into two lines
-    .item-info {
-        // Overwrite this
-        padding-left: 5px;
+    /* Force actions or date to not break into two lines */
+    .one-line {
         white-space: nowrap;
+    }
+
+    .item-owner a {
+        color: $medium;
+
+        &:hover {
+            color: $secondlevel;
+        }
     }
 }
 
@@ -845,10 +846,6 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
-.color-strong {
-    color: $strongest;
-}
-
 /* for icons such as pin, need important to override default icon color */
 .color-weak {
     color: $secondlevel !important;
@@ -857,10 +854,9 @@ the form-control fails to do that so we do the border ourselves */
 .category-button {
     background-color: var(--bg);
     color: $white;
-}
-
-.item-date {
-    color: $medium;
+    font-size: 75%;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .smallgray {
@@ -1119,10 +1115,6 @@ input[type='color'] {
     background-color: $lightblue;
 }
 
-.color-white {
-    color: #fff;
-}
-
 /* give the togglePassword some borders like input */
 .input-border {
     border: 1px solid #ced4da;
@@ -1207,7 +1199,7 @@ input[type='color'] {
 
 /* notifications */
 .notification {
-    border-top: 1px solid $medium;
+    border-top: 1px solid $mainbackground;
 
     .relative-moment {
         color: $medium;

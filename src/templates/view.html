@@ -158,7 +158,7 @@
       {# TOGGLE PIN #}
       <div class='mr-3'>
         <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='hl-hover-gray p-2 rounded'>
-          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ Entity.Pins.isPinned ? '' : 'color-weak' }} fa-fw'></i>
+          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
         </div>
       </div>
 
@@ -195,7 +195,7 @@
   </div>
 
   {# TITLE #}
-  <h1 id='documentTitle' class='mb-4 title color-strong'>
+  <h1 id='documentTitle' class='mb-4 title text-dark'>
     {% if Entity.type == 'items' %}
       <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
     {% endif %}
@@ -207,7 +207,7 @@
     <div class='edit-mode-label'>
       <i aria-hidden='true' class='fas fa-folder'></i> {{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
     </div>
-    <span style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category|upper }}</span>
+    <span style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category}}</span>
   </div>
 
   {# TAGS #}
@@ -253,7 +253,7 @@
       {% set nextStepsArr = next_step|split('|') %}
       {% set next = nextStepsArr|first %}
       <p>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='color-strong'>{{ next|raw }}</span>
+      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='text-dark'>{{ next|raw }}</span>
       </p>
   {% endif %}
 
@@ -270,8 +270,8 @@
           {% set body = Entity.entityData.body %}
       {% endif %}
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-      {# body in view mode is color-strong for more lisibility see github issue #52 #}
-      <div id='body_view' class='pt-2 color-strong' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
+      {# body in view mode is text-dark for more lisibility see github issue #52 #}
+      <div id='body_view' class='pt-2 text-dark' {{ not displayMainText ? 'hidden' }}>{{ body|raw }}</div>
   {% endif %}
 
   <!-- METADATA view -->
@@ -325,7 +325,7 @@
         <div class='input-group my-1 rounded'>
           <textarea id='commentsCreateArea' class='form-control p-2 brr-none' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
           <div class='input-group-append'>
-            <button class='btn btn-primary' type='button' data-action='create-comment'><i class='fas fa-paper-plane color-white'></i></button>
+            <button class='btn btn-primary' type='button' data-action='create-comment'><i class='fas fa-paper-plane text-white'></i></button>
           </div>
         </div>
       </div>

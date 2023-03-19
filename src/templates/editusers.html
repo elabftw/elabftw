@@ -73,7 +73,7 @@
                   {% if App.Session.get('is_sysadmin') and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
                     {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
                     {% if addableToTeams %}
-                      <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                      <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
                       <span class='form-group form-inline mt-2' hidden>
                         <select class='form-control'>
                           {% for team in addableToTeams %}

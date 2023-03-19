@@ -1,20 +1,22 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
-<tr class='item' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
+<tr class='item' id='parent_{{ randomId }}'>
 
   {# DATE #}
-  <td class='item-date'>
-    <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|date('Y-m-d') }}</span>
-    {# timestamp icon #}
-    {% if item.timestamped %}
-      <i class='far fa-calendar-check'></i>
-    {% endif %}
+  <td class='item-date one-line'>
+    {# checkbox #}
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+    {{ item.date|date('Y-m-d') }}
   </td>
 
   {# TITLE #}
   <td class='title'>
-    {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+    {# edit icon #}
+    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+      <span class='p-1 rounded hl-hover-gray'>
+        <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
+      </span>
+    {% endif %}
     {# lock icon #}
     {% if item.locked %}
       <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
@@ -34,7 +36,11 @@
 
   {# CATEGORY #}
   <td class='item-next'>
-    <span class='item-type' style='color:#{{ item.color }}'>{{ item.category }}</span>
+    {# timestamp icon #}
+    {% if item.timestamped %}
+      <i class='far fa-calendar-check mr-1'></i>
+    {% endif %}
+    <span class='item-type category-button rounded p-1' style='--bg:#{{ item.color }}'>{{ item.category }}</span>
   </td>
 
   {# TAGS #}
@@ -50,11 +56,7 @@
   </td>
 
   {# ACTIONS #}
-  <td class='item-info'>
-    {# edit icon #}
-    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-      <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
-    {% endif %}
+  <td class='one-line'>
     {# toggle body #}
     <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
       <i class='fas fa-square-plus link-like'></i>

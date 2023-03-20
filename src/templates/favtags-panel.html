@@ -1,10 +1,4 @@
 <div class='side-panel' id='favtagsPanel' hidden>
-  <!-- Close favtags panel arrow (bouncy). In a div to maximize trigger area -->
-  <div class='float-right bounce-left mr-2 mt-2'>
-    <a data-action='toggle-favtags' title='{{ 'Close'|trans }}'>
-        <i class='fas fa-chevron-left fa-2x'></i>
-    </a>
-  </div>
   <h3 class='p-2'>{{ 'Favorite tags'|trans }}</h3>
   <div class='input-group p-2'>
     <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
@@ -19,6 +13,7 @@
     </div>
     {% endfor %}
   </div>
+  <hr>
   <div class='m-2'>
     <input type='text' id='createFavTagInput' data-autocomplete='tags' class='form-control createFavTagInput' placeholder='{{ 'Start typing a tag'|trans }}' hidden />
   </div>

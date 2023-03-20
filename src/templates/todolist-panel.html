@@ -1,18 +1,12 @@
 <div class='side-panel' id='todolistPanel' hidden>
-  <div class='float-right bounce-left mr-2 mt-2'>
-    <a data-action='toggle-todolist' title='{{ 'Close'|trans }}'>
-      <i class='fas fa-chevron-left fa-2x'></i>
-    </a>
-  </div>
-
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-icon='todolistToggleIcon' class='p-2'><i id='todolistToggleIcon' class='fas fa-caret-down'></i> {{ 'Todolist'|trans }}</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='p-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Todolist'|trans }}</h3>
 
   <div data-save-hidden='todolistMainDiv'>
     <div class='input-group mt-2 mb-3 p-2'>
-      <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'New item'|trans }}'>
+      <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'Add a new task'|trans }}'>
       <div class='input-group-append'>
-        <button class='btn btn-outline-secondary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
-          <i class='fas fa-plus-circle fa-fw' title='{{ 'Add'|trans }}'></i>
+        <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
+          <i class='fas fa-plus fa-fw' title='{{ 'Add'|trans }}'></i>
         </button>
       </div>
     </div>

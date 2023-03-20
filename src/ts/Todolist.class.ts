@@ -9,7 +9,6 @@ import { Model, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain } from './misc';
 import FavTag from './FavTag.class';
-import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 
 export default class Todolist extends SidePanel {
@@ -37,13 +36,15 @@ export default class Todolist extends SidePanel {
     return this.readAll().then(json => {
       let html = '';
       for (const entry of json as Array<Todoitem>) {
-        html += `<div data-todoitemid=${entry.id} id='todoItem_${entry.id}' class='side-panel-item'>
-        <a class='float-right mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' title='` + i18next.t('generic-delete-warning') + `'>
-          <i class='fas fa-trash-alt'></i>
-        </a>
-        <span style='font-size:90%;display:block;'><span class='draggable sortableHandle'><i class='fas fa-sort'></i></span> <span class='relative-moment' title='${entry.creation_time}'></span></span>
-        <span class='todoItem editable' data-todoitemid='${entry.id}'>${entry.body}</span>
-      </div>`;
+        html += `<div data-todoitemid=${entry.id} id='todoItem_${entry.id}' class='side-panel-item d-flex align-items-center'>
+        <div>
+          <div>
+            <span class='draggable sortableHandle'><i class='fas fa-grip-vertical fa-fw mr-1'></i></span>
+            <input type='checkbox' class='mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' />
+            <span class='todoItem editable' data-todoitemid='${entry.id}'>${entry.body}</span></div>
+            <div class='relative-moment' title='${entry.creation_time}'></div>
+          </div>
+        </div>`;
       }
       document.getElementById('todoItems').innerHTML = html;
       makeSortableGreatAgain();

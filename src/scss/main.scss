@@ -141,6 +141,12 @@ select {
     border: 1px solid #ced4da;
 }
 
+/* prevent the caret from being too close from text */
+/* stylelint-disable-next-line selector-no-qualifying-type */
+select.form-control {
+    padding-right: 31px;
+}
+
 .form-control:focus,
 #dropdownMenu1:focus {
     border-color: $elabblue;
@@ -529,17 +535,6 @@ button:disabled {
     }
 }
 
-.left-panel-opener {
-    background-color: $mediumstrong;
-    border-radius: 0 5px 5px 0;
-    padding: 10px 5px;
-
-    i {
-        color: $firstlevel;
-    }
-
-}
-
 /* OVERLAY */
 .overlay {
     border-radius: 5px;
@@ -659,9 +654,32 @@ button:disabled {
 
 
 /* SIDE PANEL */
+.sidepanel-btn {
+    border-radius: 0 5px 5px 0;
+    padding: 10px 5px;
+
+    &.sidepanel-closed {
+        background-color: $medium;
+        box-shadow: -1rem 0 0 $medium;
+
+        i {
+            color: $mainbackground;
+        }
+    }
+
+    &.sidepanel-opened {
+        background-color: $white;
+        box-shadow: -1rem 0 0 $white;
+
+        i {
+            color: $strongest;
+        }
+    }
+}
+
 .side-panel {
     background: $mediumstrong;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
     color: $mainbackground;
     height: 100%;
     left: 0;
@@ -684,8 +702,8 @@ button:disabled {
     }
 
     .side-panel-item {
-        background-color: $medium;
-        font-size: 110%;
+        /*background-color: $medium;
+        font-size: 110%;*/
         padding: 5px 0 5px 10px;
 
         /* Favtags will show up as selected */
@@ -696,6 +714,15 @@ button:disabled {
 
         &:hover:not(.selected) {
             background-color: $medium;
+        }
+
+        i {
+            color: $secondlevel;
+        }
+
+        .relative-moment {
+            color: $secondlevel;
+            font-size: 80%;
         }
     }
 

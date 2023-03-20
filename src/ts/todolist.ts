@@ -85,6 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPDATE TODOITEM
   const malleableTodoitem = new Malle({
+    // will only work if the editable class is present (class is removed on check)
+    before: original => {
+      return original.classList.contains('editable');
+    },
     inputClasses: ['form-control'],
     fun: async (value, original) => {
       return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
@@ -115,13 +119,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY TODOITEM
     } else if (el.matches('[data-action="destroy-todoitem"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const todoitemId = parseInt(el.dataset.todoitemid);
-        TodolistC.destroy(todoitemId).then(() => {
-          // hide item
-          $('#todoItem_' + todoitemId).css('background', '#29AEB9').toggle('blind');
-        });
-      }
+      const todoitemId = parseInt(el.dataset.todoitemid);
+      TodolistC.destroy(todoitemId).then(() => {
+        // check item text
+        const content = (el.nextElementSibling as HTMLSpanElement);
+        content.style.textDecoration = 'line-through';
+        // make it non editable (before function checks for that in malle)
+        content.classList.remove('editable');
+        // disable the checkbox
+        el.setAttribute('disabled', 'disabled');
+      });
 
     // TOGGLE TODOITEM
     } else if (el.matches('[data-action="toggle-todolist"]')) {

@@ -153,9 +153,17 @@
 </nav>
 
 <!-- SHOW FAVTAGS PANEL -->
-<div class='pr-2 mt-3 float-left bounce-right' id='favtags-opener' hidden>
-  <div class='left-panel-opener' data-action='toggle-favtags' title='{{ 'Open favorite tags'|trans }}'>
-    <i class='fas fa-caret-right'></i>
+<div class='pr-2 mt-3 float-left'>
+  <div id='favtags-opener' hidden>
+    <div class='bound-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-favtags' title='{{ 'Toggle favorite tags'|trans }}'>
+      <i class='fas fa-folder-tree'></i>
+    </div>
+  </div>
+  <!-- SHOW TODOLIST PANEL -->
+  <div class='mt-3' id='todolist-opener' hidden>
+    <div class='bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-todolist' title='{{ 'Toggle todolist'|trans }}'>
+      <i class='fas fa-list-check'></i>
+    </div>
   </div>
 </div>
 <div class='real-container'>

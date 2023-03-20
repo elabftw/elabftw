@@ -388,7 +388,7 @@
   <!-- END RATING -->
   <!-- LOCK -->
   <div class='col-md-3'>
-    <label class='d-inline' for='locked'>{{ 'Locked'|trans }}</label>
+    <label for='locked'>{{ 'Locked'|trans }}</label>
     <select id='locked' name='locked' class='form-control filterHelper' data-filter='locked'>
       <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
       <option value='yes' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
@@ -399,7 +399,7 @@
 
   <!-- TIMESTAMPED -->
   <div class='col-md-3'>
-    <label class='d-inline' for='timestamped'>{{ 'Timestamped'|trans }}</label>
+    <label for='timestamped'>{{ 'Timestamped'|trans }}</label>
     <select id='timestamped' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
       <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
       <option value='yes' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>

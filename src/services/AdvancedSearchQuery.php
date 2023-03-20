@@ -62,7 +62,12 @@ class AdvancedSearchQuery
             $parser = new Parser();
             $this->parsedQuery = $parser->parse($this->expertQuery);
         } catch (SyntaxError $e) {
-            $this->exception = 'Line ' . $e->grammarLine . ', Column ' . $e->grammarColumn . ': ' . $e->getMessage();
+            $this->exception = sprintf(
+                'Line %d, Column %d: %s',
+                $e->grammarLine,
+                $e->grammarColumn,
+                $e->getMessage(),
+            );
             return false;
         }
         return true;

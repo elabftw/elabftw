@@ -1,6 +1,6 @@
 <div class='pl-3 mt-3'>
   {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-    <!-- CREATE NEW AND IMPORT BUTTONS -->
+    {# CREATE NEW AND IMPORT BUTTONS (ucp page) #}
     <div class='mb-4 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can edit.'|trans }}</p>
       <div>
@@ -9,6 +9,13 @@
         <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
         <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2 col-md-3'>
       </div>
+    </div>
+  {% endif %}
+
+  {% if App.Request.getScriptName|split('/')|last == 'team.php' %}
+    {# TEAM page #}
+    <div class='mb-4 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can view.'|trans }}</p>
     </div>
   {% endif %}
 

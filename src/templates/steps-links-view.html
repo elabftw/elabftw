@@ -47,8 +47,10 @@
             </div>
           </div>
           {# toggle body #}
-          <div data-type='experiments' class='ml-auto align-self-center mr-3' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-            <i class='fas fa-square-plus'></i>
+          <div class='ml-auto align-self-center mr-3'>
+            <div data-type='experiments' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+              <i class='fas fa-square-plus'></i>
+            </div>
           </div>
         </div>
         <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
@@ -77,12 +79,14 @@
           <div>
             <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
             <div>
-              <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
+              <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
           </div>
           {# toggle body #}
-          <div data-type='items' class='ml-auto align-self-center mr-3' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-            <i class='fas fa-square-plus'></i>
+          <div class='ml-auto align-self-center mr-3'>
+            <div data-type='items' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+              <i class='fas fa-square-plus'></i>
+            </div>
           </div>
         </div>
         <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
@@ -118,8 +122,10 @@
               </div>
             </div>
             {# toggle body #}
-            <div data-type='experiments' class='ml-auto align-self-center mr-3' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-              <i class='fas fa-square-plus'></i>
+            <div class='ml-auto align-self-center mr-3'>
+              <div data-type='experiments' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                <i class='fas fa-square-plus'></i>
+              </div>
             </div>
           </div>
           <div hidden id='{{ randomId }}'>
@@ -154,8 +160,10 @@
               </div>
             </div>
             {# toggle body #}
-            <div data-type='items' class='ml-auto align-self-center mr-3' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-              <i class='fas fa-square-plus'></i>
+            <div class='ml-auto align-self-center mr-3'>
+              <div data-type='items' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                <i class='fas fa-square-plus'></i>
+              </div>
             </div>
           </div>
           <div hidden id='{{ randomId }}'>

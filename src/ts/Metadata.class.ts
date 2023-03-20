@@ -7,7 +7,6 @@
  */
 import { Action, Entity, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
-import i18next from 'i18next';
 
 type ExtraFieldProperty =
   | string

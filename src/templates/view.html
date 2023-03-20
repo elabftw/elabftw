@@ -80,19 +80,7 @@
     {% endif %}
   </div>
 
-  {# PERMISSIONS #}
-  <div class='d-flex mb-2 align-items-center'>
-    {# CAN READ #}
-    {% set rw = 'canread' %}
-    {% set can = Entity.entityData.canread|canToHuman %}
-    {% include('view-permissions.html') %}
-  </div>
-  <div class='d-flex mb-2 align-items-center'>
-    {# CAN WRITE #}
-    {% set rw = 'canwrite' %}
-    {% set can = Entity.entityData.canwrite|canToHuman %}
-    {% include('view-permissions.html') %}
-  </div>
+  {% include('edit-permissions.html') %}
 
   <!-- SHOW EVENTS -->
   {% if Entity.entityData.is_bound %}<i class='far fa-calendar-alt'></i>

@@ -1,4 +1,17 @@
 <div class='pl-3 mt-3'>
+  {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
+    <!-- CREATE NEW AND IMPORT BUTTONS -->
+    <div class='mb-4 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can edit.'|trans }}</p>
+      <div>
+        <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
+        <div class='vertical-separator d-inline mx-3'></div>
+        <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
+        <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2 col-md-3'>
+      </div>
+    </div>
+  {% endif %}
+
   <table id='tplTable' class='table' aria-describedby='TODO' data-table-sort='true'>
     <thead>
       <tr>
@@ -6,7 +19,6 @@
         <th scope='col'>{{ 'Owner'|trans }}</th>
         <th scope='col'>{{ 'Last modification date'|trans }}</th>
         <th scope='col'>{{ 'Name'|trans }}</th>
-        <th scope='col'>{{ 'Action'|trans }}</th>
       </tr>
     </thead>
     <tbody>
@@ -15,10 +27,15 @@
           <td>{{ template.team_name }}</td>
           <td>{{ template.fullname|raw }}</td>
           <td>{{ template.modified_at }}</td>
-          <td>{% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
-          <td><a href='?tab=3&templateid={{ template.id }}'><i class='fas fa-pencil-alt'></i></a></td>
+          <td>
+            <span class='p-2 rounded hl-hover-gray'><a href='?tab=3&mode=view&templateid={{ template.id }}'><i class='fas fa-eye clickable link-like'></i></a></span>
+            {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
+              <span class='p-2 rounded hl-hover-gray'><a href='?tab=3&mode=edit&templateid={{ template.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a></span>
+            {% endif %}
+            {% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+<div id='info' data-page='template-edit' data-type='experiments_templates'></div>

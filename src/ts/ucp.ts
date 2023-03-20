@@ -31,7 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  if (entity.id) {
+  // in view mode php takes care of displaying it
+  const params = new URLSearchParams(document.location.search);
+  if (entity.id && params.get('mode') === 'edit') {
     // add extra fields elements from metadata json
     const MetadataC = new Metadata(entity);
     MetadataC.display('edit');
@@ -143,25 +145,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // input to upload an ELN archive
-  document.getElementById('import_tpl').addEventListener('change', (event) => {
-    const params = {
-      'type': 'archive',
-      'file': (event.target as HTMLInputElement).files[0],
-      'target': 'experiments_templates:0',
-    };
-    // TODO check for file size here too, like the other import modal
-    (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
-      window.location.reload();
+  const importTplInput = document.getElementById('import_tpl');
+  if (importTplInput) {
+    importTplInput.addEventListener('change', (event) => {
+      const params = {
+        'type': 'archive',
+        'file': (event.target as HTMLInputElement).files[0],
+        'target': 'experiments_templates:0',
+      };
+      // TODO check for file size here too, like the other import modal
+      (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
+        window.location.reload();
+      });
     });
-  });
+  }
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
-
-  // auto update title on blur
-  $(document).on('blur', '#title_input', function() {
-    const content = (document.getElementById('title_input') as HTMLInputElement).value;
-    const id = $(this).data('id');
-    EntityC.update(id, Target.Title, content);
-  });
 });

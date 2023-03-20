@@ -1,0 +1,17 @@
+{# TAGS #}
+<div class='d-flex mb-2 align-items-center mathjax-ignore'>
+  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
+  <div class='tags form-inline mr-2'>
+    <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
+      <!--  build the tag array -->
+      {% if Entity.entityData.tags|length > 0 %}
+        {% set tagsIdArr = Entity.entityData.tags_id|split(',') %}
+        {% set tagsValueArr = Entity.entityData.tags|split('|') %}
+        {% for tag in tagsValueArr -%}
+          <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }}' data-action='unreference-tag' data-tagid='{{ tagsIdArr[loop.index0] }}'>{{ tag|raw }}</a>
+        {%- endfor -%}
+      {% endif %}
+    </div>
+    <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
+  </div>
+</div>

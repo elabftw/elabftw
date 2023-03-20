@@ -153,7 +153,12 @@
 
 <!-- TAB 3 TEMPLATE -->
 <div data-tabcontent='3' hidden>
-  {% include 'show-templates-view.html' %}
+  <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
+  {% if App.Request.query.has('templateid') %}
+    {% include 'view-edit-template.html' %}
+  {% else %}
+    {% include 'show-templates-select.html' %}
+  {% endif %}
 </div>
 
         <!--p>{{ 'No templates from other members of the team to display!'|trans }}</p-->

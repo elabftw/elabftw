@@ -26,7 +26,7 @@ use Elabftw\Services\Check;
  * Here be dragons!
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Search');
+$App->pageTitle = _('Advanced search');
 
 $Experiments = new Experiments($App->Users);
 $Database = new Items($App->Users);

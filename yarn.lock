@@ -1211,6 +1211,11 @@ commander@9.2.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-9.2.0.tgz#6e21014b2ed90d8b7c9647230d8b7a94a4a419a9"
   integrity sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==
 
+commander@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-10.0.0.tgz#71797971162cd3cf65f0b9d24eb28f8d303acdf1"
+  integrity sha512-zS5PnTI22FIRM6ylNW8G4Ap0IEOyk62fhLSD0+uHRT9McRCLGpkVNvao4bjimpK/GShynyQkFFxHhwMcETmduA==
+
 commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
@@ -2983,10 +2988,13 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-peggy@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/peggy/-/peggy-1.0.0.tgz#df6c7816c9df0ef35e071aaf96836cb866fe7eb4"
-  integrity sha512-lH12sxAXj4Aug+vH6IGoByIQOREIlhH+x4Uzb9kce6DD8wcGeidkC0JYEOwHormKrLt5BFLTbR4PuD/tiMOirQ==
+peggy@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/peggy/-/peggy-3.0.1.tgz#5c5aac3f7b92752c81f6fcaa54ffb058157b2bea"
+  integrity sha512-opG0pnfH5ZQvlqz8Ozmk1SvIer9Rz6op0nDSkVQ4kQnVL0+KOKtIocoidxOgpLoS82r+ZW8J16FjhL3rhH/MpA==
+  dependencies:
+    commander "^10.0.0"
+    source-map-generator "0.8.0"
 
 pend@~1.2.0:
   version "1.2.0"
@@ -2998,10 +3006,10 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==
 
-phpeggy@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/phpeggy/-/phpeggy-1.0.1.tgz#c5914fe960a9880b27c9270678b93f5748640983"
-  integrity sha512-wMrxoPlCmKHCRdY4UriTzDE5hBdBaXxCIBuebLeMlk+LkAIBsZAF251i7EspetlZSqcKkT0eo93v+tzZ053glw==
+phpeggy@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/phpeggy/-/phpeggy-2.0.0.tgz#ae0beb6e9ffb0f0ce365239750ae65d23d390641"
+  integrity sha512-yyYT9fuDc/Td0JiAbgUgbOiUfONbBJqQSoO3WWii3gG3SzvZrAzvx3rhDyzWI4eo/BctuNFF1NUHg4nHLaY+Cw==
 
 picocolors@^1.0.0:
   version "1.0.0"
@@ -3644,6 +3652,11 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+source-map-generator@0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/source-map-generator/-/source-map-generator-0.8.0.tgz#10d5ca0651e2c9302ea338739cbd4408849c5d00"
+  integrity sha512-psgxdGMwl5MZM9S3FWee4EgsEaIjahYV5AzGnwUvPhWeITz/j6rKpysQHlQ4USdxvINlb8lKfWGIXwfkrgtqkA==
 
 "source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.0.2:
   version "1.0.2"

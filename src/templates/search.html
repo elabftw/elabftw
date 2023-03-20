@@ -454,6 +454,7 @@
 
 <!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
   it avoids having to repeat the query params -->
+<a href='#' id='anchor'></a>
 {% if App.Request.query.has('type') %}
   <h2>{{ 'Results'|trans }}</h2>
   <hr>
@@ -461,5 +462,4 @@
   </form>
 {% endif %}
 
-<a href='#' id='anchor'></a>
 <div id='shortcuts' data-create='{{ App.Users.userData.sc_create }}'></div>

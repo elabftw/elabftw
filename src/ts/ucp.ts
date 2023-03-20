@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const location = resp.headers.get('location').split('/');
           const newId = parseInt(location[location.length -1], 10);
           EntityC.update(newId, Target.ContentType, String(editor.typeAsInt)).then(() => {
-            window.location.href = `ucp.php?tab=3&templateid=${newId}`;
+            window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
           });
         });
       }

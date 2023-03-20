@@ -32,7 +32,7 @@ export default class SidePanel {
   }
 
   show(): void {
-    $('#container').css('width', '78%').css('margin-left', 'max(22%, 300px)');
+    $('#container').css('width', '76%').css('margin-left', 'max(24%, 330px)');
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state

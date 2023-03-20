@@ -1,4 +1,7 @@
 {% include 'head.html' %}
+{% block title %}
+  <h1 id='pageTitle'>{{ App.pageTitle }}</h1>
+{% endblock %}
 
 <!-- Modal for advanced search -->
 <div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>

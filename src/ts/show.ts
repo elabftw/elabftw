@@ -349,8 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // so check for the type param in url that will be present on search page
   const params = new URLSearchParams(document.location.search.slice(1));
   if (!params.get('type')) {
-    document.getElementById('favtags-opener').removeAttribute('hidden');
-    document.getElementById('todolist-opener').removeAttribute('hidden');
+    document.getElementById('sidepanel-buttons').removeAttribute('hidden');
   }
 
   // FAVTAGS PANEL

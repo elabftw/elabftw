@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.setAttribute('disabled', 'disabled');
       });
 
-    // TOGGLE TODOITEM
+    // TOGGLE TODOLIST
     } else if (el.matches('[data-action="toggle-todolist"]')) {
       TodolistC.toggle();
     }

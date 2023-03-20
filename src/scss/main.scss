@@ -408,17 +408,6 @@ label {
     width: 0;
 }
 
-
-/* BUTTONS */
-.button-small {
-    color: $white;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 5px 10px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
 button:disabled {
     cursor: not-allowed;
 }
@@ -688,7 +677,7 @@ button:disabled {
     padding-top: 10px;
     position: fixed;
     top: 0;
-    width: max(22%, 300px);
+    width: max(24%, 330px);
 
     hr {
         background-color: $mainbackground;
@@ -844,6 +833,10 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-medium {
     color: $medium;
+}
+
+.color-white {
+    color: $white !important;
 }
 
 .togglable-section-title {

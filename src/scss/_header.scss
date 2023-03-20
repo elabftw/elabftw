@@ -41,6 +41,10 @@
     &.active {
         border-bottom: 6px $elabblue solid;
     }
+
+    i {
+        color: $secondlevel;
+    }
 }
 
 /* search bar in head.php ; nav */

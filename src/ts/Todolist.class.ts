@@ -82,9 +82,6 @@ export default class Todolist extends SidePanel {
 
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
-    if (!document.getElementById('favtagsPanel').hasAttribute('hidden')) {
-      document.getElementById('favtags-opener').removeAttribute('hidden');
-    }
     // force favtags to close if it's open
     (new FavTag).hide();
     super.toggle();

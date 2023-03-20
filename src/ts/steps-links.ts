@@ -154,9 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElements(['linksDiv', 'linksExpDiv']);
-        // clear input field
-        $(this).val('');
+        reloadElements(['linksDiv', 'linksExpDiv']).then(() => {
+          // clear input field
+          $(this).val('');
+          addAutocompleteToLinkInputs();
+        });
       });
     }
   });
@@ -182,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
       });
       $(this).val('');
+      addAutocompleteToLinkInputs();
     }
   });
 

@@ -139,7 +139,7 @@
     <hr>
 
     <label for="common_template_md">{{ 'Common Experiment Template'|trans }} (Markdown)</label>
-    <textarea style='height:400px' class='markdown-textarea' name="common_template_md" id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
+    <textarea style='height:400px' class='markdown-textarea form-control mt-2' name="common_template_md" id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
       <button data-action='patch-team-common-template-md' data-id='{{ App.teamArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>

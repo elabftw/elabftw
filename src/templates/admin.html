@@ -73,13 +73,13 @@
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_name' type='text' value='{{ App.teamArr.link_name }}' name='link_name' id='link_name' />
+      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='link_name' type='text' value='{{ App.teamArr.link_name }}' name='link_name' id='link_name' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
-      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_href' value='{{ App.teamArr.link_href }}' name='link_href' id='link_href' />
+      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/current' data-target='link_href' value='{{ App.teamArr.link_href }}' name='link_href' id='link_href' />
     </div>
     <hr>
 
@@ -99,7 +99,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canread' id='force_canread'>
+      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canread' id='force_canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ App.teamArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
@@ -115,7 +115,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canwrite' id='force_canwrite'>
+      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canwrite' id='force_canwrite'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}' {{ App.teamArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}

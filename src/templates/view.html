@@ -20,15 +20,11 @@
 {% include('view-edit-toolbar.html') %}
 
 {% if Entity.entityData.timestamped %}
-<div class='alert alert-success'><i class='fas fa-info-circle'></i>
-  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw }}
-</div>
+  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw|msg('ok', false) }}
 {% endif %}
 
 {% if Entity.entityData.locked %}
-<div class='alert alert-success'><i class='fas fa-info-circle'></i>
-  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw }}
-</div>
+  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw|msg('ok', false) }}
 {% endif %}
 
 <section id='main_section'>

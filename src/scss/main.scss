@@ -839,6 +839,18 @@ the form-control fails to do that so we do the border ourselves */
     color: $white !important;
 }
 
+.color-success {
+    color: $elabblue !important;
+}
+
+.color-danger {
+    color: $dangerred !important;
+}
+
+.color-warning {
+    color: #856404 !important;
+}
+
 .togglable-section-title {
     color: $medium;
     font-size: 100%;

@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const warningDiv = document.createElement('div');
       warningDiv.classList.add('alert', 'alert-warning');
       const chevron = document.createElement('i');
-      chevron.classList.add('fas', 'fa-chevron-right');
+      chevron.classList.add('fas', 'fa-chevron-right', 'color-warning', 'fa-fw');
       warningDiv.appendChild(chevron);
       const text = document.createElement('span');
       text.classList.add('ml-1');

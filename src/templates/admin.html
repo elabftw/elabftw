@@ -259,10 +259,15 @@
       {% for status in statusArr %}
         <li id='status_{{ status.category_id }}' data-statusid='status_{{ status.category_id }}' class='list-group-item'>
           <ul class='list-inline'>
+            <li class='list-inline-item'>
+              <span class='draggable sortableHandle'>
+                <i class='fas fa-grip-vertical fa-fw'></i>
+              </span>
+            </li>
 
             <li class='list-inline-item'>
               <label for='statusName_{{ status.category_id }}'>{{ 'Name'|trans }}</label>
-              <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category }}' />
+              <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category|raw }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>
@@ -281,11 +286,6 @@
 
             <li class='list-inline-item'>
               <button data-id='{{ status.category_id }}' data-teamid='{{ App.Users.userData.team }}' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
-            </li>
-            <li class='list-inline-item'>
-              <span class='draggable sortableHandle float-right'>
-                <i class='fas fa-sort fa-2x'></i>
-              </span>
             </li>
           </ul>
         </li>

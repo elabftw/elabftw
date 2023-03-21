@@ -138,18 +138,13 @@ select {
     background: #fff url('images/ico-arrow.png') no-repeat 97% 56%;
 }
 
-#dropdownMenu1 {
-    border: 1px solid #ced4da;
-}
-
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */
 select.form-control {
     padding-right: 31px;
 }
 
-.form-control:focus,
-#dropdownMenu1:focus {
+.form-control:focus {
     border-color: $elabblue;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
     z-index: 3;
@@ -385,11 +380,6 @@ button:disabled {
         text-align: center;
     }
 
-    /* Force actions or date to not break into two lines */
-    .one-line {
-        white-space: nowrap;
-    }
-
     .item-owner a {
         color: $medium;
 
@@ -591,8 +581,6 @@ button:disabled {
     }
 
     .side-panel-item {
-        /*background-color: $medium;
-        font-size: 110%;*/
         padding: 5px 0 5px 10px;
 
         /* Favtags will show up as selected */

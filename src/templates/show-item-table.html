@@ -1,9 +1,8 @@
-{# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
 <tr class='item' id='parent_{{ randomId }}'>
 
   {# DATE #}
-  <td class='item-date one-line'>
+  <td class='item-date'>
     {# checkbox #}
     <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
     {{ item.date|date('Y-m-d') }}

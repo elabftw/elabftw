@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
+    eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
     // selection
     select: function(info): void {
       if (!editable) { return; }

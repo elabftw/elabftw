@@ -84,7 +84,6 @@
   <div class='row mb-3'>
     <div class='col-md-3'>
       <!-- CATEGORY -->
-      {# Note: option color doesn't show up in firefox #}
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
@@ -99,10 +98,11 @@
     <div class='col-md-3'>
       <!-- ITEM LIST -->
       <form>
-        <select name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
+        <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
           {% for item in itemsArr %}
-            <option style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
+            {# data-color is used to set the background during initial drag #}
+            <option data-color='{{ item.color }}' style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
             {{ item.category }} - {{ item.title }}</option>
           {% endfor %}
         </select>

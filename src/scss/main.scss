@@ -491,7 +491,7 @@ button:disabled {
     }
 
     .fa-square-plus {
-        color: $mediumstrong;
+        color: $medium;
     }
 
     .fa-comments,
@@ -527,7 +527,7 @@ button:disabled {
         }
 
         &.bgnd-dark {
-            background-color: $mediumstrong;
+            background-color: $medium;
 
             &:hover {
                 background-color: $secondlevel;
@@ -547,8 +547,8 @@ button:disabled {
     padding: 10px 5px;
 
     &.sidepanel-closed {
-        background-color: $medium;
-        box-shadow: -1rem 0 0 $medium;
+        background-color: $mediumstrong;
+        box-shadow: -1rem 0 0 $mediumstrong;
 
         i {
             color: $mainbackground;
@@ -557,7 +557,7 @@ button:disabled {
 
     &.sidepanel-opened {
         background-color: $white;
-        border: 1px solid $medium;
+        border: 1px solid $mediumstrong;
         box-shadow: -1rem 0 0 $white;
 
         i {

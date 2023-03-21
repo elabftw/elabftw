@@ -176,19 +176,25 @@ List1
   = "'" @ListString1 "'"
 
 ListString1
-  = @$((
+  = chars:(
     [^\n\r\f\\']
     / Escape
-  )+)
+  )+
+  {
+    return join("", $chars);
+  }
 
 List2
   = '"' @ListString2 '"'
 
 ListString2
-  = @$((
+  = chars:(
     [^\n\r\f\\"]
     / Escape
-  )+)
+  )+
+  {
+    return join("", $chars);
+  }
 
 LiteralInField 'term'
   = literal:String
@@ -210,10 +216,13 @@ Literal 'term'
   }
 
 String
-  = @$((
+  = chars:(
     [^\n\r\f\\"'|&!() ]
     / Escape
-  )+)
+  )+
+  {
+    return join("", $chars);
+  }
 
 Escape
   = $('\\' [%_]) // Escape MySQL wildcard characters

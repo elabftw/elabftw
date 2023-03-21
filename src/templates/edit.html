@@ -148,6 +148,7 @@
 {# UPLOAD FORM: not togglable or dropzone doesn't register #}
 <h3 class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Attach a file'|trans }}</h3>
 <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
+<hr>
 
 {% include 'uploads.html' %}
 

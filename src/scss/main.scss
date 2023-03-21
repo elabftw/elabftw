@@ -556,6 +556,7 @@ button:disabled {
 
     &.sidepanel-opened {
         background-color: $white;
+        border: 1px solid $medium;
         box-shadow: -1rem 0 0 $white;
 
         i {

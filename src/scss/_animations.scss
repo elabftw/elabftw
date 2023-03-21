@@ -49,43 +49,33 @@
 @keyframes bounce-left {
     0%,
     100%,
-    20%,
     50%,
     80% {
         transform: translateX(0);
     }
 
-    40% {
-        transform: translateX(-7px);
-    }
-
-    60% {
-        transform: translateX(-3px);
+    50% {
+        transform: translateX(-6px);
     }
 }
 
 @keyframes bounce-right {
     0%,
     100%,
-    20%,
     50%,
     80% {
         transform: translateX(0);
     }
 
-    40% {
-        transform: translateX(7px);
-    }
-
-    60% {
-        transform: translateX(3px);
+    50% {
+        transform: translateX(6px);
     }
 }
 
 .bounce-left:hover {
-    animation: bounce-left 666ms;
+    animation: bounce-left 250ms;
 }
 
 .bounce-right:hover {
-    animation: bounce-right 666ms;
+    animation: bounce-right 250ms;
 }

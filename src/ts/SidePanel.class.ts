@@ -27,6 +27,7 @@ export default class SidePanel {
     localStorage.setItem(`is${this.model}Open`, '0');
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.add('bounce-right');
+    opener.classList.remove('bounce-left');
     opener.classList.remove('sidepanel-opened');
     opener.classList.add('sidepanel-closed');
   }
@@ -39,6 +40,7 @@ export default class SidePanel {
     localStorage.setItem(`is${this.model}Open`, '1');
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.remove('bounce-right');
+    opener.classList.add('bounce-left');
     opener.classList.add('sidepanel-opened');
     opener.classList.remove('sidepanel-closed');
   }

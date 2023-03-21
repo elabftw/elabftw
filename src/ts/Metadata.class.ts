@@ -149,6 +149,7 @@ export class Metadata {
     wrapperDiv.append(nameEl);
     wrapperDiv.append(this.getDescriptionSpan(properties));
     wrapperDiv.append(valueEl);
+    wrapperDiv.append(document.createElement('hr'));
     return wrapperDiv;
   }
 

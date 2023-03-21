@@ -522,11 +522,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const MetadataC = new Metadata({type: entityType, id: entityId});
           MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
-            contentDiv.classList.remove('col-md-12');
-            contentDiv.style.border = '0';
-            contentDiv.style.padding = '0 20px';
-            contentDiv.firstChild.remove();
-
             // go over all the type: url elements and create a link dynamically
             generateMetadataLink();
           });

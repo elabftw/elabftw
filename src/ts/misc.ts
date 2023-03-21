@@ -427,6 +427,7 @@ export function permissionsToJson(base: number, extra: string[]): string {
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
     const link = document.createElement('a');
+    link.classList.add('d-block');
     const url = (el as HTMLSpanElement).innerText;
     link.href = url;
     link.text = url;

@@ -33,6 +33,10 @@
   <div class='lds-dual-ring'></div>
 </div>
 
+{# set variables for binary-settings template and other inputs with a data-model #}
+{% set src = App.teamArr %}
+{% set model = 'teams/current' %}
+
 <!-- TAB 1 TEAM CONFIG -->
 <div data-tabcontent='1' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Configure your Team'|trans }}</h3>
@@ -40,63 +44,42 @@
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='announcement' class='col-form-label'>{{ 'Announcement'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='announcement' type='text' id='announcement' name='announcement' value='{{ teamConfigArr.announcement }}' />
+      <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='announcement' type='text' id='announcement' name='announcement' value='{{ App.teamArr.announcement }}' />
     </div>
     <p class='smallgray'>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='deletable_xp' class='col-form-label'>{{ 'Users can delete experiments'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='deletable_xp' {{ teamConfigArr.deletable_xp == 1 ? 'checked="checked"' }} id='deletable_xp'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'An admin account will always be able to delete experiments.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'deletable_xp',
+      'label': 'Users can delete experiments',
+      'help': 'An admin account will always be able to delete experiments.'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='deletable_item' class='col-form-label'>{{ 'Users can delete items'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='deletable_item' {{ teamConfigArr.deletable_item == 1 ? 'checked="checked"' }} id='deletable_item'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'An admin account will always be able to delete items.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'deletable_item',
+      'label': 'Users can delete items',
+      'help': 'An admin account will always be able to delete items.'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='user_create_tag' class='col-form-label'>{{ 'Users can create tags'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='user_create_tag' {{ teamConfigArr.user_create_tag == 1 ? 'checked="checked"' }} id='user_create_tag'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'An admin account will always be able to create tags.'|trans }}</p>
-    <hr>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'user_create_tag',
+      'label': 'Users can create tags',
+      'help': 'An admin account will always be able to create tags.'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='force_exp_tpl' class='col-form-label'>{{ 'Force experiment template use'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='force_exp_tpl' {{ teamConfigArr.force_exp_tpl == 1 ? 'checked="checked"' }} id='force_exp_tpl'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'force_exp_tpl',
+      'label': 'Force experiment template use'} %}
   </div>
   <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
 
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_name' type='text' value='{{ teamConfigArr.link_name }}' name='link_name' id='link_name' />
+      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_name' type='text' value='{{ App.teamArr.link_name }}' name='link_name' id='link_name' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
-      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_href' value='{{ teamConfigArr.link_href }}' name='link_href' id='link_href' />
+      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/{{ App.Users.userData.team }}' data-target='link_href' value='{{ App.teamArr.link_href }}' name='link_href' id='link_href' />
     </div>
     <hr>
 
@@ -105,49 +88,36 @@
 
   <div class='pl-3 mt-2'>
 
-    <div class='d-flex justify-content-between'>
-      <label for='public_db' class='col-form-label'>{{ 'Anonymous visitors can see database items'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='public_db' {{ teamConfigArr.public_db == 1 ? 'checked="checked"' }} id='public_db'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'public_db',
+      'label': 'Anonymous visitors can see database items'} %}
 
-    <div class='d-flex justify-content-between'>
-      <label for='do_force_canread' class='col-form-label'>{{ 'Enforce read permissions?'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='do_force_canread' {{ teamConfigArr.do_force_canread == 1 ? 'checked="checked"' }} id='do_force_canread'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'Select if you want to enforce read permissions on experiments'|trans }}</p>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'do_force_canread',
+      'label': 'Enforce read permissions?',
+      'help': 'Select if you want to enforce read permissions on experiments'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
       <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canread' id='force_canread'>
         {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ teamConfigArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          <option value='{{ key }}' {{ App.teamArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
       </select>
     </div>
     <p class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</p>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='do_force_canwrite' class='col-form-label'>{{ 'Enforce write permissions?'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='teams/{{ App.Users.userData.team }}' data-target='do_force_canwrite' {{ teamConfigArr.do_force_canwrite == 1 ? 'checked="checked"' }} id='do_force_canwrite'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <p class='smallgray'>{{ 'Select if you want to enforce write permissions on experiments'|trans }}</p>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'do_force_canwrite',
+      'label': 'Enforce write permissions?',
+      'help': 'Select if you want to enforce write permissions on experiments'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
       <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/{{ App.Users.userData.team }}' data-target='force_canwrite' id='force_canwrite'>
         {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ teamConfigArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
+          <option value='{{ key }}' {{ App.teamArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
         {% endfor %}
       </select>
     </div>
@@ -160,19 +130,19 @@
   <div class='pl-3 mt-2'>
     <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
     <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
-        {{ teamConfigArr.common_template|raw }}
+        {{ App.teamArr.common_template|raw }}
     </textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template' data-id='{{ teamConfigArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-team-common-template' data-id='{{ App.teamArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
     <hr>
 
     <label for="common_template_md">{{ 'Common Experiment Template'|trans }} (Markdown)</label>
-    <textarea style='height:400px' class='markdown-textarea' name="common_template_md" id='common_template_md'>{{ teamConfigArr.common_template_md|raw }}</textarea>
+    <textarea style='height:400px' class='markdown-textarea' name="common_template_md" id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template-md' data-id='{{ teamConfigArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-team-common-template-md' data-id='{{ App.teamArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
   </div>

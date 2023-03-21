@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -16,7 +15,6 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
-use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,9 +32,7 @@ $Response->prepare($Request);
 try {
     $Controller = new DatabaseController($App, new Items($App->Users));
     // show nothing to anon if admin didn't set the DB as public
-    $Teams = new Teams($App->Users);
-    $teamConfigArr = $Teams->readOne();
-    if ($App->Session->has('is_anon') && ($teamConfigArr['public_db'] === '0')) {
+    if ($App->Session->has('is_anon') && ($App->teamArr['public_db'] === 0)) {
         throw new ImproperActionException(Tools::error(true));
     }
 

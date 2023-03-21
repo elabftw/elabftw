@@ -1,9 +1,11 @@
-{# use this template to generate a binary setting for instance config. Set a "slug" and "label" keys. #}
-{# optionally a model #}
+{# use this template to generate a binary setting for instance config. Set a "slug" and "label" keys. Set also an array "src" so we can check current config. #}
+{# optionally a "model" and "help" #}
+{% set model = model|default('config') %}
+{% set src = src|default(App.Config.configArr) %}
 <div class='d-flex justify-content-between'>
   <label for='{{ slug }}' class='col-form-label'>{{ label|trans }}</label>
   <label class='switch ucp-align'>
-    <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ model|default('config') }}' data-target='{{ slug }}' {{ App.Config.configArr[slug] ? 'checked="checked"' }} id='{{ slug }}'>
+    <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ model|default('config') }}' data-target='{{ slug }}' {{ src[slug] ? 'checked="checked"' }} id='{{ slug }}'>
     <span class='slider'></span>
   </label>
 </div>

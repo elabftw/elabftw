@@ -52,7 +52,6 @@ try {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->readOne();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -88,7 +87,6 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
-        'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'teamsArr' => $teamsArr,

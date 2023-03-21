@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
       const entityId = parseInt(el.dataset.id, 10);
       (new EntityClass(entityType)).read(entityId).then(json => {
-        // do we display the body
+        // do we display the body?
         const metadata = JSON.parse(json.metadata || '{}');
         if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
           && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')

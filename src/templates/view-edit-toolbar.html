@@ -53,11 +53,13 @@
     </a>
   {% else %}
     {# EDIT #}
-    <a class='mr-2' title='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}'>
-      <div class='hl-hover-gray p-2 rounded main-action-button'>
-        <i class='fas fa-pencil fa-fw'></i>
-      </div>
-    </a>
+    {% if not Entity.entityData.locked %}
+      <a class='mr-2' title='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}'>
+        <div class='hl-hover-gray p-2 rounded main-action-button'>
+          <i class='fas fa-pencil fa-fw'></i>
+        </div>
+      </a>
+    {% endif %}
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}

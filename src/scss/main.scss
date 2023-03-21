@@ -306,108 +306,6 @@ label {
     color: #36b1c0;
 }
 
-/* TOOLTIP */
-
-.elab-tooltip {
-    outline: none;
-    position: relative;
-}
-
-.elab-tooltip:hover {
-    text-decoration: none;
-}
-
-.elab-tooltip span {
-    border-radius: 2px;
-    box-shadow: 1px 1px 2px #666;
-    display: none;
-    font-weight: normal;
-    line-height: 16px;
-    margin: 25px auto 0;
-    padding: 5px 10px 8px;
-    position: relative;
-    text-align: center;
-    white-space: nowrap;
-    width: auto;
-    z-index: 10;
-}
-
-.elab-tooltip:hover span {
-    background: $mediumstrong;
-    color: #fff;
-    display: inline;
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    top: 0;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.elab-tooltip span::after {
-    border: 4px solid transparent;
-    border-bottom-color: $mediumstrong;
-    bottom: 100%;
-    content: ' ';
-    height: 0;
-    left: 50%;
-    margin-left: -4px;
-    pointer-events: none;
-    position: absolute;
-    width: 0;
-}
-
-.elab-tooltip-top {
-    outline: none;
-    position: relative;
-}
-
-.elab-tooltip-top:hover {
-    text-decoration: none;
-}
-
-.elab-tooltip-top span {
-    border-radius: 2px;
-    box-shadow: 1px 1px 2px #666;
-    display: none;
-    font-weight: normal;
-    line-height: 16px;
-    margin: 0 auto 25px;
-    padding: 5px 10px 8px;
-    position: relative;
-    text-align: center;
-    text-transform: none;
-    white-space: nowrap;
-    width: auto;
-    z-index: 10;
-}
-
-.elab-tooltip-top:hover span {
-    background: $mediumstrong;
-    bottom: 0;
-    color: #fff;
-    display: inline;
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.elab-tooltip-top span::after {
-    border: solid transparent;
-    border-top-color: $mediumstrong;
-    border-width: 4px;
-    content: ' ';
-    height: 0;
-    left: 50%;
-    margin-left: -4px;
-    pointer-events: none;
-    position: absolute;
-    top: 100%;
-    width: 0;
-}
-
 button:disabled {
     cursor: not-allowed;
 }
@@ -934,7 +832,6 @@ the form-control fails to do that so we do the border ourselves */
     .real-container > span,
     .real-container > hr,
     .real-container > form,
-    .elab-tooltip,
     .col-md-10,
     .col-md-2,
     .smallgray,

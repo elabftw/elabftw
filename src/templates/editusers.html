@@ -59,7 +59,7 @@
           <tbody>
             {% for user in usersArr %}
               <tr {{ user.archived ? "class='bg-medium'" }}>
-                <td><span class='elab-tooltip badge badge-secondary {{ user.archived ? 'alert-danger' }}'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span></td>
+                <td><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
@@ -93,7 +93,7 @@
                 <td>
                   <span class='malleableUsergroup hl-hover-gray rounded p-1' data-userid='{{ user.userid }}'>{{ user.usergroup|usergroupToHuman }}</span>
                 </td>
-                <td>{% if user.mfa_secret %}<span class='elab-tooltip'><span>{{ '2FA enabled'|trans }}</span><i title='' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                <td>{% if user.mfa_secret %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
                 <td>
                   {% if App.Users.userData.usergroup == '1' %}
                     <div class='clickable p-2 hl-hover-gray text-center rounded' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>

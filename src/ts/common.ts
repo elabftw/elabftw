@@ -322,6 +322,10 @@ document.addEventListener('DOMContentLoaded', () => {
         targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
+
+      if (el.dataset.toggleTargetExtra) {
+        document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
+      }
       const iconEl = el.querySelector('i');
       if (iconEl) {
         if (targetEl.hasAttribute('hidden')) {

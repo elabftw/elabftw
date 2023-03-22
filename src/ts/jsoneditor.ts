@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
         JsonEditorHelperC.saveMetadata();
       } else if (el.matches('[data-action="json-save-file"]')) {
         JsonEditorHelperC.saveNewFile();
+      } else if (el.matches('[data-action="json-saveas-file"]')) {
+        JsonEditorHelperC.saveAsFile();
       } else if (el.matches('[data-action="json-save"]')) {
-        // need the stopPropagation here to toggle #json-save-dropdown when save button is pressed
-        event.stopPropagation();
         JsonEditorHelperC.save();
       } else if (el.matches('[data-action="json-import-file"]')) {
         document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');

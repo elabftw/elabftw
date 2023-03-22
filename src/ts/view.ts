@@ -9,9 +9,7 @@ import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
-import { EntityType, Action, Model } from './interfaces';
-import { DateTime } from 'luxon';
-import EntityClass from './Entity.class';
+import { EntityType, Model } from './interfaces';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
 
   // EDIT SHORTCUT
@@ -40,82 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    // DUPLICATE
-    if (el.matches('[data-action="duplicate-entity"]')) {
-      EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&id=${resp.headers.get('location').split('/').pop()}`);
-
-    // EDIT
-    } else if (el.matches('[data-action="edit"]')) {
-      window.location.href = `?mode=edit&id=${entity.id}`;
-
-    // TOGGLE LOCK
-    } else if (el.matches('[data-action="lock-entity"]')) {
-      // reload the page to change the icon and make the edit button disappear (#1897)
-      EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
-
-    // SEE EVENTS
-    } else if (el.matches('[data-action="see-events"]')) {
-      EntityC.read(entity.id).then(json => {
-        const eventId = json.events_id;
-        // now read the event info
-        ApiC.getJson(`event/${eventId}`).then(json => {
-          const bookingsDiv = document.getElementById('boundBookings');
-          const el = document.createElement('a');
-          el.href = `team.php?item=${json.item}&start=${encodeURIComponent(json.start)}`;
-          const button = document.createElement('button');
-          button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
-          const locale = document.getElementById('user-prefs').dataset.jslang;
-          button.innerText = DateTime.fromISO(json.start, {'locale': locale}).toRelative();
-          el.appendChild(button);
-          bookingsDiv.replaceChildren(el);
-        });
-      });
-
-    // SHARE
-    } else if (el.matches('[data-action="share"]')) {
-      EntityC.read(entity.id).then(json => {
-        const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
-        link.value = json.sharelink;
-        link.hidden = false;
-        link.focus();
-        link.select();
-      });
-
-    // TOGGLE PINNED
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => document.getElementById('toggle-pin-icon').classList.toggle('grayed-out'));
-
-    // TIMESTAMP button in modal
-    } else if (el.matches('[data-action="timestamp"]')) {
-      // prevent double click
-      (event.target as HTMLButtonElement).disabled = true;
-      EntityC.timestamp(entity.id).then(() => window.location.replace(`experiments.php?mode=view&id=${entity.id}`));
-
-    // BLOXBERG
-    } else if (el.matches('[data-action="bloxberg"]')) {
-      const overlay = document.createElement('div');
-      overlay.id = 'loadingOverlay';
-      const loading = document.createElement('p');
-      const ring = document.createElement('div');
-      ring.classList.add('lds-dual-ring');
-      // see https://loading.io/css/
-      const emptyDiv = document.createElement('div');
-      ring.appendChild(emptyDiv);
-      ring.appendChild(emptyDiv);
-      ring.appendChild(emptyDiv);
-      ring.appendChild(emptyDiv);
-      overlay.classList.add('full-screen-overlay');
-      loading.appendChild(ring);
-      overlay.appendChild(loading);
-      document.getElementById('container').append(overlay);
-      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
-        // reload uploaded files on success
-        .then(() => reloadElement('filesdiv'))
-        // remove overlay in all cases
-        .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
-
     // SHOW CONTENT OF PLAIN TEXT FILES
-    } else if (el.matches('[data-action="show-plain-text"]')) {
+    if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
     // CREATE COMMENT
     } else if (el.matches('[data-action="create-comment"]')) {
@@ -162,8 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
     category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json));
   }
   const malleableCategory = new Malle({
+    // use the after hook to change the background color of the new element
+    after: (original, _, value) => {
+      category.then(categoryArr => {
+        const cat = categoryArr.find(cat => cat.category === value);
+        original.style.setProperty('--bg', `#${cat.color}`);
+      });
+      return true;
+    },
     cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     fun: value => updateCategory(entity, value),
     inputType: InputType.Select,
@@ -172,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOptions: category.then(categoryArr => categoryArr),
     listenOn: '.malleableCategory',
     submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
 

@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bodyRecovery = $('<div></div>', {
       class : 'alert alert-warning',
       id: 'recoveryDiv',
-      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
+      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
     });
     $('#main_section').before(bodyRecovery);
   }
@@ -218,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const doodleDiv = document.getElementById('doodleDiv');
       doodleDiv.removeAttribute('hidden');
       doodleDiv.scrollIntoView();
-      // adjust chevron icon
+      // adjust caret icon
       const doodleDivIcon = document.getElementById('doodleDivIcon');
-      doodleDivIcon.classList.remove('fa-chevron-circle-right');
-      doodleDivIcon.classList.add('fa-chevron-circle-down');
+      doodleDivIcon.classList.remove('fa-caret-right');
+      doodleDivIcon.classList.add('fa-caret-down');
 
       const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
       const img = new Image();
@@ -254,20 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return editor.setContent(content);
       });
 
-    // DESTROY ENTITY
-    } else if (el.matches('[data-action="destroy"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
-      }
-
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
-
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => reloadElement('toggle-pin-icon-div'));
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
@@ -457,11 +446,6 @@ document.addEventListener('DOMContentLoaded', () => {
       content = '<img src="' + url + '" />';
     }
     editor.setContent(content);
-  });
-
-  $(document).on('blur', '#date_input', function() {
-    const content = (document.getElementById('date_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Date, content);
   });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there

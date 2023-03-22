@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const newInput = document.createElement('input');
       newInput.classList.add('form-control');
       newInput.classList.add('newFieldOption');
+      newInput.classList.add('mb-1');
       document.getElementById('choicesInputDiv').appendChild(newInput);
     }
   });

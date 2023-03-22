@@ -25,7 +25,6 @@ final class AnonymousUser extends Users
     {
         $this->userData['team'] = $this->team;
         $this->userData['limit_nb'] = 15;
-        $this->userData['display_size'] = 'lg';
         $this->userData['display_mode'] = 'it';
         $this->userData['orderby'] = 'date';
         $this->userData['sort'] = 'desc';

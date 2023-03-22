@@ -1,10 +1,10 @@
 {# required vars: rw visibilityArr teamsArr myTeamgroupsArr usersArr #}
 <!-- Modal for permission edit -->
-<div class='modal fade' id='permModal-{{ rw }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+<div class='modal fade' id='permModal-{{ rw }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ rw }}' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ rw == 'canread' ? 'Select who can see this entry'|trans : 'Select who can edit this entry'|trans }}</h5>
+        <h5 class='modal-title' id='permModalLabel_{{ rw }}'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ rw == 'canread' ? 'Select who can see this entry'|trans : 'Select who can edit this entry'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>

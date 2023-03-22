@@ -50,7 +50,7 @@ export function relativeMoment(): void {
  */
 export function collectForm(form: HTMLElement): object {
   let params = {};
-  ['input', 'select'].forEach(inp => {
+  ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
       const el = input as HTMLInputElement;
       if (el.reportValidity() === false) {
@@ -265,11 +265,16 @@ export async function reloadElement(elementId: string): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
     const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
+    const caretIcon = el.previousElementSibling.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
+      caretIcon.classList.remove('fa-caret-down');
+      caretIcon.classList.add('fa-caret-right');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
+      caretIcon.classList.remove('fa-caret-right');
+      caretIcon.classList.add('fa-caret-down');
     }
   });
 }
@@ -355,15 +360,7 @@ export function addAutocompleteToTagInputs(): void {
 export async function updateCategory(entity: Entity, value: string): Promise<string> {
   const resp = await (new Api()).patch(`${entity.type}/${entity.id}`, {'category': value});
   const json = await resp.json();
-  // change the color of the item border
-  // we first remove any status class
-  $('#main_section').css('border', null);
-  // and we add our new border color
-  // first : get what is the color of the new status
-  const css = '6px solid #' + json.color;
-  $('#main_section').css('border-left', css);
-
-  // we also need to change the category next to the title for db items
+  // we need to change the category next to the title for db items
   const title = document.getElementById('documentTitle');
   // it's only there is view mode, and for database items
   const url = new URL(document.location.href);
@@ -430,6 +427,7 @@ export function permissionsToJson(base: number, extra: string[]): string {
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
     const link = document.createElement('a');
+    link.classList.add('d-block');
     const url = (el as HTMLSpanElement).innerText;
     link.href = url;
     link.text = url;

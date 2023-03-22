@@ -1977,10 +1977,20 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the team.
+        description: ID of the team or `current`.
         required: true
         schema:
-          type: integer
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['current']
+        examples:
+          first:
+            summary: Access the current team.
+            value: 'current'
+          second:
+            summary: Access team with ID 3.
+            value: 3
     get:
       tags: ['Teams']
       summary: Read a team. Requires Admin permissions.

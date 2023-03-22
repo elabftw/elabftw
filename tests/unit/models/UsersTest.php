@@ -108,7 +108,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_read' => BasePermissions::Organization->toJson(),
-            'display_size' => 'lg',
             'display_mode' => 'it',
             'sort' => 'date',
             'orderby' => 'desc',

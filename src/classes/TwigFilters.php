@@ -45,26 +45,7 @@ class TwigFilters
             $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
-        $begin = "<div class='alert alert-" . $alert .
-            "'><i class='fas " . $icon .
-            "'></i>";
-        $end = '</div>';
-
-        return $begin . $crossLink . ' ' . $message . $end;
-    }
-
-    /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
+        return sprintf("<div class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
     }
 
     /**

@@ -169,7 +169,7 @@ class Templates extends AbstractTemplateEntity
         $sql = sprintf("SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata,
+                CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.modified_at,
                 users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,
                 GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id

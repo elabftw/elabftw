@@ -166,7 +166,7 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0): array
+    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false): array
     {
         $teamFilterSql = '';
         if ($teamId > 0) {
@@ -182,6 +182,11 @@ class Users implements RestInterface
             $tmpTable = '';
         }
 
+        $archived = '';
+        if ($includeArchived) {
+            $archived = 'OR users.archived = 1';
+        }
+
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
@@ -192,6 +197,7 @@ class Users implements RestInterface
             FROM users
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
+            AND users.archived = 0 ' . $archived . '
             ORDER BY users2teams.teams_id ASC, users.usergroup ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

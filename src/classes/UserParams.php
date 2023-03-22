@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\DisplayMode;
-use Elabftw\Enums\DisplaySize;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\PdfFormat;
@@ -47,12 +46,11 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'password' => password_hash(Check::passwordLength($this->content), PASSWORD_DEFAULT),
             'orcid' => $this->filterOrcid(),
             'limit_nb' => (string) Check::limit((int) $this->content),
-            'display_size' => (DisplaySize::tryFrom($this->content) ?? DisplaySize::Large)->value,
             'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
             'sc_create', 'sc_submit', 'sc_todo', 'sc_edit' => Filter::firstLetter($this->content),
-            'show_team', 'show_team_templates', 'show_public', 'single_column_layout', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email' => (string) Filter::toBinary($this->content),
+            'show_team', 'show_team_templates', 'show_public', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email' => (string) Filter::toBinary($this->content),
             'lang' => (Language::tryFrom($this->content) ?? Language::English)->value,
             'default_read', 'default_write' => Check::visibility($this->content),
             'pdf_format' => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,

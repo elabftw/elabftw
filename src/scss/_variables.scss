@@ -5,21 +5,27 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-$darkgray: #343434;
-$nottoodarkgray: rgba(255, 255, 255, 0.51);
-$maingray: #595959;
-$verylightgray: #f2f2f2;
-$lightgray: #626262;
-$lightwhite: #f4f6f7;
-$lightgraybutnottoolight: #d6d6d6;
-$bordersgray: #dcdddc;
+/* going from less contrasted to more contrasted */
+$mainbackground: #f2f2f2;
+$firstlevel: #dbdbdb;
+$secondlevel: #bdbdbd;
+$medium: #4d4c4c;
+$mediumstrong: #343434;
+$strongest: #000;
+
+/* COLORS */
 $elabblue: #29aeb9;
-$darkblue: #1f8591;
-$dangerred: #e6614c;
 $lightblue: #c4f9ff;
-$darkred: #dd1e00;
+$darkblue: #1f8591;
+
 $lightred: #ffc1b7;
+$dangerred: #e6614c;
+$darkred: #dd1e00;
+
 $green: #54aa08;
+
+$lightgold: #eddec6;
+$gold: #d4ae75;
 
 /* font awesome */
 $fa-font-path: '/assets/fonts';

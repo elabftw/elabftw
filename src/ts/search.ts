@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('anchor').scrollIntoView();
   }
 
-  const extendedArea = document.getElementById('extendedArea') as HTMLTextAreaElement;
+  const extendedArea = document.getElementById('extendedArea') as HTMLInputElement;
 
   SearchSyntaxHighlighting.init(extendedArea);
 

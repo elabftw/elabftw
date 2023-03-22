@@ -33,9 +33,9 @@
       <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' />
       <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
     </div>
-    <button type='submit' class='button btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
+    <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {% if App.Session.has('enable_mfa') %}
-      <button type='submit' class='button btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
+      <button type='submit' class='btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
   </form>
 </section>

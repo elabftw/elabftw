@@ -22,179 +22,171 @@
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
   {% if Entity.entityData.uploads %}
-    <div class='box'>
-      <div class='d-flex justify-content-between'>
-        <div><!-- necessary div for flex -->
-          <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-icon-target='uploadsDiv' data-icon='uploadedFilesIcon' class='d-inline'><i id='uploadedFilesIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-paperclip'></i> {% trans %}Attached file
-            {% plural Entity.entityData.uploads|length %}
-            Attached files
-            {% endtrans %}
-          </h3>
-        </div>
-
-        <div class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
-          <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
-          <i class='fas fa-fw fa-table-cells'></i>
-        </div>
+    <div class='d-flex justify-content-between'>
+      <div><!-- necessary div for flex -->
+        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' data-icon-target='uploadsDiv' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
+          {% plural Entity.entityData.uploads|length %}
+          Attached files
+          {% endtrans %}
+        </h3>
       </div>
 
-      <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadedFilesDiv'>
-        {% for upload in Entity.entityData.uploads %}
-          {% set ext = upload.real_name|getExt %}
+      {# id is used with data-toggle-target-extra #}
+      <div id='uploadsViewToggler' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+        <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
+        <i class='fas fa-fw fa-table-cells'></i>
+      </div>
+    </div>
 
-          <!-- COMPACT LAYOUT (0) -->
-          {% if App.Users.userData.uploads_layout == 0 %}
-            <div class='col-md-3 col-sm-4 hl-hover-gray rounded'>
-              {% include('upload-dropdown-menu.html') %}
-              <div>
-                <i class='fas fa-fw fa-download mr-1'></i>
-                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
-              </div>
-              {% include('upload-comment.html') %}
-              {% include('upload-more-info.html') %}
-              {% include('upload-replace-form.html') %}
+    <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadedFilesDiv'>
+      {% for upload in Entity.entityData.uploads %}
+        {% set ext = upload.real_name|getExt %}
+
+        <!-- COMPACT LAYOUT (0) -->
+        {% if App.Users.userData.uploads_layout == 0 %}
+          <div class='col-md-3 col-sm-4 hl-hover-gray rounded'>
+            {% include('upload-dropdown-menu.html') %}
+            <div>
+              <i class='fas fa-fw fa-download mr-1'></i>
+              <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
             </div>
+            {% include('upload-comment.html') %}
+            {% include('upload-more-info.html') %}
+            {% include('upload-replace-form.html') %}
+          </div>
 
-          <!-- DEFAULT LAYOUT (1) -->
-          {% else %}
-            <div class='col-md-4 col-sm-6'>
-              <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
-                {% include('upload-dropdown-menu.html') %}
+        <!-- DEFAULT LAYOUT (1) -->
+        {% else %}
+          <div class='col-md-4 col-sm-6'>
+            <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+              {% include('upload-dropdown-menu.html') %}
 
-                <!-- IMAGES -->
-                {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                  {# don't make the thumbnail clickable if it's a tif #}
-                  {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
-                    <div class='text-center'>
-                      <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
-                         {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name }}'{% endif %}
-                        {% if upload.comment %}title='{{ upload.comment }}' data-caption='{{ upload.comment }}'{% endif %}
-                      >
-                  {% endif %}
-                  {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                  {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
-                  {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                    <div class='text-center'>
-                      <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
-                    </div>
-                  {% else %}
-                    <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
-                  {% endif %}
-                  {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
-                      </a>
-                    </div>
-                  {% endif %}
-
-                <!-- MOLFILES -->
-                {% elseif ext == 'mol' %}
+              <!-- IMAGES -->
+              {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
+                {# don't make the thumbnail clickable if it's a tif #}
+                {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                   <div class='text-center'>
-                    <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'></canvas>
+                    <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
+                       {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name }}'{% endif %}
+                      {% if upload.comment %}title='{{ upload.comment }}' data-caption='{{ upload.comment }}'{% endif %}
+                    >
+                {% endif %}
+                {% set thumb_name = upload.long_name ~ '_th.jpg' %}
+                {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
+                {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
+                  <div class='text-center'>
+                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
                   </div>
-
-                <!-- MOLECULES -->
-                {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
-                  <!--  build control dropdown to change the representation style -->
-                  <div style='padding-bottom: 5px' class='btn-group'>
-                    <button type='button'
-                      class='btn btn-secondary btn-xs dropdown-toggle'
-                      data-toggle='dropdown'
-                      aria-haspopup='true'
-                      aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
-                    </button>
-
-                    <ul class='dropdown-menu clickable'>
-                      {% set moldivId = '3Dmol_' ~ upload.id %}
-                      <li class='dropdown-item'>
-                        <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
-                      </li>
-                      <li class='dropdown-item'>
-                        <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
-                      </li>
-                      <li class='dropdown-item'>
-                        <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
-                      </li>
-                      <li class='dropdown-item'>
-                        <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
-                      </li>
-                      <li class='dropdown-item'>
-                        <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <!-- IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format -->
-                  <div class='viewer_3Dmoljs file-uploaded'
-                    data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
-                    data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
-                    data-backgroundcolor='0xffffff'
-                    id='3Dmol_{{ upload.id }}'>
-                  </div>
-
-                <!-- DNA -->
-                {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
-                  <div class='viewer-ove'
-                    data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
-                    data-real-name='{{ upload.real_name }}'
-                    id='OVE_{{ upload.id }}'>
-                  </div>
-
-                <!-- TEXT -->
-                {% elseif ext matches '/txt$/i' %}
-                  <span class='eye-overlay'
-                    data-action='show-plain-text'
-                    data-storage='{{ upload.storage }}'
-                    data-path='{{ upload.long_name }}'
-                    data-name='{{ upload.real_name }}'>
-                    <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
-                  </span>
-
-                <!-- ANYTHING ELSE -->
                 {% else %}
                   <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
                 {% endif %}
-
-                <div class='caption'>
-                  <i class='fas fa-fw fa-download mr-1'></i>
-                  <p class='d-inline'>
-                    <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
-                    <span class='smallgray' style='display:inline'>
-                      {% if upload.filesize %}
-                        {{ upload.filesize|formatBytes }} -
-                      {% endif %}
-                      {{ upload.created_at }}
-                    </span>
-                  </p>
-                <br>
-                {% include('upload-comment.html') %}
-
-                <!-- LOAD IN JSON EDITOR -->
-                {% if ext matches '/(json)$/i' %}
-                  <div class='clickable'>
-                    <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>
-                    <p data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file' class='d-inline'>{{ 'Load into JSON Editor'|trans }}</p>
+                {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
+                    </a>
                   </div>
                 {% endif %}
 
-                <!-- SHOW TXT CONTENT -->
-                {% if ext matches '/txt$/i' %}
-                  <div class='clickable'>
-                    <i class='fas fa-fw fa-eye mr-1'></i>
-                    <p data-action='show-plain-text'
-                       data-storage='{{ upload.storage }}'
-                       data-path='{{ upload.long_name }}'
-                       data-name='{{ upload.real_name }}'
-                       class='d-inline'>{{ 'Show content of file'|trans }}</p>
-                  </div>
-                {% endif %}
+              <!-- MOLFILES -->
+              {% elseif ext == 'mol' %}
+                <div class='text-center'>
+                  <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'></canvas>
+                </div>
 
-                {% include('upload-more-info.html') %}
-                </div><!-- end div.caption -->
-                {% include('upload-replace-form.html') %}
-              </div>
+              <!-- MOLECULES -->
+              {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
+                <!--  build control dropdown to change the representation style -->
+                <div style='padding-bottom: 5px' class='btn-group'>
+                  <button type='button'
+                    class='btn btn-secondary btn-xs dropdown-toggle'
+                    data-toggle='dropdown'
+                    aria-haspopup='true'
+                    aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
+                  </button>
+
+                  <ul class='dropdown-menu clickable'>
+                    {% set moldivId = '3Dmol_' ~ upload.id %}
+                    <li class='dropdown-item'>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                    </li>
+                    <li class='dropdown-item'>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
+                    </li>
+                    <li class='dropdown-item'>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
+                    </li>
+                    <li class='dropdown-item'>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
+                    </li>
+                    <li class='dropdown-item'>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format -->
+                <div class='viewer_3Dmoljs file-uploaded'
+                  data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
+                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
+                  data-backgroundcolor='0xffffff'
+                  id='3Dmol_{{ upload.id }}'>
+                </div>
+
+              <!-- DNA -->
+              {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
+                <div class='viewer-ove'
+                  data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
+                  data-real-name='{{ upload.real_name }}'
+                  id='OVE_{{ upload.id }}'>
+                </div>
+
+              <!-- TEXT -->
+              {% elseif ext matches '/txt$/i' %}
+                <span class='eye-overlay'
+                  data-action='show-plain-text'
+                  data-storage='{{ upload.storage }}'
+                  data-path='{{ upload.long_name }}'
+                  data-name='{{ upload.real_name }}'>
+                  <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
+                </span>
+
+              <!-- ANYTHING ELSE -->
+              {% else %}
+                <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
+              {% endif %}
+
+              <div class='caption'>
+                <i class='fas fa-fw fa-download mr-1'></i>
+                <p class='d-inline'>
+                  <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
+                  <span class='smallgray' style='display:inline'>
+                    {% if upload.filesize %}
+                      {{ upload.filesize|formatBytes }} -
+                    {% endif %}
+                    {{ upload.created_at }}
+                  </span>
+                </p>
+              <br>
+              {% include('upload-comment.html') %}
+
+              <!-- SHOW TXT CONTENT -->
+              {% if ext matches '/txt$/i' %}
+                <div class='clickable'>
+                  <i class='fas fa-fw fa-eye mr-1'></i>
+                  <p data-action='show-plain-text'
+                     data-storage='{{ upload.storage }}'
+                     data-path='{{ upload.long_name }}'
+                     data-name='{{ upload.real_name }}'
+                     class='d-inline'>{{ 'Show content of file'|trans }}</p>
+                </div>
+              {% endif %}
+
+              {% include('upload-more-info.html') %}
+              </div><!-- end div.caption -->
+              {% include('upload-replace-form.html') %}
             </div>
-          {% endif %}
-        {% endfor %}
-      </div>
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
+    <hr>
   {% endif %}
 </div><!-- #filesdiv -->

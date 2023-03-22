@@ -9,7 +9,7 @@
 _('Drop files here to upload');
 /** @psalm-suppress UnusedFunctionCall */
 // editing-metadata
-_('Editing metadata');
+_('You are currently editing the metadata attached to this entry.');
 /** @psalm-suppress UnusedFunctionCall */
 // entity-default-title
 _('Untitled');

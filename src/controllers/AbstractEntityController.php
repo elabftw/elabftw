@@ -184,11 +184,13 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
+            'hideTitle' => true,
             'teamsArr' => $Teams->readAll(),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
@@ -254,6 +256,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'entityData' => $this->Entity->entityData,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'hideTitle' => true,
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),

@@ -11,12 +11,6 @@ namespace Elabftw\Elabftw;
 
 class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 {
-    public function testShowStar(): void
-    {
-        $out = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:#54aa08' class='fas fa-star' title='☻'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i><i style='color:gray' class='fas fa-star' title='☺'></i>";
-        $this->assertEquals($out, TwigFilters::showStars(2));
-    }
-
     public function testFormatMetadata(): void
     {
         $metadataJson = '{

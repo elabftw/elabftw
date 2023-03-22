@@ -85,6 +85,10 @@ abstract class AbstractApiController implements ControllerInterface
         if (($req[4] ?? '') === 'me') {
             $this->id = $this->Users->userData['userid'];
         }
+        // allow using "current" to refer to the current logged in team
+        if (($req[4] ?? '') === 'current') {
+            $this->id = $this->Users->userData['team'];
+        }
 
         // used by backup zip only for now
         // TODO remove with apiv1

@@ -47,12 +47,12 @@ trait TwigTrait
         $filterOptions = array('is_safe' => array('html'));
         $msgFilter = new TwigFilter('msg', '\Elabftw\Elabftw\TwigFilters::displayMessage', $filterOptions);
         $mdFilter = new TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
-        $starsFilter = new TwigFilter('stars', '\Elabftw\Elabftw\TwigFilters::showStars', $filterOptions);
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
+        $usergroupToHumanFilter = new TwigFilter('usergroupToHuman', '\Elabftw\Services\Transform::usergroupToHuman', $filterOptions);
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
@@ -77,8 +77,6 @@ trait TwigTrait
         $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
         $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
 
-
-
         // load the i18n extension for using the translation tag for twig
         // {% trans %}my string{% endtrans %}
         $TwigEnvironment->addExtension(new Translation());
@@ -91,7 +89,6 @@ trait TwigTrait
 
         $TwigEnvironment->addFilter($msgFilter);
         $TwigEnvironment->addFilter($mdFilter);
-        $TwigEnvironment->addFilter($starsFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
         $TwigEnvironment->addFilter($metadataFilter);
@@ -103,6 +100,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($extractDisplayMainText);
         $TwigEnvironment->addFilter($isInJsonArray);
         $TwigEnvironment->addFilter($canToHuman);
+        $TwigEnvironment->addFilter($usergroupToHumanFilter);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

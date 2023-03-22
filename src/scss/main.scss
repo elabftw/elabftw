@@ -781,15 +781,15 @@ the form-control fails to do that so we do the border ourselves */
 
 /* TAGS */
 .tag {
-    background-color: $secondlevel;
+    background-color: $firstlevel;
     border-radius: 5px;
-    color: $white;
+    color: $mediumstrong;
     font: bold 80% Verdana, Arial, Helvetica, sans-serif;
     padding: 2px 5px;
 
     &:hover {
-        background-color: $elabblue;
-        color: $white;
+        background-color: $mediumstrong;
+        color: $white !important;
     }
 }
 

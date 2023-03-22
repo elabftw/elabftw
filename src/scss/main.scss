@@ -544,6 +544,10 @@ button:disabled {
         i {
             color: $strongest;
         }
+
+        &:hover {
+            background-color: $secondlevel;
+        }
     }
 
     &.sidepanel-opened {
@@ -552,6 +556,10 @@ button:disabled {
 
         i {
             color: $mainbackground;
+        }
+
+        &:hover {
+            background-color: $medium;
         }
     }
 }

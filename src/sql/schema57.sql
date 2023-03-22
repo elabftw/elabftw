@@ -2,9 +2,7 @@
 START TRANSACTION;
     DELETE FROM experiments_revisions WHERE userid NOT IN (SELECT users.userid FROM users);
     DELETE FROM experiments_revisions WHERE item_id NOT IN (SELECT experiments.id FROM experiments);
-    ALTER TABLE `users2teams` ADD COLUMN `id` int(10) UNSIGNED NOT NULL;
-    ALTER TABLE `users2teams` ADD PRIMARY KEY (`id`);
-    ALTER TABLE `users2teams` MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+    ALTER TABLE `users2teams` ADD COLUMN `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`);
 
     ALTER TABLE `users` ADD `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it';
     ALTER TABLE `users` CHANGE `password` `password` VARCHAR(255) NULL DEFAULT NULL;

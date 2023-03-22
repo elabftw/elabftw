@@ -537,21 +537,21 @@ button:disabled {
     padding: 10px 5px;
 
     &.sidepanel-closed {
+        background-color: $firstlevel;
+        border: 1px solid $firstlevel;
+        box-shadow: -1rem 0 0 $firstlevel;
+
+        i {
+            color: $strongest;
+        }
+    }
+
+    &.sidepanel-opened {
         background-color: $mediumstrong;
         box-shadow: -1rem 0 0 $mediumstrong;
 
         i {
             color: $mainbackground;
-        }
-    }
-
-    &.sidepanel-opened {
-        background-color: $white;
-        border: 1px solid $mediumstrong;
-        box-shadow: -1rem 0 0 $white;
-
-        i {
-            color: $strongest;
         }
     }
 }

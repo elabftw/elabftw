@@ -971,10 +971,8 @@ paths:
               properties:
                 category_id:
                   type: integer
-                  description: >-
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
+                  description: |
+                    Mandatory parameter, an ID corresponding to an items_types in the team.
                 tags:
                   type: array
                   items:

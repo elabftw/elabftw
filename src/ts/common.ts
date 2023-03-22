@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title = 'Accessibility Statement';
           break;
         default:
-          'Privacy Policy';
+          title = 'Privacy Policy';
         }
         (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
         (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;

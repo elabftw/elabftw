@@ -187,6 +187,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
+  * Add an event listener on wheel event to prevent scrolling down with a number input selected.
+  * Without this, the number will change to the next integer and information entered is lost.
+  * Use the "passive" option to avoid impact on performance.
+  */
+  document.addEventListener('wheel', () => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLInputElement && activeElement.type === 'number') {
+      activeElement.blur();
+    }
+  }, { passive: true });
+
+  /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
    * matches a known action then that action is triggered

@@ -487,12 +487,34 @@
     {% include 'ts-config.html' %}
   </div>
 
+  {# BLOXBERG #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
   <div class='pl-3'>
 
     {% include 'binary-setting.html' with {'label': 'Enable blockchain timestamping with Bloxberg', 'slug': 'blox_enabled'} %}
     {% include 'binary-setting.html' with {'label': 'Anonymize author for GDPR compliance', 'slug': 'blox_anon'} %}
 
+  </div>
+
+  {# KEEEX #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
+  <div class='pl-3'>
+
+    {% include 'binary-setting.html' with {'label': 'Enable keeex', 'slug': 'keeex_enabled'} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='keeex_host' class='col-form-label'>{{ 'Keeex host'|trans }}</label>
+      <input class='form-control col-md-3' type='text' id='keeex_host' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_host' value='{{ App.Config.configArr.keeex_host }}' />
+    </div>
+    <p class='smallgray'>{{ 'Address (hostname or IP) of the Keeex service.'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='keeex_port' class='col-form-label'>{{ 'Keeex port'|trans }}</label>
+      <input class='form-control col-md-3' type='text' id='keeex_port' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_port' value='{{ App.Config.configArr.keeex_port }}' />
+    </div>
+    <p class='smallgray'>{{ 'Default port is 8080.'|trans }}</p>
+    <hr>
   </div>
 </div>
 

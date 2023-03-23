@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: info.calendarlang,
+    locale: calendarEl.dataset.lang,
     initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,

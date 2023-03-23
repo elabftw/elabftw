@@ -110,7 +110,7 @@
     </div>
   </div>
   {% endif %}
-  <div id='scheduler' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
 <!-- TAB 2 INFO -->
@@ -182,7 +182,6 @@
 </div>
 
 <div id='info'
-    data-calendarlang="{{ App.getJsLang }}"
     data-item="{{ selectedItem }}"
     data-all="{{ allItems }}"></div>
 {% endblock body %}

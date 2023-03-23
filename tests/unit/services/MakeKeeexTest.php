@@ -25,8 +25,6 @@ class MakeKeeexTest extends \PHPUnit\Framework\TestCase
             new Response(200, array(), 'fake keeexed content'),
             new Response(400, array(), 'fake keeexed content'),
             new Response(500, array(), 'fake keeexed content'),
-            //new RequestException('Invalid request', new Request('POST', 'test')),
-            //new RequestException('Server is down?', new Request('POST', 'test')),
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));

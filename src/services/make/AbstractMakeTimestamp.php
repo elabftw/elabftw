@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Experiments;
+use GuzzleHttp\Client;
 use ZipArchive;
 
 /**
@@ -79,6 +80,10 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             true, // PDF/A always for timestamp pdf
         );
         $MakePdf = new MakeTimestampPdf($MpdfProvider, $this->Entity);
+        if ($this->configArr['keeex_enabled'] === '1') {
+            $Keeex = new MakeKeeex(new Client());
+            return $Keeex->fromString($MakePdf->getFileContent());
+        }
         return $MakePdf->getFileContent();
     }
 

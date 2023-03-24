@@ -5,17 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import EntityClass from './Entity.class';
-import { Action, EntityType } from './interfaces';
-import { Api } from './Apiv2.class';
-import { notif } from './misc';
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
 import caLocale from '@fullcalendar/core/locales/ca';
 import deLocale from '@fullcalendar/core/locales/de';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -33,10 +28,15 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import EntityClass from './Entity.class';
+import { Action, EntityType } from './interfaces';
+import { Api } from './Apiv2.class';
+import { notif } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {

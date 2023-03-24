@@ -449,16 +449,38 @@
 
     <button class='btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
-      {% for tag in tagsArr %}
-        <p>
-        <a title='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
-          <i class='fas fa-external-link-square-alt'></i>
-        </a>
-        <a title='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
-          <i class='fas fa-external-link-square-alt'></i>
-        </a>
-        <a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a><span class='tag editable hl-hover' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</span> ({{ tag.item_count }})</p>
-      {% endfor %}
+      <table class='table' aria-label='Tags of the team' data-table-sort='true'>
+        <thead>
+          <tr>
+            <th scope='col'>{{ 'Tag'|trans }}</th>
+            <th scope='col'>{{ 'Occurence'|trans }}</th>
+            <th scope='col'>{{ 'Show tagged experiments'|trans }}</th>
+            <th scope='col'>{{ 'Show tagged items'|trans }}</th>
+            <th scope='col'>{{ 'Delete'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tag in tagsArr %}
+            <tr>
+              <td><span class='tag editable hl-hover' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</span></td>
+              <td>{{ tag.item_count }}</td>
+              <td>
+                <a title='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                  <i class='fas fa-external-link-square-alt'></i>
+                </a>
+              </td>
+              <td>
+                <a title='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                  <i class='fas fa-external-link-square-alt'></i>
+                </a>
+              </td>
+              <td>
+                <a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

@@ -57,7 +57,7 @@ export default class TableSorting {
    * Sort rows in table based on selected column
    */
   public makeSortable(table: HTMLTableElement): void {
-    // do not parse table twice, i.e. while loading entry bodies via toggle-body button
+    // do not parse table twice, e.g. while loading entry bodies via toggle-body button
     if (table.dataset.sortingActivated === 'true') {
       return;
     }

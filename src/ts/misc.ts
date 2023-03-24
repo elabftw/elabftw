@@ -7,7 +7,7 @@
  */
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'jquery-ui/ui/widgets/sortable';
-import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
+import * as $3Dmol from '3dmol';
 import { CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';

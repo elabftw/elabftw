@@ -935,9 +935,11 @@ the form-control fails to do that so we do the border ourselves */
     width: 66px;
 }
 
-/* fix for 3Dmoljs uploaded files */
-.file-uploaded {
+/* fix the canvas for 3Dmoljs uploaded files */
+/* stylelint-disable-next-line selector-class-pattern */
+.viewer_3Dmoljs {
     height: 250px;
+    position: relative;
     width: 100%;
 }
 

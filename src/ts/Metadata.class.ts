@@ -122,10 +122,15 @@ export class Metadata {
    */
   generateElement(name: string, properties: Record<string, ExtraFieldProperty>): Element {
     const wrapperDiv = document.createElement('div');
-    // name
-    const nameEl = document.createElement('h5');
-    nameEl.classList.add('m-0');
+    wrapperDiv.classList.add('d-flex');
+    // name + description
+    const nameWrapper = document.createElement('div');
+    nameWrapper.classList.add('flex-column');
+
+    const nameEl = document.createElement('p');
     nameEl.innerText = name;
+    nameWrapper.append(nameEl);
+    nameWrapper.append(this.getDescription(properties));
 
     let valueEl: HTMLElement;
     // checkbox is special case
@@ -138,7 +143,7 @@ export class Metadata {
         (valueEl as HTMLInputElement).checked = true;
       }
     } else {
-      valueEl = document.createElement('p');
+      valueEl = document.createElement('div');
       valueEl.innerText = properties.value as string;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
@@ -146,10 +151,12 @@ export class Metadata {
         valueEl.dataset.genLink = 'true';
       }
     }
-    wrapperDiv.append(nameEl);
-    wrapperDiv.append(this.getDescriptionSpan(properties));
-    wrapperDiv.append(valueEl);
-    wrapperDiv.append(document.createElement('hr'));
+    const valueWrapper = document.createElement('div');
+    // set the value on the right
+    valueWrapper.classList.add('ml-auto');
+    valueWrapper.append(valueEl);
+    wrapperDiv.append(nameWrapper);
+    wrapperDiv.append(valueWrapper);
     return wrapperDiv;
   }
 
@@ -267,7 +274,6 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
-      this.metadataDiv.classList.add('col-md-12');
       // the input elements that will be created from the extra fields
       const elements = [];
       for (const [name, properties] of Object.entries(json.extra_fields)) {
@@ -280,22 +286,22 @@ export class Metadata {
       }
       // now display the names/values from extra_fields
       for (const element of elements.sort((a, b) => a.position - b.position)) {
-        const rowDiv = document.createElement('div');
-        rowDiv.classList.add('row');
-        this.metadataDiv.append(rowDiv);
-        rowDiv.append(element.element);
+        this.metadataDiv.append(element.element);
+        this.metadataDiv.append(document.createElement('hr'));
       }
     });
   }
 
-  // build a description span element
-  getDescriptionSpan(properties: Record<string, ExtraFieldProperty>): HTMLSpanElement {
-    const descriptionSpan = document.createElement('span');
+  // build a description element
+  getDescription(properties: Record<string, ExtraFieldProperty>): HTMLSpanElement {
+    const descriptionWrapper = document.createElement('div');
     if (properties.description) {
-      descriptionSpan.classList.add('smallgray');
-      descriptionSpan.innerText = properties.description as string;
+      const descriptionEl = document.createElement('p');
+      descriptionEl.classList.add('smallgray');
+      descriptionEl.innerText = properties.description as string;
+      descriptionWrapper.append(descriptionEl);
     }
-    return descriptionSpan;
+    return descriptionWrapper;
   }
 
   /**
@@ -317,37 +323,36 @@ export class Metadata {
           position: parseInt(properties.position, 10) || 99999,
         });
       }
+      const wrapperUl = document.createElement('ul');
+      wrapperUl.classList.add('list-group');
+
       // now display the inputs from extra_fields
       for (const element of elements.sort((a, b) => a.position - b.position)) {
-        const rowDiv = document.createElement('div');
-        rowDiv.classList.add('row', 'flex-column');
-        //rowDiv.classList.add('flex-column');
-        this.metadataDiv.append(rowDiv);
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
         const label = document.createElement('label');
-        label.style.marginRight = '10px';
         label.htmlFor = element.element.id;
         label.innerText = element.name as string;
 
-        if (element.element.type === 'checkbox') {
-          // d-inline to fix the checkbox text being all constrained
-          label.classList.add('form-check-label', 'd-inline');
-        }
         // for checkboxes the label comes second
         if (element.element.type === 'checkbox') {
+          label.classList.add('form-check-label');
           const wrapperDiv = document.createElement('div');
           wrapperDiv.classList.add('form-check');
-          rowDiv.append(wrapperDiv);
+          listItem.append(wrapperDiv);
           wrapperDiv.append(element.element);
-          // add some spacing between the checkbox and the label
-          label.classList.add('ml-1');
           wrapperDiv.append(label);
-          wrapperDiv.append(this.getDescriptionSpan(element));
+          wrapperDiv.append(this.getDescription(element));
         } else {
-          rowDiv.append(label);
-          rowDiv.append(this.getDescriptionSpan(element));
-          rowDiv.append(element.element);
+          listItem.append(label);
+          listItem.append(this.getDescription(element));
+          listItem.append(element.element);
         }
+
+        wrapperUl.append(listItem);
       }
+
+      this.metadataDiv.append(wrapperUl);
     });
   }
 }

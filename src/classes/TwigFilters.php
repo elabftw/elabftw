@@ -64,7 +64,7 @@ class TwigFilters
         });
         foreach ($extraFields as $key => $properties) {
             $description = isset($properties[MetadataEnum::Description->value])
-                ? sprintf('<h6>%s</h6>', $properties[MetadataEnum::Description->value])
+                ? sprintf('<span class="smallgray">%s</span>', $properties[MetadataEnum::Description->value])
                 : '';
             $value = $properties[MetadataEnum::Value->value];
             // checkbox is a special case
@@ -86,8 +86,8 @@ class TwigFilters
                 $value = implode(', ', $value);
             }
 
-            $final .= sprintf('<li class="list-group-item"><h5>%s</h5><span class="smallgray">%s</span><p>%s</p></li>', $key, $description, $value);
+            $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $key, $description, $value);
         }
-        return $final . '</ul>';
+        return $final;
     }
 }

@@ -153,7 +153,7 @@ export class Metadata {
     }
     const valueWrapper = document.createElement('div');
     // set the value on the right
-    valueWrapper.classList.add('ml-auto');
+    valueWrapper.classList.add('ml-auto', 'pl-5');
     valueWrapper.append(valueEl);
     wrapperDiv.append(nameWrapper);
     wrapperDiv.append(valueWrapper);

@@ -31,7 +31,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     public function __construct(protected array $configArr, Experiments $entity)
     {
         parent::__construct($entity);
-        $this->Entity->canOrExplode('write');
         $this->checkMonthlyLimit();
     }
 

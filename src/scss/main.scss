@@ -526,6 +526,10 @@ button:disabled {
     background-color: $firstlevel;
 }
 
+/* make the text of buttons in bold to increase readability because contrast ratio is not great */
+.btn {
+    font-weight: bold;
+}
 
 /* SIDE PANEL */
 .sidepanel-btn {

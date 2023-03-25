@@ -148,6 +148,13 @@
                   <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
                 </span>
 
+              {% elseif ext matches '/(mp4|webm)$/i' %}
+                <div class='text-center'>
+                  <video controls width='300' preload='metadata'>
+                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name}}' type='video/{{ ext }}'>
+                  </video>
+                </div>
+
               <!-- ANYTHING ELSE -->
               {% else %}
                 <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>

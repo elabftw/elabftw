@@ -102,7 +102,6 @@ final class Extensions
     public const VIDEO = array(
         'mov',
         'avi',
-        'mp4',
         'wmv',
         'mpeg',
         'flv',

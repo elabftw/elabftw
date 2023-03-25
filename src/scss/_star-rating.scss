@@ -1,0 +1,47 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2023 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+.rating {
+    .cancel-button {
+        cursor: pointer;
+        /* important to get a good alignment with the stars */
+        vertical-align: sub;
+
+        &:hover {
+            i {
+                color: $dangerred !important;
+            }
+        }
+    }
+
+    label {
+        cursor: pointer;
+        float: right;
+        position: relative;
+
+        &:not(:first-of-type) {
+            padding-right: 3px;
+        }
+
+        &::before {
+            color: $medium;
+            content: '\f005';
+            font: var(--fa-font-solid);
+        }
+    }
+
+    input {
+        display: none;
+    }
+
+    input:checked ~ label::before,
+    &:not(:checked) > label:hover::before,
+    &:not(:checked) > label:hover ~ label::before {
+        color: $gold;
+    }
+}

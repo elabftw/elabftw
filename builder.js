@@ -63,7 +63,6 @@ module.exports = {
       'prismjs/components/prism-ruby.js',
     ],
     jslibs: [
-      './src/js/vendor/jquery.rating.js',
       './src/js/vendor/keymaster.js',
     ],
   },

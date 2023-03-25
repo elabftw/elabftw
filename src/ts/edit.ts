@@ -308,15 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // STAR RATING
-  $(document).on('click', '.rating-cancel', function() {
-    EntityC.update(entity.id, Target.Rating, '0');
-  });
-
-  $(document).on('click', '.star', function() {
-    EntityC.update(entity.id, Target.Rating, $(this).data('rating').current[0].innerText);
-  });
-
   // no tinymce stuff when md editor is selected
   if (editor.type === 'tiny') {
     // Object to hold control data for selected image

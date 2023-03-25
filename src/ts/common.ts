@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el.dataset.transform === 'permissionsToJson') {
           value = permissionsToJson(parseInt(value, 10), []);
         }
+        if (el.dataset.value) {
+          value = el.dataset.value;
+        }
         const params = {};
         params[el.dataset.target] = value;
         ApiC.patch(`${el.dataset.model}`, params).then(() => {

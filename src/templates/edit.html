@@ -72,13 +72,12 @@
       <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
       <input id='date_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
     </div>
-    <div class='ml-auto align-self-baseline'>
-      <fieldset>
-        <legend class='sr-only'>{{ 'Rating'|trans }}</legend>
-        {% for i in range(1, 5) %}
-        <input aria-label='{{ 'Rating'|trans }}' data-rating='{{ i }}' name='star' type='radio' class='star' value='{{ i }}' {{ Entity.entityData.rating == i ? ' checked=checked' }} />
-        {% endfor %}
-      </fieldset>
+    {# RATING #}
+    <div class='ml-auto rating' id='editRatingDiv'>
+      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
+      {% for i in range(5, 1) %}
+        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}'></label>
+      {% endfor %}
     </div>
   </div>
 

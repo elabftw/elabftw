@@ -34,10 +34,10 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
         private AbstractEntity $entity,
-        private int $id,
+        int $id,
         private int $size,
     ) {
-        $this->entity->setId($this->id);
+        $this->entity->setId($id);
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
     }

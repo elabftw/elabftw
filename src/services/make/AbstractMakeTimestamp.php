@@ -26,8 +26,6 @@ use ZipArchive;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public string $pdfPath = '';
-
     public function __construct(protected array $configArr, Experiments $entity)
     {
         parent::__construct($entity);

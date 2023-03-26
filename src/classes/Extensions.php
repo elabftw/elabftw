@@ -139,6 +139,7 @@ final class Extensions
      *
      * @param string $ext Extension of the file
      * @return string Class of the fa icon
+     * @psalm-suppress PossiblyUnusedMethod this method is used as a twig function ext2icon
      */
     public static function getIconFromExtension(string $ext): string
     {

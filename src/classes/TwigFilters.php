@@ -50,6 +50,7 @@ class TwigFilters
 
     /**
      * Process the metadata json string into html
+     * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates
      */
     public static function formatMetadata(string $json): string
     {

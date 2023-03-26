@@ -39,8 +39,6 @@ class MakePdf extends AbstractMakePdf
     use TwigTrait;
     use UploadTrait;
 
-    public string $longName;
-
     public array $failedAppendPdfs = array();
 
     // collect paths of files to delete
@@ -61,7 +59,6 @@ class MakePdf extends AbstractMakePdf
     {
         parent::__construct($mpdfProvider, $entity);
 
-        $this->longName = $this->getLongName() . '.pdf';
         $this->pdfa = $mpdfProvider->isPdfa();
 
         $this->mpdf->SetTitle($this->Entity->entityData['title']);

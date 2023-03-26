@@ -23,16 +23,14 @@ class MakeEln extends MakeStreamZip
 {
     protected string $extension = '.eln';
 
-    private DateTimeImmutable $now;
-
     // name of the folder containing everything
     private string $root;
 
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
         parent::__construct($Zip, $entity, $idArr);
-        $this->now = new DateTimeImmutable();
-        $this->root = $this->now->format('Y-m-d-His') . '-export';
+        $now = new DateTimeImmutable();
+        $this->root = $now->format('Y-m-d-His') . '-export';
         $this->jsonArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
@@ -41,7 +39,7 @@ class MakeEln extends MakeStreamZip
                     '@type' => 'CreativeWork',
                     'about' => array('@id' => './'),
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
-                    'dateCreated' => $this->now->format(DateTimeImmutable::ISO8601),
+                    'dateCreated' => $now->format(DateTimeImmutable::ISO8601),
                     'sdPublisher' => array(
                         '@type' => 'Organization',
                         'name' => 'eLabFTW',

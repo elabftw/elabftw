@@ -26,10 +26,10 @@ class MakeSchedulerReport extends AbstractMakeCsv
 
     protected array $rows;
 
-    public function __construct(private Scheduler $scheduler)
+    public function __construct(Scheduler $scheduler)
     {
         $this->Db = Db::getConnection();
-        $this->rows = $this->scheduler->readAll();
+        $this->rows = $scheduler->readAll();
     }
 
     /**

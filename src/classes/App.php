@@ -48,16 +48,21 @@ class App
 
     public Users $Users;
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public string $pageTitle = 'Lab manager';
 
     public array $teamArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ok = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ko = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $warning = array();
 
     public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
@@ -158,6 +163,7 @@ class App
         return $this->Config->configArr['lang'];
     }
 
+    /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
         return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);

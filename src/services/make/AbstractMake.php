@@ -23,8 +23,6 @@ abstract class AbstractMake
 {
     use UploadTrait;
 
-    public string $filePath = '';
-
     // a place to gather errors or warnings generated during the making
     public array $errors = array();
 

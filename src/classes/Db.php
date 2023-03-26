@@ -36,16 +36,16 @@ final class Db
      */
     private function __construct()
     {
-        $pdo_options = array();
+        $pdoOptions = array();
         // throw exception if error
-        $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        $pdoOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         // use persistent mode for connection to MySQL
-        $pdo_options[PDO::ATTR_PERSISTENT] = true;
+        $pdoOptions[PDO::ATTR_PERSISTENT] = true;
         // only return a named array
-        $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
+        $pdoOptions[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
         if (!empty(Config::fromEnv('DB_CERT_PATH'))) {
             /** @psalm-suppress UndefinedConstant */
-            $pdo_options[PDO::MYSQL_ATTR_SSL_CA] = Config::fromEnv('DB_CERT_PATH');
+            $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = Config::fromEnv('DB_CERT_PATH');
         }
 
         $this->connection = new PDO(
@@ -53,7 +53,7 @@ final class Db
             Config::fromEnv('DB_NAME'),
             Config::fromEnv('DB_USER'),
             Config::fromEnv('DB_PASSWORD'),
-            $pdo_options
+            $pdoOptions
         );
     }
 

@@ -16,7 +16,7 @@
           <select id='{{ rw }}_select_base' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ Entity.entityData.canread|extractJson('base') == key ? ' selected' }}
+              {{ Entity.entityData[rw]|extractJson('base') == key ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -26,7 +26,7 @@
           <select id='{{ rw }}_select_teams' multiple class='form-control' autocomplete='off'>
             {% for team in teamsArr %}
               <option value='team:{{ team.id }}'
-              {{ Entity.entityData.canread|isInJsonArray('teams', team.id) ? ' selected' }}
+              {{ Entity.entityData[rw]|isInJsonArray('teams', team.id) ? ' selected' }}
               >{{ 'Team'|trans }} - {{ team.name }}</option>
             {% endfor %}
           </select>
@@ -36,7 +36,7 @@
           <select id='{{ rw }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
             {% for tg in myTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
-              {{ Entity.entityData.canread|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
+              {{ Entity.entityData[rw]|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
                       >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>
             {% endfor %}
           </select>

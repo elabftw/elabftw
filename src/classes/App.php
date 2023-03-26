@@ -33,7 +33,7 @@ use RuntimeException;
 use function setlocale;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use function textdomain;
 
 /**
@@ -60,7 +60,7 @@ class App
 
     public array $warning = array();
 
-    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log)
+    public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
     {
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it

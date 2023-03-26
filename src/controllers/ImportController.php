@@ -40,7 +40,6 @@ class ImportController implements ControllerInterface
             $Importer->getInserted(),
             ngettext('item imported successfully.', 'items imported successfully.', $Importer->getInserted()),
         );
-        // @phpstan-ignore-next-line
         $this->app->Session->getFlashBag()->add('ok', $msg);
         if (str_starts_with((string) $this->request->request->get('target'), 'items')) {
             return new RedirectResponse('../../database.php?order=lastchange');

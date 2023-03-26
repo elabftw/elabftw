@@ -92,6 +92,9 @@ class SamlAuth implements AuthInterface
         $conf = self::getJWTConfig();
 
         try {
+            if (empty($token)) {
+                throw new UnauthorizedException('Decoding JWT Token failed');
+            }
             $parsedToken = $conf->parser()->parse($token);
             if (!$parsedToken instanceof UnencryptedToken) {
                 throw new UnauthorizedException('Decoding JWT Token failed');

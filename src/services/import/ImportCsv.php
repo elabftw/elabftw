@@ -95,7 +95,7 @@ class ImportCsv extends AbstractImport
     /**
      * Generate a body from a row. Add column name and content after that.
      *
-     * @param array<string, string> $row row from the csv
+     * @param array<non-falsy-string, null|string> $row row from the csv
      */
     private function getBodyFromRow(array $row): string
     {

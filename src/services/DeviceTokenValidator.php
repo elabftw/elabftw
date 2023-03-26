@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -27,6 +26,9 @@ class DeviceTokenValidator
 
     public function validate(): bool
     {
+        if (empty($this->deviceToken)) {
+            return false;
+        }
         $Db = Db::getConnection();
         try {
             $parsedToken = $this->config->parser()->parse($this->deviceToken);
@@ -40,7 +42,7 @@ class DeviceTokenValidator
                 return false;
             }
             // group all the possible exceptions into one because we don't really care the reason why the token might be invalid
-        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated $e) {
+        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
             return false;
         }
         return true;

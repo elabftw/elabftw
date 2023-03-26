@@ -175,20 +175,17 @@ class LoginController implements ControllerInterface
         if ($this->App->Session->has('auth_userid')) {
             return;
         }
-        $isTokenValid = false;
         // a devicetoken cookie might or might not exist, so this can be null
-        $token = $this->App->Request->cookies->get('devicetoken');
+        $token = (string) $this->App->Request->cookies->get('devicetoken');
         // if a token is sent, we need to validate it
-        if (is_string($token)) {
-            $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
-            $isTokenValid = $DeviceTokenValidator->validate();
-        }
+        $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
+        $isTokenValid = $DeviceTokenValidator->validate();
         // if the token is not valid, verify we can login from untrusted devices for that user
         if ($isTokenValid === false) {
             // email might be for non existing user, which will throw exception
             try {
                 $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
-            } catch (ResourceNotFoundException $e) {
+            } catch (ResourceNotFoundException) {
                 throw new InvalidDeviceTokenException();
             }
             // check if authentication is locked for untrusted clients for that user

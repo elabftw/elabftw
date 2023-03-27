@@ -290,20 +290,6 @@
   <!-- END AUTHOR/OWNER HELPER -->
 </div>
 
-
-<div class='row'>
-  <!-- SEARCH WITH TAG -->
-  <div class='col-md-12 mb-2'>
-    <label for='tags-select'>{{ 'With the tag'|trans }}</label>
-    <select multiple name='tags[]' id='tags-select' class='form-control selectpicker' data-show-subtext='true' data-live-search='true' data-showtick='true' data-actions-box='true'>
-      {% for tag in tagsArr %}
-        <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <!-- END SEARCH WITH TAG -->
-</div>
-
 <div class='row mb-2'>
   <!-- SEARCH DATE -->
   <div class='col-md-6'>

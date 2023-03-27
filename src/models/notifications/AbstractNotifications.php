@@ -22,7 +22,8 @@ abstract class AbstractNotifications
 {
     use SetIdTrait;
 
-    protected const PREF = null;
+    /** @var non-empty-string */
+    protected const PREF = 'not set';
 
     protected Notifications $category;
 

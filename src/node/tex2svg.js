@@ -22,7 +22,7 @@ const MathJax = {
         processEscapes: true,
         packages: ['base', 'ams', 'autoload'],
         // fail hard
-        formatError: (_, err) => {throw err},
+        formatError: (jax, err) => {throw err},
     },
     svg: {
         fontCache: 'local',
@@ -32,8 +32,8 @@ const MathJax = {
     },
     options: {
         // fail hard
-        compileError: (_, _, err) => {throw err},
-        typesetError: (_, _, err) => {throw err},
+        compileError: (doc, math, err) => {throw err},
+        typesetError: (doc, math, err) => {throw err},
     }
 };
 

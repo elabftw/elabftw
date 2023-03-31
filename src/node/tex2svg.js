@@ -15,7 +15,8 @@
 const htmlfile = require('fs').readFileSync(process.argv[2], 'utf8');
 
 // Configure MathJax
-const MathJax = {
+// don't put const here or everything explodes and AI takes over the world
+MathJax = {
     tex: {
         inlineMath: [['$','$'], ['\\(','\\)']],
         displayMath: [['$$','$$'], ['\\[','\\]']],

@@ -23,6 +23,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="create-user"]')) {
       return ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
+    // CREATE USER(s) FROM REMOTE DIRECTORY
+    } else if (el.matches('[data-action="create-user-from-remote"]')) {
+      // the users are in a table row, we need to collect all the rows that are selected
+      const selected = document.getElementById('remoteDirectoryUsersTable').querySelectorAll('input[type="checkbox"]:checked');
+      const users = [];
+      selected.forEach(box => {
+        const row = box.parentNode.parentNode as HTMLTableRowElement;
+        users.push({
+          'firstname': row.cells[1].innerText,
+          'lastname': row.cells[2].innerText,
+          'email': row.cells[3].innerText,
+          'orgid': row.cells[4].innerText,
+        });
+      });
+      users.forEach(user => {
+        ApiC.post('users', {...user});
+      });
+
     // UPDATE USER
     } else if (el.matches('[data-action="update-user"]')) {
       return ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));

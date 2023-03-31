@@ -19,9 +19,13 @@ use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
+use Elabftw\Services\DummyRemoteDirectory;
+use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function filter_var;
+
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -74,6 +78,19 @@ try {
         }
     }
 
+    // Remote directory search
+    $remoteDirectoryUsersArr = array();
+    if ($App->Request->query->has('remote_dir_query')) {
+        if ($App->Config->configArr['remote_dir_service'] === 'eairef') {
+            $RemoteDirectory = new EairefRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        } else {
+            $RemoteDirectory = new DummyRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        }
+        $remoteDirectoryUsersArr = $RemoteDirectory->search((string) $App->Request->query->get('remote_dir_query'));
+        if (empty($remoteDirectoryUsersArr)) {
+            $App->warning[] = _('No users found. Try another search.');
+        }
+    }
 
     // all the tags for the team
     $tagsArr = $Tags->readFull();
@@ -89,6 +106,7 @@ try {
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+        'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'teamsArr' => $teamsArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

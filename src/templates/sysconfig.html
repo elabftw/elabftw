@@ -144,6 +144,25 @@
     {% include 'binary-setting.html' with {'label': 'Show local login form', 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'} %}
   </div>
 
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>
+  <div class='pl-3'>
+    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory', 'slug': 'admins_create_users_remote_dir'} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='remote_dir_service' class='col-form-label'>{{ 'Remote directory service'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='remote_dir_service' type='text' value='{{ App.Config.configArr.remote_dir_service }}' id='remote_dir_service' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='remote_dir_config' class='col-form-label'>{{ 'Remote directory config'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='remote_dir_config' type='text' value='{{ App.Config.configArr.remote_dir_config }}' id='remote_dir_config' />
+    </div>
+    <p class='smallgray'>{{ 'Use a JSON string for configuration.'|trans }}</p>
+    <hr>
+  </div>
+
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
   <div class='pl-3'>
     <ul class='list-group'>

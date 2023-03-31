@@ -71,6 +71,7 @@ class Users implements RestInterface
         bool $forceValidation = false,
         bool $alertAdmin = true,
         ?string $validUntil = null,
+        ?string $orgid = null,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
@@ -113,6 +114,7 @@ class Users implements RestInterface
             `validated`,
             `lang`,
             `valid_until`,
+            `orgid`,
             `default_read`,
             `default_write`
         ) VALUES (
@@ -125,6 +127,7 @@ class Users implements RestInterface
             :validated,
             :lang,
             :valid_until,
+            :orgid,
             :default_read,
             :default_write);';
         $req = $this->Db->prepare($sql);
@@ -138,6 +141,7 @@ class Users implements RestInterface
         $req->bindParam(':usergroup', $group, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
+        $req->bindValue(':orgid', $orgid);
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
         $this->Db->execute($req);
@@ -190,7 +194,7 @@ class Users implements RestInterface
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.email, users.mfa_secret,
+            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret,
             users.validated, users.usergroup, users.archived, users.last_login, users.valid_until,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service

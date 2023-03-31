@@ -43,6 +43,10 @@ class UserCreator
             $teams = array('id' => $this->requester->userData['team']);
         }
         $validUntil = $this->reqBody['valid_until'] ?? null;
+        $orgid = null;
+        if (isset($this->reqBody['orgid'])) {
+            $orgid = (new UserParams('orgid', $this->reqBody['orgid']))->getContent();
+        }
         return (new Users())->createOne(
             (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
@@ -56,6 +60,7 @@ class UserCreator
             // don't alert admin
             false,
             $validUntil,
+            $orgid,
         );
     }
 

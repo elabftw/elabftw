@@ -163,7 +163,10 @@ final class Config implements RestInterface
             ('s3_endpoint', ''),
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
-            ('enforce_mfa', '0')";
+            ('enforce_mfa', '0'),
+            ('admins_create_users_remote_dir', '0'),
+            ('remote_dir_service', 'eairef'),
+            ('remote_dir_config', NULL)";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

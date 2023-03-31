@@ -51,6 +51,7 @@
               <th scope='col'>{{ 'Email'|trans }}</th>
               <th scope='col'>{{ 'Last login'|trans }}</th>
               <th scope='col'>{{ 'Valid until'|trans }}</th>
+              <th scope='col'>{{ 'Internal ID'|trans }}</th>
               <th scope='col'>{{ 'Permission group'|trans }}</th>
               <th scope='col'>2FA</th>
               <th scope='col'>{{ 'Actions'|trans }}</th>
@@ -85,11 +86,20 @@
                     {% endif %}
                   {% endif %}
                 </td>
-                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span></td>
-                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span></td>
-                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span></td>
-                <td>{{ user.last_login|default('Never'|trans) }}</td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span>
+                </td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span>
+                </td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
+                </td>
+                <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
                 <td>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
+                </td>
                 <td>
                   <span class='malleableUsergroup hl-hover-gray rounded p-1' data-userid='{{ user.userid }}'>{{ user.usergroup|usergroupToHuman }}</span>
                 </td>
@@ -140,7 +150,7 @@
   </div>
 {% endif %}
 
-{% if App.Config.configArr.admins_create_users or App.Users.userData.is_sysadmin %}
+{% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
 <!-- CREATE USER ACCOUNT -->
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
@@ -197,4 +207,58 @@
     </div>
   </div>
 </div>
+{% endif %}
+
+{% if App.Config.configArr.admins_create_users_remote_dir and App.Request.getScriptName|split('/')|last == 'admin.php' %}
+  {# CREATE USER ACCOUNT through remote API call #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account from external directory'|trans }}</h3>
+  <div class='pl-3'>
+    <form method='GET'>
+      <input type='hidden' name='tab' value='3' />
+      <div class='form-group'>
+        <div class='row mb-2'>
+          {# EMAIL #}
+          <div class='col-md-12'>
+            <label for='email' class='col-form-label'>{{ 'Search term'|trans }}</label>
+            <input class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
+          </div>
+        </div>
+
+        {# SEARCH #}
+        <div class='col-md-12 text-center mt-2'>
+          <button type='submit' class='btn btn-primary'>{{ 'Search'|trans }}</button>
+        </div>
+      </div>
+    </form>
+
+    {% if App.Request.query.has('remote_dir_query') %}
+      <div class='mt-2'>
+        <table class='table' id='remoteDirectoryUsersTable' aria-label='Remote directory users list' data-table-sort='true'>
+          <thead>
+            <tr>
+              <th scope='col'>{{ 'Selection'|trans }}</th>
+              <th scope='col'>{{ 'Firstname'|trans }}</th>
+              <th scope='col'>{{ 'Lastname'|trans }}</th>
+              <th scope='col'>{{ 'Email'|trans }}</th>
+              <th scope='col'>{{ 'Internal ID'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in remoteDirectoryUsersArr %}
+              <tr>
+                <td><input {{ user.disabled ? "disabled='disabled'" }} type='checkbox' /></td>
+                <td>{{ user.firstname }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.orgid }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class='col-md-12 text-center mt-2'>
+          <button data-action='create-user-from-remote' class='btn btn-primary'>{{ 'Add selected'|trans }}</button>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 {% endif %}

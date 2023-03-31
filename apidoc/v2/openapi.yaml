@@ -427,9 +427,9 @@ components:
         team_attr:
           type: string
         fname_attr:
-          type: integer
+          type: string
         lname_attr:
-          type: integer
+          type: string
     item:
       allOf:
         - $ref: '#/components/schemas/entity'

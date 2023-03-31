@@ -399,6 +399,37 @@ components:
           type: string
         tags_id:
           type: string
+    idp:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        entityid:
+          type: string
+        sso_url:
+          type: string
+        sso_binding:
+          type: string
+        slo_url:
+          type: string
+        slo_binding:
+          type: string
+        x509:
+          type: string
+        x509_new:
+          type: string
+        enabled:
+          type: integer
+        email_attr:
+          type: string
+        team_attr:
+          type: string
+        fname_attr:
+          type: integer
+        lname_attr:
+          type: integer
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
@@ -2969,3 +3000,139 @@ paths:
       responses:
         '204':
           description: The upload was deleted.
+
+  # IDPS
+  /idps:
+    get:
+      tags: ['idps']
+      summary: Read all IDPs.
+      operationId: read-idps
+      responses:
+        '200':
+          description: A list of idps.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp'
+    post:
+      tags: ['idps']
+      summary: Create an idp.
+      operationId: post-idp
+      requestBody:
+        description: Parameters for creating an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: A name for the IDP.
+                  required: true
+                entityid:
+                  type: string
+                  description: Entityid.
+                  required: true
+                sso_url:
+                  type: string
+                  description: URL for Single Sign-On.
+                  required: true
+                sso_binding:
+                  type: string
+                  description: Binding for SSO.
+                  required: true
+                slo_url:
+                  type: string
+                  description: URL for Single Log-Out.
+                  required: true
+                slo_binding:
+                  type: string
+                  description: Binding for SLO.
+                  required: true
+                x509:
+                  type: string
+                  description: Certificate in PEM format.
+                  required: true
+                x509_new:
+                  type: string
+                  description: Certificate in PEM format for renewal period.
+                  required: true
+                email_attr:
+                  type: string
+                  description: What attribute to look for the email.
+                  required: true
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                  required: true
+                fname_attr:
+                  type: string
+                  description: What attribute to look for the firstname.
+                  required: true
+                lname_attr:
+                  type: string
+                  description: What attribute to look for the lastname.
+                  required: true
+      responses:
+        '201':
+          description: The idp has been created.
+          headers:
+            location:
+              description: An URL to the idp that was created.
+              schema:
+                type: string
+  /idps/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['idps']
+      summary: Read an idp.
+      operationId: read-idp
+      parameters:
+      responses:
+        '200':
+          description: An idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    patch:
+      tags: ['idps']
+      summary: Actions on an idp.
+      operationId: patch-idp
+      requestBody:
+        description: Parameters for modifying an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['action']
+              properties:
+                action:
+                  type: string
+                  enum: ['update']
+      responses:
+        '200':
+          description: The updated idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    delete:
+      tags: ['idps']
+      summary: Delete an idp.
+      description: The idp gets deleted.
+      operationId: delete-idp
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The idp was deleted.

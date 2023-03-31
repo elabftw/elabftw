@@ -31,7 +31,8 @@ try {
     if ($App->Request->getMethod() === Request::METHOD_OPTIONS) {
         return new JsonResponse();
     }
-    if ($App->Request->server->has('HTTP_AUTHORIZATION')) {
+    // check if the authorization header starts with Basic it means it's a basic auth header and we ignore it.
+    if ($App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
         $keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');

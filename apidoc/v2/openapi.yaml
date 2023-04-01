@@ -3012,7 +3012,7 @@ paths:
   # IDPS
   /idps:
     get:
-      tags: ['idps']
+      tags: ['Idps']
       summary: Read all IDPs.
       operationId: read-idps
       responses:
@@ -3025,7 +3025,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/idp'
     post:
-      tags: ['idps']
+      tags: ['Idps']
       summary: Create an idp.
       operationId: post-idp
       requestBody:
@@ -3100,7 +3100,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['idps']
+      tags: ['Idps']
       summary: Read an idp.
       operationId: read-idp
       parameters:
@@ -3112,7 +3112,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/idp'
     patch:
-      tags: ['idps']
+      tags: ['Idps']
       summary: Actions on an idp.
       operationId: patch-idp
       requestBody:
@@ -3134,7 +3134,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/idp'
     delete:
-      tags: ['idps']
+      tags: ['Idps']
       summary: Delete an idp.
       description: The idp gets deleted.
       operationId: delete-idp

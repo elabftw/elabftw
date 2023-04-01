@@ -55,9 +55,11 @@ components:
     config:
       type: object
       properties:
-        admin_validate:
-          type: string
         admins_create_users:
+          type: string
+        admins_create_users_remote_dir:
+          type: string
+        admin_validate:
           type: string
         announcement:
           type: string
@@ -136,6 +138,10 @@ components:
         privacy_policy:
           type: string
         proxy:
+          type: string
+        remote_dir_config:
+          type: string
+        remote_dir_service:
           type: string
         s3_bucket_name:
           type: string
@@ -668,6 +674,8 @@ components:
         fullname:
           type: string
         orcid:
+          type: string
+        orgid:
           type: string
         auth_service:
           type: integer

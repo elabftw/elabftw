@@ -160,7 +160,8 @@
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='row flex-nowrap'>
     <div class='col-md-6 mr-2'>
-      <canvas class='bg-white w-100 rounded' id='doodleCanvas'></canvas>
+      {# do not use w-100 here as it will break the canvas #}
+      <canvas class='bg-white rounded' width='800' height='600' id='doodleCanvas'></canvas>
     </div>
 
     <div class='col-md-6'>

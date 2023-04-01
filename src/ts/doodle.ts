@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let clickX = [];
   let clickY = [];
   // bool to store the state of painting
-  let isPainting;
-  let wasPainting;
+  let isPainting: boolean;
+  let wasPainting: boolean;
 
   const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');

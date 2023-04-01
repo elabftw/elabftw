@@ -65,9 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const content = e.currentTarget.value;
       if (content.length > 0) {
         StepC.create(content).then(() => {
-          reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
+          e.currentTarget.focus();
+          // do not reload stepsDiv which contains the input, but rather reload the div with the steps, or focus won't work
+          reloadElement('steps_div_' + entity.id);
         });
       }
     }

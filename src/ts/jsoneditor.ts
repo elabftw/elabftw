@@ -42,33 +42,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // LISTENERS
     document.querySelector('.real-container').addEventListener('click', (event) => {
       const el = (event.target as HTMLElement);
-      if (el.matches('[data-action="json-load-metadata"]')) {
-        JsonEditorHelperC.loadMetadata();
-      } else if (el.matches('[data-action="json-load-file"]')) {
-        JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
-      } else if (el.matches('[data-action="json-save-metadata"]')) {
-        JsonEditorHelperC.saveMetadata();
-      } else if (el.matches('[data-action="json-save-file"]')) {
-        JsonEditorHelperC.saveNewFile();
-      } else if (el.matches('[data-action="json-saveas-file"]')) {
-        JsonEditorHelperC.saveAsFile();
-      } else if (el.matches('[data-action="json-save"]')) {
-        JsonEditorHelperC.save();
-      } else if (el.matches('[data-action="json-import-file"]')) {
-        document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
-      } else if (el.matches('[data-action="json-upload-file"]')) {
-        const file = (document.getElementById('jsonImportFileInput') as HTMLInputElement).files[0];
-        const reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = function() {
-          try {
-            JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
-          } catch (error) {
-            notifError(error);
-          }
-        };
-      } else if (el.matches('[data-action="json-clear"]')) {
-        JsonEditorHelperC.clear();
+      try {
+        if (el.matches('[data-action="json-load-metadata"]')) {
+          JsonEditorHelperC.loadMetadata();
+        } else if (el.matches('[data-action="json-load-file"]')) {
+          JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
+        } else if (el.matches('[data-action="json-save-metadata"]')) {
+          JsonEditorHelperC.saveMetadata();
+        } else if (el.matches('[data-action="json-save-file"]')) {
+          JsonEditorHelperC.saveNewFile();
+        } else if (el.matches('[data-action="json-saveas-file"]')) {
+          JsonEditorHelperC.saveAsFile();
+        } else if (el.matches('[data-action="json-save"]')) {
+          JsonEditorHelperC.save();
+        } else if (el.matches('[data-action="json-import-file"]')) {
+          document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
+        } else if (el.matches('[data-action="json-upload-file"]')) {
+          const file = (document.getElementById('jsonImportFileInput') as HTMLInputElement).files[0];
+          const reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = function() {
+            // an error here will not bubble up, so add another try catch block
+            // adding an onerror function doesn't seem to work
+            try {
+              JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
+            } catch (error) {
+              notifError(error);
+            }
+          };
+        } else if (el.matches('[data-action="json-clear"]')) {
+          JsonEditorHelperC.clear();
+        }
+      } catch (error) {
+        notifError(error);
       }
     });
   }

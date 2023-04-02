@@ -129,7 +129,7 @@ a:hover,
     }
 }
 
-select {
+select:not([multiple]) {
     appearance: none;
     background: #fff url('images/ico-arrow.png') no-repeat 97% 56%;
 }

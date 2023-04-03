@@ -13,11 +13,11 @@ use Elabftw\Elabftw\App;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Import\Csv;
+use Elabftw\Import\Eln;
+use Elabftw\Import\Zip;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\ImportInterface;
-use Elabftw\Services\ImportCsv;
-use Elabftw\Services\ImportEln;
-use Elabftw\Services\ImportZip;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,7 +59,7 @@ class ImportController implements ControllerInterface
         // figure out the filetype depending on file extension
         switch ($uploadedFile->getClientOriginalExtension()) {
             case 'eln':
-                return new ImportEln(
+                return new Eln(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
                     $canread->toJson(),
@@ -68,7 +68,7 @@ class ImportController implements ControllerInterface
                     Storage::CACHE->getStorage()->getFs(),
                 );
             case 'zip':
-                return new ImportZip(
+                return new Zip(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
                     $canread->toJson(),
@@ -77,7 +77,7 @@ class ImportController implements ControllerInterface
                     Storage::CACHE->getStorage()->getFs(),
                 );
             case 'csv':
-                return new ImportCsv(
+                return new Csv(
                     $this->app->Users,
                     (string) $this->request->request->get('target'),
                     $canread->toJson(),

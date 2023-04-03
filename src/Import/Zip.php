@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Import;
 
 use function basename;
 use Elabftw\Elabftw\CreateUpload;
@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Uploads;
+use Elabftw\Services\Filter;
 use function is_readable;
 use function json_decode;
 use League\Flysystem\UnableToReadFile;
@@ -26,7 +27,7 @@ use PDO;
 /**
  * Import a .elabftw.zip file into the database.
  */
-class ImportZip extends AbstractImportZip
+class Zip extends AbstractZip
 {
     /**
      * Do the import

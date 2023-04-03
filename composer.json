@@ -84,6 +84,9 @@
       "Elabftw\\Factories\\": [
         "src/factories"
       ],
+      "Elabftw\\Import\\": [
+        "src/Import"
+      ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],

@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Import;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
-class ImportZipTest extends \PHPUnit\Framework\TestCase
+class ElnTest extends \PHPUnit\Framework\TestCase
 {
     private FilesystemOperator $fs;
 
@@ -32,15 +32,15 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testFailUploadedFile(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable.zip',
-            'importable.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
             null,
             UPLOAD_ERR_INI_SIZE, // file is too big!
             true,
         );
 
         $this->expectException(ImproperActionException::class);
-        new ImportZip(
+        new Eln(
             new Users(1, 1),
             'items:1',
             BasePermissions::MyTeams->toJson(),
@@ -54,13 +54,13 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     {
         $uploadedFile = new UploadedFile(
             dirname(__DIR__, 2) . '/_data/universign.asn1',
-            'importable.zip',
+            'importable.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
         $this->expectException(ImproperActionException::class);
-        new ImportZip(
+        new Eln(
             new Users(1, 1),
             'items:1',
             BasePermissions::MyTeams->toJson(),
@@ -73,14 +73,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportExperiments(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable.zip',
-            'importable.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new Eln(
             new Users(1, 1),
             'experiments:1',
             BasePermissions::MyTeams->toJson(),
@@ -95,14 +95,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportExperimentsMulti(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-multi.zip',
-            'importable-multi.zip',
+            dirname(__DIR__, 2) . '/_data/multiple-experiments.eln',
+            'importable-multi.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new Eln(
             new Users(1, 1),
             'experiments:1',
             BasePermissions::MyTeams->toJson(),
@@ -117,14 +117,14 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
     public function testImportItems(): void
     {
         $uploadedFile = new UploadedFile(
-            dirname(__DIR__, 2) . '/_data/importable-item.zip',
-            'importable.items.zip',
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.items.eln',
             null,
             UPLOAD_ERR_OK,
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new Eln(
             new Users(1, 1),
             'items:1',
             BasePermissions::MyTeams->toJson(),
@@ -146,7 +146,29 @@ class ImportZipTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
-        $Import = new ImportZip(
+        $Import = new Eln(
+            new Users(1, 1),
+            'items:1',
+            BasePermissions::MyTeams->toJson(),
+            BasePermissions::MyTeams->toJson(),
+            $uploadedFile,
+            $this->fs,
+        );
+        $this->expectException(ImproperActionException::class);
+        $Import->import();
+    }
+
+    public function testInvalidShasum(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/invalid-shasum.eln',
+            'invalid-shasum.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
             new Users(1, 1),
             'items:1',
             BasePermissions::MyTeams->toJson(),

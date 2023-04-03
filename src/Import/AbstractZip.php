@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Import;
 
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Users;
@@ -18,7 +18,7 @@ use ZipArchive;
 /**
  * Mother class for importing zip file
  */
-abstract class AbstractImportZip extends AbstractImport
+abstract class AbstractZip extends AbstractImport
 {
     // path where we extract the archive content (subfolder of cache/elab)
     protected string $tmpPath;

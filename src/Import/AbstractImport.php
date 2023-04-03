@@ -7,7 +7,7 @@
  * @see       https://www.elabftw.net Official website
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
+use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**

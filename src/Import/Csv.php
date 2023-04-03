@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -20,7 +20,7 @@ use League\Csv\Reader;
 /**
  * Import entries from a csv file.
  */
-class ImportCsv extends AbstractImport
+class Csv extends AbstractImport
 {
     protected array $allowedMimes = array(
         'application/csv',

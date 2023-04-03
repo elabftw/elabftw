@@ -7,12 +7,12 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
 /**
  * For fixtures files used in tests
  */
-class FixturesStorage extends LocalStorage
+class Fixtures extends Local
 {
     protected const FOLDER = 'tests/_data';
 }

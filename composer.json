@@ -95,10 +95,11 @@
       ],
       "Elabftw\\Services\\": [
         "src/services",
-        "src/services/auth",
         "src/services/import",
-        "src/services/make",
-        "src/services/storage"
+        "src/services/make"
+      ],
+      "Elabftw\\Storage\\": [
+        "src/Storage"
       ],
       "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
         "src/services/advancedSearchQuery/collectors"

@@ -8,6 +8,7 @@ coverage:
             - src/models/*
             - src/classes/*
             - src/services/*
+            - src/Storage/*
             - src/traits/*
             - src/controllers/*
 actor: Tester

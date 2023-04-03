@@ -7,18 +7,20 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
 use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 /**
- * For in memory filesystem operations
+ * For locally stored uploads
  */
-class MemoryStorage extends AbstractStorage
+class Local extends AbstractStorage
 {
+    protected const FOLDER = 'uploads';
+
     protected function getAdapter(): FilesystemAdapter
     {
-        return new InMemoryFilesystemAdapter();
+        return new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/' . static::FOLDER);
     }
 }

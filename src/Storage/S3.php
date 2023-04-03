@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
 use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
@@ -21,7 +21,7 @@ use League\Flysystem\Visibility;
 /**
  * Provide a League\Filesystem adapter for S3 buckets file uploads
  */
-class S3Storage extends AbstractStorage
+class S3 extends AbstractStorage
 {
     private const S3_VERSION = '2006-03-01';
 

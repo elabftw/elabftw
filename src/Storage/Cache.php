@@ -7,12 +7,12 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
 /**
  * For local cache folder, used by many processes that need to write files at some point
  */
-class CacheStorage extends LocalStorage
+class Cache extends Local
 {
     protected const FOLDER = 'cache/elab';
 }

@@ -7,15 +7,18 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
+use Aws\Credentials\Credentials;
+use Elabftw\Models\Config;
 use League\Flysystem\Filesystem;
 
-class LocalStorageTest extends \PHPUnit\Framework\TestCase
+class S3Test extends \PHPUnit\Framework\TestCase
 {
     public function testGetFs(): void
     {
-        $Storage = new LocalStorage();
+        $credentials = new Credentials('access-key', 'secret-key');
+        $Storage = new S3(Config::getConfig(), $credentials);
         $this->assertInstanceOf(Filesystem::class, $Storage->getFs());
     }
 }

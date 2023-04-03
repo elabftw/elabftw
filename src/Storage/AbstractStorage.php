@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Storage;
 
 use Elabftw\Interfaces\StorageInterface;
 use League\Flysystem\Filesystem;

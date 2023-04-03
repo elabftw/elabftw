@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
+use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;

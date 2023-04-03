@@ -9,10 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Idps;
-use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use OneLogin\Saml2\LogoutRequest as SamlLogoutRequest;

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Local;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -20,7 +21,6 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
-use Elabftw\Services\LocalAuth;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -93,7 +93,7 @@ try {
             );
     }
 
-    $showMfa = !LocalAuth::isMfaEnforced(
+    $showMfa = !Local::isMfaEnforced(
         (bool) $App->Users->userData['is_admin'],
         (bool) $App->Users->userData['is_sysadmin'],
         (int) $App->Config->configArr['enforce_mfa'],

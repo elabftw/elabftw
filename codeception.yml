@@ -4,9 +4,13 @@ coverage:
     show_only_summary: true
     whitelist:
         include:
+            - src/Auth/*
             - src/models/*
             - src/classes/*
+            - src/Make/*
+            - src/Import/*
             - src/services/*
+            - src/Storage/*
             - src/traits/*
             - src/controllers/*
 actor: Tester

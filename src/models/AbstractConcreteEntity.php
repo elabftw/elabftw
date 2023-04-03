@@ -12,7 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
-use Elabftw\Services\MakeBloxberg;
+use Elabftw\Make\MakeBloxberg;
 use GuzzleHttp\Client;
 
 /**

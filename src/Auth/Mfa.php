@@ -7,17 +7,18 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
+use Elabftw\Services\MfaHelper;
 
 /**
  * Multi Factor Auth service
  */
-class MfaAuth implements AuthInterface
+class Mfa implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

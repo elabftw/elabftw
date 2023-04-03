@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,26 +6,25 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 
-class LocalAuthTest extends \PHPUnit\Framework\TestCase
+class LocalTest extends \PHPUnit\Framework\TestCase
 {
-    private LocalAuth $AuthService;
+    private Local $AuthService;
 
     protected function setUp(): void
     {
-        $this->AuthService = new LocalAuth('phpunit@example.com', 'phpunitftw');
+        $this->AuthService = new Local('phpunit@example.com', 'phpunitftw');
     }
 
     public function testEmptyPassword(): void
     {
         $this->expectException(QuantumException::class);
-        $AuthService = new LocalAuth('phpunit@example.com', '');
+        $AuthService = new Local('phpunit@example.com', '');
     }
 
     public function testTryAuth(): void
@@ -38,12 +37,12 @@ class LocalAuthTest extends \PHPUnit\Framework\TestCase
     public function testTryAuthWithInvalidEmail(): void
     {
         $this->expectException(QuantumException::class);
-        $AuthService = new LocalAuth('invalid@example.com', 'nopenope');
+        $AuthService = new Local('invalid@example.com', 'nopenope');
     }
 
     public function testTryAuthWithInvalidPassword(): void
     {
-        $AuthService = new LocalAuth('phpunit@example.com', 'nopenope');
+        $AuthService = new Local('phpunit@example.com', 'nopenope');
         $this->expectException(InvalidCredentialsException::class);
         $AuthService->tryAuth();
     }

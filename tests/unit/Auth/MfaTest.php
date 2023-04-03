@@ -7,16 +7,17 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
+use Elabftw\Services\MfaHelper;
 use RuntimeException;
 
-class MfaAuthTest extends \PHPUnit\Framework\TestCase
+class MfaTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuthWithInvalidCode(): void
     {
         $MfaHelper = new MfaHelper(1);
-        $AuthService = new MfaAuth($MfaHelper, '12');
+        $AuthService = new Mfa($MfaHelper, '12');
         $this->expectException(RuntimeException::class);
         $AuthService->tryAuth();
     }
@@ -26,7 +27,7 @@ class MfaAuthTest extends \PHPUnit\Framework\TestCase
         $secret = (new MfaHelper(1))->generateSecret();
         $MfaHelper = new MfaHelper(1, $secret);
         $code = $MfaHelper->getCode();
-        $AuthService = new MfaAuth($MfaHelper, $code);
+        $AuthService = new Mfa($MfaHelper, $code);
         $authResponse = $AuthService->tryAuth();
         $this->assertTrue($authResponse->hasVerifiedMfa);
         $this->assertEquals(1, $authResponse->userid);

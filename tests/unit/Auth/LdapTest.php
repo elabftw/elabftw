@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,18 +6,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use LdapRecord\LdapRecordException;
 use LdapRecord\Models\Entry;
 use LdapRecord\Testing\ConnectionFake;
 use LdapRecord\Testing\LdapFake;
 
-class LdapAuthTest extends \PHPUnit\Framework\TestCase
+class LdapTest extends \PHPUnit\Framework\TestCase
 {
-    private LdapAuth $AuthService;
+    private Ldap $AuthService;
 
     protected function setUp(): void
     {
@@ -39,7 +38,7 @@ class LdapAuthTest extends \PHPUnit\Framework\TestCase
         );
         $connection = new ConnectionFake($ldapConfig, new LdapFake());
 
-        $this->AuthService = new LdapAuth($connection, new Entry(), $configArr, 'phpunit@example.com', 'phpunitftw');
+        $this->AuthService = new Ldap($connection, new Entry(), $configArr, 'phpunit@example.com', 'phpunitftw');
     }
 
     public function testTryAuth(): void

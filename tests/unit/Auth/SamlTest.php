@@ -7,8 +7,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
+use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
@@ -17,7 +18,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
-class SamlAuthTest extends \PHPUnit\Framework\TestCase
+class SamlTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 

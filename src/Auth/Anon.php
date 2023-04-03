@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
@@ -16,7 +16,7 @@ use Elabftw\Interfaces\AuthInterface;
 /**
  * Anonymous auth service
  */
-class AnonAuth implements AuthInterface
+class Anon implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

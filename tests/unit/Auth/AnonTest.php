@@ -7,23 +7,23 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
 
-class AnonAuthTest extends \PHPUnit\Framework\TestCase
+class AnonTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
-    private AnonAuth $AnonAuth;
+    private Anon $AnonAuth;
 
     protected function setUp(): void
     {
         $this->configArr = array(
             'anon_users' => '1',
         );
-        $this->AnonAuth = new AnonAuth(
+        $this->AnonAuth = new Anon(
             $this->configArr,
             1,
         );
@@ -37,7 +37,7 @@ class AnonAuthTest extends \PHPUnit\Framework\TestCase
 
         // now try anon login but it's disabled by sysadmin
         $this->expectException(IllegalActionException::class);
-        new AnonAuth(
+        new Anon(
             array('anon_users' => '0'),
             1,
         );

@@ -7,13 +7,13 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Logger;
 
-class ExternalAuthTest extends \PHPUnit\Framework\TestCase
+class ExternalTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
@@ -21,7 +21,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
 
     private Logger $log;
 
-    private ExternalAuth $ExternalAuth;
+    private External $External;
 
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
             'auth_team' => 'Alpha',
         );
         $this->log = new Logger('elabftw');
-        $this->ExternalAuth = new ExternalAuth(
+        $this->External = new External(
             $this->configArr,
             $this->serverParams,
             $this->log,
@@ -49,7 +49,7 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuth(): void
     {
-        $authResponse = $this->ExternalAuth->tryAuth();
+        $authResponse = $this->External->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
@@ -64,12 +64,12 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     {
         $serverParams = $this->serverParams;
         $serverParams['auth_email'] = 'nonexisting@yopmail.com';
-        $ExternalAuth = new ExternalAuth(
+        $External = new External(
             $this->configArr,
             $serverParams,
             $this->log,
         );
-        $authResponse = $ExternalAuth->tryAuth();
+        $authResponse = $External->tryAuth();
         $this->assertIsInt($authResponse->userid);
     }
 
@@ -80,13 +80,13 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         $serverParams['auth_email'] = 'nonexisting2@yopmail.com';
         $configArr = $this->configArr;
         $configArr['saml_user_default'] = '0';
-        $ExternalAuth = new ExternalAuth(
+        $External = new External(
             $configArr,
             $serverParams,
             $this->log,
         );
         $this->expectException(ImproperActionException::class);
-        $ExternalAuth->tryAuth();
+        $External->tryAuth();
     }
 
     // now try without a team sent by server
@@ -94,12 +94,12 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
     {
         // make sure we use the default team
         $this->serverParams['auth_team'] = null;
-        $ExternalAuth = new ExternalAuth(
+        $External = new External(
             $this->configArr,
             $this->serverParams,
             $this->log,
         );
-        $authResponse = $ExternalAuth->tryAuth();
+        $authResponse = $External->tryAuth();
         $this->assertEquals(1, $authResponse->selectedTeam);
     }
 
@@ -109,12 +109,12 @@ class ExternalAuthTest extends \PHPUnit\Framework\TestCase
         // because sysadmin configured it like that
         $this->configArr['saml_team_default'] = 0;
         $this->serverParams['auth_team'] = null;
-        $ExternalAuth = new ExternalAuth(
+        $External = new External(
             $this->configArr,
             $this->serverParams,
             $this->log,
         );
         $this->expectException(ImproperActionException::class);
-        $ExternalAuth->tryAuth();
+        $External->tryAuth();
     }
 }

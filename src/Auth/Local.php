@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
@@ -18,6 +18,7 @@ use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
+use Elabftw\Services\Filter;
 use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
@@ -26,7 +27,7 @@ use PDO;
 /**
  * Local auth service
  */
-class LocalAuth implements AuthInterface
+class Local implements AuthInterface
 {
     private Db $Db;
 

@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
@@ -16,12 +16,12 @@ use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 
-class CookieAuthTest extends \PHPUnit\Framework\TestCase
+class CookieTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
-    
+
     private Db $Db;
-    
+
     private string $token;
 
     public static function tearDownAfterClass(): void
@@ -39,7 +39,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthSuccess(): void
     {
-        $CookieAuth = new CookieAuth($this->token, '1', $this->Config->configArr);
+        $CookieAuth = new Cookie($this->token, '1', $this->Config->configArr);
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
         $req->bindParam(':token', $this->token);
         $req->execute();
@@ -52,14 +52,14 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
     public function testTryAuthFail(): void
     {
         $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-        $CookieAuth = new CookieAuth($token, '1', $this->Config->configArr);
+        $CookieAuth = new Cookie($token, '1', $this->Config->configArr);
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
     }
 
     public function testTryAuthBadTeam(): void
     {
-        $CookieAuth = new CookieAuth($this->token, '2', $this->Config->configArr);
+        $CookieAuth = new Cookie($this->token, '2', $this->Config->configArr);
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
         $req->bindParam(':token', $this->token);
         $req->execute();
@@ -76,7 +76,7 @@ class CookieAuthTest extends \PHPUnit\Framework\TestCase
         $req = $this->Db->prepare("UPDATE config SET conf_value = :value WHERE conf_name = 'enforce_mfa'");
         $req->bindValue(':value', EnforceMfa::Everyone->value);
         $req->execute();
-        $CookieAuth = new CookieAuth($this->token, '1', $this->Config->readAll());
+        $CookieAuth = new Cookie($this->token, '1', $this->Config->readAll());
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
     }

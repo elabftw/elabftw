@@ -11,6 +11,13 @@ namespace Elabftw\Controllers;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Auth\Anon;
+use Elabftw\Auth\External;
+use Elabftw\Auth\Ldap;
+use Elabftw\Auth\Local;
+use Elabftw\Auth\Mfa;
+use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Saml;
 use Elabftw\Exceptions\ImproperActionException;
@@ -21,17 +28,10 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
-use Elabftw\Services\AnonAuth;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
-use Elabftw\Services\ExternalAuth;
-use Elabftw\Services\LdapAuth;
-use Elabftw\Services\LocalAuth;
 use Elabftw\Services\LoginHelper;
-use Elabftw\Services\MfaAuth;
 use Elabftw\Services\MfaHelper;
-use Elabftw\Services\SamlAuth;
-use Elabftw\Services\TeamAuth;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -98,7 +98,7 @@ class LoginController implements ControllerInterface
         /////////////////
         // If MFA is enforced by Sysadmin (only for local auth) the user has to set it up
         if ($authType === 'local'
-            && LocalAuth::enforceMfa(
+            && Local::enforceMfa(
                 $AuthResponse,
                 (int) $this->App->Config->configArr['enforce_mfa']
             )
@@ -218,14 +218,14 @@ class LoginController implements ControllerInterface
                 );
                 $connection = new Connection($ldapConfig);
                 // use a generic Entry object https://ldaprecord.com/docs/core/v2/models/#entry-model
-                return new LdapAuth($connection, new Entry(), $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
+                return new Ldap($connection, new Entry(), $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
                 // AUTH WITH LOCAL DATABASE
             case 'local':
                 $this->App->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
-                return new LocalAuth((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
+                return new Local((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
 
                 // AUTH WITH SAML
             case 'saml':
@@ -238,7 +238,7 @@ class LoginController implements ControllerInterface
 
             case 'external':
                 $this->App->Session->set('auth_service', self::AUTH_EXTERNAL);
-                return new ExternalAuth(
+                return new External(
                     $this->App->Config->configArr,
                     $this->App->Request->server->all(),
                     $this->App->Log,
@@ -247,19 +247,19 @@ class LoginController implements ControllerInterface
                 // AUTH AS ANONYMOUS USER
             case 'anon':
                 $this->App->Session->set('auth_service', self::AUTH_ANON);
-                return new AnonAuth($this->App->Config->configArr, (int) $this->App->Request->request->get('team_id'));
+                return new Anon($this->App->Config->configArr, (int) $this->App->Request->request->get('team_id'));
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated
             case 'team':
-                return new TeamAuth(
+                return new Team(
                     $this->App->Session->get('auth_userid'),
                     (int) $this->App->Request->request->get('selected_team'),
                 );
 
                 // MFA AUTH
             case 'mfa':
-                return new MfaAuth(
+                return new Mfa(
                     new MfaHelper(
                         (int) $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),

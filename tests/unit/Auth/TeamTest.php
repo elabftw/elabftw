@@ -7,15 +7,15 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 
-class TeamAuthTest extends \PHPUnit\Framework\TestCase
+class TeamTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuth(): void
     {
-        $AuthService = new TeamAuth(1, 1);
+        $AuthService = new Team(1, 1);
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
         $this->assertEquals(1, $authResponse->userid);

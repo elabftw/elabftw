@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
@@ -38,7 +38,7 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 /**
  * SAML auth service
  */
-class SamlAuth implements AuthInterface
+class Saml implements AuthInterface
 {
     private const TEAM_SELECTION_REQUIRED = 1;
 
@@ -180,6 +180,9 @@ class SamlAuth implements AuthInterface
 
     private function getEmail(): string
     {
+        if (!isset($this->samlUserdata[$this->settings['idp']['emailAttr']])) {
+            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
+        }
         $email = $this->samlUserdata[$this->settings['idp']['emailAttr']];
 
         if (is_array($email)) {

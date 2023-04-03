@@ -4,6 +4,7 @@ coverage:
     show_only_summary: true
     whitelist:
         include:
+            - src/Auth/*
             - src/models/*
             - src/classes/*
             - src/services/*

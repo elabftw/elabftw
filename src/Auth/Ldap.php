@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
+use Elabftw\Services\Filter;
 use function explode;
 use function is_array;
 use LdapRecord\Connection;
@@ -27,7 +28,7 @@ use LdapRecord\Query\ObjectNotFoundException;
 /**
  * LDAP auth service
  */
-class LdapAuth implements AuthInterface
+class Ldap implements AuthInterface
 {
     // the login string, email or uid or else
     private string $login = '';

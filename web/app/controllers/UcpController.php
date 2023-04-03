@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Auth\Local;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -18,7 +19,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Services\Filter;
-use Elabftw\Services\LocalAuth;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -38,7 +38,7 @@ try {
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             // check that we got the good password
-            $LocalAuth = new LocalAuth($App->Users->userData['email'], (string) $Request->request->get('currpass'));
+            $LocalAuth = new Local($App->Users->userData['email'], (string) $Request->request->get('currpass'));
             try {
                 $LocalAuth->tryAuth();
             } catch (InvalidCredentialsException $e) {
@@ -78,7 +78,7 @@ try {
         // Disable MFA if not enforced
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
-            && !LocalAuth::isMfaEnforced(
+            && !Local::isMfaEnforced(
                 (bool) $App->Users->userData['is_admin'],
                 (bool) $App->Users->userData['is_sysadmin'],
                 (int) $App->Config->configArr['enforce_mfa'],

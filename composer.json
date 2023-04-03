@@ -63,6 +63,9 @@
   },
   "autoload": {
     "psr-4": {
+      "Elabftw\\Auth\\": [
+        "src/Auth"
+      ],
       "Elabftw\\Controllers\\": [
         "src/controllers"
       ],

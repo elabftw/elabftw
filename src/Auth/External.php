@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
@@ -20,7 +20,7 @@ use Monolog\Logger;
 /**
  * Authenticate with server provided values
  */
-class ExternalAuth implements AuthInterface
+class External implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

@@ -7,16 +7,17 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Services\TeamsHelper;
 
 /**
  * Team auth service: for when you are already auth but you had to select a team
  */
-class TeamAuth implements AuthInterface
+class Team implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

@@ -7,18 +7,21 @@
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 
 /**
  * Authenticate with the cookie
  */
-class CookieAuth implements AuthInterface
+class Cookie implements AuthInterface
 {
     private Db $Db;
 
@@ -69,7 +72,7 @@ class CookieAuth implements AuthInterface
 
         // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
         if ($res['auth_service'] === LoginController::AUTH_LOCAL
-            && LocalAuth::enforceMfa($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
+            && Local::enforceMfa($this->AuthResponse, (int) $this->configArr['enforce_mfa'])
         ) {
             throw new UnauthorizedException();
         }

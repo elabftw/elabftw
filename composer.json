@@ -87,6 +87,9 @@
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
       ],
+      "Elabftw\\Make\\": [
+        "src/Make"
+      ],
       "Elabftw\\Models\\": [
         "src/models"
       ],

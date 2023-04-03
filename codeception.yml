@@ -7,6 +7,7 @@ coverage:
             - src/Auth/*
             - src/models/*
             - src/classes/*
+            - src/Make/*
             - src/services/*
             - src/Storage/*
             - src/traits/*

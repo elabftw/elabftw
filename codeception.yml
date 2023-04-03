@@ -8,6 +8,7 @@ coverage:
             - src/models/*
             - src/classes/*
             - src/Make/*
+            - src/Import/*
             - src/services/*
             - src/Storage/*
             - src/traits/*

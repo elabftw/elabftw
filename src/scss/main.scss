@@ -1034,6 +1034,11 @@ input[type='color'] {
     @media (min-width: 992px) {
         height: 43px;
     }
+
+    /* prevent wrap on whitespace for elements of the menu so it doesn't take two lines when screen size is getting small */
+    .nav-item {
+        white-space: nowrap;
+    }
 }
 
 /* to make the pie smaller */

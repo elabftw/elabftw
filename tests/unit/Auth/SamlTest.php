@@ -58,7 +58,6 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $Saml = new Saml(Config::getConfig(), new Idps());
         $idpId = 1;
         $this->settings = $Saml->getSettings($idpId);
-        $this->settings['idp']['orgidAttr'] = 'internal_id';
     }
 
     public function testTryAuth(): void
@@ -96,12 +95,10 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->SamlAuthLib->method('login')->willReturn(null);
         $this->SamlAuthLib->method('processResponse')->willReturn(null);
         $this->SamlAuthLib->method('getErrors')->willReturn(null);
-        // FIXME do I really need to remake the mock entirely?
-        // calling just the line below doesn't work
         $this->SamlAuthLib->method('isAuthenticated')->willReturn(false);
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $this->expectException(UnauthorizedException::class);
-        $authResponse = $AuthService->assertIdpResponse();
+        $AuthService->assertIdpResponse();
     }
 
     /**
@@ -300,6 +297,61 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
         $this->assertEquals(2, $authResponse->selectedTeam);
+    }
+
+    public function testCreateUserWithTeamsFromIdpButConfigIsEmpty(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real_yes@example.com';
+        $samlUserdata['User.team'] = 'Bravo';
+        $settings = $this->settings;
+        // set an empty idp team attribute
+        $settings['idp']['teamAttr'] = '';
+
+        // create the user on the fly
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        // try to synchronize the teams from idp but the team attribute is empty
+        $config['saml_sync_teams'] = '1';
+
+        $this->expectException(ImproperActionException::class);
+        $this->getAuthResponse($samlUserdata, $config, $settings);
+    }
+
+    public function testCreateUserWithTeamsFromIdpAndTeamsIsArray(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real_yes@example.com';
+        $samlUserdata['User.team'] = array('Bravo', 'Alpha');
+        $settings = $this->settings;
+        // set an empty idp team attribute
+        $settings['idp']['teamAttr'] = 'User.team';
+
+        // create the user on the fly
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        // try to synchronize the teams from idp but the team attribute is empty
+        $config['saml_sync_teams'] = '1';
+
+        $response = $this->getAuthResponse($samlUserdata, $config, $settings);
+        $this->assertEquals(2, count($response->selectableTeams));
+    }
+
+    public function testCreateUserWithTeamsFromIdpButIdpValueIsEmpty(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real_yes@example.com';
+        $samlUserdata['User.team'] = '';
+        $settings = $this->settings;
+
+        // create the user on the fly
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        // try to synchronize the teams from idp but the team attribute is empty
+        $config['saml_sync_teams'] = '1';
+
+        $this->expectException(ImproperActionException::class);
+        $this->getAuthResponse($samlUserdata, $config, $settings);
     }
 
     /**

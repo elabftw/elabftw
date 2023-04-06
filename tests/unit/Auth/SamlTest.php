@@ -268,6 +268,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real@example.com';
+        $samlUserdata['internal_id'] = 'something else';
         // remove the team attribute setting
         $settings = $this->settings;
         unset($settings['idp']['teamAttr']);
@@ -277,6 +278,8 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $config['saml_user_default'] = '1';
         // let user select a team
         $config['saml_team_default'] = '-1';
+        // we try to match with orgid too but it won't work
+        $config['saml_fallback_orgid'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config, $settings);
         $this->assertEmpty($authResponse->selectableTeams);
@@ -322,8 +325,6 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     public function testAssertIdpResponseError(): void
     {
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
-        // FIXME do I really need to remake the mock entirely?
-        // calling just the line below doesn't work
         $this->SamlAuthLib->method('getErrors')->willReturn(array('Error' => 'Something went wrong!'));
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $this->expectException(UnauthorizedException::class);
@@ -336,8 +337,6 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     public function testAssertIdpResponseErrorDebug(): void
     {
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
-        // FIXME do I really need to remake the mock entirely?
-        // calling just the line below doesn't work
         $this->SamlAuthLib->method('getErrors')->willReturn(array('Error' => 'Something went wrong!'));
         $configArr = $this->configArr;
         $configArr['debug'] = '1';
@@ -364,6 +363,12 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         [$sid, $idpId] = SamlAuth::decodeToken($token);
         $this->assertEquals('abcdef', $sid);
         $this->assertEquals(1, $idpId);
+    }
+
+    public function testEmptyToken(): void
+    {
+        $this->expectException(UnauthorizedException::class);
+        SamlAuth::decodeToken('');
     }
 
     public function testUndecodableToken(): void

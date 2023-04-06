@@ -631,6 +631,8 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
+    {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email', 'slug': 'saml_fallback_orgid'} %}
+    {% include 'binary-setting.html' with {'label': 'If user is matched with internal id, update the email sent by IDP?', 'slug': 'saml_sync_email_idp'} %}
     {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP', 'slug': 'saml_sync_teams'} %}
     {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already", 'slug': 'saml_team_create'} %}
 
@@ -776,6 +778,12 @@
             <div class='d-flex justify-content-between'>
               <label for='saml-team_{{ idp.id }}' class='col-form-label'>What attribute to look for the team name (optional)</label>
               <input class='form-control col-md-3' type='text' id='saml-team_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='team_attr' value='{{ idp.team_attr }}' />
+            </div>
+            <hr>
+
+            <div class='d-flex justify-content-between'>
+              <label for='saml-orgid_{{ idp.id }}' class='col-form-label'>What attribute to look for the internal id (optional)</label>
+              <input class='form-control col-md-3' type='text' id='saml-orgid_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='orgid_attr' value='{{ idp.orgid_attr }}' />
             </div>
             <hr>
 

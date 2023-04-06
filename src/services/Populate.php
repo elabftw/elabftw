@@ -120,10 +120,11 @@ class Populate
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
+        $orgid = $user['orgid'] ?? null;
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 

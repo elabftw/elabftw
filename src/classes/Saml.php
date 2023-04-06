@@ -164,6 +164,7 @@ class Saml
                 'teamAttr' => $idp['team_attr'],
                 'fnameAttr' => $idp['fname_attr'],
                 'lnameAttr' => $idp['lname_attr'],
+                'orgidAttr' => $idp['orgid_attr'],
             ),
             // Security settings
             'security' => array(

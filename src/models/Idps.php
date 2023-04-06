@@ -37,8 +37,8 @@ class Idps implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, email_attr, team_attr, fname_attr, lname_attr)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :email_attr, :team_attr, :fname_attr, :lname_attr)';
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, email_attr, team_attr, fname_attr, lname_attr, orgid_attr)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $reqBody['name']);
         $req->bindParam(':entityid', $reqBody['entityid']);
@@ -52,6 +52,7 @@ class Idps implements RestInterface
         $req->bindParam(':team_attr', $reqBody['team_attr']);
         $req->bindParam(':fname_attr', $reqBody['fname_attr']);
         $req->bindParam(':lname_attr', $reqBody['lname_attr']);
+        $req->bindParam(':orgid_attr', $reqBody['orgid_attr']);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

@@ -3074,15 +3074,15 @@ paths:
                 team_attr:
                   type: string
                   description: What attribute to look for the team.
-                  required: true
                 fname_attr:
                   type: string
                   description: What attribute to look for the firstname.
-                  required: true
                 lname_attr:
                   type: string
                   description: What attribute to look for the lastname.
-                  required: true
+                orgid_attr:
+                  type: string
+                  description: What attribute to look for the internal id.
       responses:
         '201':
           description: The idp has been created.

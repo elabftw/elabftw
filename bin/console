@@ -23,6 +23,7 @@ $Application->add(new CheckDatabase());
 $Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new UpdateDatabase());
+$Application->add(new RevertSchema());
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());

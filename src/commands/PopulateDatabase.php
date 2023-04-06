@@ -158,6 +158,7 @@ class PopulateDatabase extends Command
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',
             'lname_attr' => 'User.LastName',
+            'orgid_attr' => 'internal_id',
         ));
 
         $output->writeln('All done.');

@@ -13,6 +13,7 @@ use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -140,7 +141,7 @@ class Saml implements AuthInterface
         $this->samlSessionIdx = $this->SamlAuthLib->getSessionIndex();
 
         // GET EMAIL
-        $email = $this->getEmail();
+        $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
         // GET POPULATED USERS OBJECT
         $Users = $this->getUsers($email);
@@ -178,21 +179,22 @@ class Saml implements AuthInterface
         return $this->samlSessionIdx;
     }
 
-    private function getEmail(): string
+    private function extractAttribute(string $attribute): string
     {
-        if (!isset($this->samlUserdata[$this->settings['idp']['emailAttr']])) {
-            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
+        $err = sprintf('Could not find attribute "%s" in response from IDP! Aborting.', $attribute);
+        if (!isset($this->samlUserdata[$attribute])) {
+            throw new ImproperActionException($err);
         }
-        $email = $this->samlUserdata[$this->settings['idp']['emailAttr']];
+        $attr = $this->samlUserdata[$attribute];
 
-        if (is_array($email)) {
-            $email = $email[0];
+        if (is_array($attr)) {
+            $attr = $attr[0];
         }
 
-        if ($email === null) {
-            throw new ImproperActionException('Could not find email in response from IDP! Aborting.');
+        if ($attr === null) {
+            throw new ImproperActionException($err);
         }
-        return $email;
+        return $attr;
     }
 
     /**
@@ -261,11 +263,35 @@ class Saml implements AuthInterface
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
-    private function getUsers(string $email): Users | int
+    private function getExistingUser(string $email): Users | false
     {
         try {
-            $Users = ExistingUser::fromEmail($email);
+            // we first try to match a local user with the email
+            return ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
+            // try finding the user with the orgid because email didn't work
+            // but only if we explicitely want to
+            if ($this->configArr['saml_fallback_orgid'] === '1' && isset($this->settings['idp']['orgidAttr'])) {
+                $orgid = $this->extractAttribute($this->settings['idp']['orgidAttr']);
+                try {
+                    $Users = ExistingUser::fromOrgid($orgid);
+                    // ok we found our user thanks to the orgid, maybe we want to update our stored email?
+                    if ($this->configArr['saml_sync_email_idp'] === '1') {
+                        $Users->patch(Action::Update, array('email' => $email));
+                    }
+                    return $Users;
+                } catch (ResourceNotFoundException) {
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
+
+    private function getUsers(string $email): Users | int
+    {
+        $Users = $this->getExistingUser($email);
+        if ($Users === false) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {

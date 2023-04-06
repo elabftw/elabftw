@@ -200,7 +200,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllActiveFromTeam(): void
     {
-        $this->assertCount(5, $this->Users->readAllActiveFromTeam());
+        $this->assertCount(6, $this->Users->readAllActiveFromTeam());
     }
 
     public function testDestroy(): void

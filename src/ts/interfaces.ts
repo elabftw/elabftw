@@ -62,6 +62,7 @@ enum Action {
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
   Lock = 'lock',
+  PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   Replace = 'replace',
   Timestamp = 'timestamp',

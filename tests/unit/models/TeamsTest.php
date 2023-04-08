@@ -18,7 +18,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Teams= new Teams(new Users(1, 1));
+        $this->Teams= new Teams(new Users(1, 1), 1);
     }
 
     public function testGetPage(): void
@@ -42,10 +42,8 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $params = array(
             'link_href' => 'https://example.com',
             'link_name' => 'Example',
-            'name' => 'Another name',
             'announcement' => '',
         );
-        $this->Teams->setId(4);
         $this->assertIsArray($this->Teams->patch(Action::Update, $params));
         $params = array(
             'announcement' => 'yep',
@@ -82,6 +80,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Teams->postAction(Action::Create, array('name' => 'Destroy me'));
         $this->Teams->setId($id);
+        $this->Teams->bypassWritePermission = true;
         $this->assertTrue($this->Teams->destroy());
         // try to destroy a team with data
         $this->Teams->setId(1);

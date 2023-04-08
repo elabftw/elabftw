@@ -38,22 +38,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, Check::id(42));
     }
 
-    public function testUsergroup(): void
-    {
-        $this->assertIsInt(Check::usergroup(1));
-        $this->assertIsInt(Check::usergroup(2));
-        $this->expectException(ImproperActionException::class);
-        Check::usergroup(3);
-        $this->assertIsInt(Check::usergroup(4));
-
-        $this->expectException(ImproperActionException::class);
-        Check::usergroup(-1337);
-        $this->expectException(ImproperActionException::class);
-        Check::usergroup(0);
-        $this->expectException(ImproperActionException::class);
-        Check::usergroup(5);
-    }
-
     public function testColor(): void
     {
         $this->assertEquals('AABBCC', Check::color('#AABBCC'));

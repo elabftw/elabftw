@@ -1143,6 +1143,14 @@ input[type='color'] {
     &.ucp-align {
         margin-top: 0.5rem;
     }
+
+    &.disabled {
+        opacity: 0.7;
+
+        .slider {
+            cursor: default;
+        }
+    }
 }
 
 /* The slider */
@@ -1168,10 +1176,6 @@ input[type='color'] {
         transition: 355ms;
         width: 18px;
     }
-}
-
-.slider-label-deactivated {
-    color: $medium;
 }
 
 input:checked + .slider {

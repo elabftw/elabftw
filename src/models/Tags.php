@@ -14,6 +14,7 @@ use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
 use function implode;
 use PDO;
@@ -157,7 +158,8 @@ class Tags implements RestInterface
             // check if we can actually create tags (for non-admins)
             $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
             $teamConfigArr = $Teams->readOne();
-            if ($teamConfigArr['user_create_tag'] === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
+            $TeamsHelper = new TeamsHelper((int) $this->Entity->Users->userData['team']);
+            if ($teamConfigArr['user_create_tag'] === 0 && $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']) === false) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 

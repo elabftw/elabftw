@@ -18,7 +18,9 @@ use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
+use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
+
 use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
@@ -69,25 +71,30 @@ class Local implements AuthInterface
     ): bool {
         return (!$AuthResponse->mfaSecret
             && self::isMfaEnforced(
-                $AuthResponse->isAdmin,
-                $AuthResponse->isSysAdmin,
+                $AuthResponse->userid,
                 $enforceMfa,
             )
         );
     }
 
     /**
-     * Is MFA enforced for a given user (SysAdmin or Admin or Everyone)?
+     * Is MFA enforced for a given user (SysAdmin or Everyone)?
      */
-    public static function isMfaEnforced(
-        bool $isAdmin,
-        bool $isSysAdmin,
-        int $enforceMfa
-    ): bool {
+    public static function isMfaEnforced(int $userid, int $enforceMfa): bool
+    {
         $EnforceMfaSetting = EnforceMfa::tryFrom($enforceMfa);
-        return ($isSysAdmin && $EnforceMfaSetting === EnforceMfa::SysAdmins)
-            || ($isAdmin && $EnforceMfaSetting === EnforceMfa::Admins)
-            || $EnforceMfaSetting === EnforceMfa::Everyone;
+        $Users = new Users($userid);
+
+        switch ($EnforceMfaSetting) {
+            case EnforceMfa::Everyone:
+                return true;
+            case EnforceMfa::SysAdmins:
+                return $Users->userData['is_sysadmin'] === 1;
+            case EnforceMfa::Admins:
+                return $Users->isAdminSomewhere();
+            default:
+                return false;
+        }
     }
 
     /**
@@ -169,11 +176,8 @@ class Local implements AuthInterface
 
     private function authWithModernAlgo(): void
     {
-        $sql = 'SELECT `users`.`password_hash`, `users`.`mfa_secret`,
-                `groups`.`is_admin`, `groups`.`is_sysadmin`
-            FROM `users`
-            LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
-            WHERE `userid` = :userid;';
+        $sql = 'SELECT `users`.`password_hash`, `users`.`mfa_secret`
+            FROM `users` WHERE `userid` = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -193,8 +197,6 @@ class Local implements AuthInterface
         }
 
         $this->AuthResponse->userid = $this->userid;
-        $this->AuthResponse->isAdmin = (bool) $res['is_admin'];
-        $this->AuthResponse->isSysAdmin = (bool) $res['is_sysadmin'];
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->setTeams();
     }

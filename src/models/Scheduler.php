@@ -350,7 +350,7 @@ class Scheduler implements RestInterface
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-        if ($this->Items->Users->userData['is_admin']) {
+        if ($this->Items->Users->isAdmin) {
             return;
         }
         $now = new DateTime();
@@ -394,7 +394,7 @@ class Scheduler implements RestInterface
 
         // if it's not, we need to be admin in the same team as the event/user
         $TeamsHelper = new TeamsHelper($event['team']);
-        return $TeamsHelper->isUserInTeam($this->Items->Users->userData['userid']) && $this->Items->Users->userData['usergroup'] <= 2;
+        return $TeamsHelper->isAdminInTeam($this->Items->Users->userData['userid']);
     }
 
     private function canWriteOrExplode(): void

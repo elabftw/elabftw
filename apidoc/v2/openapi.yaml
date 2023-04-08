@@ -665,8 +665,6 @@ components:
           type: string
         validated:
           type: integer
-        usergroup:
-          type: integer
         archived:
           type: integer
         last_login:
@@ -679,6 +677,21 @@ components:
           type: string
         auth_service:
           type: integer
+        is_sysadmin:
+          type: integer
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              usergroup:
+                type: integer
+              is_owner:
+                type: integer
 
 
 security:
@@ -2431,11 +2444,6 @@ paths:
                 email:
                   type: string
                   description: User's email address.
-                usergroup:
-                  type: string
-                  enum: ['1', '2', '4']
-                  description: |
-                    1: Sysadmin, 2: Admin, 4: regular user.
                 team:
                   type: integer
                   description: The team id.

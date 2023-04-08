@@ -40,7 +40,7 @@ $template = 'error.html';
 $renderArr = array();
 
 try {
-    if (!$App->Session->get('is_admin')) {
+    if (!$App->Users->isAdmin) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 

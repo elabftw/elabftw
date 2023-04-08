@@ -28,6 +28,7 @@ class Transform
         return sprintf("<input type='hidden' name='csrf' value='%s' />", $token);
     }
 
+    // TODO not really used
     public static function usergroupToHuman(string $usergroup): string
     {
         return Usergroup::from((int) $usergroup)->toHuman();

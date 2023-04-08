@@ -20,7 +20,7 @@
         </div>
       {% else %}
         {# edit icon #}
-        {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+        {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
           <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' title='{{ 'Edit'|trans }}'>
             <div class='left-icon rounded mr-3 my-1 bgnd-dark'>
               <i class='fas fa-pencil fa-fw'></i>

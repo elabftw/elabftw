@@ -101,7 +101,7 @@ class MakeController implements ControllerInterface
                 return $this->makeReport();
 
             case 'schedulerReport':
-                if (!$this->Users->userData['is_admin']) {
+                if (!$this->Users->isAdmin) {
                     throw new IllegalActionException('Non admin user tried to generate scheduler report.');
                 }
                 return $this->makeSchedulerReport();
@@ -126,7 +126,7 @@ class MakeController implements ControllerInterface
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
-            if (!$this->Users->userData['is_admin'] && $this->Request->query->getInt('owner') !== $this->Users->userData['userid']) {
+            if (!$this->Users->isAdminOf($this->Request->query->getInt('owner'))) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user

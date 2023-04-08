@@ -79,8 +79,7 @@ try {
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
             && !Local::isMfaEnforced(
-                (bool) $App->Users->userData['is_admin'],
-                (bool) $App->Users->userData['is_sysadmin'],
+                $App->Users->userData['userid'],
                 (int) $App->Config->configArr['enforce_mfa'],
             )
         ) {

@@ -200,7 +200,7 @@ class Experiments extends AbstractConcreteEntity
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         $Config = Config::getConfig();
-        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->userData['is_admin'])
+        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
             || $Config->configArr['deletable_xp'] === 0) {
             throw new ImproperActionException('You cannot delete experiments!');
         }

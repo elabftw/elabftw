@@ -36,7 +36,6 @@ final class AnonymousUser extends Users
         $this->userData['show_team_templates'] = 0;
         $this->userData['show_public'] = 0;
         $this->userData['fullname'] = 'Anon Ymous';
-        $this->userData['is_admin'] = 0;
         $this->userData['is_sysadmin'] = 0;
         $this->userData['lang'] = $this->lang;
         $this->userData['use_isodate'] = '0';

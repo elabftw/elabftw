@@ -956,15 +956,6 @@ the form-control fails to do that so we do the border ourselves */
     }
 }
 
-/* don't register clicks with the fontawesome icons
- * this way the click event is registered by the parent and all is well
- */
-.far,
-.fas,
-.fab, {
-    pointer-events: none;
-}
-
 .clickable:hover,
 .editable:hover,
 [data-action] {
@@ -977,11 +968,16 @@ the form-control fails to do that so we do the border ourselves */
     transition: color 0.8s ease;
 }
 
-/* font awesome icons color */
+/*
+ * font awesome icons color
+ * don't register clicks with the fontawesome icons
+ * this way the click event is registered by the parent and all is well
+ */
 .far,
 .fas,
 .fab {
     color: $medium;
+    pointer-events: none;
 }
 
 .fa-bell.active {

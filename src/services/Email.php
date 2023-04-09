@@ -129,7 +129,7 @@ class Email
     private function getSysadminEmails(): array
     {
         $Db = Db::getConnection();
-        $sql = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users LEFT JOIN users2teams ON (users2teams.users_id = users.userid) WHERE validated = 1 AND archived = 0 AND MIN(users2teams.usergroup) = 1';
+        $sql = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users WHERE validated = 1 AND archived = 0 AND is_sysadmin = 1';
         $req = $Db->prepare($sql);
         $Db->execute($req);
         $emails = array();

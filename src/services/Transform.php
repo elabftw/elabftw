@@ -10,7 +10,6 @@
 namespace Elabftw\Services;
 
 use Elabftw\Enums\Notifications;
-use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function sprintf;
@@ -26,12 +25,6 @@ class Transform
     public static function csrf(string $token): string
     {
         return sprintf("<input type='hidden' name='csrf' value='%s' />", $token);
-    }
-
-    // TODO not really used
-    public static function usergroupToHuman(string $usergroup): string
-    {
-        return Usergroup::from((int) $usergroup)->toHuman();
     }
 
     // generate html for a notification to show on web interface

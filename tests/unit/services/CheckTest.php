@@ -12,11 +12,13 @@ namespace Elabftw\Services;
 use function bin2hex;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
+
 use function hash;
 use function random_bytes;
-use TypeError;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,9 +31,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testId(): void
     {
-        $this->expectException(TypeError::class);
-        // @phpstan-ignore-next-line
-        $this->assertFalse(Check::id('yep'));
         $this->assertFalse(Check::id(-42));
         $this->assertFalse(Check::id(0));
         $this->assertEquals(3, Check::id((int) 3.1415926535));
@@ -50,6 +49,18 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(BasePermissions::MyTeams->toJson(), Check::visibility(BasePermissions::MyTeams->toJson()));
         $this->expectException(ImproperActionException::class);
         Check::visibility('pwet');
+    }
+
+    public function testVisibilityIncorrectBase(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        Check::visibility('{"base": 12}');
+    }
+
+    public function testVisibilityIncorrectArray(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        Check::visibility('{"base": 10, "teams": "yep"}');
     }
 
     public function testToken(): void
@@ -74,5 +85,13 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(Check::digit('000000021825009', 7));
         $this->assertTrue(Check::digit('000000021694233', 10));
         $this->assertFalse(Check::digit('100000021825009', 7));
+    }
+
+    public function testUsergroup(): void
+    {
+        // simulate a non admin trying to set a usergroup level of admin
+        $requester = new Users(3, 2);
+        $usergroup = Usergroup::Admin;
+        $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
     }
 }

@@ -24,14 +24,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->Users= new Users(1, 1, $requester);
     }
 
-    /*
-    protected function tearDown(): void
-    {
-        // make titi user again
-        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '4'));
-    }
-     */
-
     public function testPopulate(): void
     {
         $this->assertTrue(is_array($this->Users->userData));
@@ -69,37 +61,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, array('orcid' => 'blah'));
     }
-
-    /*
-    public function testUpdateUsergroupToSysadmin(): void
-    {
-        $params = array(
-            'usergroup' => '1',
-        );
-        $this->expectException(ImproperActionException::class);
-        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
-    }
-
-    public function testPatchFromOtherTeam(): void
-    {
-        $params = array(
-            'usergroup' => '2',
-        );
-        $this->expectException(IllegalActionException::class);
-        (new Users(2, 1, new Users(4, 2)))->patch(Action::Update, $params);
-    }
-     */
-
-    /*
-    public function testDemoteSysadmin(): void
-    {
-        // first make titi admin so we can use it to try and demote toto
-        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '2'));
-        // now use titi to try and demote toto
-        $this->expectException(ImproperActionException::class);
-        (new Users(1, 1, new Users(2, 1)))->patch(Action::Update, array('usergroup' => '2'));
-    }
-     */
 
     public function testUpdatePreferences(): void
     {
@@ -188,24 +149,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users->patch(Action::Lock, array());
     }
 
-    /*
-    public function testUserTryToPromoteToAdmin(): void
-    {
-        $Users = new Users(5, 2);
-        $Target = new Users(5, 2, $Users);
-        $res = $Target->patch(Action::Update, array('usergroup' => '2'));
-        $this->assertEquals(4, $res['usergroup']);
-    }
-
-    public function testUserPatchUsergroup(): void
-    {
-        $Users = new Users(5, 2);
-        $Target = new Users(5, 2, $Users);
-        $res = $Target->patch(Action::Update, array('usergroup' => '4'));
-        $this->assertEquals(4, $res['usergroup']);
-    }
-     */
-
     public function testReadAllActiveFromTeam(): void
     {
         $this->assertCount(6, $this->Users->readAllActiveFromTeam());
@@ -217,8 +160,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->expectException(ImproperActionException::class);
-        $Target->destroy();
-        // correct one $this->assertTrue($Target->destroy());
+        $this->assertTrue($Target->destroy());
     }
 
     public function testDestroyWithExperiments(): void

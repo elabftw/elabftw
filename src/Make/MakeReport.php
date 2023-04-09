@@ -48,11 +48,13 @@ class MakeReport extends AbstractMakeCsv
             'userid',
             'firstname',
             'lastname',
+            'orgid',
             'email',
             'validated',
             'archived',
             'last_login',
             'valid_until',
+            'is_sysadmin',
             'full_name',
             'team(s)',
             'diskusage_in_bytes',
@@ -79,8 +81,6 @@ class MakeReport extends AbstractMakeCsv
             // these columns can be null
             $unusedColumns = array(
                 'mfa_secret',
-                // TODO remove once we remove the column for good
-                'usergroup_old',
                 'orcid',
                 'auth_service',
                 'token',

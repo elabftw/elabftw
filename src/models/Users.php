@@ -275,6 +275,7 @@ class Users implements RestInterface
     {
         $sql = 'SELECT users_id FROM users2teams WHERE users_id = :userid AND groups_id <= 2';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid']);
         $this->Db->execute($req);
         return $req->rowCount() >= 1;
     }

@@ -49,7 +49,7 @@ class Users2Teams
         $userid = (int) $params['userid'];
         $teamid = (int) $params['team'];
         if ($params['target'] === 'group') {
-            $group = Usergroup::from((int) $params['group']);
+            $group = Usergroup::from((int) $params['content']);
             return $this->patchTeamGroup($requester, $userid, $teamid, $group);
         }
 

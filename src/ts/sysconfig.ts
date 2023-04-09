@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const group = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
       const team = parseInt(el.dataset.team, 10);
       const userid = parseInt(el.dataset.userid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', group: group});
+      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group});
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
       ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));

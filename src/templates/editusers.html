@@ -134,10 +134,10 @@
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
                 </td>
                 <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
-                <td>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</td>
+                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span></td>
                 <td>
                   <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>

@@ -10,7 +10,7 @@ import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, listenTrigger, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -105,43 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
   observer.observe(document.querySelector('footer'));
   // END BACK TO TOP BUTTON
 
-  // Add a listener for all elements triggered by an event
-  // and POST an update request
-  // select will be on change, text inputs on blur
-  function listenTrigger(): void {
-    document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
-      el.addEventListener(el.dataset.trigger, event => {
-        event.preventDefault();
-        if (el.dataset.customAction === 'patch-user2team-is-owner') {
-          // currently only for modifying is_owner of a user in a given team
-          const team = parseInt(el.dataset.team, 10);
-          const userid = parseInt(el.dataset.userid, 10);
-          console.log(userid);
-          ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: el.value});
-          return;
-        }
-
-        // for a checkbox element, look at the checked attribute, not the value
-        let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-        if (el.dataset.transform === 'permissionsToJson') {
-          value = permissionsToJson(parseInt(value, 10), []);
-        }
-        if (el.dataset.value) {
-          value = el.dataset.value;
-        }
-        const params = {};
-        params[el.dataset.target] = value;
-        ApiC.patch(`${el.dataset.model}`, params).then(() => {
-          if (el.dataset.reload) {
-            reloadElement(el.dataset.reload).then(() => {
-              // make sure we listen to the new element too
-              listenTrigger();
-            });
-          }
-        });
-      });
-    });
-  }
   listenTrigger();
 
   adjustHiddenState();

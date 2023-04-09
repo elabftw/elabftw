@@ -8,7 +8,7 @@
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol';
-import { CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
+import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -41,6 +41,44 @@ export function relativeMoment(): void {
       return;
     }
     span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+  });
+}
+
+// Add a listener for all elements triggered by an event
+// and POST an update request
+// select will be on change, text inputs on blur
+export function listenTrigger(): void {
+  const ApiC = new Api();
+  document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
+    el.addEventListener(el.dataset.trigger, event => {
+      event.preventDefault();
+      if (el.dataset.customAction === 'patch-user2team-is-owner') {
+        // currently only for modifying is_owner of a user in a given team
+        const team = parseInt(el.dataset.team, 10);
+        const userid = parseInt(el.dataset.userid, 10);
+        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: el.value});
+        return;
+      }
+
+      // for a checkbox element, look at the checked attribute, not the value
+      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+      if (el.dataset.transform === 'permissionsToJson') {
+        value = permissionsToJson(parseInt(value, 10), []);
+      }
+      if (el.dataset.value) {
+        value = el.dataset.value;
+      }
+      const params = {};
+      params[el.dataset.target] = value;
+      ApiC.patch(`${el.dataset.model}`, params).then(() => {
+        if (el.dataset.reload) {
+          reloadElement(el.dataset.reload).then(() => {
+            // make sure we listen to the new element too
+            listenTrigger();
+          });
+        }
+      });
+    });
   });
 }
 
@@ -246,6 +284,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
       return;
     }
     document.getElementById(id).innerHTML = html.getElementById(id).innerHTML;
+    listenTrigger();
   });
 }
 
@@ -256,6 +295,7 @@ export async function reloadElement(elementId: string): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+  listenTrigger();
 }
 
 /**

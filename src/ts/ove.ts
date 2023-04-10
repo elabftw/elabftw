@@ -136,7 +136,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;
-          clipboardData.setData('text/plain', copiedSequenceData.sequence);
+          clipboardData.setData('text/plain', copiedSequenceData.textToCopy);
           data.selection = editorState.selectionLayer;
           data.openVECopied = copiedSequenceData;
           convertToFeaturedDNASequence(editorState.sequenceData);

@@ -155,7 +155,7 @@ class MakeEln extends MakeStreamZip
                         'name' => $file['real_name'],
                         'alternateName' => $file['long_name'],
                         'contentSize' => $file['filesize'],
-                        'sha256' => $file['hash'],
+                        'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                     );
                 }
             }

@@ -107,7 +107,10 @@ This project is backed by [Institut Curie](https://science.curie.fr/) and [Delta
   </a>
 </p>
 
-Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)
+## Gold sponsors
+
+* Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)
+* Department for the Development of Innovative Digital Use − French National Research Institute for Sustainable Development
 
 # Related projects
 
@@ -131,3 +134,6 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [Elab::Client](https://metacpan.org/pod/ELab::Client): perl module for eLab API by Andreas K. Hüttel
 * [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper
 * [Matlab client](https://github.com/baillon/eLabAPI): Matlab package to facilitate working with eLabFTW API
+
+
+Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

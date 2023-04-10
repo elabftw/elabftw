@@ -45,7 +45,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             $this->Entity->setId((int) $id);
             try {
                 $all = $this->Entity->readOne();
-            } catch (IllegalActionException $e) {
+            } catch (IllegalActionException) {
                 continue;
             }
             // decode the metadata column because it's json
@@ -55,10 +55,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             $res[] = $all;
         }
 
-        $json = json_encode($res);
-        if ($json === false) {
-            return '{"error": "Something went wrong!"}';
-        }
+        $json = json_encode($res, JSON_THROW_ON_ERROR);
         $this->contentSize = mb_strlen($json);
         return $json;
     }

@@ -308,7 +308,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $deletableXp = false;
         }
         // an admin is able to delete
-        if ($this->App->Users->userData['is_admin']) {
+        if ($this->App->Users->isAdmin) {
             $deletableXp = true;
         }
         return $deletableXp;

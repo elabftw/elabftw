@@ -75,7 +75,7 @@ try {
         ),
     );
 
-    if ($App->Users->userData['is_admin']) {
+    if ($App->Users->isAdmin) {
         $notificationsSettings[] =
             array(
                 'designation' => _('New user created'),
@@ -94,8 +94,7 @@ try {
     }
 
     $showMfa = !Local::isMfaEnforced(
-        (bool) $App->Users->userData['is_admin'],
-        (bool) $App->Users->userData['is_sysadmin'],
+        $App->Users->userData['userid'],
         (int) $App->Config->configArr['enforce_mfa'],
     );
 

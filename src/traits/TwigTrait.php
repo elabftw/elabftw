@@ -52,7 +52,6 @@ trait TwigTrait
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
-        $usergroupToHumanFilter = new TwigFilter('usergroupToHuman', '\Elabftw\Services\Transform::usergroupToHuman', $filterOptions);
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
@@ -100,7 +99,6 @@ trait TwigTrait
         $TwigEnvironment->addFilter($extractDisplayMainText);
         $TwigEnvironment->addFilter($isInJsonArray);
         $TwigEnvironment->addFilter($canToHuman);
-        $TwigEnvironment->addFilter($usergroupToHumanFilter);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

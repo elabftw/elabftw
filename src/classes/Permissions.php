@@ -92,7 +92,7 @@ class Permissions
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin
         if ($this->canread['base'] === BasePermissions::User->value) {
-            if ($this->Users->userData['is_admin'] && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
+            if ($this->Users->isAdmin && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
                 return array('read' => true, 'write' => $write);
             }
         }
@@ -130,7 +130,7 @@ class Permissions
      */
     public function forItemType(): array
     {
-        if ($this->Users->userData['is_admin'] && ($this->item['team'] === $this->Users->userData['team'])) {
+        if ($this->Users->isAdmin && ($this->item['team'] === $this->Users->userData['team'])) {
             return array('read' => true, 'write' => true);
         }
         return array('read' => false, 'write' => false);
@@ -143,7 +143,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->userData['is_admin']) {
+        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
 
@@ -205,7 +205,7 @@ class Permissions
 
         // it's not our entity, our last chance is to be admin in the same team as owner
         // also make sure that it's not in "useronly" mode
-        if ($this->Users->userData['is_admin'] && $this->canwrite['base'] !== BasePermissions::UserOnly->value) {
+        if ($this->Users->isAdmin && $this->canwrite['base'] !== BasePermissions::UserOnly->value) {
             // if it's an item (has team attribute), we need to be logged in in same team
             if (isset($this->item['team'])) {
                 if ($this->item['team'] === $this->Users->userData['team']) {

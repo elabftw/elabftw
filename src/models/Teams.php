@@ -18,9 +18,11 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use RuntimeException;
 
 /**
  * All about the teams
@@ -38,6 +40,9 @@ class Teams implements RestInterface
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
+            $id = (int) $Users->userData['team'];
+        }
         $this->setId($id);
     }
 
@@ -102,21 +107,21 @@ class Teams implements RestInterface
     }
 
     /**
-     * Read from the current team
+     * Read one team
      */
     public function readOne(): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
 
     /**
-     * Get all the teams
+     * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
     public function readAll(): array
     {
@@ -265,10 +270,15 @@ class Teams implements RestInterface
 
     public function canWriteOrExplode(): void
     {
-        if ($this->bypassWritePermission) {
+        if ($this->bypassWritePermission || $this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->Users->userData['is_sysadmin'] || ($this->Users->userData['is_admin'] && $this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id))) {
+        if ($this->id === null) {
+            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+        }
+        $TeamsHelper = new TeamsHelper($this->id);
+
+        if ($TeamsHelper->isAdminInTeam((int) $this->Users->userData['userid'])) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
@@ -327,7 +337,15 @@ class Teams implements RestInterface
 
     private function canReadOrExplode(): void
     {
-        if ($this->bypassReadPermission || $this->Users->userData['is_sysadmin']) {
+        if ($this->bypassReadPermission) {
+            return;
+        }
+        if ($this->id === null) {
+            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+        }
+        $TeamsHelper = new TeamsHelper($this->id);
+
+        if ($TeamsHelper->isSysadminInTeam((int) $this->Users->userData['userid'])) {
             return;
         }
         if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {

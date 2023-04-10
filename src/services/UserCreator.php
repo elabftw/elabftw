@@ -10,8 +10,8 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\UserParams;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
@@ -19,9 +19,6 @@ class UserCreator
 {
     public function __construct(private Users $requester, private array $reqBody)
     {
-        if ($this->requester->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('User creation is limited to Admins and Sysadmins only.');
-        }
     }
 
     /**
@@ -54,7 +51,7 @@ class UserCreator
             (new UserParams('lastname', $this->reqBody['lastname']))->getContent(),
             // password is never set by admin/sysadmin
             '',
-            $this->checkUsergroup(),
+            Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? 4)))->value,
             // automatically validate user
             true,
             // don't alert admin
@@ -62,17 +59,5 @@ class UserCreator
             $validUntil,
             $orgid,
         );
-    }
-
-    /**
-     * Check to prevent a non sysadmin to create a sysadmin user
-     */
-    private function checkUsergroup(): int
-    {
-        $usergroup = Check::usergroup((int) ($this->reqBody['usergroup'] ?? 4));
-        if ($usergroup === 1 && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
-        }
-        return $usergroup;
     }
 }

@@ -42,12 +42,8 @@ class Cookie implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         // compare the provided token with the token saved in SQL database
-        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`,
-                `groups`.`is_admin`, `groups`.`is_sysadmin`
-            FROM `users`
-            LEFT JOIN `groups` ON (`users`.`usergroup` = `groups`.`id`)
-            WHERE `token` = :token
-            LIMIT 1';
+        $sql = 'SELECT `users`.`userid`, `users`.`mfa_secret`, `users`.`auth_service`
+            FROM `users` WHERE `token` = :token LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':token', $this->token);
         $this->Db->execute($req);
@@ -67,8 +63,6 @@ class Cookie implements AuthInterface
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->selectedTeam = $this->tokenTeam;
-        $this->AuthResponse->isAdmin = (bool) $res['is_admin'];
-        $this->AuthResponse->isSysAdmin = (bool) $res['is_sysadmin'];
 
         // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret
         if ($res['auth_service'] === LoginController::AUTH_LOCAL

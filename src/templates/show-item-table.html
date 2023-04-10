@@ -11,7 +11,7 @@
   {# TITLE #}
   <td class='title'>
     {# edit icon #}
-    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
+    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
       <span class='p-2 rounded hl-hover-gray'><a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a></span>
     {% endif %}
     {# lock icon #}

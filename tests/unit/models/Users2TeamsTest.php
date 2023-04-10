@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
@@ -26,5 +27,29 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->rmUserFromTeams(4, array(3));
         $this->expectException(ImproperActionException::class);
         $this->Users2Teams->rmUserFromTeams(4, array(2));
+    }
+
+    public function testPatchUser2TeamGroup(): void
+    {
+        $params = array(
+            'userid' => 2,
+            'team' => 1,
+            'target' => 'group',
+            'content' => 4,
+        );
+        $this->assertEquals(4, $this->Users2Teams->PatchUser2Team(new Users(1, 1), $params));
+    }
+
+    public function testPatchIsOwner(): void
+    {
+        $params = array(
+            'userid' => 3,
+            'team' => 1,
+            'target' => 'is_owner',
+            'content' => 'on',
+        );
+        $this->assertEquals(1, $this->Users2Teams->PatchUser2Team(new Users(1, 1), $params));
+        $this->expectException(IllegalActionException::class);
+        $this->Users2Teams->PatchUser2Team(new Users(2, 1), $params);
     }
 }

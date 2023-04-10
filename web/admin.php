@@ -70,7 +70,8 @@ try {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
-            $App->Users->userData['team']
+            $App->Users->userData['team'],
+            $App->Request->query->getBoolean('includeArchived'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);

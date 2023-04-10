@@ -225,7 +225,7 @@ class Users implements RestInterface
      */
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery('', $this->userData['team']);
+        return $this->readFromQuery('', $this->userData['team'], true);
     }
 
     public function readAllActiveFromTeam(): array

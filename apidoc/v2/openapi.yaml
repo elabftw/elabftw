@@ -3042,43 +3042,35 @@ paths:
           application/json:
             schema:
               type: object
+              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'x509', 'x509_new', 'email_attr']
               properties:
                 name:
                   type: string
                   description: A name for the IDP.
-                  required: true
                 entityid:
                   type: string
                   description: Entityid.
-                  required: true
                 sso_url:
                   type: string
                   description: URL for Single Sign-On.
-                  required: true
                 sso_binding:
                   type: string
                   description: Binding for SSO.
-                  required: true
                 slo_url:
                   type: string
                   description: URL for Single Log-Out.
-                  required: true
                 slo_binding:
                   type: string
                   description: Binding for SLO.
-                  required: true
                 x509:
                   type: string
                   description: Certificate in PEM format.
-                  required: true
                 x509_new:
                   type: string
                   description: Certificate in PEM format for renewal period.
-                  required: true
                 email_attr:
                   type: string
                   description: What attribute to look for the email.
-                  required: true
                 team_attr:
                   type: string
                   description: What attribute to look for the team.
@@ -3111,7 +3103,6 @@ paths:
       tags: ['Idps']
       summary: Read an idp.
       operationId: read-idp
-      parameters:
       responses:
         '200':
           description: An idp.

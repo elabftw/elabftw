@@ -9,7 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Models\Config;
 use function implode;
 use function is_array;
 
@@ -90,5 +93,10 @@ class TwigFilters
             $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $key, $description, $value);
         }
         return $final;
+    }
+
+    public static function decrypt(string $encrypted): string
+    {
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
     }
 }

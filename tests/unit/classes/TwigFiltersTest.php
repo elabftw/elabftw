@@ -9,6 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
+use Elabftw\Models\Config;
+
 class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 {
     public function testFormatMetadata(): void
@@ -55,5 +59,13 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         }';
         $expected = '<li class="list-group-item"><h5 class="mb-0">first one</h5><h6>first</h6></li><li class="list-group-item"><h5 class="mb-0">second one</h5><h6>second</h6></li><li class="list-group-item"><h5 class="mb-0">unchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" ></h6></li><li class="list-group-item"><h5 class="mb-0">url current tab</h5><h6><a href="https://example.com" >https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">url default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">last one</h5><span class="smallgray">last position</span><h6>last content</h6></li><li class="list-group-item"><h5 class="mb-0">checked checkbox</h5><h6><input class="d-block" disabled type="checkbox" checked></h6></li>';
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
+    }
+
+    public function testDecrypt(): void
+    {
+        $secret = 'Section 31';
+        $key = Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'));
+        $encrypted = Crypto::encrypt($secret, $key);
+        $this->assertEquals($secret, TwigFilters::decrypt($encrypted));
     }
 }

@@ -156,9 +156,9 @@
 
     <div class='d-flex justify-content-between'>
       <label for='remote_dir_config' class='col-form-label'>{{ 'Remote directory config'|trans }}</label>
-      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='remote_dir_config' type='text' value='{{ App.Config.configArr.remote_dir_config }}' id='remote_dir_config' />
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='remote_dir_config' type='text' autocomplete='off' value='{{ App.Config.configArr.remote_dir_config|decrypt }}' id='remote_dir_config' />
     </div>
-    <p class='smallgray'>{{ 'Use a JSON string for configuration.'|trans }}</p>
+    <p class='smallgray'>{{ 'Use a JSON string for configuration. This setting is stored encrypted.'|trans }}</p>
     <hr>
   </div>
 

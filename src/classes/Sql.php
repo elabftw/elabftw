@@ -10,8 +10,12 @@
 namespace Elabftw\Elabftw;
 
 use function array_filter;
+use Elabftw\Exceptions\DatabaseErrorException;
+
 use function explode;
 use League\Flysystem\FilesystemOperator;
+use PDOException;
+
 use function str_ends_with;
 use Symfony\Component\Console\Output\OutputInterface;
 use function trim;
@@ -31,7 +35,7 @@ class Sql
     /**
      * Read a SQL file from a folder and execute the contents
      */
-    public function execFile(string $filename): int
+    public function execFile(string $filename, bool $force = false): int
     {
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
@@ -48,7 +52,21 @@ class Sql
                     $this->output->writeln('Executing: ' . $queryline);
                 }
                 // Perform the query
-                $this->Db->q($queryline);
+                try {
+                    $this->Db->q($queryline);
+                } catch (PDOException | DatabaseErrorException $e) {
+                    if ($force) {
+                        if ($this->output !== null) {
+                            $this->output->writeln('<bg=yellow;fg=black>WARNING: Ignoring error because of force option active.</>');
+                            $this->output->writeln($e->getMessage());
+                        }
+                        // Reset temp variable to empty
+                        $queryline = '';
+                        $lineCount++;
+                        continue;
+                    }
+                    throw new DatabaseErrorException($e);
+                }
                 // Reset temp variable to empty
                 $queryline = '';
                 $lineCount++;

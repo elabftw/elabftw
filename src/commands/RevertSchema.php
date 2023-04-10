@@ -16,6 +16,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -33,6 +34,7 @@ class RevertSchema extends Command
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp("Use this command to revert a specific schema. Example to revert schema 116: 'db:revert 116'.")
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->addArgument('number', InputArgument::REQUIRED, 'Schema number to revert');
     }
 
@@ -43,7 +45,7 @@ class RevertSchema extends Command
             throw new ImproperActionException('Incorrect schema number provided.');
         }
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output);
-        $Sql->execFile(sprintf('schema%d-down.sql', (int) $targetSchema));
+        $Sql->execFile(sprintf('schema%d-down.sql', (int) $targetSchema), $input->getOption('force'));
         return 0;
     }
 }

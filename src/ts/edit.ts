@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
       for (const upload of json as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
+        // unfortunately, loading .rxn files here doesn't work as it expects json or mol only
         if (['mol', 'chemjson'].includes(extension)) {
           mols.push([upload.real_name, upload.long_name]);
         }
@@ -198,11 +199,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (realName === null || realName === '') {
         return;
       }
-      const content = el.dataset.filetype === 'chemjson' ?
-        // CHEMJSON
-        JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes))
-        // PNG
-        : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+      let content: string;
+      switch (el.dataset.filetype) {
+      case 'chemjson':
+        content = JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes));
+        break;
+      case 'png':
+        // note: this is the same as ChemDoodle.io.png.string(sketcher)
+        content = (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+        break;
+      case 'rxn':
+        content = new ChemDoodle.io.RXNInterpreter().write(sketcher.molecules, sketcher.shapes);
+        break;
+      }
 
       const params = {
         'action': Action.CreateFromString,

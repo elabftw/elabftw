@@ -44,7 +44,8 @@
     "aws/aws-sdk-php": "^3.209",
     "league/flysystem-aws-s3-v3": "^3.0",
     "jblond/twig-trans": "^1.0",
-    "twig/intl-extra": "^3.3"
+    "twig/intl-extra": "^3.3",
+    "symfony/yaml": "^6.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -55,7 +56,6 @@
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",
-    "symfony/yaml": "^6.0",
     "fakerphp/faker": "^1.13",
     "codeception/c3": "^2.8",
     "rector/rector": "^0.15.19",

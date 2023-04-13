@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
@@ -70,8 +71,7 @@ class PopulateDatabase extends Command
             }
             $yaml = Yaml::parseFile($file);
         } catch (ParseException | ImproperActionException $e) {
-            $output->writeln('Error parsing the file!');
-            $output->writeln($e->getMessage());
+            $output->writeln(sprintf('Error parsing the file: %s', $e->getMessage()));
             return 1;
         }
 
@@ -123,6 +123,32 @@ class PopulateDatabase extends Command
         // if the password is provided in the config file, it'll be used instead for that user
         foreach ($yaml['users'] as $user) {
             $Populate->createUser($Teams, $user);
+        }
+
+        // read defined experiments
+        foreach ($yaml['experiments'] as $experiment) {
+            $user = new Users((int) ($experiment['user'] ?? 1), (int) ($experiment['team'] ?? 1));
+            $Experiments = new Experiments($user);
+            $id = $Experiments->postAction(Action::Create, array());
+            $Experiments->setId($id);
+            $patch = array(
+                'title' => $experiment['title'],
+                'body' => $experiment['body'],
+                'date' => $experiment['date'],
+                'category' => $experiment['status'] ?? 2,
+                'metadata' => $experiment['metadata'] ?? '{}',
+            );
+            $Experiments->patch(Action::Update, $patch);
+            if (isset($experiment['tags'])) {
+                foreach ($experiment['tags'] as $tag) {
+                    $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
+                }
+            }
+            if (isset($experiment['comments'])) {
+                foreach ($experiment['comments'] as $comment) {
+                    $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
+                }
+            }
         }
 
         // add more items types

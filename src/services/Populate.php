@@ -33,15 +33,10 @@ class Populate
 
     private \Faker\Generator $faker;
 
-    // number of things to generate
-    private int $iter = 50;
-
-    public function __construct(?int $iter = null)
+    // iter: iterations: number of things to generate
+    public function __construct(private int $iter = 50)
     {
         $this->faker = \Faker\Factory::create();
-        if ($iter !== null) {
-            $this->iter = $iter;
-        }
     }
 
     /**

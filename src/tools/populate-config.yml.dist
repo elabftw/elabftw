@@ -85,6 +85,35 @@ users:
 
   - team: Delta
 
+experiments:
+  - title: An example experiment
+    body: This is the content of the experiment
+    date: 20250101
+    tags:
+      - example
+      - demo
+    comments:
+      - Oh, how fascinating. I'm sure the groundbreaking discovery that water is wet will change the course of human history forever.
+      - "Well, it's a relief to see that the scientific community is hard at work discovering what we already suspected: that the sky is indeed blue. I can't wait for their next groundbreaking revelation that grass is green."
+
+  - title: Transfection of p103Δ12-22 into RPE-1 Actin-RFP
+    body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
+    date: 20250102
+    status: 1
+    tags:
+      - transfection
+      - biocell
+
+  - title: Testing the eLabFTW lab notebook
+    body: "<h1>Goal</h1><p>Test the software.</p><h1>Procedure</h1><p>Click everywhere and explore everything.</p><h1>Results</h1><p>It's really nice, I think I'll adopt it for our lab."
+    date: 20250103
+    tags:
+      - test
+      - demo
+    metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
+    comments:
+      - Well, it's always reassuring to know that scientists are spending their time and our tax dollars discovering what the rest of us already learned in third-grade science class.
+
 items_types:
   - Microscope:
     name: Microscope

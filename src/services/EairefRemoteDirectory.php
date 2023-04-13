@@ -9,6 +9,8 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Models\Config;
+
 /**
  * Implements requests to EAIREF directory
  */
@@ -31,7 +33,12 @@ class EairefRemoteDirectory extends AbstractRemoteDirectory
             $term = preg_quote($term);
         }
         $url = str_replace('%q%', $term, $endpoint['url']);
-        $res = $this->client->request(self::METHOD, $url, array('auth' => $endpoint['auth']));
+        $reqOptions = array('auth' => $endpoint['auth']);
+        $Config = Config::getConfig();
+        if (!empty($Config->configArr['proxy'])) {
+            $reqOptions['proxy'] = $Config->configArr['proxy'];
+        }
+        $res = $this->client->request(self::METHOD, $url, $reqOptions);
         // terminate early if we get a 204 (nothing found)
         if ($res->getStatusCode() === 204) {
             return array();

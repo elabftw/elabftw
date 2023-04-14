@@ -95,8 +95,11 @@ class TwigFilters
         return $final;
     }
 
-    public static function decrypt(string $encrypted): string
+    public static function decrypt(?string $encrypted): string
     {
+        if (empty($encrypted)) {
+            return '';
+        }
         return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
     }
 }

@@ -67,5 +67,6 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $key = Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'));
         $encrypted = Crypto::encrypt($secret, $key);
         $this->assertEquals($secret, TwigFilters::decrypt($encrypted));
+        $this->assertEmpty(TwigFilters::decrypt(null));
     }
 }

@@ -856,14 +856,14 @@
 
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
-      <label for='ldap_search_attr' class='col-form-label'>By which LDAP attribute the user will be found (default is 'mail').</label>
+      <label for='ldap_search_attr' class='col-form-label'>{{ "By which LDAP attribute the user will be found (default is 'mail')."|trans }}</label>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_search_attr' placeholder='mail' value='{{ App.Config.configArr.ldap_search_attr }}' id='ldap_search_attr' />
     </div>
-    <p class='smallgray'>You can search for several attributes by separating them with a comma (e.g. uid,mail).</p>
+    <p class='smallgray'>{{ 'You can search for several attributes by separating them with a comma (e.g. uid,mail).'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-team' class='col-form-label'>What attribute to look for the team name:</label>
+      <label for='ldap-team' class='col-form-label'>{{ 'What attribute to look for the team name'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ldap_team' type='text' id='ldap-team' value='{{ App.Config.configArr.ldap_team }}' />
     </div>
     <hr>
@@ -871,13 +871,13 @@
     {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-team-default' class='col-form-label'>If no team attribute is found, to which team user is assigned?</label>
+      <label for='ldap-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
       <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_team_default' id='ldap-team-default'>
         {% for team in teamsArr %}
           <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
-        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
-        <option {{ '-1' == App.Config.configArr.saml_team_default ? 'selected' }} value='-1'>Let user select a team</option>
+        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error!'|trans }}</option>
+        <option {{ '-1' == App.Config.configArr.saml_team_default ? 'selected' }} value='-1'>{{ 'Let user select a team'|trans }}</option>
       </select>
     </div>
     <hr>
@@ -885,26 +885,26 @@
     <div class='d-flex justify-content-between'>
       <label for='ldap-user-default' class='col-form-label'>If the user doesn't exist yet, what to do?</label>
       <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_user_default' name='saml_user_default' id='ldap-user-default'>
-        <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
-        <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
+        <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>{{ 'Create the user on the fly'|trans }}</option>
+        <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>{{ 'Throw error, allowing a sysadmin to create the user'|trans }}</option>
       </select>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-email' class='col-form-label'>What attribute to look for the email:</label>
+      <label for='ldap-email' class='col-form-label'>{{ 'What attribute to look for the email'|trans }}</label>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_email' id='ldap-email' placeholder='mail' value='{{ App.Config.configArr.ldap_email }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-firstname' class='col-form-label'>What attribute to look for the firstname:</label>
+      <label for='ldap-firstname' class='col-form-label'>{{ 'What attribute to look for the firstname'|trans }}</label>
       <input class='form-control col-md-3' type='text' id='ldap-firstname' placeholder='givenname' data-trigger='blur' data-model='config' data-target='ldap_firstname' value='{{ App.Config.configArr.ldap_firstname }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-lastname' class='col-form-label'>What attribute to look for the lastname:</label>
+      <label for='ldap-lastname' class='col-form-label'>{{ 'What attribute to look for the lastname'|trans }}</label>
       <input class='form-control col-md-3' type='text' id='ldap-lastname' placeholder='sn' data-trigger='blur' data-model='config' data-target='ldap_lastname' value='{{ App.Config.configArr.ldap_lastname }}' />
     </div>
     <hr>
@@ -954,21 +954,21 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='extauth-team-default' class='col-form-label'>If no team attribute is found, to which team user is assigned?</label>
+      <label for='extauth-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
       <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_team_default' id='extauth-team-default'>
         {% for team in teamsArr %}
           <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
-        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>Throw error!</option>
+        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error!'|trans }}</option>
       </select>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='extauth-user-default' class='col-form-label'>If the user doesn't exist yet, what to do?</label>
+      <label for='extauth-user-default' class='col-form-label'>{{ "If the user doesn't exist yet, what to do?"|trans }}</label>
       <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_user_default' id='extauth-user-default'>
-        <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>Create the user on the fly</option>
-        <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>Throw error, allowing a sysadmin to create the user</option>
+        <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>{{ 'Create the user on the fly'|trans }}</option>
+        <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>{{ 'Throw error, allowing a sysadmin to create the user'|trans }}</option>
       </select>
     </div>
     <hr>

@@ -370,7 +370,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='email_domain'>{{ 'Enforce a domain name for emails'|trans }}</label>
+      <label for='email_domain' class='col-form-label'>{{ 'Enforce a domain name for emails'|trans }}</label>
       <input id='email_domain' class='form-control col-md-3' type='text' placeholder='example.edu' value='{{ App.Config.configArr.email_domain }}' data-trigger='blur' data-model='config' data-target='email_domain' />
     </div>
     <p class='smallgray'>{{ 'Only email addresses at this domain will be allowed to register an account.'|trans }}<br>

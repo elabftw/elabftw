@@ -876,7 +876,7 @@
         {% for team in teamsArr %}
           <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
-        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error!'|trans }}</option>
+        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error'|trans }}</option>
         <option {{ '-1' == App.Config.configArr.saml_team_default ? 'selected' }} value='-1'>{{ 'Let user select a team'|trans }}</option>
       </select>
     </div>
@@ -959,7 +959,7 @@
         {% for team in teamsArr %}
           <option {{ team.id == App.Config.configArr.saml_team_default ? 'selected' }} value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
-        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error!'|trans }}</option>
+        <option {{ 0 == App.Config.configArr.saml_team_default ? 'selected' }} value='0'>{{ 'Throw error'|trans }}</option>
       </select>
     </div>
     <hr>

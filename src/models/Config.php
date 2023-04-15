@@ -115,6 +115,8 @@ final class Config implements RestInterface
             ('open_science', '0'),
             ('open_team', NULL),
             ('privacy_policy', NULL),
+            ('terms_of_service', NULL),
+            ('a11y_statement', NULL),
             ('announcement', NULL),
             ('login_announcement', NULL),
             ('saml_nameidencrypted', 0),

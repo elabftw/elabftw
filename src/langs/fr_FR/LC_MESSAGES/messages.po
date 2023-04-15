@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-15 17:58+0200\n"
+"POT-Creation-Date: 2023-04-15 23:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -2960,6 +2960,10 @@ msgstr ""
 #: src/templates/sysconfig.html:391
 msgid "Set to 0 to disable this feature."
 msgstr "Mettre à 0 pour désactiver."
+
+#: src/templates/sysconfig.html:395
+msgid "Bruteforce login protection"
+msgstr "Protection de connexion par force brute"
 
 #: src/templates/sysconfig.html:398
 msgid "%d users are currently prevented from logging in from unknown devices."

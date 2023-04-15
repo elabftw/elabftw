@@ -3,13 +3,13 @@
 {% set model = model|default('config') %}
 {% set src = src|default(App.Config.configArr) %}
 <div class='d-flex justify-content-between'>
-  <label for='{{ slug }}' class='col-form-label'>{{ label|trans }}</label>
+  <label for='{{ slug }}' class='col-form-label'>{{ label }}</label>
   <label class='switch ucp-align'>
     <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ model|default('config') }}' data-target='{{ slug }}' {{ src[slug] ? 'checked="checked"' }} id='{{ slug }}'>
     <span class='slider'></span>
   </label>
 </div>
 {% if help %}
-  <p class='smallgray'>{{ help|trans }}</p>
+  <p class='smallgray'>{{ help }}</p>
 {% endif %}
 <hr>

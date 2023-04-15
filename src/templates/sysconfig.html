@@ -88,9 +88,9 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments', 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'} %}
+    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'} %}
 
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only me»', 'slug': 'allow_useronly'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only me»'|trans, 'slug': 'allow_useronly'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
@@ -124,9 +124,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments', 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans } %}
 
-    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode', 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'} %}
+    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans } %}
 
     <div class='d-flex justify-content-between'>
       <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
@@ -139,14 +139,14 @@
     <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Enable local account creation', 'slug': 'local_register'} %}
-    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts', 'slug': 'admins_create_users'} %}
-    {% include 'binary-setting.html' with {'label': 'Show local login form', 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'} %}
+    {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register'} %}
+    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
+    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans } %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>
   <div class='pl-3'>
-    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory', 'slug': 'admins_create_users_remote_dir'} %}
+    {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory'|trans, 'slug': 'admins_create_users_remote_dir'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='remote_dir_service' class='col-form-label'>{{ 'Remote directory service'|trans }}</label>
@@ -155,7 +155,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='remote_dir_config' class='col-form-label'>{{ 'Remote directory config'|trans }}</label>
+      <label for='remote_dir_config' class='col-form-label'>{{ 'Remote directory configuration'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='remote_dir_config' type='text' autocomplete='off' value='{{ App.Config.configArr.remote_dir_config|decrypt }}' id='remote_dir_config' />
     </div>
     <p class='smallgray'>{{ 'Use a JSON string for configuration. This setting is stored encrypted.'|trans }}</p>
@@ -337,7 +337,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate', 'slug': 'smtp_verify_cert'} %}
+    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 'smtp_verify_cert'} %}
   </div>
 
   <!-- TEST EMAIL -->
@@ -357,7 +357,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    {% include 'binary-setting.html' with {'label': 'Users need validation by admin after registration', 'slug': 'admin_validate'} %}
+    {% include 'binary-setting.html' with {'label': 'Users need validation by admin after registration'|trans, 'slug': 'admin_validate'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='enforce_mfa' class='col-form-label'>{{ 'Enforce 2FA'|trans }}</label>
@@ -510,8 +510,8 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Enable blockchain timestamping with Bloxberg', 'slug': 'blox_enabled'} %}
-    {% include 'binary-setting.html' with {'label': 'Anonymize author for GDPR compliance', 'slug': 'blox_anon'} %}
+    {% include 'binary-setting.html' with {'label': 'Enable blockchain timestamping with Bloxberg'|trans, 'slug': 'blox_enabled'} %}
+    {% include 'binary-setting.html' with {'label': 'Anonymize author for GDPR compliance'|trans, 'slug': 'blox_anon'} %}
 
   </div>
 
@@ -519,7 +519,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Enable keeex', 'slug': 'keeex_enabled'} %}
+    {% include 'binary-setting.html' with {'label': 'Enable Keeex'|trans, 'slug': 'keeex_enabled'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='keeex_host' class='col-form-label'>{{ 'Keeex host'|trans }}</label>
@@ -554,9 +554,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'General settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    {% include 'binary-setting.html' with {'label': 'Enable SAML authentication', 'slug': 'saml_toggle'} %}
-    {% include 'binary-setting.html' with {'label': 'Strict mode', 'slug': 'saml_strict'} %}
-    {% include 'binary-setting.html' with {'label': 'Debug mode', 'slug': 'saml_debug'} %}
+    {% include 'binary-setting.html' with {'label': 'Enable SAML authentication'|trans, 'slug': 'saml_toggle'} %}
+    {% include 'binary-setting.html' with {'label': 'Strict mode'|trans, 'slug': 'saml_strict'} %}
+    {% include 'binary-setting.html' with {'label': 'Debug mode'|trans, 'slug': 'saml_debug'} %}
 
   </div>
 
@@ -631,10 +631,10 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
 
-    {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email', 'slug': 'saml_fallback_orgid'} %}
-    {% include 'binary-setting.html' with {'label': 'If user is matched with internal id, update the email sent by IDP?', 'slug': 'saml_sync_email_idp'} %}
-    {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP', 'slug': 'saml_sync_teams'} %}
-    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already", 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email'|trans, 'slug': 'saml_fallback_orgid'} %}
+    {% include 'binary-setting.html' with {'label': 'If user is matched with internal id, update the email sent by IDP?'|trans, 'slug': 'saml_sync_email_idp'} %}
+    {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP'|trans, 'slug': 'saml_sync_teams'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='saml_team_default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -802,7 +802,7 @@
 
   <div class='pl-3 mt-2 mb-5'>
 
-    {% include 'binary-setting.html' with {'label': 'Toggle LDAP login', 'slug': 'ldap_toggle'} %}
+    {% include 'binary-setting.html' with {'label': 'Toggle LDAP login'|trans, 'slug': 'ldap_toggle'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_host' class='col-form-label'>{{ 'LDAP Host'|trans }}</label>
@@ -818,7 +818,7 @@
     <p class='smallgray'>{{ 'Default: 389 LDAPS: 636'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Use TLS', 'slug': 'ldap_use_tls'} %}
+    {% include 'binary-setting.html' with {'label': 'Use TLS'|trans, 'slug': 'ldap_use_tls'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_base_dn' class='col-form-label'>LDAP Base DN</label>
@@ -868,7 +868,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already", 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>If no team attribute is found, to which team user is assigned?</label>
@@ -973,7 +973,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already", 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
   </div>
 </div>
 

@@ -51,22 +51,22 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'deletable_xp',
-      'label': 'Users can delete experiments',
-      'help': 'An admin account will always be able to delete experiments.'} %}
+      'label': 'Users can delete experiments'|trans,
+      'help': 'An admin account will always be able to delete experiments.'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'deletable_item',
-      'label': 'Users can delete items',
-      'help': 'An admin account will always be able to delete items.'} %}
+      'label': 'Users can delete items'|trans,
+      'help': 'An admin account will always be able to delete items.'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'user_create_tag',
-      'label': 'Users can create tags',
-      'help': 'An admin account will always be able to create tags.'} %}
+      'label': 'Users can create tags'|trans,
+      'help': 'An admin account will always be able to create tags.'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
-      'label': 'Force experiment template use'} %}
+      'label': 'Force experiment template use'|trans} %}
   </div>
   <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
 
@@ -90,12 +90,12 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'public_db',
-      'label': 'Anonymous visitors can see database items'} %}
+      'label': 'Anonymous visitors can see database items'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'do_force_canread',
-      'label': 'Enforce read permissions?',
-      'help': 'Select if you want to enforce read permissions on experiments'} %}
+      'label': 'Enforce read permissions?'|trans,
+      'help': 'Select if you want to enforce read permissions on experiments'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
@@ -110,8 +110,8 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'do_force_canwrite',
-      'label': 'Enforce write permissions?',
-      'help': 'Select if you want to enforce write permissions on experiments'} %}
+      'label': 'Enforce write permissions?|trans',
+      'help': 'Select if you want to enforce write permissions on experiments'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
@@ -361,7 +361,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='categoryExportFormat' class='col-form-label'>{{ 'Select export format'|trans }}</label>
+      <label for='categoryExportFormat' class='col-form-label'>{{ 'Select an export format'|trans }}</label>
       <select class='form-control col-md-3' id='categoryExportFormat' autocomplete='off'>
         <option value='eln'>{{ 'ELN Archive'|trans }}</option>
         <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
@@ -392,7 +392,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='userExportFormat' class='col-form-label'>{{ 'Select export format'|trans }}</label>
+      <label for='userExportFormat' class='col-form-label'>{{ 'Select an export format'|trans }}</label>
       <select class='form-control col-md-3' id='userExportFormat' autocomplete='off'>
         <option value='eln'>{{ 'ELN Archive'|trans }}</option>
         <option value='zip'>{{ 'ZIP Archive'|trans }}</option>

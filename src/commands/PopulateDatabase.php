@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -112,7 +113,7 @@ class PopulateDatabase extends Command
         $Teams->bypassReadPermission = true;
         $Teams->bypassWritePermission = true;
         foreach ($yaml['teams'] as $team) {
-            $Teams->postAction(Action::Create, array('name' => $team));
+            $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
@@ -137,8 +138,12 @@ class PopulateDatabase extends Command
                 'date' => $experiment['date'],
                 'category' => $experiment['status'] ?? 2,
                 'metadata' => $experiment['metadata'] ?? '{}',
+                'rating' => $experiment['rating'] ?? 0,
             );
             $Experiments->patch(Action::Update, $patch);
+            if (isset($experiment['locked'])) {
+                $Experiments->toggleLock();
+            }
             if (isset($experiment['tags'])) {
                 foreach ($experiment['tags'] as $tag) {
                     $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
@@ -151,23 +156,46 @@ class PopulateDatabase extends Command
             }
         }
 
+        // delete the default items_types
         // add more items types
         foreach ($yaml['items_types'] as $items_types) {
-            $user = new Users(1, (int) $items_types['team']);
+            $user = new Users(1, (int) ($items_types['team'] ?? 1));
             $ItemsTypes = new ItemsTypes($user);
             $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
             $ItemsTypes->bypassWritePermission = true;
             $defaultPermissions = BasePermissions::MyTeams->toJson();
             $patch = array(
                 'color' => $items_types['color'],
-                'body' => $items_types['template'],
+                'body' => $items_types['template'] ?? '',
                 'canread' => $defaultPermissions,
                 'canwrite' => $defaultPermissions,
-                'bookable' => $items_types['bookable'],
+                'bookable' => $items_types['bookable'] ?? false,
+                'metadata' => $items_types['metadata'] ?? '{}',
             );
             $ItemsTypes->patch(Action::Update, $patch);
         }
 
+        // randomize the entries so they look like they are not added at once
+        if (isset($yaml['items'])) {
+            shuffle($yaml['items']);
+            foreach ($yaml['items'] as $item) {
+                $user = new Users((int) ($item['user'] ?? 1), (int) ($item['team'] ?? 1));
+                $Items = new Items($user);
+                $id = $Items->postAction(Action::Create, array('category_id' => $item['category']));
+                $Items->setId($id);
+                $patch = array(
+                    'title' => $item['title'],
+                    'body' => $item['body'] ?? '',
+                    'date' => $item['date'] ?? date('Ymd'),
+                    'rating' => $item['rating'] ?? 0,
+                );
+                // don't override the items type metadata
+                if (isset($item['metadata'])) {
+                    $patch['metadata'] = $item['metadata'];
+                }
+                $Items->patch(Action::Update, $patch);
+            }
+        }
 
         // Insert an IDP
         $Idps = new Idps();

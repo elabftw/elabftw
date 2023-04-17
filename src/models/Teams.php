@@ -101,7 +101,7 @@ class Teams implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($reqBody['name'] ?? 'New team name'),
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Edit me')),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
     }
@@ -284,7 +284,7 @@ class Teams implements RestInterface
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name): int
+    private function create(string $name, string $defaultCategoryName): int
     {
         $this->canWriteOrExplode();
         $name = Filter::title($name);
@@ -310,7 +310,7 @@ class Teams implements RestInterface
         // create default item type
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
-        $ItemsTypes->setId($ItemsTypes->create('Edit me'));
+        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
         $defaultPermissions = BasePermissions::MyTeams->toJson();

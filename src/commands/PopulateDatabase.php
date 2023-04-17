@@ -113,7 +113,11 @@ class PopulateDatabase extends Command
         $Teams->bypassReadPermission = true;
         $Teams->bypassWritePermission = true;
         foreach ($yaml['teams'] as $team) {
-            $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
+            $id = $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
+            if (isset($team['visible'])) {
+                $Teams->setId($id);
+                $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
+            }
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;

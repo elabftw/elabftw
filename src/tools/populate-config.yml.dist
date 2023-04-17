@@ -39,6 +39,7 @@ teams:
   - name: Bravo
   - name: Charlie
   - name: Delta
+    visible: false
 
 # for users you need team as a minimum
 # the password will be the one provided on the command line for all users

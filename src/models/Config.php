@@ -13,6 +13,7 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -218,6 +219,11 @@ final class Config implements RestInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+
+        // special case for remote_dir_config where we decrypt it in output so it can be used by external scripts
+        if (!empty($config['remote_dir_config'])) {
+            $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
+        }
 
         return array_map(function ($v): mixed {
             return $v[0];

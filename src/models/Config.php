@@ -50,20 +50,6 @@ final class Config implements RestInterface
     }
 
     /**
-     * Disallow cloning the class
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Disallow wakeup also
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */

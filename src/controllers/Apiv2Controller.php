@@ -38,6 +38,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -100,6 +101,17 @@ class Apiv2Controller extends AbstractApiController
                 'code' => 400,
                 'message' => 'Bad Request',
                 'description' => $e->getMessage(),
+            );
+            return new JsonResponse($error, $error['code']);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            if ($e->getPrevious() instanceof Exception) {
+                $message .= ' ' . $e->getPrevious()->getMessage();
+            }
+            $error = array(
+                'code' => 500,
+                'message' => 'Unexpected error',
+                'description' => $message,
             );
             return new JsonResponse($error, $error['code']);
         }

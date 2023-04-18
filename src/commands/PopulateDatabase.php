@@ -16,8 +16,10 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -158,6 +160,18 @@ class PopulateDatabase extends Command
                     $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
                 }
             }
+            if (isset($experiment['experiments_links'])) {
+                foreach ($experiment['experiments_links'] as $target) {
+                    $Experiments->ExperimentsLinks->setId($target);
+                    $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                }
+            }
+            if (isset($experiment['items_links'])) {
+                foreach ($experiment['items_links'] as $target) {
+                    $Experiments->ItemsLinks->setId($target);
+                    $Experiments->ItemsLinks->postAction(Action::Create, array());
+                }
+            }
         }
 
         // delete the default items_types
@@ -196,6 +210,18 @@ class PopulateDatabase extends Command
                 // don't override the items type metadata
                 if (isset($item['metadata'])) {
                     $patch['metadata'] = $item['metadata'];
+                }
+                if (isset($item['experiments_links'])) {
+                    foreach ($item['experiments_links'] as $target) {
+                        $ExperimentsLinks = new ExperimentsLinks($Items, (int) $target);
+                        $ExperimentsLinks->postAction(Action::Create, array());
+                    }
+                }
+                if (isset($item['items_links'])) {
+                    foreach ($item['items_links'] as $target) {
+                        $ExperimentsLinks = new ItemsLinks($Items, (int) $target);
+                        $ExperimentsLinks->postAction(Action::Create, array());
+                    }
                 }
                 $Items->patch(Action::Update, $patch);
             }

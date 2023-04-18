@@ -102,6 +102,8 @@ experiments:
       - transfection
       - biocell
       - RPE-1
+    items_links:
+      - 173
 
   - title: Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
     body: |
@@ -125,6 +127,8 @@ experiments:
     status: 4
     rating: 1
     locked: true
+    items_links:
+      - 50
     tags:
       - synthesis
       - antimicrobial
@@ -235,6 +239,13 @@ experiments:
     metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
     comments:
       - Well, it's always reassuring to know that scientists are spending their time and our tax dollars discovering what the rest of us already learned in third-grade science class.
+    experiments_links:
+      - 256
+      - 257
+      - 258
+    items_links:
+      - 50
+      - 51
 
 items_types:
   - name: Microscope

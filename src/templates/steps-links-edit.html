@@ -45,8 +45,8 @@
                 <br>
 
                 <div id='stepDeadlineDiv_{{ step.id }}'>
-                  {{ 'Deadline:'|trans }}
                   {% if step.deadline %}
+                  {{ 'Deadline:'|trans }}
                   {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
                   <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
                   {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
@@ -55,9 +55,9 @@
                   {% endif %}
                   <span class='ml-2 hl-hover-gray p-1 rounded' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}'><i class='fas fa-trash-alt' ></i></span>
                   {% else %}
-                  <span data-action='replace-with-next' title='{{ 'Add deadline'|trans }}'><i class='fas fa-plus-circle'></i></span>
-                  <div hidden>
-                    <select class='form-control col-md-3' id='stepSelectDeadline_{{ step.id }}'>
+                  <button data-action='replace-with-next' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
+                  <div hidden class='input-group'>
+                    <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
                       <option disabled>{{ 'Set deadline in'|trans }}</option>
                       <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
                       <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
@@ -65,7 +65,9 @@
                       <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
                       <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
                     </select>
-                    <button class='btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                    <div class='input-group-append'>
+                      <button class='btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                    </div>
                   </div>
                   {% endif %}
                   </div>

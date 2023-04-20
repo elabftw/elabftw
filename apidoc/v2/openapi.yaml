@@ -151,6 +151,8 @@ components:
           type: string
         s3_region:
           type: string
+        s3_verify_cert:
+          type: string
         saml_acs_binding:
           type: string
         saml_allowrepeatattributename:

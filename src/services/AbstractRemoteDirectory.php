@@ -9,10 +9,7 @@
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Interfaces\RemoteDirectoryInterface;
-use Elabftw\Models\Config;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -26,7 +23,6 @@ abstract class AbstractRemoteDirectory implements RemoteDirectoryInterface
 
     public function __construct(protected ClientInterface $client, string $jsonConfig)
     {
-        $decryptedConfig = Crypto::decrypt($jsonConfig, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
-        $this->config = json_decode($decryptedConfig, true, 10, JSON_THROW_ON_ERROR);
+        $this->config = json_decode($jsonConfig, true, 10, JSON_THROW_ON_ERROR);
     }
 }

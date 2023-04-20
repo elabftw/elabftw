@@ -9,9 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Models\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -65,7 +62,7 @@ class EairefRemoteDirectoryTest extends \PHPUnit\Framework\TestCase
             ),
         );
 
-        $config = Crypto::encrypt(json_encode($config, JSON_THROW_ON_ERROR), Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+        $config = json_encode($config, JSON_THROW_ON_ERROR);
         $RemoteDir = new EairefRemoteDirectory($client, $config);
         $res = $RemoteDir->search('parc');
 

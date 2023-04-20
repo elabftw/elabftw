@@ -33,7 +33,7 @@ class UserCreator
         if ($this->requester->userData['is_sysadmin'] === 0) {
             $Config = Config::getConfig();
             // check for instance setting allowing/disallowing creation of users by admins
-            if ($Config->configArr['admins_create_users'] === '0') {
+            if ($Config->configArr['admins_create_users'] === '0' && $Config->configArr['admins_create_users_remote_dir'] === '0') {
                 throw new IllegalActionException('Admin tried to create user but user creation is disabled for admins.');
             }
             // force using the team in which we are logged in if we are not sysadmin

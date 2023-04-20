@@ -9,9 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Models\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -28,7 +25,7 @@ class DummyRemoteDirectoryTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
 
-        $config = Crypto::encrypt('[]', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+        $config = '[]';
         $RemoteDir = new DummyRemoteDirectory($client, $config);
         $res = $RemoteDir->search('yep');
 

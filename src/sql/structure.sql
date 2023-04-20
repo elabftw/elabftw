@@ -808,6 +808,7 @@ CREATE TABLE `users` (
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
+  `sc_search` varchar(1) NOT NULL DEFAULT '/',
   `show_team` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `show_team_templates` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `show_public` tinyint UNSIGNED NOT NULL DEFAULT 0,

@@ -48,6 +48,8 @@
   data-lang='{{ App.getLang }}'
   data-jslang='{{ App.getJsLang }}'
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
+  data-sc-search='{{ App.Users.userData.sc_search }}'
+  data-sc-todolist='{{ App.Users.userData.sc_todo }}'
   ></div>
 
 {% if App.Session.has('is_auth') %}

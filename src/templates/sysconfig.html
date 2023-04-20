@@ -496,10 +496,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'S3 verify SSL certificates (disable only for HTTP. This is insecure!)'|trans, 'slug': 's3_verify_cert'} %}
-
-    <hr>
-
+    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_verify_cert'} %}
   </div>
 </div>
 

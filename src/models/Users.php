@@ -387,8 +387,8 @@ class Users implements RestInterface
 
     private function canReadOrExplode(): void
     {
-        if ($this->requester->userid === $this->userid) {
-            // it's ourself
+        // it's ourself or we are sysadmin
+        if ($this->requester->userid === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
         if (!$this->requester->isAdmin && $this->userid !== $this->userData['userid']) {
@@ -431,6 +431,9 @@ class Users implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
+        if ($this->requester->userData['is_sysadmin'] === 1) {
+            return;
+        }
         if (!$this->requester->isAdminOf($this->userData['userid'])) {
             throw new IllegalActionException(Tools::error(true));
         }

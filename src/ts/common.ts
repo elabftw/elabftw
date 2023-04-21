@@ -32,6 +32,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
+import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -58,10 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const TableSortingC = new TableSorting();
   TableSortingC.init();
 
+  const userPrefs = document.getElementById('user-prefs').dataset;
   // set the language for js translated strings
-  i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
+  i18next.changeLanguage(userPrefs.lang);
 
   makeSortableGreatAgain();
+
+  const kbd = new KeyboardShortcuts(
+    userPrefs.scCreate,
+    userPrefs.scEdit,
+    userPrefs.scTodolist,
+    userPrefs.scFavorite,
+    userPrefs.scSearch,
+  );
+  kbd.init();
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');

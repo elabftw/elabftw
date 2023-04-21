@@ -30,8 +30,9 @@ final class AnonymousUser extends Users
         $this->userData['sort'] = 'desc';
         $this->userData['sc_create'] = 'c';
         $this->userData['sc_edit'] = 'e';
-        $this->userData['sc_submit'] = 's';
-        $this->userData['sc_todo'] = 'w';
+        $this->userData['sc_favorite'] = 'f';
+        $this->userData['sc_todo'] = 't';
+        $this->userData['sc_search'] = 's';
         $this->userData['show_team'] = 1;
         $this->userData['show_team_templates'] = 0;
         $this->userData['show_public'] = 0;

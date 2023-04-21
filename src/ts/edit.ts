@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
@@ -172,9 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // KEYBOARD SHORTCUT
-  key(about.scsubmit, () => updateEntityBody());
 
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options

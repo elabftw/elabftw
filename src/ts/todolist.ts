@@ -10,7 +10,6 @@ import Todolist from './Todolist.class';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { Model } from './interfaces';
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -54,14 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem(`is${TodolistC.model}Open`) === '1') {
     TodolistC.toggle();
   }
-  // use shortcut
-  const todoSc = document.getElementById('todoSc');
-  if (todoSc) {
-    key(todoSc.dataset.toggle, () => {
-      TodolistC.toggle();
-    });
-  }
-
   scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
   scopeSwitch.addEventListener('change', () => {
     if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){

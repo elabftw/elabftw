@@ -10,7 +10,6 @@ import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
 import { EntityType, Model } from './interfaces';
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -30,9 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const ApiC = new Api();
-
-  // EDIT SHORTCUT
-  key(about.scedit, () => window.location.href = `?mode=edit&id=${entity.id}`);
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {

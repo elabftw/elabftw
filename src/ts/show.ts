@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
@@ -30,21 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
-
-  // CREATE EXPERIMENT or DATABASE item with shortcut
-  key(document.getElementById('shortcuts').dataset.create, function() {
-    if (about.type === 'experiments') {
-      const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
-      const tplid = el.dataset.tplid;
-      const urlParams = new URLSearchParams(document.location.search);
-      const tags = urlParams.getAll('tags[]');
-      EntityC.create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
-    } else {
-      // for database items, show a selection modal
-      // modal plugin requires jquery
-      $('#createModal').modal('toggle');
-    }
-  });
 
   // THE CHECKBOXES
   const nothingSelectedError = {

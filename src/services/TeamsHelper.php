@@ -71,11 +71,6 @@ class TeamsHelper
         return $this->getUserInTeam($userid)['groups_id'] <= 2;
     }
 
-    public function isSysadminInTeam(int $userid): bool
-    {
-        return $this->getUserInTeam($userid)['groups_id'] === 1;
-    }
-
     /**
      * @deprecated
      */

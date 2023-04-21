@@ -89,9 +89,9 @@
       </div>
     </div>
     <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
+    <div class='vertical-separator mx-2'></div>
   {% endif %}
 
-  <div class='vertical-separator mx-2'></div>
 
   {# TIMESTAMP EXPERIMENT #}
   {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
@@ -111,7 +111,9 @@
     </div>
   {% endif %}
 
-  <div class='vertical-separator mx-2'></div>
+  {% if not App.Session.has('is_anon') %}
+    <div class='vertical-separator mx-2'></div>
+  {% endif %}
 
   {# DOWNLOAD / EXPORT MENU #}
   <div class='dropdown'>
@@ -129,9 +131,9 @@
     </div>
   </div>
 
-  {% if not App.Session.has('is_anon') %}
+  <div class='ml-auto d-flex align-items-center'>
+    {% if not App.Session.has('is_anon') %}
 
-    <div class='ml-auto d-flex align-items-center'>
       {# TOGGLE PIN #}
       <div class='mr-2'>
         <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>

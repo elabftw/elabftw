@@ -343,9 +343,8 @@ class Teams implements RestInterface
         if ($this->id === null) {
             throw new RuntimeException('Cannot check permissions in team because the team id is null.');
         }
-        $TeamsHelper = new TeamsHelper($this->id);
 
-        if ($TeamsHelper->isSysadminInTeam((int) $this->Users->userData['userid'])) {
+        if ($this->Users->userData['is_sysadmin'] === '1') {
             return;
         }
         if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {

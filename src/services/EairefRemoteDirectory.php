@@ -10,6 +10,8 @@
 namespace Elabftw\Services;
 
 use Elabftw\Models\Config;
+use function in_array;
+use function strtolower;
 
 /**
  * Implements requests to EAIREF directory
@@ -51,7 +53,9 @@ class EairefRemoteDirectory extends AbstractRemoteDirectory
             $user['orgid'] = $user[$endpoint['orgid']];
             $user['disabled'] = false;
             foreach ($endpoint['disabled'] as $disabler) {
-                if (isset($user[$disabler['property']]) && $user[$disabler['property']] === $disabler['value']) {
+                // make it lower case because it varies
+                $property = strtolower($disabler['property']);
+                if (isset($user[$property]) && in_array($disabler['value'], $user[$property], true)) {
                     $user['disabled'] = true;
                 }
             }

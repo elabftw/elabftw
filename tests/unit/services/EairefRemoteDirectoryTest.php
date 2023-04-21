@@ -30,7 +30,7 @@ class EairefRemoteDirectoryTest extends \PHPUnit\Framework\TestCase
                 'mail' => 'anita.borg@parc.example.net',
                 'sn' => 'Borg',
                 'givenname' => 'Anita',
-                'accountStatus' => 'AccountLockedBecauseIsASpy',
+                'accountstatus' => array('AccountLockedBecauseIsASpy'),
             ),
         );
         $mock = new MockHandler(array(
@@ -49,11 +49,11 @@ class EairefRemoteDirectoryTest extends \PHPUnit\Framework\TestCase
                 'disabled' => array(
                     array(
                         'value' => 'AccountLockedBecauseIsASpy',
-                        'property' => 'accountStatus',
+                        'property' => 'accountstatus',
                     ),
                     array(
                         'value' => 'AccountTerminatedBecauseIsARobot',
-                        'property' => 'accountStatus',
+                        'property' => 'accountstatus',
                     ),
                 ),
                 'lastname' => 'sn',

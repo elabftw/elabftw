@@ -92,7 +92,7 @@
         <th class='align-left'>{{ 'Action'|trans }}</th>
         <th>{{ 'Create'|trans }}</th>
         <th>{{ 'Edit'|trans }}</th>
-        <th>{{ 'Submit'|trans }}</th>
+        <th>{{ 'Favorite tags'|trans }}</th>
         <th>{{ 'TODO list'|trans }}</th>
         <th>{{ 'Search'|trans }}</th>
       </tr>
@@ -109,7 +109,7 @@
         </td>
 
         <td>
-          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_submit }}' data-trigger='blur' data-model='users/me' data-target='sc_submit' />
+          <input class='form-control col-md-2' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_favorite }}' data-trigger='blur' data-model='users/me' data-target='sc_favorite' />
         </td>
 
         <td>

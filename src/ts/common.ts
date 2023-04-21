@@ -32,8 +32,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
-import Todolist from './Todolist.class';
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -66,21 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   makeSortableGreatAgain();
 
-  // search bar focus shortcut
-  key(userPrefs.scSearch, (event: Event) => {
-    // search input might not be visible on some pages
-    const qs = document.getElementById('quicksearchInput');
-    if (qs) {
-      // add this or the shortcut key gets written in the input
-      event.preventDefault();
-      qs.focus();
-    }
-  });
-  // todolist toggle shortcut
-  key(userPrefs.scTodolist, () => {
-    (new Todolist()).toggle();
-  });
-
+  const kbd = new KeyboardShortcuts(
+    userPrefs.scCreate,
+    userPrefs.scEdit,
+    userPrefs.scTodolist,
+    userPrefs.scFavorite,
+    userPrefs.scSearch,
+  );
+  kbd.init();
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');

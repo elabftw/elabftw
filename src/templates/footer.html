@@ -48,8 +48,11 @@
   data-lang='{{ App.getLang }}'
   data-jslang='{{ App.getJsLang }}'
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
-  data-sc-search='{{ App.Users.userData.sc_search }}'
-  data-sc-todolist='{{ App.Users.userData.sc_todo }}'
+  data-sc-search='{{ App.Users.userData.sc_search|default('s') }}'
+  data-sc-todolist='{{ App.Users.userData.sc_todo|default('t') }}'
+  data-sc-create='{{ App.Users.userData.sc_create|default('c') }}'
+  data-sc-edit='{{ App.Users.userData.sc_edit|default('e') }}'
+  data-sc-favorite='{{ App.Users.userData.sc_favorite|default('f') }}'
   ></div>
 
 {% if App.Session.has('is_auth') %}

@@ -17,6 +17,9 @@ use League\Flysystem\FilesystemOperator;
 use PDOException;
 
 use function str_ends_with;
+use function str_repeat;
+use function strlen;
+use function strtoupper;
 use Symfony\Component\Console\Output\OutputInterface;
 use function trim;
 
@@ -37,6 +40,13 @@ class Sql
      */
     public function execFile(string $filename, bool $force = false): int
     {
+        if ($this->output !== null) {
+            // add two for the spaces around
+            $len = strlen($filename) + 2;
+            $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
+            $this->output->writeln(sprintf('<bg=green;fg=black> %s </>', strtoupper($filename)));
+            $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
+        }
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';

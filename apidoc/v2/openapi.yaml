@@ -2511,6 +2511,12 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/users'
                 - type: object
+                  description: Archive or validate a user (will toggle the attribute)
+                  properties:
+                    action:
+                      type: string
+                      enum: ['archive', 'validate']
+                - type: object
                   description: Add or remove a user from a team.
                   properties:
                     action:

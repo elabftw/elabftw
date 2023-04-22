@@ -56,7 +56,6 @@ try {
     }
 
     // TEAM GROUPS
-    $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
     // the items categoryArr for add link input
@@ -98,6 +97,7 @@ try {
         (int) $App->Config->configArr['enforce_mfa'],
     );
 
+
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
@@ -112,6 +112,7 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
         'showMFA' => $showMfa,
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 } catch (ImproperActionException $e) {
     // show message to user

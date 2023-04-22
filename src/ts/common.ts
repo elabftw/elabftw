@@ -302,8 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
           .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
           .concat(existingUsers),
       );
-      const entity = getEntity();
-      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+      if (document.location.pathname === '/ucp.php') {
+        // we need to replace canread/canwrite with default_read/default_write for user attribute
+        let paramKey = 'default_read';
+        if (el.dataset.rw === 'canwrite') {
+          paramKey = 'default_write';
+        }
+        // create a new key and delete the old one
+        params[paramKey] = params[el.dataset.rw];
+        delete params[el.dataset.rw];
+        return ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(paramKey + 'Div'));
+      } else {
+        const entity = getEntity();
+        return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+      }
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.

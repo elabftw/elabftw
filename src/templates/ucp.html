@@ -226,21 +226,31 @@
 
     <div class='d-flex justify-content-between'>
       <label for='default-read-select' class='col-form-label'>{{ 'Default visibility for new experiments'|trans }}</label>
-      <select id='default-read-select' class='form-control col-md-3' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_read'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.Users.userData.default_read|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
+      <div id='default_readDiv'>
+        {% set rw = 'canread' %}
+        {% set can = App.Users.userData.default_read|canToHuman %}
+        {% include('view-permissions-details.html') %}
+        {% set ucpPage = true %}
+        {% include('permissions-edit-modal.html') %}
+        <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+          <i class='fas fa-fw fa-square-plus fa-2x'></i>
+        </div>
+      </div>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='default-write-select' class='col-form-label'>{{ 'Default write permission for new experiments'|trans }}</label>
-      <select id='default-write-select' class='form-control col-md-3' data-trigger='change' data-model='users/me' data-transform='permissionsToJson' data-target='default_write'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.Users.userData.default_write|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
+      <div id='default_writeDiv'>
+        {% set rw = 'canwrite' %}
+        {% set can = App.Users.userData.default_write|canToHuman %}
+        {% include('view-permissions-details.html') %}
+        {% set ucpPage = true %}
+        {% include('permissions-edit-modal.html') %}
+        <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+          <i class='fas fa-fw fa-square-plus fa-2x'></i>
+        </div>
+      </div>
     </div>
   </div>
 

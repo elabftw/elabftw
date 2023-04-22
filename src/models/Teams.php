@@ -101,7 +101,7 @@ class Teams implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Edit me')),
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Default')),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
     }

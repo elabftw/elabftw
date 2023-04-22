@@ -98,11 +98,28 @@ class Saml
                         'serviceDescription' => 'Electronic Lab Notebook',
                         'requestedAttributes' => array(
                             array(
-                                'name' => '',
+                                'name' => 'urn:oid:0.9.2342.19200300.100.1.3',
+                                'isRequired' => true,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'mail',
+                            ),
+                            array(
+                                'name' => 'urn:oid:2.5.4.42',
                                 'isRequired' => false,
-                                'nameFormat' => '',
-                                'friendlyName' => '',
-                                'attributeValue' => '',
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'givenName',
+                            ),
+                            array(
+                                'name' => 'urn:oid:2.5.4.4',
+                                'isRequired' => false,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'sn',
+                            ),
+                            array(
+                                'name' => 'urn:oid:0.9.2342.19200300.100.1.1',
+                                'isRequired' => false,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'uid',
                             ),
                         ),
                 ),

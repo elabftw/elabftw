@@ -62,7 +62,6 @@ class Populate
             BasePermissions::UserOnly->toJson(),
         );
 
-        printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
             $Entity->setId($id);
@@ -107,7 +106,6 @@ class Populate
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
         }
-        printf("Generated %d %s \n", $this->iter, $Entity->type);
     }
 
     // create a user based on options provided in yaml file

@@ -55,8 +55,6 @@ class PopulateDatabase extends Command
         $this
             // the short description shown while running "php bin/console list"
             ->setDescription('Populate the database with fake data')
-            ->addOption('smtpuser', 'u', InputOption::VALUE_REQUIRED, 'SMTP username')
-            ->addOption('smtppass', 's', InputOption::VALUE_REQUIRED, 'SMTP password')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Skip confirmation question')
             ->addArgument('file', InputArgument::REQUIRED, 'Yaml configuration file')
 
@@ -104,8 +102,6 @@ class PopulateDatabase extends Command
 
         // adjust global config
         $configArr = $yaml['config'] ?? array();
-        $configArr['smtp_password'] = $input->getOption('smtppass') ?? 'afakepassword';
-        $configArr['smtp_username'] = $input->getOption('smtpuser') ?? 'somesmtpuser';
         $Config = Config::getConfig();
         $Config->patch(Action::Update, $configArr);
 

@@ -30,7 +30,7 @@ It lets you store and organize your research experiments easily. It also feature
 It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at in many research institutions around the globe. It is also a great solution for companies looking into improving the traceability and reproducibility of their processes.
 
 Click the image below to see it in bigger size:
-[![Demo gif](https://elabftw.net/img/view-edit.gif)](https://www.elabftw.net/img/view-edit.gif)
+[![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://www.elabftw.net/img/view-edit.gif)
 
 ## Features
 

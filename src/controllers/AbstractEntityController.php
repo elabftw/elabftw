@@ -29,6 +29,7 @@ use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AccessKeyHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -95,6 +96,10 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         $itemsArr = $this->getItemsArr();
+        if ($isSearchPage && count($itemsArr) === 1) {
+            return new RedirectResponse(sprintf('%s.php?mode=view&id=%d', $this->Entity->page, $itemsArr[0]['id']));
+        }
+
         // get tags separately
         $tagsArr = array();
         if (!empty($itemsArr)) {

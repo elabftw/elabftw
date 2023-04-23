@@ -20,6 +20,8 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\Check;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The search page
@@ -27,6 +29,10 @@ use Elabftw\Services\Check;
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Advanced search');
+
+// default response is search page without results
+$Response = new Response();
+$Response->prepare($App->Request);
 
 $Experiments = new Experiments($App->Users);
 $Database = new Items($App->Users);
@@ -65,7 +71,13 @@ $renderArr = array(
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     'teamGroups' => array_column($teamGroupsArr, 'name'),
 );
-echo $App->render('search.html', $renderArr);
+
+$responseContent = $App->render('search.html', $renderArr);
+
+$getFooterContent = function () use ($App): string {
+    return $App->render('todolist-panel.html', array())
+        . $App->render('footer.html', array());
+};
 
 /**
  * Here the search begins
@@ -82,13 +94,21 @@ if ($App->Request->query->count() > 0) {
 
         try {
             $Controller = new SearchController($App, $Entity);
-            echo $Controller->show(true)->getContent();
+            $controllerResponse = $Controller->show(true);
+            if ($controllerResponse instanceof RedirectResponse) {
+                $controllerResponse->send();
+                exit;
+            }
+            $responseContent .= $controllerResponse->getContent() ?: '';
         } catch (ImproperActionException $e) {
-            echo TwigFilters::displayMessage($e->getMessage(), 'ko', false);
+            $responseContent .= TwigFilters::displayMessage($e->getMessage(), 'ko', false);
+            $responseContent .= $getFooterContent();
         }
     }
 } else {
     // no search
-    echo $App->render('todolist-panel.html', array());
-    echo $App->render('footer.html', array());
+    $responseContent .= $getFooterContent();
 }
+
+$Response->setContent($responseContent);
+$Response->send();

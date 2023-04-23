@@ -139,6 +139,9 @@ class Populate
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key']);
         }
+        if (isset($user['user_preferences'])) {
+            $Users->patch(Action::Update, $user['user_preferences']);
+        }
 
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);

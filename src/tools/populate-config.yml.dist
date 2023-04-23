@@ -51,6 +51,9 @@ users:
     create_experiments: true
     create_items: true
     create_templates: false
+    user_preferences:
+      orderby: lastchange
+      cjk_fonts: 1
 
   - email: titi@yopmail.com
     team: Alpha

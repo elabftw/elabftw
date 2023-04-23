@@ -172,18 +172,12 @@
   {% endif %}
 </div>
 
-
-
 <div id='info'
     data-page='view'
     data-type='{{ Entity.type }}'
     data-id='{{ Entity.id }}'
     data-team='{{ App.Users.userData.team }}'
     data-isanon='{{ App.Session.get('is_anon') }}'
-    data-scedit='{{ Entity.Users.userData.sc_edit }}'>
-</div>
-<div id='shortcuts'
-    data-create='{{ Entity.Users.userData.sc_create }}'>
 </div>
 
 {% endblock body %}

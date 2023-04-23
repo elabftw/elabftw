@@ -74,12 +74,10 @@ $renderArr = array(
 
 $responseContent = $App->render('search.html', $renderArr);
 
-function getFooterContent(): string
-{
-    global $App;
+$getFooterContent = function () use ($App): string {
     return $App->render('todolist-panel.html', array())
         . $App->render('footer.html', array());
-}
+};
 
 /**
  * Here the search begins
@@ -104,12 +102,12 @@ if ($App->Request->query->count() > 0) {
             $responseContent .= $controllerResponse->getContent() ?: '';
         } catch (ImproperActionException $e) {
             $responseContent .= TwigFilters::displayMessage($e->getMessage(), 'ko', false);
-            $responseContent .= getFooterContent();
+            $responseContent .= $getFooterContent();
         }
     }
 } else {
     // no search
-    $responseContent .= getFooterContent();
+    $responseContent .= $getFooterContent();
 }
 
 $Response->setContent($responseContent);

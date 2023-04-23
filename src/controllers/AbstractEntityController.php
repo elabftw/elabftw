@@ -96,6 +96,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         $itemsArr = $this->getItemsArr();
+        // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {
             return new RedirectResponse(sprintf('%s.php?mode=view&id=%d', $this->Entity->page, $itemsArr[0]['id']));
         }

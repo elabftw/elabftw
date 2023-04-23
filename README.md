@@ -27,10 +27,10 @@
 **eLabFTW** is an electronic lab notebook manager for research teams.
 
 It lets you store and organize your research experiments easily. It also features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
-It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
+It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at in many research institutions around the globe. It is also a great solution for companies looking into improving the traceability and reproducibility of their processes.
 
 Click the image below to see it in bigger size:
-[![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://gfycat.com/tangibleequatorialbrant)
+[![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://www.elabftw.net/img/view-edit.gif)
 
 ## Features
 
@@ -91,15 +91,15 @@ Or use GitHub to follow releases:
 
 # Funding
 
-As you know, eLabFTW is distributed without charge.
-
-If you find this project useful, please consider making a small donation either:
+eLabFTW is distributed without charge. If you find this project useful, please consider making a small donation either:
 
 * as a [GitHub Sponsor](https://github.com/sponsors/NicolasCARPi)
 
 * or with [Liberapay](https://liberapay.com/NicolasCARPi/donate)
 
-This project is backed by [Institut Curie](https://science.curie.fr/) and [Deltablot](https://www.deltablot.com).
+## Gold sponsors
+
+This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 <p align='center'>
   <a href="https://www.deltablot.com">
@@ -107,17 +107,16 @@ This project is backed by [Institut Curie](https://science.curie.fr/) and [Delta
   </a>
 </p>
 
-## Gold sponsors
-
 * Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)
 * Department for the Development of Innovative Digital Use − French National Research Institute for Sustainable Development
+* Institut Curie - Centre de Recherche
 
 # Related projects
 
 ## API libraries
 
 * [elabftw/elabapi-python](https://github.com/elabftw/elabapi-python/): python library for interacting with APIv2
-* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1
+* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1 (deprecated)
 * [elabftw/elabapi-javascript-example](https://github.com/elabftw/elabapi-javascript-example#readme): example code for interacting with APIv2 through JavaScript
 
 ## Communities

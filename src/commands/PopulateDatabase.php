@@ -128,44 +128,46 @@ class PopulateDatabase extends Command
             $Populate->createUser($Teams, $user);
         }
 
-        // read defined experiments
-        foreach ($yaml['experiments'] as $experiment) {
-            $user = new Users((int) ($experiment['user'] ?? 1), (int) ($experiment['team'] ?? 1));
-            $Experiments = new Experiments($user);
-            $id = $Experiments->postAction(Action::Create, array());
-            $Experiments->setId($id);
-            $patch = array(
-                'title' => $experiment['title'],
-                'body' => $experiment['body'],
-                'date' => $experiment['date'],
-                'category' => $experiment['status'] ?? 2,
-                'metadata' => $experiment['metadata'] ?? '{}',
-                'rating' => $experiment['rating'] ?? 0,
-            );
-            $Experiments->patch(Action::Update, $patch);
-            if (isset($experiment['locked'])) {
-                $Experiments->toggleLock();
-            }
-            if (isset($experiment['tags'])) {
-                foreach ($experiment['tags'] as $tag) {
-                    $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
+        if (isset($yaml['experiments'])) {
+            // read defined experiments
+            foreach ($yaml['experiments'] as $experiment) {
+                $user = new Users((int) ($experiment['user'] ?? 1), (int) ($experiment['team'] ?? 1));
+                $Experiments = new Experiments($user);
+                $id = $Experiments->postAction(Action::Create, array());
+                $Experiments->setId($id);
+                $patch = array(
+                    'title' => $experiment['title'],
+                    'body' => $experiment['body'],
+                    'date' => $experiment['date'],
+                    'category' => $experiment['status'] ?? 2,
+                    'metadata' => $experiment['metadata'] ?? '{}',
+                    'rating' => $experiment['rating'] ?? 0,
+                );
+                $Experiments->patch(Action::Update, $patch);
+                if (isset($experiment['locked'])) {
+                    $Experiments->toggleLock();
                 }
-            }
-            if (isset($experiment['comments'])) {
-                foreach ($experiment['comments'] as $comment) {
-                    $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
+                if (isset($experiment['tags'])) {
+                    foreach ($experiment['tags'] as $tag) {
+                        $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
+                    }
                 }
-            }
-            if (isset($experiment['experiments_links'])) {
-                foreach ($experiment['experiments_links'] as $target) {
-                    $Experiments->ExperimentsLinks->setId($target);
-                    $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                if (isset($experiment['comments'])) {
+                    foreach ($experiment['comments'] as $comment) {
+                        $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
+                    }
                 }
-            }
-            if (isset($experiment['items_links'])) {
-                foreach ($experiment['items_links'] as $target) {
-                    $Experiments->ItemsLinks->setId($target);
-                    $Experiments->ItemsLinks->postAction(Action::Create, array());
+                if (isset($experiment['experiments_links'])) {
+                    foreach ($experiment['experiments_links'] as $target) {
+                        $Experiments->ExperimentsLinks->setId($target);
+                        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                    }
+                }
+                if (isset($experiment['items_links'])) {
+                    foreach ($experiment['items_links'] as $target) {
+                        $Experiments->ItemsLinks->setId($target);
+                        $Experiments->ItemsLinks->postAction(Action::Create, array());
+                    }
                 }
             }
         }

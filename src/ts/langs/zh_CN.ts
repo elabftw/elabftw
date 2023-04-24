@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "点击编辑",
     "comment-add": "添加评论",
+    "dropzone-filesize-limit": "文件大小限制：",
     "dropzone-upload-area": "请选取上传文件",
     "editing-metadata": "编辑元数据",
     "entity-default-title": "无标题",

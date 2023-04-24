@@ -53,10 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPLOAD FORM
   const dropZoneElement = '#elabftw-dropzone';
+  const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
   const dropZoneOptions = {
     // i18n message to user
-    dictDefaultMessage: i18next.t('dropzone-upload-area'),
-    maxFilesize: parseInt(document.getElementById('info').dataset.maxsize, 10), // MB
+    dictDefaultMessage: i18next.t('dropzone-upload-area') + `<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
+    maxFilesize: maxsize,
     timeout: 900000,
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),

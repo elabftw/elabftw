@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "Kliknite za urejanje",
     "comment-add": "Dodaj komentar",
+    "dropzone-filesize-limit": "Omejitev velikosti datoteke:",
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
     "editing-metadata": "Urejanje metapodatkov",
     "entity-default-title": "Brez naslova",

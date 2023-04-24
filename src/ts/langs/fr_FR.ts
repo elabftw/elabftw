@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "Cliquez pour éditer",
     "comment-add": "Ajouter un commentaire",
+    "dropzone-filesize-limit": "Taille de fichier maximale :",
     "dropzone-upload-area": "Déposez ici les fichiers à uploader",
     "editing-metadata": "Édition des métadonnées",
     "entity-default-title": "Sans titre",

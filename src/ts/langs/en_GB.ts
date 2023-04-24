@@ -4,6 +4,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "Cancel",
     "comment-add": "Add a comment",
+    "dropzone-filesize-limit": "File size limit:",
     "dropzone-upload-area": "Drop files here to upload",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Untitled",

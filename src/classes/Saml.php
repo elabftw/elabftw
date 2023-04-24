@@ -26,13 +26,13 @@ class Saml
      * Get the settings array
      * On login we don't have an id but we don't need the settings
      * from a particular idp (just the service provider)
-     * So getActive will just grab the first active one
+     * So getEnabled will just grab the first enabled one
      *
      * @param int|null $id id of the selected idp
      */
     public function getSettings(?int $id = null): array
     {
-        $idp = $this->Idps->getActive($id);
+        $idp = $this->Idps->getEnabled($id);
 
         return $this->getSettingsByIdp($idp);
     }
@@ -44,7 +44,7 @@ class Saml
      */
     public function getSettingsByEntityId(string $entId): array
     {
-        $idp = $this->Idps->getActiveByEntityId($entId);
+        $idp = $this->Idps->getEnabledByEntityId($entId);
 
         return $this->getSettingsByIdp($idp);
     }
@@ -98,11 +98,28 @@ class Saml
                         'serviceDescription' => 'Electronic Lab Notebook',
                         'requestedAttributes' => array(
                             array(
-                                'name' => '',
+                                'name' => 'urn:oid:0.9.2342.19200300.100.1.3',
+                                'isRequired' => true,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'mail',
+                            ),
+                            array(
+                                'name' => 'urn:oid:2.5.4.42',
                                 'isRequired' => false,
-                                'nameFormat' => '',
-                                'friendlyName' => '',
-                                'attributeValue' => '',
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'givenName',
+                            ),
+                            array(
+                                'name' => 'urn:oid:2.5.4.4',
+                                'isRequired' => false,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'sn',
+                            ),
+                            array(
+                                'name' => 'urn:oid:0.9.2342.19200300.100.1.1',
+                                'isRequired' => false,
+                                'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                                'friendlyName' => 'uid',
                             ),
                         ),
                 ),
@@ -164,6 +181,7 @@ class Saml
                 'teamAttr' => $idp['team_attr'],
                 'fnameAttr' => $idp['fname_attr'],
                 'lnameAttr' => $idp['lname_attr'],
+                'orgidAttr' => $idp['orgid_attr'],
             ),
             // Security settings
             'security' => array(

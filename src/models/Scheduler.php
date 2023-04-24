@@ -11,12 +11,12 @@ namespace Elabftw\Models;
 
 use DateTime;
 use DateTimeImmutable;
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -183,15 +183,14 @@ class Scheduler implements RestInterface
 
         // send a notification to all team admins
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
-        $Notifications = new Notifications($this->Items->Users);
-        $Notifications->createMultiUsers(
-            new CreateNotificationParams(
-                Notifications::EVENT_DELETED,
-                array('event' => $this->readOne(), 'actor' => $this->Items->Users->userData['fullname']),
-            ),
-            $TeamsHelper->getAllAdminsUserid(),
-            $this->Items->Users->userData['userid'],
-        );
+        $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
+        $admins = $TeamsHelper->getAllAdminsUserid();
+        array_map(function ($userid) use ($Notif) {
+            if ($userid === $this->Items->Users->userData['userid']) {
+                return;
+            }
+            $Notif->create($userid);
+        }, $admins);
         return $this->Db->execute($req);
     }
 
@@ -351,7 +350,7 @@ class Scheduler implements RestInterface
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-        if ($this->Items->Users->userData['is_admin']) {
+        if ($this->Items->Users->isAdmin) {
             return;
         }
         $now = new DateTime();
@@ -395,7 +394,7 @@ class Scheduler implements RestInterface
 
         // if it's not, we need to be admin in the same team as the event/user
         $TeamsHelper = new TeamsHelper($event['team']);
-        return $TeamsHelper->isUserInTeam($this->Items->Users->userData['userid']) && $this->Items->Users->userData['usergroup'] <= 2;
+        return $TeamsHelper->isAdminInTeam($this->Items->Users->userData['userid']);
     }
 
     private function canWriteOrExplode(): void

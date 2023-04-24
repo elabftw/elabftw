@@ -1,41 +1,39 @@
 <!-- RIGHT MENU: CREATE NEW BUTTON -->
 {% if not App.Session.get('is_anon') %}
-  <div class='col-md-2'>
-    <div class='btn-group float-right'>
-      <div class='btn-group dropleft' role='group'>
-        <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-          <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
-        </button>
-        <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
-          {% if Entity.type == 'experiments' %}
-            {% if templatesArr|length > 0 %}
-              <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
-              {% for tpl in templatesArr %}
-                <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item'>
-                  {{ tpl.title|raw }}
-                </a>
-              {% endfor %}
-            {% else %}
-              <h6 class='dropdown-header'>{{ 'No pinned templates found'|trans }}</h6>
-            {% endif %}
-            <div class='dropdown-divider'></div>
-            <a href='ucp.php?tab=3' class='dropdown-item'><i class='fas fa-layer-group'></i>
-              {{ 'Manage templates'|trans }}
-            </a>
-          {% else %}
-            {% for category in categoryArr %}
-              <a href='#' data-action='create-item' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
-                {{ category.category }}
+  <div class='btn-group'>
+    <div class='btn-group dropleft' role='group'>
+      <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
+      </button>
+      <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
+        {% if Entity.type == 'experiments' %}
+          {% if templatesArr|length > 0 %}
+            <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
+            {% for tpl in templatesArr %}
+              <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item wrap'>
+                {{ tpl.title|raw }}
               </a>
             {% endfor %}
+          {% else %}
+            <h6 class='dropdown-header'>{{ 'No pinned templates found'|trans }}</h6>
           {% endif %}
           <div class='dropdown-divider'></div>
-          <div class='dropdown-item' data-action='import-file'>
-            <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
-          </div>
+          <a href='ucp.php?tab=3' class='dropdown-item'><i class='fas fa-layer-group'></i>
+            {{ 'Manage templates'|trans }}
+          </a>
+        {% else %}
+          {% for category in categoryArr %}
+            <a href='#' data-action='create-item' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+              {{ category.category }}
+            </a>
+          {% endfor %}
+        {% endif %}
+        <div class='dropdown-divider'></div>
+        <div class='dropdown-item' data-action='import-file'>
+          <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
         </div>
       </div>
-      <button type='button' data-action='create-entity' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>
+    <button type='button' data-action='create-entity' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
   </div>
 {% endif %}

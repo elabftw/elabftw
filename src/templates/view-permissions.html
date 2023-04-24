@@ -1,38 +1,10 @@
 {# required vars: rw, can: coming from canread or canwrite with canToHuman filter #}
 {% include('permissions-edit-modal.html') %}
-<div id='{{ rw }}Div' style='line-height: 90%' class='mr-2'>
-  <h5 class='d-inline'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</h5>
-  {% if not Entity.isReadOnly %}
-    <button class='button-small btn btn-primary align-top' data-action='toggle-modal' data-target='permModal-{{ rw }}'>{{ 'edit'|trans }}</button>
-  {% endif %}
-  <div>
-  {{ can.base }}
-  {% if can.teams %}
-    <details><summary>{{ 'Teams'|trans }}</summary>
-      <ul>
-      {% for team in can.teams %}
-        <li>{{ team.name }}</li>
-      {% endfor %}
-      </ul>
-    </details>
-  {% endif %}
-  {% if can.teamgroups %}
-    <details><summary>{{ 'Groups'|trans }}</summary>
-      <ul>
-      {% for group in can.teamgroups %}
-        <li>{{ group.name }}</li>
-      {% endfor %}
-      </ul>
-    </details>
-  {% endif %}
-  {% if can.users %}
-    <details><summary>{{ 'Users'|trans }}</summary>
-      <ul>
-      {% for user in can.users %}
-        <li>{{ user.fullname }}</li>
-      {% endfor %}
-      </ul>
-    </details>
-  {% endif %}
+<label  class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }} mr-1' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</label>
+{% if not Entity.isReadOnly %}
+  <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+    <i class='fas fa-fw fa-square-plus fa-2x'></i>
   </div>
-</div>
+{% endif %}
+<div class='vertical-separator mx-3'></div>
+{% include('view-permissions-details.html') %}

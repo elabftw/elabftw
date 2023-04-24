@@ -302,7 +302,7 @@ class TeamGroups implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
-        if (!$this->Users->userData['is_admin']) {
+        if (!$this->Users->isAdmin) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

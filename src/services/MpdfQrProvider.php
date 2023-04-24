@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,7 +7,6 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -25,29 +24,25 @@ class MpdfQrProvider implements IQRCodeProvider
      * Constructor
      *
      * @param array<int> $background RGB background color. Default [255, 255, 255].
-     * @param array<int> $color RGB foreground and border color. Default [0, 0, 0].
+     * @param array<int> $foreground RGB foreground and border color. Default [0, 0, 0].
      * @param int $compression Compression level: from 0 (default, no compression) to 9.
      */
-    public function __construct(public array $background = array(255, 255, 255), public array $color = array(0, 0, 0), public int $compression = 0)
+    public function __construct(public array $background = array(255, 255, 255), public array $foreground = array(0, 0, 0), public int $compression = 0)
     {
     }
 
     public function getMimeType(): string
     {
-        // Do not use type declarations for function arguments here.
-        // The IQRCodeProvider interface does not use it.
         return 'image/png';
     }
 
     /**
      * Generate the png qr code
      */
-    public function getQRCodeImage($qrtext, $size): string
+    public function getQRCodeImage(string $qrtext, int $size): string
     {
-        // Do not use type declarations for function arguments here.
-        // The IQRCodeProvider interface does not use it.
         $qrCode = new QrCode($qrtext);
         $png = new Png();
-        return $png->output($qrCode, $size, $this->background, $this->color, $this->compression);
+        return $png->output($qrCode, $size, $this->background, $this->foreground, $this->compression);
     }
 }

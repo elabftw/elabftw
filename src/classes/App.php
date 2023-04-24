@@ -18,7 +18,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
@@ -33,7 +33,7 @@ use RuntimeException;
 use function setlocale;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use function textdomain;
 
 /**
@@ -44,23 +44,28 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.5.5';
+    public const INSTALLED_VERSION = '4.6.0-alpha';
 
     public Users $Users;
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public string $pageTitle = 'Lab manager';
 
     public array $teamArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ok = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ko = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $warning = array();
 
-    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log)
+    public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
     {
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
@@ -158,6 +163,7 @@ class App
         return $this->Config->configArr['lang'];
     }
 
+    /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
         return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);
@@ -173,7 +179,7 @@ class App
         $Teams = new Teams($this->Users);
         $this->teamArr = $Teams->readOne();
         // Notifs
-        $Notifications = new Notifications($this->Users);
+        $Notifications = new UserNotifications($this->Users);
         $this->notifsArr = $Notifications->readAll();
     }
 

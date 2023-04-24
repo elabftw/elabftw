@@ -11,26 +11,26 @@ import './prism-elabftwquery';
 
 export class SearchSyntaxHighlighting {
 
-  static init(textarea: HTMLTextAreaElement): void {
-    new ResizeObserver(SearchSyntaxHighlighting.syncSize).observe(textarea);
+  static init(input: HTMLInputElement): void {
+    new ResizeObserver(SearchSyntaxHighlighting.syncSize).observe(input);
 
-    SearchSyntaxHighlighting.update(textarea.value);
+    SearchSyntaxHighlighting.update(input.value);
 
     // display element before syncScroll otherwise there is an offset
     document.getElementById('search-highlighting').classList.remove('d-none');
-    SearchSyntaxHighlighting.syncScroll(textarea);
+    SearchSyntaxHighlighting.syncScroll(input);
 
     // trigger syncSize via ResizeObserver
-    textarea.style.height = String(textarea.offsetHeight) + 'px';
+    input.style.height = String(input.offsetHeight) + 'px';
 
-    textarea.addEventListener('input', (ev: InputEvent): void => {
-      const textarea = ev.target as HTMLTextAreaElement;
-      SearchSyntaxHighlighting.update(textarea.value);
-      SearchSyntaxHighlighting.syncScroll(textarea);
+    input.addEventListener('input', (ev: InputEvent): void => {
+      const input = ev.target as HTMLInputElement;
+      SearchSyntaxHighlighting.update(input.value);
+      SearchSyntaxHighlighting.syncScroll(input);
     });
 
-    textarea.addEventListener('scroll', (ev: Event): void => {
-      SearchSyntaxHighlighting.syncScroll(ev.target as HTMLTextAreaElement);
+    input.addEventListener('scroll', (ev: Event): void => {
+      SearchSyntaxHighlighting.syncScroll(ev.target as HTMLInputElement);
     });
 
   }
@@ -51,16 +51,16 @@ export class SearchSyntaxHighlighting {
     );
   }
 
-  static syncScroll(textarea: HTMLTextAreaElement): void {
+  static syncScroll(input: HTMLInputElement): void {
     const pre = document.getElementById('search-highlighting');
 
-    pre.scrollTop = textarea.scrollTop;
+    pre.scrollTop = input.scrollTop;
   }
 
   static syncSize(entries: ResizeObserverEntry[]): void {
-    const textarea = entries[0].target as HTMLTextAreaElement;
+    const input = entries[0].target as HTMLInputElement;
     const pre = document.getElementById('search-highlighting');
 
-    pre.style.height = String(textarea.style.height);
+    pre.style.height = String(input.style.height);
   }
 }

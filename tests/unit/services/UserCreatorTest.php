@@ -41,12 +41,6 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->UserCreator->create());
     }
 
-    public function testCreateWithNonAdminUser(): void
-    {
-        $this->expectException(IllegalActionException::class);
-        new UserCreator(new Users(2, 1), array());
-    }
-
     public function testCreateFromAdminUser(): void
     {
         $UserCreator = new UserCreator(new Users(4, 2), array(

@@ -1,23 +1,3 @@
-<div class='row'>
-  <div class='col-md-10'>
-    <!-- BACK TO LINK -->
-    {% if App.Session.has('lastquery') %}
-      {% set lastquery = App.Session.get('lastquery') %}
-    {% else %}
-      {% set lastquery = 'mode=show' %}
-    {% endif %}
-
-    <a href='?{{ lastquery }}'>
-      <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
-    </a>
-    {% block backtoview %}{% endblock %}
-  </div>
-  {% block createnew %}{% endblock %}
-</div>
-
-<!-- show message if we are not owner -->
-{% if Entity.entityData.userid != Entity.Users.userData.userid %}
-  {{ 'Owned by %s'|trans|format(Entity.entityData.fullname)|msg('ok', false) }}
-{% endif %}
+{% block createnew %}{% endblock %}
 
 {% block createmodal %}{% endblock %}

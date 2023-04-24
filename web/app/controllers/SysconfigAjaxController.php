@@ -33,7 +33,7 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$App->Session->get('is_sysadmin')) {
+    if (!$App->Users->userData['is_sysadmin']) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
 

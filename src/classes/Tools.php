@@ -132,16 +132,6 @@ class Tools
         return 'unknown';
     }
 
-    public static function getMimeExt(string $filename): string
-    {
-        $ext = strtolower(self::getExt($filename));
-        // special case for jpg
-        if ($ext === 'jpg') {
-            return 'jpeg';
-        }
-        return $ext;
-    }
-
     /**
      * Display a generic error message
      *
@@ -153,27 +143,6 @@ class Tools
             return _('This section is out of your reach!');
         }
         return _('An error occurred!');
-    }
-
-    /**
-     * A better print_r()
-     * Used for debugging only
-     *
-     * @noRector \Rector\DeadCode\Rector\ClassMethod\RemoveDeadRecursiveClassMethodRector
-     * @param array<mixed> $arr
-     * @return string
-     */
-    public static function printArr(array $arr): string
-    {
-        $html = '<ul>';
-        foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
-            } else {
-                $html .= '<li><span style="color:red;">' . (string) $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
-            }
-        }
-        return $html . '</ul>';
     }
 
     public static function getIdFilterSql(array $idArr): string

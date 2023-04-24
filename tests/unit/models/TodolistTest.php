@@ -40,13 +40,14 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateOrdering(): void
     {
-        $content = 'write more tests';
-        $this->Todolist->postAction(Action::Create, array('content' => $content));
-        $this->Todolist->postAction(Action::Create, array('content' => $content));
-        $this->Todolist->postAction(Action::Create, array('content' => $content));
-        $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4');
+        $this->Todolist->postAction(Action::Create, array('content' => 'item 2'));
+        $this->Todolist->postAction(Action::Create, array('content' => 'item 3'));
+        $this->Todolist->postAction(Action::Create, array('content' => 'item 4'));
+        $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4', 'todoItem_1');
         $OrderingParams = new OrderingParams('todolist', $ordering);
         $this->Todolist->updateOrdering($OrderingParams);
+        $all = $this->Todolist->readAll();
+        $this->assertEquals('item 3', $all[0]['body']);
     }
 
     public function testDestroy(): void

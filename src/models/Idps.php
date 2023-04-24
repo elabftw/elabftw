@@ -10,14 +10,15 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Enums\Action;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
- * Store information about different identity providers for auth with SAML
+ * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */
-class Idps implements DestroyableInterface
+class Idps implements RestInterface
 {
     use SetIdTrait;
 
@@ -29,43 +30,42 @@ class Idps implements DestroyableInterface
         $this->id = $id;
     }
 
-    /**
-     * Create an IDP
-     */
-    public function create(
-        string $name,
-        string $entityid,
-        string $ssoUrl,
-        string $ssoBinding,
-        string $sloUrl,
-        string $sloBinding,
-        string $x509,
-        string $x509_new,
-        string $active,
-        string $emailAttr,
-        string $teamAttr,
-        string $fnameAttr,
-        string $lnameAttr,
-    ): int {
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, active, email_attr, team_attr, fname_attr, lname_attr)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :active, :email_attr, :team_attr, :fname_attr, :lname_attr)';
+    public function getPage(): string
+    {
+        return 'api/v2/idps/';
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, email_attr, team_attr, fname_attr, lname_attr, orgid_attr)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':entityid', $entityid);
-        $req->bindParam(':sso_url', $ssoUrl);
-        $req->bindParam(':sso_binding', $ssoBinding);
-        $req->bindParam(':slo_url', $sloUrl);
-        $req->bindParam(':slo_binding', $sloBinding);
-        $req->bindParam(':x509', $x509);
-        $req->bindParam(':x509_new', $x509_new);
-        $req->bindParam(':active', $active);
-        $req->bindParam(':email_attr', $emailAttr);
-        $req->bindParam(':team_attr', $teamAttr);
-        $req->bindParam(':fname_attr', $fnameAttr);
-        $req->bindParam(':lname_attr', $lnameAttr);
+        $req->bindParam(':name', $reqBody['name']);
+        $req->bindParam(':entityid', $reqBody['entityid']);
+        $req->bindParam(':sso_url', $reqBody['sso_url']);
+        $req->bindParam(':sso_binding', $reqBody['sso_binding']);
+        $req->bindParam(':slo_url', $reqBody['slo_url']);
+        $req->bindParam(':slo_binding', $reqBody['slo_binding']);
+        $req->bindParam(':x509', $reqBody['x509']);
+        $req->bindParam(':x509_new', $reqBody['x509_new']);
+        $req->bindParam(':email_attr', $reqBody['email_attr']);
+        $req->bindParam(':team_attr', $reqBody['team_attr']);
+        $req->bindParam(':fname_attr', $reqBody['fname_attr']);
+        $req->bindParam(':lname_attr', $reqBody['lname_attr']);
+        $req->bindParam(':orgid_attr', $reqBody['orgid_attr']);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    public function readOne(): array
+    {
+        $sql = 'SELECT * FROM idps WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->fetch($req);
     }
 
     public function readAll(): array
@@ -77,64 +77,20 @@ class Idps implements DestroyableInterface
         return $req->fetchAll();
     }
 
-    /**
-     * Update info about an IDP
-     */
-    public function update(
-        int $id,
-        string $name,
-        string $entityid,
-        string $ssoUrl,
-        string $ssoBinding,
-        string $sloUrl,
-        string $sloBinding,
-        string $x509,
-        string $x509_new,
-        string $active,
-        string $emailAttr,
-        string $teamAttr,
-        string $fnameAttr,
-        string $lnameAttr
-    ): bool {
-        $sql = 'UPDATE idps SET
-            name = :name,
-            entityid = :entityid,
-            sso_url = :sso_url,
-            sso_binding = :sso_binding,
-            slo_url = :slo_url,
-            slo_binding = :slo_binding,
-            x509 = :x509,
-            x509_new = :x509_new,
-            active = :active,
-            email_attr = :email_attr,
-            team_attr = :team_attr,
-            fname_attr = :fname_attr,
-            lname_attr = :lname_attr
-            WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':entityid', $entityid);
-        $req->bindParam(':sso_url', $ssoUrl);
-        $req->bindParam(':sso_binding', $ssoBinding);
-        $req->bindParam(':slo_url', $sloUrl);
-        $req->bindParam(':slo_binding', $sloBinding);
-        $req->bindParam(':x509', $x509);
-        $req->bindParam(':x509_new', $x509_new);
-        $req->bindParam(':active', $active);
-        $req->bindParam(':email_attr', $emailAttr);
-        $req->bindParam(':team_attr', $teamAttr);
-        $req->bindParam(':fname_attr', $fnameAttr);
-        $req->bindParam(':lname_attr', $lnameAttr);
-        return $this->Db->execute($req);
+    public function patch(Action $action, array $params): array
+    {
+        foreach ($params as $key => $value) {
+            $this->update($key, $value);
+        }
+        return $this->readOne();
     }
 
     /**
-     * Get an active IDP
+     * Get an enabled IDP
      */
-    public function getActive(?int $id = null): array
+    public function getEnabled(?int $id = null): array
     {
-        $sql = 'SELECT * FROM idps WHERE active = 1';
+        $sql = 'SELECT * FROM idps WHERE enabled = 1';
         if ($id !== null) {
             $sql .= ' AND id = :id';
         }
@@ -148,11 +104,11 @@ class Idps implements DestroyableInterface
     }
 
     /**
-     * Get active IDP by entity id
+     * Get enabled IDP by entity id
      */
-    public function getActiveByEntityId(string $entId): array
+    public function getEnabledByEntityId(string $entId): array
     {
-        $sql = 'SELECT * FROM idps WHERE active = 1 AND entityid = :entId';
+        $sql = 'SELECT * FROM idps WHERE enabled = 1 AND entityid = :entId';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':entId', $entId);
@@ -168,5 +124,15 @@ class Idps implements DestroyableInterface
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function update(string $target, string $value): array
+    {
+        $sql = 'UPDATE idps SET ' . $target . ' = :value WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':value', $value);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->readOne();
     }
 }

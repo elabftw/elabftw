@@ -1,10 +1,16 @@
 {# required vars: rw visibilityArr teamsArr myTeamgroupsArr usersArr #}
+{% if ucpPage %}{# set this to true on ucp page #}
+  {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
+  {% set permissionsJson = App.Users.userData[column] %}
+{% else %}
+  {% set permissionsJson = Entity.entityData[rw] %}
+{% endif %}
 <!-- Modal for permission edit -->
-<div class='modal fade' id='permModal-{{ rw }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+<div class='modal fade' id='permModal-{{ rw }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ rw }}' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ rw == 'canread' ? 'Select who can see this entry'|trans : 'Select who can edit this entry'|trans }}</h5>
+        <h5 class='modal-title' id='permModalLabel_{{ rw }}'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ rw == 'canread' ? 'Select who can see this entry'|trans : 'Select who can edit this entry'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -16,7 +22,7 @@
           <select id='{{ rw }}_select_base' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ Entity.entityData.canread|extractJson('base') == key ? ' selected' }}
+              {{ permissionsJson|extractJson('base') == key ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -24,9 +30,9 @@
           <label for='{{ rw }}_select_teams'>{{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <select id='{{ rw }}_select_teams' multiple class='form-control' autocomplete='off'>
-            {% for team in teamsArr %}
+            {% for team in teamsArr|filter(t => t.visible == '1') %}
               <option value='team:{{ team.id }}'
-              {{ Entity.entityData.canread|isInJsonArray('teams', team.id) ? ' selected' }}
+              {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}
               >{{ 'Team'|trans }} - {{ team.name }}</option>
             {% endfor %}
           </select>
@@ -36,14 +42,14 @@
           <select id='{{ rw }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
             {% for tg in myTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
-              {{ Entity.entityData.canread|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
+              {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
                       >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>
             {% endfor %}
           </select>
           <!-- USERS -->
           <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.' }}</p>
           <ul class='list-group mb-1' id='{{ rw }}_list_users'>
-            {% set humanCan = Entity.entityData[rw]|canToHuman %}
+            {% set humanCan = permissionsJson|canToHuman %}
             {% for user in humanCan.users %}
               <li class='list-group-item w-100' data-id='{{ user.userid }}'>
                 <i class='fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
@@ -58,7 +64,7 @@
             </div>
           </div>
         </div>
-        {% if rw == 'canread' and App.Config.configArr.anon_users %}
+        {% if rw == 'canread' and App.Config.configArr.anon_users and not ucpPage %}
           <hr>
           <div class='custom-control custom-checkbox'>
             <input type='checkbox' class='custom-control-input' id='readAccessCheckbox' data-action='toggle-anonymous-access' autocomplete='off' {{ Entity.entityData.access_key ? 'checked' }}>

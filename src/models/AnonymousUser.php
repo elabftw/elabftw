@@ -25,19 +25,18 @@ final class AnonymousUser extends Users
     {
         $this->userData['team'] = $this->team;
         $this->userData['limit_nb'] = 15;
-        $this->userData['display_size'] = 'lg';
         $this->userData['display_mode'] = 'it';
         $this->userData['orderby'] = 'date';
         $this->userData['sort'] = 'desc';
         $this->userData['sc_create'] = 'c';
         $this->userData['sc_edit'] = 'e';
-        $this->userData['sc_submit'] = 's';
-        $this->userData['sc_todo'] = 'w';
+        $this->userData['sc_favorite'] = 'f';
+        $this->userData['sc_todo'] = 't';
+        $this->userData['sc_search'] = 's';
         $this->userData['show_team'] = 1;
         $this->userData['show_team_templates'] = 0;
         $this->userData['show_public'] = 0;
         $this->userData['fullname'] = 'Anon Ymous';
-        $this->userData['is_admin'] = 0;
         $this->userData['is_sysadmin'] = 0;
         $this->userData['lang'] = $this->lang;
         $this->userData['use_isodate'] = '0';

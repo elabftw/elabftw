@@ -5,17 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import EntityClass from './Entity.class';
-import { EntityType } from './interfaces';
-import { Api } from './Apiv2.class';
-import { notif } from './misc';
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
 import caLocale from '@fullcalendar/core/locales/ca';
 import deLocale from '@fullcalendar/core/locales/de';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -33,10 +28,15 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import EntityClass from './Entity.class';
+import { Action, EntityType } from './interfaces';
+import { Api } from './Apiv2.class';
+import { notif } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: info.calendarlang,
+    locale: calendarEl.dataset.lang,
     initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
+    eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
     // selection
     select: function(info): void {
       if (!editable) { return; }
@@ -279,11 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      const eventid = parseInt(original.dataset.eventid, 10);
+    fun: async (value, original) => {
       const params = {'target': 'title', 'content': value};
-      ApiC.patch(`event/${eventid}`, params);
-      return value;
+      return ApiC.patch(`event/${original.dataset.eventid}`, params)
+        .then(resp => resp.json()).then(json => json.title);
     },
     listenOn: '#eventTitle',
     submit : i18next.t('save'),
@@ -300,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
       TemplateC.duplicate(parseInt(el.dataset.id));
     // TOGGLE TPL PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      TemplateC.pin(parseInt(el.dataset.id))
+      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin})
         .then(() => window.location.replace('team.php?tab=3'));
 
     // DESTROY TEMPLATE

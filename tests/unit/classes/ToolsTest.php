@@ -27,12 +27,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('unknown', Tools::getExt('/path/to/myfilegif'));
     }
 
-    public function testGetMimeExt(): void
-    {
-        $this->assertEquals('gif', Tools::getMimeExt('myfile.gif'));
-        $this->assertEquals('jpeg', Tools::getMimeExt('myfile.JPG'));
-    }
-
     public function testMd2html(): void
     {
         $md = '[a link](https://www.elabftw.net) **in bold** _in italic_';
@@ -44,13 +38,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('An error occurred!', Tools::error());
         $this->assertEquals('This section is out of your reach!', Tools::error(true));
-    }
-
-    public function testPrintArr(): void
-    {
-        $arr = array('Blah' => 42, array('Pwet', 1337));
-        $out = '<ul><li><span style="color:red;">Blah</span><b> => </b><span style="color:blue;">42</span></li><li><span style="color:red;">0</span><b> => </b><span style="color:blue;"><ul><li><span style="color:red;">0</span><b> => </b><span style="color:blue;">Pwet</span></li><li><span style="color:red;">1</span><b> => </b><span style="color:blue;">1337</span></li></ul></span></li></ul>';
-        $this->assertEquals($out, Tools::printArr($arr));
     }
 
     public function testGetShortElabid(): void

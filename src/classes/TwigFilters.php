@@ -9,7 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Models\Config;
 use function implode;
 use function is_array;
 
@@ -45,30 +48,12 @@ class TwigFilters
             $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
-        $begin = "<div class='alert alert-" . $alert .
-            "'><i class='fas " . $icon .
-            "'></i>";
-        $end = '</div>';
-
-        return $begin . $crossLink . ' ' . $message . $end;
-    }
-
-    /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
+        return sprintf("<div class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
     }
 
     /**
      * Process the metadata json string into html
+     * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates
      */
     public static function formatMetadata(string $json): string
     {
@@ -83,7 +68,7 @@ class TwigFilters
         });
         foreach ($extraFields as $key => $properties) {
             $description = isset($properties[MetadataEnum::Description->value])
-                ? sprintf('<h5>%s</h5>', $properties[MetadataEnum::Description->value])
+                ? sprintf('<span class="smallgray">%s</span>', $properties[MetadataEnum::Description->value])
                 : '';
             $value = $properties[MetadataEnum::Value->value];
             // checkbox is a special case
@@ -105,8 +90,16 @@ class TwigFilters
                 $value = implode(', ', $value);
             }
 
-            $final .= sprintf('<h4 class="m-0">%s</h4>%s<p>%s</p>', $key, $description, $value);
+            $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $key, $description, $value);
         }
         return $final;
+    }
+
+    public static function decrypt(?string $encrypted): string
+    {
+        if (empty($encrypted)) {
+            return '';
+        }
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
     }
 }

@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use function implode;
@@ -56,6 +57,10 @@ try {
         // If one enables 2FA we need to provide the secret.
         // For user convenience it is provide as QR code and as plain text.
         if ($App->Session->has('enable_mfa')) {
+            // User is not fully authenticated, we load the user as we need email
+            if ($App->Session->get('enforce_mfa')) {
+                $App->Users = new Users($App->Session->get('auth_userid'));
+            }
             $MfaHelper = new MfaHelper((int) $App->Users->userData['userid'], $App->Session->get('mfa_secret'));
             $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
             $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));

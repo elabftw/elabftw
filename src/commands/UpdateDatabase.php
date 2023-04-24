@@ -18,6 +18,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -36,6 +37,7 @@ class UpdateDatabase extends Command
 
             // the full command description shown when running the command with
             // the "--help" option
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->setHelp('This command allows you to update the structure of the database to the latest version.');
     }
 
@@ -59,7 +61,7 @@ class UpdateDatabase extends Command
 
             $Config = Config::getConfig();
             $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
-            $warn = $Update->runUpdateScript();
+            $warn = $Update->runUpdateScript($input->getOption('force'));
             $output->writeln('<info>All done.</info>');
             // display warning messages if any
             foreach ($warn as $msg) {

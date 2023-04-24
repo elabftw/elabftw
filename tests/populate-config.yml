@@ -19,10 +19,11 @@ mailfrom: elabftw@example.com
 iterations: 12
 
 teams:
-  - Alpha
-  - Bravo
-  - Charlie
-  - Delta
+  - name: Alpha
+    default_category_name: Generated
+  - name: Bravo
+  - name: Charlie
+  - name: Delta
 
 # for users you need team as a minimum
 # the password will be the one provided on the command line for all users
@@ -32,6 +33,7 @@ users:
     firstname: Phpunit
     lastname: TestUser
     team: Alpha
+    orgid: internal_id_1
     api_key: apiKey4Test
     password: phpunitftw
     create_mfa_secret: false
@@ -52,6 +54,11 @@ users:
     firstname: Tata
     team: Bravo
     create_experiments: true
+
+  - email: somesamluser@example.com
+    team: Bravo
+    create_experiments: false
+    orgid: internal_id_42
 
   - team: Bravo
 

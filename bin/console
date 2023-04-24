@@ -23,6 +23,7 @@ $Application->add(new CheckDatabase());
 $Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new UpdateDatabase());
+$Application->add(new RevertSchema());
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());
@@ -39,5 +40,6 @@ $Application->add(new PruneUploads());
 $Application->add(new PruneExperiments());
 $Application->add(new PruneItems());
 $Application->add(new MigrateUploads());
+$Application->add(new ExperimentsTimestamp());
 
 $Application->run();

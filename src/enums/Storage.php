@@ -12,11 +12,11 @@ namespace Elabftw\Enums;
 use Aws\Credentials\Credentials;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
-use Elabftw\Services\CacheStorage;
-use Elabftw\Services\FixturesStorage;
-use Elabftw\Services\LocalStorage;
-use Elabftw\Services\MemoryStorage;
-use Elabftw\Services\S3Storage;
+use Elabftw\Storage\Cache;
+use Elabftw\Storage\Fixtures;
+use Elabftw\Storage\Local;
+use Elabftw\Storage\Memory;
+use Elabftw\Storage\S3;
 
 /**
  * This enum is responsible for providing a storage provider
@@ -32,11 +32,11 @@ enum Storage: int
     public function getStorage(): StorageInterface
     {
         return match ($this) {
-            $this::LOCAL => new LocalStorage(),
-            $this::S3 => new S3Storage(Config::getConfig(), new Credentials(Config::fromEnv('ELAB_AWS_ACCESS_KEY'), Config::fromEnv('ELAB_AWS_SECRET_KEY'))),
-            $this::MEMORY => new MemoryStorage(),
-            $this::CACHE => new CacheStorage(),
-            $this::FIXTURES => new FixturesStorage(),
+            $this::LOCAL => new Local(),
+            $this::S3 => new S3(Config::getConfig(), new Credentials(Config::fromEnv('ELAB_AWS_ACCESS_KEY'), Config::fromEnv('ELAB_AWS_SECRET_KEY'))),
+            $this::MEMORY => new Memory(),
+            $this::CACHE => new Cache(),
+            $this::FIXTURES => new Fixtures(),
         };
     }
 }

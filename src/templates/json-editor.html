@@ -1,36 +1,80 @@
 <!-- JSON EDITOR -->
 {% include('field-builder-modal.html') %}
 
-<section class='box' id='json-editor'>
-  <h3 data-action='toggle-next' data-icon='jsonEditorIcon' class='d-inline'><i id='jsonEditorIcon' class='fas fa-chevron-circle-down'></i> <i class='fas fa-fw fa-list'></i> {{ 'JSON Editor'|trans }}</h3>
+<section id='json-editor'>
+  {# id for icon is used when focusing after loading from file #}
+  <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
-    <button type='button' id='jsonEditorMetadataLoadButton' data-action='json-load-metadata' class='btn btn-neutral'>{{ 'Load metadata'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='btn btn-primary'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='json-import-file' class='btn btn-primary'>{{ 'Import from file'|trans }}</button>
-    {% if mode == 'edit' %}
-      <div class='btn-group'>
-        <button type='button' data-action='json-save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <div class='btn-group dropright' role='group'>
-          <button type='button' id='json-save-dropdown' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-            <span class='sr-only'>{{ 'Toggle JSON editor save menu'|trans }}</span>
-          </button>
-          <div class='dropdown-menu'>
-            <a href='#' data-action='json-save-file' class='dropdown-item'>{{ 'Save as file'|trans }}</a>
-            <a href='#' data-action='json-save-metadata' class='dropdown-item'>{{ 'Save as metadata'|trans }}</a>
+    <hr>
+    {# JSON EDITOR TOOLBAR #}
+    <div class='d-flex align-items-center'>
+      {# ADD FIELD #}
+      <div class='mr-2'>
+        <div title='{{ 'Add field'|trans }}' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='hl-hover-gray p-2 rounded main-action-button'>
+          <i class='fas fa-plus fa-fw'></i>
+        </div>
+      </div>
+
+      <div class='vertical-separator mx-3'></div>
+
+      {# IMPORT FROM FILE #}
+      <div class='mr-2'>
+        <div title='{{ 'Import from file'|trans }}' data-action='json-import-file' class='hl-hover-gray p-2 rounded'>
+          <i class='fas fa-upload fa-fw'></i>
+        </div>
+      </div>
+
+      {# SAVE TO FILE #}
+      <div class='mr-2'>
+        <div title='{{ 'Save as…'|trans }}' data-action='json-saveas-file' class='hl-hover-gray p-2 rounded'>
+          <i class='fas fa-download fa-fw'></i>
+        </div>
+      </div>
+
+      <div class='vertical-separator mx-3'></div>
+
+      {# SAVE AS ATTACHMENT #}
+      <div class='mr-2'>
+        <div title='{{ 'Save as attachment'|trans }}' data-action='json-save-file' class='hl-hover-gray p-2 rounded'>
+          <i class='fas fa-paperclip fa-fw'></i>
+        </div>
+      </div>
+
+      {# SAVE #}
+      <div class='mr-2'>
+        <div title='{{ 'Save'|trans }}' data-action='json-save' class='hl-hover-gray p-2 rounded'>
+          <i class='fas fa-save fa-fw'></i>
+        </div>
+      </div>
+
+      {# CLEAR #}
+      <div class='ml-auto d-flex align-items-center'>
+        <div class='mr-2'>
+          <div title='{{ 'Clear'|trans }}' data-action='json-clear' class='hl-hover-gray p-2 rounded'>
+            <i class='fas fa-trash-alt fa-fw'></i>
           </div>
         </div>
       </div>
-    {% endif %}
-    {% if mode == 'edit-template' %}
-      <button type='button' data-action='json-save-metadata' class='btn btn-primary'>{{ 'Save as metadata'|trans }}</button>
-    {% endif %}
-    <button type='button' data-action='json-clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-    <div hidden id='jsonImportFileDiv'>
-      <input type='file' name='file' accept='.json' id='jsonImportFileInput' />
-      <button type='submit' data-action='json-upload-file' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
     </div>
-    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
+
+    <div hidden id='jsonImportFileDiv'>
+      <input type='file' class='form-control col-md-4 form-inline' name='file' accept='.json' id='jsonImportFileInput' />
+      <button type='submit' data-action='json-upload-file' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+    </div>
+
+    <hr>
+
+    <!-- Display main text switch -->
+    <div class='d-inline-flex p-1'>
+      <div class='mr-1'>{{ 'Display main text'|trans }}</div>
+      <label class='switch'>
+        <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+        <span class='slider'></span>
+      </label>
+    </div>
+
+    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>

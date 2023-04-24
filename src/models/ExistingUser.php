@@ -32,6 +32,21 @@ class ExistingUser extends Users
         return new self((int) $res);
     }
 
+    public static function fromOrgid(string $orgid): Users
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT userid FROM users
+            WHERE orgid = :orgid AND archived = 0 AND validated = 1 LIMIT 1';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':orgid', $orgid);
+        $Db->execute($req);
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            throw new ResourceNotFoundException();
+        }
+        return new self((int) $res);
+    }
+
     public static function fromScratch(
         string $email,
         array $teams,

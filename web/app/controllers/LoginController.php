@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\AuthFail;
 use Exception;
@@ -32,7 +33,7 @@ $Response = new RedirectResponse($location);
 try {
     $Controller = new LoginController($App);
     $Response = $Controller->getResponse();
-} catch (QuantumException | InvalidCredentialsException $e) {
+} catch (QuantumException | InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
     $AuthFail->register();

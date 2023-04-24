@@ -9,10 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Idps;
-use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use OneLogin\Saml2\LogoutRequest as SamlLogoutRequest;
@@ -67,7 +67,12 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->getAlnum('saml_token'));
+        $samlToken = $App->Request->cookies->getAlnum('saml_token');
+        $sessionIndex = null;
+        $idpId = null;
+        if (!empty($samlToken)) {
+            [$sessionIndex, $idpId] = SamlAuth::decodeToken($samlToken);
+        }
     } catch (Exception $e) {
         // log error and show general error message
         $destroySession();  // destroy session anyway

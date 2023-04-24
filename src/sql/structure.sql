@@ -349,11 +349,12 @@ CREATE TABLE `idps` (
   `slo_binding` varchar(255) NOT NULL,
   `x509` text NOT NULL,
   `x509_new` text NOT NULL,
-  `active` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `enabled` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `email_attr` varchar(255) NOT NULL,
   `team_attr` varchar(255) NULL DEFAULT NULL,
   `fname_attr` varchar(255) NULL DEFAULT NULL,
   `lname_attr` varchar(255) NULL DEFAULT NULL,
+  `orgid_attr` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -795,19 +796,21 @@ CREATE TABLE `users` (
   `salt` varchar(255) NULL DEFAULT NULL,
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
-  `mfa_secret` varchar(32) DEFAULT NULL,
-  `usergroup` tinyint UNSIGNED NOT NULL,
+  `mfa_secret` varchar(32) NULL DEFAULT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `orcid` varchar(19) DEFAULT NULL,
+  `is_sysadmin` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `orcid` varchar(19) NULL DEFAULT NULL,
+  `orgid` varchar(255) NULL DEFAULT NULL,
   `register_date` bigint(20) UNSIGNED NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `limit_nb` tinyint UNSIGNED NOT NULL DEFAULT 15,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
-  `sc_submit` varchar(1) NOT NULL DEFAULT 's',
+  `sc_favorite` varchar(1) NOT NULL DEFAULT 'f',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
+  `sc_search` varchar(1) NOT NULL DEFAULT 's',
   `show_team` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `show_team_templates` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `show_public` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -817,7 +820,6 @@ CREATE TABLE `users` (
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   `default_read` JSON NOT NULL,
   `default_write` JSON NOT NULL,
-  `single_column_layout` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `cjk_fonts` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `orderby` varchar(255) NOT NULL DEFAULT 'date',
   `sort` varchar(255) NOT NULL DEFAULT 'desc',
@@ -827,7 +829,6 @@ CREATE TABLE `users` (
   `append_pdfs` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `archived` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
-  `display_size` varchar(2) NOT NULL DEFAULT 'lg',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
   `allow_untrusted` tinyint UNSIGNED NOT NULL DEFAULT 1,
@@ -846,12 +847,6 @@ CREATE TABLE `users` (
   `valid_until` date NULL DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `users`:
---   `usergroup`
---       `groups` -> `id`
---
 
 -- --------------------------------------------------------
 
@@ -881,6 +876,8 @@ CREATE TABLE `users2team_groups` (
 CREATE TABLE `users2teams` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
+  `groups_id` TINYINT UNSIGNED NOT NULL DEFAULT 4,
+  `is_owner` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`users_id`, `teams_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
@@ -889,6 +886,8 @@ CREATE TABLE `users2teams` (
 --       `teams` -> `id`
 --   `users_id`
 --       `users` -> `userid`
+--   `groups_id`
+--       `groups` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -1069,12 +1068,6 @@ ALTER TABLE `team_groups`
 --
 ALTER TABLE `todolist`
   ADD KEY `fk_todolist_users_userid` (`userid`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD KEY `fk_users_groups_id` (`usergroup`);
 
 --
 -- Indexes for table `experiments2experiments`
@@ -1301,10 +1294,12 @@ CREATE TABLE `experiments_templates_links` (
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
-  ADD KEY `fk_users2teams_users_id` (`users_id`);
+  ADD KEY `fk_users2teams_users_id` (`users_id`),
+  ADD KEY `fk_users2teams_groups_id` (`groups_id`);
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_users2teams_groups_id` FOREIGN KEY (`groups_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `users2team_groups`
@@ -1315,12 +1310,6 @@ ALTER TABLE `users2team_groups`
 ALTER TABLE `users2team_groups`
   ADD CONSTRAINT `fk_users2team_groups_groupid` FOREIGN KEY (`groupid`) REFERENCES `team_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_users2team_groups_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_users_groups_id` FOREIGN KEY (`usergroup`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments2experiments`

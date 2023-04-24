@@ -37,10 +37,6 @@ export default class Entity {
     return this.api.patch(`${this.model}/${id}`, {'action': Action.Lock});
   }
 
-  pin(id: number): Promise<Response> {
-    return this.api.patch(`${this.model}/${id}`, {'action': Action.Pin});
-  }
-
   duplicate(id: number): Promise<Response> {
     return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate});
   }

@@ -8,7 +8,7 @@
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import i18next from 'i18next';
-import { notif, reloadElement } from './misc';
+import { notif, notifSaved, reloadElement, getEntity } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -62,8 +62,8 @@ export default class JsonEditorHelper {
   focus(): void {
     // toggle the arrow icon
     const iconEl = document.getElementById('jsonEditorIcon');
-    iconEl.classList.add('fa-chevron-circle-down');
-    iconEl.classList.remove('fa-chevron-circle-right');
+    iconEl.classList.add('fa-caret-down');
+    iconEl.classList.remove('fa-caret-right');
     const jsonEditorDiv = document.getElementById('jsonEditorDiv');
     // make sure it's not hidden
     jsonEditorDiv.toggleAttribute('hidden', false);
@@ -97,8 +97,7 @@ export default class JsonEditorHelper {
     this.currentUploadId = uploadid;
     this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
-    document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
-    document.getElementById('jsonEditorAddFieldButton').toggleAttribute('hidden', true);
+    document.getElementById('jsonImportFileDiv').toggleAttribute('hidden', true);
   }
 
   loadMetadata(): void {
@@ -107,9 +106,6 @@ export default class JsonEditorHelper {
     // Note: metadata is read two times one for the editor, one to display, a get to the entity should ideally only be made once
     this.MetadataC.read().then(metadata => this.editor.set(metadata));
     this.editorDiv.dataset.what = 'metadata';
-    // disable the load metadata button
-    document.getElementById('jsonEditorMetadataLoadButton').toggleAttribute('disabled', true);
-    document.getElementById('jsonEditorAddFieldButton').removeAttribute('hidden');
   }
 
   loadMetadataFromId(entity: Entity): void {
@@ -148,8 +144,7 @@ export default class JsonEditorHelper {
     }
   }
 
-  // create a new file
-  saveNewFile(): void {
+  askFilename(): string {
     let realName = prompt(i18next.t('request-filename'));
     if (realName === null) {
       return;
@@ -158,12 +153,18 @@ export default class JsonEditorHelper {
     if (realName.slice(-5).includes('.json')) {
       realName = realName.slice(0, -5);
     }
+    return realName += '.json';
+  }
+
+  // create a new file
+  saveNewFile(): void {
+    const realName = this.askFilename();
     // add the new name for the file as a title
-    this.editorTitle.innerText = i18next.t('filename') + ': ' + realName + '.json';
+    this.editorTitle.innerText = i18next.t('filename') + ': ' + realName;
     const params = {
       'action': Action.CreateFromString,
       'file_type': 'json',
-      'real_name': realName + '.json',
+      'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };
     this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
@@ -171,6 +172,21 @@ export default class JsonEditorHelper {
       reloadElement('filesdiv');
       this.currentUploadId = String(location[location.length - 1]);
     });
+  }
+
+  saveAsFile(): void {
+    const realName = this.askFilename();
+    const content = JSON.stringify(this.editor.get());
+    const blob = new Blob([content], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    // we create a link and click it
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = realName;
+    this.editorDiv.appendChild(link);
+    link.click();
+    // cleanup by revoking the URL object
+    URL.revokeObjectURL(url);
   }
 
   // edit an existing file
@@ -183,6 +199,31 @@ export default class JsonEditorHelper {
     fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
       method: 'POST',
       body: formData,
+    });
+    notifSaved();
+  }
+
+  toggleDisplayMainText(): void {
+    const entity = getEntity();
+    const MetadataC = new Metadata(entity);
+    let json = {};
+    // get the current metadata
+    MetadataC.read().then(metadata => {
+      if (metadata) {
+        json = metadata;
+      }
+      // add the namespace object 'elabftw' if it's not there
+      if (!Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
+        json['elabftw'] = {};
+      }
+      // if it's not present, set it to false
+      if (!Object.prototype.hasOwnProperty.call(json['elabftw'], 'display_main_text')) {
+        json['elabftw']['display_main_text'] = false;
+      } else {
+        json['elabftw']['display_main_text'] = !json['elabftw']['display_main_text'];
+      }
+      this.editor.set(json);
+      this.saveMetadata();
     });
   }
 

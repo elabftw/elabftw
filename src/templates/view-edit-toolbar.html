@@ -176,9 +176,11 @@
         <!-- CHANGELOG -->
         <a class='dropdown-item' href='?id={{ Entity.id }}&mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
 
-        <div class='dropdown-divider'></div>
-        {# DELETE #}
-        <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+        {% if App.Config.configArr.deletable_xp == '1' %}
+          <div class='dropdown-divider'></div>
+          {# DELETE #}
+          <a class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' href='#' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</a>
+        {% endif %}
       </div>
     </div>
   </div>

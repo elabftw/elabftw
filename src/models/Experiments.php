@@ -201,7 +201,7 @@ class Experiments extends AbstractConcreteEntity
         $teamConfigArr = $Teams->readOne();
         $Config = Config::getConfig();
         if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
-            || $Config->configArr['deletable_xp'] === 0) {
+            || $Config->configArr['deletable_xp'] === '0') {
             throw new ImproperActionException('You cannot delete experiments!');
         }
         // delete from pinned too

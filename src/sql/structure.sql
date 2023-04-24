@@ -767,7 +767,7 @@ CREATE TABLE `uploads` (
   `long_name` text NOT NULL,
   `comment` text NULL DEFAULT NULL,
   `item_id` int(10) UNSIGNED DEFAULT NULL,
-  `userid` text NOT NULL,
+  `userid` int UNSIGNED NOT NULL,
   `type` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(128) DEFAULT NULL,
@@ -781,6 +781,8 @@ CREATE TABLE `uploads` (
 
 --
 -- RELATIONSHIPS FOR TABLE `uploads`:
+--   `userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -1229,6 +1231,15 @@ ALTER TABLE `team_groups`
 --
 ALTER TABLE `todolist`
   ADD CONSTRAINT `fk_todolist_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `uploads`
+--
+ALTER TABLE `uploads`
+  ADD KEY `idx_uploads_item_id_type` (`item_id`, `type`),
+  ADD KEY `fk_uploads_users_userid` (`userid`);
+  -- ToDo: check if there is interference for cascading and if not add constraints
+  -- ADD CONSTRAINT `fk_uploads_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- schema 49
 CREATE TABLE `items_steps` (

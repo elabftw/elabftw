@@ -1237,8 +1237,9 @@ ALTER TABLE `todolist`
 --
 ALTER TABLE `uploads`
   ADD KEY `idx_uploads_item_id_type` (`item_id`, `type`),
-  ADD KEY `fk_uploads_users_userid` (`userid`),
-  ADD CONSTRAINT `fk_uploads_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD KEY `fk_uploads_users_userid` (`userid`);
+  -- ToDo: check if there is interference for cascading and if not add constraints
+  -- ADD CONSTRAINT `fk_uploads_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- schema 49
 CREATE TABLE `items_steps` (

@@ -50,7 +50,7 @@ users:
     api_key: apiKey4Test
     create_experiments: true
     create_items: true
-    create_templates: false
+    create_templates: true
     user_preferences:
       orderby: lastchange
       cjk_fonts: 1

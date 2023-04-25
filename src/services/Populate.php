@@ -31,6 +31,9 @@ class Populate
     /** @var string DEFAULT_PASSWORD the password to use if none are provided */
     private const DEFAULT_PASSWORD = 'totototo';
 
+    /** @var int TEMPLATES_ITER number of templates to generate */
+    private const TEMPLATES_ITER = 5;
+
     private \Faker\Generator $faker;
 
     // iter: iterations: number of things to generate
@@ -143,7 +146,7 @@ class Populate
 
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
-            for ($i = 0; $i < $this->iter; $i++) {
+            for ($i = 0; $i <= self::TEMPLATES_ITER; $i++) {
                 $id = $Templates->create($this->faker->sentence());
                 $Templates->setId($id);
                 $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));

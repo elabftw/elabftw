@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "Kliknite a upravte",
     "comment-add": "Pridať komentár",
+    "dropzone-filesize-limit": "Limit veľkosti súboru:",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
     "editing-metadata": "Úpravy metadát",
     "entity-default-title": "Bez mena",

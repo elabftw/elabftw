@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "Feu clic per editar",
     "comment-add": "Afegir un comentari",
+    "dropzone-filesize-limit": "Límit de mida del fitxer:",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
     "editing-metadata": "S'estan editant metadades",
     "entity-default-title": "Sense títol",

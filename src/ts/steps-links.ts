@@ -65,9 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const content = e.currentTarget.value;
       if (content.length > 0) {
         StepC.create(content).then(() => {
-          reloadElement('stepsDiv');
           // clear input field
           e.currentTarget.value = '';
+          e.currentTarget.focus();
+          // do not reload stepsDiv which contains the input, but rather reload the div with the steps, or focus won't work
+          reloadElement('steps_div_' + entity.id);
         });
       }
     }
@@ -78,15 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      StepC.update(
-        parseInt(original.dataset.stepid, 10),
-        value,
-        original.dataset.target as Target,
-      ).then(() => {
-        reloadElement('stepsDiv');
-      });
-      return value;
+    fun: async (value, original) => {
+      return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
+        .then(resp => resp.json()).then(json => json.body);
     },
     listenOn: '.step.editable',
     submit : i18next.t('save'),
@@ -160,9 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElements(['linksDiv', 'linksExpDiv']);
-        // clear input field
-        $(this).val('');
+        reloadElements(['linksDiv', 'linksExpDiv']).then(() => {
+          // clear input field
+          $(this).val('');
+          addAutocompleteToLinkInputs();
+        });
       });
     }
   });
@@ -188,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
       });
       $(this).val('');
+      addAutocompleteToLinkInputs();
     }
   });
 

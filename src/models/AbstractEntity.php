@@ -151,13 +151,13 @@ abstract class AbstractEntity implements RestInterface
     public function toggleLock(): array
     {
         $this->getPermissions();
-        if (!$this->Users->userData['is_admin'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
+        if (!$this->Users->isAdmin && $this->entityData['userid'] !== $this->Users->userData['userid']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
         $locked = $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && !$this->Users->userData['is_admin'] && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if ($locked === 1 && !$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -253,7 +253,7 @@ abstract class AbstractEntity implements RestInterface
         }
         $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
         // admin will see the experiments with visibility user for user of their team
-        if ($this->Users->userData['is_admin']) {
+        if ($this->Users->isAdmin) {
             $sql .= 'AND entity.userid = users2teams.users_id)';
         } else {
             $sql .= 'AND entity.userid = :userid)';
@@ -560,7 +560,11 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $this->entityData['access_key'] ?? '');
+        $ak = '';
+        if (!empty($this->entityData['access_key'])) {
+            $ak = sprintf('&access_key=%s', $this->entityData['access_key']);
+        }
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $ak);
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
@@ -666,11 +670,11 @@ abstract class AbstractEntity implements RestInterface
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         if ($rw === 'canread') {
-            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->isAdmin) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
         } else {
-            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->isAdmin) {
                 throw new ImproperActionException(_('Write permissions enforced by admin. Aborting change.'));
             }
         }

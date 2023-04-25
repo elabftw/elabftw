@@ -24,8 +24,6 @@ abstract class AbstractCategory implements RestInterface
 
     protected Db $Db;
 
-    protected int $team;
-
     /**
      * Get all the things
      */

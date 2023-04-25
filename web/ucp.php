@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Local;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -55,7 +56,6 @@ try {
     }
 
     // TEAM GROUPS
-    $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
     // the items categoryArr for add link input
@@ -74,7 +74,7 @@ try {
         ),
     );
 
-    if ($App->Users->userData['is_admin']) {
+    if ($App->Users->isAdmin) {
         $notificationsSettings[] =
             array(
                 'designation' => _('New user created'),
@@ -92,6 +92,12 @@ try {
             );
     }
 
+    $showMfa = !Local::isMfaEnforced(
+        $App->Users->userData['userid'],
+        (int) $App->Config->configArr['enforce_mfa'],
+    );
+
+
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
@@ -105,6 +111,8 @@ try {
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
+        'showMFA' => $showMfa,
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 } catch (ImproperActionException $e) {
     // show message to user

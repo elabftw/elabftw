@@ -32,6 +32,7 @@ module.exports = {
       './src/ts/todolist.ts',
       './src/ts/ucp.ts',
       './src/ts/view.ts',
+      './src/ts/toolbar.ts',
       './src/ts/editusers.ts',
       './src/ts/search.ts',
       './src/ts/show.ts',
@@ -62,11 +63,7 @@ module.exports = {
       'prismjs/components/prism-ruby.js',
     ],
     jslibs: [
-      './src/js/vendor/jquery.rating.js',
       './src/js/vendor/keymaster.js',
-    ],
-    '3Dmol-notrack': [
-      './src/ts/3Dmol-notrack.ts',
     ],
   },
   // uncomment this to find where the error is coming from

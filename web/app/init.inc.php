@@ -54,7 +54,7 @@ try {
     try {
         $Config = Config::getConfig();
     } catch (DatabaseErrorException | PDOException $e) {
-        throw new ImproperActionException('The database structure is not loaded! Did you run the installer?');
+        throw new ImproperActionException('<h1>Error encountered during MySQL initialization</h1><h2>Possible solutions:</h2><ul><li>Make sure to run <code>bin/console db:install</code></li><li>Make sure credentials are correct</li><li>Make sure the database is operational and reachable (firewalls)</li></ul>');
     }
     if (Config::fromEnv('SITE_URL') === '') {
         throw new ImproperActionException('<h1>Could not find mandatory <code>SITE_URL</code> variable! Please <a href="https://doc.elabftw.net/changelog.html#version-4-3-0">have a look at the changelog</a>.</h1>');

@@ -13,6 +13,7 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -46,22 +47,6 @@ final class Config implements RestInterface
             $this->create();
             $this->configArr = $this->readAll();
         }
-    }
-
-    /**
-     * Disallow cloning the class
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Disallow wakeup also
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
-     */
-    public function __wakeup()
-    {
     }
 
     /**
@@ -117,6 +102,8 @@ final class Config implements RestInterface
             ('open_science', '0'),
             ('open_team', NULL),
             ('privacy_policy', NULL),
+            ('terms_of_service', NULL),
+            ('a11y_statement', NULL),
             ('announcement', NULL),
             ('login_announcement', NULL),
             ('saml_nameidencrypted', 0),
@@ -132,8 +119,10 @@ final class Config implements RestInterface
             ('saml_wantxmlvalidation', 1),
             ('saml_relaxdestinationvalidation', 0),
             ('saml_lowercaseurlencoding', 0),
+            ('saml_fallback_orgid', '0'),
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
+            ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
             ('allow_useronly', 1),
@@ -163,8 +152,13 @@ final class Config implements RestInterface
             ('s3_path_prefix', ''),
             ('s3_region', ''),
             ('s3_endpoint', ''),
+            ('s3_verify_cert', '1'),
             ('blox_anon', '0'),
-            ('blox_enabled', '1')";
+            ('blox_enabled', '1'),
+            ('enforce_mfa', '0'),
+            ('admins_create_users_remote_dir', '0'),
+            ('remote_dir_service', 'eairef'),
+            ('remote_dir_config', NULL)";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
@@ -213,6 +207,11 @@ final class Config implements RestInterface
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
 
+        // special case for remote_dir_config where we decrypt it in output so it can be used by external scripts
+        if (!empty($config['remote_dir_config'])) {
+            $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
+        }
+
         return array_map(function ($v): mixed {
             return $v[0];
         }, $config);
@@ -227,7 +226,7 @@ final class Config implements RestInterface
      */
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password', 'ts_password');
+        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {

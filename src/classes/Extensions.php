@@ -64,7 +64,6 @@ final class Extensions
 
     /**
      * @var array 3DMOL list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html
-     * @norector \Rector\DeadCode\Rector\ClassConst\RemoveUnusedClassConstantRector
      */
     public const MOLECULE = array(
         'cdjson',
@@ -103,7 +102,6 @@ final class Extensions
     public const VIDEO = array(
         'mov',
         'avi',
-        'mp4',
         'wmv',
         'mpeg',
         'flv',
@@ -141,6 +139,7 @@ final class Extensions
      *
      * @param string $ext Extension of the file
      * @return string Class of the fa icon
+     * @psalm-suppress PossiblyUnusedMethod this method is used as a twig function ext2icon
      */
     public static function getIconFromExtension(string $ext): string
     {

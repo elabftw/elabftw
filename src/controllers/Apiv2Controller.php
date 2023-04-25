@@ -23,9 +23,10 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\Idps;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
-use Elabftw\Models\Notifications;
+use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -37,6 +38,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,6 +103,17 @@ class Apiv2Controller extends AbstractApiController
                 'description' => $e->getMessage(),
             );
             return new JsonResponse($error, $error['code']);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            if ($e->getPrevious() instanceof Exception) {
+                $message .= ' ' . $e->getPrevious()->getMessage();
+            }
+            $error = array(
+                'code' => 500,
+                'message' => 'Unexpected error',
+                'description' => $message,
+            );
+            return new JsonResponse($error, $error['code']);
         }
     }
 
@@ -136,7 +149,7 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Request->getContent()) {
             try {
                 // SET REQBODY
-                $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+                $this->reqBody = json_decode($this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
                 // SET ACTION
                 $this->action = Action::tryFrom((string) ($this->reqBody['action'] ?? '')) ?? $this->action;
             } catch (JsonException) {
@@ -182,6 +195,7 @@ class Apiv2Controller extends AbstractApiController
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::QrPdf,
+            ExportFormat::QrPng,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,
@@ -207,6 +221,8 @@ class Apiv2Controller extends AbstractApiController
                 return new ApiKeys($this->Users, $this->id);
             case 'config':
                 return Config::getConfig();
+            case 'idps':
+                return new Idps($this->id);
             case 'experiments':
             case 'items':
             case 'experiments_templates':
@@ -265,7 +281,7 @@ class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
-                'notifications' => new Notifications($this->Users, $this->subId),
+                'notifications' => new UserNotifications($this->Model, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }
@@ -274,7 +290,7 @@ class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
-        if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
+        if (($this->Model instanceof Config || $this->Model instanceof Idps) && $this->Users->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 

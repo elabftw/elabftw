@@ -1,30 +1,32 @@
 <div class='side-panel' id='favtagsPanel' hidden>
-  <div class='m-2'>
-    <a class='float-right' data-action='toggle-favtags' title='{{ 'Close'|trans }}'>
-        <i class='fas fa-chevron-left fa-2x'></i>
-    </a>
-    <h3>{{ 'Favorite tags'|trans }}</h3>
+  <div class='p-3'>
+    <h3 class='mb-3'>{{ 'Favorite tags'|trans }}</h3>
     <div class='input-group'>
       <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
       <div class='input-group-append'>
         <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times fa-fw'></i></button>
       </div>
     </div>
+    <hr>
+    {% if favTagsArr|length == 0 %}
+      <p>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</p>
+    {% endif %}
+    <div class='d-flex flex-column'>
+      {% for favtag in favTagsArr %}
+      <div data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : ''}}'>
+        {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
+      </div>
+      {% endfor %}
+    </div>
+    <hr>
+    {# ADD TAG AS FAVORITE INPUT #}
+    <div class='input-group mt-2 mb-3'>
+      <input id='createFavTagInput' data-autocomplete='tags' type='text' class='form-control form-inline createFavTagInput' aria-label='{{ 'Add a tag as favorite'|trans }}' placeholder='{{ 'Add a tag as favorite'|trans }}'>
+      <div class='input-group-append'>
+        <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
+          <i class='fas fa-plus fa-fw' title='{{ 'Add'|trans }}'></i>
+        </button>
+      </div>
+    </div>
   </div>
-  <ul>
-    {% for favtag in favTagsArr %}
-    <li data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='{{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : ''}}'>
-      {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags' hidden><i class='fas fa-trash-alt'></i></a>
-    </li>
-    {% endfor %}
-  </ul>
-  <div class='m-2'>
-    <input type='text' id='createFavTagInput' data-autocomplete='tags' class='form-control createFavTagInput' placeholder='{{ 'Add a tag as favorite'|trans }}' hidden />
-  </div>
-  <a data-action='toggle-addfav' href='#'>
-    <i class='m-2 fas fa-plus-circle fa-2x'></i>
-  </a>
-  <a data-action='toggle-favtags-edit' href='#'>
-    <i class='m-2 fas fa-pencil-alt fa-2x'></i>
-  </a>
 </div>

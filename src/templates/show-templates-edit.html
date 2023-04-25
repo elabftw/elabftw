@@ -1,90 +1,85 @@
-<div class='box' style='min-height: 600px;'>
-  <div class='row'>
-    <div class='col'>
-      <h3><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
+{% set mode = App.Request.query.get('mode') %}
+
+{# TOP TOOLBAR #}
+<hr>
+<div class='d-flex align-items-center'>
+  <a title='{{ 'Back to listing'|trans }}' href='?tab=3'>
+    <div class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-arrow-left fa-fw'></i>
     </div>
-    <!-- CREATE NEW AND IMPORT BUTTONS -->
-    <div class='col text-right'>
-      <div class='btn-group mt-1'>
-        <div class='btn-group dropleft' role='group'>
-          <button type='button' id='btnGroupDrop1' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-            <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
-          </button>
-          <div class='dropdown-menu' aria-labelledby='btnGroupDrop1'>
-            <div data-action='show-import-tpl' class='dropdown-item'><i class='fas fa-upload fa-fw'></i> {{ 'Import from file'|trans }} (.eln)</div>
-            <!-- disable the reordering for now
-            <div class='dropdown-divider'></div>
-            <a id='toggleReorder' class='dropdown-item'><i class='fas fa-sort fa-fw' data-fa-transform='rotate-90 down-1'></i> {{ 'Reorder templates'|trans }}</a>
-            -->
-          </div>
-        </div>
-        <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
+  </a>
+
+  <div class='vertical-separator mx-3'></div>
+
+  {% if mode == 'edit' %}
+    {# VIEW #}
+    <a class='mr-2' title='{{ 'View mode'|trans }}' href='?tab=3&mode=view&templateid={{ Entity.id }}'>
+      <div class='hl-hover-gray p-2 rounded main-action-button'>
+        <i class='fas fa-eye fa-fw'></i>
       </div>
-      <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-1'>
+    </a>
+  {% else %}
+    {# EDIT #}
+    <a class='mr-2' title='{{ 'Edit'|trans }}' href='?tab=3&mode=edit&templateid={{ Entity.id }}'>
+      <div class='hl-hover-gray p-2 rounded main-action-button'>
+        <i class='fas fa-pencil fa-fw'></i>
+      </div>
+    </a>
+  {% endif %}
+
+  {# CREATE EXPERIMENT #}
+  <div class='mr-2'>
+    <div title='{{ 'Create experiment from template'|trans }}' data-action='create-entity' data-tplid='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-circle-plus fa-fw'></i>
     </div>
   </div>
-  <hr>
 
-  {% include 'show-templates-select.html' %}
-
-  {% if Entity.entityData %}
-  <div id='templatesDiv'>
-  <!-- MORE OPTIONS DROPDOWN MENU (···) -->
-  <div class='d-flex align-items-center'>
-    <!-- NAME OF TPL AND OWNER -->
-    <div class='d-flex mr-auto'>
-      <h2>
-        <!-- lock icon -->
-        {% if entityData.locked %}
-          <i class='fas fa-lock fa-fw' style='color:#29AEB9'></i>
-        {% endif %}
-        {% if Entity.Pins.isPinned %}
-          <i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i>
-        {% endif %}
-        {{ Entity.entityData.fullname|raw }} - {{ Entity.entityData.title|raw }}
-      </h2>
+  {# DOWNLOAD #}
+  <div class='mr-2'>
+    <div title='{{ 'Download template'|trans }}' data-action='download-template' data-id='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-download fa-fw'></i>
     </div>
+  </div>
 
-    <div class='d-flex align-items-start justify-content-around col-md-6'>
-      <!-- CAN READ -->
-      {% set rw = 'canread' %}
-      {% set can = Entity.entityData.canread|canToHuman %}
-      {% include('view-permissions.html') %}
-      <!-- CAN WRITE -->
-      {% set rw = 'canwrite' %}
-      {% set can = Entity.entityData.canwrite|canToHuman %}
-      {% include('view-permissions.html') %}
-    </div>
-
-
-    <!-- MORE OPTIONS MENU (...) -->
-    <div class='dropdown'>
-      <div data-toggle='dropdown' aria-haspopup='true' class='button-on-hover' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
-        <i class='fas fa-ellipsis-v fa-2x'></i>
+  {# RIGHT PART #}
+  <div class='ml-auto d-flex align-items-center'>
+    {# TOGGLE PIN #}
+    <div class='mr-2'>
+      <div title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
+        <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
       </div>
+    </div>
+
+    {# LOCK #}
+    {% set lockIcon = 'fa-lock-open' %}
+    {% set alt = 'Lock/Unlock item'|trans %}
+    {% if Entity.entityData.locked %}
+        {% set lockIcon = 'fa-lock' %}
+        {% set alt = Entity.entityData.locked_at %}
+    {% endif %}
+    <div title='{{ alt }}' data-action='toggle-lock' data-id='{{ Entity.id }}' class='{{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 rounded'>
+      <i class='fas {{ lockIcon }} fa-fw'></i>
+    </div>
+
+    <div class='vertical-separator mx-3'></div>
+
+    <!-- MORE OPTIONS -->
+    <div class='dropdown'>
+      <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded'>
+        <i class='fas fa-ellipsis-v'></i>
+      </div>
+
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-        <!-- CREATE EXPERIMENT -->
-        <a data-action='create-entity' data-tplid="{{ Entity.id }}" href='#' class='dropdown-item'>
-          <i class='fas fa-circle-plus fa-fw mr-1'></i>{{ 'Create experiment from template'|trans }}
-        </a>
-        <!-- PIN -->
-        <a data-action='toggle-pin' data-id='{{ Entity.id }}' href='#' class='dropdown-item'>
-          <i class='fas fa-thumbtack fa-fw mr-1'></i>{{ 'Toggle pin (add to create button menu)'|trans }}
-        </a>
-        <!-- LOCK -->
-        <a data-action='toggle-lock' data-id="{{ Entity.id }}" href='#' class='dropdown-item'>
-          <i class='fas fa-lock fa-fw mr-1'></i>{{ 'Lock/Unlock item'|trans }}
-        </a>
-        <!-- DOWNLOAD -->
-        <a href='#' class='dropdown-item' data-action='download-template' data-id='{{ Entity.id }}'>
-          <i class='fas fa-download fa-fw mr-1'></i>{{ 'Download template'|trans }}
-        </a>
         <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
         <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
         <!-- REVISIONS -->
         {% if revNum > 0 %}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
+          <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>
         {% endif %}
+        <!-- CHANGELOG -->
+        <a class='dropdown-item' href='?id={{ Entity.id }}&mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+
+        {# DELETE #}
         {% if not Entity.entityData.locked %}
           <!-- DESTROY -->
           <div class='dropdown-divider'></div>
@@ -94,16 +89,56 @@
         {% endif %}
       </div>
     </div>
+    <hr>
   </div>
+</div>
+<hr>
 
-  {% if Entity.entityData.locked %}
+<div id='templatesDiv'>
+  {% if mode == 'view' %}
+    {# VIEW MODE #}
     {% include 'templates-view.html' %}
   {% else %}
-    {% include 'templates-edit.html' %}
-  {% endif %}
+    {# EDIT MODE #}
+    {# TITLE #}
+    <div class='d-flex mb-2 justify-content-between align-items-center'>
+      <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
+      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
+    </div>
 
-  </div>
+    {# TAGS #}
+    {% include('edit-tags.html') %}
+    {# PERMISSIONS #}
+    {% include('edit-permissions.html') %}
+
+    {# MAIN CONTENT #}
+    <div class='mt-4'>
+      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+      {% if editor == 'md' %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% else %}
+        <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
+          <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
+        </div>
+      {% endif %}
+      <div class='text-center mt-4'>
+        <button data-action='update-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+
+    {# EXTRA FIELDS #}
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+    <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
+      {# this div is filled in JS by Metadata.class.ts edit() #}
+      <div id='metadataDiv'></div>
+      <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-primary mt-3 row'>{{ 'Add field'|trans }}</button>
+    </div>
+    <hr>
+    {% set mode = 'edit-template' %}
+    {% include 'steps-links-edit.html' %}
+    {% include 'json-editor.html' %}
   {% endif %}
 
 </div>
+
 <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
@@ -54,10 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPLOAD FORM
   const dropZoneElement = '#elabftw-dropzone';
+  const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
   const dropZoneOptions = {
     // i18n message to user
-    dictDefaultMessage: i18next.t('dropzone-upload-area'),
-    maxFilesize: parseInt(document.getElementById('info').dataset.maxsize, 10), // MB
+    dictDefaultMessage: i18next.t('dropzone-upload-area') + `<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
+    maxFilesize: maxsize,
     timeout: 900000,
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
@@ -94,8 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // check if there is some local data with this id to recover
   if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
     const bodyRecovery = $('<div></div>', {
-      'class' : 'alert alert-warning',
-      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
+      class : 'alert alert-warning',
+      id: 'recoveryDiv',
+      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
     });
     $('#main_section').before(bodyRecovery);
   }
@@ -103,15 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // RECOVER YES
   $(document).on('click', '.recover-yes', function() {
     EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
+      editor.replaceContent(localStorage.getItem('body'));
       localStorage.clear();
-      document.location.reload();
+      document.getElementById('recoveryDiv').remove();
     });
   });
 
   // RECOVER NO
   $(document).on('click', '.recover-no', function() {
     localStorage.clear();
-    document.location.reload();
+    document.getElementById('recoveryDiv').remove();
   });
 
   // END DATA RECOVERY
@@ -123,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
       for (const upload of json as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
+        // unfortunately, loading .rxn files here doesn't work as it expects json or mol only
         if (['mol', 'chemjson'].includes(extension)) {
           mols.push([upload.real_name, upload.long_name]);
         }
@@ -170,9 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // KEYBOARD SHORTCUT
-  key(about.scsubmit, () => updateEntityBody());
-
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
   const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
@@ -196,11 +196,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (realName === null || realName === '') {
         return;
       }
-      const content = el.dataset.filetype === 'chemjson' ?
-        // CHEMJSON
-        JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes))
-        // PNG
-        : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+      let content: string;
+      switch (el.dataset.filetype) {
+      case 'chemjson':
+        content = JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes));
+        break;
+      case 'png':
+        // note: this is the same as ChemDoodle.io.png.string(sketcher)
+        content = (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+        break;
+      case 'rxn':
+        content = new ChemDoodle.io.RXNInterpreter().write(sketcher.molecules, sketcher.shapes);
+        break;
+      }
 
       const params = {
         'action': Action.CreateFromString,
@@ -216,10 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const doodleDiv = document.getElementById('doodleDiv');
       doodleDiv.removeAttribute('hidden');
       doodleDiv.scrollIntoView();
-      // adjust chevron icon
+      // adjust caret icon
       const doodleDivIcon = document.getElementById('doodleDivIcon');
-      doodleDivIcon.classList.remove('fa-chevron-circle-right');
-      doodleDivIcon.classList.add('fa-chevron-circle-down');
+      doodleDivIcon.classList.remove('fa-caret-right');
+      doodleDivIcon.classList.add('fa-caret-down');
 
       const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
       const img = new Image();
@@ -252,20 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return editor.setContent(content);
       });
 
-    // DESTROY ENTITY
-    } else if (el.matches('[data-action="destroy"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
-      }
-
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
-
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => reloadElement('toggle-pin-icon-div'));
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
@@ -315,15 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // update the page's title
       document.title = content + ' - eLabFTW';
     }
-  });
-
-  // STAR RATING
-  $(document).on('click', '.rating-cancel', function() {
-    EntityC.update(entity.id, Target.Rating, '0');
-  });
-
-  $(document).on('click', '.star', function() {
-    EntityC.update(entity.id, Target.Rating, $(this).data('rating').current[0].innerText);
   });
 
   // no tinymce stuff when md editor is selected
@@ -455,11 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
       content = '<img src="' + url + '" />';
     }
     editor.setContent(content);
-  });
-
-  $(document).on('blur', '#date_input', function() {
-    const content = (document.getElementById('date_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Date, content);
   });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there

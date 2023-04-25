@@ -9,7 +9,7 @@ import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectFor
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Model, Target } from './interfaces';
+import { Action, EntityType, Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
@@ -31,7 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  if (entity.id) {
+  // in view mode php takes care of displaying it
+  const params = new URLSearchParams(document.location.search);
+  if (entity.id && params.get('mode') === 'edit') {
     // add extra fields elements from metadata json
     const MetadataC = new Metadata(entity);
     MetadataC.display('edit');
@@ -56,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const location = resp.headers.get('location').split('/');
           const newId = parseInt(location[location.length -1], 10);
           EntityC.update(newId, Target.ContentType, String(editor.typeAsInt)).then(() => {
-            window.location.href = `ucp.php?tab=3&templateid=${newId}`;
+            window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
           });
         });
       }
@@ -108,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const warningDiv = document.createElement('div');
         warningDiv.classList.add('alert', 'alert-warning');
         const chevron = document.createElement('i');
-        chevron.classList.add('fas', 'fa-chevron-right');
+        chevron.classList.add('fas', 'fa-chevron-right', 'color-warning', 'fa-fw');
         warningDiv.appendChild(chevron);
 
         const newkey = document.createElement('p');
@@ -132,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(parseInt(el.dataset.id)).then(() => {
+      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => {
         reloadElement('templatesDiv').then(() => {
           addAutocompleteToTagInputs();
           tinymce.remove();
@@ -143,25 +145,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // input to upload an ELN archive
-  document.getElementById('import_tpl').addEventListener('change', (event) => {
-    const params = {
-      'type': 'archive',
-      'file': (event.target as HTMLInputElement).files[0],
-      'target': 'experiments_templates:0',
-    };
-    // TODO check for file size here too, like the other import modal
-    (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
-      window.location.reload();
+  const importTplInput = document.getElementById('import_tpl');
+  if (importTplInput) {
+    importTplInput.addEventListener('change', (event) => {
+      const params = {
+        'type': 'archive',
+        'file': (event.target as HTMLInputElement).files[0],
+        'target': 'experiments_templates:0',
+      };
+      // TODO check for file size here too, like the other import modal
+      (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
+        window.location.reload();
+      });
     });
-  });
+  }
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
-
-  // auto update title on blur
-  $(document).on('blur', '#title_input', function() {
-    const content = (document.getElementById('title_input') as HTMLInputElement).value;
-    const id = $(this).data('id');
-    EntityC.update(id, Target.Title, content);
-  });
 });

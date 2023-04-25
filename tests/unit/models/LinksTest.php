@@ -22,7 +22,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments = new Experiments(new Users(1, 1), 3);
         $this->Items = new Items(new Users(1, 1), 3);
-        $this->Experiments->ExperimentsLinks->setId(3);
+        $this->Experiments->ExperimentsLinks->setId(4);
     }
 
     public function testGetPage(): void
@@ -34,11 +34,17 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
+        $count = count($this->Experiments->ItemsLinks->readAll());
+        $this->assertEquals(1, $count);
         $this->Experiments->ItemsLinks->destroy();
+        $this->assertEquals(0, count($this->Experiments->ItemsLinks->readAll()));
 
-        $this->Experiments->ExperimentsLinks->setId(3);
+        $this->Experiments->ExperimentsLinks->setId(4);
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
+        $count = count($this->Experiments->ExperimentsLinks->readAll());
+        $this->assertEquals(1, $count);
         $this->Experiments->ExperimentsLinks->destroy();
+        $this->assertEquals(0, count($this->Experiments->ExperimentsLinks->readAll()));
     }
 
     public function testImport(): void

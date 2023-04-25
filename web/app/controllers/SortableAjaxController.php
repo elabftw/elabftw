@@ -42,13 +42,13 @@ $reqBody = json_decode((string) $App->Request->getContent(), true, 512, JSON_THR
 try {
     switch ($reqBody['table']) {
         case 'items_types':
-            if (!$App->Session->get('is_admin')) {
+            if (!$App->Users->isAdmin) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
             $Entity = new ItemsTypes($App->Users);
             break;
         case 'status':
-            if (!$App->Session->get('is_admin')) {
+            if (!$App->Users->isAdmin) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
             $Entity = new Status(new Teams($App->Users));

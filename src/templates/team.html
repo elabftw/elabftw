@@ -35,7 +35,7 @@
 
         <!-- BIND EXPERIMENT -->
         <div id='eventBoundExp'></div>
-        <button data-action='scheduler-rm-bind' data-type='experiment' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
+        <button data-action='scheduler-rm-bind' data-type='experiment' aria-hidden='true' class='btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
             <div id='binddivexp' class='input-group mb-3'>
@@ -50,7 +50,7 @@
         </div>
         <!-- BIND ITEM -->
         <div id='eventBoundDb'></div>
-        <button data-action='scheduler-rm-bind' data-type='item_link' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
+        <button data-action='scheduler-rm-bind' data-type='item_link' aria-hidden='true' class='btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an item'|trans }}</h5>
             <div id='binddivdb' class='input-group mb-3'>
@@ -66,10 +66,10 @@
 
 
         <h5>{{ 'Delete this event'|trans }}</h5>
-        <button type='button' id='deleteEvent' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        <button type='button' id='deleteEvent' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='button btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
       </div>
     </div>
   </div>
@@ -84,7 +84,6 @@
   <div class='row mb-3'>
     <div class='col-md-3'>
       <!-- CATEGORY -->
-      {# Note: option color doesn't show up in firefox #}
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
@@ -99,10 +98,11 @@
     <div class='col-md-3'>
       <!-- ITEM LIST -->
       <form>
-        <select name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
+        <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
           {% for item in itemsArr %}
-            <option style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
+            {# data-color is used to set the background during initial drag #}
+            <option data-color='{{ item.color }}' style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
             {{ item.category }} - {{ item.title }}</option>
           {% endfor %}
         </select>
@@ -110,80 +110,78 @@
     </div>
   </div>
   {% endif %}
-  <div id='scheduler' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
 <!-- TAB 2 INFO -->
 <div data-tabcontent='2' hidden>
-    <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-    {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-    {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
-    </div>
+  <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
+  {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  </div>
 
-<section class='box'>
-    <h5><i class='fas fa-users'></i> {{ 'Members'|trans }}</h5>
-    <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
-      <thead>
-        <tr>
-            <th>{{ 'Name'|trans }}</th>
-            <th>{{ 'Email'|trans }}</th>
-            <th>ORCID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- archived users are hidden on this page -->
-        {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
-        <tr>
-          <td>
-            <a href='experiments.php?owner={{ user.userid }}'>
-              <span>
-                {{ user.fullname|raw }}
-                {% if user.usergroup in range(1, 3) %}
-                  ({{ 'Admin'|trans }})
-                {% endif %}
-              </span>
-            </a>
-          </td>
-          <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
-          <td>{{ user.orcid }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</section>
-
+  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
+  <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
+    <thead>
+      <tr>
+          <th>{{ 'Name'|trans }}</th>
+          <th>{{ 'Email'|trans }}</th>
+          <th>ORCID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- archived users are hidden on this page -->
+      {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
+      <tr>
+        <td>
+          <a href='experiments.php?owner={{ user.userid }}'>
+            <span>
+              {{ user.fullname|raw }}
+              {% if user.usergroup in range(1, 3) %}
+                ({{ 'Admin'|trans }})
+              {% endif %}
+            </span>
+          </a>
+        </td>
+        <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
+        <td>{{ user.orcid }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <!-- TAB 3 TEMPLATE -->
 <div data-tabcontent='3' hidden>
-  {% include 'show-templates-view.html' %}
+  <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
+  {% if App.Request.query.has('templateid') %}
+    {% include 'view-edit-template.html' %}
+  {% else %}
+    {% include 'show-templates-select.html' %}
+  {% endif %}
 </div>
 
         <!--p>{{ 'No templates from other members of the team to display!'|trans }}</p-->
 
 <!-- TAB 4 EMAIL -->
 <div data-tabcontent='4' hidden>
-<section class='box'>
-    <h5><i class='fas fa-envelope'></i> {{ 'Send an email to all team members'|trans }}</h5>
-    <form id='emailTeamForm' method="post" action="app/controllers/TeamController.php">
-        {{ App.Session.get('csrf')|csrf }}
-        <input type='hidden' name='emailTeam' />
-        <div class="form-group">
-            <label for="emailSubject">{{ 'Subject'|trans }}</label>
-            <input type='text' id='emailSubject' name='subject' class='form-control' required />
-            <label for="emailBody">{{ 'Content'|trans }}</label>
-            <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required></textarea>
-        </div>
-        <div class='mt-4 text-center'>
-            <button type='submit' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
-        </div>
-    </form>
-
-</section>
+  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-envelope'></i> {{ 'Send an email to all team members'|trans }}</h3>
+  <form class='pl-3' id='emailTeamForm' method='post' action='app/controllers/TeamController.php'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='emailTeam' />
+    <div class='form-group'>
+      <label for='emailSubject'>{{ 'Subject'|trans }}</label>
+      <input type='text' id='emailSubject' name='subject' class='form-control' required />
+      <label for='emailBody'>{{ 'Content'|trans }}</label>
+      <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required></textarea>
+    </div>
+    <div class='mt-4 text-center'>
+      <button type='submit' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+    </div>
+  </form>
 </div>
 
 <div id='info'
-    data-calendarlang="{{ App.getJsLang }}"
     data-item="{{ selectedItem }}"
     data-all="{{ allItems }}"></div>
 {% endblock body %}

@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "Klik untuk mengedit",
     "comment-add": "Tambahkan komentar",
+    "dropzone-filesize-limit": "Batas ukuran file:",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "editing-metadata": "Mengedit metadata",
     "entity-default-title": "Tanpa Judul",

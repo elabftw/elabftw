@@ -55,11 +55,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->Tags->readAll());
         $this->Experiments->Tags->setId(1);
         $this->assertIsArray($this->Experiments->Tags->readOne());
-        /* TODO test with query
-        $res = $this->Experiments->Tags->readAll('my');
-        $this->assertEquals('my tag', $res[0]['tag']);
-         */
-
         $Items = new Items($this->Users, 1);
         $Tags = new Tags($Items);
         $this->assertIsArray($Tags->readAll());

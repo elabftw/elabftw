@@ -1,96 +1,78 @@
-      {# dim the experiment a bit if it's not yours #}
-      {% set randomId = random() %}
+{% set randomId = random() %}
+<tr class='item' id='parent_{{ randomId }}'>
 
-          {# here the item-show-{lg-md-xs} is always lg #}
-          <tr class='item item-show item-show-lg {{ loop.last ? 'item-show-last' }}' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }}'>
+  {# DATE #}
+  <td class='item-date'>
+    {# checkbox #}
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+    {{ item.date|date('Y-m-d') }}
+  </td>
 
-            {# DATE #}
-            <td class='item-date'>
-              <span class='item-date'><i class='far fa-calendar-alt mr-1'></i>{{ item.date|date('Y-m-d') }}</span>
-              {# timestamp icon #}
-              {% if item.timestamped %}
-                <i class='far fa-calendar-check'></i>
-              {% endif %}
-            </td>
+  {# TITLE #}
+  <td class='title'>
+    {# edit icon #}
+    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
+      <span class='p-2 rounded hl-hover-gray'><a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a></span>
+    {% endif %}
+    {# lock icon #}
+    {% if item.locked %}
+      <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+    {% endif %}
+    {# toggle body #}
+    <span class='p-2 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></span>
+    <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+  </td>
 
-            {# TITLE #}
-            <td class='title'>
-              {# checkbox #}
-              <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
-              {# lock icon #}
-              {% if item.locked %}
-                <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
-              {% endif %}
-              <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
-            </td>
+  {# NEXT STEP #}
+  <td class='item-next'>
+    {% set next = '' %}
+    {% if item.next_step|length > 0 %}
+      {% set stepsArr = item.next_step|split('|') %}
+      {% set next = stepsArr|first %}
+    {% endif %}
+    <span class='item-next-step'>{{ next|raw }}</span>
+  </td>
 
-            {# NEXT STEP #}
-            <td class='item-next'>
-              {% set next = '' %}
-              {% if item.next_step|length > 0 %}
-                {% set stepsArr = item.next_step|split('|') %}
-                {% set next = stepsArr|first %}
-              {% endif %}
-              <span class='item-next-step'>{{ next|raw }}</span>
-            </td>
+  {# CATEGORY #}
+  <td class='item-next'>
+    {# timestamp icon #}
+    {% if item.timestamped %}
+      <i class='far fa-calendar-check mr-1'></i>
+    {% endif %}
+    <span class='item-type category-button rounded p-1' style='--bg:#{{ item.color }}'>{{ item.category }}</span>
+  </td>
 
-            {# CATEGORY #}
-            <td class='item-next'>
-              <span class='item-type' style='color:#{{ item.color }}'>{{ item.category }}</span>
-            </td>
+  {# TAGS #}
+  <td class='tags mathjax-ignore'>
+  {% set itemtagsArr = tagsArr[item.id] %}
+    {% if itemtagsArr|length > 0 %}
+      <span class='d-flex flex-wrap'>
+        {% for tag in itemtagsArr %}
+          <a class='tag margin-1px' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+        {% endfor %}
+      </span>
+  {% endif %}
+  </td>
 
-            {# TAGS #}
-            <td class='tags mathjax-ignore'>
-            {% set itemtagsArr = tagsArr[item.id] %}
-              {% if itemtagsArr|length > 0 %}
-                <span class='d-flex flex-wrap'>
-                  {% for tag in itemtagsArr %}
-                    <a class='tag margin-1px' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
-                  {% endfor %}
-                </span>
-            {% endif %}
-            </td>
+  <td class='item-rating'>
+    {% if item.rating > 0 %}
+      <span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>{{ item.rating }}</span>
+    {% endif %}
+  </td>
 
-            {# ACTIONS #}
-            <td class='item-info'>
-              {# edit icon #}
-              {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Session.get('is_admin')) %}
-                <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a>
-              {% endif %}
-              {# toggle body #}
-              <span data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-                <i class='fas fa-plus-circle link-like'></i>
-              </span>
+  <td class='item-owner'>
+    {{"<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname)|raw }}
+  </td>
 
-              {# show attached if there is a file attached #}
-              {% if item.has_attachment %}
-                <i class='fas fa-paperclip'></i>
-              {% endif %}
-              {% if item.has_comment %}
-                <i class='fas fa-comments'></i>
-              {% endif %}
+</tr>
+{# container to hold the body of the entity if it is toggled with the +/- icon #}
+{# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
+<tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.color }}'>
+  <td colspan='100%'>
+    <div style='overflow:auto;margin: 10px 0 0 20px'></div>
+  </td>
+</tr>
 
-            </td>
-
-            <td class='item-rating'>
-              {% if item.rating > 0 %}
-                {{ item.rating|stars|raw }}
-              {% endif %}
-            </td>
-
-            <td class='item-owner'>
-              {{"<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname)|raw }}
-            </td>
-
-          </tr>
-          {# container to hold the body of the entity if it is toggled with the +/- icon #}
-          {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-          <tr style='border-left: 4px solid #{{ item.color }}'>
-            <td colspan='100%'>
-              <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
-            </td>
-          </tr>
-
-          {# Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css #}
-          <tr hidden></tr>
-        </div>
+{# Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css #}
+<tr hidden></tr>
+</div>

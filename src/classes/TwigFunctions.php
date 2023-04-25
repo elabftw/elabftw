@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use DateTime;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\TeamGroups;
@@ -62,6 +62,18 @@ class TwigFunctions
         return memory_get_usage();
     }
 
+    public static function getExtendedSearchExample(): string
+    {
+        $examples = array(
+            '"search term in quotes"',
+            'termA AND date:>2023-01-01',
+            'title:something OR body:"something else"',
+            '(locked:yes OR timestamped:yes) AND author:"Firstname Lastname"',
+            '"western blot" AND rating:5',
+        );
+        return $examples[array_rand($examples)];
+    }
+
     public static function getNumberOfQueries(): int
     {
         $Db = Db::getConnection();
@@ -86,10 +98,22 @@ class TwigFunctions
     public static function extractJson(string $json, string $key): string|bool|int
     {
         $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
-        if ($decoded[$key]) {
+        if (isset($decoded[$key])) {
             return (int) $decoded[$key];
         }
         return false;
+    }
+
+    public static function extractDisplayMainText(?string $json): bool
+    {
+        if ($json === null) {
+            return true;
+        }
+        $decoded = json_decode($json, true, 42, JSON_THROW_ON_ERROR);
+        if (isset($decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
+            return $decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value];
+        }
+        return true;
     }
 
     public static function isInJsonArray(string $json, string $key, int $target): bool

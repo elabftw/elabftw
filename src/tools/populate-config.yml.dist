@@ -20,8 +20,6 @@ config:
   admin_validate: 0
   # set debug mode ON
   debug: 1
-  # the url of the dev install
-  url: "https://elab.local:3148"
   # set the mail_from config
   mailfrom: elabftw@example.com
   ldap_base_dn: dc=example,dc=org
@@ -34,10 +32,12 @@ config:
 
 
 teams:
-  - Alpha
-  - Bravo
-  - Charlie
-  - Delta
+  - name: Alpha
+    default_category_name: Generated
+  - name: Bravo
+  - name: Charlie
+  - name: Delta
+    visible: false
 
 # for users you need team as a minimum
 # the password will be the one provided on the command line for all users
@@ -51,16 +51,17 @@ users:
     create_experiments: true
     create_items: true
     create_templates: false
+    user_preferences:
+      orderby: lastchange
+      cjk_fonts: 1
 
   - email: titi@yopmail.com
-    firstname: Titi
     team: Alpha
     create_experiments: true
     create_templates: false
     create_mfa_secret: false
 
   - email: tutu@yopmail.com
-    firstname: Tutu
     team: Alpha
     create_experiments: true
     create_templates: false
@@ -73,7 +74,6 @@ users:
     create_templates: false
 
   - email: tata@yopmail.com
-    firstname: Tata
     team: Bravo
     create_experiments: true
     create_items: true
@@ -85,31 +85,378 @@ users:
 
   - team: Delta
 
+experiments:
+  - title: An example experiment
+    body: This is the content of the experiment
+    date: 20250101
+    tags:
+      - example
+      - demo
+    comments:
+      - Oh, how fascinating. I'm sure the groundbreaking discovery that water is wet will change the course of human history forever.
+      - "Well, it's a relief to see that the scientific community is hard at work discovering what we already suspected: that the sky is indeed blue. I can't wait for their next groundbreaking revelation that grass is green."
+
+  - title: Transfection of p103Δ12-22 into RPE-1 Actin-RFP
+    body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
+    date: 20250102
+    tags:
+      - transfection
+      - biocell
+      - RPE-1
+    items_links:
+      - 173
+
+  - title: Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
+    body: |
+      <h1>Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties</h1>
+      <p>
+      The emergence of drug-resistant bacterial strains has become a major public health concern, highlighting the need for the development of new antimicrobial agents. In this study, we aimed to synthesize a novel organic compound with potential antimicrobial activity.
+      </p>
+      <h2>Experimental Design</h2>
+      <p>
+      The compound was synthesized via a multi-step reaction scheme. The starting material, benzaldehyde, was reacted with aniline in the presence of an acid catalyst to form the intermediate product, N-phenylbenzamide. The intermediate product was then reacted with thionyl chloride to form the corresponding acid chloride. The acid chloride was then reacted with aminoguanidine in the presence of a base catalyst to form the final product, which was purified by recrystallization.
+      </p>
+      <h2>Characterization</h2>
+      <p>
+      The synthesized compound was characterized using various spectroscopic techniques. The melting point of the compound was determined using a melting point apparatus and compared to the literature value. The IR spectrum of the compound was obtained using a Fourier transform infrared spectrometer and compared to the expected spectrum. The NMR spectrum of the compound was obtained using a nuclear magnetic resonance spectrometer and analyzed to confirm the structure of the compound.
+      </p>
+      <h2>Antimicrobial Activity</h2>
+      <p>
+      The antimicrobial activity of the synthesized compound was evaluated against several bacterial strains using the disk diffusion method. The results showed that the compound exhibited significant antimicrobial activity against both Gram-positive and Gram-negative bacteria, suggesting its potential as a new antimicrobial agent.
+      </p>
+    date: 20250102
+    status: 4
+    rating: 1
+    locked: true
+    items_links:
+      - 50
+    tags:
+      - synthesis
+      - antimicrobial
+      - chemistry
+
+  - title: フルーツフライの食性に関する研究
+    body: |
+      <p>背景： フルーツフライは、果物の成熟過程に大きな影響を与えます。そのため、フルーツフライの食性について研究することは、果物産業にとって重要な意義を持ちます。</p>
+
+      <p>目的： この研究の目的は、フルーツフライの好んで食べる果物の種類を調べることです。</p>
+
+      <p>方法： まず、フルーツフライを捕獲し、実験室で飼育します。次に、果物を複数用意し、フルーツフライが好んで食べる果物を調べます。果物は、リンゴ、バナナ、オレンジ、キウイフルーツ、グレープフルーツ、パイナップル、マンゴーの7種類を用意します。各果物を1つずつケージの中に入れ、フルーツフライが果物を食べたかどうかを確認します。果物は毎日交換し、同じ果物が連続して入れられないようにします。また、フルーツフライが果物を食べる時間帯も調べます。</p>
+
+      <p>結果： 実験の結果、フルーツフライが好んで食べる果物は、バナナ、マンゴー、パイナップルであることがわかりました。また、フルーツフライが果物を食べる時間帯は、午前中が多いことがわかりました。</p>
+
+      <p>結論： フルーツフライは、バナナ、マンゴー、パイナップルを好んで食べることが明らかになりました。この結果は、果物生産業にとって重要な情報となります。</p>
+    date: 20250102
+    tags:
+      - CJK
+      - ショウジョウバエ
+
+  - title: Effect of temperature on enzyme activity
+    user: 2
+    body: |
+      <h1>Effect of Temperature on Enzyme Activity</h1>
+      <p>
+      Enzymes are biological molecules that catalyze chemical reactions in living organisms. In this experiment, we investigated the effect of temperature on the activity of the enzyme amylase, which catalyzes the hydrolysis of starch into glucose.
+      </p>
+      <h2>Experimental Design</h2>
+      <p>
+      We prepared a solution of starch and added a small amount of amylase to the solution. We then incubated the solution at different temperatures, ranging from 4°C to 70°C, for 5 minutes. After the incubation period, we added iodine to the solution to detect the presence of starch. The disappearance of the blue-black color of the iodine indicated the breakdown of starch into glucose.
+      </p>
+      <h2>Results</h2>
+      <p>
+      The results showed that the activity of amylase increased with increasing temperature up to 37°C, which is the optimum temperature for amylase activity. At temperatures above 37°C, the activity of amylase decreased rapidly, and at 70°C, the enzyme was completely denatured and lost its catalytic activity.
+      </p>
+      <p>
+      The relationship between temperature and enzyme activity can be described by the Arrhenius equation, which relates the rate constant of a reaction to the activation energy and temperature. The equation can be written as:
+      </p>
+      <p>
+      $$k = Ae^{-E_a/RT}$$
+      </p>
+      <p>
+      where k is the rate constant, A is the pre-exponential factor, E_a is the activation energy, R is the gas constant, and T is the absolute temperature. The activation energy is the energy required to break the bonds in the reactants and form the products. The rate constant increases with increasing temperature due to the increase in the number of reactant molecules with sufficient kinetic energy to overcome the activation energy barrier.
+      </p>
+      <p>
+      The effect of temperature on enzyme activity can also be described by the Q10 value, which is the ratio of the reaction rate at a given temperature to the reaction rate at a temperature 10°C lower. The Q10 value for most enzyme-catalyzed reactions is around 2-3, indicating that the reaction rate doubles or triples with each 10°C increase in temperature.
+      </p>
+    date: 20250102
+    status: 3
+    tags:
+      - enzymology
+      - test
+      - Project ENZYTEMP
+
+  - title: Testing relationship between acceleration and gravity
+    body: |
+      <h1>Determination of Acceleration Due to Gravity</h1>
+      <p>
+      The acceleration due to gravity is a fundamental constant that determines the gravitational force between two objects. In this experiment, we aimed to determine the value of acceleration due to gravity using a simple pendulum.
+      </p>
+      <h2>Experimental Design</h2>
+      <p>
+      We suspended a metal ball from a string and measured the time taken for one complete oscillation of the pendulum. We repeated this measurement for different lengths of the pendulum and recorded the corresponding times. Using the formula $T=2\pi\sqrt{\frac{L}{g}}$, where $T$ is the period of the pendulum, $L$ is the length of the pendulum, and $g$ is the acceleration due to gravity, we calculated the value of $g$. The period $T$ can also be expressed in terms of the frequency $f$ using the equation $T=\frac{1}{f}$.
+      </p>
+      <h2>Results</h2>
+      <p>
+      The results showed that the value of acceleration due to gravity was $9.81 \text{ m/s}^2$, which is consistent with the accepted value. We also found that the period of the pendulum increased with increasing length, as predicted by the formula $T=2\pi\sqrt{\frac{L}{g}}$. The relationship between the length and period of the pendulum can be expressed as $T^2=\frac{4\pi^2}{g}L$, which is a linear relationship with a slope of $\frac{4\pi^2}{g}$.
+      </p>
+    date: 20250102
+    tags:
+      - has-mathjax
+      - physics
+
+  - title: Synthesis of Aspirin
+    user: 3
+    body: |
+      <h1>Introduction</h1>
+      <p>
+      Aspirin is a widely used pain-relieving and anti-inflammatory drug. In this experiment, we aimed to synthesize aspirin from salicylic acid and acetic anhydride.
+      </p>
+      <h2>Experimental Design</h2>
+      <p>
+      We mixed salicylic acid and acetic anhydride in the presence of a catalyst, sulfuric acid. The reaction produced aspirin and acetic acid, as shown in the following chemical equation:
+      </p>
+      <p>
+      $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
+      </p>
+      <p>
+      After the reaction, we purified the aspirin by recrystallization from hot water. The purity of the aspirin was confirmed using thin-layer chromatography (TLC) and melting point analysis.
+      </p>
+      <h2>Results</h2>
+      <p>
+      The yield of aspirin was 80% based on the amount of salicylic acid used. The purity of the aspirin was confirmed using TLC, which showed a single spot corresponding to aspirin. The melting point of the aspirin was 135-136°C, which is consistent with the literature value of 135-136.5°C.
+      </p>
+      <p>
+      The chemical reaction involved in the synthesis of aspirin can be written as:
+      </p>
+      <p>
+      $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
+      </p>
+      <p>
+      The theoretical yield of aspirin can be calculated using the stoichiometry of the reaction. Assuming that all the salicylic acid reacts and no aspirin is lost during the purification process, the theoretical yield is calculated as follows:
+      </p>
+      <p>
+      $$\text{Theoretical yield} = \frac{\text{moles of salicylic acid used}}{\text{molar ratio of salicylic acid to aspirin}} \times \text{molar mass of aspirin}$$
+      </p>
+      <p>
+      The actual yield of aspirin can be calculated by dividing the mass of the purified aspirin by the mass of salicylic acid used and multiplying by 100%. The percent yield can be calculated by dividing the actual yield by the theoretical yield and multiplying by 100%.
+      </p>
+    date: 20250102
+    tags:
+      - has-mathjax
+      - chemistry
+
+  - title: Testing the eLabFTW lab notebook
+    body: "<h1>Goal</h1><p>Test the software.</p><h1>Procedure</h1><p>Click everywhere and explore everything.</p><h1>Results</h1><p>It's really nice, I think I'll adopt it for our lab."
+    date: 20250303
+    status: 1
+    rating: 5
+    tags:
+      - test
+      - demo
+    metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
+    comments:
+      - Well, it's always reassuring to know that scientists are spending their time and our tax dollars discovering what the rest of us already learned in third-grade science class.
+    experiments_links:
+      - 256
+      - 257
+      - 258
+    items_links:
+      - 50
+      - 51
+
 items_types:
-  - Microscope:
-    name: Microscope
+  - name: Microscope
     color: '#54AA08'
     bookable: true
-    template: 'Objectives:'
-    team: 1
+    metadata: '{"extra_fields":{"Location":{"type":"select","value":"Microscopy room 3rd floor","options":["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Availability":{"type":"select","value":"Works great","options":["Works great","Works most of the time, make sure to reboot the computer","Half broken, do not use","Completely useless"],"description":"Is it broken?"},"Person in charge":{"type":"text","value":"Paolo"},"Available wavelengths":{"type":"select","value":"405 nm","options":["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values":true}}}'
 
-  - Molecule:
-    name: Molecule
+  - name: Chemical compound
     color: '#29AEB9'
-    bookable: false
-    template: 'Structure:'
-    team: 1
 
-  - Plasmid:
-    name: Plasmid
+  - name: Plasmid
     color: '#C0C0C0'
-    bookable: false
-    template: 'Concentration:'
-    team: 1
+    metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
 
-  - Antibody:
-    name: Antibody
+  - name: Antibody
     color: '#C24F3D'
-    bookable: false
-    template: 'Host:'
-    team: 1
+    metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""},"Number of aliquots left":{"type":"number","value":"","description":"Make sure to decrement this when using one!"}}}'
+
+  - name: Yeast
+    color: '#ED9913'
+
+items:
+  - title: Spinning Disk 2
+    category: 5
+    rating: 5
+  - title: Video microscope Bravo
+    category: 5
+  - title: Scanning Electron Microscope
+    category: 5
+  - title: Light sheet 1
+    category: 5
+  - title: TIRF microscope
+    category: 5
+  - title: STORM/PALM
+    category: 5
+    # Chemical compounds
+  - title: Sodium chloride - NaCl
+    category: 6
+  - title: Methane - CH4
+    category: 6
+  - title: Ethanol - C2H5OH
+    category: 6
+  - title: Ammonia - NH3
+    category: 6
+  - title: Hydrogen peroxide - H2O2
+    category: 6
+  - title: Sulfuric acid - H2SO4
+    category: 6
+  - title: Nitric acid - HNO3
+    category: 6
+  - title: Acetic acid - CH3COOH
+    category: 6
+  - title: Glucose - C6H12O6
+    category: 6
+  - title: Calcium carbonate - CaCO3
+    category: 6
+  - title: Sodium bicarbonate - NaHCO3
+    category: 6
+  - title: Potassium chloride - KCl
+    category: 6
+  - title: Magnesium sulfate - MgSO4
+    category: 6
+  - title: Aluminum oxide - Al2O3
+    category: 6
+  - title: Methanol - CH3OH
+    category: 6
+  - title: Hydrochloric acid - HCl
+    category: 6
+  - title: Formaldehyde - CH2O
+    category: 6
+  - title: Ethylene glycol - C2H6O2
+    category: 6
+  # PLASMIDS
+  - title: pBR322
+    category: 7
+  - title: pUC19
+    category: 7
+  - title: pGEM-T Easy
+    category: 7
+  - title: pBluescript II KS+
+    category: 7
+  - title: pET-28a(+)
+    category: 7
+  - title: pET-32a(+)
+    category: 7
+  - title: pACYC184
+    category: 7
+  - title: pET-15b
+    category: 7
+  - title: pBAD/Thio-TOPO
+    category: 7
+  - title: pEGFP-N1
+    category: 7
+  - title: pCMV-Tag2B
+    category: 7
+  - title: pCR2.1-TOPO
+    category: 7
+  - title: pACYC177
+    category: 7
+  - title: pRS415
+    category: 7
+  - title: pET-41a(+)
+    category: 7
+  - title: pQE-30
+    category: 7
+  - title: pGEX-4T-1
+    category: 7
+  - title: pRSF-Duet-1
+    category: 7
+  - title: pMAL-c2x
+    category: 7
+  - title: pET-28b(+)
+    category: 7
+  # ANTIBODIES
+  - title: Anti-Actin
+    category: 8
+  - title: Anti-GAPDH
+    category: 8
+  - title: Anti-Tubulin
+    category: 8
+  - title: Anti-Histone H3
+    category: 8
+  - title: Anti-FLAG
+    category: 8
+  - title: Anti-HA
+    category: 8
+  - title: Anti-Myc
+    category: 8
+  - title: Anti-RFP
+    category: 8
+  - title: Anti-V5
+    category: 8
+  - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
+    category: 8
+  - title: Anti-Phospho-AKT (Ser473)
+    category: 8
+  - title: Anti-Phospho-STAT3 (Tyr705)
+    category: 8
+  - title: Anti-Phospho-p38 MAPK (Thr180/Tyr182)
+    category: 8
+  - title: Anti-Cleaved PARP (Asp214)
+    category: 8
+  - title: Anti-Caspase-3
+    category: 8
+  - title: Anti-Ki-67
+    category: 8
+  - title: Anti-CD45
+    category: 8
+  - title: "Anti-CD4"
+    category: 8
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+    body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
+  - title: "Anti-GFP"
+    category: 8
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-80°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
+    body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
+  - title: "Anti-CD11b"
+    category: 8
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+  - title: "Anti-BrdU"
+    category: 8
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+    body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
+  - title: "Anti-CD3ε"
+    category: 8
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
+    body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
+  - title: "Anti-CD4"
+    category: 8
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
+    body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
+  - title: "Anti-GAPDH"
+    category: 8
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
+    body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
+  # YEASTS
+  - title: BY4741
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: W303
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: BY4742
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: S288C
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: CEN.PK113-7D
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: JK9-3d
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - title: DBY746
+    category: 9
+    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'

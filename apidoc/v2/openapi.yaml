@@ -55,9 +55,11 @@ components:
     config:
       type: object
       properties:
-        admin_validate:
-          type: string
         admins_create_users:
+          type: string
+        admins_create_users_remote_dir:
+          type: string
+        admin_validate:
           type: string
         announcement:
           type: string
@@ -137,6 +139,10 @@ components:
           type: string
         proxy:
           type: string
+        remote_dir_config:
+          type: string
+        remote_dir_service:
+          type: string
         s3_bucket_name:
           type: string
         s3_endpoint:
@@ -144,6 +150,8 @@ components:
         s3_path_prefix:
           type: string
         s3_region:
+          type: string
+        s3_verify_cert:
           type: string
         saml_acs_binding:
           type: string
@@ -256,6 +264,7 @@ components:
             $ref: '#/components/schemas/comment'
         content_type:
           type: integer
+          description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
         date:
@@ -398,6 +407,37 @@ components:
         tags:
           type: string
         tags_id:
+          type: string
+    idp:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        entityid:
+          type: string
+        sso_url:
+          type: string
+        sso_binding:
+          type: string
+        slo_url:
+          type: string
+        slo_binding:
+          type: string
+        x509:
+          type: string
+        x509_new:
+          type: string
+        enabled:
+          type: integer
+        email_attr:
+          type: string
+        team_attr:
+          type: string
+        fname_attr:
+          type: string
+        lname_attr:
           type: string
     item:
       allOf:
@@ -628,8 +668,6 @@ components:
           type: string
         validated:
           type: integer
-        usergroup:
-          type: integer
         archived:
           type: integer
         last_login:
@@ -638,8 +676,25 @@ components:
           type: string
         orcid:
           type: string
+        orgid:
+          type: string
         auth_service:
           type: integer
+        is_sysadmin:
+          type: integer
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              usergroup:
+                type: integer
+              is_owner:
+                type: integer
 
 
 security:
@@ -902,7 +957,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['csv', 'eln', 'json', 'qrpdf', 'pdf', 'pdfa', 'zip', 'zipa']
+            enum: ['csv', 'eln', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
             default: json
           description: |
             Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
@@ -971,10 +1026,8 @@ paths:
               properties:
                 category_id:
                   type: integer
-                  description: >-
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
+                  description: |
+                    Mandatory parameter, an ID corresponding to an items_types in the team.
                 tags:
                   type: array
                   items:
@@ -1091,6 +1144,22 @@ paths:
       tags: ['Items']
       summary: Read an item
       operationId: get-item
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: ['csv', 'eln', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
+            default: json
+          description: |
+            Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
+          examples:
+            first:
+              summary: Generate a pdf
+              value: pdf
+            second:
+              summary: Generate a csv
+              value: csv
       responses:
         '200':
           description: An item
@@ -1961,10 +2030,20 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the team.
+        description: ID of the team or `current`.
         required: true
         schema:
-          type: integer
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['current']
+        examples:
+          first:
+            summary: Access the current team.
+            value: 'current'
+          second:
+            summary: Access team with ID 3.
+            value: 3
     get:
       tags: ['Teams']
       summary: Read a team. Requires Admin permissions.
@@ -2368,17 +2447,15 @@ paths:
                 email:
                   type: string
                   description: User's email address.
-                usergroup:
-                  type: string
-                  enum: ['1', '2', '4']
-                  description: |
-                    1: Sysadmin, 2: Admin, 4: regular user.
                 team:
                   type: integer
                   description: The team id.
                 valid_until:
                   type: string
                   description: Date in the YYYY-MM-DD format for account expiration date.
+                orgid:
+                  type: string
+                  description: Internal id.
       responses:
         '201':
           description: The user has been created.
@@ -2412,6 +2489,42 @@ paths:
       description: |
         Note: it is possible to use "me" instead of the userid to access the user of the API key.
       operationId: read-user
+      responses:
+        '200':
+          description: Public properties of a user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+
+    patch:
+      tags: ['Users']
+      summary: Modify a user.
+      description: |
+        Note: it is possible to use "me" instead of the userid to access the user of the API key.
+      operationId: patch-user
+      requestBody:
+        description: Parameters for modifying a user.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/users'
+                - type: object
+                  description: Archive or validate a user (will toggle the attribute)
+                  properties:
+                    action:
+                      type: string
+                      enum: ['archive', 'validate']
+                - type: object
+                  description: Add or remove a user from a team.
+                  properties:
+                    action:
+                      enum: ['add', 'unreference']
+                      type: string
+                    team:
+                      type: integer
+                      description: ID of the team
       responses:
         '200':
           description: Public properties of a user.
@@ -2912,3 +3025,130 @@ paths:
       responses:
         '204':
           description: The upload was deleted.
+
+  # IDPS
+  /idps:
+    get:
+      tags: ['Idps']
+      summary: Read all IDPs.
+      operationId: read-idps
+      responses:
+        '200':
+          description: A list of idps.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp'
+    post:
+      tags: ['Idps']
+      summary: Create an idp.
+      operationId: post-idp
+      requestBody:
+        description: Parameters for creating an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'x509', 'x509_new', 'email_attr']
+              properties:
+                name:
+                  type: string
+                  description: A name for the IDP.
+                entityid:
+                  type: string
+                  description: Entityid.
+                sso_url:
+                  type: string
+                  description: URL for Single Sign-On.
+                sso_binding:
+                  type: string
+                  description: Binding for SSO.
+                slo_url:
+                  type: string
+                  description: URL for Single Log-Out.
+                slo_binding:
+                  type: string
+                  description: Binding for SLO.
+                x509:
+                  type: string
+                  description: Certificate in PEM format.
+                x509_new:
+                  type: string
+                  description: Certificate in PEM format for renewal period.
+                email_attr:
+                  type: string
+                  description: What attribute to look for the email.
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                fname_attr:
+                  type: string
+                  description: What attribute to look for the firstname.
+                lname_attr:
+                  type: string
+                  description: What attribute to look for the lastname.
+                orgid_attr:
+                  type: string
+                  description: What attribute to look for the internal id.
+      responses:
+        '201':
+          description: The idp has been created.
+          headers:
+            location:
+              description: An URL to the idp that was created.
+              schema:
+                type: string
+  /idps/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read an idp.
+      operationId: read-idp
+      responses:
+        '200':
+          description: An idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    patch:
+      tags: ['Idps']
+      summary: Actions on an idp.
+      operationId: patch-idp
+      requestBody:
+        description: Parameters for modifying an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['action']
+              properties:
+                action:
+                  type: string
+                  enum: ['update']
+      responses:
+        '200':
+          description: The updated idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp.
+      description: The idp gets deleted.
+      operationId: delete-idp
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The idp was deleted.

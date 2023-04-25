@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,7 +6,6 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -14,7 +13,6 @@ use function bin2hex;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
 use function hash;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -113,7 +111,7 @@ class LoginHelper
     }
 
     /**
-     * Store userid and permissions in session
+     * Store userid in session
      */
     private function populateSession(): void
     {
@@ -129,16 +127,7 @@ class LoginHelper
         // ANON LOGIN
         if ($this->AuthResponse->isAnonymous) {
             $this->Session->set('is_anon', 1);
-            $this->Session->set('is_admin', 0);
-            $this->Session->set('is_sysadmin', 0);
-            return;
         }
-
-        // NORMAL LOGIN
-        // load the permissions
-        $Users = new Users($this->AuthResponse->userid);
-        $this->Session->set('is_admin', $Users->userData['is_admin']);
-        $this->Session->set('is_sysadmin', $Users->userData['is_sysadmin']);
     }
 
     /**

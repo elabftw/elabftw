@@ -7,9 +7,10 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
+import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, listenTrigger, permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -31,6 +32,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
+import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -57,10 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const TableSortingC = new TableSorting();
   TableSortingC.init();
 
+  const userPrefs = document.getElementById('user-prefs').dataset;
   // set the language for js translated strings
-  i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
+  i18next.changeLanguage(userPrefs.lang);
 
   makeSortableGreatAgain();
+
+  const kbd = new KeyboardShortcuts(
+    userPrefs.scCreate,
+    userPrefs.scEdit,
+    userPrefs.scTodolist,
+    userPrefs.scFavorite,
+    userPrefs.scSearch,
+  );
+  kbd.init();
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');
@@ -104,31 +116,28 @@ document.addEventListener('DOMContentLoaded', () => {
   observer.observe(document.querySelector('footer'));
   // END BACK TO TOP BUTTON
 
-  // Add a listener for all elements triggered by an event
-  // and POST an update request
-  // select will be on change, text inputs on blur
-  function listenTrigger(): void {
-    document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
-      el.addEventListener(el.dataset.trigger, event => {
-        event.preventDefault();
-        // for a checkbox element, look at the checked attribute, not the value
-        const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-        const params = {};
-        params[el.dataset.target] = value;
-        ApiC.patch(`${el.dataset.model}`, params).then(() => {
-          if (el.dataset.reload) {
-            reloadElement(el.dataset.reload).then(() => {
-              // make sure we listen to the new element too
-              listenTrigger();
-            });
-          }
-        });
-      });
-    });
-  }
   listenTrigger();
 
   adjustHiddenState();
+
+  // Listen for malleable columns
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableColumn',
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
 
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility
@@ -170,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
   document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = document.getElementById(el.dataset.icon);
+    const iconEl = el.querySelector('i');
     let contentDiv: HTMLElement;
     if (el.dataset.iconTarget) {
       contentDiv = document.getElementById(el.dataset.iconTarget);
@@ -178,11 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv = el.nextElementSibling as HTMLElement;
     }
     if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-chevron-circle-down');
-      iconEl.classList.add('fa-chevron-circle-right');
+      iconEl.classList.remove('fa-caret-down');
+      iconEl.classList.add('fa-caret-right');
     } else {
-      iconEl.classList.add('fa-chevron-circle-down');
-      iconEl.classList.remove('fa-chevron-circle-right');
+      iconEl.classList.add('fa-caret-down');
+      iconEl.classList.remove('fa-caret-right');
     }
   });
 
@@ -206,15 +215,25 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
-    if (el.matches('[data-action="show-privacy-policy"]')) {
+    if (el.matches('[data-action="show-policy"]')) {
       fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
-        let policy = json.privacy_policy;
-        if (!policy) {
-          policy = 'No privacy policy is set.';
+        const policy = json[el.dataset.policy];
+        let title: string;
+        // TODO i18n
+        switch (el.dataset.policy) {
+        case 'tos':
+          title = 'Terms of Service';
+          break;
+        case 'a11y':
+          title = 'Accessibility Statement';
+          break;
+        default:
+          title = 'Privacy Policy';
         }
-        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
+        (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
+        (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#privacyModal') as JQuery).modal('toggle');
+        ($('#policiesModal') as JQuery).modal('toggle');
       });
 
     // SCROLL TO TOP
@@ -283,8 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
           .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
           .concat(existingUsers),
       );
-      const entity = getEntity();
-      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+      if (document.location.pathname === '/ucp.php') {
+        // we need to replace canread/canwrite with default_read/default_write for user attribute
+        let paramKey = 'default_read';
+        if (el.dataset.rw === 'canwrite') {
+          paramKey = 'default_write';
+        }
+        // create a new key and delete the old one
+        params[paramKey] = params[el.dataset.rw];
+        delete params[el.dataset.rw];
+        return ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(paramKey + 'Div'));
+      } else {
+        const entity = getEntity();
+        return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+      }
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
@@ -301,14 +332,18 @@ document.addEventListener('DOMContentLoaded', () => {
         targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
-      if (el.dataset.icon) {
-        const iconEl = document.getElementById(el.dataset.icon);
+
+      if (el.dataset.toggleTargetExtra) {
+        document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
+      }
+      const iconEl = el.querySelector('i');
+      if (iconEl) {
         if (targetEl.hasAttribute('hidden')) {
-          iconEl.classList.remove('fa-chevron-circle-down');
-          iconEl.classList.add('fa-chevron-circle-right');
+          iconEl.classList.remove('fa-caret-down');
+          iconEl.classList.add('fa-caret-right');
         } else {
-          iconEl.classList.add('fa-chevron-circle-down');
-          iconEl.classList.remove('fa-chevron-circle-right');
+          iconEl.classList.add('fa-caret-down');
+          iconEl.classList.remove('fa-caret-right');
         }
       }
       // save the hidden state of the target element in localStorage
@@ -372,7 +407,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
 
     } else if (el.matches('[data-action="export-user"]')) {
-      const source = (document.getElementById('userExport') as HTMLSelectElement).value;
+      let source: string;
+      // profile page will set this attribute on the action button
+      if (el.dataset.userid) {
+        source = el.dataset.userid;
+      } else {
+        // admin page will provide it from a select element
+        source = (document.getElementById('userExport') as HTMLSelectElement).value;
+      }
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?format=${format}&owner=${source}&type=experiments`;
 
@@ -405,6 +447,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="import-file"]')) {
       ($('#importModal') as JQuery).modal('toggle');
+
+    } else if (el.matches('[data-action="navigate-twitter"]')) {
+      event.preventDefault();
+      el.querySelector('i').classList.add('moving-bird');
+      setTimeout(() => window.location.assign('https://twitter.com/elabftw'), 666);
+
     } else if (el.matches('[data-action="report-bug"]')) {
       event.preventDefault();
       el.querySelector('i').classList.add('moving-bug');
@@ -458,12 +506,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
-        plusMinusIcon.classList.remove('fa-plus-circle');
-        plusMinusIcon.classList.add('fa-minus-circle');
+        plusMinusIcon.classList.remove('fa-square-plus');
+        plusMinusIcon.classList.add('fa-square-minus');
         action = 'show';
       } else {
-        plusMinusIcon.classList.add('fa-plus-circle');
-        plusMinusIcon.classList.remove('fa-minus-circle');
+        plusMinusIcon.classList.add('fa-square-plus');
+        plusMinusIcon.classList.remove('fa-square-minus');
       }
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
@@ -472,11 +520,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const contentDiv = bodyDiv.querySelector('div');
+
       // prepare the get request
       const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
       const entityId = parseInt(el.dataset.id, 10);
       (new EntityClass(entityType)).read(entityId).then(json => {
-        // do we display the body
+        // do we display the body?
         const metadata = JSON.parse(json.metadata || '{}');
         if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
           && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
@@ -484,19 +534,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
           // add extra fields elements from metadata json
           const MetadataC = new Metadata({type: entityType, id: entityId});
-          MetadataC.metadataDiv = bodyDiv;
+          MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
-            bodyDiv.classList.remove('col-md-12');
-            bodyDiv.style.border = '0';
-            bodyDiv.style.padding = '0 20px';
-            bodyDiv.firstChild.remove();
-
             // go over all the type: url elements and create a link dynamically
             generateMetadataLink();
           });
         } else {
           // add html content
-          bodyDiv.innerHTML = json.body_html;
+          contentDiv.innerHTML = json.body_html;
 
           // adjust the width of the children
           // get the width of the parent. The -30 is to make it smaller than parent even with the margins

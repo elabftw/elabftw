@@ -5,3 +5,5 @@ coverage:
         threshold: 0.5%
 # Disable PR comments
 comment: false
+github_checks:
+    annotations: false

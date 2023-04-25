@@ -30,7 +30,5 @@ export default class FavTag extends SidePanel {
     // force todolist to close if it's open
     (new TodoList).hide();
     super.toggle();
-    // toggle the opener icon (>)
-    document.getElementById('favtags-opener').toggleAttribute('hidden');
   }
 }

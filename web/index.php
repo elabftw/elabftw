@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,14 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Services\LoginHelper;
-use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use OneLogin\Saml2\Response as SamlResponse;

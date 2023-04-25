@@ -49,6 +49,15 @@ import Prism from 'prismjs';
       },
       pattern: RegExp('\\b(?:date|created_at|locked_at|timestamped_at)\\b:(?:' + date + '\\.\\.' + date + '|(?:[<>]=?|!?=)?' + date + ')', 'i'),
     },
+    'field-id': {
+      alias: 'keyword',
+      greedy: true,
+      inside: {
+        'punctuation': /:/,
+        'number': /\d+/,
+      },
+      pattern: /\bid\b:[1-9][0-9]*/i,
+    },
     'field-rating': {
       alias: 'keyword',
       greedy: true,

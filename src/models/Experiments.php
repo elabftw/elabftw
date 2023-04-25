@@ -18,13 +18,13 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
-use Elabftw\Services\MakeCustomTimestamp;
-use Elabftw\Services\MakeDfnTimestamp;
-use Elabftw\Services\MakeDigicertTimestamp;
-use Elabftw\Services\MakeGlobalSignTimestamp;
-use Elabftw\Services\MakeSectigoTimestamp;
-use Elabftw\Services\MakeUniversignTimestamp;
-use Elabftw\Services\MakeUniversignTimestampDev;
+use Elabftw\Make\MakeCustomTimestamp;
+use Elabftw\Make\MakeDfnTimestamp;
+use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeGlobalSignTimestamp;
+use Elabftw\Make\MakeSectigoTimestamp;
+use Elabftw\Make\MakeUniversignTimestamp;
+use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\InsertTagsTrait;
 use GuzzleHttp\Client;
@@ -200,8 +200,8 @@ class Experiments extends AbstractConcreteEntity
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         $Config = Config::getConfig();
-        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->userData['is_admin'])
-            || $Config->configArr['deletable_xp'] === 0) {
+        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
+            || $Config->configArr['deletable_xp'] === '0') {
             throw new ImproperActionException('You cannot delete experiments!');
         }
         // delete from pinned too
@@ -210,6 +210,7 @@ class Experiments extends AbstractConcreteEntity
 
     public function patch(Action $action, array $params): array
     {
+        $this->canOrExplode('write');
         return match ($action) {
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
@@ -231,7 +232,6 @@ class Experiments extends AbstractConcreteEntity
 
     private function timestamp(): array
     {
-        $this->canOrExplode('write');
         $Config = Config::getConfig();
         $Maker = $this->getTimestampMaker($Config->configArr);
         $pdfBlob = $Maker->generatePdf();

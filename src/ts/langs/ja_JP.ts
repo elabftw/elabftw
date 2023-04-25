@@ -3,6 +3,7 @@ const t = {
   translation: {
     "click-to-edit": "クリックして編集する",
     "comment-add": "コメントを追加",
+    "dropzone-filesize-limit": "ファイルサイズの制限:",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
     "editing-metadata": "メタデータの編集",
     "entity-default-title": "無題",

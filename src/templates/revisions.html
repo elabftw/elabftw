@@ -2,6 +2,8 @@
 
 {% block body %}
 
+<p>{{ 'This server is configured to store %d revisions per entry maximum.'|trans|format(App.Config.configArr.max_revisions) }}</p>
+
 {% if Entity.type == 'experiments_templates' %}
 <a href='ucp.php?tab=3&templateid={{ Entity.id }}'>
 {% else %}

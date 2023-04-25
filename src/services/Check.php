@@ -10,8 +10,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
+
 use function filter_var;
 
 use JsonException;
@@ -53,14 +56,6 @@ class Check
             ),
         );
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
-    }
-
-    public static function usergroup(int $gid): int
-    {
-        return match ($gid) {
-            1, 2, 4 => $gid,
-            default => throw new ImproperActionException('Invalid usergroup value.'),
-        };
     }
 
     /**
@@ -147,5 +142,17 @@ class Check
         }
         $remainder = $sum % 11;
         return $checksum === ((12 - $remainder) % 11);
+    }
+
+    public static function usergroup(Users $requester, Usergroup $group): Usergroup
+    {
+        if ($group === Usergroup::Sysadmin && $requester->userData['is_sysadmin'] === 0) {
+            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
+        }
+        // if requester is not Admin, the only valid usergroup is User
+        if (!$requester->isAdmin) {
+            return Usergroup::User;
+        }
+        return $group;
     }
 }

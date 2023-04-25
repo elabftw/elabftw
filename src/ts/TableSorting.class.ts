@@ -57,7 +57,7 @@ export default class TableSorting {
    * Sort rows in table based on selected column
    */
   public makeSortable(table: HTMLTableElement): void {
-    // do not parse table twice, i.e. while loading entry bodies via toggle-body button
+    // do not parse table twice, e.g. while loading entry bodies via toggle-body button
     if (table.dataset.sortingActivated === 'true') {
       return;
     }
@@ -72,7 +72,7 @@ export default class TableSorting {
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button
       // need span because .fas has pointer-events:none
-      th.innerHTML = '<span role="button"><i class="fas fa-sort"></i></span> ' + th.innerHTML;
+      th.innerHTML = '<span class="d-flex justify-content-between"><span>' + th.innerHTML + '</span><span class="ml-2" role="button"><i class="fas fa-sort"></i></span></span>';
 
       th.firstChild.addEventListener('click', (event => {
         const icon = (event.target as HTMLElement).firstChild as HTMLElement;

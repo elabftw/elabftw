@@ -29,7 +29,7 @@
         </button>
       </div>
       <div class='modal-body'>
-        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
+        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' rel='noopener'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
         <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
           {{ App.Session.get('csrf')|csrf }}
           <label for='import_modal_target'>{{ '1. Select where to import:'|trans }}</label>
@@ -40,7 +40,7 @@
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
             {# if we are admin we can import in other users experiments, otherwise just for ourself #}
-            {% for user in usersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
+            {% for user in usersArr|filter(u => App.Users.isAdmin ? true : u.userid == App.Users.userData.userid ? u) %}
               <option value='experiments:{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>
@@ -71,7 +71,7 @@
 
           <div class='mt-4 text-center'>
             <div id='errorHolder' class='alert-danger m-2'></div>
-            <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
+            <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='btn btn-primary'>{{ 'Import'|trans }}</button>
           </div>
 
         </form>

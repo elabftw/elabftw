@@ -33,15 +33,10 @@ class Populate
 
     private \Faker\Generator $faker;
 
-    // number of things to generate
-    private int $iter = 50;
-
-    public function __construct(?int $iter = null)
+    // iter: iterations: number of things to generate
+    public function __construct(private int $iter = 50)
     {
         $this->faker = \Faker\Factory::create();
-        if ($iter !== null) {
-            $this->iter = $iter;
-        }
     }
 
     /**
@@ -67,7 +62,6 @@ class Populate
             BasePermissions::UserOnly->toJson(),
         );
 
-        printf("Generating %s \n", $Entity->type);
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
             $Entity->setId($id);
@@ -112,7 +106,6 @@ class Populate
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
         }
-        printf("Generated %d %s \n", $this->iter, $Entity->type);
     }
 
     // create a user based on options provided in yaml file
@@ -120,10 +113,11 @@ class Populate
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
+        $orgid = $user['orgid'] ?? null;
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
         $email = $user['email'] ?? $this->faker->safeEmail();
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Users = new Users($userid, (int) $team[0]['id']);
 
@@ -142,6 +136,9 @@ class Populate
         if ($user['api_key'] ?? false) {
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key']);
+        }
+        if (isset($user['user_preferences'])) {
+            $Users->patch(Action::Update, $user['user_preferences']);
         }
 
         if ($user['create_templates'] ?? false) {

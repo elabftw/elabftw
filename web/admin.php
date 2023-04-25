@@ -19,9 +19,13 @@ use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
+use Elabftw\Services\DummyRemoteDirectory;
+use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function filter_var;
+
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,7 +40,7 @@ $template = 'error.html';
 $renderArr = array();
 
 try {
-    if (!$App->Session->get('is_admin')) {
+    if (!$App->Users->isAdmin) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
@@ -52,7 +56,6 @@ try {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->readOne();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -67,7 +70,8 @@ try {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
-            $App->Users->userData['team']
+            $App->Users->userData['team'],
+            $App->Request->query->getBoolean('includeArchived'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
@@ -75,6 +79,19 @@ try {
         }
     }
 
+    // Remote directory search
+    $remoteDirectoryUsersArr = array();
+    if ($App->Request->query->has('remote_dir_query')) {
+        if ($App->Config->configArr['remote_dir_service'] === 'eairef') {
+            $RemoteDirectory = new EairefRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        } else {
+            $RemoteDirectory = new DummyRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        }
+        $remoteDirectoryUsersArr = $RemoteDirectory->search((string) $App->Request->query->get('remote_dir_query'));
+        if (empty($remoteDirectoryUsersArr)) {
+            $App->warning[] = _('No users found. Try another search.');
+        }
+    }
 
     // all the tags for the team
     $tagsArr = $Tags->readFull();
@@ -88,9 +105,9 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
-        'teamConfigArr' => $teamConfigArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+        'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'teamsArr' => $teamsArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
@@ -37,11 +36,5 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             return 'body';
         }
         return parent::getColumn();
-    }
-
-    public function getState(): int
-    {
-        $state = State::tryFrom((int) $this->content) ?? State::Normal;
-        return $state->value;
     }
 }

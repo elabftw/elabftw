@@ -204,8 +204,8 @@ abstract class AbstractLinks implements RestInterface
      */
     protected function create(): int
     {
-        // don't insert a link to the same entity
-        if ($this->Entity->id === $this->id) {
+        // don't insert a link to the same entity, make sure we check for the type too
+        if ($this->Entity->id === $this->id && $this->Entity->type === $this->getTargetType()) {
             return 0;
         }
         // use IGNORE to avoid failure due to a key constraint violations

@@ -35,6 +35,9 @@ abstract class AbstractApiController implements ControllerInterface
 
     public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
     {
+        if ($Users->userData['archived'] === 1) {
+            throw new ImproperActionException('Cannot use API with an archived account!');
+        }
     }
 
     protected function parseReq(): array

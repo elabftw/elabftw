@@ -82,7 +82,7 @@ PRO support and professional hosting are available from [Deltablot](https://www.
 
 # Stay tuned
 
-[Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
+[Subscribe to the newsletter](https://eepurl.com/bTjcMj) to be notified when a new release is out!
 
 Or use GitHub to follow releases:
 

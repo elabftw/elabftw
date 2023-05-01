@@ -37,7 +37,7 @@
     "phpeggy": "^2.0.0",
     "popper.js": "1.16.*",
     "prismjs": "^1.25.0",
-    "sass": "^1.23.7",
+    "sass": "^1.62.1",
     "stream-browserify": "^3.0.0",
     "timers-browserify": "^2.0.12",
     "tinymce": "^5.10.0",

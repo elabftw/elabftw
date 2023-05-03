@@ -34,21 +34,17 @@ Great you've installed elabftw. But you're a little bit paranoid because you're 
 
 Here is a list of steps you should follow to increase the security of your instance.
 
+### Prevent external access
+
+Exposing the eLabFTW service only internally is a good way to avoid having the whole world attacking it.
+
 ### Run the Docker container
 
 **eLabFTW**'s container has been fine tuned for maximizing safety. For instance, the default PHP configuration has been modified to make the session identifier longer, in a specific folder with tight permissions, a lot of functions not used in elabftw are forbidden, the cookies have the httpOnly, SameSite and secure flags, and other details that might not be easily modifiable if installed outside Docker.
 
 Nginx also has a custom configuration and binary compilation options with secure headers sent to the client.
 
-Running **eLabFTW** outside Docker is possible, of course, but discouraged.
-
-### Using a BSD family OS
-
-If your webserver is of the BSD family, Docker is not an option. Before installing eLabFTW on a BSD, consider the higher amount of maintenance that will be required on updates, as webserver configuration will change over time. It is recommended to use [nginx](https://nginx.org/) as a webserver so you can copy/paste the configuration from the official Docker image.
-
-It is recommended to use a jail and make sure to have an appropriate webserver configuration (especially the security headers).
-
-You will find configuration files for nginx in [this folder](https://github.com/elabftw/elabimg/tree/master/src/nginx).
+Running **eLabFTW** outside Docker is **NOT** possible.
 
 ### Stay updated
 

@@ -85,7 +85,7 @@ class LoginHelper
         if ($this->AuthResponse->isAnonymous) {
             return;
         }
-        $sql = 'SELECT IFNULL(valid_until, "3000-01-01") > NOW() FROM users WHERE userid = :userid';
+        $sql = "SELECT IFNULL(valid_until, '3000-01-01') > NOW() FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);

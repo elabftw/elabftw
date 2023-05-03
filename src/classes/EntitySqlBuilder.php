@@ -33,12 +33,12 @@ class EntitySqlBuilder
     {
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
-            $select = 'SELECT DISTINCT entity.*,
+            $select = sprintf("SELECT DISTINCT entity.*,
                 GROUP_CONCAT(DISTINCT (team_events.experiment IS NOT NULL OR team_events.item_link IS NOT NULL)) AS is_bound,
                 GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
                 GROUP_CONCAT(DISTINCT team_events.id) AS events_id,
-                "' . $this->entity->page . '" AS page,
-                "' . $this->entity->type. '" AS type,';
+                '%s' AS page,
+                '%s' AS type,", $this->entity->page, $this->entity->type);
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,

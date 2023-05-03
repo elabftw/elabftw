@@ -38,8 +38,8 @@
           </select>
           <!-- TEAMGROUPS -->
           <label for='{{ rw }}_select_teamgroups'>{{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
-          <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
-          <select id='{{ rw }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
+          <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}{{ myTeamgroupsArr|length == 0 ? ' ' ~ 'You do not belong to any teamgroup.'|trans }}</p>
+          <select {{ myTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ rw }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
             {% for tg in myTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
@@ -47,7 +47,7 @@
             {% endfor %}
           </select>
           <!-- USERS -->
-          <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.' }}</p>
+          <label for='{{ rw }}_select_users'>{{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
           <ul class='list-group mb-1' id='{{ rw }}_list_users'>
             {% set humanCan = permissionsJson|canToHuman %}
             {% for user in humanCan.users %}

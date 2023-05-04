@@ -9,6 +9,7 @@
 
 namespace Elabftw\Commands;
 
+use Elabftw\Factories\MailerFactory;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Monolog\Handler\ErrorLogHandler;
@@ -47,7 +48,8 @@ class CheckTsBalance extends Command
         if ($tsBalance < self::THRESHOLD) {
             $Logger = new Logger('elabftw');
             $Logger->pushHandler(new ErrorLogHandler());
-            $Email = new Email($Config, $Logger);
+            $Mailer = new MailerFactory($Config);
+            $Email = new Email($Mailer->getMailer(), $Logger, $Config->configArr['mail_from']);
             $Email->notifySysadminsTsBalance($tsBalance);
         }
         return 0;

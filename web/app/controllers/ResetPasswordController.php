@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\MailerFactory;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Services\Email;
@@ -36,7 +37,8 @@ $Response = new RedirectResponse('../../login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {
-    $Email = new Email($App->Config, $App->Log);
+    $Mailer = new MailerFactory($App->Config);
+    $Email = new Email($Mailer->getMailer(), $App->Log, $App->Config->configArr['mail_from']);
 
     // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {

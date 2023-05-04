@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -15,6 +14,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\MailerFactory;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,12 +32,22 @@ try {
     }
 
     // EMAIL TEAM
-    if ($Request->request->has('emailTeam')) {
-        $Email = new Email($App->Config, $App->Log);
+    if ($Request->request->has('emailUsers')) {
+        $target = (string) $Request->request->get('target');
+        // default to team
+        $targetId = $App->Users->userData['team'];
+        $targetType = 'team';
+        if (str_starts_with($target, 'teamgroup')) {
+            $targetId = (int) explode('_', $target)[1];
+            $targetType = 'teamgroup';
+        }
+        $Mailer = new MailerFactory($App->Config);
+        $Email = new Email($Mailer->getMailer(), $App->Log, $App->Config->configArr['mail_from']);
         $sent = $Email->massEmail(
+            $targetType,
+            $targetId,
             (string) $Request->request->get('subject'),
             (string) $Request->request->get('body'),
-            $App->Users->userData['team'],
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }

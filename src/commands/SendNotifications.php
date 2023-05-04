@@ -9,6 +9,7 @@
 
 namespace Elabftw\Commands;
 
+use Elabftw\Factories\MailerFactory;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\EmailNotifications;
@@ -39,9 +40,11 @@ class SendNotifications extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $Config = Config::getConfig();
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new ErrorLogHandler());
-        $Email = new Email(Config::getConfig(), $Logger);
+        $Mailer = new MailerFactory($Config);
+        $Email = new Email($Mailer->getMailer(), $Logger, $Config->configArr['mail_from']);
         $Notifications = new EmailNotifications($Email);
         $count = $Notifications->sendEmails();
         if ($output->isVerbose()) {

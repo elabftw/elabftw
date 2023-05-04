@@ -9,7 +9,6 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Factories\MailerFactory;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\EmailNotifications;
@@ -18,6 +17,8 @@ use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * Send the notifications emails
@@ -43,8 +44,11 @@ class SendNotifications extends Command
         $Config = Config::getConfig();
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new ErrorLogHandler());
-        $Mailer = new MailerFactory($Config);
-        $Email = new Email($Mailer->getMailer(), $Logger, $Config->configArr['mail_from']);
+        $Email = new Email(
+            new Mailer(Transport::fromDsn($Config->getDsn())),
+            $Logger,
+            $Config->configArr['mail_from'],
+        );
         $Notifications = new EmailNotifications($Email);
         $count = $Notifications->sendEmails();
         if ($output->isVerbose()) {

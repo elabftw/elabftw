@@ -9,7 +9,6 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Factories\MailerFactory;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Monolog\Handler\ErrorLogHandler;
@@ -17,6 +16,8 @@ use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * Look at the timestamp balance and notify sysadmin if it's too low
@@ -48,8 +49,11 @@ class CheckTsBalance extends Command
         if ($tsBalance < self::THRESHOLD) {
             $Logger = new Logger('elabftw');
             $Logger->pushHandler(new ErrorLogHandler());
-            $Mailer = new MailerFactory($Config);
-            $Email = new Email($Mailer->getMailer(), $Logger, $Config->configArr['mail_from']);
+            $Email = new Email(
+                new Mailer(Transport::fromDsn($Config->getDsn())),
+                $Logger,
+                $Config->configArr['mail_from'],
+            );
             $Email->notifySysadminsTsBalance($tsBalance);
         }
         return 0;

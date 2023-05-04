@@ -69,6 +69,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('0', $result['ts_balance']);
     }
 
+    public function testDsn(): void
+    {
+        $this->assertIsString($this->Config->getDsn());
+    }
+
     public function testPostAction(): void
     {
         $this->expectException(ImproperActionException::class);

@@ -14,10 +14,11 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\MailerFactory;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * Actions from team.php
@@ -41,8 +42,11 @@ try {
             $targetId = (int) explode('_', $target)[1];
             $targetType = 'teamgroup';
         }
-        $Mailer = new MailerFactory($App->Config);
-        $Email = new Email($Mailer->getMailer(), $App->Log, $App->Config->configArr['mail_from']);
+        $Email = new Email(
+            new Mailer(Transport::fromDsn($App->Config->getDsn())),
+            $App->Log,
+            $App->Config->configArr['mail_from'],
+        );
         $sent = $Email->massEmail(
             $targetType,
             $targetId,

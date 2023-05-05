@@ -78,7 +78,7 @@ class UnfinishedSteps implements RestInterface
             ) AS stepst ON (stepst.item_id = entity.id)';
 
         $sql .= ' JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
-        $sql .= $this->teamScoped ? $this->getTeamWhereClause($model) : ' WHERE entity.userid = :userid';
+        $sql .= ' WHERE ' . ($this->teamScoped ? $this->getTeamWhereClause($model) : 'entity.userid = :userid');
 
         $sql .= sprintf(' AND entity.state = %d GROUP BY entity.id ORDER BY entity.id DESC', State::Normal->value);
         $req = $this->Db->prepare($sql);
@@ -114,29 +114,59 @@ class UnfinishedSteps implements RestInterface
 
     private function getTeamWhereClause(EntityType $model): string
     {
-        $sql =  'WHERE ' . ($model === EntityType::Items ? 'entity.team = :teamid ' : '1 = 1 ');
-        // add pub/org/team filter
-        $sqlPublicOrg = sprintf("( (JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
-        $sql .= sprintf(" AND  %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, BasePermissions::User->value);
+        // add pub/org
+        $sql = sprintf(
+            "%s AND (
+                (JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d)
+                AND users2teams.users_id = entity.userid
+            )",
+            $model === EntityType::Items ? 'entity.team = :teamid' : '1 = 1',
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value,
+        );
+
+        // add team filter
+        $sql .= sprintf(
+            " OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid)",
+            BasePermissions::MyTeams->value,
+        );
+
+        // add user filter
+        $sql .= sprintf(
+            " OR JSON_EXTRACT(entity.canread, '$.base') = %d ",
+            BasePermissions::User->value,
+        );
+
         // add entities in useronly visibility only if we own them
-        $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
+        $sql .= sprintf(
+            " OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)",
+            BasePermissions::UserOnly->value,
+        );
+
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         foreach ($teamsOfUser as $team) {
-            $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+            $sql .= sprintf(
+                ' OR (%d MEMBER OF (entity.canread->>"$.teams"))',
+                $team,
+            );
         }
+
         // look for teamgroups
         $teamgroupsOfUser = array_column((new TeamGroups($this->Users))->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
+                $sql .= sprintf(
+                    ' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))',
+                    $teamgroup,
+                );
             }
         }
+
         // look for our userid in users part of the json
         $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
-        $sql .= ')';
 
-        return $sql;
+        return sprintf('(%s)', $sql);
     }
 }

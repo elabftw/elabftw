@@ -114,7 +114,7 @@ class UnfinishedSteps implements RestInterface
 
     private function getTeamWhereClause(EntityType $model): string
     {
-        // add pub/org
+        // add team id filter for items + pub/org visibility filter
         $sql = sprintf(
             "%s AND (
                 (JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d)

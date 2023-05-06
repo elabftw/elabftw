@@ -285,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(resp => resp.json()).then(json => json.title);
     },
     listenOn: '#eventTitle',
+    returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),

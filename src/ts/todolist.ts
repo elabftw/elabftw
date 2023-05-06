@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
         .then(resp => resp.json()).then(json => json.body);
     },
+    returnedValueIsTrustedHtml: true,
     listenOn: '.todoItem',
     tooltip: i18next.t('click-to-edit'),
   }).listen();

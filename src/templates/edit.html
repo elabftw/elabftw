@@ -101,7 +101,7 @@
       <!-- TODO add a box with color -->
       {% for category in categoryArr %}
         <option value='{{ category.category_id }}'
-        {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category }}</option>
+        {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category|raw }}</option>
       {% endfor %}
     </select>
   </div>

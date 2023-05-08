@@ -884,6 +884,12 @@ paths:
             type: integer
           description: |
             The status id of the experiments.
+        - name: tags
+          in: query
+          schema:
+            type: array
+          description: |
+            An array of tags for filtering results containing all of these tags.
         - name: limit
           in: query
           schema:
@@ -1075,6 +1081,12 @@ paths:
             type: integer
           description: |
             The category id of the items.
+        - name: tags
+          in: query
+          schema:
+            type: array
+          description: |
+            An array of tags for filtering results containing all of these tags.
         - name: limit
           in: query
           schema:

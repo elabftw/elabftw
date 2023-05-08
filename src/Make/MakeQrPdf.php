@@ -54,7 +54,7 @@ class MakeQrPdf extends AbstractMakePdf
      */
     private function readAll(): array
     {
-        $DisplayParams = new DisplayParams($this->Entity->Users, Request::createFromGlobals());
+        $DisplayParams = new DisplayParams($this->Entity->Users, Request::createFromGlobals(), $this->Entity->type);
         $DisplayParams->limit = 9001;
         $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
         $entityArr = $this->Entity->readShow($DisplayParams, true);

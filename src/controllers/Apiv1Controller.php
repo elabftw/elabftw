@@ -303,7 +303,7 @@ class Apiv1Controller extends AbstractApiController
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            $DisplayParams = new DisplayParams($this->Users, $this->Request);
+            $DisplayParams = new DisplayParams($this->Users, $this->Request, $this->Entity->type);
 
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;

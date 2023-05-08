@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
@@ -41,7 +42,7 @@ try {
     $Templates = new Templates($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
 
-    $DisplayParams = new DisplayParams($App->Users, $App->Request);
+    $DisplayParams = new DisplayParams($App->Users, $App->Request, EntityType::Items->value);
     // we only want the bookable type of items
     $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
     // make limit very big because we want to see ALL the bookable items here

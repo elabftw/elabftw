@@ -187,7 +187,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readAll(): array
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals()), true);
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->type), true);
     }
 
     /**

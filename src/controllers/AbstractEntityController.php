@@ -74,21 +74,9 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
-
-        // TAG FILTER
-        if (!empty(($this->App->Request->query->all('tags'))[0])) {
-            // get all the ids with that tag
-            $tagsFromGet = $this->App->Request->query->all('tags');
-            $tagsFromGet = array_map(function ($t) {
-                return (string) $t;
-            }, $tagsFromGet);
-            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet);
-            $this->Entity->idFilter = Tools::getIdFilterSql($ids);
-            $DisplayParams->searchType = 'tags';
-        }
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {

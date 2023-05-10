@@ -17,6 +17,8 @@ use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * Send the notifications emails
@@ -39,9 +41,14 @@ class SendNotifications extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $Config = Config::getConfig();
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new ErrorLogHandler());
-        $Email = new Email(Config::getConfig(), $Logger);
+        $Email = new Email(
+            new Mailer(Transport::fromDsn($Config->getDsn())),
+            $Logger,
+            $Config->configArr['mail_from'],
+        );
         $Notifications = new EmailNotifications($Email);
         $count = $Notifications->sendEmails();
         if ($output->isVerbose()) {

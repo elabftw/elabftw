@@ -187,7 +187,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readAll(): array
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals()), true);
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->type), true);
     }
 
     /**
@@ -265,7 +265,7 @@ abstract class AbstractEntity implements RestInterface
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
+                $sql .= sprintf(" OR (%d MEMBER OF (entity.canread->>'$.teams'))", $team);
             }
         }
         // look for teamgroups
@@ -273,11 +273,11 @@ abstract class AbstractEntity implements RestInterface
         // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
+                $sql .= sprintf(" OR (%d MEMBER OF (entity.canread->>'$.teamgroups'))", $teamgroup);
             }
         }
         // look for our userid in users part of the json
-        $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
+        $sql .= " OR (:userid MEMBER OF (entity.canread->>'$.users'))";
         $sql .= ')';
 
         $sqlArr = array(

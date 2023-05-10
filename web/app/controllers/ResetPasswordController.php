@@ -26,6 +26,8 @@ use function nl2br;
 use function random_int;
 use function sleep;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use function time;
@@ -36,7 +38,11 @@ $Response = new RedirectResponse('../../login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {
-    $Email = new Email($App->Config, $App->Log);
+    $Email = new Email(
+        new Mailer(Transport::fromDsn($App->Config->getDsn())),
+        $App->Log,
+        $App->Config->configArr['mail_from'],
+    );
 
     // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {

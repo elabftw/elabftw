@@ -60,12 +60,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Tags->readAll());
     }
 
-    public function testGetIdFromTags(): void
-    {
-        $this->assertContains(1, $this->Experiments->Tags->getIdFromTags(array('my tag')));
-        $this->assertEmpty($this->Experiments->Tags->getIdFromTags(array('oOoOoOoOoO')));
-    }
-
     public function testCopyTags(): void
     {
         $id = $this->Experiments->postAction(Action::Create, array());

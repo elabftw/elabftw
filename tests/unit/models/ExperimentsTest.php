@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
@@ -141,7 +142,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             'metakey' => array('test'),
             'metavalue' => array('some text'),
         ));
-        $displayParams = new DisplayParams($this->Users, $request);
+        $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments->value);
         $res = $this->Experiments->readShow($displayParams);
         $this->assertEquals(1, $res[0]['id']);
     }

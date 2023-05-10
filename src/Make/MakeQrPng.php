@@ -88,9 +88,10 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     private function getTitleSplitSize(): int
     {
         $res = abs(intdiv($this->size, self::SPLIT_FACTOR));
-        if ($res < 1) {
+        if ($res <= 1) {
             return 1;
         }
-        return $res;
+        // remove one to fix swallowed up characters
+        return $res - 1;
     }
 }

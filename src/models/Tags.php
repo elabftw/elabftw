@@ -16,7 +16,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
-use function implode;
 use PDO;
 
 /**
@@ -106,34 +105,6 @@ class Tags implements RestInterface
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Get a list of entity id filtered by tags
-     *
-     * @param array<array-key, string> $tags tags from the query string
-     */
-    public function getIdFromTags(array $tags): array
-    {
-        $sql = 'SELECT id FROM tags WHERE tag IN ("' . implode('", "', $tags) . '")';
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-        $tagIds = $req->fetchAll(PDO::FETCH_COLUMN);
-        if (empty($tagIds)) {
-            return array();
-        }
-
-        // look for item ids that have all the tags not only one of them
-        // note: you can't have a parameter for the IN clause
-        // the HAVING COUNT is necessary to make an AND search between tags
-        $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
-            AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
-        // note: we count on the number of provided tags, not the result of the first query as the same tag can appear mutiple times (from different teams)
-        $req->bindValue(':count', count($tags), PDO::PARAM_INT);
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**

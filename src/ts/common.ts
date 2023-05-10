@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => json[original.dataset.target]);
     },
     listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),

@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use PDO;
+use function urlencode;
 
 /**
  * The general config table
@@ -254,6 +255,28 @@ final class Config implements RestInterface
     public function getPage(): string
     {
         return 'api/v2/config/';
+    }
+
+    public function getDsn(): string
+    {
+        $username = '';
+        $password = '';
+        if ($this->configArr['smtp_password']) {
+            $username = $this->configArr['smtp_username'];
+            $password = Crypto::decrypt(
+                $this->configArr['smtp_password'],
+                Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY'))
+            );
+        }
+
+        return sprintf(
+            'smtp://%s:%s@%s:%d?verify_peer=%s',
+            $username,
+            urlencode($password),
+            $this->configArr['smtp_address'],
+            $this->configArr['smtp_port'],
+            $this->configArr['smtp_verify_cert'],
+        );
     }
 
     public function postAction(Action $action, array $reqBody): int

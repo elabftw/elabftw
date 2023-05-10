@@ -9,6 +9,7 @@
 
 namespace Elabftw\Make;
 
+use Elabftw\Enums\Action;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Users;
@@ -19,7 +20,13 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Make = new MakeSchedulerReport(new Scheduler(new Items(new Users(1, 1), 1)));
+        $Scheduler = new Scheduler(new Items(new Users(1, 1), 1));
+        $Scheduler->postAction(Action::Create, array(
+            'title' => 'for test',
+            'start' => '2023-01-01T13:37:00+02:00',
+            'end' => '2023-01-01T15:37:00+02:00',
+        ));
+        $this->Make = new MakeSchedulerReport($Scheduler);
     }
 
     public function testGetFileName(): void

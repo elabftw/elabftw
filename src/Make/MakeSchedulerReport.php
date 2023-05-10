@@ -11,7 +11,6 @@ namespace Elabftw\Make;
 
 use function date;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\UploadTrait;
@@ -31,11 +30,6 @@ class MakeSchedulerReport extends AbstractMakeCsv
     public function __construct(Scheduler $scheduler)
     {
         $this->Db = Db::getConnection();
-        $scheduler->postAction(Action::Create, array(
-            'title' => 'for test',
-            'start' => '2023-01-01T13:37:00+02:00',
-            'end' => '2023-01-01T15:37:00+02:00',
-        ));
         $this->rows = $scheduler->readAll();
     }
 

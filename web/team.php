@@ -47,20 +47,9 @@ try {
     $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
     // make limit very big because we want to see ALL the bookable items here
     $DisplayParams->limit = 900000;
-    $itemData = null;
 
-    $allItems = true;
-    $selectedItem = null;
-    if ($App->Request->query->get('item')) {
-        if ($App->Request->query->get('item') === 'all'
-            || !$App->Request->query->has('item')) {
-        } else {
-            $Scheduler->Items->setId($App->Request->query->getInt('item'));
-            $selectedItem = $App->Request->query->get('item');
-            $allItems = false;
-            // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Items->readOne();
-        }
+    if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
+        $Scheduler->Items->setId($App->Request->query->getInt('item'));
     }
 
     $entityData = array();
@@ -77,11 +66,8 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        'allItems' => $allItems,
         'bookableCategoryArr' => $bookableCategoryArr,
         'itemsArr' => $Items->readShow($DisplayParams),
-        'itemData' => $itemData,
-        'selectedItem' => $selectedItem,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),

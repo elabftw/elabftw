@@ -75,6 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
+  let selectedItem = '';
+  if (params.has('item') && params.get('item') !== 'all') {
+    selectedItem = params.get('item');
+  }
   // allow filtering the category of items in events
   let queryString = '?';
   if (params.get('cat')) {
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: `api/v2/events/${info.item}${queryString}`,
+        url: `api/v2/events/${selectedItem}${queryString}`,
       },
     ],
     // first day is monday

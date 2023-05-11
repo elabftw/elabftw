@@ -78,8 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
       const filenameInput = document.createElement('input');
       filenameInput.dataset.id = el.dataset.id;
+      filenameInput.classList.add('form-control');
       filenameInput.value = filenameLink.textContent;
       const parentSpan = filenameLink.parentElement;
+      parentSpan.classList.add('form-inline');
       filenameInput.addEventListener('blur', event => {
         processNewFilename(event, filenameLink, parentSpan);
       });

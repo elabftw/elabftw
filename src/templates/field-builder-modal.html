@@ -10,6 +10,30 @@
           </button>
         </div>
         <div class='modal-body'>
+            <label for='newFieldGroupSelect'>{{ 'Group'|trans }}</label>
+            <span class='p-1 rounded hl-hover-gray' data-toggle-plus-icon='1' data-action='toggle-next' title='{{ 'Add group'|trans }}'>
+              <i class='fas fa-square-plus fa-fw'></i>
+            </span>
+            <div hidden class='mb-3'>
+              {# NEW GROUP NAME #}
+              <label for='newFieldsGroupKeyInput'>{{ 'Add new group'|trans }}</label>
+              <div class='input-group'>
+                <input type='text' autocomplete='off' placeholder='{{ 'New group name'|trans }}' id='newFieldsGroupKeyInput' class='form-control'>
+                <div class='input-group-append'>
+                  <button class='btn btn-primary' aria-label='{{ 'Save'|trans }}' type='button' data-action='save-new-fields-group'><i class='fas fa-save text-white'></i></button>
+                </div>
+              </div>
+              {# TODO delete a group #}
+              <hr>
+            </div>
+            <select id='newFieldGroupSelect' class='form-control' autocomplete='off'>
+              {% if metadataGroups[0].id == -1 %}
+                <option value='-1'>{{ 'Undefined group'|trans }}</option>
+              {% endif %}
+              {% for group in metadataGroups %}
+                <option value='{{ group.id }}'>{{ group.name }}</option>
+              {% endfor %}
+            </select>
             <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
             <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
               <option value='text'>{{ 'Text'|trans }}</option>

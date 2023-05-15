@@ -10,7 +10,7 @@ import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, listenTrigger, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -339,12 +339,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const iconEl = el.querySelector('i');
       if (iconEl) {
-        if (targetEl.hasAttribute('hidden')) {
-          iconEl.classList.remove('fa-caret-down');
-          iconEl.classList.add('fa-caret-right');
+        if (el.dataset.togglePlusIcon) {
+          togglePlusIcon(iconEl);
         } else {
-          iconEl.classList.add('fa-caret-down');
-          iconEl.classList.remove('fa-caret-right');
+          if (targetEl.hasAttribute('hidden')) {
+            iconEl.classList.remove('fa-caret-down');
+            iconEl.classList.add('fa-caret-right');
+          } else {
+            iconEl.classList.add('fa-caret-down');
+            iconEl.classList.remove('fa-caret-right');
+          }
         }
       }
       // save the hidden state of the target element in localStorage
@@ -502,17 +506,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      const plusMinusIcon = el.querySelector('.fas');
+      if (el.dataset.togglePlusIcon) {
+        togglePlusIcon(el.querySelector('.fas'));
+      }
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
-        plusMinusIcon.classList.remove('fa-square-plus');
-        plusMinusIcon.classList.add('fa-square-minus');
         action = 'show';
-      } else {
-        plusMinusIcon.classList.add('fa-square-plus');
-        plusMinusIcon.classList.remove('fa-square-minus');
       }
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else

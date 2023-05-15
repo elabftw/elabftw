@@ -21,4 +21,6 @@ enum Metadata: string
     case Position = 'position'; // number to order the extra fields
     case BlankValueOnDuplicate = 'blank_value_on_duplicate'; // is value of extra field to be blanked when the entity is duplicated
     case AllowMultiValues = 'allow_multi_values'; // for type=select, can multiple options be selected
+    case Groups = 'groups'; // will be found in elabftw namespace
+    case GroupId = 'group_id';
 }

@@ -28,10 +28,10 @@ class Metadata
         $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
     }
 
-    public function getExtraFields(): ?array
+    public function getExtraFields(): array
     {
         if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {
-            return null;
+            return array();
         }
         return $this->metadata[MetadataEnum::ExtraFields->value];
     }
@@ -44,6 +44,36 @@ class Metadata
         return true;
     }
 
+    public function getGroups(): array
+    {
+        if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value])) {
+            $groups = $this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value];
+            return array_combine(array_column($groups, 'id'), $groups);
+        }
+        return array(-1 => array('id' => -1, 'name' => _('Undefined group')));
+    }
+
+    public function getGroupedExtraFields(): array
+    {
+        $groups = $this->getGroups();
+        $extraFields = $this->getExtraFields();
+        // loop over the extra fields and assign their properties to a group's extra_fields array
+        // the name being the key, we merge it into the properties with a "name" key
+        foreach ($extraFields as $key => $properties) {
+            if (isset($properties[MetadataEnum::GroupId->value])) {
+                $groups[$properties[MetadataEnum::GroupId->value]]['extra_fields'][] = array_merge($properties, array('name' => $key));
+            } else {
+                // add it to the default group
+                // if the default group doesn't exist, create it
+                if (!isset($groups[-1])) {
+                    $groups[-1] = array('id' => -1, 'name' => _('Undefined group'));
+                }
+                $groups[-1]['extra_fields'][] = array_merge($properties, array('name' => $key));
+            }
+        }
+        return $groups;
+    }
+
     /**
      * Get json encoded string of metadata with blanked values for
      * extra fields with 'blank_value_on_duplicate' is true
@@ -51,7 +81,7 @@ class Metadata
     public function blankExtraFieldsValueOnDuplicate(): ?string
     {
         $extraFields = $this->getExtraFields();
-        if ($extraFields === null) {
+        if (empty($extraFields)) {
             return null;
         }
 

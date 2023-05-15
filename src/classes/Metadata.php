@@ -60,16 +60,20 @@ class Metadata
         // loop over the extra fields and assign their properties to a group's extra_fields array
         // the name being the key, we merge it into the properties with a "name" key
         foreach ($extraFields as $key => $properties) {
-            if (isset($properties[MetadataEnum::GroupId->value])) {
-                $groups[$properties[MetadataEnum::GroupId->value]]['extra_fields'][] = array_merge($properties, array('name' => $key));
+            // default group id for extra fields with invalid or no group_id
+            $groupId = -1;
+            // if the group_id of the extra field is not defined in groups, it will endup in the default group, with the ones that don't have group_id property
+            if (isset($properties[MetadataEnum::GroupId->value]) && in_array($properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
+                $groupId = (int) $properties[MetadataEnum::GroupId->value];
             } else {
                 // add it to the default group
                 // if the default group doesn't exist, create it
+                // if all the extra fields are assigned to an existing group, there won't be this default group
                 if (!isset($groups[-1])) {
                     $groups[-1] = array('id' => -1, 'name' => _('Undefined group'));
                 }
-                $groups[-1]['extra_fields'][] = array_merge($properties, array('name' => $key));
             }
+            $groups[$groupId]['extra_fields'][] = array_merge($properties, array('name' => $key));
         }
         return $groups;
     }

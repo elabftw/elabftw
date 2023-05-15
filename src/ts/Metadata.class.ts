@@ -348,9 +348,12 @@ export class Metadata {
         groups = groups.concat((json.elabftw as MetadataElabftw).groups);
       }
     }
-    // add the undefined group at the end
-    // TODO i18n this
-    groups = groups.concat([{id: -1, name: 'Undefined group'}]);
+
+    if (Object.keys(groupedArr).length !== groups.length) {
+      // add the undefined group at the end, but only if there are fields without groups
+      // TODO i18n this
+      groups = groups.concat([{id: -1, name: 'Undefined group'}]);
+    }
 
     return [groups, groupedArr];
   }

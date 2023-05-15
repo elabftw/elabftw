@@ -334,20 +334,21 @@ export class Metadata {
       });
     }
 
-    // group the elements based on the group property
-    const groupedArr = elements.reduce((grouped, el) => {
-      const group = el.group_id || -1;
-      grouped[group] = grouped[group] || [];
-      grouped[group].push(el);
-      return grouped;
-    }, {});
-
     let groups: Array<ExtraFieldsGroup> = [];
     if (Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
       if (Object.prototype.hasOwnProperty.call(json.elabftw, 'groups')) {
         groups = groups.concat((json.elabftw as MetadataElabftw).groups);
       }
     }
+
+    // group the elements based on the group property
+    const groupedArr = elements.reduce((grouped, el) => {
+      // make sure the group_id is part of the defined elabftw.groups, or assing it to group -1
+      const group = groups.some(grp => grp.id === parseInt(el.group_id, 10)) ? el.group_id : -1;
+      grouped[group] = grouped[group] || [];
+      grouped[group].push(el);
+      return grouped;
+    }, {});
 
     if (Object.keys(groupedArr).length !== groups.length) {
       // add the undefined group at the end, but only if there are fields without groups

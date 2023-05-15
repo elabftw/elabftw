@@ -86,6 +86,14 @@ users:
   - team: Delta
 
 experiments:
+
+  - title: Test the grouped extra fields
+    date: 20241231
+    tags:
+      - dev
+      - extra fields
+    metadata: '{"elabftw":{"groups":[{"id":1,"name":"Group with id 1, first position"},{"id":2,"name":"Group with id 2, second position"},{"id":3,"name":"Group with id 3, third position"}],"display_main_text":false},"extra_fields":{"Has group_id 3 as number":{"type":"text","value":"","group_id":3},"Has group_id 3 as string":{"type":"text","value":"","group_id":"3"},"Has no group_id property":{"type":"text","value":""},"Group_id 1 and position 1":{"type":"checkbox","value":"","group_id":1,"position":1,"description":"This is a checkbox custom input"},"Group_id 2 and position 1":{"type":"url","value":"","group_id":2,"position":1},"Group_id 2 and position 2":{"type":"url","value":"https://datalake.example.com/experiments/3921","group_id":2,"position":2},"Group_id 2 and position 3":{"type":"url","value":"","group_id":2,"position":3},"Another one without group_id property":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"this element has no group property defined"},"Has group_id that is not in elabftw.groups":{"type":"text","value":"I am lost!","group_id":"19"}}}'
+
   - title: An example experiment
     body: This is the content of the experiment
     date: 20250101

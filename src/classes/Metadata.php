@@ -38,7 +38,7 @@ class Metadata
 
     public function getDisplayMainText(): bool
     {
-        if (isset($this->metadata[MetadataEnum::Elabftw->value])) {
+        if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
             return !$this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value] === false;
         }
         return true;

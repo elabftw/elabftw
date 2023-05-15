@@ -15,7 +15,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testNoMetadata(): void
     {
         $metadata = new Metadata(null);
-        $this->assertNull($metadata->getExtraFields());
+        $this->assertEmpty($metadata->getExtraFields());
         $this->assertTrue($metadata->getDisplayMainText());
     }
 
@@ -29,6 +29,18 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     {
         $metadata = new Metadata('{"elabftw": {"display_main_text": false}}');
         $this->assertFalse($metadata->getDisplayMainText());
+    }
+
+    public function testGetGroups(): void
+    {
+        $metadata = new Metadata('{"elabftw": {"groups": [ { "id": 1, "name": "my group"} ] }}');
+        $this->assertEquals(1, count($metadata->getGroups()));
+    }
+
+    public function testGetGroupedExtraFields(): void
+    {
+        $metadata = new Metadata('{"elabftw": {"groups": [ { "id": 1, "name": "my group"} ] }, "extra_fields":{"foo":{"group_id": 1,"value":"bar"}, "nogroup": {"value": ""}}}');
+        $this->assertEquals(2, count($metadata->getGroupedExtraFields()));
     }
 
     public function testBlankValueOnDuplicate(): void

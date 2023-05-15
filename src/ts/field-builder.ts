@@ -126,11 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const entity = getEntity();
       const MetadataC = new Metadata(entity);
-      const json = {};
       // get the current metadata
       MetadataC.read().then((metadata: ValidMetadata) => {
+        // make sure we have an elabftw property
         if (!Object.prototype.hasOwnProperty.call(metadata, 'elabftw')) {
-          json['elabftw'] = {};
+          metadata['elabftw'] = {};
         }
         // default groupid
         let groupId = 1;

@@ -330,25 +330,27 @@ export class Metadata {
         description: properties.description,
         element: this.generateElement(mode, name, properties),
         position: parseInt(String(properties.position), 10) || 99999,
-        group: properties.group_id,
+        group_id: properties.group_id || -1,
       });
     }
 
     // group the elements based on the group property
     const groupedArr = elements.reduce((grouped, el) => {
-      const group = el.group || -1;
+      const group = el.group_id || -1;
       grouped[group] = grouped[group] || [];
       grouped[group].push(el);
       return grouped;
     }, {});
 
-    let groups: Array<ExtraFieldsGroup> = [{id: -1, name: 'default group'}];
-    // if we have defined the groups in elabftw.groups, use this for group names instead so we have the user defined order
+    let groups: Array<ExtraFieldsGroup> = [];
     if (Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
       if (Object.prototype.hasOwnProperty.call(json.elabftw, 'groups')) {
-        groups = (json.elabftw as MetadataElabftw).groups;
+        groups = groups.concat((json.elabftw as MetadataElabftw).groups);
       }
     }
+    // add the undefined group at the end
+    // TODO i18n this
+    groups = groups.concat([{id: -1, name: 'Undefined group'}]);
 
     return [groups, groupedArr];
   }
@@ -370,13 +372,7 @@ export class Metadata {
       groups.forEach(group => {
         const groupWrapperDiv =  document.createElement('div');
         groupWrapperDiv.classList.add('mt-4');
-
-        let headerEl = 'h4';
-        // for the default group, don't show "default" but use hr instead
-        if (group.id === -1) {
-          headerEl = 'hr';
-        }
-        const groupHeader = document.createElement(headerEl);
+        const groupHeader = document.createElement('h4');
         groupHeader.dataset.action='toggle-next';
         groupHeader.classList.add('d-inline', 'togglable-section-title');
         const groupHeaderIcon = document.createElement('i');
@@ -391,36 +387,33 @@ export class Metadata {
         wrapperUl.classList.add('list-group', 'mt-2');
         wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
 
-        // prevent error if we have groups that have no field associated with them by only taking into account the extra fields present in a known group
-        if (Object.keys(groupedArr).map(g => parseInt(g, 10)).includes(group.id)) {
-          for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            const label = document.createElement('label');
-            label.htmlFor = element.element.id;
-            label.innerText = element.name as string;
+        for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
+          const listItem = document.createElement('li');
+          listItem.classList.add('list-group-item');
+          const label = document.createElement('label');
+          label.htmlFor = element.element.id;
+          label.innerText = element.name as string;
 
-            // for checkboxes the label comes second
-            if (element.element.type === 'checkbox') {
-              label.classList.add('form-check-label');
-              const wrapperDiv = document.createElement('div');
-              wrapperDiv.classList.add('form-check');
-              listItem.append(wrapperDiv);
-              wrapperDiv.append(element.element);
-              wrapperDiv.append(label);
-              wrapperDiv.append(this.getDescription(element));
-            } else {
-              listItem.append(label);
-              listItem.append(this.getDescription(element));
-              listItem.append(element.element);
-            }
-
-            wrapperUl.append(listItem);
+          // for checkboxes the label comes second
+          if (element.element.type === 'checkbox') {
+            label.classList.add('form-check-label');
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.classList.add('form-check');
+            listItem.append(wrapperDiv);
+            wrapperDiv.append(element.element);
+            wrapperDiv.append(label);
+            wrapperDiv.append(this.getDescription(element));
+          } else {
+            listItem.append(label);
+            listItem.append(this.getDescription(element));
+            listItem.append(element.element);
           }
-          groupWrapperDiv.append(groupHeader);
-          groupWrapperDiv.append(wrapperUl);
-          wrapperDiv.append(groupWrapperDiv);
+
+          wrapperUl.append(listItem);
         }
+        groupWrapperDiv.append(groupHeader);
+        groupWrapperDiv.append(wrapperUl);
+        wrapperDiv.append(groupWrapperDiv);
       });
 
       this.metadataDiv.append(wrapperDiv);

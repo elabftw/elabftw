@@ -63,7 +63,7 @@ class Metadata
             // default group id for extra fields with invalid or no group_id
             $groupId = -1;
             // if the group_id of the extra field is not defined in groups, it will endup in the default group, with the ones that don't have group_id property
-            if (isset($properties[MetadataEnum::GroupId->value]) && in_array($properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
+            if (isset($properties[MetadataEnum::GroupId->value]) && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
                 $groupId = (int) $properties[MetadataEnum::GroupId->value];
             } else {
                 // add it to the default group

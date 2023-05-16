@@ -322,7 +322,7 @@ export class Metadata {
   }
 
   getGroups(mode: string, json: ValidMetadata) {
-    // the input elements that will be created from the extra fields
+    // collect all extra fields, normalize position and group_id, add an element property
     const elements = [];
     for (const [name, properties] of Object.entries(json.extra_fields)) {
       elements.push({
@@ -334,10 +334,11 @@ export class Metadata {
       });
     }
 
+    // collect extra fields groups if they are defined
     let groups: Array<ExtraFieldsGroup> = [];
     if (Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
-      if (Object.prototype.hasOwnProperty.call(json.elabftw, 'groups')) {
-        groups = groups.concat((json.elabftw as MetadataElabftw).groups);
+      if (Object.prototype.hasOwnProperty.call(json.elabftw, 'extra_fields_groups')) {
+        groups = groups.concat((json.elabftw as MetadataElabftw).extra_fields_groups);
       }
     }
 

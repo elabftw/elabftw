@@ -104,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
-        console.log(grpSel.value);
         if (grpSel.value !== '-1') {
           field['group_id'] = grpSel.value;
         }
@@ -134,14 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // default groupid
         let groupId = 1;
-        if (Object.prototype.hasOwnProperty.call(metadata.elabftw, 'groups')) {
+        if (Object.prototype.hasOwnProperty.call(metadata.elabftw, 'extra_fields_groups')) {
           // find out what will be the next group id by looking for the highest group.id and adding 1
-          groupId = metadata.elabftw.groups.reduce((prev, current) => {
+          groupId = metadata.elabftw.extra_fields_groups.reduce((prev, current) => {
             return (prev.id > current.id) ? prev : current;
           }).id + 1;
         } else {
           // create an empty array if no groups exist
-          metadata.elabftw.groups = [];
+          metadata.elabftw.extra_fields_groups = [];
         }
 
         const grpOption = document.createElement('option');
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         grpSel.selectedIndex = grpSel.options.length - 1;
 
         // save the new group in metadata
-        metadata.elabftw.groups.push({'id': groupId, 'name': nameInput.value});
+        metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
         // don't use the update method because we don't need to refresh the inputs
         MetadataC.save(metadata);
         // clear input value

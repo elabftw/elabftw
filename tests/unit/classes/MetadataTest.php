@@ -33,13 +33,13 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testGetGroups(): void
     {
-        $metadata = new Metadata('{"elabftw": {"groups": [ { "id": 1, "name": "my group"} ] }}');
+        $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "id": 1, "name": "my group"} ] }}');
         $this->assertEquals(1, count($metadata->getGroups()));
     }
 
     public function testGetGroupedExtraFields(): void
     {
-        $metadata = new Metadata('{"elabftw": {"groups": [ { "id": 1, "name": "my group"} ] }, "extra_fields":{"foo":{"group_id": 1,"value":"bar"}, "nogroup": {"value": ""}}}');
+        $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "id": 1, "name": "my group"} ] }, "extra_fields":{"foo":{"group_id": 1,"value":"bar"}, "nogroup": {"value": ""}}}');
         $this->assertEquals(2, count($metadata->getGroupedExtraFields()));
     }
 

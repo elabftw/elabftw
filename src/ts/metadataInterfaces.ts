@@ -27,7 +27,7 @@ export interface ExtraFieldProperties {
 }
 
 export interface MetadataElabftw {
-  groups?: Array<ExtraFieldsGroup>,
+  extra_fields_groups?: Array<ExtraFieldsGroup>,
   display_main_text?: boolean,
 }
 

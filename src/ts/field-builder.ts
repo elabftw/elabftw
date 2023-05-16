@@ -110,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         json['extra_fields'][fieldKey] = field;
 
-        MetadataC.update(json as ValidMetadata).then(() => { document.location.reload(); });
+        // jQuery selector required for .modal()
+        MetadataC.update(json as ValidMetadata).then(() => { $('#fieldBuilderModal').modal('hide'); });
       });
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {

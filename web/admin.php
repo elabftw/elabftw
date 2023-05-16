@@ -96,6 +96,11 @@ try {
     // all the tags for the team
     $tagsArr = $Tags->readFull();
 
+    $metadataGroups = array();
+    if (isset($ItemsTypes->entityData['metadata'])) {
+        $metadataGroups = (new Metadata($ItemsTypes->entityData['metadata']))->getGroups();
+    }
+
     $template = 'admin.html';
     $renderArr = array(
         'Entity' => $ItemsTypes,
@@ -103,6 +108,7 @@ try {
         'tagsArr' => $tagsArr,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
         'teamGroupsArr' => $teamGroupsArr,

@@ -11,6 +11,11 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
+    public function testGetMaxUploadSize(): void
+    {
+        $this->assertIsInt(Tools::getMaxUploadSize());
+    }
+
     public function testFormatBytes(): void
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));
@@ -43,5 +48,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     public function testGetShortElabid(): void
     {
         $this->assertEquals('7995340c', Tools::getShortElabid('20220627-7995340c1921f38fd833c447be50b7101e4f852c'));
+        $this->assertIsString(Tools::getShortElabid(''));
     }
 }

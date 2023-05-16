@@ -28,6 +28,11 @@ class Metadata
         $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
     }
 
+    public function getRaw(): string
+    {
+        return Tools::printArr($this->metadata);
+    }
+
     public function getExtraFields(): array
     {
         if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {

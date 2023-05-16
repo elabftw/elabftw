@@ -61,7 +61,7 @@ class TwigFilters
         $Metadata = new Metadata($json);
         $extraFields = $Metadata->getExtraFields();
         if (empty($extraFields)) {
-            return $final;
+            return $Metadata->getRaw();
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         uasort($extraFields, function (array $a, array $b): int {

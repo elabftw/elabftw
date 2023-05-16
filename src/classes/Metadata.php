@@ -28,20 +28,54 @@ class Metadata
         $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
     }
 
-    public function getExtraFields(): ?array
+    public function getExtraFields(): array
     {
         if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {
-            return null;
+            return array();
         }
         return $this->metadata[MetadataEnum::ExtraFields->value];
     }
 
     public function getDisplayMainText(): bool
     {
-        if (isset($this->metadata[MetadataEnum::Elabftw->value])) {
+        if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
             return !$this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value] === false;
         }
         return true;
+    }
+
+    public function getGroups(): array
+    {
+        if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value])) {
+            $groups = $this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value];
+            return array_combine(array_column($groups, 'id'), $groups);
+        }
+        return array(-1 => array('id' => -1, 'name' => _('Undefined group')));
+    }
+
+    public function getGroupedExtraFields(): array
+    {
+        $groups = $this->getGroups();
+        $extraFields = $this->getExtraFields();
+        // loop over the extra fields and assign their properties to a group's extra_fields array
+        // the name being the key, we merge it into the properties with a "name" key
+        foreach ($extraFields as $key => $properties) {
+            // default group id for extra fields with invalid or no group_id
+            $groupId = -1;
+            // if the group_id of the extra field is not defined in groups, it will endup in the default group, with the ones that don't have group_id property
+            if (isset($properties[MetadataEnum::GroupId->value]) && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
+                $groupId = (int) $properties[MetadataEnum::GroupId->value];
+            } else {
+                // add it to the default group
+                // if the default group doesn't exist, create it
+                // if all the extra fields are assigned to an existing group, there won't be this default group
+                if (!isset($groups[-1])) {
+                    $groups[-1] = array('id' => -1, 'name' => _('Undefined group'));
+                }
+            }
+            $groups[$groupId]['extra_fields'][] = array_merge($properties, array('name' => $key));
+        }
+        return $groups;
     }
 
     /**
@@ -51,7 +85,7 @@ class Metadata
     public function blankExtraFieldsValueOnDuplicate(): ?string
     {
         $extraFields = $this->getExtraFields();
-        if ($extraFields === null) {
+        if (empty($extraFields)) {
             return null;
         }
 

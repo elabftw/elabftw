@@ -28,6 +28,11 @@ code {
     border: 1px dotted #ccc;
 }
 
+/* fix list items having numbers in pdf */
+li {
+    list-style-type: none;
+}
+
 table {
     border-collapse: collapse;
 }

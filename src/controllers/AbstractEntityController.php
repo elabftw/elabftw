@@ -243,18 +243,21 @@ abstract class AbstractEntityController implements ControllerInterface
         );
         $Teams = new Teams($this->Entity->Users);
 
+        $Metadata = new Metadata($this->Entity->entityData['metadata']);
+
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             // Do we display the main body of a concrete entity? Default is true
-            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'displayMainText' => $Metadata->getDisplayMainText(),
             'hideTitle' => true,
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
+            'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'teamsArr' => $Teams->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,

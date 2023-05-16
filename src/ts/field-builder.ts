@@ -7,6 +7,7 @@
  */
 import { getEntity, notifError } from './misc';
 import { Metadata } from './Metadata.class';
+import { ValidMetadata } from './metadataInterfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('fieldBuilderModal')) {
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
+    const grpSel = (document.getElementById('newFieldGroupSelect') as HTMLSelectElement);
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
@@ -102,10 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
+        if (grpSel.value !== '-1') {
+          field['group_id'] = grpSel.value;
+        }
 
         json['extra_fields'][fieldKey] = field;
 
-        MetadataC.update(json).then(() => { document.location.reload(); });
+        MetadataC.update(json as ValidMetadata).then(() => { document.location.reload(); });
       });
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {
@@ -114,6 +119,44 @@ document.addEventListener('DOMContentLoaded', () => {
       newInput.classList.add('newFieldOption');
       newInput.classList.add('mb-1');
       document.getElementById('choicesInputDiv').appendChild(newInput);
+    // SAVE NEW GROUP
+    } else if (el.matches('[data-action="save-new-fields-group"]')) {
+      const nameInput = (document.getElementById('newFieldsGroupKeyInput') as HTMLInputElement);
+
+      const entity = getEntity();
+      const MetadataC = new Metadata(entity);
+      // get the current metadata
+      MetadataC.read().then((metadata: ValidMetadata) => {
+        // make sure we have an elabftw property
+        if (!Object.prototype.hasOwnProperty.call(metadata, 'elabftw')) {
+          metadata['elabftw'] = {};
+        }
+        // default groupid
+        let groupId = 1;
+        if (Object.prototype.hasOwnProperty.call(metadata.elabftw, 'extra_fields_groups')) {
+          // find out what will be the next group id by looking for the highest group.id and adding 1
+          groupId = metadata.elabftw.extra_fields_groups.reduce((prev, current) => {
+            return (prev.id > current.id) ? prev : current;
+          }).id + 1;
+        } else {
+          // create an empty array if no groups exist
+          metadata.elabftw.extra_fields_groups = [];
+        }
+
+        const grpOption = document.createElement('option');
+        grpOption.value = String(groupId);
+        grpOption.text = nameInput.value;
+        grpSel.add(grpOption);
+        // select the freshly added group because it is the most likely to be picked now that we just added it
+        grpSel.selectedIndex = grpSel.options.length - 1;
+
+        // save the new group in metadata
+        metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
+        // don't use the update method because we don't need to refresh the inputs
+        MetadataC.save(metadata);
+        // clear input value
+        nameInput.value = '';
+      });
     }
   });
 });

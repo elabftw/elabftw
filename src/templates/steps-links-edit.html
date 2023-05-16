@@ -78,12 +78,12 @@
           </div>
         {% endfor %}
       </div>
-      <!-- Add step input -->
-      <div class='input-group mt-4'>
-          <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
-          <div class='input-group-append'>
-            <button class='btn btn-primary' type='submit'>{{ 'Add a step'|trans }}</button>
-          </div>
+    </div>
+    {# Add step input #}
+    <div class='input-group mt-4'>
+      <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
+      <div class='input-group-append'>
+        <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
       </div>
     </div>
   </section>

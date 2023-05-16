@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
         reloadElement('stepsDiv');
       });
+    // ADD STEP
+    } else if (el.matches('[data-action="create-step"]')) {
+      createStep(el.parentElement.parentElement.querySelector('input'));
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
       StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
@@ -59,21 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // CREATE
-  $(document).on('keypress blur', '.stepinput', function(e) {
+  $(document).on('keypress', '.stepinput', function(e) {
     // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      const content = e.currentTarget.value;
-      if (content.length > 0) {
-        StepC.create(content).then(() => {
-          // clear input field
-          e.currentTarget.value = '';
-          e.currentTarget.focus();
-          // do not reload stepsDiv which contains the input, but rather reload the div with the steps, or focus won't work
-          reloadElement('steps_div_' + entity.id);
-        });
-      }
+    if (e.which === 13) {
+      createStep(e.currentTarget);
     }
   });
+
+  function createStep(input: HTMLInputElement): void
+  {
+    const content = input.value;
+    if (content.length > 0) {
+      StepC.create(content).then(() => {
+        reloadElement('stepsDiv').then(() => {
+          // clear input field
+          input.value = '';
+          input.focus();
+        });
+      });
+    }
+  }
 
   // UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
   const malleableStep = new Malle({

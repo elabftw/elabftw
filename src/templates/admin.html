@@ -309,28 +309,15 @@
           <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
         </li>
 
-        <div class='list-inline-item'>
-          <!-- CAN READ -->
-          {% set rw = 'canread' %}
-          {% set can = Entity.entityData.canread|canToHuman %}
-          {% include('view-permissions.html') %}
-        </div>
-
-        <div class='list-inline-item'>
-          <!-- CAN WRITE -->
-          {% set rw = 'canwrite' %}
-          {% set can = Entity.entityData.canwrite|canToHuman %}
-          {% include('view-permissions.html') %}
-        </div>
-
       </ul>
+      {% include('edit-permissions.html') %}
 
       <div>
         <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
       </div>
 
       <div id='metadataDiv' class='col-md-6'></div>
-      <div class='mt-3 row'>
+      <div class='mt-3'>
         <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
       </div>
       {% set mode = 'edit-template' %}

@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!$(this).data('autocomplete')) {
       $(this).autocomplete({
         // necessary or the autocomplete will get under the modal
-        appendTo: '#autocompleteUsersDiv' + $(this).data('rw'),
+        appendTo: '#autocompleteUsersDiv' + $(this).data('identifier'),
         source: function(request: Record<string, string>, response: (data) => void): void {
           ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
             const res = [];
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // create a new li element in the list of existing users, so it is collected at Save action
     } else if (el.matches('[data-action="add-user-to-permissions"]')) {
       // collect userid + name + email from input
-      const addUserPermissionsInput = (document.getElementById(`${el.dataset.rw}_select_users`) as HTMLInputElement);
+      const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
         notifError(new Error('Use the autocompletion menu to add users.'));
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.insertAdjacentElement('beforeend', deleteSpan);
 
       // and insert it into the list
-      document.getElementById(`${el.dataset.rw}_list_users`).appendChild(li);
+      document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
 
       // clear input
       addUserPermissionsInput.value = '';
@@ -294,16 +294,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};
       // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-      const existingUsers = Array.from(document.getElementById(`${el.dataset.rw}_list_users`).children)
+      const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
         .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
       params[el.dataset.rw] = permissionsToJson(
-        parseInt(($('#' + el.dataset.rw + '_select_base').val() as string), 10),
-        ($('#' + el.dataset.rw + '_select_teams').val() as string[])
-          .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
+        parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
+        ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
+          .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
           .concat(existingUsers),
       );
-      if (document.location.pathname === '/ucp.php') {
+      // if we're editing the default read/write permissions for experiments, this data attribute will be set
+      if (el.dataset.isUserDefault) {
         // we need to replace canread/canwrite with default_read/default_write for user attribute
         let paramKey = 'default_read';
         if (el.dataset.rw === 'canwrite') {
@@ -312,10 +313,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // create a new key and delete the old one
         params[paramKey] = params[el.dataset.rw];
         delete params[el.dataset.rw];
-        return ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(paramKey + 'Div'));
+        return ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       } else {
         const entity = getEntity();
-        return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+        return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
 
     /* TOGGLE NEXT ACTION

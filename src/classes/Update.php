@@ -60,7 +60,7 @@ class Update
      */
     public function runUpdateScript(bool $force = false): array
     {
-        // at the end of the update, warnings can be displayed for important informations
+        // at the end of the update, warnings can be displayed for important information
         $warn = array();
 
         // make sure we run MySQL version 8 at least

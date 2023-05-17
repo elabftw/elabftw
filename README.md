@@ -32,11 +32,11 @@ It is accessed _via_ the browser. Several research teams can be hosted on the sa
 ## Features
 
 * Lab notebook for experiments
-* Database for lab reagents, equipments, storage, cell lines, etc...
+* Database for lab reagents, equipment, storage, cell lines, etc...
 * Trusted timestamping
 * Blockchain timestamping
 * Import and export in various formats
-* Calendar to manage booking of equipments
+* Calendar to manage booking of equipment
 * Support for various scientific file formats
 * Molecule/equation editor
 * LaTeX support
@@ -106,7 +106,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
   </a>
 </p>
 
-* Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)
+* Atelier de la donnée ADOC Lorraine (project financé avec le soutien du Fonds national pour la Science ouverte)
 * Department for the Development of Innovative Digital Use − French National Research Institute for Sustainable Development
 * Institut Curie - Centre de Recherche
 

@@ -1,4 +1,4 @@
 [codespell]
-skip = .git,*.pdf,*.svg
-#
-# ignore-words-list =
+skip = .git,*.pdf,*.svg,langs,*-langs,*.lock,*.yml.dist,package.json,*.scss
+# ssee is due to %sSee
+ignore-words-list = wantto,searchin,optionel,crate,ssee

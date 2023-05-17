@@ -157,16 +157,14 @@
 
 <hr>
 
-<!-- DOODLE -->
+{# DOODLE #}
 <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
-  <div class='row flex-nowrap'>
-    <div class='col-md-6 mr-2'>
-      {# do not use w-100 here as it will break the canvas #}
-      <canvas class='bg-white rounded' width='800' height='600' id='doodleCanvas'></canvas>
-    </div>
+  <div class='d-flex'>
+    {# do not use w-100 here as it will break the canvas #}
+    <canvas class='bg-white rounded' width='800' height='600' id='doodleCanvas'></canvas>
 
-    <div class='col-md-6'>
+    <div class='ml-3'>
       <hr>
       <div>
         <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
@@ -186,11 +184,15 @@
         <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}</label>
       </div>
 
+      <hr>
+
+      <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+
+      <hr>
       <div>
         <button id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
         <button id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
       </div>
-      <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
     </div>
   </div>
 </div>

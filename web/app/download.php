@@ -34,7 +34,7 @@ try {
     }
 
     $storage = (int) $Request->query->get('storage');
-    // backward compatiblity: the download links in body won't have the storage param
+    // backward compatibility: the download links in body won't have the storage param
     if ($storage === 0) {
         $storage = 1;
     }

@@ -344,7 +344,7 @@ export class Metadata {
 
     // group the elements based on the group property
     const groupedArr = elements.reduce((grouped, el) => {
-      // make sure the group_id is part of the defined elabftw.groups, or assing it to group -1
+      // make sure the group_id is part of the defined elabftw.groups, or assign it to group -1
       const group = groups.some(grp => grp.id === parseInt(el.group_id, 10)) ? el.group_id : -1;
       grouped[group] = grouped[group] || [];
       grouped[group].push(el);

@@ -270,7 +270,7 @@ class Saml implements AuthInterface
             return ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
             // try finding the user with the orgid because email didn't work
-            // but only if we explicitely want to
+            // but only if we explicitly want to
             if ($this->configArr['saml_fallback_orgid'] === '1' && isset($this->settings['idp']['orgidAttr'])) {
                 $orgid = $this->extractAttribute($this->settings['idp']['orgidAttr']);
                 try {

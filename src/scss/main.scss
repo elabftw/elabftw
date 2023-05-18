@@ -632,6 +632,12 @@ button:disabled {
     text-transform: uppercase;
 }
 
+/* for steps highlight, because .active only works on list-group-item */
+.highlighted {
+    background-color: $elabblue;
+    color: $white;
+}
+
 .item-next {
     .item-next-step {
         color: #000;

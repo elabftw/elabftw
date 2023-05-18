@@ -101,9 +101,9 @@
       {% plural 2 %}
       Linked experiments
       {% endtrans %}</h4>
-      <div id='linksExpDiv' class='mt-2' data-save-hidden='linksExpDiv'>
+      <div class='mt-2' data-save-hidden='linksExpDiv'>
         <!-- display experiments links -->
-        <div id='links_exp_div_{{ Entity.id }}'>
+        <div id='linksExpDiv'>
             {% if Entity.entityData.experiments_links %}
             <ul class='list-group'>
                 {% for link in Entity.entityData.experiments_links %}
@@ -164,9 +164,9 @@
   <!-- ITEMS LINKS -->
   <section class='col-md-12'>
     <h4 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Linked items'|trans }}</h4>
-    <div id='linksDiv' class='mt-2' data-save-hidden='linksDiv'>
+    <div class='mt-2' data-save-hidden='linksDiv'>
       <!-- DISPLAY ITEMS LINKS -->
-      <div id='links_div_{{ Entity.id }}'>
+      <div id='linksDiv'>
           {% if Entity.entityData.items_links %}
           <ul class='list-group'>
               {% for link in Entity.entityData.items_links %}

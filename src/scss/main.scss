@@ -360,6 +360,11 @@ button:disabled {
         font-size: 100%;
     }
 
+    .item-date,
+    .item-owner {
+        white-space: nowrap;
+    }
+
     .item-next {
         max-width: 14ch;
         overflow: hidden;

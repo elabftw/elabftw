@@ -32,11 +32,11 @@ It is accessed _via_ the browser. Several research teams can be hosted on the sa
 ## Features
 
 * Lab notebook for experiments
-* Database for lab reagents, equipments, storage, cell lines, etc...
+* Database for lab reagents, equipment, storage, cell lines, etc...
 * Trusted timestamping
 * Blockchain timestamping
 * Import and export in various formats
-* Calendar to manage booking of equipments
+* Calendar to manage booking of equipment
 * Support for various scientific file formats
 * Molecule/equation editor
 * LaTeX support

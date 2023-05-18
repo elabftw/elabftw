@@ -304,7 +304,7 @@ class MakePdf extends AbstractMakePdf
             $body = Filter::body(Tools::md2html($body));
         }
 
-        // now this part of the code will look for embeded images in the text and download them from storage and passes them to mpdf via variables.
+        // now this part of the code will look for embedded images in the text and download them from storage and passes them to mpdf via variables.
         // it would have been preferable to avoid such complexity and regexes, but this is the most robust way to get images in there.
         // it works for any storage source
         // mpdf supports jpg, gif, png (+/- transparency), svg, webp, wmf and bmp (not documented but in source).

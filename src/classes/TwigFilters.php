@@ -58,39 +58,48 @@ class TwigFilters
     public static function formatMetadata(string $json): string
     {
         $final = '';
-        $extraFields = (new Metadata($json))->getExtraFields();
-        if ($extraFields === null) {
-            return $final;
+        $Metadata = new Metadata($json);
+        $extraFields = $Metadata->getExtraFields();
+        if (empty($extraFields)) {
+            return $Metadata->getRaw();
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         uasort($extraFields, function (array $a, array $b): int {
             return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
         });
-        foreach ($extraFields as $key => $properties) {
-            $description = isset($properties[MetadataEnum::Description->value])
-                ? sprintf('<span class="smallgray">%s</span>', $properties[MetadataEnum::Description->value])
-                : '';
-            $value = $properties[MetadataEnum::Value->value];
-            // checkbox is a special case
-            if ($properties[MetadataEnum::Type->value] === 'checkbox') {
-                $checked = $properties[MetadataEnum::Value->value] === 'on' ? 'checked' : '';
-                $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
-            }
-            // url is another special case
-            if ($properties[MetadataEnum::Type->value] === 'url') {
-                $newTab = 'target="_blank" rel="noopener"';
-                if (($properties['open_in_current_tab'] ?? false) === true) {
-                    $newTab = '';
+
+        $grouped = $Metadata->getGroupedExtraFields();
+
+        foreach ($grouped as $group) {
+            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", $group['name']);
+            $final .= '<div>';
+            foreach ($group['extra_fields'] as $field) {
+                $description = isset($field[MetadataEnum::Description->value])
+                    ? sprintf('<span class="smallgray">%s</span>', $field[MetadataEnum::Description->value])
+                    : '';
+                $value = $field[MetadataEnum::Value->value];
+                // checkbox is a special case
+                if ($field[MetadataEnum::Type->value] === 'checkbox') {
+                    $checked = $field[MetadataEnum::Value->value] === 'on' ? 'checked' : '';
+                    $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
                 }
-                $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
-            }
+                // url is another special case
+                if ($field[MetadataEnum::Type->value] === 'url') {
+                    $newTab = 'target="_blank" rel="noopener"';
+                    if (($field['open_in_current_tab'] ?? false) === true) {
+                        $newTab = '';
+                    }
+                    $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+                }
 
-            // multi select will be an array
-            if (is_array($value)) {
-                $value = implode(', ', $value);
-            }
+                // multi select will be an array
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
 
-            $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $key, $description, $value);
+                $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $field['name'], $description, $value);
+            }
+            $final .= '</div>';
         }
         return $final;
     }

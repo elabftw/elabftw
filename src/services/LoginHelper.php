@@ -30,6 +30,8 @@ class LoginHelper
     public function __construct(private AuthResponse $AuthResponse, private SessionInterface $Session)
     {
         $this->Db = Db::getConnection();
+        // just before login, we regenerate a fresh session
+        $this->Session->invalidate();
     }
 
     /**

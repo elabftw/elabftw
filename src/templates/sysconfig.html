@@ -519,6 +519,7 @@
   {# KEEEX #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
   <div class='pl-3'>
+    <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-keeex'>", "</a>")|raw }}</p>
 
     {% include 'binary-setting.html' with {'label': 'Enable Keeex'|trans, 'slug': 'keeex_enabled'} %}
 
@@ -916,12 +917,13 @@
 <div data-tabcontent='12' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
   <div class='pl-3'>
-    <p class='smallgray'>{{ 'If the server manages authentication, then you can provide here the environment variables names for user information.'|trans }}</p>
+    <p class='smallgray'>{{ 'If authentication is handled by an upstream server, configure here the request headers mappings and behaviors.'|trans }}</p>
 
     <div class='d-flex justify-content-between'>
       <label for='extauth_remote_user' class='col-form-label'>{{ 'Remote user'|trans }}</label>
       <input class='form-control col-md-3' type='text' placeholder='REMOTE_USER' value='{{ App.Config.configArr.extauth_remote_user }}' data-trigger='blur' data-model='config' data-target='extauth_remote_user' id='extauth_remote_user' />
     </div>
+    <p class='smallgray'>{{ 'Use this to detect if the user is logged in from upstream server (value is not used, only presence).'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>

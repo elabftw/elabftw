@@ -745,7 +745,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apikey'
+                type: array
+                items:
+                  $ref: '#/components/schemas/apikey'
   /apikeys/{id}:
     summary: Actions on an api key
     delete:

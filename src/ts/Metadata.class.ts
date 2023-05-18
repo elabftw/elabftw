@@ -6,13 +6,10 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
+import { adjustHiddenState } from './misc';
 import { Api } from './Apiv2.class';
+import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup } from './metadataInterfaces';
 
-type ExtraFieldProperty =
-  | string
-  | boolean
-  | number
-  | Array<string>;
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -36,7 +33,7 @@ export class Metadata {
   /**
    * Get the json from the metadata column
    */
-  read(): Promise<Record<string, unknown>> {
+  read(): Promise<Record<string, unknown>|ValidMetadata> {
     return this.api.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
       // if there are no metadata.json file available, return an empty object
       if (typeof json.metadata === 'undefined' || !json.metadata) {
@@ -70,25 +67,29 @@ export class Metadata {
   /**
    * Save the whole json at once, coming from json editor save button
    */
-  update(metadata): Promise<void> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)}).then(() => this.display('edit'));
+  update(metadata: ValidMetadata): Promise<void> {
+    return this.save(metadata).then(() => this.display('edit'));
+  }
+
+  save(metadata: ValidMetadata): Promise<Response> {
+    return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
   }
 
   /**
    * For radio we need a special build workflow
    */
-  buildRadio(name: string, description: Record<string, ExtraFieldProperty>): Element { // eslint-disable-line
+  buildRadio(name: string, properties: ExtraFieldProperties): Element { // eslint-disable-line
     // a div to hold the different elements so we can return a single Element
     const element = document.createElement('div');
     element.dataset.purpose = 'radio-holder';
 
     const radioInputs = [];
     const radiosName = this.getRandomId();
-    for (const option of (description.options as Array<string>)) {
+    for (const option of (properties.options as Array<string>)) {
       const radioInput = document.createElement('input');
       radioInput.classList.add('form-check-input');
       radioInput.type = 'radio';
-      radioInput.checked = description.value === option ? true : false;
+      radioInput.checked = properties.value === option ? true : false;
       radioInput.value = option;
       // they all need to have the same name to work together
       radioInput.name = radiosName;
@@ -117,10 +118,17 @@ export class Metadata {
     return Math.random().toString(36).substring(2, 12);
   }
 
+  generateElement(mode: string, name: string, properties: ExtraFieldProperties): Element {
+    if (mode === 'view') {
+      return this.generateViewableElement(name, properties);
+    }
+    return this.generateInput(name, properties);
+  }
+
   /**
    * Generate a non editable view of the extra fields
    */
-  generateElement(name: string, properties: Record<string, ExtraFieldProperty>): Element {
+  generateViewableElement(name: string, properties: ExtraFieldProperties): Element {
     const wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('d-flex');
     // name + description
@@ -163,28 +171,28 @@ export class Metadata {
   /**
    * Take the json description of the field and build an input element to be injected
    */
-  generateInput(name: string, description: Record<string, ExtraFieldProperty>): Element {
+  generateInput(name: string, properties: ExtraFieldProperties): Element {
     // we don't know yet which kind of element it will be
     let element: HTMLInputElement|HTMLSelectElement;
     // generate a unique id for the element so we can associate the label properly
     const uniqid = this.getRandomId();
 
     // read the type of element
-    switch (description.type) {
+    switch (properties.type) {
     case 'number':
       element = document.createElement('input');
       element.type = 'number';
       break;
     case 'select':
       element = document.createElement('select');
-      if (description.allow_multi_values === true) {
+      if (properties.allow_multi_values === true) {
         element.toggleAttribute('multiple');
       }
       // add options to select element
-      for (const option of description.options as Array<string>) {
+      for (const option of properties.options as Array<string>) {
         const optionEl = document.createElement('option');
         optionEl.text = option;
-        if (description.allow_multi_values === true && (description.value as Array<string>).includes(option)) {
+        if (properties.allow_multi_values === true && (properties.value as Array<string>).includes(option)) {
           optionEl.setAttribute('selected', '');
         }
         element.add(optionEl);
@@ -199,7 +207,7 @@ export class Metadata {
       element.type = 'checkbox';
       break;
     case 'radio':
-      return this.buildRadio(name, description);
+      return this.buildRadio(name, properties);
     case 'url':
       element = document.createElement('input');
       element.type = 'url';
@@ -212,27 +220,26 @@ export class Metadata {
     // add the unique id to the element
     element.id = uniqid;
 
-    if (Object.prototype.hasOwnProperty.call(description, 'value')) {
+    if (Object.prototype.hasOwnProperty.call(properties, 'value')) {
       if (element.type === 'checkbox') {
-        (element as HTMLInputElement).checked = description.value === 'on' ? true : false;
+        (element as HTMLInputElement).checked = properties.value === 'on' ? true : false;
       }
-      if (description.allow_multi_values !== true) {
-        element.value = description.value as string;
+      if (properties.allow_multi_values !== true) {
+        element.value = properties.value as string;
       }
     }
 
-    if (Object.prototype.hasOwnProperty.call(description, 'required')) {
+    if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
 
     // by default all inputs get this bootstrap class
     let cssClass = 'form-control';
     // but checkboxes/radios need a different one
-    if (description.type === 'checkbox') {
+    if (properties.type === 'checkbox') {
       cssClass = 'form-check-input';
     }
     element.classList.add(cssClass);
-
 
     // add a data-field attribute so we know what to update on change
     element.dataset.field = name;
@@ -262,7 +269,7 @@ export class Metadata {
       }
       // if there was an issue fetching metadata, log the error
       console.error(e);
-    });
+    }).then(() => adjustHiddenState());
   }
 
   /**
@@ -274,26 +281,36 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
-      // the input elements that will be created from the extra fields
-      const elements = [];
-      for (const [name, properties] of Object.entries(json.extra_fields)) {
-        elements.push({
-          name: name,
-          description: properties.description,
-          element: this.generateElement(name, properties),
-          position: parseInt(properties.position, 10) || 99999,
-        });
-      }
-      // now display the names/values from extra_fields
-      for (const element of elements.sort((a, b) => a.position - b.position)) {
-        this.metadataDiv.append(element.element);
-        this.metadataDiv.append(document.createElement('hr'));
-      }
+      const [groups, groupedArr] = this.getGroups('view', json as ValidMetadata);
+      groups.forEach(group => {
+        const groupWrapperDiv =  document.createElement('div');
+        groupWrapperDiv.classList.add('mt-4');
+
+        let headerEl = 'h4';
+        // for the default group, don't show "default" but use hr instead
+        if (group.id === -1) {
+          headerEl = 'hr';
+        }
+        const groupHeader = document.createElement(headerEl);
+        groupHeader.classList.add('d-inline');
+        // only add content to the header if there are more than one group
+        if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
+          groupHeader.textContent = group.name;
+        }
+
+        groupWrapperDiv.append(groupHeader);
+        // now display the names/values from extra_fields
+        for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
+          groupWrapperDiv.append(element.element);
+        }
+        groupWrapperDiv.append(document.createElement('hr'));
+        this.metadataDiv.append(groupWrapperDiv);
+      });
     });
   }
 
   // build a description element
-  getDescription(properties: Record<string, ExtraFieldProperty>): HTMLSpanElement {
+  getDescription(properties: ExtraFieldProperties): HTMLSpanElement {
     const descriptionWrapper = document.createElement('div');
     if (properties.description) {
       const descriptionEl = document.createElement('p');
@@ -302,6 +319,45 @@ export class Metadata {
       descriptionWrapper.append(descriptionEl);
     }
     return descriptionWrapper;
+  }
+
+  getGroups(mode: string, json: ValidMetadata) {
+    // collect all extra fields, normalize position and group_id, add an element property
+    const elements = [];
+    for (const [name, properties] of Object.entries(json.extra_fields)) {
+      elements.push({
+        name: name,
+        description: properties.description,
+        element: this.generateElement(mode, name, properties),
+        position: parseInt(String(properties.position), 10) || 99999,
+        group_id: properties.group_id || -1,
+      });
+    }
+
+    // collect extra fields groups if they are defined
+    let groups: Array<ExtraFieldsGroup> = [];
+    if (Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
+      if (Object.prototype.hasOwnProperty.call(json.elabftw, 'extra_fields_groups')) {
+        groups = groups.concat((json.elabftw as MetadataElabftw).extra_fields_groups);
+      }
+    }
+
+    // group the elements based on the group property
+    const groupedArr = elements.reduce((grouped, el) => {
+      // make sure the group_id is part of the defined elabftw.groups, or assign it to group -1
+      const group = groups.some(grp => grp.id === parseInt(el.group_id, 10)) ? el.group_id : -1;
+      grouped[group] = grouped[group] || [];
+      grouped[group].push(el);
+      return grouped;
+    }, {});
+
+    if (Object.keys(groupedArr).length !== groups.length) {
+      // add the undefined group at the end, but only if there are fields without groups
+      // TODO i18n this
+      groups = groups.concat([{id: -1, name: 'Undefined group'}]);
+    }
+
+    return [groups, groupedArr];
   }
 
   /**
@@ -313,46 +369,59 @@ export class Metadata {
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;
       }
-      // the input elements that will be created from the extra fields
-      const elements = [];
-      for (const [name, properties] of Object.entries(json.extra_fields)) {
-        elements.push({
-          name: name,
-          description: properties.description,
-          element: this.generateInput(name, properties),
-          position: parseInt(properties.position, 10) || 99999,
-        });
-      }
-      const wrapperUl = document.createElement('ul');
-      wrapperUl.classList.add('list-group');
 
-      // now display the inputs from extra_fields
-      for (const element of elements.sort((a, b) => a.position - b.position)) {
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item');
-        const label = document.createElement('label');
-        label.htmlFor = element.element.id;
-        label.innerText = element.name as string;
+      const [groups, groupedArr] = this.getGroups('edit', json as ValidMetadata);
+      // the full content of extra fields
+      const wrapperDiv = document.createElement('div');
 
-        // for checkboxes the label comes second
-        if (element.element.type === 'checkbox') {
-          label.classList.add('form-check-label');
-          const wrapperDiv = document.createElement('div');
-          wrapperDiv.classList.add('form-check');
-          listItem.append(wrapperDiv);
-          wrapperDiv.append(element.element);
-          wrapperDiv.append(label);
-          wrapperDiv.append(this.getDescription(element));
-        } else {
-          listItem.append(label);
-          listItem.append(this.getDescription(element));
-          listItem.append(element.element);
+      groups.forEach(group => {
+        const groupWrapperDiv =  document.createElement('div');
+        groupWrapperDiv.classList.add('mt-4');
+        const groupHeader = document.createElement('h4');
+        groupHeader.dataset.action='toggle-next';
+        groupHeader.classList.add('d-inline', 'togglable-section-title');
+        const groupHeaderIcon = document.createElement('i');
+        groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');
+        // only add content to the header if there are more than one group
+        if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
+          groupHeader.textContent = group.name;
+          groupHeader.insertAdjacentElement('afterbegin', groupHeaderIcon);
         }
 
-        wrapperUl.append(listItem);
-      }
+        const wrapperUl = document.createElement('ul');
+        wrapperUl.classList.add('list-group', 'mt-2');
+        wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
 
-      this.metadataDiv.append(wrapperUl);
+        for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
+          const listItem = document.createElement('li');
+          listItem.classList.add('list-group-item');
+          const label = document.createElement('label');
+          label.htmlFor = element.element.id;
+          label.innerText = element.name as string;
+
+          // for checkboxes the label comes second
+          if (element.element.type === 'checkbox') {
+            label.classList.add('form-check-label');
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.classList.add('form-check');
+            listItem.append(wrapperDiv);
+            wrapperDiv.append(element.element);
+            wrapperDiv.append(label);
+            wrapperDiv.append(this.getDescription(element));
+          } else {
+            listItem.append(label);
+            listItem.append(this.getDescription(element));
+            listItem.append(element.element);
+          }
+
+          wrapperUl.append(listItem);
+        }
+        groupWrapperDiv.append(groupHeader);
+        groupWrapperDiv.append(wrapperUl);
+        wrapperDiv.append(groupWrapperDiv);
+      });
+
+      this.metadataDiv.append(wrapperDiv);
     });
   }
 }

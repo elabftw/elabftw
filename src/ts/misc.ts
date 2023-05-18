@@ -474,3 +474,14 @@ export function generateMetadataLink(): void {
     el.replaceWith(link);
   });
 }
+
+// transform the + icon in - and vice versa
+export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
+  if (plusMinusIcon.classList.contains('fa-square-plus')) {
+    plusMinusIcon.classList.remove('fa-square-plus');
+    plusMinusIcon.classList.add('fa-square-minus');
+  } else {
+    plusMinusIcon.classList.add('fa-square-plus');
+    plusMinusIcon.classList.remove('fa-square-minus');
+  }
+}

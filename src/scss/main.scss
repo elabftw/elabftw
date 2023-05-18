@@ -360,6 +360,11 @@ button:disabled {
         font-size: 100%;
     }
 
+    .item-date,
+    .item-owner {
+        white-space: nowrap;
+    }
+
     .item-next {
         max-width: 14ch;
         overflow: hidden;
@@ -625,6 +630,12 @@ button:disabled {
     color: $medium;
     font-size: 80%;
     text-transform: uppercase;
+}
+
+/* for steps highlight, because .active only works on list-group-item */
+.highlighted {
+    background-color: $elabblue;
+    color: $white;
 }
 
 .item-next {

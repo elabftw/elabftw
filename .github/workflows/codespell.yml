@@ -1,0 +1,27 @@
+---
+name: Codespell
+
+on:
+  push:
+    branches: [master,hypernext,next]
+  pull_request:
+    branches: [master,hypernext,next]
+
+jobs:
+  codespell:
+    name: Check for typos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      # codespell github action does not yet allow for --config option
+      # https://github.com/codespell-project/actions-codespell/issues/67
+      # so we need to install and invoke "manually"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Install codespell
+        run: |
+            python -m pip install codespell
+      - name: Run codespell
+        run: codespell --config src/tools/codespellrc

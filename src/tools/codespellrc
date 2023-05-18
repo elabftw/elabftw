@@ -1,2 +1,5 @@
 [codespell]
-skip = ./node_modules,./vendor,./uploads,./cache,*.map,*.bundle.js,*.min.js,./.git,./_srcdoc,./src/langs/*,./src/ts/langs/*,./src/js/tinymce-langs/*,./tests/_output/*,./tests/_support/*,*.min.css,./src/dfn-cert/*,./src/js/vendor/*,./yarn.lock,*.bundle.js.LICENSE.txt
+skip = ./node_modules,./vendor,./uploads,./cache,.*.map,*.bundle.js,*.min.js,.git,*.pdf,*.svg,langs,*-langs,*.lock,*.yml.dist,package.json,*.scss
+# ssee is due to %sSee
+ignore-words-list = wantto,searchin,optionel,crate,ssee
+ignore-regex = \bprojet financé\b

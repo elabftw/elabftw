@@ -87,7 +87,7 @@
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",
     "chemdoodle": "cp node_modules/@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js web/assets",
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js src/node/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css web/app/css/*.min.css.map web/assets/ove/*",
-    "codespell": "codespell --config src/tools/codespellrc -L want to,sSee",
+    "codespell": "codespell --config src/tools/codespellrc",
     "csslint": "./node_modules/.bin/stylelint src/scss/*.scss",
     "cy": "yarn run cypress run",
     "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",

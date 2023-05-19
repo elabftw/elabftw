@@ -142,6 +142,8 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('team_selection_required', true);
             $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            // carry over the cookie
+            $this->App->Session->set('rememberme', $icanhazcookies);
             return new RedirectResponse('../../login.php');
         }
 

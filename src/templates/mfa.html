@@ -7,6 +7,9 @@
   <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
   <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
     <input type='hidden' name='auth_type' value='mfa'>
+    {% if App.Session.get('rememberme') == '1' %}
+      <input type='hidden' name='rememberme' value='on'>
+    {% endif %}
     {{ App.Session.get('csrf')|csrf }}
     {% if App.Session.has('enable_mfa') %}
       <p>

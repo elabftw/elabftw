@@ -113,6 +113,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('mfa_auth_required', true);
             $this->App->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            $this->App->Session->set('rememberme', $icanhazcookies);
 
             return new RedirectResponse('../../login.php');
         }
@@ -126,6 +127,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('mfa_secret', $AuthResponse->mfaSecret);
             // remember which user is authenticated
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            $this->App->Session->set('rememberme', $icanhazcookies);
             return new RedirectResponse('../../login.php');
         }
         if ($AuthResponse->hasVerifiedMfa) {

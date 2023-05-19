@@ -75,6 +75,9 @@
   {% elseif App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <input type='hidden' name='auth_type' value='team'>
+      {% if App.Session.get('rememberme') == '1' %}
+        <input type='hidden' name='rememberme' value='on'>
+      {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>

@@ -38,7 +38,12 @@ class Metadata
         if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {
             return array();
         }
-        return $this->metadata[MetadataEnum::ExtraFields->value];
+        // sort the elements based on the position attribute. If not set, will be at the end.
+        $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+        uasort($extraFields, function (array $a, array $b): int {
+            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
+        });
+        return $extraFields;
     }
 
     public function getDisplayMainText(): bool

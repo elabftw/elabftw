@@ -63,10 +63,6 @@ class TwigFilters
         if (empty($extraFields)) {
             return $Metadata->getRaw();
         }
-        // sort the elements based on the position attribute. If not set, will be at the end.
-        uasort($extraFields, function (array $a, array $b): int {
-            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
-        });
 
         $grouped = $Metadata->getGroupedExtraFields();
 

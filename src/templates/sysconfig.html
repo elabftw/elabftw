@@ -230,6 +230,8 @@
               <span data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='p-1 rounded hover-danger'>
                 <i class='fas fa-trash-alt'></i>
               </span>
+              {% else %}
+                <em class='text-muted'>{{ 'None available'|trans }}</em>
               {% endif %}
             </td>
           </tr>

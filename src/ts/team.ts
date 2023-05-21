@@ -205,9 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
         if (entityid > 0) {
           ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(() => {
-            $('#bindinput').val('');
             $('#eventModal').modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+            window.location.replace(`team.php?tab=1&item=${selectedItem}&start=${encodeURIComponent(info.event.start.toString())}`);
           });
         }
       });
@@ -215,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
         ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': null}).then(() => {
           $('#eventModal').modal('toggle');
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+          window.location.replace(`team.php?tab=1&item=${selectedItem}&start=${encodeURIComponent(info.event.start.toString())}`);
         });
       });
       // BIND AUTOCOMPLETE

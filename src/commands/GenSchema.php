@@ -40,6 +40,12 @@ class GenSchema extends Command
         $content = sprintf("-- schema %1\$s\n\nUPDATE config SET conf_value = %1\$s WHERE conf_name = 'schema';\n", $schemaNumber);
         file_put_contents($filePath, $content);
         $output->writeln('Created file: ' . $filePath);
+        // now generate the down file
+        $filePath = sprintf('%s/sql/schema%d-down.sql', dirname(__DIR__), $schemaNumber);
+        $schemaNumberPrevious = $schemaNumber - 1;
+        $content = sprintf("-- revert schema %d\n\nUPDATE config SET conf_value = %d WHERE conf_name = 'schema';\n", $schemaNumber, $schemaNumberPrevious);
+        file_put_contents($filePath, $content);
+        $output->writeln('Created file: ' . $filePath);
         return 0;
     }
 }

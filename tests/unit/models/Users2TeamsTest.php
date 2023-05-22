@@ -37,7 +37,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'target' => 'group',
             'content' => 4,
         );
-        $this->assertEquals(4, $this->Users2Teams->PatchUser2Team(new Users(1, 1), $params));
+        $this->assertEquals(4, $this->Users2Teams->patchUser2Team(new Users(1, 1), $params));
     }
 
     public function testPatchIsOwner(): void
@@ -48,8 +48,8 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'target' => 'is_owner',
             'content' => 'on',
         );
-        $this->assertEquals(1, $this->Users2Teams->PatchUser2Team(new Users(1, 1), $params));
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team(new Users(1, 1), $params));
         $this->expectException(IllegalActionException::class);
-        $this->Users2Teams->PatchUser2Team(new Users(2, 1), $params);
+        $this->Users2Teams->patchUser2Team(new Users(2, 1), $params);
     }
 }

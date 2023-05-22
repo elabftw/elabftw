@@ -44,7 +44,7 @@ class Users2Teams
         return $this->Db->execute($req);
     }
 
-    public function PatchUser2Team(Users $requester, array $params): int
+    public function patchUser2Team(Users $requester, array $params): int
     {
         $userid = (int) $params['userid'];
         $teamid = (int) $params['team'];

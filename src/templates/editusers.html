@@ -64,7 +64,7 @@
                         <div class='d-flex justify-content-between'>
                           <span class='form-group form-inline mt-2'>
                             <select class='form-control brr-none' autocomplete='off'>
-                              <option value='1' {{ currentTeam.usergroup == 1 ? 'selected' }}>{{ 'Admin'|trans }}</option>
+                              <option value='2' {{ currentTeam.usergroup == 2 ? 'selected' }}>{{ 'Admin'|trans }}</option>
                               <option value='4' {{ currentTeam.usergroup == 4 ? 'selected' }}>{{ 'User'|trans }}</option>
                             </select>
                             <button data-action='patch-user2team-group' data-userid='{{ user.userid }}' data-team='{{ team.id }}' data-target='usergroup' class='btn btn-primary brl-none'>{{ 'Save'|trans }}</button>
@@ -126,7 +126,7 @@
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
-                      <div class='user-badge px-2 py-1 rounded mr-2 mt-2'>{{ team.name }}</div>
+                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge'}}'>{{ team.name }}</div>
                     {% endfor %}
                   </div>
                 </td>

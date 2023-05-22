@@ -14,7 +14,7 @@ import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, g
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
-import { Action, EntityType, Model } from './interfaces';
+import { Action, EntityType, Model, Target } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -243,6 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // TRANSFER OWNERSHIP
+    } else if (el.matches('[data-action="transfer-ownership"]')) {
+      const value = (document.getElementById('new_owner') as HTMLInputElement).value;
+      const entity = getEntity();
+      const params = {};
+      params[Target.UserId] = value;
+      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 
     // ADD USER TO PERMISSIONS
     // create a new li element in the list of existing users, so it is collected at Save action

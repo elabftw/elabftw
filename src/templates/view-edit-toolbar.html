@@ -53,7 +53,7 @@
     </a>
   {% else %}
     {# EDIT #}
-    {% if not Entity.entityData.locked %}
+    {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
       <a class='mr-2' title='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}'>
         <div class='hl-hover-gray p-2 rounded main-action-button'>
           <i class='fas fa-pencil fa-fw'></i>
@@ -94,7 +94,7 @@
 
 
   {# TIMESTAMP EXPERIMENT #}
-  {% if Entity.type == 'experiments' and not App.Session.has('is_anon') %}
+  {% if Entity.type == 'experiments' and not App.Session.has('is_anon') and not Entity.isReadOnly %}
     <div class='mr-2'>
       <div title='{{ 'Timestamp Experiment'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='hl-hover-gray p-2 rounded'>
         <i class='fas fa-calendar-check fa-fw'></i>

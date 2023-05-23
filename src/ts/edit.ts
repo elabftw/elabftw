@@ -280,12 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // TRANSFER OWNERSHIP
-  document.getElementById('new_owner').addEventListener('change', () => {
-    const value = (document.getElementById('new_owner') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.UserId, value).then(() => window.location.reload());
-  });
-
   // CATEGORY SELECT
   $(document).on('change', '#category_select', function() {
     updateCategory(entity, String($(this).val()));

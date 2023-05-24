@@ -137,7 +137,7 @@ class PopulateDatabase extends Command
                 $Experiments->setId($id);
                 $patch = array(
                     'title' => $experiment['title'],
-                    'body' => $experiment['body'],
+                    'body' => $experiment['body'] ?? '',
                     'date' => $experiment['date'],
                     'category' => $experiment['status'] ?? 2,
                     'metadata' => $experiment['metadata'] ?? '{}',

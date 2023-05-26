@@ -14,6 +14,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -218,11 +219,12 @@ class Teams implements RestInterface
     {
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users) AS totusers,
-        (SELECT COUNT(items.id) FROM items) AS totdb,
+        (SELECT COUNT(items.id) FROM items WHERE items.state = :state) AS totdb,
         (SELECT COUNT(teams.id) FROM teams) AS totteams,
-        (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts';
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch(PDO::FETCH_NAMED);
@@ -240,11 +242,12 @@ class Teams implements RestInterface
     {
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.timestamped = 1) AS totxpts';
+        (SELECT COUNT(items.id) FROM items WHERE items.team = :team AND items.state = :state) AS totdb,
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch(PDO::FETCH_NAMED);

@@ -839,7 +839,7 @@
     <div class='d-flex justify-content-between'>
       <label for='ldap_password' class='col-form-label'>LDAP {{ 'Password'|trans }}</label>
       {% if App.Config.configArr.ldap_password|length == 0 %}
-        <input class='form-control col-md-3' type='password' id='ldap_password' autocomplete='off' />
+        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
       {% else %}
         <p>
           {{ 'A password is already set.'|trans }}

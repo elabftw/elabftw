@@ -9,7 +9,7 @@
 
 namespace Elabftw\Auth;
 
-use LdapRecord\LdapRecordException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use LdapRecord\Models\Entry;
 use LdapRecord\Testing\ConnectionFake;
 use LdapRecord\Testing\LdapFake;
@@ -36,14 +36,19 @@ class LdapTest extends \PHPUnit\Framework\TestCase
             'password' => 'phpunitftw',
             'use_tls' => false,
         );
-        $connection = new ConnectionFake($ldapConfig, new LdapFake());
+        $fake = new LdapFake();
+        $fake->expect(array(
+            LdapFake::operation('bind')->once()->with($ldapConfig['username'], $ldapConfig['password'])->andReturnResponse(),
+            LdapFake::operation('search')->once()->andReturn(array()),
+        ));
+        $connection = new ConnectionFake($ldapConfig, $fake);
 
         $this->AuthService = new Ldap($connection, new Entry(), $configArr, 'phpunit@example.com', 'phpunitftw');
     }
 
     public function testTryAuth(): void
     {
-        $this->expectException(LdapRecordException::class);
+        $this->expectException(InvalidCredentialsException::class);
         $this->AuthService->tryAuth();
     }
 }

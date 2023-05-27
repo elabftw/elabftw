@@ -232,7 +232,7 @@ final class Config implements RestInterface
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
-            // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
+                // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
             }

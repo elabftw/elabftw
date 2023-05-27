@@ -67,7 +67,7 @@ try {
             $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
             $location = '../../login.php';
 
-        // if the user is in several teams, we need to redirect to the team selection
+            // if the user is in several teams, we need to redirect to the team selection
         } elseif ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);

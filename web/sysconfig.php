@@ -20,9 +20,12 @@ use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Teams;
+use Elabftw\Services\DummyRemoteDirectory;
+use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function file_get_contents;
+use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -65,6 +68,20 @@ try {
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
+        }
+    }
+
+    // Remote directory search
+    $remoteDirectoryUsersArr = array();
+    if ($App->Request->query->has('remote_dir_query')) {
+        if ($App->Config->configArr['remote_dir_service'] === 'eairef') {
+            $RemoteDirectory = new EairefRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        } else {
+            $RemoteDirectory = new DummyRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        }
+        $remoteDirectoryUsersArr = $RemoteDirectory->search((string) $App->Request->query->get('remote_dir_query'));
+        if (empty($remoteDirectoryUsersArr)) {
+            $App->warning[] = _('No users found. Try another search.');
         }
     }
 
@@ -111,6 +128,7 @@ try {
         'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
         'privacyPolicyTemplate' => $privacyPolicyTemplate,
+        'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,

@@ -53,7 +53,7 @@ class TimestampUtils
     }
 
     /**
-     * Delete all temporary files once the processus is completed
+     * Delete all temporary files once the process is completed
      */
     public function __destruct()
     {

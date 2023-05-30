@@ -62,6 +62,8 @@ final class Config implements RestInterface
             ('admin_validate', '1'),
             ('autologout_time', '0'),
             ('cookie_validity_time', '43200'),
+            ('remember_me_checked', '1'),
+            ('remember_me_allowed', '1'),
             ('debug', '0'),
             ('lang', 'en_GB'),
             ('login_tries', '3'),

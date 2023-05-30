@@ -74,7 +74,7 @@ class LoginController implements ControllerInterface
 
         // store the rememberme choice in a cookie, not the session as it won't follow up for saml
         $icanhazcookies = '0';
-        if ($this->App->Request->request->has('rememberme')) {
+        if ($this->App->Request->request->has('rememberme') && $this->App->Config->configArr['remember_me_allowed'] === '1') {
             $icanhazcookies = '1';
         }
         $cookieOptions = array(

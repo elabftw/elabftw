@@ -393,6 +393,10 @@
     <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
     <hr>
 
+    {% include 'binary-setting.html' with {'label': 'Allow setting an authentication cookie'|trans, 'slug': 'remember_me_allowed', 'help': 'Disabling this setting will hide the "remember me" checkbox on login page.'|trans } %}
+
+    {% include 'binary-setting.html' with {'label': 'Check the "remember me" box on login page by default'|trans, 'slug': 'remember_me_checked' } %}
+
     <div class='d-flex justify-content-between'>
       <label for='cookie_validity_time' class='col-form-label'>{{ 'Validity period of an authentication cookie (in minutes)'|trans }}</label>
       <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.cookie_validity_time }}' data-trigger='blur' data-model='config' data-target='cookie_validity_time' id='cookie_validity_time' />

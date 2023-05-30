@@ -116,7 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
-      ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
+      }
     // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);

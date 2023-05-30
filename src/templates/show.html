@@ -256,25 +256,40 @@
           <thead>
             <tr>
               <th>
-                {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Date'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
+                </div>
               </th>
               <th class='title-item-table col-8'>
-                {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
+                <div class='d-flex justify-content-between'>
+                  {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
+                </div>
               </th>
               <th class='step-item-table col-2'>
                 {{ 'Next step'|trans }}
               </th>
               <th class='category-item-table w-20'>
-                {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Category'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
+                </div>
               </th>
               <th class='tags-item-table w-20'>
                 {{ 'Tags'|trans }}
               </th>
               <th class='actions-item-rating w-10'>
-                {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
+                <div class='d-flex justify-content-between'>
+                  {# add mr-1 here because column is small #}
+                  <span class='mr-1'>{{ 'Rating'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
+                </div>
               </th>
               <th class='actions-item-owner col-2'>
-                {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Owner'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
+                </div>
               </th>
             </tr>
           </thead>

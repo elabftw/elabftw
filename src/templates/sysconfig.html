@@ -392,6 +392,12 @@
     </div>
     <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
     <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='cookie_validity_time' class='col-form-label'>{{ 'Validity period of an authentication cookie (in minutes)'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.cookie_validity_time }}' data-trigger='blur' data-model='config' data-target='cookie_validity_time' id='cookie_validity_time' />
+    </div>
+    <hr>
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h3>

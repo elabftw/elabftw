@@ -71,6 +71,8 @@ components:
           type: string
         blox_enabled:
           type: string
+        cookie_validity_time:
+          type: integer
         debug:
           type: string
         deletable_xp:

@@ -12,56 +12,61 @@ namespace Elabftw\Auth;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\EnforceMfa;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\Config;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
 {
-    private Config $Config;
-
     private Db $Db;
 
-    private string $token;
+    private CookieToken $CookieToken;
 
-    public static function tearDownAfterClass(): void
-    {
-        $req = (Db::getConnection())->prepare("UPDATE config SET conf_value = '0' WHERE conf_name = 'enforce_mfa'");
-        $req->execute();
-    }
+    private int $userid = 1;
 
     protected function setUp(): void
     {
-        $this->Config = Config::getConfig();
         $this->Db = Db::getConnection();
-        $this->token = '8669b095961a14edc0dd37fefa76e932938b830f2d02377a8f2154cc3f12719d';
+        $this->CookieToken = new CookieToken();
+        $this->CookieToken->saveToken($this->userid);
+    }
+
+    public function testTryAuthExpired(): void
+    {
+        // cookie is valid only one minute
+        $CookieAuth = new Cookie(1, 0, $this->CookieToken, 1);
+        // create a token but 4 minutes in the past
+        $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
+        $req->bindParam(':token', $this->CookieToken->token);
+        $req->bindParam(':userid', $this->userid);
+        $req->execute();
+        // now try login but our cookie isn't valid anymore
+        $this->expectException(UnauthorizedException::class);
+        $CookieAuth->tryAuth();
     }
 
     public function testTryAuthSuccess(): void
     {
-        $CookieAuth = new Cookie($this->token, '1', $this->Config->configArr);
-        $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
-        $req->bindParam(':token', $this->token);
-        $req->execute();
+        $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 1);
         $res = $CookieAuth->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $res);
-        $this->assertEquals('1', $res->userid);
-        $this->assertEquals('1', $res->selectedTeam);
+        $this->assertEquals(1, $res->userid);
+        $this->assertEquals(1, $res->selectedTeam);
     }
 
     public function testTryAuthFail(): void
     {
         $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-        $CookieAuth = new Cookie($token, '1', $this->Config->configArr);
+        $CookieAuth = new Cookie(220330, 0, new CookieToken($token), 1);
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
     }
 
     public function testTryAuthBadTeam(): void
     {
-        $CookieAuth = new Cookie($this->token, '2', $this->Config->configArr);
-        $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = 1');
-        $req->bindParam(':token', $this->token);
+        $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 2);
+        $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
+        $req->bindParam(':token', $this->CookieToken->token);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
@@ -69,15 +74,19 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthEnforceMFA(): void
     {
-        $req = $this->Db->prepare('UPDATE users SET token = :token, auth_service = :auth_service WHERE userid = 1');
-        $req->bindParam(':token', $this->token);
+        $CookieAuth = new Cookie(220330, 1, $this->CookieToken, 1);
+        $req = $this->Db->prepare('UPDATE users SET token = :token, auth_service = :auth_service WHERE userid = :userid');
+        $req->bindParam(':token', $this->CookieToken->token);
         $req->bindValue(':auth_service', LoginController::AUTH_LOCAL);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
-        $req = $this->Db->prepare("UPDATE config SET conf_value = :value WHERE conf_name = 'enforce_mfa'");
-        $req->bindValue(':value', EnforceMfa::Everyone->value);
-        $req->execute();
-        $CookieAuth = new Cookie($this->token, '1', $this->Config->readAll());
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
+    }
+
+    public function testInvalidToken(): void
+    {
+        $this->expectException(IllegalActionException::class);
+        new CookieToken('invalid length');
     }
 }

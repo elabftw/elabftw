@@ -61,6 +61,7 @@ final class Config implements RestInterface
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('autologout_time', '0'),
+            ('cookie_validity_time', '43200'),
             ('debug', '0'),
             ('lang', 'en_GB'),
             ('login_tries', '3'),

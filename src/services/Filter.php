@@ -137,6 +137,18 @@ class Filter
     }
 
     /**
+     * An hexit is an hexadecimal digit: 0 to 9 and a to f
+     */
+    public static function hexits(string $input): string
+    {
+        $res = preg_replace('/[^[:xdigit:]]/', '', $input);
+        if ($res === null) {
+            return '';
+        }
+        return $res;
+    }
+
+    /**
      * Sanitize body with a list of allowed html tags.
      *
      * @param string $input Body to sanitize

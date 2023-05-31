@@ -87,7 +87,7 @@ try {
         } else {
             $RemoteDirectory = new DummyRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
         }
-        $remoteDirectoryUsersArr = $RemoteDirectory->search((string) $App->Request->query->get('remote_dir_query'));
+        $remoteDirectoryUsersArr = $RemoteDirectory->search($App->Request->query->getString('remote_dir_query'));
         if (empty($remoteDirectoryUsersArr)) {
             $App->warning[] = _('No users found. Try another search.');
         }

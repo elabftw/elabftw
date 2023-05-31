@@ -74,8 +74,7 @@ class Auth implements AuthInterface
                 return new Cookie(
                     (int) $this->Config->configArr['cookie_validity_time'],
                     (int) $this->Config->configArr['enforce_mfa'],
-                    // TODO in symfony 6.3, use getString()
-                    new CookieToken((string) $this->Request->cookies->get('token')),
+                    new CookieToken($this->Request->cookies->getString('token')),
                     $this->Request->cookies->getInt('token_team'),
                 );
             case 'access_key':

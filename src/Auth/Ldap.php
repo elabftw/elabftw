@@ -120,11 +120,7 @@ class Ldap implements AuthInterface
         $this->entries->setDn($this->configArr['ldap_base_dn']);
         foreach ($attributes as $attribute) {
             try {
-                $res = $this->entries::findbyOrFail(trim($attribute), $this->login);
-                // add this check so we're sure to return a Model and not an array
-                if ($res instanceof Model) {
-                    return $res;
-                }
+                return $this->entries::findbyOrFail(trim($attribute), $this->login);
             } catch (ObjectNotFoundException) {
                 continue;
             }

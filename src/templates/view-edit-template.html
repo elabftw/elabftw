@@ -1,4 +1,4 @@
-{% set mode = App.Request.query.get('mode') %}
+{% set mode = App.Request.query.get('mode') | default('view') %}
 
 {# TOP TOOLBAR #}
 <hr>

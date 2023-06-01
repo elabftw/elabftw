@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb3b6a2d92eb5e8dee33315454a640fa",
+    "content-hash": "68e35e1a78ca9a8137c361836d39a881",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7499,16 +7499,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.15.25",
+            "version": "0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "015935c7ed9e48a4f5895ba974f337e20a263841"
+                "reference": "2125ff71ea05b079562a8f59ca48a97eb78dc07f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/015935c7ed9e48a4f5895ba974f337e20a263841",
-                "reference": "015935c7ed9e48a4f5895ba974f337e20a263841",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2125ff71ea05b079562a8f59ca48a97eb78dc07f",
+                "reference": "2125ff71ea05b079562a8f59ca48a97eb78dc07f",
                 "shasum": ""
             },
             "require": {
@@ -7548,7 +7548,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.15.25"
+                "source": "https://github.com/rectorphp/rector/tree/0.16.0"
             },
             "funding": [
                 {
@@ -7556,7 +7556,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-04-20T16:07:39+00:00"
+            "time": "2023-05-05T12:12:17+00:00"
         },
         {
             "name": "roave/security-advisories",

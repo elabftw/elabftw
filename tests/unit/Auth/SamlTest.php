@@ -75,7 +75,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
 
         $Saml = new Saml(Config::getConfig(), new Idps());
-        $idpId = 1;
+        $idpId = $Idps->readAll()[0]['id'];
         $this->settings = $Saml->getSettings($idpId);
     }
 

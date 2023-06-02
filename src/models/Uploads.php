@@ -218,6 +218,7 @@ class Uploads implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+        unset($params['action']);
         foreach ($params as $key => $value) {
             $this->update(new UploadParams($key, $value));
         }

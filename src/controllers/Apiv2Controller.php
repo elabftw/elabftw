@@ -152,8 +152,8 @@ class Apiv2Controller extends AbstractApiController
                 $this->reqBody = json_decode($this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
                 // SET ACTION
                 $this->action = Action::tryFrom((string) ($this->reqBody['action'] ?? '')) ?? $this->action;
-            } catch (JsonException) {
-                throw new ImproperActionException('Error decoding json payload.');
+            } catch (JsonException $e) {
+                throw new ImproperActionException(sprintf('Error decoding json payload: %s', $e->getMessage()));
             } catch (ValueError) {
                 throw new ImproperActionException('Incorrect action value.');
             }

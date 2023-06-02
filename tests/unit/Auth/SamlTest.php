@@ -29,6 +29,10 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
     private array $settings;
 
+    private int $idpId;
+
+    private Saml $Saml;
+
     protected function setUp(): void
     {
         // Insert an IDP
@@ -74,9 +78,9 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->samlUserdata['User.team'] = 'Alpha';
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
 
-        $Saml = new Saml(Config::getConfig(), new Idps());
-        $idpId = $Idps->readAll()[0]['id'];
-        $this->settings = $Saml->getSettings($idpId);
+        $this->Saml = new Saml(Config::getConfig(), $Idps);
+        $this->idpId = $Idps->readAll()[0]['id'];
+        $this->settings = $this->Saml->getSettings($this->idpId);
     }
 
     public function testTryAuth(): void
@@ -95,6 +99,11 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);
+    }
+
+    public function testgetSettings(): void
+    {
+        $this->assertIsArray($this->Saml->getSettings($this->idpId));
     }
 
     public function testAssertIdpResponseSyncTeams(): void

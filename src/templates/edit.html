@@ -130,7 +130,8 @@
 <hr>
 
 {# DOODLE #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
+{# id for the i is needed by the annotate-image action #}
+<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='d-flex'>
     {# do not use w-100 here as it will break the canvas #}

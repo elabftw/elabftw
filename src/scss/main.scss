@@ -350,8 +350,11 @@ button:disabled {
 
     th {
         white-space: nowrap;
-    }
 
+        &:not(:last-child) {
+            border-right: $firstlevel 1px solid;
+        }
+    }
 }
 
 /* TABLE SHOW MODE */

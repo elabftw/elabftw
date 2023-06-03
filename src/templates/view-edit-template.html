@@ -1,4 +1,4 @@
-{% set mode = App.Request.query.get('mode') %}
+{% set mode = App.Request.query.get('mode') | default('view') %}
 
 {# TOP TOOLBAR #}
 <hr>
@@ -33,6 +33,13 @@
   <div class='mr-2'>
     <div title='{{ 'Create experiment from template'|trans }}' data-action='create-entity' data-tplid='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
       <i class='fas fa-circle-plus fa-fw'></i>
+    </div>
+  </div>
+
+  {# DUPLICATE TEMPLATE #}
+  <div class='mr-2'>
+    <div title='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-copy fa-fw'></i>
     </div>
   </div>
 

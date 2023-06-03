@@ -122,11 +122,13 @@
             </div>
           </div>
 
-          <!-- Remember me checkbox -->
-          <div class='form-check mt-2'>
-            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme-1' />
-            <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-          </div>
+          {# Remember me checkbox #}
+          {% if App.Config.configArr.remember_me_allowed %}
+            <div class='form-check mt-2'>
+              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
+              <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+            </div>
+          {% endif %}
         </div>
 
         {% if App.Config.configArr.ldap_toggle %}
@@ -173,10 +175,12 @@
             {% endfor %}
           </select>
           <!-- Remember me checkbox -->
-          <div class='form-check mt-2'>
-            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme-2' />
-            <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-          </div>
+          {% if App.Config.configArr.remember_me_allowed %}
+            <div class='form-check mt-2'>
+              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-2' />
+              <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+            </div>
+          {% endif %}
           <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>

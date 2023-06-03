@@ -98,7 +98,7 @@ class DownloadController implements ControllerInterface
         }
 
         $disposition = HeaderUtils::DISPOSITION_INLINE;
-        // change the diposition to attachment
+        // change the disposition to attachment
         if ($this->forceDownload) {
             $disposition = HeaderUtils::DISPOSITION_ATTACHMENT;
         }

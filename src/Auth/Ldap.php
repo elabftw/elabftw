@@ -35,12 +35,11 @@ class Ldap implements AuthInterface
 
     private AuthResponse $AuthResponse;
 
-    private Container $Container;
-
     public function __construct(Connection $connection, private Entry $entries, private array $configArr, string $login, private string $password)
     {
-        // add connection to the Container https://ldaprecord.com/docs/core/v2/connections/#container
-        $this->Container = Container::addConnection($connection);
+        // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
+        $connection->connect();
+        Container::addConnection($connection);
         $this->login = Filter::sanitize($login);
         $this->AuthResponse = new AuthResponse();
     }
@@ -52,7 +51,7 @@ class Ldap implements AuthInterface
         if ($dn === null) {
             throw new ImproperActionException('Error finding the dn!');
         }
-        if (!$this->Container::getConnection()->auth()->attempt($dn, $this->password)) {
+        if (!Container::getConnection()->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException(0);
         }
 
@@ -91,10 +90,10 @@ class Ldap implements AuthInterface
                     return $this->AuthResponse;
                 }
                 $teamFromLdap = array($teamId);
-            // it is found and it is a string
+                // it is found and it is a string
             } elseif (is_string($teamFromLdap)) {
                 $teamFromLdap = array($teamFromLdap);
-            // it is found and it is an array
+                // it is found and it is an array
             } elseif (is_array($teamFromLdap)) {
                 if (is_array($teamFromLdap[0])) {
                     // go one level deeper

@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // the users are in a table row, we need to collect all the rows that are selected
       const selected = document.getElementById('remoteDirectoryUsersTable').querySelectorAll('input[type="checkbox"]:checked');
       const users = [];
+      const team = (document.getElementById('remoteUserTeam') as HTMLSelectElement).value;
+      const usergroup = (document.getElementById('remoteUserIsAdmin') as HTMLInputElement).checked ? 2 : 4;
       selected.forEach(box => {
         const row = box.parentNode.parentNode as HTMLTableRowElement;
         users.push({
@@ -35,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
           'lastname': row.cells[2].innerText,
           'email': row.cells[3].innerText,
           'orgid': row.cells[4].innerText,
+          'team': team,
+          'usergroup': usergroup,
         });
       });
       users.forEach(user => {

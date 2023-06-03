@@ -9,16 +9,10 @@
 
 namespace Elabftw\Services;
 
-use function bin2hex;
-
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
-
-use function hash;
-use function random_bytes;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -61,14 +55,6 @@ class CheckTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         Check::visibility('{"base": 10, "teams": "yep"}');
-    }
-
-    public function testToken(): void
-    {
-        $token = hash('sha256', bin2hex(random_bytes(16)));
-        $this->assertEquals($token, Check::token($token));
-        $this->expectException(IllegalActionException::class);
-        Check::token('blah');
     }
 
     public function testAk(): void

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const about = document.getElementById('info').dataset;
 
   // only run in view/edit mode
-  const allowedPages = ['view', 'edit'];
+  const allowedPages = ['view', 'edit', 'template-view', 'template-edit'];
   if (!allowedPages.includes(about.page)) {
     return;
   }
@@ -36,7 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
-      EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&id=${resp.headers.get('location').split('/').pop()}`);
+      let queryString = '';
+      if (about.page.startsWith('template-')) {
+        queryString = 'tab=3&template';
+      }
+      EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
 
     // TOGGLE LOCK
     } else if (el.matches('[data-action="lock-entity"]')) {

@@ -30,7 +30,7 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $Response = new RedirectResponse('../../experiments.php');
 
 try {
-    $Entity = EntityType::from((string) $Request->query->get('type'))->toInstance($App->Users);
+    $Entity = EntityType::from($Request->query->getString('type'))->toInstance($App->Users);
     $entityId = $Request->query->getInt('item_id');
     $Entity->setId($entityId);
     $Entity->canOrExplode('write');

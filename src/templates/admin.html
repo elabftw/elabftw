@@ -293,6 +293,9 @@
 
     <!-- templateData will be loaded with content from an item type if templateid is present is url -->
     {% if Entity.entityData %}
+      <div class='float-right'>
+        <button class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
+      </div>
       <ul class='list-inline'>
         <li class='list-inline-item'>
           <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
@@ -314,6 +317,9 @@
 
       <div>
         <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
+        <div class='text-center mt-3'>
+          <button class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
+        </div>
       </div>
 
       <div id='metadataDiv' class='col-md-6'></div>
@@ -324,11 +330,6 @@
       {% include 'steps-links-edit.html' %}
       <!-- METADATA editor for items types -->
       {% include 'json-editor.html' %}
-
-      <div class='text-center mt-3'>
-        <button class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
-        <button class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
-      </div>
     {% endif %}
 
   </div>

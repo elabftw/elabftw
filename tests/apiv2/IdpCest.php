@@ -25,14 +25,6 @@ class IdpCest
         $I->seeResponseIsJson();
     }
 
-    public function getIdp(ApiTester $I)
-    {
-        $I->wantTo('Get an idp');
-        $I->sendGET('/idps/1');
-        $I->seeResponseCodeIs(HttpCode::OK); // 200
-        $I->seeResponseIsJson();
-    }
-
     public function createIdp(ApiTester $I)
     {
         $I->wantTo('Create an idp');
@@ -53,10 +45,18 @@ class IdpCest
         $I->seeResponseCodeIs(HttpCode::CREATED);
     }
 
+    public function getIdp(ApiTester $I)
+    {
+        $I->wantTo('Get an idp');
+        $I->sendGET('/idps/1');
+        $I->seeResponseCodeIs(HttpCode::OK); // 200
+        $I->seeResponseIsJson();
+    }
+
     public function updateIdp(ApiTester $I)
     {
         $I->wantTo('Update an idp');
-        $I->sendPATCH('/idps/2', array(
+        $I->sendPATCH('/idps/1', array(
             'name' => 'apitest updated',
         ));
         $I->seeResponseCodeIs(HttpCode::OK);
@@ -66,7 +66,7 @@ class IdpCest
     public function deletedIdp(ApiTester $I)
     {
         $I->wantTo('Delete an idp');
-        $I->sendDELETE('/idps/2');
+        $I->sendDELETE('/idps/1');
         $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 }

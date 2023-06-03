@@ -71,6 +71,8 @@ components:
           type: string
         blox_enabled:
           type: string
+        cookie_validity_time:
+          type: integer
         debug:
           type: string
         deletable_xp:
@@ -2920,6 +2922,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required: ['file']
               properties:
                 file:
                   type: string
@@ -2993,10 +2996,18 @@ paths:
       requestBody:
         description: Parameters for replacing an upload.
         content:
-          application/octet-stream:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              type: object
+              required: ['file']
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+                comment:
+                  type: string
+                  description: Optional file comment.
       responses:
         '201':
           description: The file has been uploaded.
@@ -3008,19 +3019,32 @@ paths:
     patch:
       tags: ['Uploads']
       summary: |
-        Actions on an upload.
+        Modify attributes such as "real_name", "comment" or "state" of an upload.
       operationId: patch-upload
       requestBody:
-        description: Parameters for modifying an upload.
+        description: Parameters for modifying an upload attributes.
         content:
           application/json:
             schema:
               type: object
-              required: ['action']
               properties:
                 action:
                   type: string
                   enum: ['update']
+                real_name:
+                  type: string
+                comment:
+                  type: string
+                state:
+                  type: integer
+                  enum: [1, 2, 3]
+            anyOf:
+              - required:
+                  - real_name
+              - required:
+                  - comment
+              - required:
+                  - state
       responses:
         '200':
           description: The updated upload.

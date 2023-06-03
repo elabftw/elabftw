@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use function basename;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieToken;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
@@ -71,9 +72,10 @@ class Auth implements AuthInterface
             // AUTH WITH COOKIE
             case 'cookie':
                 return new Cookie(
-                    (string) $this->Request->cookies->get('token'),
-                    $this->Request->cookies->getDigits('token_team'),
-                    $this->Config->configArr,
+                    (int) $this->Config->configArr['cookie_validity_time'],
+                    (int) $this->Config->configArr['enforce_mfa'],
+                    new CookieToken($this->Request->cookies->getString('token')),
+                    $this->Request->cookies->getInt('token_team'),
                 );
             case 'access_key':
                 // now we need to know in which team we autologin the user

@@ -105,6 +105,11 @@ class Templates extends AbstractTemplateEntity
         $Steps = new Steps($this);
         $Steps->duplicate((int) $template['id'], $newId, true);
 
+        // now pin the newly created template so it directly appears in Create menu
+        $this->setId($newId);
+        $Pins = new Pins($this);
+        $Pins->togglePin();
+
         return $newId;
     }
 

@@ -83,9 +83,9 @@
     lodash.once "^4.1.1"
 
 "@deltablot/chemdoodle-web-mini@^9.2.1":
-  version "9.2.6"
-  resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.6.tgz#8987050d8d1ceb6ba424d6556b92c2fe65646176"
-  integrity sha512-Wk7AyGgI5pq1gHv9ipql+SB2ywahvEfBroAHfOSNXmBOlwuQp+pYlFxHzb+NX+Cn3Z6gNcPAZw8eaZziDXFqBA==
+  version "9.2.7"
+  resolved "https://registry.yarnpkg.com/@deltablot/chemdoodle-web-mini/-/chemdoodle-web-mini-9.2.7.tgz#94cce6197419492857ecfd9d7297b04b3ed007ec"
+  integrity sha512-2IEeRpyd93rfoh7y+CtzNY7Zvtm52obx59S8qEEZjlkw4PjZkwIkEtoJLH61GJzKD2qeKf4NYHFS8G1wXpJf7w==
 
 "@deltablot/malle@^2.3.0":
   version "2.3.0"

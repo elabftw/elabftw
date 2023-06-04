@@ -14,7 +14,8 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag')
     cy.contains('some tag').click()
     cy.get('div.tags').contains('some tag').should('not.exist')
-    cy.get('.stepinput').type('some step').blur()
+    cy.get('.stepinput').type('some step')
+    cy.get('[data-action="create-step"').click()
     cy.get('.step-static').contains('some step')
     cy.get('.stepbox').click()
     cy.get('.text-muted').contains('completed')
@@ -24,14 +25,14 @@ describe('Experiments', () => {
 
   const entityComment = () => {
     // go in view mode
-    cy.contains('View mode').click()
+    cy.get('[title="View mode"]').click()
     cy.get('#commentsCreateArea').type('This is a very nice experiment')
     cy.get('[data-action="create-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('be.visible')
     cy.get('[data-action="destroy-comment"]').click()
     cy.contains('Toto Le sysadmin commented').should('not.exist')
     // go back in edit mode for destroy action
-    cy.get('[data-action="edit"]').first().click()
+    cy.get('[title="Edit"]').click()
   }
 
   const entityDuplicate = () => {
@@ -39,18 +40,18 @@ describe('Experiments', () => {
     cy.url().then(url => {
       cy.log(url)
       // go in view mode
-      cy.contains('View mode').click()
+      cy.get('[title="View mode"]').click()
       cy.get('[data-action="duplicate-entity"]').click()
       cy.contains('Title').should('be.visible')
       // destroy the duplicated entity now
-      cy.get('a[title="More options"]').click().get('a[data-action="destroy"]').click()
+      cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click()
       // go back to the original entity
       cy.visit(url)
     })
   }
 
   const entityDestroy = () => {
-    cy.get('a[title="More options"]').click().get('a[data-action="destroy"]').click()
+    cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click()
   }
 
   it('Create and edit an experiment', () => {
@@ -62,12 +63,13 @@ describe('Experiments', () => {
     entityComment()
     entityDuplicate()
     entityDestroy()
+    cy.wait(100)
   });
 
   it('Create and edit an item', () => {
     cy.visit('/database.php')
     cy.contains('Create').click()
-    cy.contains('Edit me').click()
+    cy.get('#createModal').within(() => { cy.contains('Generated').click() })
     entityEdit()
     cy.get('#category_select').select('Microscope').blur()
     cy.contains('Saved').should('be.visible')

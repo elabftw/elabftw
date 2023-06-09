@@ -35,9 +35,9 @@
           <td>{{ template.fullname|raw }}</td>
           <td>{{ template.modified_at }}</td>
           <td>
-            <span class='p-2 rounded hl-hover-gray'><a href='?tab=3&mode=view&templateid={{ template.id }}'><i class='fas fa-eye clickable link-like'></i></a></span>
+            <a href='?tab=3&mode=view&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-eye clickable link-like'></i></span></a>
             {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-              <span class='p-2 rounded hl-hover-gray'><a href='?tab=3&mode=edit&templateid={{ template.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a></span>
+              <a href='?tab=3&mode=edit&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt clickable link-like'></i></span></a>
             {% endif %}
             {% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
         </tr>

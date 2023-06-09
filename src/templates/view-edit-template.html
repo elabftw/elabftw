@@ -89,8 +89,10 @@
           </div>
 
           <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-            <!-- SWITCH EDITOR the data-editor is here to indicate which is the current editor -->
-            <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+            {% if mode == 'edit' %}
+              {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
+              <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+            {% endif %}
             <!-- REVISIONS -->
             {% if revNum > 0 %}
               <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ revNum }} {% trans %}revision available{% plural revNum %}revisions available{% endtrans %}</a>

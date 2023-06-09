@@ -70,33 +70,6 @@ class UsersHelper
         return (int) $req->fetchColumn();
     }
 
-    private function countComments(): int
-    {
-        $sql = 'SELECT SUM(comment_count) AS total_comment_count
-            FROM (
-                SELECT COUNT(*) AS comment_count
-                FROM experiments_comments
-                WHERE userid = :userid
-                UNION ALL
-                SELECT COUNT(*) AS comment_count
-                FROM items_comments
-                WHERE userid = :userid
-            ) AS subquery;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    private function countTable(string $table): int
-    {
-        $sql = sprintf('SELECT COUNT(id) FROM %s WHERE userid = :userid', $table);
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
     /**
      * Get the team id where the user belong
      */
@@ -125,6 +98,33 @@ class UsersHelper
     public function getTeamsNameFromUserid(): array
     {
         return array_column($this->getTeamsFromUserid(), 'name');
+    }
+
+    private function countComments(): int
+    {
+        $sql = 'SELECT SUM(comment_count) AS total_comment_count
+            FROM (
+                SELECT COUNT(*) AS comment_count
+                FROM experiments_comments
+                WHERE userid = :userid
+                UNION ALL
+                SELECT COUNT(*) AS comment_count
+                FROM items_comments
+                WHERE userid = :userid
+            ) AS subquery;';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    private function countTable(string $table): int
+    {
+        $sql = sprintf('SELECT COUNT(id) FROM %s WHERE userid = :userid', $table);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     private function hasExperiments(): bool

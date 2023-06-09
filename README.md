@@ -122,7 +122,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 * [The ELN Consortium](https://github.com/TheELNConsortium/): a consortium of ELN vendors interested in improving interoperability between ELNs
 
-## Third party libraries
+## Third party libraries or scripts
 
 These projects were created by users of eLabFTW, check them out if interested!
 
@@ -132,6 +132,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [Elab::Client](https://metacpan.org/pod/ELab::Client): perl module for eLab API by Andreas K. Hüttel
 * [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper
 * [Matlab client](https://github.com/baillon/eLabAPI): Matlab package to facilitate working with eLabFTW API
+* [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
 
 
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

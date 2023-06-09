@@ -151,7 +151,10 @@
     <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
       {# this div is filled in JS by Metadata.class.ts edit() #}
       <div id='metadataDiv'></div>
-      <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary mt-3 row'>{{ 'Add field'|trans }}</button>
+      <div class='mt-3'>
+        <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+        <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+      </div>
     </div>
     <hr>
     {% set mode = 'edit-template' %}

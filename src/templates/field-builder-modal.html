@@ -126,17 +126,19 @@
               <button type='button' class='btn btn-primary' data-target='items_types' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
             </div>
           </div>
-          <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
-          <div class='input-group'>
-            <select class='form-control' id='loadMetadataSelect_experiments_templates'>
-              {% for template in templatesArr %}
-                <option value="{{ template.id }}">{{ template.title }}</option>
-              {% endfor %}
-            </select>
-            <div class='input-group-append'>
-              <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+          {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
+            <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
+            <div class='input-group'>
+              <select class='form-control' id='loadMetadataSelect_experiments_templates'>
+                {% for template in templatesArr %}
+                  <option value="{{ template.id }}">{{ template.title }}</option>
+                {% endfor %}
+              </select>
+              <div class='input-group-append'>
+                <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+              </div>
             </div>
-          </div>
+          {% endif %}
           <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
           <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
           <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>

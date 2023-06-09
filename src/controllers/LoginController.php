@@ -19,7 +19,7 @@ use Elabftw\Auth\Mfa;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\Saml;
+use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -234,10 +234,10 @@ class LoginController implements ControllerInterface
                 // AUTH WITH SAML
             case 'saml':
                 $this->App->Session->set('auth_service', self::AUTH_SAML);
-                $Saml = new Saml($this->App->Config, new Idps());
+                $IdpsHelper = new IdpsHelper($this->App->Config, new Idps());
                 $idpId = (int) $this->App->Request->request->get('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
-                $settings = $Saml->getSettings($idpId);
+                $settings = $IdpsHelper->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
 
             case 'external':

@@ -29,7 +29,7 @@ class UsersHelper
 
     public function cannotBeDeleted(): bool
     {
-        return $this->hasExperiments() || $this->hasItems() || $this->isSysadmin() || $this->hasComments() || $this->hasTemplates();
+        return $this->hasExperiments() || $this->hasItems() || $this->isSysadmin() || $this->hasComments() || $this->hasTemplates() || $this->hasUploads();
     }
 
     /**

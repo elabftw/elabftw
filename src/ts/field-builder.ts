@@ -8,11 +8,15 @@
 import { getEntity, notifError } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata } from './metadataInterfaces';
+import { Api } from './Apiv2.class';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('fieldBuilderModal')) {
     return;
   }
+
+  const entity = getEntity();
 
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'selectradio', 'checkbox'];
@@ -53,6 +57,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  document.getElementById('fieldLoaderModal').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    const ApiC = new Api();
+    // LOAD METADATA FROM TEMPLATE/CATEGORY
+    if (el.matches('[data-action="load-metadata-from"]')) {
+      const select = (document.getElementById(`loadMetadataSelect_${el.dataset.target}`) as HTMLSelectElement);
+      const selectedIndex = select.selectedIndex;
+      const id = select.options[selectedIndex].value;
+      const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
+      ApiC.getJson(`${el.dataset.target}/${id}`).then(json => {
+        const jsonObj = JSON.parse(json.metadata);
+        textarea.value = JSON.stringify(jsonObj, null, 2);
+        const applyBtn = (document.getElementById('applyMetadataLoadBtn') as HTMLButtonElement);
+        applyBtn.removeAttribute('disabled');
+        const warningTxt = document.getElementById('loadMetadataWarning');
+        warningTxt.removeAttribute('hidden');
+      });
+    } else if (el.matches('[data-action="load-metadata-from-textarea"]')) {
+      const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
+      const MetadataC = new Metadata(entity);
+      ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
+        MetadataC.display('edit');
+        textarea.value = '';
+        $('#fieldLoaderModal').modal('hide');
+      });
+    }
+  });
+
+
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const grpSel = (document.getElementById('newFieldGroupSelect') as HTMLSelectElement);
@@ -65,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value;
 
-      const entity = getEntity();
       const MetadataC = new Metadata(entity);
       let json = {};
       // get the current metadata

@@ -160,7 +160,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Admin = new Users(4, 2);
         $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
         $Target = new Users($id, 2, $Admin);
-        $this->expectException(ImproperActionException::class);
         $this->assertTrue($Target->destroy());
     }
 

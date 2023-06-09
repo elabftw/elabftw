@@ -347,10 +347,44 @@ class Users implements RestInterface
 
         $UsersHelper = new UsersHelper($this->userData['userid']);
         if ($UsersHelper->cannotBeDeleted()) {
-            throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
+            throw new ImproperActionException('Cannot delete a user that owns experiments, items, comments, templates or uploads!');
         }
-        // currently, let's disable this entirely. Next step will be to give this a state and set it to deleted.
-        throw new ImproperActionException('Complete user deletion is temporarily deactivated. Use Archive button instead.');
+        $sql = 'DELETE FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM users2teams WHERE users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM users2team_groups WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM todolist WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM team_events WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM notifications WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM favtags2users WHERE users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return true;
     }
 
     /**

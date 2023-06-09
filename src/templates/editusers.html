@@ -140,7 +140,14 @@
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
                 </td>
                 <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
-                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span></td>
+                <td>
+                  {% if user.validated == 0 %}
+                    <span class='p-1 rounded alert-warning'>{{ 'Unvalidated'|trans }}</span>
+                  {% else %}
+                    <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span>
+                  {% endif %}
+                </td>
+
                 <td>
                   <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>
@@ -188,6 +195,11 @@
                       {% else %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
+                        </div>
+                      {% endif %}
+                      {% if user.validated == 0 %}
+                        <div class='dropdown-item' data-action='validate-user' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
                         </div>
                       {% endif %}
                       <div class='dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'><i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}</div>

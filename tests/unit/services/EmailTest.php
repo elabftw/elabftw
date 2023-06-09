@@ -56,7 +56,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     public function testMassEmail(): void
     {
-        $this->assertEquals(17, $this->Email->massEmail('instance', null, '', 'yep'));
+        $this->assertEquals(16, $this->Email->massEmail('instance', null, '', 'yep'));
         $this->assertEquals(7, $this->Email->massEmail('team', 1, 'Important message', 'yep'));
         $this->assertEquals(0, $this->Email->massEmail('teamgroup', 1, 'Important message', 'yep'));
     }

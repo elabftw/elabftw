@@ -67,7 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
       if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-        return ApiC.delete(`users/${el.dataset.userid}`).then(() => reloadElement('editUsersBox'));
+        return ApiC.delete(`users/${el.dataset.userid}`).then(() => {
+          reloadElement('editUsersBox');
+          if (document.getElementById('unvalidatedUsersBox')) {
+            reloadElement('unvalidatedUsersBox');
+          }
+        });
       }
     }
   });

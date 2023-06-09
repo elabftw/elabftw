@@ -9,7 +9,7 @@
     <ul>
     {% for user in unvalidatedUsersArr %}
       <li>
-        {{ user.fullname|raw }} ({{ user.email }}) <button class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button>
+        {{ user.fullname|raw }} ({{ user.email }}) <button class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
       </li>
     {% endfor %}
     </ul>

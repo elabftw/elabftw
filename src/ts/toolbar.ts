@@ -76,9 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Pin}).then(() => {
-        document.getElementById('toggle-pin-icon').classList.toggle('color-weak');
-        ['bgnd-gray', 'hl-hover-gray'].forEach(cl => document.getElementById('toggle-pin-icon-div').classList.toggle(cl));
+      let id = entity.id;
+      if (isNaN(id) || id === null) {
+        id = parseInt(el.dataset.id, 10);
+      }
+
+      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
+        // for team/ucp page view mode of list of templates, we reload the full page because the ordering will be different
+        const urlParams = new URLSearchParams(window.location.search);
+        if (['/team.php', '/ucp.php'].includes(window.location.pathname) && !urlParams.has('templateid')) {
+          window.location.replace('?tab=3');
+        } else {
+          document.getElementById('toggle-pin-icon').classList.toggle('color-weak');
+          ['bgnd-gray', 'hl-hover-gray'].forEach(cl => document.getElementById('toggle-pin-icon-div').classList.toggle(cl));
+        }
       });
 
     // TIMESTAMP button in modal

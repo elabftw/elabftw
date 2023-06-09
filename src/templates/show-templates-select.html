@@ -39,7 +39,9 @@
             {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
               <a href='?tab=3&mode=edit&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt clickable link-like'></i></span></a>
             {% endif %}
-            {% if template.is_pinned %}<i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw' style='color:#29AEB9'></i> {% endif %} {{ template.title|raw }}</td>
+              {# clickable toggle pin button #}
+              <span title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ template.id }}' id='toggle-pin-icon-div' class='{{ template.is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-1 rounded'><i id='toggle-pin-icon' class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></span>
+              {{ template.title|raw }}</td>
         </tr>
       {% endfor %}
     </tbody>

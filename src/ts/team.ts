@@ -301,10 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
-    // TOGGLE TPL PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin})
-        .then(() => window.location.replace('team.php?tab=3'));
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

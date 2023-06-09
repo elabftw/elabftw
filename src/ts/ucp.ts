@@ -133,14 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => {
-        reloadElement('templatesDiv').then(() => {
-          addAutocompleteToTagInputs();
-          tinymce.remove();
-          tinymce.init(getTinymceBaseConfig('ucp'));
-        });
-      });
     }
   });
 

@@ -60,7 +60,7 @@
   {% endif %}
 
   {# RIGHT PART #}
-    <div class='ml-auto d-flex align-items-center'>
+    <div class='ml-auto d-flex align-items-center' id='toolbarRightDiv'>
       {# TOGGLE PIN #}
       <div class='mr-2'>
         <div title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>

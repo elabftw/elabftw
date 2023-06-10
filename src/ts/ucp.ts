@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectForm } from './misc';
+import { getEntity, notif, reloadElement, collectForm } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -64,13 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.lock(parseInt(el.dataset.id)).then(() => {
-        reloadElement('templatesDiv').then(() => {
-          addAutocompleteToTagInputs();
-          tinymce.remove();
-          tinymce.init(getTinymceBaseConfig('ucp'));
-        });
-      });
+      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('toolbarRightDiv'));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());

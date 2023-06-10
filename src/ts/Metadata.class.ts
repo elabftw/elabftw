@@ -371,54 +371,59 @@ export class Metadata {
       }
 
       const [groups, groupedArr] = this.getGroups('edit', json as ValidMetadata);
+      console.log(groups);
+      console.log(groupedArr);
       // the full content of extra fields
       const wrapperDiv = document.createElement('div');
 
       groups.forEach(group => {
-        const groupWrapperDiv =  document.createElement('div');
-        groupWrapperDiv.classList.add('mt-4');
-        const groupHeader = document.createElement('h4');
-        groupHeader.dataset.action='toggle-next';
-        groupHeader.classList.add('d-inline', 'togglable-section-title');
-        const groupHeaderIcon = document.createElement('i');
-        groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');
-        // only add content to the header if there are more than one group
-        if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
-          groupHeader.textContent = group.name;
-          groupHeader.insertAdjacentElement('afterbegin', groupHeaderIcon);
-        }
-
-        const wrapperUl = document.createElement('ul');
-        wrapperUl.classList.add('list-group', 'mt-2');
-        wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
-
-        for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
-          const listItem = document.createElement('li');
-          listItem.classList.add('list-group-item');
-          const label = document.createElement('label');
-          label.htmlFor = element.element.id;
-          label.innerText = element.name as string;
-
-          // for checkboxes the label comes second
-          if (element.element.type === 'checkbox') {
-            label.classList.add('form-check-label');
-            const wrapperDiv = document.createElement('div');
-            wrapperDiv.classList.add('form-check');
-            listItem.append(wrapperDiv);
-            wrapperDiv.append(element.element);
-            wrapperDiv.append(label);
-            wrapperDiv.append(this.getDescription(element));
-          } else {
-            listItem.append(label);
-            listItem.append(this.getDescription(element));
-            listItem.append(element.element);
+        // make sure there is an element in that group
+        if (Object.prototype.hasOwnProperty.call(groupedArr, group.id)) {
+          const groupWrapperDiv =  document.createElement('div');
+          groupWrapperDiv.classList.add('mt-4');
+          const groupHeader = document.createElement('h4');
+          groupHeader.dataset.action='toggle-next';
+          groupHeader.classList.add('d-inline', 'togglable-section-title');
+          const groupHeaderIcon = document.createElement('i');
+          groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');
+          // only add content to the header if there are more than one group
+          if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
+            groupHeader.textContent = group.name;
+            groupHeader.insertAdjacentElement('afterbegin', groupHeaderIcon);
           }
 
-          wrapperUl.append(listItem);
+          const wrapperUl = document.createElement('ul');
+          wrapperUl.classList.add('list-group', 'mt-2');
+          wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
+
+          for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            const label = document.createElement('label');
+            label.htmlFor = element.element.id;
+            label.innerText = element.name as string;
+
+            // for checkboxes the label comes second
+            if (element.element.type === 'checkbox') {
+              label.classList.add('form-check-label');
+              const wrapperDiv = document.createElement('div');
+              wrapperDiv.classList.add('form-check');
+              listItem.append(wrapperDiv);
+              wrapperDiv.append(element.element);
+              wrapperDiv.append(label);
+              wrapperDiv.append(this.getDescription(element));
+            } else {
+              listItem.append(label);
+              listItem.append(this.getDescription(element));
+              listItem.append(element.element);
+            }
+
+            wrapperUl.append(listItem);
+          }
+          groupWrapperDiv.append(groupHeader);
+          groupWrapperDiv.append(wrapperUl);
+          wrapperDiv.append(groupWrapperDiv);
         }
-        groupWrapperDiv.append(groupHeader);
-        groupWrapperDiv.append(wrapperUl);
-        wrapperDiv.append(groupWrapperDiv);
       });
 
       this.metadataDiv.append(wrapperDiv);

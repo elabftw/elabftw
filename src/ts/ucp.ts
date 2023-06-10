@@ -9,7 +9,7 @@ import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectFor
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Action, EntityType, Model, Target } from './interfaces';
+import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';

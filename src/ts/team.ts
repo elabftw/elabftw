@@ -34,7 +34,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
-import { Action, EntityType } from './interfaces';
+import { EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import Tab from './Tab.class';

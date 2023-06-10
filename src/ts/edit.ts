@@ -264,6 +264,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
 
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-image-in-body"]')) {
+      // link to the image
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // switch for markdown or tinymce editor
+      let content: string;
+      if (editor.type === 'md') {
+        content = '\n![image](' + url + ')\n';
+      } else if (editor.type === 'tiny') {
+        content = '<img src="' + url + '" />';
+      }
+      editor.setContent(content);
+
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
       fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
@@ -424,20 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // INSERT IMAGE AT CURSOR POSITION IN TEXT
-  $(document).on('click', '.inserter',  function() {
-    // link to the image
-    const url = `app/download.php?f=${$(this).data('link')}&storage=${$(this).data('storage')}`;
-    // switch for markdown or tinymce editor
-    let content;
-    if (editor.type === 'md') {
-      content = '\n![image](' + url + ')\n';
-    } else if (editor.type === 'tiny') {
-      content = '<img src="' + url + '" />';
-    }
-    editor.setContent(content);
-  });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesdiv').addEventListener('submit', event => {

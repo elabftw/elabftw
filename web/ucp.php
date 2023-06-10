@@ -16,6 +16,7 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
@@ -44,6 +45,7 @@ try {
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
     $entityData = array();
+    $changelogData = array();
     if ($App->Request->query->has('templateid')) {
         $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
@@ -53,6 +55,8 @@ try {
             (int) $App->Config->configArr['min_delta_revisions'],
             (int) $App->Config->configArr['min_days_revisions'],
         );
+        $Changelog = new Changelog($Templates);
+        $changelogData = $Changelog->readAll();
     }
 
     // TEAM GROUPS
@@ -102,6 +106,7 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
+        'changes' => $changelogData,
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,

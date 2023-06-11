@@ -25,7 +25,7 @@ class SelfIsValidated extends AbstractNotifications implements MailableInterface
     {
         $subject = _('Account validated');
         $url = Config::fromEnv('SITE_URL') . '/login.php';
-        $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
+        $body = sprintf(_('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s'), $url);
         return array('subject' => $subject, 'body' => $body);
     }
 }

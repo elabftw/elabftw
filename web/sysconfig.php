@@ -64,6 +64,7 @@ try {
             filter_var($App->Request->query->get('q'), FILTER_SANITIZE_STRING),
             (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT),
             $App->Request->query->getBoolean('includeArchived'),
+            $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);

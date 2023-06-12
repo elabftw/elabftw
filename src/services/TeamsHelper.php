@@ -30,11 +30,7 @@ class TeamsHelper
      */
     public function getGroup(): int
     {
-        if ($this->isFirstUser()) {
-            return 1;
-        }
-
-        if ($this->isFirstUserInTeam()) {
+        if ($this->isFirstUser() || $this->isFirstUserInTeam()) {
             return 2;
         }
         return 4;

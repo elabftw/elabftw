@@ -72,6 +72,7 @@ try {
             filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
             $App->Users->userData['team'],
             $App->Request->query->getBoolean('includeArchived'),
+            $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);

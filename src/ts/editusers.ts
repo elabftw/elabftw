@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
       // show alert
-      if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and user will not be able to login anymore.')) {
+      if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and archived and user will not be able to login anymore.')) {
         return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'archive'}).then(() => reloadElement('editUsersBox'));
       }
 

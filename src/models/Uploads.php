@@ -21,7 +21,6 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\MakeThumbnail;
@@ -160,17 +159,6 @@ class Uploads implements RestInterface
         return $this->Db->lastInsertId();
     }
 
-    public function read(ContentParamsInterface $params): array
-    {
-        if ($params->getTarget() === 'all') {
-            return $this->readAll();
-        }
-        if ($params->getTarget() === 'uploadid') {
-            $this->id = $this->getIdFromLongname($params->getContent());
-        }
-        return $this->readOne();
-    }
-
     /**
      * Read from current id
      */
@@ -223,8 +211,7 @@ class Uploads implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        $action = $params['action'];
-        if ($action === Action::Archive->value) {
+        if ($action === Action::Archive) {
             return $this->archive();
         }
         unset($params['action']);
@@ -308,15 +295,6 @@ class Uploads implements RestInterface
         return (int) $req->fetchColumn();
     }
 
-    public function getIdFromLongname(string $longname): int
-    {
-        $sql = 'SELECT id FROM uploads WHERE long_name = :long_name LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
     private function readNormalAndArchived(): array
     {
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
@@ -338,10 +316,8 @@ class Uploads implements RestInterface
      */
     private function replace(CreateUpload $params): int
     {
-        $this->canWriteOrExplode();
-        // read the current one to get the comment
-        $upload = $this->readOne();
-        $this->update(new UploadParams('state', (string) State::Archived->value));
+        // read the current one to get the comment, and at the same time archive it
+        $upload = $this->archive();
 
         return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
     }

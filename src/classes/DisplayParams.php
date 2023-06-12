@@ -74,9 +74,7 @@ class DisplayParams
         $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
         $this->adjust();
         // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
-        if ($this->Request->query->get('archived')) {
-            $this->includeArchived = true;
-        }
+        $this->includeArchived = $this->Request->query->has('archived');
     }
 
     public function appendFilterSql(FilterableColumn $column, int $value): void

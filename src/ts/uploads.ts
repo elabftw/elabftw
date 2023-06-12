@@ -98,6 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElement('filesdiv');
       });
 
+    // TOGGLE SHOW ARCHIVED
+    } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
+      const url = new URL(window.location.href);
+      const queryParams = new URLSearchParams(url.search);
+
+      // toggle "archived" query parameter
+      if (queryParams.has('archived')) {
+        queryParams.delete('archived');
+      } else {
+        queryParams.set('archived', 'on');
+      }
+
+      // Update the query parameters in the URL
+      url.search = queryParams.toString();
+      url.hash = 'filesDiv';
+      const modifiedUrl = url.toString();
+      window.location.replace(modifiedUrl);
+
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
       document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;

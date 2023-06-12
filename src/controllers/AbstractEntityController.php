@@ -56,6 +56,10 @@ abstract class AbstractEntityController implements ControllerInterface
             $Templates = new Templates($this->Entity->Users);
             $this->templatesArr = $Templates->Pins->readAllSimple();
         }
+        if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
+            $Entity->Uploads->includeArchived = true;
+        }
+
     }
 
     public function getResponse(): Response

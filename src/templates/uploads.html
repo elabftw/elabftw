@@ -21,6 +21,7 @@
 
 <!-- UPLOADED FILES -->
 <div id='filesdiv'>
+  <a name='filesDiv'></a>
   {% if Entity.entityData.uploads %}
     <div class='d-flex justify-content-between'>
       <div><!-- necessary div for flex -->
@@ -32,9 +33,14 @@
       </div>
 
       {# id is used with data-toggle-target-extra #}
-      <div title='{{ 'Switch layout'|trans }}' id='uploadsViewToggler' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
-        <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
-        <i class='fas fa-fw fa-table-cells'></i>
+      <div>
+        <span title='{{ 'Switch layout'|trans }}' id='uploadsViewToggler' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+          <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
+          <i class='fas fa-fw fa-table-cells'></i>
+        </span>
+        <span title='{{ 'Show archived'|trans }}' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-show-archived'>
+          <i class='fas fa-fw fa-box-archive'></i>
+        </span>
       </div>
     </div>
 
@@ -58,8 +64,11 @@
         <!-- DEFAULT LAYOUT (1) -->
         {% else %}
           <div class='col-md-4 col-sm-6'>
-            <div class='thumbnail box' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+            <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
               {% include('upload-dropdown-menu.html') %}
+              {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+              <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
+              {% endif %}
 
               <!-- IMAGES -->
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}

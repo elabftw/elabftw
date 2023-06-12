@@ -98,6 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElement('filesdiv');
       });
 
+    // TOGGLE SHOW ARCHIVED
+    } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
+      const url = new URL(window.location.href);
+      const queryParams = new URLSearchParams(url.search);
+
+      // toggle "archived" query parameter
+      if (queryParams.has('archived')) {
+        queryParams.delete('archived');
+      } else {
+        queryParams.set('archived', 'on');
+      }
+
+      // Update the query parameters in the URL
+      url.search = queryParams.toString();
+      url.hash = 'filesDiv';
+      const modifiedUrl = url.toString();
+      window.location.replace(modifiedUrl);
+
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
       document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
@@ -123,6 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+
+    // ARCHIVE UPLOAD
+    } else if (el.matches('[data-action="archive-upload"]')) {
+      const uploadid = parseInt(el.dataset.uploadid, 10);
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive}).then(() => reloadElement('filesdiv'));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

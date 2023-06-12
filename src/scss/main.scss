@@ -281,7 +281,10 @@ label {
     background-color: $lightred;
     border-color: $darkred;
     color: $darkred;
-    transition-duration: 500ms;
+}
+
+.hover-warning:hover {
+    background-color: $warningbg;
 }
 
 .hover-action:hover {

@@ -21,7 +21,6 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\MakeThumbnail;
@@ -44,6 +43,8 @@ class Uploads implements RestInterface
     private const BIG_FILE_THRESHOLD = 50000000;
 
     public array $uploadData = array();
+
+    public bool $includeArchived = false;
 
     protected Db $Db;
 
@@ -158,17 +159,6 @@ class Uploads implements RestInterface
         return $this->Db->lastInsertId();
     }
 
-    public function read(ContentParamsInterface $params): array
-    {
-        if ($params->getTarget() === 'all') {
-            return $this->readAll();
-        }
-        if ($params->getTarget() === 'uploadid') {
-            $this->id = $this->getIdFromLongname($params->getContent());
-        }
-        return $this->readOne();
-    }
-
     /**
      * Read from current id
      */
@@ -204,6 +194,9 @@ class Uploads implements RestInterface
      */
     public function readAll(): array
     {
+        if ($this->includeArchived) {
+            return $this->readNormalAndArchived();
+        }
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state';
         $req = $this->Db->prepare($sql);
@@ -218,6 +211,9 @@ class Uploads implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+        if ($action === Action::Archive) {
+            return $this->archive();
+        }
         unset($params['action']);
         foreach ($params as $key => $value) {
             $this->update(new UploadParams($key, $value));
@@ -299,13 +295,19 @@ class Uploads implements RestInterface
         return (int) $req->fetchColumn();
     }
 
-    public function getIdFromLongname(string $longname): int
+    private function readNormalAndArchived(): array
     {
-        $sql = 'SELECT id FROM uploads WHERE long_name = :long_name LIMIT 1';
+        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return (int) $req->fetchColumn();
+
+        return $req->fetchAll();
+
     }
 
     /**
@@ -314,10 +316,8 @@ class Uploads implements RestInterface
      */
     private function replace(CreateUpload $params): int
     {
-        $this->canWriteOrExplode();
-        // read the current one to get the comment
-        $upload = $this->readOne();
-        $this->update(new UploadParams('state', (string) State::Archived->value));
+        // read the current one to get the comment, and at the same time archive it
+        $upload = $this->archive();
 
         return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
     }
@@ -364,6 +364,13 @@ class Uploads implements RestInterface
             throw new IllegalActionException('User tried to edit an immutable upload.');
         }
         $this->Entity->canOrExplode('write');
+    }
+
+    private function archive(): array
+    {
+        $this->canWriteOrExplode();
+        $this->update(new UploadParams('state', (string) State::Archived->value));
+        return $this->readOne();
     }
 
     /**

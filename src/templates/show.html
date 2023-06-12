@@ -128,6 +128,16 @@
               {% endfor %}
             </select>
             {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
+            {# ARCHIVED filter #}
+            <div class='input-group mr-1'>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
+                  <input id='showArchivedBox' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' aria-label='{{ 'Show archived'|trans }}'>
+                </div>
+              </div>
+              <label for='showArchivedBox' class='input-group-text brl-none'>{{ 'Show archived'|trans }}</label>
+            </div>
+
             <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
 
           </div>

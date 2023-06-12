@@ -58,6 +58,7 @@ enum Action {
 
   AccessKey = 'accesskey',
   Add = 'add',
+  Archive = 'archive',
   Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',

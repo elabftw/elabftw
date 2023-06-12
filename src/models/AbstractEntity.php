@@ -224,8 +224,12 @@ abstract class AbstractEntity implements RestInterface
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
         $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
-        // first where is the state
-        $sql .= ' WHERE entity.state = :state';
+        // first WHERE is the state, possibly including archived
+        $stateSql = 'entity.state = :normal';
+        if ($displayParams->includeArchived) {
+            $stateSql = '(entity.state = :normal OR entity.state = :archived)';
+        }
+        $sql .= ' WHERE ' . $stateSql;
 
         // add externally added filters
         $sql .= $this->filterSql;
@@ -300,7 +304,10 @@ abstract class AbstractEntity implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
+        if ($displayParams->includeArchived) {
+            $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        }
         if ($displayParams->hasMetadataSearch) {
             foreach ($displayParams->metadataKey as $i => $v) {
                 $req->bindParam(sprintf(':metadata_key_%d', $i), $displayParams->metadataKey[$i]);
@@ -345,6 +352,15 @@ abstract class AbstractEntity implements RestInterface
         }
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
+            Action::Archive => (
+                function () {
+                    $targetState = State::Archived;
+                    if ($this->entityData['state'] === $targetState->value) {
+                        $targetState = State::Normal;
+                    }
+                    $this->update(new EntityParams('state', (string) $targetState->value));
+                }
+            )(),
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
             Action::UpdateMetadataField => (

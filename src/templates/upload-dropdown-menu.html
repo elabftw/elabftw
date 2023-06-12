@@ -73,8 +73,12 @@
       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 
   {% if not upload.immutable and not Entity.isReadOnly %}
-    <!-- DESTROY -->
+    {# ARCHIVE #}
     <div class='dropdown-divider'></div>
+    <a class='dropdown-item hover-warning' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+      <i class='fas fa-fw fa-box-archive fa-fw mr-1' title='{{ 'Archive/Unarchive'|trans }}'></i>{{ 'Archive/Unarchive'|trans }}
+    </a>
+    {# DESTROY #}
     <a class='dropdown-item hover-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
     </a>

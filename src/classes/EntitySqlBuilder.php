@@ -48,6 +48,7 @@ class EntitySqlBuilder
                 entity.rating,
                 entity.userid,
                 entity.locked,
+                entity.state,
                 entity.canread,
                 entity.canwrite,
                 entity.modified_at,';

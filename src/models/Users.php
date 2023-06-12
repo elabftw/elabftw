@@ -102,6 +102,11 @@ class Users implements RestInterface
 
         $isSysadmin = $group === 1 ? 1 : 0;
 
+        // transform group in 2 if it is 1 because users2teams.groups_id is 2 or 4, not 1
+        if ($group === 1) {
+            $group = 2;
+        }
+
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
         if ($forceValidation) {

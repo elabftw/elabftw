@@ -278,7 +278,20 @@
 
   <!-- MASS EMAIL -->
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5'>
+  <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>
+    <label>{{ 'Send to'|trans }}</label>
+
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='target' value='all' id='targetAll' checked> <label class='form-check-label' for='targetAll'>{{ 'All active users'|trans }}</label>
+    </div>
+
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='target' value='admins' id='targetAdmins'> <label class='form-check-label' for='targetAdmins'>{{ 'All active admins'|trans }}</label>
+    </div>
+
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='target' value='sysadmins' id='targetSysadmins'> <label class='form-check-label' for='targetSysadmins'>{{ 'All active sysadmins'|trans }}</label>
+    </div>
     <label for='massSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
     <input class='form-control col-md-12' type='text' id='massSubject' size='45' />
 

@@ -51,7 +51,7 @@ try {
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email->massEmail('instance', null, $Request->request->getString('subject'), $Request->request->getString('body'));
+        $Email->massEmail($Request->request->getString('target'), null, $Request->request->getString('subject'), $Request->request->getString('body'));
     }
 
     // DESTROY IDP

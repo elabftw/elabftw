@@ -146,7 +146,7 @@ class Email
      */
     private function getAllEmails(string $targetType, ?int $targetId): array
     {
-        $select = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
+        $select = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
         switch($targetType) {
             case 'team':
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
@@ -155,6 +155,14 @@ class Email
             case 'teamgroup':
                 $join = 'CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid)';
                 $filter = 'AND users2team_groups.groupid = :id';
+                break;
+            case 'admins':
+                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
+                $filter = 'AND users2teams.groups_id = 2';
+                break;
+            case 'sysadmins':
+                $join = '';
+                $filter = 'AND users.is_sysadmin = 1';
                 break;
             default:
                 $join = '';

@@ -191,6 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button));
     // MASS MAIL
     } else if (el.matches('[data-action="send-mass-email"]')) {
+      const massEmailDiv = document.getElementById('massEmailDiv');
+      const targetRadio = (massEmailDiv.querySelector('input[name="target"]:checked') as HTMLInputElement);
       const button = (el as HTMLButtonElement);
       button.disabled = true;
       button.innerText = 'Sending…';
@@ -198,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const body = (document.getElementById('massBody') as HTMLInputElement).value;
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
-        { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
+        { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button));
     } else if (el.matches('[data-action="create-idp"]')) {
       const params = collectForm(document.getElementById('createIdpForm'));
       ApiC.post(Model.Idp, params).then(() => {

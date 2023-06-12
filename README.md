@@ -109,6 +109,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 * Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)
 * Department for the Development of Innovative Digital Use − French National Research Institute for Sustainable Development
 * Institut Curie - Centre de Recherche
+* Vrije Universiteit Brussel
 
 # Related projects
 

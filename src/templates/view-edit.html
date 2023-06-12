@@ -30,3 +30,9 @@
     </div>
   </div>
 </div>
+
+<div id='isArchivedDiv'>
+{% if Entity.entityData.state == constant('Elabftw\\Enums\\State::Archived').value %}
+  {{ 'This entry is archived'|trans|msg('ok', false) }}
+{% endif %}
+</div>

@@ -35,6 +35,10 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
+        // test archive too
+        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
+        // two times to test unarchive branch
+        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);

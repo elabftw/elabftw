@@ -60,9 +60,11 @@ class DisplayParams
     public array $metadataValuePath = array();
 
     public array $metadataValue = array();
+    // end metadata stuff
+
+    public bool $includeArchived = false;
 
     private array $metadataHaving = array();
-    // end metadata stuff
 
     public function __construct(Users $Users, private Request $Request, private string $entityType)
     {
@@ -71,6 +73,10 @@ class DisplayParams
         $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
         $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
         $this->adjust();
+        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
+        if ($this->Request->query->get('archived')) {
+            $this->includeArchived = true;
+        }
     }
 
     public function appendFilterSql(FilterableColumn $column, int $value): void

@@ -123,6 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElement('filesdiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
+    // ARCHIVE ENTITY
+    } else if (el.matches('[data-action="archive-entity"]')) {
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

@@ -45,6 +45,8 @@ class Uploads implements RestInterface
 
     public array $uploadData = array();
 
+    public bool $includeArchived = false;
+
     protected Db $Db;
 
     private string $hashAlgorithm = 'sha256';
@@ -204,6 +206,9 @@ class Uploads implements RestInterface
      */
     public function readAll(): array
     {
+        if ($this->includeArchived) {
+            return $this->readNormalAndArchived();
+        }
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state';
         $req = $this->Db->prepare($sql);
@@ -218,6 +223,10 @@ class Uploads implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+        $action = $params['action'];
+        if ($action === Action::Archive->value) {
+            return $this->archive();
+        }
         unset($params['action']);
         foreach ($params as $key => $value) {
             $this->update(new UploadParams($key, $value));
@@ -308,6 +317,21 @@ class Uploads implements RestInterface
         return (int) $req->fetchColumn();
     }
 
+    private function readNormalAndArchived(): array
+    {
+        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+
+    }
+
     /**
      * Attached files are immutable (change history is kept), so the current
      * file gets its state changed to "archived" and a new one is added
@@ -364,6 +388,13 @@ class Uploads implements RestInterface
             throw new IllegalActionException('User tried to edit an immutable upload.');
         }
         $this->Entity->canOrExplode('write');
+    }
+
+    private function archive(): array
+    {
+        $this->canWriteOrExplode();
+        $this->update(new UploadParams('state', (string) State::Archived->value));
+        return $this->readOne();
     }
 
     /**

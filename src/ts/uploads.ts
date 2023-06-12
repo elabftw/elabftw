@@ -124,6 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
 
+    // ARCHIVE UPLOAD
+    } else if (el.matches('[data-action="archive-upload"]')) {
+      const uploadid = parseInt(el.dataset.uploadid, 10);
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive}).then(() => reloadElement('filesdiv'));
+
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);

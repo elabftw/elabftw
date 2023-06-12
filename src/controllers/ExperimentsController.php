@@ -28,6 +28,10 @@ class ExperimentsController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
+        if ($app->Request->query->get('archived') === '1') {
+            $entity->Uploads->includeArchived = true;
+        }
+
         $Category = new Status(new Teams($this->App->Users, $this->App->Users->team));
         $this->categoryArr = $Category->readAll();
     }

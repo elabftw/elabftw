@@ -62,6 +62,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
             'saml_user_default' => '0',
             'saml_fallback_orgid' => '0',
             'saml_sync_email_idp' => '0',
+            'user_msg_need_local_account_created' => '',
         );
 
         // don't use the real saml lib but create a mock

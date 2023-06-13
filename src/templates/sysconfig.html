@@ -142,6 +142,12 @@
     {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register'} %}
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans } %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='user_msg_need_local_account_created' type='text' autocomplete='off' value='{{ App.Config.configArr.user_msg_need_local_account_created }}' id='user_msg_need_local_account_created' />
+    </div>
+    <hr>
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>

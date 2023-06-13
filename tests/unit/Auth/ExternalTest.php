@@ -32,6 +32,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             'extauth_teams' => 'auth_team',
             'saml_team_default' => '1',
             'saml_user_default' => '1',
+            'user_msg_need_local_account_created' => '',
         );
         $this->serverParams = array(
             'auth_firstname' => 'Phpunit',

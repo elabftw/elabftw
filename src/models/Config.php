@@ -69,6 +69,7 @@ final class Config implements RestInterface
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),
             ('proxy', ''),
+            ('user_msg_need_local_account_created', ''),
             ('smtp_address', 'mail.smtp2go.com'),
             ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),

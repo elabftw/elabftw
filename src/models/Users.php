@@ -102,6 +102,11 @@ class Users implements RestInterface
 
         $isSysadmin = $group === 1 ? 1 : 0;
 
+        // transform group in 2 if it is 1 because users2teams.groups_id is 2 or 4, not 1
+        if ($group === 1) {
+            $group = 2;
+        }
+
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
         if ($forceValidation) {
@@ -177,7 +182,7 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false): array
+    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false, bool $onlyAdmins = false): array
     {
         $teamFilterSql = '';
         if ($teamId > 0) {
@@ -185,7 +190,7 @@ class Users implements RestInterface
         }
 
         // Assures to get every user only once
-        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id
+        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id, MIN(groups_id) AS groups_id
             FROM users2teams
             GROUP BY users_id) AS';
         // unless we use a specific team
@@ -198,6 +203,11 @@ class Users implements RestInterface
             $archived = 'OR users.archived = 1';
         }
 
+        $admins = '';
+        if ($onlyAdmins) {
+            $admins = 'AND users2teams.groups_id = 2';
+        }
+
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
@@ -206,7 +216,7 @@ class Users implements RestInterface
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
             FROM users
-            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
+            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ' ' . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             AND users.archived = 0 ' . $archived . '
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';

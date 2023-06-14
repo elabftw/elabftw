@@ -4,7 +4,7 @@ This document outlines security procedures and general policies for **eLabFTW**.
 
 ## Reporting a security issue
 
-See our [Responsible Disclosure Policiy](https://www.deltablot.com/security/).
+See our [Responsible Disclosure Policy](https://www.deltablot.com/security/).
 
 ## Steps taken in the development process
 

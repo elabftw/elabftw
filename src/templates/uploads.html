@@ -38,7 +38,7 @@
           <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
           <i class='fas fa-fw fa-table-cells'></i>
         </span>
-        <span title='{{ 'Show archived'|trans }}' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-show-archived'>
+        <span title='{{ 'Show archived'|trans }}' class='hl-hover-gray rounded p-1 {{ App.Request.query.has('archived') ? 'bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
           <i class='fas fa-fw fa-box-archive'></i>
         </span>
       </div>

@@ -2474,6 +2474,10 @@ paths:
                 orgid:
                   type: string
                   description: Internal id.
+                usergroup:
+                  type: integer
+                  description: Which permissions level the user will get? `1` is Sysadmin, `2` is Admin, `4` is user (default)
+                  enum: [1, 2, 4]
       responses:
         '201':
           description: The user has been created.

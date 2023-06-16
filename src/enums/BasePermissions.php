@@ -23,8 +23,8 @@ enum BasePermissions: int
             $this::Full => _('Public'),
             $this::Organization => _('Organization'),
             $this::MyTeams => _('All the teams I am part of'),
-            $this::User  => _('Only me and admins'),
-            $this::UserOnly => _('Only me'),
+            $this::User  => _('Only owner and admins'),
+            $this::UserOnly => _('Only owner'),
         };
     }
 

@@ -90,7 +90,7 @@
 
     {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'} %}
 
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only me»'|trans, 'slug': 'allow_useronly'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>

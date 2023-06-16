@@ -78,7 +78,7 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 

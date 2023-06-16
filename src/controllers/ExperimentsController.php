@@ -37,7 +37,7 @@ class ExperimentsController extends AbstractEntityController
      */
     protected function getItemsArr(): array
     {
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // filter by user if we don't want to show the rest of the team
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all

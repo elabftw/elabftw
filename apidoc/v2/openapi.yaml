@@ -684,6 +684,8 @@ components:
           type: integer
         is_sysadmin:
           type: integer
+        entrypoint:
+          type: integer
         teams:
           type: array
           items:

@@ -155,6 +155,8 @@ export function notif(info: ResponseMsg): void {
   }
 
   const p = document.createElement('p');
+  // "status" role: see WCAG2.1 4.1.3
+  p.role = 'status';
   p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');

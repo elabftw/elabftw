@@ -81,6 +81,18 @@
     </div>
     <hr>
 
+    <div class='d-flex justify-content-between'>
+      <label for='entrypoint' class='col-form-label'>{{ 'Which page will be loaded first'|trans }}</label>
+      <select id='entrypoint' data-trigger='change' data-model='users/me' data-target='entrypoint' class='form-control col-md-3'>
+        <option value='0' {{ App.Users.userData.entrypoint == 'dashboard' ? ' selected' }}>{{ 'Dashboard'|trans }} {{ '(default)'|trans }}</option>
+        <option value='1' {{ App.Users.userData.entrypoint == 'experiments' ? ' selected' }}>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</option>
+        <option value='2' {{ App.Users.userData.entrypoint == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
+        <option value='3' {{ App.Users.userData.entrypoint == 'scheduler' ? ' selected' }}>{{ 'Scheduler'|trans }}</option>
+      </select>
+    </div>
+    <hr>
+
+
   </div>
 
   <!-- KEYBOARD SHORTCUTS -->

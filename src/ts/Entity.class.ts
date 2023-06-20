@@ -23,6 +23,19 @@ export default class Entity {
     return this.api.post(`${this.model}`, params);
   }
 
+  getPage(): string {
+    switch (this.model) {
+    case EntityType.Experiment:
+      return 'experiments';
+    case EntityType.Item:
+      return 'database';
+    case EntityType.ItemType:
+      return 'admin.php';
+    case EntityType.Template:
+      return 'ucp.php';
+    }
+  }
+
   read(id: number) {
     return this.api.getJson(`${this.model}/${id}`);
   }

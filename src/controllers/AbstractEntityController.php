@@ -19,7 +19,6 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Revisions;
@@ -51,11 +50,8 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        // items don't need to show the templates in create new menu, so save a sql call here
-        if ($this->Entity instanceof Experiments) {
-            $Templates = new Templates($this->Entity->Users);
-            $this->templatesArr = $Templates->Pins->readAllSimple();
-        }
+        $Templates = new Templates($this->Entity->Users);
+        $this->templatesArr = $Templates->Pins->readAllSimple();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
             $Entity->Uploads->includeArchived = true;
         }
@@ -78,7 +74,7 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 

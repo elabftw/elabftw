@@ -166,6 +166,8 @@ export function getTinymceBaseConfig(page: string): object {
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],
       [0x25A1, 'white square'],
+      [0x2702, 'black scissors'],
+      [0x21BB, 'clockwise open circle arrow'],
     ],
     height: '500',
     mentions: {

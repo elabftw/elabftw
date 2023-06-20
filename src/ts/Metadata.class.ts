@@ -371,8 +371,6 @@ export class Metadata {
       }
 
       const [groups, groupedArr] = this.getGroups('edit', json as ValidMetadata);
-      console.log(groups);
-      console.log(groupedArr);
       // the full content of extra fields
       const wrapperDiv = document.createElement('div');
 

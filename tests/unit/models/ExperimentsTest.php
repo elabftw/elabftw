@@ -146,7 +146,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             'metakey' => array('test'),
             'metavalue' => array('some text'),
         ));
-        $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments->value);
+        $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments);
         $res = $this->Experiments->readShow($displayParams);
         $this->assertEquals(1, $res[0]['id']);
     }

@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
           field['allow_multi_values'] = true;
         }
         if (grpSel.value !== '-1') {
-          field['group_id'] = grpSel.value;
+          field['group_id'] = parseInt(grpSel.value);
         }
 
         json['extra_fields'][fieldKey] = field;

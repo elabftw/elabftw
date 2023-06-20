@@ -33,7 +33,7 @@ class DatabaseController extends AbstractEntityController
      */
     protected function getItemsArr(): array
     {
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         return $this->Entity->readShow($DisplayParams);
     }
 }

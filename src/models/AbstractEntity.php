@@ -20,6 +20,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
@@ -70,6 +71,9 @@ abstract class AbstractEntity implements RestInterface
 
     // string representation of EntityType
     public string $type = '';
+
+    // replaces $type string above
+    public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
     public bool $bypassReadPermission = false;
@@ -187,7 +191,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readAll(): array
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->type), true);
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
     }
 
     /**

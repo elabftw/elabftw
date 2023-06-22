@@ -176,9 +176,11 @@
         <!-- CHANGELOG -->
         <a class='dropdown-item' href='?id={{ Entity.id }}&mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
 
-        <a class='dropdown-item hover-warning' data-action='archive-entity'>
-          <i class='fas fa-fw fa-box-archive fa-fw mr-1' title='{{ 'Archive/Unarchive'|trans }}'></i>{{ 'Archive/Unarchive'|trans }}
-        </a>
+        {% if not App.Session.has('is_anon') %}
+          <a class='dropdown-item hover-warning' data-action='archive-entity'>
+            <i class='fas fa-fw fa-box-archive fa-fw mr-1' title='{{ 'Archive/Unarchive'|trans }}'></i>{{ 'Archive/Unarchive'|trans }}
+          </a>
+        {% endif %}
         {% if App.Config.configArr.deletable_xp == '1' %}
           <div class='dropdown-divider'></div>
           {# DELETE #}

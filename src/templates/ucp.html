@@ -136,6 +136,17 @@
       </tbody>
     </table>
     <p class='smallgray mt-2'>{{ 'Only lowercase letters are allowed.'|trans }}</p>
+
+    <hr>
+    <div class='d-flex justify-content-between'>
+      {# setting added for WCAG2.1 2.1.4 Character Key Shortcuts https://www.w3.org/TR/WCAG21/#character-key-shortcuts #}
+      <label for='disable_shortcuts' class='col-form-label'>{{ 'Disable all shortcuts'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='disable_shortcuts' {{ App.Users.userData.disable_shortcuts == 1 ? 'checked="checked"' }} id='disable_shortcuts'>
+        <span class='slider'></span>
+      </label>
+    </div>
+
   </div>
 
   <!-- PDF CONFIG -->

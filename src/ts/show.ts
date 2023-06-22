@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff
-      checked.forEach(chk => EntityC.destroy(chk.id).then(() => $('#parent_' + chk.randomid).hide(200)));
+      checked.forEach(chk => EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove()));
     }
   });
 

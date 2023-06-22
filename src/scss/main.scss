@@ -262,12 +262,6 @@ h5 {
     font-size: 130%;
 }
 
-label {
-    color: $medium;
-    font-size: 120%;
-    font-weight: normal;
-}
-
 /* HEAD */
 
 /* BEGIN HELP CONTAINER */
@@ -297,7 +291,7 @@ label {
     }
 
     .selected {
-        border-bottom: 5px solid $elabblue;
+        border-bottom: 6px solid $elabblue;
         padding-bottom: 0;
     }
 }

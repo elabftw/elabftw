@@ -65,14 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   makeSortableGreatAgain();
 
-  const kbd = new KeyboardShortcuts(
-    userPrefs.scCreate,
-    userPrefs.scEdit,
-    userPrefs.scTodolist,
-    userPrefs.scFavorite,
-    userPrefs.scSearch,
-  );
-  kbd.init();
+  if (userPrefs.scDisabled === '0') {
+    const kbd = new KeyboardShortcuts(
+      userPrefs.scCreate,
+      userPrefs.scEdit,
+      userPrefs.scTodolist,
+      userPrefs.scFavorite,
+      userPrefs.scSearch,
+    );
+    kbd.init();
+  }
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');

@@ -53,6 +53,7 @@
   data-sc-create='{{ App.Users.userData.sc_create|default('c') }}'
   data-sc-edit='{{ App.Users.userData.sc_edit|default('e') }}'
   data-sc-favorite='{{ App.Users.userData.sc_favorite|default('f') }}'
+  data-sc-disabled='{{ App.Users.userData.disable_shortcuts|default('0') }}'
   ></div>
 
 {% if App.Session.has('is_auth') %}

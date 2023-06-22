@@ -25,7 +25,7 @@
 <!-- TAB 1 - USER PREFERENCES -->
 <div data-tabcontent='1' hidden>
   <!-- LANGUAGE -->
-  <h3 class='p-2 pl-3 section-title'>{{ 'Preferences'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Preferences'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
       <label for='lang' class='col-form-label'>{{ 'Language'|trans }}</label>
@@ -37,11 +37,11 @@
         {% endfor %}
       </select>
     </div>
-    <p class='mt-1'><a target='_blank' rel='noopener' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
   </div>
 
   <!-- DISPLAY -->
-  <h3 class='p-2 pl-3 section-title'>{{ 'Display'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Display'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
 
     <div class='d-flex justify-content-between'>
@@ -95,41 +95,42 @@
 
   </div>
 
-  <!-- KEYBOARD SHORTCUTS -->
-  <h3 id='keyboardShortcuts' class='p-2 pl-3 section-title'>{{ 'Keyboard Shortcuts'|trans }}</h3>
+  {# KEYBOARD SHORTCUTS #}
+  <h2 id='keyboardShortcuts' class='p-2 pl-3 section-title'>{{ 'Keyboard Shortcuts'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     <table aria-describedby='keyboardShortcuts' class='table col-md-12'>
       <thead>
       <tr>
-        <th class='align-left'>{{ 'Action'|trans }}</th>
-        <th>{{ 'Create'|trans }}</th>
-        <th>{{ 'Edit'|trans }}</th>
-        <th>{{ 'Favorite tags'|trans }}</th>
-        <th>{{ 'TODO list'|trans }}</th>
-        <th>{{ 'Search'|trans }}</th>
+        <th>{{ 'Action'|trans }}</th>
+        {# add mb-0 to labels so they align with the Action that has vertical-align: bottom from tables.scss, but label element has a mb from reboot.scss #}
+        <th><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
+        <th><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
+        <th><label class='mb-0' for='sc_input_favorite'>{{ 'Favorite tags'|trans }}</label></th>
+        <th><label class='mb-0' for='sc_input_todo'>{{ 'TODO list'|trans }}</label></th>
+        <th><label class='mb-0' for='sc_input_search'>{{ 'Search'|trans }}</label></th>
       </tr>
       </thead>
       <tbody class='bgnd-transparent'>
       <tr>
         <td>{{ 'Shortcut'|trans }}</td>
         <td>
-          <input class='form-control col-md-2 p-1 text-center' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
+          <input class='form-control col-md-2 p-1 text-center' id='sc_input_create' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>
 
         <td>
-          <input class='form-control col-md-2 p-1 text-center' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
+          <input class='form-control col-md-2 p-1 text-center' id='sc_input_edit' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
         </td>
 
         <td>
-          <input class='form-control col-md-2 p-1 text-center' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_favorite }}' data-trigger='blur' data-model='users/me' data-target='sc_favorite' />
+          <input class='form-control col-md-2 p-1 text-center' id='sc_input_favorite' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_favorite }}' data-trigger='blur' data-model='users/me' data-target='sc_favorite' />
         </td>
 
         <td>
-          <input class='form-control col-md-2 p-1 text-center' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
+          <input class='form-control col-md-2 p-1 text-center' id='sc_input_todo' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
         </td>
 
         <td>
-          <input class='form-control col-md-2 p-1 text-center' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_search }}' data-trigger='blur' data-model='users/me' data-target='sc_search' />
+          <input class='form-control col-md-2 p-1 text-center' id='sc_input_search' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_search }}' data-trigger='blur' data-model='users/me' data-target='sc_search' />
         </td>
       </tr>
       </tbody>
@@ -138,7 +139,7 @@
   </div>
 
   <!-- PDF CONFIG -->
-  <h3 class='p-2 pl-3 section-title'>{{ 'PDF configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'PDF configuration'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
       <label for='pdf_format' class='col-form-label'>{{ 'Select paper format for PDF'|trans }}</label>
@@ -164,7 +165,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='inc_files_pdf' class='col-form-label'>{{ 'Add attached files summary to the PDF'|trans }}</label>
-      <label class='switch ucp-align'>
+      <label class='switch ucp-align' title='{{ 'Add attached files summary to the PDF'|trans }}'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='inc_files_pdf' {{ App.Users.userData.inc_files_pdf == 1 ? 'checked="checked"' }} id='inc_files_pdf'>
         <span class='slider'></span>
       </label>
@@ -189,7 +190,7 @@
     </div>
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'Miscellaneous'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Miscellaneous'|trans }}</h2>
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='show_team' class='col-form-label'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
@@ -285,7 +286,7 @@
       </div>
     </div>
 
-    <h3 class='p-2 pl-3 section-title'>{{ 'Personal informations'|trans }}</h3>
+    <h2 class='p-2 pl-3 section-title'>{{ 'Personal informations'|trans }}</h2>
     <div class='pl-3 mt-2 mb-5'>
 
       <div class='d-flex justify-content-between'>
@@ -308,7 +309,7 @@
 
     {# only show MFA setting if not enforced #}
     {% if showMFA %}
-      <h3 class='p-2 pl-3 section-title'>{{ 'Two Factor Authentication'|trans }}</h3>
+      <h2 class='p-2 pl-3 section-title'>{{ 'Two Factor Authentication'|trans }}</h2>
       <div class='pl-3 mt-2 mb-5'>
         <div class='d-flex justify-content-between'>
           <label for='use_mfa' class='col-form-label'>{{ 'Use two-factor authentication?'|trans }}</label>
@@ -325,7 +326,7 @@
   </form>
 
   <hr>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Your identity'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Your identity'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5' id='ucp-account-form'>
     <div class='d-flex justify-content-between'>
       <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
@@ -353,7 +354,7 @@
 
 <!-- TAB 3 - USER TEMPLATES -->
 <div data-tabcontent='3' hidden>
-  <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h2>
 
   {% if App.Request.query.has('templateid') %}
     {% include 'view-edit-template.html' %}
@@ -365,7 +366,7 @@
 <!-- TAB 4 - API KEYS -->
 <div data-tabcontent='4' hidden>
   <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h5>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
   <div id='newKeyPlaceholder'></div><!-- the newly created key will be displayed here -->
   <div class='pl-3 mt-2 mb-5'>
 
@@ -390,7 +391,7 @@
 
   </div>
 
-  <h3 class='p-2 pl-3 section-title mb-3' id='existingKeys'>{{ 'Existing keys'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title mb-3' id='existingKeys'>{{ 'Existing keys'|trans }}</h2>
   <table id='apiTable' class='table' aria-describedby='existingKeys' data-table-sort='true'>
     <thead>
       <tr>
@@ -417,7 +418,7 @@
 
 <!-- TAB 5 - NOTIFICATIONS SETTINGS -->
 <div data-tabcontent='5' hidden>
-  <h3 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
   {% for notif in notificationsSettings %}
     <div class='d-flex justify-content-between'>

@@ -2820,6 +2820,18 @@ paths:
               description: An URL to the tag that was created.
               schema:
                 type: string
+    delete:
+      tags: ['Tags']
+      summary: Delete all tags.
+      description: All the tags from that entity get removed.
+      operationId: delete-tag
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The tags were deleted.
+
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -2876,18 +2888,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
-    delete:
-      tags: ['Tags']
-      summary: Delete all tags.
-      description: All the tags from that entity get removed.
-      operationId: delete-tag
-      requestBody:
-        content:
-          application/json: {}
-      responses:
-        '204':
-          description: The tags were deleted.
-
 
   # UPLOADS
   /{entity_type}/{id}/uploads:

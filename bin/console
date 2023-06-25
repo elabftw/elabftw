@@ -22,6 +22,8 @@ $Application->add(new CacheClear());
 $Application->add(new CheckDatabase());
 $Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
+$Application->add(new ExportUser());
+$Application->add(new ImportUser());
 $Application->add(new UpdateDatabase());
 $Application->add(new RevertSchema());
 $Application->add(new UpdateTo3());

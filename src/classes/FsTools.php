@@ -28,7 +28,7 @@ class FsTools
      */
     public static function getCacheFolder(string $folder): string
     {
-        $fs = self::getFs(self::getCachePath());
+        $fs = self::getCacheFs();
         $fs->createDirectory($folder);
         $fs->setVisibility($folder, Visibility::PRIVATE);
         return self::getCachePath() . $folder;
@@ -47,13 +47,9 @@ class FsTools
         return hash('sha512', bin2hex(random_bytes(16)));
     }
 
-    public static function deleteCache(): void
+    public static function getCacheFs(): FilesystemOperator
     {
-        $fs = self::getFs(self::getCachePath());
-        $fs->deleteDirectory('elab');
-        $fs->deleteDirectory('twig');
-        $fs->deleteDirectory('mpdf');
-        $fs->deleteDirectory('purifier');
+        return self::getFs(self::getCachePath());
     }
 
     public static function getFs(string $path): FilesystemOperator

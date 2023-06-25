@@ -19,26 +19,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GenSecretKey extends Command
 {
-    // the name of the command (the part after "bin/console")
     protected static $defaultName = 'tools:genkey';
 
-    /**
-     * Set the help messages
-     */
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Generate the secret key for the application')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Generate the secret key for the application')
             ->setHelp('The secret key is used to encrypt smtp password among other things. It needs to be in a particular format.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln(Key::createNewRandomKey()->saveToAsciiSafeString());
-        return 0;
+        return Command::SUCCESS;
     }
 }

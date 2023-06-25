@@ -11,6 +11,7 @@ namespace Elabftw\Commands;
 
 use Symfony\Component\Console\Application;
 use function dirname;
+use Elabftw\Storage\Cache;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -23,7 +24,9 @@ $Application->add(new CheckDatabase());
 $Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new ExportUser());
-$Application->add(new ImportUser());
+$Application->add(new ExportResources());
+$Application->add(new ImportResources(new Cache()));
+$Application->add(new ImportUser(new Cache()));
 $Application->add(new UpdateDatabase());
 $Application->add(new RevertSchema());
 $Application->add(new UpdateTo3());

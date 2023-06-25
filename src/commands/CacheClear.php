@@ -15,36 +15,32 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * For cache related actions
+ * Clear the cache folder
  */
 class CacheClear extends Command
 {
-    // the name of the command (the part after "bin/console")
     protected static $defaultName = 'cache:clear';
 
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Remove files in cache folder')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Remove files in cache folder')
             ->setHelp('Temporary files can be stored in the cache folder. This command will remove its contents.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($output->isVerbose()) {
-            $output->writeln(array(
-                'Clearing cache',
-                '==============',
-            ));
-        }
-        FsTools::deleteCache();
-        if ($output->isVerbose()) {
-            $output->writeln('Cache cleared!');
-        }
-        return 0;
+        $output->writeln(array(
+            'Clearing cache',
+            '==============',
+        ));
+
+        $fs = FsTools::getCacheFs();
+        $fs->deleteDirectory('elab');
+        $fs->deleteDirectory('twig');
+        $fs->deleteDirectory('mpdf');
+        $fs->deleteDirectory('purifier');
+
+        $output->writeln('Cache cleared!');
+        return Command::SUCCESS;
     }
 }

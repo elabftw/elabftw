@@ -17,6 +17,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Status;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use function hash_file;
 use function json_decode;
@@ -188,6 +190,19 @@ class Eln extends AbstractZip
                 $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
                 // adjust the date
                 $this->Entity->patch(Action::Update, array('date' => $json['date']));
+                if ($this->Entity instanceof Experiments) {
+                    // try and adjust the status for experiments
+                    $sourceStatus = $json['category'];
+                    // let's see if we can find a status like this in target instance
+                    $targetStatusArr = (new Status(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
+                    $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {
+                        return $status['category'] === $sourceStatus;
+                    });
+                    if (!empty($filteredStatus)) {
+                        // use array_key_first because the filter will not reset the key numbering
+                        $this->Entity->patch(Action::Update, array('category' => (string) $filteredStatus[array_key_first($filteredStatus)]['category_id']));
+                    }
+                }
             }
             if ($json['metadata'] !== null) {
                 $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));

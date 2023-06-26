@@ -9,7 +9,7 @@
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\FsTools;
+use Elabftw\Storage\ParentCache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,12 +34,8 @@ class CacheClear extends Command
             '==============',
         ));
 
-        $fs = FsTools::getCacheFs();
-        $fs->deleteDirectory('elab');
-        $fs->deleteDirectory('twig');
-        $fs->deleteDirectory('mpdf');
-        $fs->deleteDirectory('purifier');
-
+        $storage = new ParentCache();
+        $storage->destroy();
         $output->writeln('Cache cleared!');
         return Command::SUCCESS;
     }

@@ -10,7 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function bin2hex;
-use function dirname;
+use Elabftw\Storage\ParentCache;
+
 use function hash;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
@@ -28,10 +29,11 @@ class FsTools
      */
     public static function getCacheFolder(string $folder): string
     {
-        $fs = self::getCacheFs();
+        $storage = new ParentCache();
+        $fs = $storage->getFs();
         $fs->createDirectory($folder);
         $fs->setVisibility($folder, Visibility::PRIVATE);
-        return self::getCachePath() . $folder;
+        return sprintf('%s/%s', $storage->getPath(), $folder);
     }
 
     /**
@@ -47,18 +49,8 @@ class FsTools
         return hash('sha512', bin2hex(random_bytes(16)));
     }
 
-    public static function getCacheFs(): FilesystemOperator
-    {
-        return self::getFs(self::getCachePath());
-    }
-
     public static function getFs(string $path): FilesystemOperator
     {
         return new Filesystem(new LocalFilesystemAdapter($path));
-    }
-
-    private static function getCachePath(): string
-    {
-        return dirname(__DIR__, 2) . '/cache/';
     }
 }

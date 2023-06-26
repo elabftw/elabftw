@@ -11,13 +11,12 @@ namespace Elabftw\Commands;
 
 use Symfony\Component\Console\Tester\CommandTester;
 
-class GenSecretKeyTest extends \PHPUnit\Framework\TestCase
+class AddMissingLinksTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute(): void
     {
-        $commandTester = new CommandTester(new GenSecretKey());
+        $commandTester = new CommandTester(new AddMissingLinks());
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('def', $commandTester->getDisplay());
     }
 }

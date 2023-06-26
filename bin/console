@@ -12,15 +12,17 @@ namespace Elabftw\Commands;
 use Symfony\Component\Console\Application;
 use function dirname;
 use Elabftw\Storage\Cache;
+use Elabftw\Models\Config;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
+$Config = Config::getConfig();
 
 $Application->add(new Install());
 $Application->add(new GenSecretKey());
 $Application->add(new CacheClear());
-$Application->add(new CheckDatabase());
+$Application->add(new CheckDatabase((int) $Config->configArr['schema']));
 $Application->add(new CheckTsBalance());
 $Application->add(new CleanDatabase());
 $Application->add(new ExportUser());

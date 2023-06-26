@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Update;
-use Elabftw\Models\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,20 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CheckDatabase extends Command
 {
-    // the name of the command (the part after "bin/console")
     protected static $defaultName = 'db:check';
 
-    /**
-     * Set the help messages
-     */
+    public function __construct(private int $currentSchema)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Check the database version')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Check the database version')
             ->setHelp('This command allows you to compare the database version with the current required schema.');
     }
 
@@ -45,23 +39,20 @@ class CheckDatabase extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $Config = Config::getConfig();
-        $current = (int) $Config->configArr['schema'];
-
-        $required = Update::getRequiredSchema();
+        $requiredSchema = Update::getRequiredSchema();
 
         $output->writeln(array(
             'Database check',
             '==============',
-            'Current version: ' . (string) $current,
-            'Required version: ' . (string) $required,
+            sprintf('Current version: %d', $this->currentSchema),
+            sprintf('Required version: %d', $requiredSchema),
         ));
-        if ($current === $required) {
+        if ($this->currentSchema === $requiredSchema) {
             $output->writeln('No upgrade required.');
-            return 0;
+            return Command::SUCCESS;
         }
 
         $output->writeln('An upgrade is required.');
-        return 1;
+        return Command::FAILURE;
     }
 }

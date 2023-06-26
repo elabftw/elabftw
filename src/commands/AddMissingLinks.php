@@ -32,20 +32,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class AddMissingLinks extends Command
 {
-    // the name of the command (the part after "bin/console")
     protected static $defaultName = 'links:sync';
 
-    /**
-     * Set the help messages
-     */
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments".')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments".')
             ->setHelp('Find links to items and experiments in the body of entities and add them to the "Linked items" and "Linked experiments" of that entity. Templates and ItemsTypes can only have links to items.');
     }
 

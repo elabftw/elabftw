@@ -29,6 +29,7 @@ use Elabftw\Traits\UploadTrait;
 use function implode;
 use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
+use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
 use function strtolower;
@@ -57,7 +58,7 @@ class MakePdf extends AbstractMakePdf
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
     {
         parent::__construct($mpdfProvider, $entity);
 
@@ -113,7 +114,7 @@ class MakePdf extends AbstractMakePdf
      */
     public function getContent(): string
     {
-        $Tex2Svg = new Tex2Svg($this->mpdf, $this->getHtml());
+        $Tex2Svg = new Tex2Svg($this->log, $this->mpdf, $this->getHtml());
         $content = $Tex2Svg->getContent();
 
         // Inform user that there was a problem with Tex rendering

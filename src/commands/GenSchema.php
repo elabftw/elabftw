@@ -10,6 +10,7 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Update;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,6 +22,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'dev:genschema')]
 class GenSchema extends Command
 {
+    public function __construct(private FilesystemOperator $fs)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this->setDescription('Generate a new database schema migration file')
@@ -31,16 +37,16 @@ class GenSchema extends Command
     {
         $schemaNumber = Update::REQUIRED_SCHEMA + 1;
         $output->writeln(sprintf('Generating schema %d', $schemaNumber));
-        $filePath = sprintf('%s/sql/schema%d.sql', dirname(__DIR__), $schemaNumber);
+        $filename = sprintf('schema%d.sql', $schemaNumber);
         $content = sprintf("-- schema %1\$s\n\nUPDATE config SET conf_value = %1\$s WHERE conf_name = 'schema';\n", $schemaNumber);
-        file_put_contents($filePath, $content);
-        $output->writeln('Created file: ' . $filePath);
+        $this->fs->write($filename, $content);
+        $output->writeln('Created file: ' . $filename);
         // now generate the down file
-        $filePath = sprintf('%s/sql/schema%d-down.sql', dirname(__DIR__), $schemaNumber);
+        $filename = sprintf('schema%d-down.sql', $schemaNumber);
         $schemaNumberPrevious = $schemaNumber - 1;
         $content = sprintf("-- revert schema %d\n\nUPDATE config SET conf_value = %d WHERE conf_name = 'schema';\n", $schemaNumber, $schemaNumberPrevious);
-        file_put_contents($filePath, $content);
-        $output->writeln('Created file: ' . $filePath);
+        $this->fs->write($filename, $content);
+        $output->writeln('Created file: ' . $filename);
         return Command::SUCCESS;
     }
 }

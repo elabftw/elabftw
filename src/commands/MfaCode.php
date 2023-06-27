@@ -28,22 +28,16 @@ class MfaCode extends Command
         $this
             ->setDescription('Get a 2FA code')
             ->setHelp('This command allows you to get a 2FA code if you provide a secret token.')
-            ->addArgument('secret', InputArgument::REQUIRED, 'Please provide the 2FA secret.');
+            ->addArgument('secret', InputArgument::REQUIRED, 'The 2FA secret provided as text.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // remove spaces from input so we don't have to do it manually
         $secret = str_replace(' ', '', $input->getArgument('secret'));
-
         $MfaHelper = new MfaHelper(0, $secret);
-        $code = $MfaHelper->getCode();
 
-        $output->writeln(array(
-            'Secret: ' . $secret,
-            '2FA code: ' . $code,
-        ));
-
+        $output->writeln(sprintf('2FA code: %s', $MfaHelper->getCode()));
         return Command::SUCCESS;
     }
 }

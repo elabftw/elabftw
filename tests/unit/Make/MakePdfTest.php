@@ -13,6 +13,8 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,7 +45,8 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         $upArr = $Entity->Uploads->uploadData;
         $Entity->entityData['body'] .= '\n<p><img src="app/download.php?f=' . $upArr['long_name'] . '"></p>';
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakePdf($MpdfProvider, $Entity);
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $Entity);
     }
 
     public function testGetFileContent(): void

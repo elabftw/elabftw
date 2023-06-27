@@ -25,17 +25,17 @@ class ForceSchema extends Command
 {
     protected function configure(): void
     {
-        $this->setDescription('Generate a new database schema migration file')
+        $this->setDescription('Directly set a schema number in the general config')
             ->addArgument('schema', InputArgument::REQUIRED, 'Target schema number')
-            ->setHelp('This command allows you to generate a new schemaNNN.sql for database schema migration');
+            ->setHelp('This command allows you to directly set the value of the schema number in the config table.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $Config = Config::getConfig();
         $schemaNumber = $input->getArgument('schema');
+        $Config = Config::getConfig();
         $Config->patch(Action::Update, array('schema' => $schemaNumber));
         $output->writeln(sprintf('Changing schema to %d', $schemaNumber));
-        return 0;
+        return Command::SUCCESS;
     }
 }

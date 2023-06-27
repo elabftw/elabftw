@@ -50,6 +50,23 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
+    public function testForceSchema(): void
+    {
+        $commandTester = new CommandTester(new ForceSchema());
+        $Config = Config::getConfig();
+        $commandTester->execute(array('schema' => $Config->configArr['schema']));
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
+    }
+
+    public function testGenCache(): void
+    {
+        $commandTester = new CommandTester(new GenCache());
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Success', $commandTester->getDisplay());
+    }
+
     public function testExecuteCacheClear(): void
     {
         $commandTester = new CommandTester(new CacheClear());

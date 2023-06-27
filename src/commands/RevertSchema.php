@@ -13,6 +13,7 @@ use Elabftw\Elabftw\Sql;
 use Elabftw\Exceptions\ImproperActionException;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,17 +23,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Use this to revert a specific schema
  */
+#[AsCommand(name: 'db:revert')]
 class RevertSchema extends Command
 {
-    protected static $defaultName = 'db:revert';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Allow reverting a specific schema upgrade.')
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Allow reverting a specific schema upgrade.')
             ->setHelp("Use this command to revert a specific schema. Example to revert schema 116: 'db:revert 116'.")
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->addArgument('number', InputArgument::REQUIRED, 'Schema number to revert');
@@ -46,6 +42,6 @@ class RevertSchema extends Command
         }
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output);
         $Sql->execFile(sprintf('schema%d-down.sql', (int) $targetSchema), $input->getOption('force'));
-        return 0;
+        return Command::SUCCESS;
     }
 }

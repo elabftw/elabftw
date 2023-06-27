@@ -14,6 +14,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\EmailNotifications;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,19 +24,12 @@ use Symfony\Component\Mailer\Transport;
 /**
  * Send the notifications emails
  */
+#[AsCommand(name: 'notifications:send')]
 class SendNotifications extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'notifications:send';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Send the notifications emails')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Send the notifications emails')
             ->setHelp('Look for all notifications that need to be sent by email and send them');
     }
 
@@ -55,6 +49,6 @@ class SendNotifications extends Command
             $output->writeln(sprintf('Sent %d emails', $count));
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

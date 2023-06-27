@@ -10,6 +10,7 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Update;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,10 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Check the the current schema version versus the required one
  */
+#[AsCommand(name: 'db:check')]
 class CheckDatabase extends Command
 {
-    protected static $defaultName = 'db:check';
-
     public function __construct(private int $currentSchema)
     {
         parent::__construct();

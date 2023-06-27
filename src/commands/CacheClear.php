@@ -10,6 +10,7 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Storage\ParentCache;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,10 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Clear the cache folder
  */
+#[AsCommand(name: 'cache:clear')]
 class CacheClear extends Command
 {
-    protected static $defaultName = 'cache:clear';
-
     protected function configure(): void
     {
         $this->setDescription('Remove files in cache folder')

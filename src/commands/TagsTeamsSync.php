@@ -14,6 +14,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Users;
 use PDO;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,19 +23,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Synchronize tags between teams
  */
+#[AsCommand(name: 'tags:teamssync')]
 class TagsTeamsSync extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'tags:teamssync';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Synchronize tags between teams')
+        $this->setDescription('Synchronize tags between teams')
             ->addArgument('teams', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'List of teams (ids)')
-            // the full command description shown when running the command with
-            // the "--help" option
             ->setHelp('Synchronize tags between teams.');
     }
 
@@ -54,7 +49,7 @@ class TagsTeamsSync extends Command
         if ($inserted > 0) {
             $output->writeln(sprintf('Inserted %d tags.', $inserted));
         }
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function getTags(array $teams): array

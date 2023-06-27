@@ -14,6 +14,7 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,19 +24,12 @@ use ZipStream\ZipStream;
 /**
  * Export a category of resources
  */
+#[AsCommand(name: 'items:export')]
 class ExportResources extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'items:export';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Export all items with a given category')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Export all items with a given category')
             ->setHelp('This command will generate a ELN archive with all the items of a particular category. It is more reliable than using the web interface as it will not suffer from timeouts.')
             ->addArgument('category_id', InputArgument::REQUIRED, 'Target category ID')
             ->addArgument('userid', InputArgument::REQUIRED, 'User executing the request');

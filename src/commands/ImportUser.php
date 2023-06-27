@@ -15,6 +15,7 @@ use Elabftw\Import\Eln;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,11 +25,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * Import experiments from a .eln
  */
+#[AsCommand(name: 'users:import')]
 class ImportUser extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'users:import';
-
     public function __construct(private StorageInterface $Fs)
     {
         parent::__construct();
@@ -37,11 +36,7 @@ class ImportUser extends Command
     protected function configure(): void
     {
         $this
-            // the short description shown while running "php bin/console list"
             ->setDescription('Import experiments from an ELN archive')
-
-            // the full command description shown when running the command with
-            // the "--help" option
             ->setHelp('This command will import experiments from a provided ELN archive. It is more reliable than using the web interface as it will not suffer from timeouts.')
             ->addArgument('userid', InputArgument::REQUIRED, 'User id')
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import present in cache/elab folder');

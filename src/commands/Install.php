@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,19 +26,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Import database structure
  */
+#[AsCommand(name: 'db:install')]
 class Install extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'db:install';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Install eLabFTW in a MySQL database')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Install eLabFTW in a MySQL database')
             ->setHelp('Ask information to connect to the MySQL database, create the config file and load the database structure.')
             ->addOption('reset', 'r', InputOption::VALUE_NONE, 'Delete and recreate the database before installing the structure.');
     }
@@ -50,7 +44,7 @@ class Install extends Command
         $res = $req->fetch();
         if ((int) $res['cnt'] > 1 && !$input->getOption('reset')) {
             $output->writeln('<info>→ Database structure already present. Skipping initialization.</info>');
-            return 0;
+            return Command::SUCCESS;
         }
 
         $output->writeln(array(
@@ -88,6 +82,6 @@ class Install extends Command
         $output->writeln('<info>✓ Installation successful! You can now start using your eLabFTW instance.</info>');
         $output->writeln('<info>→ Register your Sysadmin account here: ' . Config::fromEnv('SITE_URL') . '/register.php</info>');
         $output->writeln('<info>→ Subscribe to the low volume newsletter to stay informed about new releases: http://eepurl.com/bTjcMj</info>');
-        return 0;
+        return Command::SUCCESS;
     }
 }

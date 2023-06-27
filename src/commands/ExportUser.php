@@ -13,6 +13,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,19 +23,12 @@ use ZipStream\ZipStream;
 /**
  * Export experiments from user
  */
+#[AsCommand(name: 'users:export')]
 class ExportUser extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'users:export';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Export all experiments from user')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Export all experiments from user')
             ->setHelp('This command will generate a ELN archive with all the experiments of a particular user. It is more reliable than using the web interface as it will not suffer from timeouts.')
             ->addArgument('userid', InputArgument::REQUIRED, 'Target user ID');
     }

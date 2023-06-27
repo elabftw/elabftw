@@ -13,17 +13,29 @@ use Symfony\Component\Console\Application;
 use function dirname;
 use Elabftw\Storage\Cache;
 use Elabftw\Models\Config;
+use Symfony\Component\Mailer\Mailer;
+use Elabftw\Services\Email;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
+use Symfony\Component\Mailer\Transport;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
 $Config = Config::getConfig();
+$Logger = new Logger('elabftw');
+$Logger->pushHandler(new ErrorLogHandler());
+$Email = new Email(
+    new Mailer(Transport::fromDsn($Config->getDsn())),
+    $Logger,
+    $Config->configArr['mail_from'],
+);
 
 $Application->add(new Install());
 $Application->add(new GenSecretKey());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
-$Application->add(new CheckTsBalance());
+$Application->add(new CheckTsBalance((int) $Config->configArr['ts_balance'], $Email));
 $Application->add(new CleanDatabase());
 $Application->add(new ExportUser());
 $Application->add(new ExportResources());

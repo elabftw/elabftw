@@ -210,6 +210,27 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
+    public function testExecuteExportUser(): void
+    {
+        $commandTester = new CommandTester(new ExportUser(new Memory()));
+        $commandTester->execute(array(
+            'userid' => '1',
+        ));
+
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testExecuteExportResources(): void
+    {
+        $commandTester = new CommandTester(new ExportResources(new Memory()));
+        $commandTester->execute(array(
+            'category_id' => '1',
+            'userid' => '1',
+        ));
+
+        $commandTester->assertCommandIsSuccessful();
+    }
+
     public function testSendNotifications(): void
     {
         $commandTester = new CommandTester(new SendNotifications($this->Email));

@@ -10,6 +10,7 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
 use RuntimeException;
@@ -26,6 +27,11 @@ use ZipStream\ZipStream;
 #[AsCommand(name: 'users:export')]
 class ExportUser extends Command
 {
+    public function __construct(private StorageInterface $Fs)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this->setDescription('Export all experiments from user')
@@ -37,7 +43,7 @@ class ExportUser extends Command
     {
         $userid = (int) $input->getArgument('userid');
         $outputFilename = sprintf('export-%s-userid-%d.eln', date('Y-m-d_H-i-s'), $userid);
-        $fileStream = fopen('/elabftw/cache/elab/' . $outputFilename, 'wb');
+        $fileStream = fopen($this->Fs->getPath() . '/' . $outputFilename, 'wb');
         if ($fileStream === false) {
             throw new RuntimeException('Could not open output stream!');
         }
@@ -51,7 +57,7 @@ class ExportUser extends Command
 
         $output->writeln(sprintf('Experiments of user with ID %d successfully exported as ELN archive.', $userid));
         $output->writeln('Copy the generated archive from the container to the current directory with:');
-        $output->writeln(sprintf('docker cp elabftw:/elabftw/cache/elab/%s .', $outputFilename));
+        $output->writeln(sprintf('docker cp elabftw:%s/%s .', $this->Fs->getPath(), $outputFilename));
 
         return Command::SUCCESS;
     }

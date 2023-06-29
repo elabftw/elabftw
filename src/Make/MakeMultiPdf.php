@@ -14,6 +14,8 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 
 /**
  * Make a PDF from several experiments or db items
@@ -69,7 +71,8 @@ class MakeMultiPdf extends AbstractMakePdf
             return;
         }
         if ($permissions['read']) {
-            $currentEntity = new MakePdf($this->mpdfProvider, $this->Entity);
+            $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+            $currentEntity = new MakePdf($log, $this->mpdfProvider, $this->Entity);
             $currentEntity->setNotifications(false);
             // write content
             $this->mpdf->WriteHTML($currentEntity->getContent());

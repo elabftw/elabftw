@@ -5,6 +5,7 @@ coverage:
     whitelist:
         include:
             - src/Auth/*
+            - src/commands/*
             - src/models/*
             - src/classes/*
             - src/Make/*

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use Elabftw\Services\CacheGenerator;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,19 +18,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Generate the cached Twig files
  */
+#[AsCommand(name: 'dev:gencache')]
 class GenCache extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'dev:gencache';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Generate the cached Twig files')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Generate the cached Twig files')
             ->setHelp('Loop through all the templates and ask Twig to load it, so the cache file is generated in cache/twig.');
     }
 

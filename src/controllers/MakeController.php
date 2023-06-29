@@ -35,6 +35,8 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -165,7 +167,8 @@ class MakeController implements ControllerInterface
     {
         $this->Entity->setId((int) $this->Request->query->get('id'));
         $this->Entity->canOrExplode('read');
-        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity));
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity));
     }
 
     private function makeMultiPdf(): Response

@@ -23,6 +23,8 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
 use function json_encode;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use ZipArchive;
 
 /**
@@ -120,7 +122,8 @@ class MakeBloxberg extends AbstractMake
             $userData['pdf_format'],
             true, // PDF/A always for timestamp pdf
         );
-        $MakePdf = new MakePdf($MpdfProvider, $this->Entity);
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $MakePdf = new MakePdf($log, $MpdfProvider, $this->Entity);
         return $MakePdf->getFileContent();
     }
 

@@ -10,9 +10,8 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
-use Elabftw\Exceptions\ImproperActionException;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,17 +21,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Use this to revert a specific schema
  */
+#[AsCommand(name: 'db:revert')]
 class RevertSchema extends Command
 {
-    protected static $defaultName = 'db:revert';
+    public function __construct(private FilesystemOperator $fs)
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Allow reverting a specific schema upgrade.')
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Allow reverting a specific schema upgrade.')
             ->setHelp("Use this command to revert a specific schema. Example to revert schema 116: 'db:revert 116'.")
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->addArgument('number', InputArgument::REQUIRED, 'Schema number to revert');
@@ -40,12 +39,8 @@ class RevertSchema extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $targetSchema = $input->getArgument('number');
-        if (!is_string($targetSchema)) {
-            throw new ImproperActionException('Incorrect schema number provided.');
-        }
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output);
-        $Sql->execFile(sprintf('schema%d-down.sql', (int) $targetSchema), $input->getOption('force'));
-        return 0;
+        $Sql = new Sql($this->fs, $output);
+        $Sql->execFile(sprintf('schema%d-down.sql', (int) $input->getArgument('number')), $input->getOption('force'));
+        return Command::SUCCESS;
     }
 }

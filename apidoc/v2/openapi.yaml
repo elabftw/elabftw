@@ -1895,6 +1895,8 @@ paths:
                     type: string
                   id:
                     type: integer
+                  item_count:
+                    type: integer
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.

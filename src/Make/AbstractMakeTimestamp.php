@@ -18,6 +18,8 @@ use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Experiments;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use ZipArchive;
 
 /**
@@ -77,7 +79,8 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             $userData['pdf_format'],
             true, // PDF/A always for timestamp pdf
         );
-        $MakePdf = new MakeTimestampPdf($MpdfProvider, $this->Entity);
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $MakePdf = new MakeTimestampPdf($log, $MpdfProvider, $this->Entity);
         if ($this->configArr['keeex_enabled'] === '1') {
             $Keeex = new MakeKeeex(new Client());
             return $Keeex->fromString($MakePdf->getFileContent());

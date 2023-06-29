@@ -28,6 +28,7 @@ use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use function mb_strlen;
 use function str_repeat;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,24 +42,17 @@ use Symfony\Component\Yaml\Yaml;
  * Populate the database with example data. Useful to get a fresh dev env.
  * For dev purposes, should not be used by normal users.
  */
+#[AsCommand(name: 'dev:populate')]
 class PopulateDatabase extends Command
 {
     /** @var int DEFAULT_ITERATIONS number of things to create */
     private const DEFAULT_ITERATIONS = 50;
 
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'dev:populate';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Populate the database with fake data')
+        $this->setDescription('Populate the database with fake data')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Skip confirmation question')
             ->addArgument('file', InputArgument::REQUIRED, 'Yaml configuration file')
-
-            // the full command description shown when running the command with
-            // the "--help" option
             ->setHelp('This command allows you to populate the database with fake users/experiments/items. The database will be dropped before populating it. The configuration is read from the yaml file passed as first argument.');
     }
 
@@ -225,7 +219,7 @@ class PopulateDatabase extends Command
         }
 
         $output->writeln('All done.');
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function dropAndInitDb(): void

@@ -30,17 +30,9 @@ class Email
 
     private Address $from;
 
-    /** general toggle to disable sending if the email is not configured */
-    private bool $isEnabled = true;
-
-    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, string $mailFrom)
+    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
     {
         $this->footer = $this->makeFooter();
-        if ($mailFrom === 'notconfigured@example.com') {
-            // we don't want to throw an exception here, just fail but log an error
-            $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
-            $this->isEnabled = false;
-        }
         $this->from = new Address($mailFrom, 'eLabFTW');
     }
 
@@ -49,7 +41,9 @@ class Email
      */
     public function send(RawMessage $email): bool
     {
-        if (!$this->isEnabled) {
+        if ($this->mailFrom === 'notconfigured@example.com') {
+            // we don't want to throw an exception here, just fail but log an error
+            $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
             return false;
         }
         try {

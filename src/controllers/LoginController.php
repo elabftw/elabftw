@@ -22,6 +22,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
@@ -190,7 +191,7 @@ class LoginController implements ControllerInterface
             try {
                 $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
             } catch (ResourceNotFoundException) {
-                throw new InvalidDeviceTokenException();
+                throw new QuantumException(_('Invalid email/password combination.'));
             }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {

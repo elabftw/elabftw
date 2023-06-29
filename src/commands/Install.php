@@ -31,8 +31,8 @@ class Install extends Command
 {
     protected function configure(): void
     {
-        $this->setDescription('Install eLabFTW in a MySQL database')
-            ->setHelp('Ask information to connect to the MySQL database, create the config file and load the database structure.')
+        $this->setDescription('Install the MySQL structure for eLabFTW in a MySQL database')
+            ->setHelp('This command will initialize the MySQL database with the correct tables.')
             ->addOption('reset', 'r', InputOption::VALUE_NONE, 'Delete and recreate the database before installing the structure.');
     }
 
@@ -61,7 +61,6 @@ class Install extends Command
         $output->writeln(array(
             '<info>Welcome to the install of eLabFTW!</info>',
             '<info>This program will install the MySQL structure.</info>',
-            '<info>Before proceeding, make sure you have an empty MySQL database for eLabFTW with a user+password to access it.</info>',
             '',
         ));
 

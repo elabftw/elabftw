@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
       [startInput, endInput].forEach(input => {
         input.addEventListener('change', event => {
           const input = (event.currentTarget as HTMLInputElement);
-          const dt = DateTime.fromJSDate(input.valueAsDate);
+          // Note: valueAsDate was not working on Chromium
+          const dt = DateTime.fromMillis(input.valueAsNumber);
           ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
             calendar.refetchEvents();
           });

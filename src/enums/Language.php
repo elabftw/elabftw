@@ -13,7 +13,8 @@ enum Language: string
 {
     case Catalan = 'ca_ES';
     case German = 'de_DE';
-    case English = 'en_GB';
+    case EnglishGB = 'en_GB';
+    case EnglishUS = 'en_US';
     case Spanish = 'es_ES';
     case French = 'fr_FR';
     case Indonesian = 'id_ID';
@@ -42,7 +43,8 @@ enum Language: string
         return match ($value) {
             Language::Catalan => 'ca',
             Language::German => 'de',
-            Language::English => 'en',
+            Language::EnglishGB=> 'en-gb',
+            Language::EnglishUS => 'en-us',
             Language::Spanish => 'es',
             Language::French => 'fr',
             Language::Indonesian => 'id',
@@ -65,7 +67,8 @@ enum Language: string
         return match ($value) {
             Language::Catalan => 'Spanish (Catalan)',
             Language::German => 'German',
-            Language::English => 'English (UK)',
+            Language::EnglishGB => 'English (UK/GB)',
+            Language::EnglishUS => 'English (US)',
             Language::Spanish => 'Spanish',
             Language::French => 'French',
             Language::Indonesian => 'Indonesian',

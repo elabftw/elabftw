@@ -857,6 +857,10 @@ the form-control fails to do that so we do the border ourselves */
         background-color: $mediumstrong;
         color: $white !important;
     }
+
+    &.favorite {
+        background-color: $gold;
+    }
 }
 
 .box {

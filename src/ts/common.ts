@@ -233,6 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'a11y':
           title = 'Accessibility Statement';
           break;
+        case 'legal':
+          title = 'Legal notice';
+          break;
         default:
           title = 'Privacy Policy';
         }

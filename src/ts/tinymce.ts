@@ -35,6 +35,7 @@ import 'tinymce/themes/mobile';
 import '../js/tinymce-langs/ca_ES.js';
 import '../js/tinymce-langs/de_DE.js';
 import '../js/tinymce-langs/en_GB.js';
+import '../js/tinymce-langs/en_US.js';
 import '../js/tinymce-langs/es_ES.js';
 import '../js/tinymce-langs/fr_FR.js';
 import '../js/tinymce-langs/id_ID.js';

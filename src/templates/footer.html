@@ -18,13 +18,16 @@
 
     <span>
       {%- if App.Config.configArr.privacy_policy -%}
-        <a href='#' data-policy='privacy' data-action='show-policy'>{{ 'Privacy policy'|trans }}</a>
+        <a href='#' data-policy='privacy' data-action='show-policy'>{{ App.Config.configArr.privacy_policy_name }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.terms_of_service -%}
-        <a href='#' data-policy='tos' data-action='show-policy'>{{ 'Terms of service'|trans }}</a>
+        <a href='#' data-policy='tos' data-action='show-policy'>{{ App.Config.configArr.terms_of_service_name }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.a11y_statement -%}
-        <a href='#' data-policy='a11y' data-action='show-policy'>{{ 'Accessibility statement'|trans }}</a>
+        <a href='#' data-policy='a11y' data-action='show-policy'>{{ App.Config.configArr.a11y_statement_name }}</a>
+      {%- endif -%}
+      {%- if App.Config.configArr.legal_notice -%}
+        <a href='#' data-policy='legal' data-action='show-policy'>{{ App.Config.configArr.legal_notice_name }}</a>
       {%- endif -%}
     </span>
   </p>

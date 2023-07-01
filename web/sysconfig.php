@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
@@ -24,7 +23,6 @@ use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
-use function file_get_contents;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
@@ -116,8 +114,6 @@ try {
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
-    $privacyPolicyTemplate = file_get_contents(dirname(__DIR__) . '/src/templates/privacy-policy.html');
-
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
@@ -128,7 +124,6 @@ try {
         'isSearching' => $isSearching,
         'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
-        'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
         'Teams' => $Teams,

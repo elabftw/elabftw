@@ -441,50 +441,33 @@
 
 <!-- TAB 7 POLICIES -->
 <div data-tabcontent='7' hidden>
-  <!-- PRIVACY POLICY -->
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Adjust your privacy policy notice'|trans }}</h3>
-  <div class='pl-3'>
-    {% if not App.Config.configArr.privacy_policy %}
-      {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-    {% endif %}
-    <textarea id='privacyPolicyInput' class='mceditable'>
-      {{ App.Config.configArr.privacy_policy|default(privacyPolicyTemplate)|raw }}
-    </textarea>
-    <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='privacy_policy' data-textarea='privacyPolicyInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-    </div>
-  </div>
 
-  <!-- TERMS OF SERVICE -->
-  <h3 class='mb-3 p-2 pl-3 mt-5 section-title'>{{ 'Adjust your terms of service'|trans }}</h3>
-  <div class='pl-3'>
-    {% if not App.Config.configArr.terms_of_service %}
-      {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-    {% endif %}
-    <textarea id='termsOfServiceInput' class='mceditable'>
-      {{ App.Config.configArr.termsOfService|default('TODO')|raw }}
-    </textarea>
-    <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='terms_of_service' data-textarea='termsOfServiceInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+  {% macro policy(title, slug, configArr) %}
+    <h3 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h3>
+    <div class='pl-3'>
+      <div class='d-flex justify-content-between'>
+        <label for='{{ slug }}_name' class='col-form-label'>{{ 'Link name'|trans }}</label>
+        <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='{{ slug }}_name' type='text' value='{{ configArr[ slug ~ '_name'] }}' id='{{ slug }}_name' />
+      </div>
+      <hr>
+      {% if not configArr[slug] %}
+        {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
+      {% endif %}
+      <textarea id='{{ slug }}Input' class='mceditable'>
+        {{ configArr[slug]|default('Set your text here.')|raw }}
+      </textarea>
+      <div class='my-4 text-center'>
+        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
     </div>
-  </div>
+  {% endmacro %}
 
-  <!-- A11Y STATEMENT -->
-  <h3 class='mb-3 p-2 pl-3 mt-5 section-title'>{{ 'Adjust your accessibility statement'|trans }}</h3>
-  <div class='pl-3'>
-    {% if not App.Config.configArr.a11y_statement %}
-      {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-    {% endif %}
-    <textarea id='a11yStatementInput' class='mceditable'>
-      {{ App.Config.configArr.a11y_statement|default('TODO')|raw }}
-    </textarea>
-    <div class='mt-4 text-center'>
-      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button data-action='patch-policy' data-confname='a11y_statement' data-textarea='a11yStatementInput'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-    </div>
-  </div>
+  {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr) }}
+  {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr) }}
+  {{ _self.policy('Accessibility statement', 'a11y_statement', App.Config.configArr) }}
+  {{ _self.policy('Legal notice', 'legal_notice', App.Config.configArr) }}
+
 </div>
 
 <!-- TAB 8 UPLOADS -->

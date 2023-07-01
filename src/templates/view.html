@@ -76,10 +76,13 @@
   {% include('edit-permissions.html') %}
 
   <!-- SHOW EVENTS -->
-  {% if Entity.entityData.is_bound %}<i class='far fa-calendar-alt'></i>
-    <a href='#' data-action='see-events'>{{ 'See bookings'|trans }}</a>
+  {% if Entity.entityData.events_start %}<i class='far fa-calendar-alt'></i>
+    {% for event in Entity.entityData.events_start|split('|') %}
+    <a href='team.php?item={{ entity.id }}&start={{ event|url_encode }}'>
+      <button class='m-1 btn btn-neutral relative-moment' title='{{ event|date('Y-m-d H:i:s') }}'></button>
+    </a>
+    {% endfor %}
   {% endif %}
-  <div id='boundBookings'></div>
 
   <!-- SHOW NEXT STEP -->
   {% set next_step = Entity.entityData.next_step %}

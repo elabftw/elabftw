@@ -9,7 +9,6 @@ import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
-import { DateTime } from 'luxon';
 import { Action } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -55,23 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         link.toggleAttribute('hidden');
         link.focus();
         link.select();
-      });
-    // SEE EVENTS
-    } else if (el.matches('[data-action="see-events"]')) {
-      EntityC.read(entity.id).then(json => {
-        const eventId = json.events_id;
-        // now read the event info
-        ApiC.getJson(`event/${eventId}`).then(json => {
-          const bookingsDiv = document.getElementById('boundBookings');
-          const el = document.createElement('a');
-          el.href = `team.php?item=${json.item}&start=${encodeURIComponent(json.start)}`;
-          const button = document.createElement('button');
-          button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
-          const locale = document.getElementById('user-prefs').dataset.jslang;
-          button.innerText = DateTime.fromISO(json.start, {'locale': locale}).toRelative();
-          el.appendChild(button);
-          bookingsDiv.replaceChildren(el);
-        });
       });
 
     // TOGGLE PINNED

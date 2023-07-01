@@ -34,9 +34,7 @@ class EntitySqlBuilder
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
             $select = sprintf("SELECT DISTINCT entity.*,
-                GROUP_CONCAT(DISTINCT (team_events.experiment IS NOT NULL OR team_events.item_link IS NOT NULL)) AS is_bound,
-                GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,
+                GROUP_CONCAT(team_events.start ORDER BY team_events.start SEPARATOR '|') AS events_start,
                 '%s' AS page,
                 '%s' AS type,", $this->entity->page, $this->entity->type);
         } else {
@@ -132,13 +130,14 @@ class EntitySqlBuilder
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
             $select .= ', categoryt.bookable';
-            $eventsColumn = 'item_link';
+            $eventsColumn = 'item_link = entity.id OR team_events.item';
         } else {
             throw new IllegalActionException('Nope.');
         }
         $eventsJoin = '';
         if ($fullSelect) {
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id)';
+            // only select events from the future
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id AND team_events.start > NOW())';
         }
 
         $sqlArr = array(

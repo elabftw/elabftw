@@ -273,10 +273,6 @@ components:
           type: string
         elabid:
           type: string
-        events_id:
-          type: string
-        events_item_id:
-          type: string
         firstname:
           type: string
         fullname:
@@ -287,8 +283,6 @@ components:
           type: integer
         id:
           type: integer
-        is_bound:
-          type: string
         lastchangeby:
           type: integer
         lastname:

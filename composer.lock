@@ -298,16 +298,16 @@
         },
         {
             "name": "directorytree/ldaprecord",
-            "version": "v3.0.3",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DirectoryTree/LdapRecord.git",
-                "reference": "67dd3078a678ad6e2fd371256315ae0eb8bf84f4"
+                "reference": "bf64a0d75fed6ee4babbd4ff6e893b89d21de340"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/67dd3078a678ad6e2fd371256315ae0eb8bf84f4",
-                "reference": "67dd3078a678ad6e2fd371256315ae0eb8bf84f4",
+                "url": "https://api.github.com/repos/DirectoryTree/LdapRecord/zipball/bf64a0d75fed6ee4babbd4ff6e893b89d21de340",
+                "reference": "bf64a0d75fed6ee4babbd4ff6e893b89d21de340",
                 "shasum": ""
             },
             "require": {
@@ -319,7 +319,7 @@
                 "nesbot/carbon": "*",
                 "php": ">=8.1",
                 "psr/log": "*",
-                "psr/simple-cache": "^2.0|^3.0"
+                "psr/simple-cache": "^v1.0|^v2.0|^3.0"
             },
             "require-dev": {
                 "fakerphp/faker": "^1.21",
@@ -370,7 +370,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-06-03T13:29:20+00:00"
+            "time": "2023-06-20T13:00:20+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -968,16 +968,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.13.5",
+            "version": "v10.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "73652e915e56531e08c06bd356d8fa8bc346812e"
+                "reference": "7fdccaabe533b7d86e59d278901aac075aae0abc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/73652e915e56531e08c06bd356d8fa8bc346812e",
-                "reference": "73652e915e56531e08c06bd356d8fa8bc346812e",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/7fdccaabe533b7d86e59d278901aac075aae0abc",
+                "reference": "7fdccaabe533b7d86e59d278901aac075aae0abc",
                 "shasum": ""
             },
             "require": {
@@ -1019,11 +1019,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-05-24T17:26:41+00:00"
+            "time": "2023-06-23T21:58:46+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.13.5",
+            "version": "v10.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1069,16 +1069,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.13.5",
+            "version": "v10.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "93605a5fc27cead6746d84796725c7c0d7d51d62"
+                "reference": "ec47d1aa1a1b1a679d8553836b417343881b8215"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/93605a5fc27cead6746d84796725c7c0d7d51d62",
-                "reference": "93605a5fc27cead6746d84796725c7c0d7d51d62",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ec47d1aa1a1b1a679d8553836b417343881b8215",
+                "reference": "ec47d1aa1a1b1a679d8553836b417343881b8215",
                 "shasum": ""
             },
             "require": {
@@ -1113,11 +1113,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-06-06T15:23:52+00:00"
+            "time": "2023-06-27T14:35:49+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.13.5",
+            "version": "v10.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",

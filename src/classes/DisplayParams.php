@@ -54,8 +54,6 @@ class DisplayParams
     // start metadata stuff
     public bool $hasMetadataSearch = false;
 
-    public array $metadataFilter = array();
-
     public array $metadataKey = array();
 
     public array $metadataValuePath = array();
@@ -105,9 +103,7 @@ class DisplayParams
         $this->metadataKey[] = $jsonPath;
         $this->metadataValuePath[] = $jsonPath . '.value';
         $this->metadataValue[] = Filter::sanitize($searchTerm);
-
-        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
-        $this->metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
+        $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
     }
 
     /**

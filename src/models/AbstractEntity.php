@@ -241,9 +241,6 @@ abstract class AbstractEntity implements RestInterface
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
 
-        // metadata filter (this will just be empty if we're not doing anything metadata related)
-        $sql .= implode(' ', $displayParams->metadataFilter);
-
         // teamFilter is to restrict to the team for items only
         // as they have a team column
         $teamFilter = '';

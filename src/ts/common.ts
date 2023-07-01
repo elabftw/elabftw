@@ -127,6 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Listen for malleable columns
   new Malle({
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      return true;
+    },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],

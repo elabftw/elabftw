@@ -160,6 +160,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
+      {text: 'SQL', value: 'sql'},
     ],
     codesample_global_prismjs: true,
     language: document.getElementById('user-prefs').dataset.lang,

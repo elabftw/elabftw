@@ -91,10 +91,12 @@ class TeamTags implements RestInterface
         // TODO move this out of here
         $Request = Request::createFromGlobals();
         $query = Filter::sanitize($Request->query->getString('q'));
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
+        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY item_count DESC';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
         $this->Db->execute($req);

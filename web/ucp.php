@@ -20,6 +20,7 @@ use Elabftw\Models\Changelog;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,6 +41,7 @@ try {
 
     $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
+    $TeamTags = new TeamTags($App->Users);
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
@@ -106,6 +108,7 @@ try {
         'teamsArr' => $Teams->readAll(),
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
+        'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,

@@ -1,12 +1,36 @@
 {# TAGS #}
-<div class='d-flex mb-2 align-items-center mathjax-ignore'>
-  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
-  <div class='tags form-inline mr-2'>
-    <div id='tags_div_{{ Entity.id }}' class='d-flex flex-wrap mb-1'>
-      {% for tag in Entity.Tags.readAll() %}
-        <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite'}}' data-action='unreference-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag|raw }}</a>
+<div id='tags_div_{{ Entity.id }}'>
+  <div class='d-flex mb-2 align-items-center mathjax-ignore'>
+    <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
+    <div class='tags form-inline mr-2'>
+      <div class='d-flex flex-wrap mb-1'>
+        {% set attachedTags = Entity.Tags.readAll() %}
+        {% for tag in attachedTags %}
+          <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite'}}' data-action='unreference-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag|raw }}</a>
+        {%- endfor -%}
+      </div>
+      <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
+    </div>
+  </div>
+  <div class='d-flex mb-2 align-items-center mathjax-ignore'>
+    <label for='suggestedTags' class='col-form-label mr-3 edit-mode-label'>{{ 'Suggested tags'|trans }}</label>
+    <div class='mr-2'>
+      {% set filteredTags = [] %}
+      {% for tag in teamTagsArr %}
+        {% set tagFound = false %}
+        {% for attachedTag in attachedTags %}
+          {% if tag.tag == attachedTag.tag %}
+            {% set tagFound = true %}
+          {% endif %}
+        {% endfor %}
+        {% if not tagFound %}
+          {% set filteredTags = filteredTags|merge([tag]) %}
+        {% endif %}
+      {% endfor %}
+
+      {% for tag in filteredTags|slice(0, 30) %}
+        <a class='tag margin-1px opacity-8 {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite'}}' data-action='add-suggested-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag|raw }}</a>
       {%- endfor -%}
     </div>
-    <input type='text' id='createTagInput' data-teamid='{{ App.Users.userData.team }}' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
   </div>
 </div>

@@ -225,6 +225,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $Teams = new Teams($this->Entity->Users);
+        $TeamTags = new TeamTags($this->App->Users);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
 
@@ -243,6 +244,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'teamsArr' => $Teams->readAll(),
+            'teamTagsArr' => $TeamTags->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),

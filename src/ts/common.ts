@@ -528,9 +528,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const contentDiv = bodyDiv.querySelector('div');
 
       // prepare the get request
-      const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
       const entityId = parseInt(el.dataset.id, 10);
-      (new EntityClass(entityType)).read(entityId).then(json => {
+      let queryUrl = `${el.dataset.type}/${entityId}`;
+      // special case for revisions
+      if (el.dataset.revid) {
+        queryUrl += `/revisions/${el.dataset.revid}`;
+      }
+      ApiC.getJson(queryUrl).then(json => {
         // do we display the body?
         const metadata = JSON.parse(json.metadata || '{}');
         if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
@@ -538,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
           && !metadata.elabftw.display_main_text
         ) {
           // add extra fields elements from metadata json
-          const MetadataC = new Metadata({type: entityType, id: entityId});
+          const MetadataC = new Metadata({type: el.dataset.type as EntityType, id: entityId});
           MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
             // go over all the type: url elements and create a link dynamically

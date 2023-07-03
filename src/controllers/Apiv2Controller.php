@@ -27,6 +27,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -262,14 +263,22 @@ class Apiv2Controller extends AbstractApiController
     private function getSubModel(string $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
+            $Config = Config::getConfig();
             return match ($submodel) {
                 'comments' => new Comments($this->Model, $this->subId),
                 'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
                 'items_links' => new ItemsLinks($this->Model, $this->subId),
+                'revisions' => new Revisions(
+                    $this->Model,
+                    (int) $Config->configArr['max_revisions'],
+                    (int) $Config->configArr['min_delta_revisions'],
+                    (int) $Config->configArr['min_days_revisions'],
+                    $this->subId
+                ),
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {

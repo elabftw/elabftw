@@ -18,7 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
@@ -49,12 +48,6 @@ try {
     if ($App->Request->query->has('templateid')) {
         $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
-        $Revisions = new Revisions(
-            $Templates,
-            (int) $App->Config->configArr['max_revisions'],
-            (int) $App->Config->configArr['min_delta_revisions'],
-            (int) $App->Config->configArr['min_days_revisions'],
-        );
         $Changelog = new Changelog($Templates);
         $changelogData = $Changelog->readAll();
     }
@@ -115,7 +108,6 @@ try {
         'notificationsSettings' => $notificationsSettings,
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
-        'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );

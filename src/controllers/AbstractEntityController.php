@@ -21,7 +21,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
@@ -161,14 +160,6 @@ abstract class AbstractEntityController implements ControllerInterface
         }
         $this->Entity->setId($id);
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
@@ -189,7 +180,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
@@ -234,13 +224,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
         $Teams = new Teams($this->Entity->Users);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
@@ -261,7 +244,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'edit',
             'teamsArr' => $Teams->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

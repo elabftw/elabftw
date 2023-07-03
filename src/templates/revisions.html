@@ -22,25 +22,26 @@
 </div>
 
 <ul class='list-group mt-3'>
-{% for revision in revisionsArr %}
-  {% set randomId = random() %}
-  <li id='parent_{{ randomId }}' class='list-group-item'>
-    <div class='d-flex'>
-      <div>
-        <input autocomplete='off' type='checkbox' data-action='checkbox-revision' data-id='{{ Entity.id }}' data-revid='{{ revision.id }}' data-type='{{ Entity.type }}' aria-label='Select' class='mr-2' />
-        <span title='{{ 'Revision ID'|trans }}' class='badge badge-secondary mr-2'>{{ revision.id }}</span>
-        <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-          <i class='fas fa-square-plus fa-fw'></i>
-        </span>
-        <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }}
+  {% for revision in revisionsArr %}
+    {% set randomId = random() %}
+    <li id='parent_{{ randomId }}' class='list-group-item'>
+      <div class='d-flex'>
+        <div>
+          <input autocomplete='off' type='checkbox' data-action='checkbox-revision' data-id='{{ Entity.id }}' data-revid='{{ revision.id }}' data-type='{{ Entity.type }}' aria-label='Select' class='mr-2' />
+          <span title='{{ 'Revision ID'|trans }}' class='badge badge-secondary mr-2'>{{ revision.id }}</span>
+          <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+            <i class='fas fa-square-plus fa-fw'></i>
+          </span>
+          <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }}
+        </div>
+        <div class='ml-auto'>
+          {% if not Entity.isReadOnly %}<button data-action='restore-revision' data-id='{{ Entity.id }}' data-type='{{ Entity.type }}' data-revid='{{ revision.id }}' class='btn hl-hover-gray'>{{ 'Restore'|trans }}</button>{% endif %}
+        </div>
       </div>
-      <div class='ml-auto'>
-        {% if not Entity.isReadOnly %}<button data-action='restore-revision' data-id='{{ Entity.id }}' data-type='{{ Entity.type }}' data-revid='{{ revision.id }}' class='btn hl-hover-gray'>{{ 'Restore'|trans }}</button>{% endif %}
-      </div>
-    </div>
-    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
-  </li>
-{% endfor %}
+      <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
+    </li>
+  {% endfor %}
+</ul>
 
 <div id='info' data-page='revisions'></div>
 {% endblock body %}

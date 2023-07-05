@@ -9,6 +9,7 @@ import i18next from 'i18next';
 import { collectForm, reloadElement } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
+import { Action } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
@@ -49,11 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="update-user"]')) {
       return ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
+    // TOGGLE ADMIN STATUS
+    } else if (el.matches('[data-action="toggle-admin-user"]')) {
+      const group = el.dataset.promote === '1' ? 2 : 4;
+      return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElement('editUsersBox'));
+
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
       // show alert
       if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and archived and user will not be able to login anymore.')) {
-        return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'archive'}).then(() => reloadElement('editUsersBox'));
+        return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive}).then(() => reloadElement('editUsersBox'));
       }
 
     // VALIDATE USER

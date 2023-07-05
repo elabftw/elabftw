@@ -193,6 +193,20 @@
                           <i class='mr-1 fas fa-pencil fa-fw'></i>{{ 'Manage teams for user'|trans }}
                         </div>
                       {% endif %}
+                      {# on admin page, allow promoting someone to admin of the same team #}
+                      {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+                        {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
+                        {% if currentTeam.usergroup == 4 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
+                          </div>
+                        {% endif %}
+                        {% if currentTeam.usergroup == 2 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
+                          </div>
+                        {% endif %}
+                      {% endif %}
                       {% if user.archived %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}

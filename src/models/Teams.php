@@ -213,29 +213,6 @@ class Teams implements RestInterface
     }
 
     /**
-     * Get statistics for the whole install
-     */
-    public function getAllStats(): array
-    {
-        $sql = 'SELECT
-        (SELECT COUNT(users.userid) FROM users) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.state = :state) AS totdb,
-        (SELECT COUNT(teams.id) FROM teams) AS totteams,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetch(PDO::FETCH_NAMED);
-        if ($res === false) {
-            return array();
-        }
-
-        return $res;
-    }
-
-    /**
      * Get statistics for a team
      */
     public function getStats(int $team): array

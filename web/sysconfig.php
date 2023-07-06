@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -50,7 +51,6 @@ try {
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
-    $teamsStats = $Teams->getAllStats();
     $Experiments = new Experiments($App->Users);
 
     // Users search
@@ -128,7 +128,7 @@ try {
         'samlSecuritySettings' => $samlSecuritySettings,
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
-        'teamsStats' => $teamsStats,
+        'info' => (new Info())->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),

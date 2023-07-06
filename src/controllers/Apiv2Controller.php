@@ -24,6 +24,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Notifications\UserNotifications;
@@ -224,6 +225,8 @@ class Apiv2Controller extends AbstractApiController
                 return Config::getConfig();
             case 'idps':
                 return new Idps($this->id);
+            case 'info':
+                return new Info();
             case 'experiments':
             case 'items':
             case 'experiments_templates':
@@ -256,7 +259,7 @@ class Apiv2Controller extends AbstractApiController
             case 'users':
                 return new Users($this->id, $this->Users->team, $this->Users);
             default:
-                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
+                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
         }
     }
 

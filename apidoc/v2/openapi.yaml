@@ -1044,7 +1044,52 @@ paths:
         '204':
           description: The experiment was deleted
 
-  # Items
+  # INFO
+  /info:
+    summary: Information about the instance
+    get:
+      tags: ['Info']
+      summary: Get information about the instance.
+      description: Get information about the instance.
+      operationId: get-info
+      responses:
+        '200':
+          description: Information about the instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  elabftw_version:
+                    type: string
+                    description: Current eLabFTW version
+                    example: 4.8.0
+                  all_users_count:
+                    type: integer
+                    description: Total count of all users
+                    example: 389
+                  active_users_count:
+                    type: integer
+                    description: Total count of active users
+                    example: 311
+                  items_count:
+                    type: integer
+                    description: Total count of items
+                    example: 666
+                  teams_count:
+                    type: integer
+                    description: Total count of teams
+                    example: 18
+                  experiments_count:
+                    type: integer
+                    description: Total count of experiments
+                    example: 10189
+                  experiments_timestamped_count:
+                    type: integer
+                    description: Total count of experiments with timestamps
+                    example: 1601
+
+  # ITEMS
   /items:
     summary: Actions on items
     post:

@@ -8,7 +8,7 @@
 import { Action, Entity, EntityType } from './interfaces';
 import { adjustHiddenState } from './misc';
 import { Api } from './Apiv2.class';
-import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup } from './metadataInterfaces';
+import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 
 
 export function ResourceNotFoundException(message: string): void {
@@ -178,12 +178,12 @@ export class Metadata {
     const uniqid = this.getRandomId();
 
     // read the type of element
-    switch (properties.type) {
-    case 'number':
+    switch (properties.type as ExtraFieldInputType) {
+    case ExtraFieldInputType.Number:
       element = document.createElement('input');
       element.type = 'number';
       break;
-    case 'select':
+    case ExtraFieldInputType.Select:
       element = document.createElement('select');
       if (properties.allow_multi_values === true) {
         element.toggleAttribute('multiple');
@@ -198,19 +198,23 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
-    case 'date':
+    case ExtraFieldInputType.Date:
       element = document.createElement('input');
       element.type = 'date';
       break;
-    case 'checkbox':
+    case ExtraFieldInputType.Checkbox:
       element = document.createElement('input');
       element.type = 'checkbox';
       break;
-    case 'radio':
+    case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
-    case 'url':
+    case ExtraFieldInputType.Url:
       element = document.createElement('input');
       element.type = 'url';
+      break;
+    case ExtraFieldInputType.Time:
+      element = document.createElement('input');
+      element.type = 'time';
       break;
     default:
       element = document.createElement('input');

@@ -7,7 +7,7 @@
  */
 import { getEntity, notifError } from './misc';
 import { Metadata } from './Metadata.class';
-import { ValidMetadata } from './metadataInterfaces';
+import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import { Api } from './Apiv2.class';
 
 
@@ -34,22 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // start by hiding this one, which is only shown for select
     document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', true);
 
-    switch (fieldType) {
-    case 'text':
-    case 'date':
-    case 'number':
-    case 'url':
+    switch (fieldType as ExtraFieldInputType) {
+    case ExtraFieldInputType.Text:
+    case ExtraFieldInputType.Date:
+    case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Url:
+    case ExtraFieldInputType.Time:
       valueInput.setAttribute('type', fieldType);
       toggleContentDiv('classic');
       break;
-    case 'select':
+    case ExtraFieldInputType.Select:
       document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
       toggleContentDiv('selectradio');
       break;
-    case 'radio':
+    case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
-    case 'checkbox':
+    case ExtraFieldInputType.Checkbox:
       toggleContentDiv(fieldType);
       break;
     default:

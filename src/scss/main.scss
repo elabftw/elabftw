@@ -437,6 +437,15 @@ button:disabled {
     }
 }
 
+/* table in view mode, always add borders, see #4436 */
+#body_view {
+    table,
+    td,
+    tr {
+        border: 1px solid $secondlevel;
+    }
+}
+
 .margin-1px {
     margin: 1px;
 }

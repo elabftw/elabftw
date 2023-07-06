@@ -1,0 +1,28 @@
+<!-- Modal for ownership transfer -->
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <!-- SELECT USER -->
+        <label for='new_owner'>{{ 'New owner'|trans }}</label>
+        <select id='new_owner' class='form-control'>
+          {% for user in Entity.Users.readAllFromTeam %}
+            <option value='{{ user.userid }}'
+            {{ Entity.entityData.userid == user.userid ? ' selected' }}
+            >{{ user.fullname|raw }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='transfer-ownership'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

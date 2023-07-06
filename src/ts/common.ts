@@ -125,6 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // show human friendly moments
   relativeMoment();
 
+  // look for elements that should have focus
+  const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);
+  if (needFocus) {
+    needFocus.focus();
+  }
+
   // Listen for malleable columns
   new Malle({
     onEdit: (original, _, input) => {

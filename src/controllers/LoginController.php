@@ -20,6 +20,7 @@ use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\IdpsHelper;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -166,9 +167,8 @@ class LoginController implements ControllerInterface
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 
-        return new RedirectResponse(
-            (string) ($this->App->Request->cookies->get('elab_redirect') ?? '../../experiments.php')
-        );
+        // we redirect to index that will then redirect to the correct entrypoint set by user
+        return new RedirectResponse('/index.php');
     }
 
     /**

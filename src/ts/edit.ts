@@ -190,6 +190,20 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
+    // CLICK the NOW button of a time or date extra field
+    } else if (el.matches('[data-action="update-to-now"]')) {
+      const input = el.closest('.input-group').querySelector('input');
+      const currentDate = new Date();
+      if (input.type === 'date') {
+        input.valueAsDate = currentDate;
+      }
+      if (input.type === 'time') {
+        // need the time in milliseconds
+        input.valueAsNumber = (currentDate.getHours() * 60 + currentDate.getMinutes()) * 60000;
+      }
+      // trigger change event so it is saved
+      input.dispatchEvent(new Event('change'));
+
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));

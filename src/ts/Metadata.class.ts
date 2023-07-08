@@ -252,6 +252,20 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
+
+    // add a prepend button for "Now" for date and time types
+    if (['time', 'date'].includes(element.type)) {
+      const inputGroupDiv = document.createElement('div');
+      inputGroupDiv.classList.add('input-group');
+      const prependDiv = document.createElement('div');
+      prependDiv.classList.add('input-group-prepend');
+      prependDiv.appendChild(this.getActionButton());
+
+      inputGroupDiv.appendChild(prependDiv);
+      // now add the input
+      inputGroupDiv.appendChild(element);
+      return inputGroupDiv;
+    }
     return element;
   }
 
@@ -323,6 +337,15 @@ export class Metadata {
       descriptionWrapper.append(descriptionEl);
     }
     return descriptionWrapper;
+  }
+
+  getActionButton(): HTMLButtonElement {
+    const btn = document.createElement('button');
+    // TODO i18n
+    btn.innerText = 'Now';
+    btn.dataset.action = 'update-to-now';
+    btn.classList.add('btn', 'btn-secondary');
+    return btn;
   }
 
   getGroups(mode: string, json: ValidMetadata) {

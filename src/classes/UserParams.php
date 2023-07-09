@@ -54,14 +54,6 @@ final class UserParams extends ContentParams implements ContentParamsInterface
         };
     }
 
-    public function getColumn(): string
-    {
-        return match ($this->target) {
-            'password' => 'password_hash',
-            default => $this->target,
-        };
-    }
-
     private function filterOrcid(): string
     {
         // first check basic structure

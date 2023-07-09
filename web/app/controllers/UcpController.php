@@ -17,7 +17,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -28,7 +27,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
-$Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
+$Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 
 $postData = $Request->request->all();
 try {
@@ -37,13 +36,7 @@ try {
         $tab = 2;
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
-            // check that we got the good password
-            $LocalAuth = new Local($App->Users->userData['email'], (string) $Request->request->get('currpass'));
-            try {
-                $LocalAuth->tryAuth();
-            } catch (InvalidCredentialsException $e) {
-                throw new ImproperActionException('The current password is not valid!');
-            }
+            $App->Users->checkCurrentPasswordOrExplode($Request->request->getString('current_password'));
             // update the email if necessary
             if (isset($postData['email']) && ($postData['email'] !== $App->Users->userData['email'])) {
                 $App->Users->patch(Action::Update, array('email' => $postData['email']));
@@ -51,8 +44,9 @@ try {
         }
 
         // CHANGE PASSWORD (only for local accounts)
-        if (!empty($Request->request->get('newpass')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
-            $App->Users->patch(Action::Update, array('password' => $postData['newpass']));
+        if (!empty($Request->request->get('password')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+            $App->Users->patch(Action::UpdatePassword, $postData);
+            $App->Log->info('Password was changed for this user', array('userid' => $App->Users->userData['userid']));
         }
 
         // TWO FACTOR AUTHENTICATION
@@ -68,10 +62,10 @@ try {
             $App->Session->set('mfa_auth_required', true);
             $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
             $App->Session->set('enable_mfa', true);
-            $App->Session->set('mfa_redirect_origin', '../../ucp.php?tab=2');
+            $App->Session->set('mfa_redirect_origin', '/ucp.php?tab=2');
 
             // This will redirect user right away to verify mfa code
-            $Response = new RedirectResponse('../../login.php');
+            $Response = new RedirectResponse('/login.php');
             $Response->send();
             exit;
 
@@ -89,7 +83,7 @@ try {
     // END TAB 2
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
-    $Response = new RedirectResponse(sprintf('../../ucp.php?tab=%d', $tab));
+    $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

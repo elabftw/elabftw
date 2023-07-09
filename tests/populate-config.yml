@@ -54,6 +54,7 @@ users:
     firstname: Tata
     team: Bravo
     create_experiments: true
+    password: testPassword
 
   - email: somesamluser@example.com
     team: Bravo

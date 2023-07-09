@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 
@@ -49,7 +50,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'firstname' => 'Tata',
             'lastname' => 'Yep',
             'orcid' => '0000-0002-7494-5555',
-            'password' => 'new super password',
         );
         $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
@@ -107,6 +107,52 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(4, 2, new Users(4, 2));
         $this->expectException(ImproperActionException::class);
         $Users->patch(Action::Update, array('password' => 'short'));
+    }
+
+    public function testUpdatePasswordNoCurrentPasswordProvided(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd'));
+    }
+
+    public function testUpdatePasswordIncorrectCurrentPasswordProvided(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd', 'current_password' => 'incorrectPassword'));
+    }
+
+    public function testUpdatePasswordWithEmptyPassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => '', 'current_password' => 'testPassword'));
+    }
+
+    public function testUpdatePassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd', 'current_password' => 'testPassword')));
+    }
+
+    public function testResetPassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->assertTrue($Users->resetPassword('newPassw0rd'));
+    }
+
+    public function testUpdatePasswordAsSysadmin(): void
+    {
+        $Users = new Users(4, 2, new Users(1, 1));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd')));
+    }
+
+    public function testTryToBecomeSysadmin(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Update, array('is_sysadmin' => 1));
     }
 
     public function testInvalidateToken(): void

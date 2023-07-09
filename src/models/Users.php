@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
@@ -16,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
@@ -304,6 +306,7 @@ class Users implements RestInterface
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $target => $content) {
@@ -418,6 +421,27 @@ class Users implements RestInterface
     }
 
     /**
+     * This function allows us to set a new password without having to provide the old password
+     */
+    public function resetPassword(string $password): bool
+    {
+        return $this->updatePassword(array('password' => $password), true);
+    }
+
+    public function checkCurrentPasswordOrExplode(?string $currentPassword): void
+    {
+        if (empty($currentPassword)) {
+            throw new ImproperActionException('Current password must be provided by "current_password" parameter.');
+        }
+        $LocalAuth = new Local($this->userData['email'], $currentPassword);
+        try {
+            $LocalAuth->tryAuth();
+        } catch (InvalidCredentialsException) {
+            throw new ImproperActionException('The current password is not valid!');
+        }
+    }
+
+    /**
      * Remove sensitives values from readFromQuery()
      */
     private function readFromQuerySafe(string $query, int $team): array
@@ -446,9 +470,8 @@ class Users implements RestInterface
 
     private function update(UserParams $params): bool
     {
-        // special case for password: we invalidate the stored token
         if ($params->getTarget() === 'password') {
-            $this->invalidateToken();
+            throw new ImproperActionException('Use action:updatepassword to update the password');
         }
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
@@ -464,6 +487,28 @@ class Users implements RestInterface
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updatePassword(array $params, bool $isReset = false): bool
+    {
+        // a sysadmin or reset password page request doesn't need to provide the current password
+        if ($this->requester->userData['is_sysadmin'] !== 1 && $isReset === false) {
+            $this->checkCurrentPasswordOrExplode($params['current_password']);
+        }
+        if (empty($params['password'])) {
+            throw new ImproperActionException('New password must be provided by "password" parameter.');
+        }
+        // when updating the password, we need to check for the presence and validity of the current_password
+        // special case for password: we invalidate the stored token
+        $this->invalidateToken();
+        // this will properly hash the password
+        $params = new UserParams('password', $params['password']);
+        // don't use the update() function so it cannot be bypassed by setting Action::Update instead of Action::UpdatePassword
+        $sql = 'UPDATE users SET password_hash = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

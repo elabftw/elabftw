@@ -67,6 +67,7 @@ enum Action {
   Pin = 'pin',
   Replace = 'replace',
   Timestamp = 'timestamp',
+  UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
   UpdateMetadataField = 'updatemetadatafield',
   Unreference = 'unreference',

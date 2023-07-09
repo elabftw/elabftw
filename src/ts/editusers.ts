@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
       const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
-      return ApiC.patch(`users/${el.dataset.userid}`, {'password': password});
+      // because we're sysadmin, we don't need to provide the current_password parameter
+      return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: password});
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {

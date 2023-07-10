@@ -13,6 +13,7 @@ const t = {
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
     "nothing-selected": "Tidak ada yang dipilih!",
+    "now": "Sekarang",
     "please-wait": "Mohon tunggu",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",
@@ -20,6 +21,7 @@ const t = {
     "tag-delete-warning": "Hapus label ini?",
     "upload-file-comment": "File komentar",
     "template-title": "Template title",
+    "today": "Hari ini",
   },
 };
 

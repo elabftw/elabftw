@@ -13,13 +13,15 @@ const t = {
     "generic-delete-warning": "Odstrániť toto?",
     "link-delete-warning": "Odstrániť tento odkaz?",
     "nothing-selected": "Nič vybraté!",
+    "now": "Teraz",
     "please-wait": "Prosím čakajte",
     "replace-edited-file": "Chcete nahradiť súbor na serveri touto úpravou?",
     "request-filename": "Zadajte názov súboru",
     "step-delete-warning": "Odstrániť tento krok?",
     "tag-delete-warning": "Odstrániť túto značku?",
     "upload-file-comment": "Komentár k súboru",
-    "template-title": "Template title",
+    "template-title": "Názov šablóny",
+    "today": "Dnes",
   },
 };
 

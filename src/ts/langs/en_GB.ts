@@ -15,6 +15,7 @@ const t = {
     "link-delete-warning": "Delete this link?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
     "nothing-selected": "Nothing selected!",
+    "now": "Now",
     "please-wait": "Please wait…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Enter name of the file",
@@ -26,6 +27,7 @@ const t = {
     "tag-delete-warning": "Delete this tag?",
     "template-title": "Template title",
     "upload-file-comment": "File comment",
+    "today": "Today",
   },
 };
 

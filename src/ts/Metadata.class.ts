@@ -7,6 +7,7 @@
  */
 import { Action, Entity, EntityType } from './interfaces';
 import { adjustHiddenState } from './misc';
+import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 
@@ -259,7 +260,12 @@ export class Metadata {
       inputGroupDiv.classList.add('input-group');
       const prependDiv = document.createElement('div');
       prependDiv.classList.add('input-group-prepend');
-      prependDiv.appendChild(this.getActionButton());
+      // NOW/TODAY button
+      const btn = document.createElement('button');
+      btn.innerText = element.type === 'time' ? i18next.t('now') : i18next.t('today');
+      btn.dataset.action = 'update-to-now';
+      btn.classList.add('btn', 'btn-secondary');
+      prependDiv.appendChild(btn);
 
       inputGroupDiv.appendChild(prependDiv);
       // now add the input
@@ -337,15 +343,6 @@ export class Metadata {
       descriptionWrapper.append(descriptionEl);
     }
     return descriptionWrapper;
-  }
-
-  getActionButton(): HTMLButtonElement {
-    const btn = document.createElement('button');
-    // TODO i18n
-    btn.innerText = 'Now';
-    btn.dataset.action = 'update-to-now';
-    btn.classList.add('btn', 'btn-secondary');
-    return btn;
   }
 
   getGroups(mode: string, json: ValidMetadata) {

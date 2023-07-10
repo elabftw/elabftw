@@ -13,13 +13,15 @@ const t = {
     "generic-delete-warning": "Želite izbrisati?",
     "link-delete-warning": "Želite izbrisati to povezavo?",
     "nothing-selected": "Nič izbranega!",
+    "now": "zdaj",
     "please-wait": "Prosim počakaj",
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
     "request-filename": "Vnesite ime datoteke",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "upload-file-comment": "Komentar datoteke",
-    "template-title": "Template title",
+    "template-title": "Naslov predloge",
+    "today": "Danes",
   },
 };
 

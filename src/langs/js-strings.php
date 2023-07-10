@@ -58,3 +58,9 @@ _('File comment');
 /** @psalm-suppress UnusedFunctionCall */
 // template-title
 _('Template title');
+/** @psalm-suppress UnusedFunctionCall */
+// now
+_('Now');
+/** @psalm-suppress UnusedFunctionCall */
+// today
+_('Today');

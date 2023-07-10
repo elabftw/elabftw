@@ -13,6 +13,7 @@ const t = {
     "generic-delete-warning": "Eliminar això?",
     "link-delete-warning": "Voleu eliminar aquest enllaç?",
     "nothing-selected": "Res seleccionat!",
+    "now": "Ara",
     "please-wait": "Si us plau, espera",
     "replace-edited-file": "Voleu substituir el fitxer del servidor per aquesta edició?",
     "request-filename": "Introduïu el nom del fitxer",
@@ -20,6 +21,7 @@ const t = {
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "upload-file-comment": "Comentari d’arxiu",
     "template-title": "Template title",
+    "today": "Avui",
   },
 };
 

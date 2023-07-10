@@ -13,13 +13,15 @@ const t = {
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
     "nothing-selected": "没有选择！",
+    "now": "现在",
     "please-wait": "请稍候",
     "replace-edited-file": "您是否要用此编辑替换服务器上的文件？",
     "request-filename": "输入文件名",
     "step-delete-warning": "删除此步骤？",
     "tag-delete-warning": "删除这个标签？",
     "upload-file-comment": "档案评论",
-    "template-title": "Template title",
+    "template-title": "模板标题",
+    "today": "今天",
   },
 };
 

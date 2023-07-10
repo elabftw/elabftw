@@ -13,13 +13,15 @@ const t = {
     "generic-delete-warning": "Apagar isto?",
     "link-delete-warning": "Apagar este link?",
     "nothing-selected": "Nada selecionado!",
+    "now": "Agora",
     "please-wait": "Por favor, espere",
     "replace-edited-file": "Você deseja substituir o arquivo no servidor por esta edição?",
     "request-filename": "Digite o nome do arquivo",
     "step-delete-warning": "Apagar este passo?",
     "tag-delete-warning": "Apagar esta etiqueta?",
     "upload-file-comment": "Comentário no arquivo",
-    "template-title": "Template title",
+    "template-title": "Título do modelo",
+    "today": "Hoje",
   },
 };
 

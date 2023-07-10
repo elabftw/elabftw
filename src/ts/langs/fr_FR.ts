@@ -13,6 +13,7 @@ const t = {
     "generic-delete-warning": "Supprimer ça ?",
     "link-delete-warning": "Supprimer ce lien ?",
     "nothing-selected": "Rien de sélectionné !",
+    "now": "Maintenant",
     "please-wait": "Veuillez patienter…",
     "replace-edited-file": "Voulez-vous remplacer le fichier sur le serveur par cette modification?",
     "request-filename": "Entrez le nom du fichier",
@@ -20,6 +21,7 @@ const t = {
     "tag-delete-warning": "Supprimer ce tag ?",
     "upload-file-comment": "Commentaire du fichier",
     "template-title": "Template title",
+    "today": "Aujourd'hui",
   },
 };
 

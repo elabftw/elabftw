@@ -13,13 +13,15 @@ const t = {
     "generic-delete-warning": "삭제할까요?",
     "link-delete-warning": "링크를 삭제할까요?",
     "nothing-selected": "선택한 항목이 없습니다!",
+    "now": "지금",
     "please-wait": "기다려주세요",
     "replace-edited-file": "서버의 파일을이 편집으로 바꾸시겠습니까?",
     "request-filename": "파일 이름 입력",
     "step-delete-warning": "단계를 삭제할까요?",
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "upload-file-comment": "파일 코멘트",
-    "template-title": "Template title",
+    "template-title": "템플릿 제목",
+    "today": "오늘",
   },
 };
 

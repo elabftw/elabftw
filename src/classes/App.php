@@ -142,7 +142,7 @@ class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
+            return $this->getTwig((bool) $this->Config->configArr['debug'])->render($template, array_merge(array('App' => $this), $variables));
         } catch (RuntimeException $e) {
             echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
             echo '<h2>Error message: ' . $e->getMessage() . '</h2>';

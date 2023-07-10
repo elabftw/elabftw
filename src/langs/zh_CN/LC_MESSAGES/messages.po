@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: src/templates/search.html:383 src/templates/search.html:394
 #: src/templates/ucp.html:304
@@ -209,11 +209,11 @@ msgstr "登录"
 
 #: src/templates/login.html:17
 msgid "Enter your email address"
-msgstr "输入您的 Email 地址"
+msgstr "输入您的Email地址"
 
 #: src/services/EmailValidator.php:41
 msgid "Someone is already using that email address!"
-msgstr "已有人使用此 Email 地址！"
+msgstr "已有人使用此Email地址！"
 
 #: web/app/controllers/RegisterController.php:56
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
@@ -302,7 +302,7 @@ msgstr "默认端口为 587。"
 
 #: src/templates/sysconfig.html:317
 msgid "SMTP password"
-msgstr "SMTP 密码"
+msgstr "SMTP密码"
 
 #: src/templates/head.html:203
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
@@ -310,7 +310,7 @@ msgstr "团队管理员可以编辑可用的状态和项目类型 （%s管理面
 
 #: src/templates/head.html:209
 msgid "Custom shortcuts are available (%sControl Panel%s)."
-msgstr "您可以自定义快捷键 (%s控制台%s)。"
+msgstr "您可以自定义快捷键（%s控制台%s）。"
 
 #: src/templates/head.html:212
 msgid "You can duplicate experiments in one click."
@@ -434,11 +434,11 @@ msgstr "页面生成于"
 
 #: src/templates/head.html:197
 msgid "You can have experiments templates (%sControl Panel%s)."
-msgstr "您可以拥有自己的实验记录模板 (%s控制面板%s)。"
+msgstr "您可以拥有自己的实验记录模板（%s控制面板%s）。"
 
 #: src/templates/head.html:206
 msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
-msgstr "如果您在编辑器中按下 Ctrl + Shift + D，日期将会插入到光标处。"
+msgstr "如果您在编辑器中按下 Ctrl+Shift+D，日期将会插入到光标处。"
 
 #: src/templates/permissions-edit-modal.html:32 src/templates/profile.html:14
 #: src/templates/sysconfig.html:42 src/templates/sysconfig.html:65
@@ -470,7 +470,7 @@ msgstr "拖动文件到此处进行上传"
 
 #: src/models/Revisions.php:105
 msgid "You cannot restore a revision of a locked item!"
-msgstr "您无法还原已锁定项目的修订记录！"
+msgstr "您无法还原已锁定项目的修订版本！"
 
 #: src/templates/ts-config.html:41
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
@@ -634,7 +634,7 @@ msgstr "显示"
 
 #: src/templates/ucp.html:87
 msgid "Keyboard Shortcuts"
-msgstr "键盘快捷方式"
+msgstr "键盘快捷键"
 
 #: src/templates/team.html:156 src/templates/ucp.html:344
 msgid "Experiments Templates"
@@ -680,7 +680,7 @@ msgstr "创建小组"
 #: src/templates/steps-links-edit.html:218 src/templates/todolist-panel.html:7
 #: src/templates/todolist-panel.html:9 src/templates/todolist-panel.html:10
 msgid "Add"
-msgstr "增加"
+msgstr "添加"
 
 #: src/templates/admin.html:169
 msgid "Existing groups"
@@ -729,7 +729,7 @@ msgstr "你可以通过输入#号在文本中插入链接，自动完成功能�
 
 #: src/templates/search.html:353
 msgid "And visibility is:"
-msgstr "可见性:"
+msgstr "可见性："
 
 #: src/templates/search.html:355
 msgid "Select visibility"
@@ -772,7 +772,7 @@ msgstr "下一步骤"
 #: src/templates/steps-links-edit.html:84
 #: src/templates/steps-links-edit.html:86
 msgid "Add a step"
-msgstr "增加步骤"
+msgstr "添加步骤"
 
 #: src/templates/edit.html:161
 msgid "Draw something"
@@ -792,7 +792,7 @@ msgstr "密码已存在。"
 
 #: src/templates/sysconfig.html:323 src/templates/sysconfig.html:844
 msgid "%sClear it%s or change it below:"
-msgstr "%s清除%s 或在下方修改:"
+msgstr "%s清除%s或在下方修改："
 
 #: src/templates/ucp.html:77
 msgid "Use default"
@@ -823,7 +823,7 @@ msgstr "用户"
 
 #: src/templates/sysconfig.html:35
 msgid "Please finalize install: %slink to documentation%s."
-msgstr "请完成安装：%s 链接到文档%s。"
+msgstr "请完成安装：%s文档链接%s。"
 
 #: src/templates/sysconfig.html:88
 msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
@@ -966,7 +966,7 @@ msgstr "信息"
 #: src/templates/view-edit-toolbar.html:174
 msgid "revision available"
 msgid_plural "revisions available"
-msgstr[0] "个修订记录"
+msgstr[0] "个修订版本"
 
 #: src/templates/steps-links-edit.html:33
 #: src/templates/steps-links-view.html:12
@@ -1017,7 +1017,7 @@ msgstr "提示：你可以使用通配符 %"
 
 #: src/templates/head.html:194
 msgid "You can use a TODOlist by pressing '%s'."
-msgstr "您可以按 ‘%s’ 来使用待办清单。"
+msgstr "您可以按'%s'来使用待办清单。"
 
 #: src/templates/login.html:47 src/templates/login.html:50
 #: src/templates/login.html:190 src/templates/login.html:193
@@ -1186,7 +1186,7 @@ msgstr "此实验已被%s锁定。您无权解锁。"
 
 #: src/templates/editusers.html:186
 msgid "Unarchive user"
-msgstr "取消冻结用户"
+msgstr "解档用户"
 
 #: src/templates/upload-dropdown-menu.html:35
 msgid "Annotate this image"
@@ -1249,7 +1249,7 @@ msgstr "从模版创建实验记录"
 
 #: src/templates/admin.html:190 src/templates/permissions-edit-modal.html:63
 msgid "Add user"
-msgstr "增加用户"
+msgstr "添加用户"
 
 #: src/templates/show-view-edit.html:6
 msgid "Select type"
@@ -1289,7 +1289,7 @@ msgstr "绑定实验记录"
 
 #: src/templates/team.html:47 src/templates/team.html:62
 msgid "Attach"
-msgstr "链接"
+msgstr "绑定"
 
 #: src/templates/team.html:68
 msgid "Delete this event"
@@ -1425,7 +1425,7 @@ msgstr "eLabFTW配置"
 
 #: web/revisions.php:26
 msgid "Revisions"
-msgstr "修订记录"
+msgstr "修订版本"
 
 #: src/templates/ucp.html:69
 msgid "Last modified"
@@ -1509,7 +1509,7 @@ msgstr "切换可见性"
 #: src/templates/view-edit-toolbar.html:139
 #: src/templates/view-edit-toolbar.html:159
 msgid "Toggle pin"
-msgstr "切换置顶状态"
+msgstr "切换固定状态"
 
 #: src/templates/view.html:117
 msgid "Last modified on %s"
@@ -1625,7 +1625,7 @@ msgstr "输入文件名"
 
 #: src/templates/view-edit-toolbar.html:193
 msgid "Owned by %s"
-msgstr "属于 %s"
+msgstr "所有者 %s"
 
 #: src/templates/admin.html:440
 msgid "Deduplicate"
@@ -1738,7 +1738,7 @@ msgstr "您输入的验证码无效！"
 
 #: src/controllers/LoginController.php:321
 msgid "Two Factor Authentication is now enabled!"
-msgstr "双重验证已启用!"
+msgstr "双重验证已启用！"
 
 #: src/langs/js-strings.php:36
 msgid "Nothing selected!"
@@ -1798,7 +1798,7 @@ msgstr "登录页面通知"
 
 #: src/templates/sysconfig.html:265
 msgid "The following text will be displayed only on the login page."
-msgstr "这些文本将仅在登录页面上显示."
+msgstr "这些文本将仅在登录页面上显示。"
 
 #: src/templates/admin.html:60
 msgid "An admin account will always be able to delete items."
@@ -1886,7 +1886,7 @@ msgstr "确定"
 
 #: src/templates/sysconfig.html:113
 msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
-msgstr "如果距离上一次修改不小于此天数，则忽略最小字符限制并创建一个修订记录。"
+msgstr "如果距离上一次修改不小于此天数，则忽略最小字符限制并创建一个修订版本。"
 
 #: src/templates/sysconfig.html:398
 msgid "%d users are currently prevented from logging in from unknown devices."
@@ -1898,16 +1898,16 @@ msgstr "目前%d个设备被阻止授权。"
 
 #: src/templates/ucp.html:66
 msgid "(default)"
-msgstr "(默认)"
+msgstr "（默认）"
 
 #: web/app/controllers/ResetPasswordController.php:63
 #: web/app/controllers/ResetPasswordController.php:98
 msgid "If the account exists, an email has been sent."
-msgstr "如果帐号存在，发送一封Email。"
+msgstr "如果该帐户存在，则已发送电子邮件。"
 
 #: web/app/controllers/ResetPasswordController.php:70
 msgid "Your account is not validated. An admin of your team needs to validate it!"
-msgstr "你的帐号尚未被核准. 需要一名属于你的团队的管理员来核准它!"
+msgstr "你的帐号尚未被验证。需要一名属于你的团队的管理员来验证它！"
 
 #: web/app/controllers/ResetPasswordController.php:79
 msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
@@ -1915,7 +1915,7 @@ msgstr "Hi. 有人（大概率是你自己）请求设置eLabFTW的新密码。%
 
 #: src/services/ResetPasswordKey.php:66
 msgid "This link has expired! Password reset links are only valid for %s minutes."
-msgstr "此链接已失效!密码重置链接仅在%s分钟内有效."
+msgstr "此链接已失效！密码重置链接仅在%s分钟内有效。"
 
 #: src/exceptions/InvalidDeviceTokenException.php:21
 msgid "This browser cannot login anymore because of too many failed attempts."
@@ -1923,7 +1923,7 @@ msgstr "因为登录失败过多，无法再从此浏览器登录。"
 
 #: src/models/Experiments.php:75
 msgid "Experiments must use a template!"
-msgstr "实验必须使用一个实验模板!"
+msgstr "实验记录必须使用模板！"
 
 #: src/templates/edit.html:60
 msgid "Warning: this entry was modified %s seconds ago by %s."
@@ -2019,11 +2019,11 @@ msgstr "帐户已验证"
 
 #: src/models/notifications/StepDeadline.php:68
 msgid "A step deadline is approaching"
-msgstr "接近步骤截止日期"
+msgstr "接近步骤截止期限"
 
 #: src/models/notifications/StepDeadline.php:59
 msgid "Hello. A step deadline is approaching: "
-msgstr "你好。接近步骤截止日期: "
+msgstr "你好。截止步骤截止期限："
 
 #: src/services/Transform.php:41
 msgid "New comment on your experiment."
@@ -2055,7 +2055,7 @@ msgstr "新评论通知"
 
 #: web/ucp.php:72
 msgid "Step deadline"
-msgstr "步骤截止日期"
+msgstr "步骤截止期限"
 
 #: web/ucp.php:80
 msgid "New user created"
@@ -2174,7 +2174,7 @@ msgstr "未完成"
 #: src/templates/steps-links-edit.html:49
 #: src/templates/steps-links-view.html:17
 msgid "Deadline:"
-msgstr "截止时间："
+msgstr "截止期限："
 
 #: src/templates/steps-links-edit.html:54
 msgid "Toggle notifications"
@@ -2182,11 +2182,11 @@ msgstr "切换通知"
 
 #: src/templates/steps-links-edit.html:56
 msgid "Clear deadline"
-msgstr "清除截止日期"
+msgstr "清除截止期限"
 
 #: src/templates/steps-links-edit.html:61
 msgid "Set deadline in"
-msgstr "设定截止日期"
+msgstr "设定截止期限"
 
 #: src/templates/steps-links-view.html:176
 #: src/templates/steps-links-view.html:178
@@ -2344,7 +2344,7 @@ msgstr "由 %s 进行时间戳归档"
 
 #: src/Import/Eln.php:57 src/Import/Zip.php:42
 msgid "Error: could not read archive file properly! (missing %s)"
-msgstr "错误：归档文件读取异常！（缺少%s）"
+msgstr "错误：存档文件读取异常！（缺少%s）"
 
 #: src/Import/Eln.php:107
 msgid "Links"
@@ -2357,7 +2357,7 @@ msgstr "账户失效。可联系团队管理员延长效期。"
 #: src/templates/admin.html:356 src/templates/admin.html:387
 #: src/templates/show.html:189 src/templates/view-edit-toolbar.html:128
 msgid "ELN Archive"
-msgstr "ELN归档"
+msgstr "ELN存档"
 
 #: src/templates/admin.html:357 src/templates/admin.html:388
 #: src/templates/show.html:190 src/templates/view-edit-toolbar.html:126
@@ -2394,7 +2394,7 @@ msgstr "未找到固定模板"
 
 #: src/templates/edit.html:210
 msgid "Save as JSON"
-msgstr "保存为JSON"
+msgstr "另存为JSON"
 
 #: src/templates/editusers.html:155
 msgid "2FA enabled"
@@ -2458,7 +2458,7 @@ msgstr "我的模板"
 
 #: src/templates/head.html:137
 msgid "My profile"
-msgstr "我的个人资料"
+msgstr "个人资料"
 
 #: src/templates/login.html:71
 msgid "Your account has been created and is now active. Try logging in again."
@@ -2480,7 +2480,7 @@ msgstr "生成ELN"
 
 #: src/templates/show-view-edit.html:32
 msgid "You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s."
-msgstr "您可以从.eln存档、.zip存档（由eLabFTW创建）或.csv文件导入数据。%s请参阅文档%s%s。"
+msgstr "您可以从.eln存档、.zip存档（由eLabFTW创建）或.csv文件导入数据。%s查看文档%s%s。"
 
 #: src/templates/show-view-edit.html:66
 msgid "3. Select a file to import:"
@@ -2500,7 +2500,7 @@ msgstr "最旧"
 
 #: src/templates/show.html:49
 msgid "Recently modified"
-msgstr "最近修改"
+msgstr "最新修改"
 
 #: src/templates/show.html:50
 msgid "Least recently modified"
@@ -2520,7 +2520,7 @@ msgstr "最低ID"
 
 #: src/templates/show.html:55
 msgid "Recently commented"
-msgstr "最近被评论"
+msgstr "最新评论"
 
 #: src/templates/show.html:56
 msgid "Title (alphabetical)"
@@ -2600,7 +2600,7 @@ msgstr "已编辑"
 
 #: src/services/Transform.php:99
 msgid "A step deadline is approaching."
-msgstr "步骤截止日期即将到来。"
+msgstr "步骤截止期限即将到来。"
 
 #: src/templates/edit.html:203
 msgid "Molecule editor"
@@ -2645,7 +2645,7 @@ msgstr "新值"
 #: src/templates/show-templates-edit.html:48
 #: src/templates/view-edit-template.html:59
 msgid "Toggle pin (add to create button menu)"
-msgstr "是否固定（添加到创建按钮菜单）"
+msgstr "切换固定状态（添加到创建按钮菜单）"
 
 #: src/templates/sysconfig.html:31
 msgid "Latest stable version:"
@@ -2654,13 +2654,13 @@ msgstr "最新的稳定版本："
 #: src/templates/admin.html:153 src/templates/sysconfig.html:547
 #: src/templates/sysconfig.html:802 src/templates/ucp.html:355
 msgid "Link to documentation"
-msgstr "链接到文档"
+msgstr "文档链接"
 
 #: src/templates/show-templates-edit.html:80
 #: src/templates/view-edit-template.html:92
 #: src/templates/view-edit-toolbar.html:177
 msgid "See changelog"
-msgstr "见更新日志"
+msgstr "查看变更记录"
 
 #: src/enums/BasePermissions.php:25
 msgid "All the teams I am part of"
@@ -2672,7 +2672,7 @@ msgstr "在这里你可以为你的团队添加、编辑或删除标签。点击
 
 #: src/templates/field-builder-modal.html:7
 msgid "Add an extra field"
-msgstr "增加一个额外字段"
+msgstr "添加额外字段"
 
 #: src/templates/field-builder-modal.html:37
 msgid "Field type"
@@ -2700,7 +2700,7 @@ msgstr "数量"
 
 #: src/templates/field-builder-modal.html:49
 msgid "required"
-msgstr "需求条件"
+msgstr "必填项"
 
 #: src/templates/field-builder-modal.html:53
 msgid "Description"
@@ -2926,7 +2926,7 @@ msgstr "使用拖柄调整项目类型的排列顺序。"
 
 #: src/templates/admin.html:344
 msgid "Select what to export"
-msgstr "导出内容"
+msgstr "选择导出内容"
 
 #: src/templates/admin.html:354 src/templates/admin.html:385
 #: src/templates/profile.html:80
@@ -2959,7 +2959,7 @@ msgstr "编辑模式"
 
 #: src/templates/edit.html:212
 msgid "Save as RXN"
-msgstr "保存为RXN"
+msgstr "另存为RXN"
 
 #: src/templates/editusers.html:22
 msgid "Search for user"
@@ -2980,7 +2980,7 @@ msgstr "团队角色管理"
 
 #: src/templates/editusers.html:74
 msgid "Is Owner"
-msgstr "拥有者"
+msgstr "所有者"
 
 #: src/templates/editusers.html:114
 msgid "Last login"
@@ -3037,7 +3037,7 @@ msgstr "新分组名"
 
 #: src/templates/field-builder-modal.html:62
 msgid "Blank value on duplicate"
-msgstr "复制条目时清空数值"
+msgstr "复制条目时清空值"
 
 #: src/templates/footer.html:24
 msgid "Terms of service"
@@ -3061,11 +3061,11 @@ msgstr "切换待办清单面板"
 
 #: src/templates/json-editor.html:30
 msgid "Save as…"
-msgstr "保存为"
+msgstr "另存为..."
 
 #: src/templates/json-editor.html:39
 msgid "Save as attachment"
-msgstr "保存为附件"
+msgstr "另存为附件"
 
 #: src/templates/json-editor.html:70
 msgid "Display main text"
@@ -3081,11 +3081,11 @@ msgstr "你不属于任何团队小组。"
 
 #: src/templates/permissions-edit-modal.html:52
 msgid "Allow individual users to access this entry."
-msgstr "允许某个用户编辑此条目。"
+msgstr "允许个别用户编辑此条目。"
 
 #: src/templates/revisions.html:5
 msgid "This server is configured to store %d revisions per entry maximum."
-msgstr "每个条目最多存储%d个修订记录。"
+msgstr "服务器被设置为每个条目最多存储 %d 个修订版本。"
 
 #: src/templates/search.html:214
 msgid "Enter search query, e.g.: %s"
@@ -3129,7 +3129,7 @@ msgstr "筛选"
 
 #: src/templates/steps-links-edit.html:58
 msgid "Add a deadline"
-msgstr "截至时间"
+msgstr "截至期限"
 
 #: src/templates/steps-links-edit.html:62
 msgid "%d hour"
@@ -3186,15 +3186,15 @@ msgstr "允许管理员删除实验记录"
 
 #: src/templates/sysconfig.html:96
 msgid "Maximum number of stored revisions per entry"
-msgstr "每个条目保存的修订记录的数量限制"
+msgstr "每个条目保存的修订版本的数量限制"
 
 #: src/templates/sysconfig.html:103
 msgid "Minimum number of characters that need to be changed in order to create a new revision per entry"
-msgstr "最少修改多少个字符才创建新的修订记录"
+msgstr "最少修改多少个字符才创建新的修订版本"
 
 #: src/templates/sysconfig.html:110
 msgid "Number of days between changes to automatically create a revision"
-msgstr "用于自动创建修订记录的两次更改的间隔天数"
+msgstr "用于自动创建修订版本的两次更改的间隔天数"
 
 #: src/templates/sysconfig.html:117
 msgid "URL where the Support menu entry from Help dropdown points"
@@ -3322,11 +3322,11 @@ msgstr "上传文件设置"
 
 #: src/templates/sysconfig.html:514
 msgid "Enable blockchain timestamping with Bloxberg"
-msgstr "使用 Bloxberg 启用区块链时间戳"
+msgstr "使用Bloxberg启用区块链时间戳"
 
 #: src/templates/sysconfig.html:515
 msgid "Anonymize author for GDPR compliance"
-msgstr "为遵守GDPR而隐匿作者"
+msgstr "遵守GDPR隐匿作者"
 
 #: src/templates/sysconfig.html:520
 msgid "Keeex configuration"
@@ -3534,7 +3534,7 @@ msgstr "常规"
 
 #: src/templates/ucp.html:40
 msgid "Help us translate eLabFTW!"
-msgstr "帮助我们翻译eLabFTW!"
+msgstr "帮助我们翻译eLabFTW！"
 
 #: src/templates/ucp.html:48
 msgid "Items per page"

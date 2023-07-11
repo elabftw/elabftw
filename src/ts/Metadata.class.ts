@@ -180,9 +180,15 @@ export class Metadata {
 
     // read the type of element
     switch (properties.type as ExtraFieldInputType) {
+    case ExtraFieldInputType.Checkbox:
+    case ExtraFieldInputType.Date:
+    case ExtraFieldInputType.DateTime:
+    case ExtraFieldInputType.Email:
     case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Time:
+    case ExtraFieldInputType.Url:
       element = document.createElement('input');
-      element.type = 'number';
+      element.type = properties.type;
       break;
     case ExtraFieldInputType.Select:
       element = document.createElement('select');
@@ -199,24 +205,8 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
-    case ExtraFieldInputType.Date:
-      element = document.createElement('input');
-      element.type = 'date';
-      break;
-    case ExtraFieldInputType.Checkbox:
-      element = document.createElement('input');
-      element.type = 'checkbox';
-      break;
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
-    case ExtraFieldInputType.Url:
-      element = document.createElement('input');
-      element.type = 'url';
-      break;
-    case ExtraFieldInputType.Time:
-      element = document.createElement('input');
-      element.type = 'time';
-      break;
     default:
       element = document.createElement('input');
       element.type = 'text';
@@ -255,14 +245,14 @@ export class Metadata {
     element.addEventListener('change', this, false);
 
     // add a prepend button for "Now" for date and time types
-    if (['time', 'date'].includes(element.type)) {
+    if (['time', 'date', 'datetime-local'].includes(element.type)) {
       const inputGroupDiv = document.createElement('div');
       inputGroupDiv.classList.add('input-group');
       const prependDiv = document.createElement('div');
       prependDiv.classList.add('input-group-prepend');
       // NOW/TODAY button
       const btn = document.createElement('button');
-      btn.innerText = element.type === 'time' ? i18next.t('now') : i18next.t('today');
+      btn.innerText = ['time', 'datetime-local'].includes(element.type) ? i18next.t('now') : i18next.t('today');
       btn.dataset.action = 'update-to-now';
       btn.classList.add('btn', 'btn-secondary');
       prependDiv.appendChild(btn);

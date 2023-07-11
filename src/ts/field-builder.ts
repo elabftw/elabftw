@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     switch (fieldType as ExtraFieldInputType) {
     case ExtraFieldInputType.Text:
     case ExtraFieldInputType.Date:
+    case ExtraFieldInputType.DateTime:
+    case ExtraFieldInputType.Email:
     case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Url:
     case ExtraFieldInputType.Time:
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = {};
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
-        if (['text', 'date', 'number', 'url'].includes(field['type'])) {
+        if (['text', 'date', 'datetime-local', 'email', 'number', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];

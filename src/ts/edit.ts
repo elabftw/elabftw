@@ -9,6 +9,7 @@ declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explic
 import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
+import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -193,14 +194,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {
       const input = el.closest('.input-group').querySelector('input');
-      const currentDate = new Date();
-      if (input.type === 'date') {
-        input.valueAsDate = currentDate;
-      }
+      // use Luxon lib here
+      const now = DateTime.local();
+      // date format
+      let format = 'yyyy-MM-dd';
       if (input.type === 'time') {
-        // need the time in milliseconds
-        input.valueAsNumber = (currentDate.getHours() * 60 + currentDate.getMinutes()) * 60000;
+        format = 'HH:mm';
       }
+      if (input.type === 'datetime-local') {
+        /* eslint-disable-next-line quotes */
+        format = "yyyy-MM-dd'T'HH:mm";
+      }
+      input.value = now.toFormat(format);
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
 

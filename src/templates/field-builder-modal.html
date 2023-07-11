@@ -61,12 +61,24 @@
               <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
               <div class='separator'></div>
               <!-- Blank value on duplicate switch -->
-              <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='blankValueOnDuplicateSwitch'><p>{{ 'Blank value on duplicate'|trans }}</p></div>
-                <label class='switch'>
-                  <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
-                  <span class='slider'></span>
-                </label>
+              <div>
+                <div class='d-inline-flex flex-row'>
+                  <div class='d-inline mr-1' for='blankValueOnDuplicateSwitch'><p>{{ 'Blank value on duplicate'|trans }}</p></div>
+                  <label class='switch'>
+                    <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
+                    <span class='slider'></span>
+                  </label>
+                </div>
+                </div>
+              <div>
+                {# required switch #}
+                <div class='d-inline-flex flex-row'>
+                  <div class='d-inline mr-1' for='requiredSwitch'><p>{{ 'Required'|trans }}</p></div>
+                  <label class='switch'>
+                    <input type='checkbox' autocomplete='off' id='requiredSwitch'>
+                    <span class='slider'></span>
+                  </label>
+                </div>
               </div>
             </div>
 

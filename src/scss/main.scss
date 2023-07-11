@@ -446,6 +446,19 @@ button:disabled {
     }
 }
 
+/* required labels/input for extra fields */
+#metadataDiv {
+    /* target the required fields, but only if they are invalid: empty or incorrect */
+    [required]:invalid {
+        border: 1px solid $lightred;
+    }
+
+    .required-label::after {
+        color: $dangerred;
+        content: ' *';
+    }
+}
+
 .margin-1px {
     margin: 1px;
 }

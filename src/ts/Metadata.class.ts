@@ -414,6 +414,9 @@ export class Metadata {
             const label = document.createElement('label');
             label.htmlFor = element.element.id;
             label.innerText = element.name as string;
+            if (element.element.required) {
+              label.classList.add('required-label');
+            }
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {

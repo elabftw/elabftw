@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use function array_column;
+use function array_keys;
 use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
@@ -310,8 +311,7 @@ abstract class AbstractEntity implements RestInterface
             $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
         }
         if ($displayParams->hasMetadataSearch) {
-            foreach ($displayParams->metadataKey as $i => $v) {
-                $req->bindParam(sprintf(':metadata_key_%d', $i), $displayParams->metadataKey[$i]);
+            foreach (array_keys($displayParams->metadataKey) as $i) {
                 $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
                 $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
             }

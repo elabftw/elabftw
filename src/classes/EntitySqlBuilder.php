@@ -129,7 +129,7 @@ class EntitySqlBuilder
             $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
-            $select .= ', categoryt.bookable';
+            $select .= ', entity.is_bookable';
             $eventsColumn = 'item_link = entity.id OR team_events.item';
         } else {
             throw new IllegalActionException('Nope.');

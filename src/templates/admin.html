@@ -307,11 +307,6 @@
           <input class='form-control' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
         </li>
 
-        <li class='list-inline-item'>
-          <input id='itemsTypesBookable' type='checkbox' {{ Entity.entityData.bookable ? " checked" }} />
-          <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
-        </li>
-
       </ul>
       {% include('edit-permissions.html') %}
 

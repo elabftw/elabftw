@@ -71,27 +71,23 @@ items_types:
   - Microscope:
     name: Microscope
     color: '#54AA08'
-    bookable: true
     template: 'Objectives:'
     team: 1
 
   - Molecule:
     name: Molecule
     color: '#29AEB9'
-    bookable: false
     template: 'Structure:'
     team: 1
 
   - Plasmid:
     name: Plasmid
     color: '#C0C0C0'
-    bookable: false
     template: 'Concentration:'
     team: 1
 
   - Antibody:
     name: Antibody
     color: '#C24F3D'
-    bookable: false
     template: 'Host:'
     team: 1

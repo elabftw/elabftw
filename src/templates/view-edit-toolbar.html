@@ -161,6 +161,10 @@
       </div>
 
       <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+        {# BOOKING PARAMS #}
+        {% if Entity.type == 'items' %}
+          <a class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</a>
+        {% endif %}
         <!-- TRANSFER OWNERSHIP -->
         {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin) %}
           <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>

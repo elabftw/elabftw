@@ -1,0 +1,55 @@
+{# Modal for booking parameters #}
+<div class='modal fade' id='bookingParamsModal' tabindex='-1' role='dialog' aria-labelledby='bookingParamsModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='bookingParamsModalLabel'><i class='fas fa-fw fa-calendar-plus'></i> {{ 'Modify booking parameters'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# Is bookable? #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div class='d-inline mr-1' for='isBookableSwitch'><p>{{ 'Allow booking this resource'|trans }}</p></div>
+          <label class='switch' title='{{ 'Allow booking this resource'|trans }}'>
+            <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
+        {# OVERLAP #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div class='d-inline mr-1' for='isOverlapableSwitch'><p>{{ 'Allow overlapping slots'|trans }}</p></div>
+          <label class='switch' title='{{ 'Allow overlapping slots'|trans }}'>
+            <input type='checkbox' autocomplete='off' id='isOverlapableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_can_overlap' {{ Entity.entityData.book_can_overlap == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
+
+        {# MAX BOOK TIME #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum slot time (in minutes)'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_minutes' type='number' value='{{ Entity.entityData.book_max_minutes }}' id='book_max_minutes' />
+        </div>
+
+
+        {# CAN CANCEL #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div class='d-inline mr-1' for='isCancellableSwitch'><p>{{ 'Allow cancelling a booking slot'|trans }}</p></div>
+          <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'>
+            <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_cancel_minutes' class='col-form-label'>{{ 'Minimum time before a slot can be cancelled (in minutes)'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

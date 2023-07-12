@@ -83,9 +83,10 @@
   {# PERMISSIONS #}
   {% include('edit-permissions.html') %}
 
+  {# BOOKING PARAMS #}
+  {% include('booking-params-modal.html') %}
 
-
-  <!-- BODY -->
+  {# BODY #}
   <div class='mt-4' {{ not displayMainText ? 'hidden' }}>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
     {% if editor == 'md' %}
       <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>

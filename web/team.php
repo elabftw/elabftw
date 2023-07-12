@@ -59,15 +59,18 @@ try {
     }
 
     // only the bookable categories
-    $bookableCategoryArr = array_filter($ItemsTypes->readAll(), function ($c) {
-        return $c['bookable'] === 1;
+    $bookableItemsArr = $Items->readShow($DisplayParams, true);
+    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category_id');
+    $allItemsTypes = $ItemsTypes->readAll();
+    $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
+        return in_array($a['category_id'], $categoriesOfBookableItems, true);
     });
 
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        'bookableCategoryArr' => $bookableCategoryArr,
-        'itemsArr' => $Items->readShow($DisplayParams),
+        'bookableItemsTypes' => $bookableItemsTypes,
+        'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),

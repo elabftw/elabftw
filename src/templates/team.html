@@ -87,7 +87,7 @@
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
-          {% for category in bookableCategoryArr %}
+          {% for category in bookableItemsTypes %}
             <option style='color:#{{ category.color }}' value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
           {{ category.category|raw }}</option>
           {% endfor %}

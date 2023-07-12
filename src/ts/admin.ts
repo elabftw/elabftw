@@ -85,14 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-    const checkbox = $('#itemsTypesBookable').is(':checked');
-    let bookable = 0;
-    if (checkbox) {
-      bookable = 1;
-    }
-
     const body = tinymce.get('itemsTypesBody').getContent();
-    const params = {'title': name, 'color': color, 'bookable': bookable, 'body': body};
+    const params = {'title': name, 'color': color, 'body': body};
     return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
   }
   // END ITEMS TYPES

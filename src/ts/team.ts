@@ -146,9 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'end': info.endStr,
         'title': title,
       };
-      ApiC.post(`events/${itemid}`, postParams).then(() => {
+      ApiC.post(`events/${itemid}`, postParams).then(()=> {
         // FIXME: it would be best to just properly render the event instead of reloading the whole page
         window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
+      }).catch(() => {
+        calendar.unselect();
+        return;
       });
     },
     // on click activate modal window
@@ -166,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`event/${info.event.id}`).then(() => {
           info.event.remove();
           $('#eventModal').modal('toggle');
-        });
+        }).catch();
       });
       // FILL THE BOUND DIV
 
@@ -189,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const dt = DateTime.fromMillis(input.valueAsNumber);
           ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
             calendar.refetchEvents();
-          });
+          }).catch(() => calendar.refetchEvents());
         });
       });
 
@@ -251,25 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
       if (editable) {
-        $(info.el).css('box-shadow', '5px 4px 4px #474747');
+        info.el.style.boxShadow = '5px 4px 4px #474747';
       }
-      $(info.el).attr('title', info.event.title);
+      info.el.setAttribute('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      $(info.el).css('box-shadow', 'unset');
+      info.el.style.boxShadow = 'unset';
     },
     // a drop means we change start date
     eventDrop: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
 

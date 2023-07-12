@@ -84,6 +84,110 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => ''));
     }
 
+    public function testPatchTitle(): void
+    {
+        $Items = new Items(new Users(1, 1), 1);
+        $id = $this->testCreate();
+        $Scheduler = new Scheduler($Items, $id, $this->start, $this->end);
+        $res = $Scheduler->patch(Action::Update, array('target' => 'title', 'content' => 'new title'));
+        $this->assertEquals('new title', $res['title']);
+    }
+
+    public function testDestroyNonCancellableEvent(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
+        $Items->setId($itemId);
+        $Items->patch(Action::Update, array('book_is_cancellable' => 0));
+        $Scheduler = new Scheduler($Items);
+        $d = new DateTime('tomorrow');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        $Scheduler->setId($id);
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->destroy();
+    }
+
+    public function testCancelTooClose(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
+        $Items->setId($itemId);
+        $Items->patch(Action::Update, array('book_cancel_minutes' => 666));
+        $Scheduler = new Scheduler($Items);
+        $d = new DateTime('5 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        $Scheduler->setId($id);
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->destroy();
+    }
+
+    public function testSlotTime(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
+        $Items->setId($itemId);
+        $Items->patch(Action::Update, array('book_max_minutes' => 12));
+        $Scheduler = new Scheduler($Items);
+        $d = new DateTime('5 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+    }
+
+    public function testOverlap(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
+        $Items->setId($itemId);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        // first one
+        $d = new DateTime('5 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        // second one
+        $d = new DateTime('15 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+    }
+
+    public function testOverlapWhileChangingExisting(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
+        $Items->setId($itemId);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        // first one
+        $d = new DateTime('5 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        // second one
+        $d = new DateTime('3 hours');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        $Scheduler->setId($id);
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => (string) time()));
+    }
+
     public function testBind(): void
     {
         $this->Scheduler->setId($this->testCreate());

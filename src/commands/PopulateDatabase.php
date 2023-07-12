@@ -178,7 +178,6 @@ class PopulateDatabase extends Command
                 'body' => $items_types['template'] ?? '',
                 'canread' => $defaultPermissions,
                 'canwrite' => $defaultPermissions,
-                'bookable' => $items_types['bookable'] ?? false,
                 'metadata' => $items_types['metadata'] ?? '{}',
             );
             $ItemsTypes->patch(Action::Update, $patch);

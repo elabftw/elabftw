@@ -73,6 +73,9 @@ class Scheduler implements RestInterface
         if ($this->Items->id === null) {
             throw new ImproperActionException('An item id is needed.');
         }
+        if (!$this->Items->canBook()) {
+            throw new ImproperActionException(_('You do not have the permission to book this entry.'));
+        }
         $title = Filter::title($reqBody['title'] ?? _('Untitled'));
 
         $start = $this->normalizeDate($reqBody['start']);

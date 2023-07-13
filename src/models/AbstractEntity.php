@@ -20,7 +20,6 @@ use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
@@ -32,7 +31,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
@@ -95,7 +93,7 @@ abstract class AbstractEntity implements RestInterface
     // inserted in sql
     public array $extendedValues = array();
 
-    protected TeamGroups $TeamGroups;
+    public TeamGroups $TeamGroups;
 
     // inserted in sql
     private string $extendedFilter = '';
@@ -218,7 +216,7 @@ abstract class AbstractEntity implements RestInterface
      *          Here be dragons!
      *  @psalm-suppress UnusedForeachValue
      */
-    public function readShow(DisplayParams $displayParams, bool $extended = false): array
+    public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         if (!empty($displayParams->query) or !empty($displayParams->extendedQuery)) {
@@ -227,7 +225,6 @@ abstract class AbstractEntity implements RestInterface
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
-        $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
         // first WHERE is the state, possibly including archived
         $stateSql = 'entity.state = :normal';
@@ -242,49 +239,8 @@ abstract class AbstractEntity implements RestInterface
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
 
-        // teamFilter is to restrict to the team for items only
-        // as they have a team column
-        $teamFilter = '';
-        if ($this instanceof Items) {
-            $teamFilter = ' AND users2teams.teams_id = entity.team';
-        }
-        // for anon add an AND base = full (public)
-        if ($this->isAnon) {
-            $sql .= sprintf(" AND JSON_EXTRACT(entity.canread, '$.base') = %s ", BasePermissions::Full->value);
-        }
-        // add pub/org/team filter
-        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
-        if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
-        }
-        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
-        // admin will see the experiments with visibility user for user of their team
-        if ($this->Users->isAdmin) {
-            $sql .= 'AND entity.userid = users2teams.users_id)';
-        } else {
-            $sql .= 'AND entity.userid = :userid)';
-        }
-        // add entities in useronly visibility only if we own them
-        $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
-        // look for teams
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
-            foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.canread->>'$.teams'))", $team);
-            }
-        }
-        // look for teamgroups
-        // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
-        // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.canread->>'$.teamgroups'))", $teamgroup);
-            }
-        }
-        // look for our userid in users part of the json
-        $sql .= " OR (:userid MEMBER OF (entity.canread->>'$.users'))";
-        $sql .= ')';
+        // add the json permissions
+        $sql .= $EntitySqlBuilder->getCanFilter($can);
 
         $sqlArr = array(
             $this->extendedFilter,

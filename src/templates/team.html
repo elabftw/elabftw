@@ -103,7 +103,7 @@
           {% for item in itemsArr %}
             {# data-color is used to set the background during initial drag #}
             <option data-color='{{ item.color }}' style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
-            {{ item.category }} - {{ item.title }}</option>
+            {{ item.category|raw }} - {{ item.title|raw }}</option>
           {% endfor %}
         </select>
       </form>

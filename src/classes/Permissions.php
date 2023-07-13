@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -17,7 +16,6 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Determine read and write access for a user and an entity
@@ -51,78 +49,95 @@ class Permissions
      */
     public function forEntity(): array
     {
-        $write = $this->getWrite();
-
         // if we have write access, then we have read access for sure
-        if ($write) {
-            return array('read' => true, 'write' => $write);
+        if ($this->getWrite()) {
+            return array('read' => true, 'write' => true);
         }
 
-        // if it's public, we can read it
-        if ($this->canread['base'] === BasePermissions::Full->value) {
-            return array('read' => true, 'write' => $write);
+        return array('read' => $this->getCan($this->canread), 'write' => false);
+    }
+
+    public function getCan(array $can): bool
+    {
+        // if base permission is public, we can
+        if ($can['base'] === BasePermissions::Full->value) {
+            return true;
         }
 
-        // if we have the elabid in the URL, allow read access to all
-        $Request = Request::createFromGlobals();
-        if (($this->item['elabid'] ?? '') === $Request->query->get('elabid')) {
-            return array('read' => true, 'write' => $write);
-        }
-
-        // starting from here, if we are anon we can't possibly have read access
+        // starting from here, if we are anon we can't possibly have access
         if ($this->Users instanceof AnonymousUser) {
-            return array('read' => false, 'write' => false);
+            return false;
         }
 
-        if ($this->canread['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
-            return array('read' => true, 'write' => $write);
+        if ($can['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
+            return true;
         }
 
-        // if the vis. setting is team, check we are in the same team than the $item
-        if ($this->canread['base'] === BasePermissions::MyTeams->value) {
+        // if the base setting is teams, check we are in the same team than the $item
+        if ($can['base'] === BasePermissions::MyTeams->value) {
             // items will have a team, make sure it's the same as the one we are logged in
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
+                return true;
             }
             // check if we have a team in common
             if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
+                return true;
             }
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin
-        if ($this->canread['base'] === BasePermissions::User->value) {
+        if ($can['base'] === BasePermissions::User->value) {
             if ($this->Users->isAdmin && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
-                return array('read' => true, 'write' => $write);
+                return true;
             }
         }
 
         // check for teams
-        if (!empty($this->canread['teams'])) {
+        if (!empty($can['teams'])) {
             $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
             $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-            foreach ($this->canread['teams'] as $team) {
+            foreach ($can['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
-                    return array('read' => true, 'write' => $write);
+                    return true;
                 }
             }
         }
 
         // check for teamgroups
-        if (!empty($this->canread['teamgroups'])) {
-            foreach ($this->canread['teamgroups'] as $teamgroup) {
+        if (!empty($can['teamgroups'])) {
+            foreach ($can['teamgroups'] as $teamgroup) {
                 if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $teamgroup)) {
-                    return array('read' => true, 'write' => $write);
+                    return true;
                 }
             }
         }
 
         // check for users
-        if (in_array((int) $this->Users->userData['userid'], $this->canread['users'], true)) {
-            return array('read' => true, 'write' => $write);
+        if (in_array((int) $this->Users->userData['userid'], $can['users'], true)) {
+            return true;
         }
 
-        return array('read' => false, 'write' => false);
+        // if we own the entity, we have access on it for sure
+        if ($this->item['userid'] === (int) $this->Users->userData['userid']) {
+            return true;
+        }
+
+        // it's not our entity, our last chance is to be admin in the same team as owner
+        // also make sure that it's not in "useronly" mode
+        if ($this->Users->isAdmin && $this->canwrite['base'] !== BasePermissions::UserOnly->value) {
+            // if it's an item (has team attribute), we need to be logged in in same team
+            if (isset($this->item['team'])) {
+                if ($this->item['team'] === $this->Users->userData['team']) {
+                    return true;
+                }
+            } else { // experiment
+                $Owner = new Users($this->item['userid']);
+                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], (int) $this->Users->userData['team'])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -146,78 +161,6 @@ class Permissions
         if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
-
-        // if anyone can write, we're sure to have access
-        if ($this->canwrite['base'] === BasePermissions::Full->value) {
-            return true;
-        }
-
-        // starting from here, if we are anon we can't possibly have write access
-        if ($this->Users instanceof AnonymousUser) {
-            return false;
-        }
-
-        // if any logged in user can write, we can as we are not anon
-        if ($this->canwrite['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
-            return true;
-        }
-
-        if ($this->canwrite['base'] === BasePermissions::MyTeams->value) {
-            // items will have a team, make sure it's the same as the one we are logged in
-            if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
-                return true;
-            }
-            // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
-                return true;
-            }
-        }
-
-        // check for teams
-        if (!empty($this->canwrite['teams'])) {
-            $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-            foreach ($this->canwrite['teams'] as $team) {
-                if (in_array($team, $teamsOfUser, true)) {
-                    return true;
-                }
-            }
-        }
-
-        // check for teamgroups
-        if (!empty($this->canwrite['teamgroups'])) {
-            foreach ($this->canwrite['teamgroups'] as $teamgroup) {
-                if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $teamgroup)) {
-                    return true;
-                }
-            }
-        }
-
-        // check for users
-        if (in_array((int) $this->Users->userData['userid'], $this->canwrite['users'], true)) {
-            return true;
-        }
-
-        // if we own the entity, we have write access on it for sure
-        if ($this->item['userid'] === (int) $this->Users->userData['userid']) {
-            return true;
-        }
-
-        // it's not our entity, our last chance is to be admin in the same team as owner
-        // also make sure that it's not in "useronly" mode
-        if ($this->Users->isAdmin && $this->canwrite['base'] !== BasePermissions::UserOnly->value) {
-            // if it's an item (has team attribute), we need to be logged in in same team
-            if (isset($this->item['team'])) {
-                if ($this->item['team'] === $this->Users->userData['team']) {
-                    return true;
-                }
-            } else { // experiment
-                $Owner = new Users($this->item['userid']);
-                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], (int) $this->Users->userData['team'])) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return $this->getCan($this->canwrite);
     }
 }

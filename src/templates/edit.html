@@ -83,9 +83,6 @@
   {# PERMISSIONS #}
   {% include('edit-permissions.html') %}
 
-  {# BOOKING PARAMS #}
-  {% include('booking-params-modal.html') %}
-
   {# BODY #}
   <div class='mt-4' {{ not displayMainText ? 'hidden' }}>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
     {% if editor == 'md' %}
@@ -96,12 +93,10 @@
     {% endif %}
   </div>
 
-
   <div class='mt-4 text-center'>
     <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
   </div>
-
 
 </section>
 

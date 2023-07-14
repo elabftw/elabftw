@@ -411,14 +411,14 @@ class Scheduler implements RestInterface
             return;
         }
         $sql = 'SELECT id FROM team_events WHERE :start < end AND :end > start AND item = :item';
-        if ($this->id) {
+        if ($this->id !== null) {
             $sql .= ' AND id != :id';
         }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':start', $start, PDO::PARAM_STR);
         $req->bindParam(':end', $end, PDO::PARAM_STR);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
-        if ($this->id) {
+        if ($this->id !== null) {
             $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         }
         $this->Db->execute($req);

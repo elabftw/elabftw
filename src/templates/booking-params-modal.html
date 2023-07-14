@@ -32,6 +32,12 @@
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_minutes' type='number' value='{{ Entity.entityData.book_max_minutes }}' id='book_max_minutes' />
         </div>
 
+        {# MAX USER BOOK SLOTS #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_max_slots' class='col-form-label'>{{ 'Maximum per-user future slot allowed'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
+        </div>
+
 
         {# CAN CANCEL #}
         <div class='d-flex justify-content-between mb-2'>

@@ -80,8 +80,7 @@ class Scheduler implements RestInterface
 
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);
-        $this->checkOverlap($start, $end);
-        $this->checkSlotTime($start, $end);
+        $this->checkConstraints($start, $end);
 
         // users won't be able to create an entry in the past
         $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ATOM, $start));
@@ -252,8 +251,7 @@ class Scheduler implements RestInterface
     private function updateEpoch(string $column, string $epoch): bool
     {
         $event = $this->readOne();
-        $this->checkOverlap($event['start'], $event['end']);
-        $this->checkSlotTime($event['start'], $event['end']);
+        $this->checkConstraints($event['start'], $event['end']);
         $new = DateTimeImmutable::createFromFormat('U', $epoch);
         if ($new === false) {
             throw new ImproperActionException('Invalid date format received.');
@@ -305,8 +303,7 @@ class Scheduler implements RestInterface
         $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkOverlap($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
-        $this->checkSlotTime($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -332,8 +329,7 @@ class Scheduler implements RestInterface
         }
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkOverlap($event['start'], $newEnd->format(DateTime::ATOM));
-        $this->checkSlotTime($event['start'], $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($event['start'], $newEnd->format(DateTime::ATOM));
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -379,7 +375,31 @@ class Scheduler implements RestInterface
         if ($totalMinutes > $this->Items->entityData['book_max_minutes']) {
             throw new ImproperActionException(sprintf(_('Slot time is limited to %d minutes.'), $this->Items->entityData['book_max_minutes']));
         }
+    }
 
+    private function checkMaxSlots(): void
+    {
+        if ($this->Items->entityData['book_max_slots'] === 0) {
+            return;
+        }
+        $sql = 'SELECT count(id) FROM team_events WHERE start > NOW() AND item = :item AND userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $count = $req->fetchColumn();
+        if ($count >= $this->Items->entityData['book_max_slots']) {
+            throw new ImproperActionException(
+                sprintf(_('You cannot book any more slots. Maximum of %d reached.'), $this->Items->entityData['book_max_slots'])
+            );
+        }
+    }
+
+    private function checkConstraints(string $start, string $end): void
+    {
+        $this->checkMaxSlots();
+        $this->checkOverlap($start, $end);
+        $this->checkSlotTime($start, $end);
     }
 
     /**

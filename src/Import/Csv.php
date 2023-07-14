@@ -49,8 +49,8 @@ class Csv extends AbstractImport
         $rows = $csv->getRecords();
 
         // SQL for importing
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, canbook, elabid, metadata)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
             $sql = 'INSERT INTO experiments(title, date, body, userid, canread, canwrite, category, elabid, metadata)
@@ -71,6 +71,7 @@ class Csv extends AbstractImport
 
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':team', $this->Users->userData['team']);
+                $req->bindParam(':canbook', $this->canread);
             }
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);

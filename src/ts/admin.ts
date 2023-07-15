@@ -136,10 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
         notifError(new Error('Invalid status name'));
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
-        return false;
+        return;
       }
       const color = (document.getElementById('statusColor') as HTMLInputElement).value;
-      return ApiC.post(`${Model.Team}/${el.dataset.teamid}/${Model.Status}`, {'name': content, 'color': color}).then(() => reloadElement('statusBox'));
+      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${Model.Status}`, {'name': content, 'color': color}).then(() => reloadElement('statusBox'));
     // UPDATE STATUS
     } else if (el.matches('[data-action="update-status"]')) {
       const id = el.dataset.id;
@@ -147,11 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const color = (document.getElementById('statusColor_' + id) as HTMLInputElement).value;
       const isDefault = (document.getElementById('statusDefault_' + id) as HTMLInputElement).checked;
       const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
-      return ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${id}`, params);
+      ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${id}`, params);
     // DESTROY STATUS
     } else if (el.matches('[data-action="destroy-status"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        return ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement('statusBox'));
+        ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement('statusBox'));
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {

@@ -108,7 +108,7 @@ class Apiv2Controller extends AbstractApiController
             return new JsonResponse($error, $error['code']);
         } catch (Exception $e) {
             $message = $e->getMessage();
-            if ($e->getPrevious() instanceof Exception) {
+            if ($e->getPrevious() !== null) {
                 $message .= ' ' . $e->getPrevious()->getMessage();
             }
             $error = array(

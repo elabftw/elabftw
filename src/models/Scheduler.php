@@ -131,7 +131,7 @@ class Scheduler implements RestInterface
         $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
-            items.title AS item_title,
+            items.title AS item_title, items.book_is_cancellable,
             CONCAT('#', items_types.color) AS color,
             team_events.experiment,
             items.category AS items_category,
@@ -226,7 +226,7 @@ class Scheduler implements RestInterface
             CONCAT('#', items_types.color) AS color,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title,
-            items.title AS item_title
+            items.title AS item_title, items.book_is_cancellable
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)

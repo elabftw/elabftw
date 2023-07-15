@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -51,7 +53,7 @@ try {
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email->massEmail($Request->request->getString('target'), null, $Request->request->getString('subject'), $Request->request->getString('body'));
+        $Email->massEmail(EmailTarget::from($Request->request->getString('target')), null, $Request->request->getString('subject'), $Request->request->getString('body'));
     }
 
     // DESTROY IDP

@@ -34,7 +34,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
-import { EntityType } from './interfaces';
+import { Action, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import Tab from './Tab.class';
@@ -164,13 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
-      // delete button in modal
-      $('#deleteEvent').on('click', function(): void {
-        ApiC.delete(`event/${info.event.id}`).then(() => {
-          info.event.remove();
-          $('#eventModal').modal('toggle');
-        }).catch();
-      });
+      // set the event id on the cancel button
+      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => { btn.dataset.id = info.event.id; });
       // FILL THE BOUND DIV
 
       // title
@@ -248,6 +243,25 @@ document.addEventListener('DOMContentLoaded', () => {
             response(res);
           });
         },
+      });
+
+      document.getElementById('eventModal').addEventListener('click', (event) => {
+        const el = (event.target as HTMLElement);
+        if (el.matches('[data-action="cancel-event"]')) {
+          ApiC.delete(`event/${el.dataset.id}`).then(() => {
+            info.event.remove();
+            $('#eventModal').modal('toggle');
+          }).catch();
+        } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+          const target = (document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement).value;
+          const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target}).then(() => {
+            ApiC.delete(`event/${el.dataset.id}`).then(() => {
+              info.event.remove();
+              $('#eventModal').modal('toggle');
+            }).catch();
+          });
+        }
       });
 
     },

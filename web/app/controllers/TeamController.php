@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -37,10 +39,10 @@ try {
         $target = (string) $Request->request->get('target');
         // default to team
         $targetId = $App->Users->userData['team'];
-        $targetType = 'team';
+        $targetType = EmailTarget::Team;
         if (str_starts_with($target, 'teamgroup')) {
             $targetId = (int) explode('_', $target)[1];
-            $targetType = 'teamgroup';
+            $targetType = EmailTarget::TeamGroup;
         }
         $Email = new Email(
             new Mailer(Transport::fromDsn($App->Config->getDsn())),

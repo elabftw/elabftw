@@ -27,6 +27,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
@@ -295,6 +296,12 @@ class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
+            };
+        }
+        if ($this->Model instanceof Scheduler) {
+            return match ($submodel) {
+                'notifications' => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
+                default => throw new ImproperActionException('Incorrect submodel for event: available models are: notifications.'),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

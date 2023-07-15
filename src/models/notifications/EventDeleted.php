@@ -9,11 +9,20 @@
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Enums\Action;
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Config;
+use Elabftw\Services\Email;
+use Elabftw\Services\Filter;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
-class EventDeleted extends AbstractNotifications implements MailableInterface
+class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
 {
     protected const PREF = 'notif_event_deleted';
 
@@ -22,8 +31,60 @@ class EventDeleted extends AbstractNotifications implements MailableInterface
     public function __construct(
         private array $event,
         private string $actor,
+        private string $msg = '',
+        private EmailTarget $target = EmailTarget::ActiveUsers,
     ) {
         parent::__construct();
+    }
+
+    public function readOne(): array
+    {
+        return $this->readAll();
+    }
+
+    public function readAll(): array
+    {
+        return array();
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        if (!empty($reqBody['msg'])) {
+            $this->msg = Filter::body($reqBody['msg']);
+        }
+        $Config = Config::getConfig();
+        $Log = new Logger('elabftw');
+        $Log->pushHandler(new ErrorLogHandler());
+        $Email = new Email(
+            new Mailer(Transport::fromDsn($Config->getDsn())),
+            $Log,
+            $Config->configArr['mail_from'],
+        );
+        $targetId = $this->event['item'];
+        if ($this->target === EmailTarget::TeamGroup) {
+            $targetId = (int) explode('_', $reqBody['target'])[1];
+        }
+        $userids = $Email->getAllEmails($this->target, $targetId, true);
+        foreach($userids as $userid) {
+            $this->create($userid);
+        }
+        return count($userids);
+    }
+
+    public function patch(Action $action, array $params): array
+    {
+        return array();
+
+    }
+
+    public function getPage(): string
+    {
+        return 'api/v2/nah';
+    }
+
+    public function destroy(): bool
+    {
+        return false;
     }
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
@@ -32,9 +93,13 @@ class EventDeleted extends AbstractNotifications implements MailableInterface
         $info = _('A booked slot was deleted from the scheduler.');
         $url = Config::fromEnv('SITE_URL') . '/team.php?item=' . $this->event['item'];
         $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
+        if (!empty($this->msg)) {
+            $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
+        }
         return array(
             'subject' => $info,
             'body' => $body,
+            'target' => $this->target,
         );
     }
 
@@ -43,6 +108,8 @@ class EventDeleted extends AbstractNotifications implements MailableInterface
         return array(
             'event' => $this->event,
             'actor' => $this->actor,
+            'msg' => $this->msg,
+            'target' => $this->target,
         );
     }
 }

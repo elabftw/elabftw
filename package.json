@@ -53,7 +53,7 @@
     "@types/dropzone": "^5.7.4",
     "@types/fancybox": "^3.5.2",
     "@types/file-saver": "^2.0.1",
-    "@types/jquery": "^3.5.1",
+    "@types/jquery": "^3.5.16",
     "@types/jqueryui": "^1.12.14",
     "@types/luxon": "^3.0.0",
     "@types/marked": "^5.0.1",

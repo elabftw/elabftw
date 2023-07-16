@@ -7,6 +7,7 @@
  */
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
+import $ from 'jquery';
 import i18next from 'i18next';
 import { notif, notifSaved, reloadElement, getEntity } from './misc';
 import { Action, Entity, Model } from './interfaces';

@@ -12,6 +12,7 @@ import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {

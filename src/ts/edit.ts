@@ -15,6 +15,7 @@ import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
+import $ from 'jquery';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
@@ -22,6 +23,7 @@ import { Api } from './Apiv2.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
+  addFile: null | undefined | ((url: string) => void);
 }
 
 // the dropzone is created programmatically, disable autodiscover

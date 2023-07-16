@@ -9,6 +9,7 @@ import { getEntity, notifError } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 
 
 document.addEventListener('DOMContentLoaded', () => {

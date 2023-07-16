@@ -13,6 +13,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 
 document.addEventListener('DOMContentLoaded', () => {

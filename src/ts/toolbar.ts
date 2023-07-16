@@ -10,6 +10,7 @@ import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
 import { Action } from './interfaces';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
 

@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import $ from 'jquery';
 import { Model } from './interfaces';
 import { Api } from './Apiv2.class';
 

@@ -9,6 +9,7 @@ import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
+import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';

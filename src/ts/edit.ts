@@ -23,7 +23,6 @@ import { Api } from './Apiv2.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
-  addFile: null | undefined | ((url: string) => void);
 }
 
 // the dropzone is created programmatically, disable autodiscover

@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
         (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#policiesModal') as $).modal('toggle');
+        ($('#policiesModal') as JQuery).modal('toggle');
       });
 
     // SCROLL TO TOP
@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
-      ($('#' + el.dataset.target) as $<HTMLDivElement>).modal('toggle');
+      ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {

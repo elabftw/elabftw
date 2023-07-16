@@ -53,7 +53,7 @@ abstract class AbstractLinks implements RestInterface
             entity.title,
             entity.elabid,
             category.title AS category,
-            ' . ($this instanceof ExperimentsLinks ? '' : 'category.bookable,') . '
+            ' . ($this instanceof ExperimentsLinks ? '' : 'entity.is_bookable,') . '
             category.color
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
@@ -82,7 +82,7 @@ abstract class AbstractLinks implements RestInterface
         $sql = 'SELECT entity.id AS entityid, entity.title';
 
         if ($this instanceof ItemsLinks) {
-            $sql .= ', category.title as category, category.bookable, category.color';
+            $sql .= ', category.title as category, entity.is_bookable, category.color';
         }
 
         $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links

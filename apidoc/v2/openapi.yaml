@@ -443,6 +443,22 @@ components:
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
+        - type: object
+          properties:
+            is_bookable:
+              type: integer
+            canbook:
+              type: string
+            book_max_minutes:
+              type: integer
+            book_max_slots:
+              type: integer
+            book_can_overlap:
+              type: integer
+            book_is_cancellable:
+              type: integer
+            book_cancel_minutes:
+              type: integer
     items_type:
       type: object
       properties:
@@ -452,8 +468,6 @@ components:
           type: string
         color:
           type: string
-        bookable:
-          type: integer
         body:
           type: string
         ordering:
@@ -473,7 +487,7 @@ components:
           type: string
         category:
           type: string
-        bookable:
+        is_bookable:
           type: integer
         color:
           type: string

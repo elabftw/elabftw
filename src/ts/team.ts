@@ -34,7 +34,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
-import { EntityType } from './interfaces';
+import { Action, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
 import { notif } from './misc';
 import Tab from './Tab.class';
@@ -146,9 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'end': info.endStr,
         'title': title,
       };
-      ApiC.post(`events/${itemid}`, postParams).then(() => {
+      ApiC.post(`events/${itemid}`, postParams).then(()=> {
         // FIXME: it would be best to just properly render the event instead of reloading the whole page
         window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
+      }).catch(() => {
+        calendar.unselect();
+        return;
       });
     },
     // on click activate modal window
@@ -161,13 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
-      // delete button in modal
-      $('#deleteEvent').on('click', function(): void {
-        ApiC.delete(`event/${info.event.id}`).then(() => {
-          info.event.remove();
-          $('#eventModal').modal('toggle');
-        });
-      });
+      // set the event id on the cancel button
+      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => { btn.dataset.id = info.event.id; });
       // FILL THE BOUND DIV
 
       // title
@@ -175,6 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
       eventTitle.innerText = info.event.extendedProps.title_only;
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
+      // hide the cancel block if event is not cancellable
+      if (info.event.extendedProps.book_is_cancellable === 0) {
+        document.getElementById('bookModalCancelDiv').setAttribute('hidden', '');
+      }
 
       // start and end inputs
       const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
@@ -189,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const dt = DateTime.fromMillis(input.valueAsNumber);
           ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
             calendar.refetchEvents();
-          });
+          }).catch(() => calendar.refetchEvents());
         });
       });
 
@@ -247,29 +249,46 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       });
 
+      document.getElementById('eventModal').addEventListener('click', (event) => {
+        const el = (event.target as HTMLElement);
+        if (el.matches('[data-action="cancel-event"]')) {
+          ApiC.delete(`event/${el.dataset.id}`).then(() => {
+            info.event.remove();
+            $('#eventModal').modal('toggle');
+          }).catch();
+        } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+          const target = (document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement).value;
+          const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target}).then(() => {
+            ApiC.delete(`event/${el.dataset.id}`).then(() => {
+              info.event.remove();
+              $('#eventModal').modal('toggle');
+            }).catch();
+          });
+        }
+      });
+
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
       if (editable) {
-        $(info.el).css('box-shadow', '5px 4px 4px #474747');
+        info.el.style.boxShadow = '5px 4px 4px #474747';
       }
-      $(info.el).attr('title', info.event.title);
+      info.el.setAttribute('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      $(info.el).css('box-shadow', 'unset');
+      info.el.style.boxShadow = 'unset';
     },
     // a drop means we change start date
     eventDrop: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
 

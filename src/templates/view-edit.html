@@ -4,6 +4,9 @@
 
 {% include('ownership-transfer-modal.html') %}
 
+{# BOOKING PARAMS #}
+{% include('booking-params-modal.html') %}
+
 <div id='isArchivedDiv'>
 {% if Entity.entityData.state == constant('Elabftw\\Enums\\State::Archived').value %}
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}

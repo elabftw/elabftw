@@ -275,7 +275,6 @@ experiments:
 items_types:
   - name: Microscope
     color: '#54AA08'
-    bookable: true
     metadata: '{"extra_fields":{"Location":{"type":"select","value":"Microscopy room 3rd floor","options":["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Availability":{"type":"select","value":"Works great","options":["Works great","Works most of the time, make sure to reboot the computer","Half broken, do not use","Completely useless"],"description":"Is it broken?"},"Person in charge":{"type":"text","value":"Paolo"},"Available wavelengths":{"type":"select","value":"405 nm","options":["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values":true}}}'
 
   - name: Chemical compound

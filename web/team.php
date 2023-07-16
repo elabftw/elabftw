@@ -9,8 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\EntityType;
-use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -42,12 +40,6 @@ try {
     $Templates = new Templates($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
 
-    $DisplayParams = new DisplayParams($App->Users, $App->Request, EntityType::Items);
-    // we only want the bookable type of items
-    $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
-    // make limit very big because we want to see ALL the bookable items here
-    $DisplayParams->limit = 900000;
-
     if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
         $Scheduler->Items->setId($App->Request->query->getInt('item'));
     }
@@ -59,15 +51,18 @@ try {
     }
 
     // only the bookable categories
-    $bookableCategoryArr = array_filter($ItemsTypes->readAll(), function ($c) {
-        return $c['bookable'] === 1;
+    $bookableItemsArr = $Items->readBookable();
+    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category_id');
+    $allItemsTypes = $ItemsTypes->readAll();
+    $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
+        return in_array($a['category_id'], $categoriesOfBookableItems, true);
     });
 
     $template = 'team.html';
     $renderArr = array(
         'Entity' => $Templates,
-        'bookableCategoryArr' => $bookableCategoryArr,
-        'itemsArr' => $Items->readShow($DisplayParams),
+        'bookableItemsTypes' => $bookableItemsTypes,
+        'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),

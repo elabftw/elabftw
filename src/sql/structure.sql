@@ -384,6 +384,7 @@ CREATE TABLE `items` (
   `userid` int(10) UNSIGNED NOT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canbook` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `available` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -391,6 +392,12 @@ CREATE TABLE `items` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `access_key` varchar(36) NULL DEFAULT NULL,
+  `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
+  `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
+  `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -476,7 +483,6 @@ CREATE TABLE `items_types` (
   `body` text NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
-  `bookable` tinyint UNSIGNED DEFAULT 0,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

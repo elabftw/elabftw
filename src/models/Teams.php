@@ -299,7 +299,6 @@ class Teams implements RestInterface
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
             'canread' => $defaultPermissions,
             'canwrite' => $defaultPermissions,
-            'bookable' => '0',
         );
         $ItemsTypes->patch(Action::Update, $extra);
 

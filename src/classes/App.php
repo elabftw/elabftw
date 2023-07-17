@@ -46,6 +46,8 @@ class App
 
     public const INSTALLED_VERSION = '4.8.0-alpha';
 
+    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-480/';
+
     public Users $Users;
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */

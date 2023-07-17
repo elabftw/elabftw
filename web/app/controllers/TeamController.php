@@ -21,6 +21,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 
 /**
  * Actions from team.php
@@ -49,11 +50,13 @@ try {
             $App->Log,
             $App->Config->configArr['mail_from'],
         );
+        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
         $sent = $Email->massEmail(
             $targetType,
             $targetId,
             (string) $Request->request->get('subject'),
             (string) $Request->request->get('body'),
+            $replyTo,
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }

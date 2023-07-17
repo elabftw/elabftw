@@ -75,7 +75,7 @@ class Email
     /**
      * Send a mass email to all users
      */
-    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body): int
+    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo = null): int
     {
         if (empty($subject)) {
             $subject = '[eLabFTW] No subject';
@@ -83,6 +83,9 @@ class Email
 
         // set from
         $from = $this->from;
+        if ($replyTo === null) {
+            $replyTo = $this->from;
+        }
 
         // get all email addresses
         $emails = $this->getAllEmails($target, $targetId);
@@ -93,6 +96,7 @@ class Email
         ->to($from)
         // Set recipients in BCC to protect email addresses
         ->bcc(...$emails)
+        ->replyTo($replyTo)
         ->text($body . $this->footer);
 
         $this->send($message);

@@ -84,18 +84,24 @@
   {% include('edit-permissions.html') %}
 
   {# BODY #}
-  <div class='mt-4' {{ not displayMainText ? 'hidden' }}>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-    {% if editor == 'md' %}
-      <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-    {% else %}
-    {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-      <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-    {% endif %}
-  </div>
+  <div {{ not displayMainText ? 'hidden' }}>
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+    <div>
+      <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+        {% if editor == 'md' %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% else %}
+        {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% endif %}
+      </div>
 
-  <div class='mt-4 text-center'>
-    <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+      <div class='mt-4 text-center'>
+        <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+      </div>
+    </div>
+    <hr>
   </div>
 
 </section>

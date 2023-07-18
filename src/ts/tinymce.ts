@@ -130,6 +130,8 @@ export function getTinymceBaseConfig(page: string): object {
     browser_spellcheck: true,
     skin_url: 'app/css/tinymce',
     autoresize_bottom_margin: 50,
+    // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
+    //resize: true,
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
@@ -143,7 +145,6 @@ export function getTinymceBaseConfig(page: string): object {
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
     },
-    content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
       {text: 'C', value: 'c'},

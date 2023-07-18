@@ -177,6 +177,7 @@ abstract class AbstractLinks implements RestInterface
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+        $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -208,6 +209,8 @@ abstract class AbstractLinks implements RestInterface
         if ($this->Entity->id === $this->id && $this->Entity->type === $this->getTargetType()) {
             return 0;
         }
+        $this->Entity->touch();
+
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);

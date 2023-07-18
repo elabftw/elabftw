@@ -149,6 +149,17 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
+     * Simply update the modified_at column of the entity
+     */
+    public function touch(): bool
+    {
+        $sql = sprintf('UPDATE %s SET modified_at = NOW() WHERE id = :id', $this->entityType->value);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
      * Lock/unlock
      */
     public function toggleLock(): array

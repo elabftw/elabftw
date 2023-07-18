@@ -115,6 +115,8 @@ class Uploads implements RestInterface
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
 
+        $this->Entity->touch();
+
         // final sql
         $sql = 'INSERT INTO uploads(
             real_name,
@@ -211,6 +213,7 @@ class Uploads implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+        $this->Entity->touch();
         if ($action === Action::Archive) {
             return $this->archive();
         }
@@ -223,6 +226,7 @@ class Uploads implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->Entity->touch();
         if ($this->id !== null) {
             $action = Action::Replace;
         }
@@ -239,21 +243,13 @@ class Uploads implements RestInterface
         return $this->Entity->getPage();
     }
 
-    public function update(UploadParams $params): bool
-    {
-        $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     /**
      * Make a body check and then remove upload
      */
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
+        $this->Entity->touch();
         // check that the filename is not in the body. see #432
         if (strpos($this->Entity->entityData['body'] ?? '', $this->uploadData['long_name'])) {
             throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
@@ -293,6 +289,15 @@ class Uploads implements RestInterface
         $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    private function update(UploadParams $params): bool
+    {
+        $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     private function readNormalAndArchived(): array

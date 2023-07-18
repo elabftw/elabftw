@@ -128,29 +128,6 @@ class Experiments extends AbstractConcreteEntity
     }
 
     /**
-     * Set the experiment as timestamped with a path to the token
-     *
-     * @param string $responseTime the date of the timestamp
-     */
-    public function updateTimestamp(string $responseTime): void
-    {
-        $this->canOrExplode('write');
-
-        $sql = 'UPDATE experiments SET
-            timestamped = 1,
-            timestampedby = :userid,
-            timestamped_at = :when
-            WHERE id = :id;';
-        $req = $this->Db->prepare($sql);
-        // the date recorded in the db will match the creation time of the timestamp token
-        $req->bindParam(':when', $responseTime);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-    }
-
-    /**
      * Duplicate an experiment
      *
      * @return int the ID of the new item

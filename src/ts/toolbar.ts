@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
       (event.target as HTMLButtonElement).disabled = true;
       EntityC.timestamp(entity.id).then(() => {
         $('#timestampModal').modal('toggle');
-        reloadElement('uploadsDiv');
+        reloadElement('filesdiv');
+        reloadElement('isTimestampedByInfoDiv');
       });
 
     // BLOXBERG

@@ -131,13 +131,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Only Experiments will currently implement this correctly
-     */
-    public function updateTimestamp(string $responseTime): void
-    {
-    }
-
-    /**
      * Count the number of timestamped experiments during past month (sliding window)
      */
     public function getTimestampLastMonth(): int

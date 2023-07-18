@@ -20,6 +20,7 @@ use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use PDO;
 use ZipArchive;
 
 /**
@@ -47,9 +48,8 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $pdfName = str_replace('zip', 'pdf', $zipName);
         $tokenName = str_replace('zip', 'asn1', $zipName);
 
-        // SQL
-        $responseTime = $this->formatResponseTime($tsResponse->getTimestampFromResponseFile());
-        $this->Entity->updateTimestamp($responseTime);
+        // update timestamp on the experiment
+        $this->updateTimestamp($this->formatResponseTime($tsResponse->getTimestampFromResponseFile()));
 
         // create a zip archive with the timestamped pdf and the asn1 token
         $zipPath = FsTools::getCacheFile() . '.zip';
@@ -98,6 +98,27 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             throw new ImproperActionException('Could not get response time!');
         }
         return date('Y-m-d H:i:s', $time);
+    }
+
+    /**
+     * Set the experiment as timestamped so we can easily display it
+     *
+     * @param string $responseTime the date of the timestamp
+     */
+    private function updateTimestamp(string $responseTime): bool
+    {
+        $sql = 'UPDATE experiments SET
+            timestamped = 1,
+            timestampedby = :userid,
+            timestamped_at = :when
+            WHERE id = :id;';
+        $req = $this->Db->prepare($sql);
+        // the date recorded in the db will match the creation time of the timestamp token
+        $req->bindParam(':when', $responseTime);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
     private function checkMonthlyLimit(): void

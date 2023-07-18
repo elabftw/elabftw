@@ -20,7 +20,6 @@ use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\IdpsHelper;
-use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;

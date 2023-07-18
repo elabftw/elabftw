@@ -53,7 +53,7 @@ abstract class AbstractLinks implements RestInterface
             entity.title,
             entity.elabid,
             category.title AS category,
-            ' . ($this instanceof ExperimentsLinks ? '' : 'entity.is_bookable,') . '
+            ' . ($this instanceof ItemsLinks ? 'entity.is_bookable,' : '') . '
             category.color
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)

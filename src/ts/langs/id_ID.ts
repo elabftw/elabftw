@@ -13,6 +13,7 @@ const t = {
     "filename": "Nama file",
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
+    "new-apikey-warning": "Ini adalah satu-satunya saat kunci akan ditampilkan! Pastikan untuk menyalinnya di tempat yang aman karena Anda tidak akan dapat melihatnya lagi:",
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Now",
     "please-wait": "Mohon tunggu…",

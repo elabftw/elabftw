@@ -13,6 +13,7 @@ const t = {
     "filename": "Nome del file",
     "generic-delete-warning": "Cancellare questo?",
     "link-delete-warning": "Eliminare questo collegamento?",
+    "new-apikey-warning": "Questa è l'unica volta che verrà mostrata la chiave! Assicurati di copiarlo in un posto sicuro perché non potrai più vederlo:",
     "nothing-selected": "Nessuna selezione!",
     "now": "Now",
     "please-wait": "Attendere, prego…",

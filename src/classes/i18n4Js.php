@@ -41,6 +41,7 @@ class i18n4Js
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
             'link-delete-warning' => _('Delete this link?'),
+            'new-apikey-warning' => _("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
             'please-wait' => _('Please wait…'),

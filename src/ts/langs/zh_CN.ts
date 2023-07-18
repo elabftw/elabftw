@@ -13,6 +13,7 @@ const t = {
     "filename": "文件名",
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
+    "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
     "nothing-selected": "未选中任何选项！",
     "now": "Now",
     "please-wait": "请稍候…",

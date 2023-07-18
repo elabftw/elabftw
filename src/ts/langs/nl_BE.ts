@@ -13,6 +13,7 @@ const t = {
     "filename": "Bestandsnaam",
     "generic-delete-warning": "Dit verwijderen?",
     "link-delete-warning": "Deze link verwijderen?",
+    "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
     "nothing-selected": "Niets geselecteerd!",
     "now": "Now",
     "please-wait": "Gelieve te wachten…",

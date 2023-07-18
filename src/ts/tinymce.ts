@@ -11,6 +11,7 @@ import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -118,7 +119,7 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
+  let plugins = 'anchor autoresize table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
   if (page !== 'admin') {
     plugins += ' autosave';
   }
@@ -128,6 +129,7 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     browser_spellcheck: true,
     skin_url: 'app/css/tinymce',
+    autoresize_bottom_margin: 50,
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',

@@ -98,6 +98,7 @@
   {% if itemsArr|length == 0 %}
     {{ 'No bookable items.'|trans|msg('warning', false) }}
   {% else %}
+  <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
   <div class='row mb-3'>
     <div class='col-md-3'>
       <!-- CATEGORY -->

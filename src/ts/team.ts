@@ -57,16 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const offset = datetime.getTimezoneOffset() * 60 * 1000;
     return datetime.valueOf() - offset;
   }
+  const params = new URLSearchParams(document.location.search.substring(1));
 
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
-  if (info.all) {
+  if (info.all || !params.has('item')) {
     editable = false;
     selectable = false;
+    document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
   }
   // get the start parameter from url and use that as start time if it's there
-  const params = new URLSearchParams(document.location.search.substring(1));
   const start = params.get('start');
   let selectedDate = new Date().valueOf();
   if (start !== null) {
@@ -127,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
     // selection
     select: function(info): void {
-      if (!editable) { return; }
       const title = prompt(i18next.t('comment-add'));
       if (!title) {
         // make the selected area disappear

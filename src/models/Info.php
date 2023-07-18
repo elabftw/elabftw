@@ -46,8 +46,10 @@ class Info implements RestInterface
 
     public function readAll(): array
     {
+        $Config = Config::getConfig();
         $base = array(
             'elabftw_version' => App::INSTALLED_VERSION,
+            'ts_balance' => (int) $Config->configArr['ts_balance'],
         );
         return array_merge($base, $this->getAllStats());
     }

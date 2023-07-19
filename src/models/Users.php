@@ -32,6 +32,7 @@ use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use function time;
+use function trim;
 
 /**
  * Users
@@ -91,8 +92,8 @@ class Users implements RestInterface
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        $firstname = Filter::sanitize($firstname);
-        $lastname = Filter::sanitize($lastname);
+        $firstname = trim(Filter::sanitize($firstname));
+        $lastname = trim(Filter::sanitize($lastname));
 
         // Registration date is stored in epoch
         $registerDate = time();

@@ -317,9 +317,12 @@ abstract class AbstractEntity implements RestInterface
             Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
             Action::Archive => (
                 function () {
-                    $targetState = State::Archived;
+                    $targetState = State::Normal;
                     if ($this->entityData['state'] === $targetState->value) {
-                        $targetState = State::Normal;
+                        $targetState = State::Archived;
+                        if ($this->entityData['locked'] === 0) {
+                            $this->toggleLock();
+                        }
                     }
                     $this->update(new EntityParams('state', (string) $targetState->value));
                 }

@@ -25,6 +25,7 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         hash:
           type: string
         can_write:
@@ -36,6 +37,7 @@ components:
           type: integer
         created_at:
           type: string
+          format: date-time
         item_id:
           type: integer
         comment:
@@ -44,6 +46,7 @@ components:
           type: integer
         modified_at:
           type: string
+          format: date-time
         fullname:
           type: string
         firstname:
@@ -269,13 +272,10 @@ components:
           description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
+          format: date-time
         date:
           type: string
         elabid:
-          type: string
-        events_id:
-          type: string
-        events_item_id:
           type: string
         firstname:
           type: string
@@ -287,8 +287,6 @@ components:
           type: integer
         id:
           type: integer
-        is_bound:
-          type: string
         lastchangeby:
           type: integer
         lastname:
@@ -307,6 +305,7 @@ components:
           type: string
         modified_at:
           type: string
+          format: date-time
         next_step:
           type: string
         orcid:
@@ -444,6 +443,22 @@ components:
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
+        - type: object
+          properties:
+            is_bookable:
+              type: integer
+            canbook:
+              type: string
+            book_max_minutes:
+              type: integer
+            book_max_slots:
+              type: integer
+            book_can_overlap:
+              type: integer
+            book_is_cancellable:
+              type: integer
+            book_cancel_minutes:
+              type: integer
     items_type:
       type: object
       properties:
@@ -453,8 +468,6 @@ components:
           type: string
         color:
           type: string
-        bookable:
-          type: integer
         body:
           type: string
         ordering:
@@ -474,7 +487,7 @@ components:
           type: string
         category:
           type: string
-        bookable:
+        is_bookable:
           type: integer
         color:
           type: string
@@ -489,6 +502,7 @@ components:
           type: integer
         created_at:
           type: string
+          format: date-time
         userid:
           type: integer
         send_email:
@@ -496,6 +510,26 @@ components:
         email_sent_at:
           type: string
         body:
+          type: string
+    revision:
+      type: object
+      properties:
+        id:
+          type: integer
+        item_id:
+          type: integer
+        body:
+          type: string
+        body_html:
+          type: string
+        content_type:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        userid:
+          type: integer
+        metadata:
           type: string
     status:
       type: object
@@ -559,6 +593,7 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         orgid:
           type: string
         public_db:
@@ -643,6 +678,7 @@ components:
           type: string
         created_at:
           type: string
+          format: date-time
         hash:
           type: string
         hash_algorithm:
@@ -683,6 +719,8 @@ components:
         auth_service:
           type: integer
         is_sysadmin:
+          type: integer
+        entrypoint:
           type: integer
         teams:
           type: array
@@ -888,10 +926,12 @@ paths:
             type: integer
           description: |
             The status id of the experiments.
-        - name: tags
+        - name: tags[]
           in: query
           schema:
             type: array
+            items:
+              type: string
           description: |
             An array of tags for filtering results containing all of these tags.
         - name: limit
@@ -1020,7 +1060,56 @@ paths:
         '204':
           description: The experiment was deleted
 
-  # Items
+  # INFO
+  /info:
+    summary: Information about the instance
+    get:
+      tags: ['Info']
+      summary: Get information about the instance.
+      description: Get information about the instance.
+      operationId: get-info
+      responses:
+        '200':
+          description: Information about the instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  elabftw_version:
+                    type: string
+                    description: Current eLabFTW version
+                    example: 4.8.0
+                  ts_balance:
+                    type: integer
+                    description: Number of timestamp tokens left
+                    example: 461
+                  all_users_count:
+                    type: integer
+                    description: Total count of all users
+                    example: 389
+                  active_users_count:
+                    type: integer
+                    description: Total count of active users
+                    example: 311
+                  items_count:
+                    type: integer
+                    description: Total count of items
+                    example: 666
+                  teams_count:
+                    type: integer
+                    description: Total count of teams
+                    example: 18
+                  experiments_count:
+                    type: integer
+                    description: Total count of experiments
+                    example: 10189
+                  experiments_timestamped_count:
+                    type: integer
+                    description: Total count of experiments with timestamps
+                    example: 1601
+
+  # ITEMS
   /items:
     summary: Actions on items
     post:
@@ -1085,10 +1174,12 @@ paths:
             type: integer
           description: |
             The category id of the items.
-        - name: tags
+        - name: tags[]
           in: query
           schema:
             type: array
+            items:
+              type: string
           description: |
             An array of tags for filtering results containing all of these tags.
         - name: limit
@@ -1893,6 +1984,8 @@ paths:
                     type: string
                   id:
                     type: integer
+                  item_count:
+                    type: integer
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -1929,7 +2022,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['deduplicate']
+                  const: 'deduplicate'
               description: Find all duplicate tags and deduplicate them.
       responses:
         '200':
@@ -1979,7 +2072,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['updatetag']
+                  const: 'updatetag'
                 tag:
                   type: string
                   description: The content of the tag.
@@ -2052,7 +2145,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['current']
+              const: 'current'
         examples:
           first:
             summary: Access the current team.
@@ -2472,6 +2565,10 @@ paths:
                 orgid:
                   type: string
                   description: Internal id.
+                usergroup:
+                  type: integer
+                  description: Which permissions level the user will get? `1` is Sysadmin, `2` is Admin, `4` is user (default)
+                  enum: [1, 2, 4]
       responses:
         '201':
           description: The user has been created.
@@ -2491,7 +2588,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2541,6 +2638,19 @@ paths:
                     team:
                       type: integer
                       description: ID of the team
+                - type: object
+                  description: Change the password
+                  properties:
+                    action:
+                      const: 'updatepassword'
+                      type: string
+                    current_password:
+                      type: string
+                      description: |
+                        Current password. Note: Sysadmin user doesn't need to provide it.
+                    password:
+                      type: string
+                      description: New password.
       responses:
         '200':
           description: Public properties of a user.
@@ -2560,7 +2670,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2590,6 +2700,7 @@ paths:
                     type: integer
                   created_at:
                     type: string
+                    format: date-time
                   userid:
                     type: integer
     delete:
@@ -2613,7 +2724,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2814,6 +2925,18 @@ paths:
               description: An URL to the tag that was created.
               schema:
                 type: string
+    delete:
+      tags: ['Tags']
+      summary: Delete all tags.
+      description: All the tags from that entity get removed.
+      operationId: delete-tag
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The tags were deleted.
+
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -2862,7 +2985,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['unreference']
+                  const: 'unreference'
       responses:
         '200':
           description: The updated tag.
@@ -2870,18 +2993,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
-    delete:
-      tags: ['Tags']
-      summary: Delete all tags.
-      description: All the tags from that entity get removed.
-      operationId: delete-tag
-      requestBody:
-        content:
-          application/json: {}
-      responses:
-        '204':
-          description: The tags were deleted.
-
 
   # UPLOADS
   /{entity_type}/{id}/uploads:
@@ -3030,7 +3141,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['update']
+                  const: 'update'
                 real_name:
                   type: string
                 comment:
@@ -3171,7 +3282,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['update']
+                  const: 'update'
       responses:
         '200':
           description: The updated idp.
@@ -3190,3 +3301,122 @@ paths:
       responses:
         '204':
           description: The idp was deleted.
+
+  # REVISIONS
+  /{entity_type}/{id}/revisions:
+    summary: Actions on revisions of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: ['Revisions']
+      summary: Create a revision.
+      operationId: post-entity-revisions
+      requestBody:
+        description: Parameters for creating a revision
+        content:
+          application/json:
+            schema:
+              required: ['body']
+              type: object
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: The revision has been created.
+          headers:
+            location:
+              description: An URL to the revision that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Revisions']
+      summary: Read all revisions of that entity.
+      operationId: read-entity-revisions
+      responses:
+        '200':
+          description: A list of revisions for that entity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    content_type:
+                      type: integer
+                    created_at:
+                      type: string
+                      format: date-time
+                    fullname:
+                      type: string
+  /{entity_type}/{id}/revisions/{subid}:
+    summary: Actions on a revision of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the revision
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Revisions']
+      summary: Read a revision of that entity.
+      operationId: read-entity-revision
+      responses:
+        '200':
+          description: A revision.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/revision'
+    patch:
+      tags: ['Revisions']
+      summary: Restore a revision.
+      operationId: patch-entity-revision
+      requestBody:
+        description: Parameters for restoring an entity revision.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  const: 'replace'
+                  description: |
+                    The `replace` action will restore the revision body to the entity.
+      responses:
+        '200':
+          description: The (unchanged) revision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/revision'

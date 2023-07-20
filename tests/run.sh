@@ -57,7 +57,7 @@ if ($ci); then
 fi
 # install the database
 echo "Initializing the database..."
-docker exec -it elabtmp bin/console db:install -r -q
+docker exec -it elabtmp bin/init db:install -r -q
 if ($ci); then
     docker exec -it elabtmp yarn static
 fi

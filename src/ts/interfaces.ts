@@ -58,6 +58,7 @@ enum Action {
 
   AccessKey = 'accesskey',
   Add = 'add',
+  Archive = 'archive',
   Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',
   Duplicate = 'duplicate',
@@ -66,6 +67,7 @@ enum Action {
   Pin = 'pin',
   Replace = 'replace',
   Timestamp = 'timestamp',
+  UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
   UpdateMetadataField = 'updatemetadatafield',
   Unreference = 'unreference',

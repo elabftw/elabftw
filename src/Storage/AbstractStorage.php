@@ -18,9 +18,16 @@ use League\Flysystem\FilesystemAdapter;
  */
 abstract class AbstractStorage implements StorageInterface
 {
+    protected const FOLDER = '';
+
     public function getFs(): Filesystem
     {
         return new Filesystem($this->getAdapter());
+    }
+
+    public function getPath(): string
+    {
+        return '/elabftw/' . static::FOLDER;
     }
 
     abstract protected function getAdapter(): FilesystemAdapter;

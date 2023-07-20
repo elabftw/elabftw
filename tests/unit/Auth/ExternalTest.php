@@ -32,6 +32,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             'extauth_teams' => 'auth_team',
             'saml_team_default' => '1',
             'saml_user_default' => '1',
+            'user_msg_need_local_account_created' => 'yep',
         );
         $this->serverParams = array(
             'auth_firstname' => 'Phpunit',
@@ -54,7 +55,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);
-        $teams = array(array('id' => '1', 'name' => 'Alpha', 'usergroup' => 1, 'is_owner' => 0));
+        $teams = array(array('id' => '1', 'name' => 'Alpha', 'usergroup' => 2, 'is_owner' => 0));
         $this->assertEquals($teams, $authResponse->selectableTeams);
     }
 

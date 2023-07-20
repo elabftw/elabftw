@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
@@ -53,24 +54,26 @@ class DisplayParams
     // start metadata stuff
     public bool $hasMetadataSearch = false;
 
-    public array $metadataFilter = array();
-
     public array $metadataKey = array();
 
     public array $metadataValuePath = array();
 
     public array $metadataValue = array();
-
-    private array $metadataHaving = array();
     // end metadata stuff
 
-    public function __construct(Users $Users, private Request $Request, private string $entityType)
+    public bool $includeArchived = false;
+
+    private array $metadataHaving = array();
+
+    public function __construct(Users $Users, private Request $Request, private EntityType $entityType)
     {
         // load user's preferences first
-        $this->limit = $Users->userData['limit_nb'];
-        $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
-        $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
+        $this->limit = $Users->userData['limit_nb'] ?? $this->limit;
+        $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
+        $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
         $this->adjust();
+        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
+        $this->includeArchived = $this->Request->query->has('archived');
     }
 
     public function appendFilterSql(FilterableColumn $column, int $value): void
@@ -100,9 +103,7 @@ class DisplayParams
         $this->metadataKey[] = $jsonPath;
         $this->metadataValuePath[] = $jsonPath . '.value';
         $this->metadataValue[] = Filter::sanitize($searchTerm);
-
-        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
-        $this->metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
+        $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
     }
 
     /**
@@ -143,7 +144,7 @@ class DisplayParams
             foreach ($tags as $key => $tag) {
                 $req->bindValue(":tag$key", $tag, PDO::PARAM_STR);
             }
-            $req->bindParam(':type', $this->entityType, PDO::PARAM_STR);
+            $req->bindValue(':type', $this->entityType->value, PDO::PARAM_STR);
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));

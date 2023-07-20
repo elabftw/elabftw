@@ -9,11 +9,13 @@ declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explic
 import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
+import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
+import $ from 'jquery';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
@@ -190,6 +192,24 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
+    // CLICK the NOW button of a time or date extra field
+    } else if (el.matches('[data-action="update-to-now"]')) {
+      const input = el.closest('.input-group').querySelector('input');
+      // use Luxon lib here
+      const now = DateTime.local();
+      // date format
+      let format = 'yyyy-MM-dd';
+      if (input.type === 'time') {
+        format = 'HH:mm';
+      }
+      if (input.type === 'datetime-local') {
+        /* eslint-disable-next-line quotes */
+        format = "yyyy-MM-dd'T'HH:mm";
+      }
+      input.value = now.toFormat(format);
+      // trigger change event so it is saved
+      input.dispatchEvent(new Event('change'));
+
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));
@@ -263,6 +283,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
+
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-image-in-body"]')) {
+      // link to the image
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // switch for markdown or tinymce editor
+      let content: string;
+      if (editor.type === 'md') {
+        content = '\n![image](' + url + ')\n';
+      } else if (editor.type === 'tiny') {
+        content = '<img src="' + url + '" />';
+      }
+      editor.setContent(content);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
@@ -424,20 +457,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // INSERT IMAGE AT CURSOR POSITION IN TEXT
-  $(document).on('click', '.inserter',  function() {
-    // link to the image
-    const url = `app/download.php?f=${$(this).data('link')}&storage=${$(this).data('storage')}`;
-    // switch for markdown or tinymce editor
-    let content;
-    if (editor.type === 'md') {
-      content = '\n![image](' + url + ')\n';
-    } else if (editor.type === 'tiny') {
-      content = '<img src="' + url + '" />';
-    }
-    editor.setContent(content);
-  });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesdiv').addEventListener('submit', event => {

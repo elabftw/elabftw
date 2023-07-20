@@ -87,11 +87,4 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->Teams->destroy();
     }
-
-    public function testGetAllStats(): void
-    {
-        $stats = $this->Teams->getAllStats();
-        $this->assertTrue(is_array($stats));
-        $this->assertEquals(3, $stats['totxpts']);
-    }
 }

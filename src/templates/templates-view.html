@@ -5,9 +5,8 @@
 {# TAGS #}
 {% if entityData.tags|length > 0 %}
   <span class='tags'><i class='fas fa-tags'></i></span>
-  {% set tagsValueArr = entityData.tags|split('|') %}
-  {% for tag in tagsValueArr %}
-    <span class='tag'>{{ tag|raw }}</span>
+  {% for tag in Entity.Tags.readAll() %}
+    <span class='tag {{ tag.is_favorite ? 'favorite'}}'>{{ tag.tag|raw }}</span>
   {% endfor %}
 {% endif %}
 

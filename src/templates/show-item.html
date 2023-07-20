@@ -46,6 +46,10 @@
       {% if item.timestamped %}
         <i style='color:#{{ item.color }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
+      {# archived icon #}
+      {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
+        <i class='fas fa-box-archive fa-fw'></i>
+      {% endif %}
       {# category #}
       <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category|raw }}</a></span>
     </div>
@@ -75,7 +79,7 @@
       {% if itemtagsArr|length > 0 %}
         <span class='d-inline-flex flex-wrap'><i class='fas fa-tags mr-1 fa-fw'></i>
           {% for tag in itemtagsArr %}
-            <a class='tag mathjax-ignore margin-1px' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+            <a class='tag mathjax-ignore margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
           {% endfor %}
         </span>
       {% endif %}

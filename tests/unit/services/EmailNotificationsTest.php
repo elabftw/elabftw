@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use DateTime;
+use Elabftw\Enums\Action;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\MathjaxFailed;
@@ -46,7 +47,13 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             array('item' => 12, 'start' => $d->format('Y-m-d H:i:s'), 'end' => $d->format('Y-m-d H:i:s')),
             'Daniel Balavoine',
         );
-        $Notifications->create(1);
+        $Notifications->postAction(Action::Create, array(
+            'msg' => 'Had to cancel booking because my cells died :(',
+        ));
+        $this->assertIsArray($Notifications->readOne());
+        $this->assertIsArray($Notifications->patch(Action::Update, array()));
+        $this->assertIsString($Notifications->getPage());
+        $this->assertFalse($Notifications->destroy());
 
         // create a deadline close to now
         $d->modify('+ 5 min');

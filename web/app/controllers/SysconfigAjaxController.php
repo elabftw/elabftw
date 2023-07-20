@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -21,6 +23,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 
 /**
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
@@ -51,7 +54,8 @@ try {
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email->massEmail('instance', null, $Request->request->getString('subject'), $Request->request->getString('body'));
+        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
+        $Email->massEmail(EmailTarget::from($Request->request->getString('target')), null, $Request->request->getString('subject'), $Request->request->getString('body'), $replyTo);
     }
 
     // DESTROY IDP

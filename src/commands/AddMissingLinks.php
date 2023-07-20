@@ -21,6 +21,7 @@ use Elabftw\Services\TeamsHelper;
 use function preg_match_all;
 use function printf;
 use function str_replace;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,22 +31,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Templates and ItemsTypes can only have links to items
  * See #1470 https://github.com/elabftw/elabftw/issues/1470#issuecomment-527098716
  */
+#[AsCommand(name: 'links:sync')]
 class AddMissingLinks extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'links:sync';
-
-    /**
-     * Set the help messages
-     */
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments".')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Make sure links in body are also properly added as "Linked items" and "Linked experiments".')
             ->setHelp('Find links to items and experiments in the body of entities and add them to the "Linked items" and "Linked experiments" of that entity. Templates and ItemsTypes can only have links to items.');
     }
 

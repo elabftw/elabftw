@@ -20,5 +20,6 @@ $Response->setData(array(
     'privacy' => $App->Config->configArr['privacy_policy'],
     'tos' => $App->Config->configArr['terms_of_service'],
     'a11y' => $App->Config->configArr['a11y_statement'],
+    'legal' => $App->Config->configArr['legal_notice'],
 ));
 $Response->send();

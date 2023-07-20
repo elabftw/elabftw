@@ -121,6 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('tag-delete-warning'))) {
         ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElement(`tags_div_${entity.id}`));
       }
+    // ADD SUGGESTED TAGS
+    } else if (el.matches('[data-action="add-suggested-tag"]')) {
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Add, 'tag': el.innerText}).then(() => reloadElement(`tags_div_${entity.id}`));
     // DESTROY (from admin panel/tag manager)
     } else if (el.matches('[data-action="destroy-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {

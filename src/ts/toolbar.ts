@@ -9,8 +9,8 @@ import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
-import { DateTime } from 'luxon';
 import { Action } from './interfaces';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -56,29 +56,23 @@ document.addEventListener('DOMContentLoaded', () => {
         link.focus();
         link.select();
       });
-    // SEE EVENTS
-    } else if (el.matches('[data-action="see-events"]')) {
-      EntityC.read(entity.id).then(json => {
-        const eventId = json.events_id;
-        // now read the event info
-        ApiC.getJson(`event/${eventId}`).then(json => {
-          const bookingsDiv = document.getElementById('boundBookings');
-          const el = document.createElement('a');
-          el.href = `team.php?item=${json.item}&start=${encodeURIComponent(json.start)}`;
-          const button = document.createElement('button');
-          button.classList.add('mr-2', 'btn', 'btn-neutral', 'relative-moment');
-          const locale = document.getElementById('user-prefs').dataset.jslang;
-          button.innerText = DateTime.fromISO(json.start, {'locale': locale}).toRelative();
-          el.appendChild(button);
-          bookingsDiv.replaceChildren(el);
-        });
-      });
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Pin}).then(() => {
-        document.getElementById('toggle-pin-icon').classList.toggle('color-weak');
-        ['bgnd-gray', 'hl-hover-gray'].forEach(cl => document.getElementById('toggle-pin-icon-div').classList.toggle(cl));
+      let id = entity.id;
+      if (isNaN(id) || id === null) {
+        id = parseInt(el.dataset.id, 10);
+      }
+
+      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
+        // for team/ucp page view mode of list of templates, we reload the full page because the ordering will be different
+        const urlParams = new URLSearchParams(window.location.search);
+        if (['/team.php', '/ucp.php'].includes(window.location.pathname) && !urlParams.has('templateid')) {
+          window.location.replace('?tab=3');
+        } else {
+          document.getElementById('toggle-pin-icon').classList.toggle('color-weak');
+          ['bgnd-gray', 'hl-hover-gray'].forEach(cl => document.getElementById('toggle-pin-icon-div').classList.toggle(cl));
+        }
       });
 
     // TIMESTAMP button in modal
@@ -87,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
       (event.target as HTMLButtonElement).disabled = true;
       EntityC.timestamp(entity.id).then(() => {
         $('#timestampModal').modal('toggle');
-        reloadElement('uploadsDiv');
+        reloadElement('filesdiv');
+        reloadElement('isTimestampedByInfoDiv');
       });
 
     // BLOXBERG
@@ -112,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElement('filesdiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
+    // ARCHIVE ENTITY
+    } else if (el.matches('[data-action="archive-entity"]')) {
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

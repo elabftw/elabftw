@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Sql;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,19 +21,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Prepare the database for the 3.0 update
  */
+#[AsCommand(name: 'db:updateto3')]
 class UpdateTo3 extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'db:updateto3';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Prepare the database for the update to 3.0')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Prepare the database for the update to 3.0')
             ->setHelp('This will rename some columns before the rest of the update can be applied.');
     }
 
@@ -68,6 +61,6 @@ class UpdateTo3 extends Command
             $cmdInput = new ArrayInput($arguments);
             $command->run($cmdInput, $output);
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -185,7 +185,7 @@ CREATE TABLE `experiments_revisions` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
-  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -283,7 +283,7 @@ CREATE TABLE `experiments_templates_revisions` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
-  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -384,6 +384,7 @@ CREATE TABLE `items` (
   `userid` int(10) UNSIGNED NOT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canbook` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `available` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -391,6 +392,12 @@ CREATE TABLE `items` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `access_key` varchar(36) NULL DEFAULT NULL,
+  `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
+  `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
+  `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -452,7 +459,7 @@ CREATE TABLE `items_revisions` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
-  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -476,7 +483,6 @@ CREATE TABLE `items_types` (
   `body` text NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
-  `bookable` tinyint UNSIGNED DEFAULT 0,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -828,6 +834,7 @@ CREATE TABLE `users` (
   `pdf_sig` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `inc_files_pdf` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `append_pdfs` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `disable_shortcuts` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `archived` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
@@ -846,6 +853,7 @@ CREATE TABLE `users` (
   `auth_lock_time` datetime DEFAULT NULL,
   `auth_service` tinyint UNSIGNED NULL DEFAULT NULL,
   `valid_until` date NULL DEFAULT NULL,
+  `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

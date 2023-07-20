@@ -13,7 +13,7 @@
   <div class='lds-dual-ring'></div>
 </div>
 
-<!-- Modal for event click -->
+{# Modal for event click #}
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
@@ -64,30 +64,48 @@
             </div>
         </div>
 
-
-        <h5>{{ 'Delete this event'|trans }}</h5>
-        <button type='button' id='deleteEvent' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
+        <div id='bookModalCancelDiv'>
+          <h5>{{ 'Cancel booking slot'|trans }}</h5>
+          <h6>{{ 'Add a custom message'|trans }}</h6>
+            <textarea id='cancelEventTextarea' class='form-control'></textarea>
+            <label>{{ 'Send to'|trans }}</label>
+            <div class='form-check'>
+              <input class='form-check-input' type='radio' name='targetCancelEvent' value='users' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
+            </div>
+            <div class='form-check'>
+              <input class='form-check-input' type='radio' name='targetCancelEvent' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+            </div>
+            {% for teamgroup in teamGroupsArr %}
+              <div class='form-check'>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' value='teamgroup_{{ teamgroup.id }}' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+              </div>
+            {% endfor %}
+            <div class='mt-2'>
+              <button type='button' data-action='cancel-event-with-message' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+              <button type='button' data-action='cancel-event' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+          </div>
+        </div>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>
     </div>
   </div>
 </div>
-
 
 <!-- TAB 1 SCHEDULER -->
 <div data-tabcontent='1' hidden>
   {% if itemsArr|length == 0 %}
     {{ 'No bookable items.'|trans|msg('warning', false) }}
   {% else %}
+  <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
   <div class='row mb-3'>
     <div class='col-md-3'>
       <!-- CATEGORY -->
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
-          {% for category in bookableCategoryArr %}
+          {% for category in bookableItemsTypes %}
             <option style='color:#{{ category.color }}' value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
           {{ category.category|raw }}</option>
           {% endfor %}
@@ -103,7 +121,7 @@
           {% for item in itemsArr %}
             {# data-color is used to set the background during initial drag #}
             <option data-color='{{ item.color }}' style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
-            {{ item.category }} - {{ item.title }}</option>
+            {{ item.category|raw }} - {{ item.title|raw }}</option>
           {% endfor %}
         </select>
       </form>

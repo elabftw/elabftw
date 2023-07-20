@@ -16,7 +16,7 @@ use function strlen;
 class MfaHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var string $secret The 2FA test secret */
-    private const SECRET = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+    public const SECRET = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
 
     private MfaHelper $MfaHelper;
 

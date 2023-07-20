@@ -28,8 +28,8 @@ code {
     border: 1px dotted #ccc;
 }
 
-/* fix list items having numbers in pdf */
-li {
+/* fix metadata extra fields having numbers in pdf */
+.no-list-style li {
     list-style-type: none;
 }
 

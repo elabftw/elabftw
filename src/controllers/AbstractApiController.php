@@ -30,9 +30,6 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected string $endpoint;
 
-    // used by backupzip to get the period
-    protected string $param;
-
     public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
     {
         if ($Users->userData['archived'] === 1) {
@@ -93,9 +90,6 @@ abstract class AbstractApiController implements ControllerInterface
             $this->id = $this->Users->userData['team'];
         }
 
-        // used by backup zip only for now
-        // TODO remove with apiv1
-        $this->param = $req[4] ?? '';
         return $req;
     }
 }

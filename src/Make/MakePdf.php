@@ -29,6 +29,7 @@ use Elabftw\Traits\UploadTrait;
 use function implode;
 use League\Flysystem\Filesystem;
 use Mpdf\Mpdf;
+use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
 use function strtolower;
@@ -57,7 +58,7 @@ class MakePdf extends AbstractMakePdf
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
     {
         parent::__construct($mpdfProvider, $entity);
 
@@ -113,7 +114,7 @@ class MakePdf extends AbstractMakePdf
      */
     public function getContent(): string
     {
-        $Tex2Svg = new Tex2Svg($this->mpdf, $this->getHtml());
+        $Tex2Svg = new Tex2Svg($this->log, $this->mpdf, $this->getHtml());
         $content = $Tex2Svg->getContent();
 
         // Inform user that there was a problem with Tex rendering
@@ -257,7 +258,8 @@ class MakePdf extends AbstractMakePdf
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
-        return $this->getTwig(Config::getConfig())->render('pdf.html', $renderArr);
+        $Config = Config::getConfig();
+        return $this->getTwig((bool) $Config->configArr['debug'])->render('pdf.html', $renderArr);
     }
 
     /**
@@ -313,7 +315,7 @@ class MakePdf extends AbstractMakePdf
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageTypeGuesser.php
         $matches = array();
         // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
-        preg_match_all('/app\/download.php\?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/i', $body, $matches);
+        preg_match_all('/app\/download.php\?(?:name=[^&]+&amp;)?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/i', $body, $matches);
         foreach ($matches[0] as $src) {
             // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // so we parse it to get the file path and storage type
@@ -324,7 +326,7 @@ class MakePdf extends AbstractMakePdf
             $res = array();
             parse_str($query, $res);
             // @phpstan-ignore-next-line
-            $longname = (string) $res['f'];
+            $longname = (string) ($res['amp;f'] ?? $res['f']);
             // there might be no storage value. In this case get it from the uploads table via the long name
             $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
             $storageFs = Storage::from($storage)->getStorage()->getFs();

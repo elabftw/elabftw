@@ -17,6 +17,11 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
  */
 class Memory extends AbstractStorage
 {
+    public function getPath(): string
+    {
+        return '';
+    }
+
     protected function getAdapter(): FilesystemAdapter
     {
         return new InMemoryFilesystemAdapter();

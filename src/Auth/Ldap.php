@@ -63,7 +63,11 @@ class Ldap implements AuthInterface
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
             if ($this->configArr['saml_user_default'] === '0') {
-                throw new ImproperActionException('Could not find an existing user. Ask a Sysadmin to create your account.');
+                $msg = _('Could not find an existing user. Ask a Sysadmin to create your account.');
+                if ($this->configArr['user_msg_need_local_account_created']) {
+                    $msg = $this->configArr['user_msg_need_local_account_created'];
+                }
+                throw new ImproperActionException($msg);
             }
             // GET FIRSTNAME AND LASTNAME
             $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';

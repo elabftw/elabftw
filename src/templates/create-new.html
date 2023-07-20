@@ -1,4 +1,6 @@
 <!-- RIGHT MENU: CREATE NEW BUTTON -->
+{% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last) %}
+{% set entityType = entityPage == 'experiments.php' ? 'experiments' : 'items' %}
 {% if not App.Session.get('is_anon') %}
   <div class='btn-group'>
     <div class='btn-group dropleft' role='group'>
@@ -6,11 +8,11 @@
         <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
       </button>
       <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
-        {% if Entity.type == 'experiments' %}
+        {% if entityPage == 'experiments.php' %}
           {% if templatesArr|length > 0 %}
             <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
             {% for tpl in templatesArr %}
-              <a href='#' data-action='create-entity' data-tplid='{{ tpl.id }}' class='dropdown-item wrap'>
+              <a href='#' data-action='create-entity' data-type='experiments' data-tplid='{{ tpl.id }}' class='dropdown-item wrap'>
                 {{ tpl.title|raw }}
               </a>
             {% endfor %}
@@ -23,17 +25,21 @@
           </a>
         {% else %}
           {% for category in categoryArr %}
-            <a href='#' data-action='create-item' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+            <div data-action='create-entity' data-type='items' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
               {{ category.category }}
-            </a>
+            </div>
           {% endfor %}
         {% endif %}
         <div class='dropdown-divider'></div>
-        <div class='dropdown-item' data-action='import-file'>
+        <div class='dropdown-item' data-action='toggle-modal' data-target='importModal'>
           <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
         </div>
       </div>
     </div>
-    <button type='button' data-action='create-entity' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+    {% if entityType == 'experiments' %}
+      <button type='button' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+    {% else %}
+      <button type='button' data-action='toggle-modal' data-target='createModal' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+    {% endif %}
   </div>
 {% endif %}

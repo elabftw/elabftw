@@ -108,6 +108,11 @@ class Populate
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
+
+            // maybe make it bookable
+            if ($Entity instanceof Items && $this->faker->randomDigit() > 6) {
+                $Entity->patch(Action::Update, array('is_bookable' => '1'));
+            }
         }
     }
 

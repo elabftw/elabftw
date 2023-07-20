@@ -67,8 +67,8 @@ class Zip extends AbstractZip
     private function dbInsert($item): void
     {
         // the body is updated after it has been fixed by the uploaded files with correct long_name
-        $sql = 'INSERT INTO items(team, title, date, userid, category, canread, canwrite, elabid, metadata)
-            VALUES(:team, :title, :date, :userid, :category, :canread, :canwrite, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, userid, category, canread, canwrite, canbook, elabid, metadata)
+            VALUES(:team, :title, :date, :userid, :category, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
             $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, elabid, metadata)
@@ -91,6 +91,7 @@ class Zip extends AbstractZip
         if ($this->Entity instanceof Items) {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->targetNumber, PDO::PARAM_INT);
+            $req->bindParam(':canbook', $this->canread);
         } else {
             $req->bindParam(':userid', $this->targetNumber, PDO::PARAM_INT);
             $req->bindValue(':category', $this->getDefaultStatus());

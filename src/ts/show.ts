@@ -12,6 +12,7 @@ import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -318,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff
-      checked.forEach(chk => EntityC.destroy(chk.id).then(() => $('#parent_' + chk.randomid).hide(200)));
+      checked.forEach(chk => EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove()));
     }
   });
 

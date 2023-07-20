@@ -111,19 +111,19 @@
                   <li class='list-group-item' id='parent_{{ randomId }}'>
                     <div class='float-right ml-1'>
                       <!-- toggle body -->
-                      <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-                        <i class='fas fa-plus-circle'></i>
+                      <span data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                        <i class='fas fa-plus-square'></i>
                       </span>
                       {% if mode != 'edit-template' %}
-                        <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                        <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='rounded p-2 hl-hover-gray'>
                           <i class='fas fa-arrows-down-to-line'></i>
                         </a>
 
-                        <a data-action='import-link-body' data-endpoint='experiments' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                        <a data-action='import-link-body' data-endpoint='experiments' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='rounded p-2 hl-hover-gray'>
                           <i class='fas fa-lg fa-file-import'></i>
                         </a>
                       {% endif %}
-                      <a data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
+                      <a data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='rounded p-2 hl-hover-gray'>
                         <i class='fas fa-lg fa-trash-alt'></i>
                       </a>
                     </div>
@@ -132,7 +132,7 @@
                     {{ link.title|raw }}</a>
                     <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
                     <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-                    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+                    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
                   </li>
                 {% endfor %}
             </ul>
@@ -174,18 +174,18 @@
                 <li class='list-group-item' id='parent_{{ randomId }}'>
                   <div class='float-right ml-1'>
                     <!-- toggle body -->
-                    <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
-                      <i class='fas fa-plus-circle'></i>
+                    <span data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                      <i class='fas fa-plus-square'></i>
                     </span>
                     {% if mode != 'edit-template' %}
-                      <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}'>
+                      <a data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='rounded p-2 hl-hover-gray'>
                         <i class='fas fa-arrows-down-to-line'></i>
                       </a>
-                      <a data-action='import-link-body' data-endpoint='items' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}'>
+                      <a data-action='import-link-body' data-endpoint='items' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='rounded p-2 hl-hover-gray'>
                         <i class='fas fa-lg fa-file-import'></i>
                       </a>
                     {% endif %}
-                    <a data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}'>
+                    <a data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='rounded p-2 hl-hover-gray'>
                       <i class='fas fa-lg fa-trash-alt'></i>
                     </a>
                   </div>
@@ -194,7 +194,7 @@
                   {{ link.title|raw }}</a>
                   <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
                   <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
-                  <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'></div>
+                  <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
                 </li>
               {% endfor %}
           </ul>

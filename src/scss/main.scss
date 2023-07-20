@@ -50,13 +50,60 @@ $text-muted: $medium;
 @font-face {
     font-display: swap;
     font-family: 'Lato';
-    src: url('fonts/lato-medium-webfont.ttf');
-    src: url('fonts/lato-medium-webfont.eot');
+    font-style: normal;
+    font-weight: 400;
     src:
-        url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
-        url('fonts/lato-medium-webfont.woff') format('woff'),
-        url('fonts/lato-medium-webfont.ttf') format('truetype'),
-        url('fonts/lato-medium-webfont.svg#webfont') format('svg');
+        url('fonts/lato-regular.woff2') format('woff2'),
+        url('fonts/lato-regular.ttf') format('truetype');
+}
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 400;
+    src:
+        url('fonts/lato-italic.woff2') format('woff2'),
+        url('fonts/lato-italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    src:
+        url('fonts/lato-bold.woff2') format('woff2'),
+        url('fonts/lato-bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 700;
+    src:
+        url('fonts/lato-bold-italic.woff2') format('woff2'),
+        url('fonts/lato-bold-italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 900;
+    src:
+        url('fonts/lato-black.woff2') format('woff2'),
+        url('fonts/lato-black.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 900;
+    src:
+        url('fonts/lato-black-italic.woff2') format('woff2'),
+        url('fonts/lato-black-italic.ttf') format('truetype');
 }
 
 body {
@@ -215,12 +262,6 @@ h5 {
     font-size: 130%;
 }
 
-label {
-    color: $medium;
-    font-size: 120%;
-    font-weight: normal;
-}
-
 /* HEAD */
 
 /* BEGIN HELP CONTAINER */
@@ -250,7 +291,7 @@ label {
     }
 
     .selected {
-        border-bottom: 5px solid $elabblue;
+        border-bottom: 6px solid $elabblue;
         padding-bottom: 0;
     }
 }
@@ -281,7 +322,10 @@ label {
     background-color: $lightred;
     border-color: $darkred;
     color: $darkred;
-    transition-duration: 500ms;
+}
+
+.hover-warning:hover {
+    background-color: $warningbg;
 }
 
 .hover-action:hover {
@@ -393,6 +437,28 @@ button:disabled {
     }
 }
 
+/* table in view mode, always add borders, see #4436 */
+#body_view {
+    table,
+    td,
+    tr {
+        border: 1px solid $secondlevel;
+    }
+}
+
+/* required labels/input for extra fields */
+#metadataDiv {
+    /* target the required fields, but only if they are invalid: empty or incorrect */
+    [required]:invalid {
+        border: 1px solid $lightred;
+    }
+
+    .required-label::after {
+        color: $dangerred;
+        content: ' *';
+    }
+}
+
 .margin-1px {
     margin: 1px;
 }
@@ -447,6 +513,10 @@ button:disabled {
 .overlay-ko p {
     background-color: $lightred;
     color: #000;
+}
+
+.opacity-8 {
+    opacity: 0.8;
 }
 
 .full-screen-overlay {
@@ -812,6 +882,10 @@ the form-control fails to do that so we do the border ourselves */
     &:hover {
         background-color: $mediumstrong;
         color: $white !important;
+    }
+
+    &.favorite {
+        background-color: $gold;
     }
 }
 

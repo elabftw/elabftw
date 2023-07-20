@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
@@ -16,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
@@ -30,6 +32,7 @@ use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use function time;
+use function trim;
 
 /**
  * Users
@@ -89,8 +92,8 @@ class Users implements RestInterface
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        $firstname = Filter::sanitize($firstname);
-        $lastname = Filter::sanitize($lastname);
+        $firstname = trim(Filter::sanitize($firstname));
+        $lastname = trim(Filter::sanitize($lastname));
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -101,6 +104,11 @@ class Users implements RestInterface
         }
 
         $isSysadmin = $group === 1 ? 1 : 0;
+
+        // transform group in 2 if it is 1 because users2teams.groups_id is 2 or 4, not 1
+        if ($group === 1) {
+            $group = 2;
+        }
 
         // will new user be validated?
         $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
@@ -177,7 +185,7 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false): array
+    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false, bool $onlyAdmins = false): array
     {
         $teamFilterSql = '';
         if ($teamId > 0) {
@@ -185,7 +193,7 @@ class Users implements RestInterface
         }
 
         // Assures to get every user only once
-        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id
+        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id, MIN(groups_id) AS groups_id
             FROM users2teams
             GROUP BY users_id) AS';
         // unless we use a specific team
@@ -198,6 +206,11 @@ class Users implements RestInterface
             $archived = 'OR users.archived = 1';
         }
 
+        $admins = '';
+        if ($onlyAdmins) {
+            $admins = 'AND users2teams.groups_id = 2';
+        }
+
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
@@ -206,7 +219,7 @@ class Users implements RestInterface
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
             FROM users
-            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ')
+            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ' ' . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             AND users.archived = 0 ' . $archived . '
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
@@ -294,6 +307,7 @@ class Users implements RestInterface
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $target => $content) {
@@ -347,10 +361,44 @@ class Users implements RestInterface
 
         $UsersHelper = new UsersHelper($this->userData['userid']);
         if ($UsersHelper->cannotBeDeleted()) {
-            throw new ImproperActionException('Cannot delete a user that owns experiments or items!');
+            throw new ImproperActionException('Cannot delete a user that owns experiments, items, comments, templates or uploads!');
         }
-        // currently, let's disable this entirely. Next step will be to give this a state and set it to deleted.
-        throw new ImproperActionException('Complete user deletion is temporarily deactivated. Use Archive button instead.');
+        $sql = 'DELETE FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM users2teams WHERE users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM users2team_groups WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM todolist WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM team_events WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM notifications WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $sql = 'DELETE FROM favtags2users WHERE users_id = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return true;
     }
 
     /**
@@ -371,6 +419,27 @@ class Users implements RestInterface
         $req->bindParam(':user_userid', $userid, PDO::PARAM_INT);
         $req->execute();
         return $req->rowCount() >= 1;
+    }
+
+    /**
+     * This function allows us to set a new password without having to provide the old password
+     */
+    public function resetPassword(string $password): bool
+    {
+        return $this->updatePassword(array('password' => $password), true);
+    }
+
+    public function checkCurrentPasswordOrExplode(?string $currentPassword): void
+    {
+        if (empty($currentPassword)) {
+            throw new ImproperActionException('Current password must be provided by "current_password" parameter.');
+        }
+        $LocalAuth = new Local($this->userData['email'], $currentPassword);
+        try {
+            $LocalAuth->tryAuth();
+        } catch (InvalidCredentialsException) {
+            throw new ImproperActionException('The current password is not valid!');
+        }
     }
 
     /**
@@ -402,9 +471,8 @@ class Users implements RestInterface
 
     private function update(UserParams $params): bool
     {
-        // special case for password: we invalidate the stored token
         if ($params->getTarget() === 'password') {
-            $this->invalidateToken();
+            throw new ImproperActionException('Use action:updatepassword to update the password');
         }
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
@@ -420,6 +488,28 @@ class Users implements RestInterface
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function updatePassword(array $params, bool $isReset = false): bool
+    {
+        // a sysadmin or reset password page request doesn't need to provide the current password
+        if ($this->requester->userData['is_sysadmin'] !== 1 && $isReset === false) {
+            $this->checkCurrentPasswordOrExplode($params['current_password']);
+        }
+        if (empty($params['password'])) {
+            throw new ImproperActionException('New password must be provided by "password" parameter.');
+        }
+        // when updating the password, we need to check for the presence and validity of the current_password
+        // special case for password: we invalidate the stored token
+        $this->invalidateToken();
+        // this will properly hash the password
+        $params = new UserParams('password', $params['password']);
+        // don't use the update() function so it cannot be bypassed by setting Action::Update instead of Action::UpdatePassword
+        $sql = 'UPDATE users SET password_hash = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

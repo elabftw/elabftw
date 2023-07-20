@@ -19,9 +19,10 @@ use Elabftw\Auth\Mfa;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\Saml;
+use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\ControllerInterface;
@@ -165,9 +166,8 @@ class LoginController implements ControllerInterface
         $this->App->Session->remove('rememberme');
         $this->App->Session->remove('auth_userid');
 
-        return new RedirectResponse(
-            (string) ($this->App->Request->cookies->get('elab_redirect') ?? '../../experiments.php')
-        );
+        // we redirect to index that will then redirect to the correct entrypoint set by user
+        return new RedirectResponse('/index.php');
     }
 
     /**
@@ -190,7 +190,7 @@ class LoginController implements ControllerInterface
             try {
                 $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
             } catch (ResourceNotFoundException) {
-                throw new InvalidDeviceTokenException();
+                throw new QuantumException(_('Invalid email/password combination.'));
             }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {
@@ -234,10 +234,10 @@ class LoginController implements ControllerInterface
                 // AUTH WITH SAML
             case 'saml':
                 $this->App->Session->set('auth_service', self::AUTH_SAML);
-                $Saml = new Saml($this->App->Config, new Idps());
+                $IdpsHelper = new IdpsHelper($this->App->Config, new Idps());
                 $idpId = (int) $this->App->Request->request->get('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
-                $settings = $Saml->getSettings($idpId);
+                $settings = $IdpsHelper->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
 
             case 'external':

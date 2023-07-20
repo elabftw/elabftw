@@ -15,8 +15,21 @@ export interface ExtraField {
   [key: string]: ExtraFieldProperties,
 }
 
+export enum ExtraFieldInputType {
+  Checkbox = 'checkbox',
+  Date = 'date',
+  DateTime = 'datetime-local',
+  Email = 'email',
+  Number = 'number',
+  Radio = 'radio',
+  Select = 'select',
+  Text = 'text',
+  Time = 'time',
+  Url = 'url',
+}
+
 export interface ExtraFieldProperties {
-  type?: string;
+  type?: ExtraFieldInputType;
   value: string|string[];
   group_id?: number;
   position?: number;

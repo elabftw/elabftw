@@ -1,6 +1,21 @@
 {# required vars: rw, can: coming from canread or canwrite with canToHuman filter #}
+{# default icon/label are for canread #}
+{% set icon = 'eye' %}
+{% set label = 'Visibility' %}
+{% set modalTitle = 'Select who can see this entry' %}
+{% if rw == 'canwrite' %}
+  {% set icon = 'pencil-alt' %}
+  {% set label = 'Can write' %}
+  {% set modalTitle = 'Select who can edit this entry' %}
+{% elseif rw == 'canbook' %}
+  {% set icon = 'calendar-plus' %}
+  {% set label = 'Can book' %}
+  {% set modalTitle = 'Select who can book this entry' %}
+{% endif %}
+
+
 {% include('permissions-edit-modal.html') %}
-<label  class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }} mr-1' title='{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}'></i>{{ rw == 'canread' ? 'Visibility'|trans : 'Can write'|trans }}</label>
+<label  class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label|trans }}'></i>{{ label|trans }}</label>
 {% if not Entity.isReadOnly %}
   <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>

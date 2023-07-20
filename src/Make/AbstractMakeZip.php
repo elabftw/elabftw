@@ -18,6 +18,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use ZipStream\ZipStream;
 
 /**
@@ -100,7 +102,8 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $userData['pdf_format'],
             $this->usePdfa,
         );
-        return new MakePdf($MpdfProvider, $this->Entity);
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        return new MakePdf($log, $MpdfProvider, $this->Entity);
     }
 
     /**

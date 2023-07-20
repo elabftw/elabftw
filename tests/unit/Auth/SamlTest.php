@@ -11,7 +11,7 @@ namespace Elabftw\Auth;
 
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Elabftw\Saml;
+use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -31,10 +31,12 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
     private int $idpId;
 
-    private Saml $Saml;
+    private IdpsHelper $IdpsHelper;
 
     protected function setUp(): void
     {
+        $cert = '-----BEGIN CERTIFICATE-----MIIELDCCAxggAwIBAgIUaFt6ppX/TrAJo207cGFEJEdGaLgwDQYJKoZIhvcNAQEFBQAwXaELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MB4XDTE3MDMxOTExMzExNloXDTIyMDMyMDExMzExNlowXzELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNKk3lhtLUJKvyl+0HZF3xpsjYRFT0HR30xADhRUGT/7lwVl3SnkgN6Us6NtOdKRFqFntz37s4qkmbzD0tGG6GirIIvgFx8HKhTwYgjsMsC/+NcS854zB/9pDlwNpZwhjGXZgE9YQUXuiZp1W/1kE+KZANr1KJKjtlsiWjNWah9VXLKCjQfKHdgYxSiSW9mv/Phz6ZjW0M3wdnJQRGg0iUzDxWhYp7sGUvjIhPtdb+VCYVm2MymYESXbkXH60kG26TPvvJrELPkAJ54RWsuPkWADBZxIozeS/1Hehjg2vIcH7T/x41+qSN9IzlhWQTYtVCkpR2ShNbXL7AUXMM5bsQIDAQABo4HfMIHcMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFPERoVBCoadgrSI2Wdy7zPWIUuWyMIGcBgNVHSMEgZQwgZGAFPERoVBCoadgrSI2Wdy7zPWIUuWyoWOkYTBfMQswCQYDVQQGEwJVUzEXMBUGA1UECgwOSW5zdGl0dXQgQ3VyaWUxFTATBgNVBAsMDE9uZUxvZ2luIElkUDEgMB4GA1UEAwwXT25lTG9naW4gQWNjb3VudCAxMDI5NTiCFGhbeqRV/06wCaNtO3BhRCRHRmi4MA4GA1UdDwEB/wQEAwIHgDANBgkqhkiG9w0BAQUFAAOCAQEAZ7CjWWuRdwJFBsUyEewobXi/yYr/AnlmkjNDOJyDGs2DHNHVEmrm7z4LWmzLHWPfzAu4w55wovJg8jrjhTaFiBO5zcAa/3XQyI4atKKu4KDlZ6cM/2a14mURBhPT6I+ZZUVeX6411AgWQmohsESXmamEZtd89aOWfwlTFfAw8lbe3tHRkZvD5Y8N5oawvdHSurapSo8fde/oWUkO8I3JyyTUzlFOA6ri8bbnWz3YnofB5TXoOtdXui1SLuVJu8ABBEbhgv/m1o36VdOoikJjlZOUjfX5xjEupRkX/YTp0yfNmxt71kjgVLs66b1+dRG1c2Zk0y2rp0x3y3KG6K61Ug==-----END CERTIFICATE-----';
+
         // Insert an IDP
         $Idps = new Idps();
         $Idps->postAction(Action::Create, array(
@@ -44,8 +46,8 @@ class SamlTest extends \PHPUnit\Framework\TestCase
             'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'slo_url' => 'https://onelogin.com/',
             'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-            'x509' => '-----BEGIN CERTIFICATE-----MIIELDCCAxggAwIBAgIUaFt6ppX/TrAJo207cGFEJEdGaLgwDQYJKoZIhvcNAQEFBQAwXaELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MB4XDTE3MDMxOTExMzExNloXDTIyMDMyMDExMzExNlowXzELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkluc3RpdHV0IEN1cmllMRUwEwYDVQQLDAxPbmVMb2dpbiBJZFAxIDAeBgNVBAMMF09uZUxvZ2luIEFjY291bnQgMTAyOTU4MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNKk3lhtLUJKvyl+0HZF3xpsjYRFT0HR30xADhRUGT/7lwVl3SnkgN6Us6NtOdKRFqFntz37s4qkmbzD0tGG6GirIIvgFx8HKhTwYgjsMsC/+NcS854zB/9pDlwNpZwhjGXZgE9YQUXuiZp1W/1kE+KZANr1KJKjtlsiWjNWah9VXLKCjQfKHdgYxSiSW9mv/Phz6ZjW0M3wdnJQRGg0iUzDxWhYp7sGUvjIhPtdb+VCYVm2MymYESXbkXH60kG26TPvvJrELPkAJ54RWsuPkWADBZxIozeS/1Hehjg2vIcH7T/x41+qSN9IzlhWQTYtVCkpR2ShNbXL7AUXMM5bsQIDAQABo4HfMIHcMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFPERoVBCoadgrSI2Wdy7zPWIUuWyMIGcBgNVHSMEgZQwgZGAFPERoVBCoadgrSI2Wdy7zPWIUuWyoWOkYTBfMQswCQYDVQQGEwJVUzEXMBUGA1UECgwOSW5zdGl0dXQgQ3VyaWUxFTATBgNVBAsMDE9uZUxvZ2luIElkUDEgMB4GA1UEAwwXT25lTG9naW4gQWNjb3VudCAxMDI5NTiCFGhbeqRV/06wCaNtO3BhRCRHRmi4MA4GA1UdDwEB/wQEAwIHgDANBgkqhkiG9w0BAQUFAAOCAQEAZ7CjWWuRdwJFBsUyEewobXi/yYr/AnlmkjNDOJyDGs2DHNHVEmrm7z4LWmzLHWPfzAu4w55wovJg8jrjhTaFiBO5zcAa/3XQyI4atKKu4KDlZ6cM/2a14mURBhPT6I+ZZUVeX6411AgWQmohsESXmamEZtd89aOWfwlTFfAw8lbe3tHRkZvD5Y8N5oawvdHSurapSo8fde/oWUkO8I3JyyTUzlFOA6ri8bbnWz3YnofB5TXoOtdXui1SLuVJu8ABBEbhgv/m1o36VdOoikJjlZOUjfX5xjEupRkX/YTp0yfNmxt71kjgVLs66b1+dRG1c2Zk0y2rp0x3y3KG6K61Ug==-----END CERTIFICATE-----',
-            'x509_new' => '',
+            'x509' => $cert,
+            'x509_new' => $cert,
             'email_attr' => 'User.email',
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',
@@ -60,6 +62,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
             'saml_user_default' => '0',
             'saml_fallback_orgid' => '0',
             'saml_sync_email_idp' => '0',
+            'user_msg_need_local_account_created' => 'yep',
         );
 
         // don't use the real saml lib but create a mock
@@ -78,9 +81,9 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->samlUserdata['User.team'] = 'Alpha';
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
 
-        $this->Saml = new Saml(Config::getConfig(), $Idps);
+        $this->IdpsHelper = new IdpsHelper(Config::getConfig(), $Idps);
         $this->idpId = $Idps->readAll()[0]['id'];
-        $this->settings = $this->Saml->getSettings($this->idpId);
+        $this->settings = $this->IdpsHelper->getSettings($this->idpId);
     }
 
     public function testTryAuth(): void
@@ -103,7 +106,12 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
     public function testgetSettings(): void
     {
-        $this->assertIsArray($this->Saml->getSettings($this->idpId));
+        $this->assertIsArray($this->IdpsHelper->getSettings($this->idpId));
+    }
+
+    public function testgetSettingsByEntityId(): void
+    {
+        $this->assertIsArray($this->IdpsHelper->getSettingsByEntityId('https://app.onelogin.com/'));
     }
 
     public function testAssertIdpResponseSyncTeams(): void

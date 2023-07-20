@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use function count;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use PDO;
@@ -30,17 +31,9 @@ class Email
 
     private Address $from;
 
-    /** general toggle to disable sending if the email is not configured */
-    private bool $isEnabled = true;
-
-    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, string $mailFrom)
+    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
     {
         $this->footer = $this->makeFooter();
-        if ($mailFrom === 'notconfigured@example.com') {
-            // we don't want to throw an exception here, just fail but log an error
-            $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
-            $this->isEnabled = false;
-        }
         $this->from = new Address($mailFrom, 'eLabFTW');
     }
 
@@ -49,7 +42,9 @@ class Email
      */
     public function send(RawMessage $email): bool
     {
-        if (!$this->isEnabled) {
+        if ($this->mailFrom === 'notconfigured@example.com') {
+            // we don't want to throw an exception here, just fail but log an error
+            $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
             return false;
         }
         try {
@@ -80,7 +75,7 @@ class Email
     /**
      * Send a mass email to all users
      */
-    public function massEmail(string $targetType, ?int $targetId, string $subject, string $body): int
+    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo): int
     {
         if (empty($subject)) {
             $subject = '[eLabFTW] No subject';
@@ -90,7 +85,9 @@ class Email
         $from = $this->from;
 
         // get all email addresses
-        $emails = $this->getAllEmails($targetType, $targetId);
+        $emails = $this->getAllEmails($target, $targetId);
+
+        $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
         $message = (new Memail())
         ->subject($subject)
@@ -98,7 +95,8 @@ class Email
         ->to($from)
         // Set recipients in BCC to protect email addresses
         ->bcc(...$emails)
-        ->text($body . $this->footer);
+        ->replyTo($replyTo)
+        ->text($body . $sender . $this->footer);
 
         $this->send($message);
         return count($emails);
@@ -117,7 +115,7 @@ class Email
 
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
-        $emails = $this->getSysadminEmails();
+        $emails = $this->getAllEmails(EmailTarget::Sysadmins);
         $subject = '[eLabFTW] Warning: timestamp balance low!';
         $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
         $message = (new Memail())
@@ -128,33 +126,32 @@ class Email
         return $this->send($message);
     }
 
-    private function getSysadminEmails(): array
-    {
-        $Db = Db::getConnection();
-        $sql = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users WHERE validated = 1 AND archived = 0 AND is_sysadmin = 1';
-        $req = $Db->prepare($sql);
-        $Db->execute($req);
-        $emails = array();
-        foreach ($req->fetchAll() as $user) {
-            $emails[] = new Address($user['email'], $user['fullname']);
-        }
-        return $emails;
-    }
-
     /**
      * Get email for all active users on instance, in team or teamgroup
      */
-    private function getAllEmails(string $targetType, ?int $targetId): array
+    public function getAllEmails(EmailTarget $target, ?int $targetId = null, bool $returnUserids = false): array
     {
-        $select = 'SELECT email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
-        switch($targetType) {
-            case 'team':
+        $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
+        switch($target) {
+            case EmailTarget::Team:
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
                 $filter = 'AND users2teams.teams_id = :id';
                 break;
-            case 'teamgroup':
+            case EmailTarget::TeamGroup:
                 $join = 'CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid)';
                 $filter = 'AND users2team_groups.groupid = :id';
+                break;
+            case EmailTarget::Admins:
+                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
+                $filter = 'AND users2teams.groups_id = 2';
+                break;
+            case EmailTarget::Sysadmins:
+                $join = '';
+                $filter = 'AND users.is_sysadmin = 1';
+                break;
+            case EmailTarget::BookableItem:
+                $join = 'CROSS JOIN team_events ON (team_events.userid = users.userid)';
+                $filter = 'AND team_events.start BETWEEN NOW() - INTERVAL 2 MONTH AND NOW() + INTERVAL 1 MONTH AND team_events.item = :id';
                 break;
             default:
                 $join = '';
@@ -164,13 +161,18 @@ class Email
         $sql = sprintf('%s %s %s %s', $select, $join, $where, $filter);
         $Db = Db::getConnection();
         $req = $Db->prepare($sql);
-        if (str_starts_with($targetType, 'team')) {
+        if ($target->needsId()) {
             $req->bindParam(':id', $targetId, PDO::PARAM_INT);
         }
         $Db->execute($req);
 
+        $res = $req->fetchAll();
+        if ($returnUserids) {
+            return array_column($res, 'userid');
+        }
+
         $emails = array();
-        foreach ($req->fetchAll() as $user) {
+        foreach ($res as $user) {
             $emails[] = new Address($user['email'], $user['fullname']);
         }
         return $emails;

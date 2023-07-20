@@ -24,9 +24,12 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
@@ -105,7 +108,7 @@ class Apiv2Controller extends AbstractApiController
             return new JsonResponse($error, $error['code']);
         } catch (Exception $e) {
             $message = $e->getMessage();
-            if ($e->getPrevious() instanceof Exception) {
+            if ($e->getPrevious() !== null) {
                 $message .= ' ' . $e->getPrevious()->getMessage();
             }
             $error = array(
@@ -223,6 +226,8 @@ class Apiv2Controller extends AbstractApiController
                 return Config::getConfig();
             case 'idps':
                 return new Idps($this->id);
+            case 'info':
+                return new Info();
             case 'experiments':
             case 'items':
             case 'experiments_templates':
@@ -255,21 +260,29 @@ class Apiv2Controller extends AbstractApiController
             case 'users':
                 return new Users($this->id, $this->Users->team, $this->Users);
             default:
-                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
+                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
         }
     }
 
     private function getSubModel(string $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
+            $Config = Config::getConfig();
             return match ($submodel) {
                 'comments' => new Comments($this->Model, $this->subId),
                 'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
                 'items_links' => new ItemsLinks($this->Model, $this->subId),
+                'revisions' => new Revisions(
+                    $this->Model,
+                    (int) $Config->configArr['max_revisions'],
+                    (int) $Config->configArr['min_delta_revisions'],
+                    (int) $Config->configArr['min_days_revisions'],
+                    $this->subId
+                ),
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {
@@ -283,6 +296,12 @@ class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
+            };
+        }
+        if ($this->Model instanceof Scheduler) {
+            return match ($submodel) {
+                'notifications' => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
+                default => throw new ImproperActionException('Incorrect submodel for event: available models are: notifications.'),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

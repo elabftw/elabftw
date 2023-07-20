@@ -9,7 +9,7 @@
     <ul>
     {% for user in unvalidatedUsersArr %}
       <li>
-        {{ user.fullname|raw }} ({{ user.email }}) <button class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button>
+        {{ user.fullname|raw }} ({{ user.email }}) <button class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
       </li>
     {% endfor %}
     </ul>
@@ -23,7 +23,7 @@
   <li data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Types of items'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Resources categories'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
 </ul>
@@ -266,11 +266,11 @@
 
 <!-- TAB 5 ITEMS TYPES-->
 <div data-tabcontent='5' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Database Items Types'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
-        <p class='col-form-label'>{{ 'This menu allows you to define categories for entries in the Database. A database item type is similar to an experiment template but for database entries.'|trans }}</p>
+        <p class='col-form-label'>{{ 'This menu allows you to define categories for your resources. A resource category is similar to an experiment template but for resources entries.'|trans }}</p>
         <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
         <div>
           <button type='button' class='btn btn-primary' data-action='itemstypes-create'>{{ 'Create'|trans }}</button>
@@ -279,7 +279,7 @@
     </div>
 
   {% if App.Request.query.has('templateid') %}
-    <a href='?tab=5'>
+    <a href='?tab=5' class='btn hl-hover-gray'>
       <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
     </a>
   {% else %}
@@ -307,11 +307,6 @@
           <input class='form-control' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
         </li>
 
-        <li class='list-inline-item'>
-          <input id='itemsTypesBookable' type='checkbox' {{ Entity.entityData.bookable ? " checked" }} />
-          <label for='itemsTypesBookable'>{{ 'Bookable'|trans }}</label>
-        </li>
-
       </ul>
       {% include('edit-permissions.html') %}
 
@@ -325,6 +320,7 @@
       <div id='metadataDiv' class='col-md-6'></div>
       <div class='mt-3'>
         <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+        <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
       </div>
       {% set mode = 'edit-template' %}
       {% include 'steps-links-edit.html' %}

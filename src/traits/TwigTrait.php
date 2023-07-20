@@ -12,7 +12,6 @@ namespace Elabftw\Traits;
 use function dirname;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Models\Config;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
@@ -29,7 +28,7 @@ trait TwigTrait
     /**
      * Prepare the Twig object
      */
-    protected function getTwig(Config $config): Environment
+    protected function getTwig(bool $debug): Environment
     {
         // load templates
         $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/src/templates');
@@ -38,7 +37,7 @@ trait TwigTrait
             // use local cache
             'cache' => FsTools::getCacheFolder('twig'),
             // debug mode means the cache is not used (useful in dev of course)
-            'debug' => (bool) $config->configArr['debug'],
+            'debug' => $debug,
         );
 
         $TwigEnvironment = new Environment($loader, $options);
@@ -83,7 +82,7 @@ trait TwigTrait
         // intl extension
         $TwigEnvironment->addExtension(new IntlExtension());
         // enable twig dump function in debug mode {{ dump(variable) }}
-        if ($config->configArr['debug']) {
+        if ($debug) {
             $TwigEnvironment->addExtension(new DebugExtension());
         }
 

@@ -44,7 +44,9 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.7.0';
+    public const INSTALLED_VERSION = '4.8.0-alpha';
+
+    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-480/';
 
     public Users $Users;
 
@@ -142,7 +144,7 @@ class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
+            return $this->getTwig((bool) $this->Config->configArr['debug'])->render($template, array_merge(array('App' => $this), $variables));
         } catch (RuntimeException $e) {
             echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
             echo '<h2>Error message: ' . $e->getMessage() . '</h2>';
@@ -166,7 +168,7 @@ class App
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
-        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);
+        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::EnglishGB);
     }
 
     /**

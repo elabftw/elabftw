@@ -12,19 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
-use function file_get_contents;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,7 +51,6 @@ try {
     $idpsArr = $Idps->readAll();
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
-    $teamsStats = $Teams->getAllStats();
     $Experiments = new Experiments($App->Users);
 
     // Users search
@@ -64,6 +62,7 @@ try {
             filter_var($App->Request->query->get('q'), FILTER_SANITIZE_STRING),
             (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT),
             $App->Request->query->getBoolean('includeArchived'),
+            $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
@@ -115,8 +114,6 @@ try {
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
 
-    $privacyPolicyTemplate = file_get_contents(dirname(__DIR__) . '/src/templates/privacy-policy.html');
-
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
@@ -127,12 +124,11 @@ try {
         'isSearching' => $isSearching,
         'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
-        'privacyPolicyTemplate' => $privacyPolicyTemplate,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
-        'teamsStats' => $teamsStats,
+        'info' => (new Info())->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),

@@ -9,7 +9,7 @@
   {% if mode == 'edit' %}
     <!-- INSERT IN TEXT in edit mode for images -->
     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-      <a class='dropdown-item inserter clickable' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
+    <a class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
     {% endif %}
 
@@ -73,8 +73,12 @@
       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 
   {% if not upload.immutable and not Entity.isReadOnly %}
-    <!-- DESTROY -->
+    {# ARCHIVE #}
     <div class='dropdown-divider'></div>
+    <a class='dropdown-item hover-warning' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+      <i class='fas fa-fw fa-box-archive fa-fw mr-1' title='{{ 'Archive/Unarchive'|trans }}'></i>{{ 'Archive/Unarchive'|trans }}
+    </a>
+    {# DESTROY #}
     <a class='dropdown-item hover-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
     </a>

@@ -5,17 +5,18 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, addAutocompleteToTagInputs, collectForm } from './misc';
+import { getEntity, notif, reloadElement, collectForm } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Action, EntityType, Model, Target } from './interfaces';
+import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -64,13 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.lock(parseInt(el.dataset.id)).then(() => {
-        reloadElement('templatesDiv').then(() => {
-          addAutocompleteToTagInputs();
-          tinymce.remove();
-          tinymce.init(getTinymceBaseConfig('ucp'));
-        });
-      });
+      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('toolbarRightDiv'));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());
@@ -133,14 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => {
-        reloadElement('templatesDiv').then(() => {
-          addAutocompleteToTagInputs();
-          tinymce.remove();
-          tinymce.init(getTinymceBaseConfig('ucp'));
-        });
-      });
     }
   });
 

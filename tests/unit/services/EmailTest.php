@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -56,9 +57,13 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     public function testMassEmail(): void
     {
-        $this->assertEquals(17, $this->Email->massEmail('instance', null, '', 'yep'));
-        $this->assertEquals(7, $this->Email->massEmail('team', 1, 'Important message', 'yep'));
-        $this->assertEquals(0, $this->Email->massEmail('teamgroup', 1, 'Important message', 'yep'));
+        $replyTo = new Address('sender@example.com', 'Sergent Garcia');
+        $this->assertEquals(16, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
+        $this->assertEquals(7, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
+        $this->assertEquals(0, $this->Email->massEmail(EmailTarget::TeamGroup, 1, 'Important message', 'yep', $replyTo));
+        $this->assertEquals(6, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
+        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));
+        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo));
     }
 
     public function testSendEmail(): void

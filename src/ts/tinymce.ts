@@ -11,6 +11,7 @@ import { DateTime } from 'luxon';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
@@ -35,6 +36,7 @@ import 'tinymce/themes/mobile';
 import '../js/tinymce-langs/ca_ES.js';
 import '../js/tinymce-langs/de_DE.js';
 import '../js/tinymce-langs/en_GB.js';
+import '../js/tinymce-langs/en_US.js';
 import '../js/tinymce-langs/es_ES.js';
 import '../js/tinymce-langs/fr_FR.js';
 import '../js/tinymce-langs/id_ID.js';
@@ -117,7 +119,7 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'anchor table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
+  let plugins = 'anchor autoresize table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
   if (page !== 'admin') {
     plugins += ' autosave';
   }
@@ -127,6 +129,9 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     browser_spellcheck: true,
     skin_url: 'app/css/tinymce',
+    autoresize_bottom_margin: 50,
+    // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
+    //resize: true,
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
@@ -140,7 +145,6 @@ export function getTinymceBaseConfig(page: string): object {
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
     },
-    content_style: '.mce-content-body {font-size:10pt;}',
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
       {text: 'C', value: 'c'},
@@ -159,6 +163,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
+      {text: 'SQL', value: 'sql'},
     ],
     codesample_global_prismjs: true,
     language: document.getElementById('user-prefs').dataset.lang,
@@ -166,6 +171,8 @@ export function getTinymceBaseConfig(page: string): object {
       [0x2640, 'female sign'],
       [0x2642, 'male sign'],
       [0x25A1, 'white square'],
+      [0x2702, 'black scissors'],
+      [0x21BB, 'clockwise open circle arrow'],
     ],
     height: '500',
     mentions: {

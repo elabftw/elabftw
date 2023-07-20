@@ -14,13 +14,13 @@ use Elabftw\Elabftw\FsTools;
 use function file_put_contents;
 use function html_entity_decode;
 use Imagick;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
 use function preg_match;
+
 use function preg_match_all;
 use function preg_replace;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use function str_replace;
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
@@ -42,7 +42,7 @@ class Tex2Svg
 
     private string $contentWithMathJaxSVG = '';
 
-    public function __construct(private Mpdf $mpdf, private string $source)
+    public function __construct(private LoggerInterface $log, private Mpdf $mpdf, private string $source)
     {
     }
 
@@ -100,11 +100,10 @@ class Tex2Svg
         unlink($tmpFile);
 
         if (!$process->isSuccessful()) {
-            $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
             // don't spam the log file with all the webpacked bundle gibberish
             $process->clearErrorOutput();
             // Log a generic error
-            $log->warning('PDF generation failed during Tex rendering.', array('Error', new SymfonyProcessFailedException($process)));
+            $this->log->warning('PDF generation failed during Tex rendering.', array('Error', new SymfonyProcessFailedException($process)));
 
             $this->mathJaxFailed = true;
             // Throwing an error here will block PDF generation. This should be avoided.

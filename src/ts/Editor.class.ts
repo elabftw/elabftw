@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import { insertParamAndReload } from './misc';
+import $ from 'jquery';
 import tinymce from 'tinymce/tinymce';
 import { marked } from 'marked';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';

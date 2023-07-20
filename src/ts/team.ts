@@ -9,6 +9,7 @@ import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
+import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';
@@ -56,16 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const offset = datetime.getTimezoneOffset() * 60 * 1000;
     return datetime.valueOf() - offset;
   }
+  const params = new URLSearchParams(document.location.search.substring(1));
 
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
-  if (info.all) {
+  if (info.all || !params.has('item')) {
     editable = false;
     selectable = false;
+    document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
   }
   // get the start parameter from url and use that as start time if it's there
-  const params = new URLSearchParams(document.location.search.substring(1));
   const start = params.get('start');
   let selectedDate = new Date().valueOf();
   if (start !== null) {
@@ -126,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
     // selection
     select: function(info): void {
-      if (!editable) { return; }
       const title = prompt(i18next.t('comment-add'));
       if (!title) {
         // make the selected area disappear
@@ -146,9 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'end': info.endStr,
         'title': title,
       };
-      ApiC.post(`events/${itemid}`, postParams).then(() => {
+      ApiC.post(`events/${itemid}`, postParams).then(()=> {
         // FIXME: it would be best to just properly render the event instead of reloading the whole page
         window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
+      }).catch(() => {
+        calendar.unselect();
+        return;
       });
     },
     // on click activate modal window
@@ -161,13 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
-      // delete button in modal
-      $('#deleteEvent').on('click', function(): void {
-        ApiC.delete(`event/${info.event.id}`).then(() => {
-          info.event.remove();
-          $('#eventModal').modal('toggle');
-        });
-      });
+      // set the event id on the cancel button
+      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => { btn.dataset.id = info.event.id; });
       // FILL THE BOUND DIV
 
       // title
@@ -175,6 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
       eventTitle.innerText = info.event.extendedProps.title_only;
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
+      // hide the cancel block if event is not cancellable
+      if (info.event.extendedProps.book_is_cancellable === 0) {
+        document.getElementById('bookModalCancelDiv').setAttribute('hidden', '');
+      }
 
       // start and end inputs
       const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
@@ -185,10 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
       [startInput, endInput].forEach(input => {
         input.addEventListener('change', event => {
           const input = (event.currentTarget as HTMLInputElement);
-          const dt = DateTime.fromJSDate(input.valueAsDate);
+          // Note: valueAsDate was not working on Chromium
+          const dt = DateTime.fromMillis(input.valueAsNumber);
           ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
             calendar.refetchEvents();
-          });
+          }).catch(() => calendar.refetchEvents());
         });
       });
 
@@ -246,29 +250,46 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       });
 
+      document.getElementById('eventModal').addEventListener('click', (event) => {
+        const el = (event.target as HTMLElement);
+        if (el.matches('[data-action="cancel-event"]')) {
+          ApiC.delete(`event/${el.dataset.id}`).then(() => {
+            info.event.remove();
+            $('#eventModal').modal('toggle');
+          }).catch();
+        } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+          const target = (document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement).value;
+          const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target}).then(() => {
+            ApiC.delete(`event/${el.dataset.id}`).then(() => {
+              info.event.remove();
+              $('#eventModal').modal('toggle');
+            }).catch();
+          });
+        }
+      });
+
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
       if (editable) {
-        $(info.el).css('box-shadow', '5px 4px 4px #474747');
+        info.el.style.boxShadow = '5px 4px 4px #474747';
       }
-      $(info.el).attr('title', info.event.title);
+      info.el.setAttribute('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      $(info.el).css('box-shadow', 'unset');
+      info.el.style.boxShadow = 'unset';
     },
     // a drop means we change start date
     eventDrop: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
 
@@ -301,10 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
-    // TOGGLE TPL PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${EntityType.Template}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin})
-        .then(() => window.location.replace('team.php?tab=3'));
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

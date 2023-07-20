@@ -10,6 +10,8 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Update;
+use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,18 +19,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * For dev purposes: generate a new empty schema file
  */
+#[AsCommand(name: 'dev:genschema')]
 class GenSchema extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'dev:genschema';
+    public function __construct(private FilesystemOperator $fs)
+    {
+        parent::__construct();
+    }
 
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Generate a new database schema migration file')
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Generate a new database schema migration file')
             ->setHelp('This command allows you to generate a new schemaNNN.sql for database schema migration');
     }
 
@@ -36,16 +37,16 @@ class GenSchema extends Command
     {
         $schemaNumber = Update::REQUIRED_SCHEMA + 1;
         $output->writeln(sprintf('Generating schema %d', $schemaNumber));
-        $filePath = sprintf('%s/sql/schema%d.sql', dirname(__DIR__), $schemaNumber);
+        $filename = sprintf('schema%d.sql', $schemaNumber);
         $content = sprintf("-- schema %1\$s\n\nUPDATE config SET conf_value = %1\$s WHERE conf_name = 'schema';\n", $schemaNumber);
-        file_put_contents($filePath, $content);
-        $output->writeln('Created file: ' . $filePath);
+        $this->fs->write($filename, $content);
+        $output->writeln('Created file: ' . $filename);
         // now generate the down file
-        $filePath = sprintf('%s/sql/schema%d-down.sql', dirname(__DIR__), $schemaNumber);
+        $filename = sprintf('schema%d-down.sql', $schemaNumber);
         $schemaNumberPrevious = $schemaNumber - 1;
         $content = sprintf("-- revert schema %d\n\nUPDATE config SET conf_value = %d WHERE conf_name = 'schema';\n", $schemaNumber, $schemaNumberPrevious);
-        file_put_contents($filePath, $content);
-        $output->writeln('Created file: ' . $filePath);
-        return 0;
+        $this->fs->write($filename, $content);
+        $output->writeln('Created file: ' . $filename);
+        return Command::SUCCESS;
     }
 }

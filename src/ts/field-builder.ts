@@ -7,12 +7,17 @@
  */
 import { getEntity, notifError } from './misc';
 import { Metadata } from './Metadata.class';
-import { ValidMetadata } from './metadataInterfaces';
+import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
+import { Api } from './Apiv2.class';
+import $ from 'jquery';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('fieldBuilderModal')) {
     return;
   }
+
+  const entity = getEntity();
 
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'selectradio', 'checkbox'];
@@ -30,28 +35,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // start by hiding this one, which is only shown for select
     document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', true);
 
-    switch (fieldType) {
-    case 'text':
-    case 'date':
-    case 'number':
-    case 'url':
+    switch (fieldType as ExtraFieldInputType) {
+    case ExtraFieldInputType.Text:
+    case ExtraFieldInputType.Date:
+    case ExtraFieldInputType.DateTime:
+    case ExtraFieldInputType.Email:
+    case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Url:
+    case ExtraFieldInputType.Time:
       valueInput.setAttribute('type', fieldType);
       toggleContentDiv('classic');
       break;
-    case 'select':
+    case ExtraFieldInputType.Select:
       document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
       toggleContentDiv('selectradio');
       break;
-    case 'radio':
+    case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
-    case 'checkbox':
+    case ExtraFieldInputType.Checkbox:
       toggleContentDiv(fieldType);
       break;
     default:
       break;
     }
   });
+
+  document.getElementById('fieldLoaderModal').addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    const ApiC = new Api();
+    // LOAD METADATA FROM TEMPLATE/CATEGORY
+    if (el.matches('[data-action="load-metadata-from"]')) {
+      const select = (document.getElementById(`loadMetadataSelect_${el.dataset.target}`) as HTMLSelectElement);
+      const selectedIndex = select.selectedIndex;
+      const id = select.options[selectedIndex].value;
+      const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
+      ApiC.getJson(`${el.dataset.target}/${id}`).then(json => {
+        const jsonObj = JSON.parse(json.metadata);
+        textarea.value = JSON.stringify(jsonObj, null, 2);
+        const applyBtn = (document.getElementById('applyMetadataLoadBtn') as HTMLButtonElement);
+        applyBtn.removeAttribute('disabled');
+        const warningTxt = document.getElementById('loadMetadataWarning');
+        warningTxt.removeAttribute('hidden');
+      });
+    } else if (el.matches('[data-action="load-metadata-from-textarea"]')) {
+      const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
+      const MetadataC = new Metadata(entity);
+      ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
+        MetadataC.display('edit');
+        textarea.value = '';
+        $('#fieldLoaderModal').modal('hide');
+      });
+    }
+  });
+
 
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -65,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value;
 
-      const entity = getEntity();
       const MetadataC = new Metadata(entity);
       let json = {};
       // get the current metadata
@@ -80,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = {};
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
-        if (['text', 'date', 'number', 'url'].includes(field['type'])) {
+        if (['text', 'date', 'datetime-local', 'email', 'number', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
@@ -100,12 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
         }
+        // deal with the required attribute
+        if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
+          field['required'] = true;
+        }
         // deal with the multi select
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
         if (grpSel.value !== '-1') {
-          field['group_id'] = grpSel.value;
+          field['group_id'] = parseInt(grpSel.value);
         }
 
         json['extra_fields'][fieldKey] = field;

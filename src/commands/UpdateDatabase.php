@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
@@ -15,6 +14,7 @@ use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,19 +24,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Update the database schema
  */
+#[AsCommand(name: 'db:update')]
 class UpdateDatabase extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'db:update';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Update the database structure')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Update the database structure')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->setHelp('This command allows you to update the structure of the database to the latest version.');
     }
@@ -68,6 +61,6 @@ class UpdateDatabase extends Command
                 $output->writeln('<bg=yellow;fg=black>NOTICE: ' . $msg . '</>');
             }
         }
-        return 0;
+        return Command::SUCCESS;
     }
 }

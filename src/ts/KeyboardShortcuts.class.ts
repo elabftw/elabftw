@@ -10,6 +10,7 @@ import Todolist from './Todolist.class';
 import { Api } from './Apiv2.class';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
+import $ from 'jquery';
 
 export class KeyboardShortcuts {
 

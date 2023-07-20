@@ -45,17 +45,17 @@ class Tags implements RestInterface
 
     public function readOne(): array
     {
-        $TeamTags = new TeamTags($this->Entity->Users, $this->id);
-        return $TeamTags->readOne();
+        return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
     public function readAll(): array
     {
-        $sql = 'SELECT DISTINCT tag, tags2entity.tag_id FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+        $sql = 'SELECT DISTINCT tag, tags2entity.tag_id, (tags_id IS NOT NULL) AS is_favorite FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id) LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
             WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -151,7 +151,7 @@ class Tags implements RestInterface
     }
 
     /**
-     * Unreference a tag from an entity
+     * Unreference a tag from an entity, and possibly delete it if it's the last of its kind
      */
     private function unreference(): array
     {
@@ -163,16 +163,12 @@ class Tags implements RestInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
+        // tag is removed from tags table if no other entity is referencing it
+        $sql = 'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (SELECT tag_id FROM tags2entity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $tags = $req->fetchAll();
 
-        if (empty($tags)) {
-            (new TeamTags($this->Entity->Users, $this->id))->destroy();
-        }
         return $this->Entity->readOne();
     }
 }

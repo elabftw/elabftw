@@ -213,29 +213,6 @@ class Teams implements RestInterface
     }
 
     /**
-     * Get statistics for the whole install
-     */
-    public function getAllStats(): array
-    {
-        $sql = 'SELECT
-        (SELECT COUNT(users.userid) FROM users) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.state = :state) AS totdb,
-        (SELECT COUNT(teams.id) FROM teams) AS totteams,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetch(PDO::FETCH_NAMED);
-        if ($res === false) {
-            return array();
-        }
-
-        return $res;
-    }
-
-    /**
      * Get statistics for a team
      */
     public function getStats(int $team): array
@@ -322,7 +299,6 @@ class Teams implements RestInterface
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
             'canread' => $defaultPermissions,
             'canwrite' => $defaultPermissions,
-            'bookable' => '0',
         );
         $ItemsTypes->patch(Action::Update, $extra);
 
@@ -347,7 +323,7 @@ class Teams implements RestInterface
             throw new RuntimeException('Cannot check permissions in team because the team id is null.');
         }
 
-        if ($this->Users->userData['is_sysadmin'] === '1') {
+        if ($this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
         if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {

@@ -14,9 +14,9 @@ use Elabftw\Models\Idps;
 use function rtrim;
 
 /**
- * Saml settings
+ * Helper class for Idps, mostly to get settings
  */
-class Saml
+class IdpsHelper
 {
     public function __construct(public Config $Config, private Idps $Idps)
     {

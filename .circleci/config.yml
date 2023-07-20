@@ -102,7 +102,7 @@ jobs:
           command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
-          command: docker exec -it elabtmp bin/console db:install -r
+          command: docker exec -it elabtmp bin/init db:install -r
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
@@ -126,7 +126,8 @@ jobs:
           command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
       - run:
           name: Generate the php documentation
-          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html --setting=graphs.enabled=true
+          # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
+          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html

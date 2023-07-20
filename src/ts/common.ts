@@ -10,7 +10,7 @@ import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, relativeMoment, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -65,14 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   makeSortableGreatAgain();
 
-  const kbd = new KeyboardShortcuts(
-    userPrefs.scCreate,
-    userPrefs.scEdit,
-    userPrefs.scTodolist,
-    userPrefs.scFavorite,
-    userPrefs.scSearch,
-  );
-  kbd.init();
+  if (userPrefs.scDisabled === '0') {
+    const kbd = new KeyboardShortcuts(
+      userPrefs.scCreate,
+      userPrefs.scEdit,
+      userPrefs.scTodolist,
+      userPrefs.scFavorite,
+      userPrefs.scSearch,
+    );
+    kbd.init();
+  }
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');
@@ -120,8 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   adjustHiddenState();
 
+  // show human friendly moments
+  relativeMoment();
+
+  // look for elements that should have focus
+  const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);
+  if (needFocus) {
+    needFocus.focus();
+  }
+
   // Listen for malleable columns
   new Malle({
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      return true;
+    },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
@@ -227,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
         case 'a11y':
           title = 'Accessibility Statement';
+          break;
+        case 'legal':
+          title = 'Legal notice';
           break;
         default:
           title = 'Privacy Policy';
@@ -442,25 +463,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
-      const path = window.location.pathname;
-      const page = path.split('/').pop();
-      // team.php and ucp.php for "create experiment from this template
-      if (page === 'experiments.php' || page === 'team.php' || page === 'ucp.php') {
-        const tplid = el.dataset.tplid;
-        const urlParams = new URLSearchParams(document.location.search);
-        const tags = urlParams.getAll('tags[]');
-        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => {
-          const location = resp.headers.get('location').split('/');
-          const newId = location[location.length -1];
-          window.location.href = `experiments.php?mode=edit&id=${newId}`;
-        });
-      } else {
-        // for database items, show a selection modal
-        // modal plugin requires jquery
-        ($('#createModal') as JQuery).modal('toggle');
-      }
-    } else if (el.matches('[data-action="import-file"]')) {
-      ($('#importModal') as JQuery).modal('toggle');
+      // look for any tag present in the url, we will create the experiment with these tags
+      const urlParams = new URLSearchParams(document.location.search);
+      const entityC = new EntityClass(el.dataset.type as EntityType);
+      entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
+        const location = resp.headers.get('location').split('/');
+        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${location[location.length -1]}`;
+      });
 
     } else if (el.matches('[data-action="navigate-twitter"]')) {
       event.preventDefault();
@@ -472,15 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.querySelector('i').classList.add('moving-bug');
       setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
 
-    } else if (el.matches('[data-action="create-item"]')) {
-      const tplid = el.dataset.tplid;
-      const urlParams = new URLSearchParams(document.location.search);
-      const tags = urlParams.getAll('tags[]');
-      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => {
-        const location = resp.headers.get('location').split('/');
-        const newId = location[location.length -1];
-        window.location.href = `database.php?mode=edit&id=${newId}`;
-      });
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
@@ -534,9 +534,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const contentDiv = bodyDiv.querySelector('div');
 
       // prepare the get request
-      const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
       const entityId = parseInt(el.dataset.id, 10);
-      (new EntityClass(entityType)).read(entityId).then(json => {
+      let queryUrl = `${el.dataset.type}/${entityId}`;
+      // special case for revisions
+      if (el.dataset.revid) {
+        queryUrl += `/revisions/${el.dataset.revid}`;
+      }
+      ApiC.getJson(queryUrl).then(json => {
         // do we display the body?
         const metadata = JSON.parse(json.metadata || '{}');
         if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
@@ -544,7 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
           && !metadata.elabftw.display_main_text
         ) {
           // add extra fields elements from metadata json
-          const MetadataC = new Metadata({type: entityType, id: entityId});
+          const MetadataC = new Metadata({type: el.dataset.type as EntityType, id: entityId});
           MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
             // go over all the type: url elements and create a link dynamically

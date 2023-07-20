@@ -8,9 +8,10 @@ describe('Experiments templates', () => {
     // stub the window.prompt() because that's the only way in cypress to input something into a prompt()
     cy.window().then(win => {
       cy.stub(win, 'prompt').returns('Cypress created template')
+      // create
       cy.get('button[data-action="create-template"]').click()
-      cy.get('.button-on-hover').click()
-      cy.get('.hover-danger').click()
+      // destroy
+      cy.get('div[title="More options"]').click().get('a[data-action="destroy-template"]').click()
     })
   })
 })

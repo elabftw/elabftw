@@ -27,8 +27,13 @@
           <button class='btn btn-secondary' id='editusersShowAll' type='button'>{{ 'Show all'|trans }}</button>
         </div>
         <div class='input-group-append'>
-          <div class="input-group-text">
+          <div class='input-group-text'>
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
+          </div>
+        </div>
+        <div class='input-group-append'>
+          <div class='input-group-text'>
+            <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
           </div>
         </div>
       </div>
@@ -140,7 +145,14 @@
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
                 </td>
                 <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
-                <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span></td>
+                <td>
+                  {% if user.validated == 0 %}
+                    <span class='p-1 rounded alert-warning'>{{ 'Unvalidated'|trans }}</span>
+                  {% else %}
+                    <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span>
+                  {% endif %}
+                </td>
+
                 <td>
                   <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>
@@ -181,6 +193,20 @@
                           <i class='mr-1 fas fa-pencil fa-fw'></i>{{ 'Manage teams for user'|trans }}
                         </div>
                       {% endif %}
+                      {# on admin page, allow promoting someone to admin of the same team #}
+                      {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+                        {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
+                        {% if currentTeam.usergroup == 4 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
+                          </div>
+                        {% endif %}
+                        {% if currentTeam.usergroup == 2 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
+                          </div>
+                        {% endif %}
+                      {% endif %}
                       {% if user.archived %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
@@ -188,6 +214,11 @@
                       {% else %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
+                        </div>
+                      {% endif %}
+                      {% if user.validated == 0 %}
+                        <div class='dropdown-item' data-action='validate-user' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
                         </div>
                       {% endif %}
                       <div class='dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'><i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}</div>

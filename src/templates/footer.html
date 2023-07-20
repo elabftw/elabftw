@@ -18,25 +18,29 @@
 
     <span>
       {%- if App.Config.configArr.privacy_policy -%}
-        <a href='#' data-policy='privacy' data-action='show-policy'>{{ 'Privacy policy'|trans }}</a>
+        <a href='#' data-policy='privacy' data-action='show-policy'>{{ App.Config.configArr.privacy_policy_name }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.terms_of_service -%}
-        <a href='#' data-policy='tos' data-action='show-policy'>{{ 'Terms of service'|trans }}</a>
+        <a href='#' data-policy='tos' data-action='show-policy'>{{ App.Config.configArr.terms_of_service_name }}</a>
       {%- endif -%}
       {%- if App.Config.configArr.a11y_statement -%}
-        <a href='#' data-policy='a11y' data-action='show-policy'>{{ 'Accessibility statement'|trans }}</a>
+        <a href='#' data-policy='a11y' data-action='show-policy'>{{ App.Config.configArr.a11y_statement_name }}</a>
+      {%- endif -%}
+      {%- if App.Config.configArr.legal_notice -%}
+        <a href='#' data-policy='legal' data-action='show-policy'>{{ App.Config.configArr.legal_notice_name }}</a>
       {%- endif -%}
     </span>
   </p>
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}<br>
-        {{ 'Page generated in'|trans }} {{ generationTime() }} {{ 'seconds'|trans }}
+    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
+    Made with ♥ by <a href='https://www.deltablot.com'>Deltablot</a>
     {% if App.Config.configArr.debug %}
-        ({{ numberOfQueries() }} SQL)
-        <br>{{ 'Memory usage:'|trans }}
-        {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
+      <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
+      ({{ numberOfQueries() }} SQL)
+      <br>{{ 'Memory usage:'|trans }}
+      {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
     {% endif %}
   </p>
 </footer>
@@ -53,6 +57,7 @@
   data-sc-create='{{ App.Users.userData.sc_create|default('c') }}'
   data-sc-edit='{{ App.Users.userData.sc_edit|default('e') }}'
   data-sc-favorite='{{ App.Users.userData.sc_favorite|default('f') }}'
+  data-sc-disabled='{{ App.Users.userData.disable_shortcuts|default('0') }}'
   ></div>
 
 {% if App.Session.has('is_auth') %}

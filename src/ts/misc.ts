@@ -12,6 +12,7 @@ import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from '.
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
+import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 
@@ -155,6 +156,8 @@ export function notif(info: ResponseMsg): void {
   }
 
   const p = document.createElement('p');
+  // "status" role: see WCAG2.1 4.1.3
+  p.role = 'status';
   p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');

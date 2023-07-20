@@ -7,8 +7,9 @@
  */
 import { Action, Entity, EntityType } from './interfaces';
 import { adjustHiddenState } from './misc';
+import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup } from './metadataInterfaces';
+import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 
 
 export function ResourceNotFoundException(message: string): void {
@@ -178,12 +179,18 @@ export class Metadata {
     const uniqid = this.getRandomId();
 
     // read the type of element
-    switch (properties.type) {
-    case 'number':
+    switch (properties.type as ExtraFieldInputType) {
+    case ExtraFieldInputType.Checkbox:
+    case ExtraFieldInputType.Date:
+    case ExtraFieldInputType.DateTime:
+    case ExtraFieldInputType.Email:
+    case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Time:
+    case ExtraFieldInputType.Url:
       element = document.createElement('input');
-      element.type = 'number';
+      element.type = properties.type;
       break;
-    case 'select':
+    case ExtraFieldInputType.Select:
       element = document.createElement('select');
       if (properties.allow_multi_values === true) {
         element.toggleAttribute('multiple');
@@ -198,20 +205,8 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
-    case 'date':
-      element = document.createElement('input');
-      element.type = 'date';
-      break;
-    case 'checkbox':
-      element = document.createElement('input');
-      element.type = 'checkbox';
-      break;
-    case 'radio':
+    case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
-    case 'url':
-      element = document.createElement('input');
-      element.type = 'url';
-      break;
     default:
       element = document.createElement('input');
       element.type = 'text';
@@ -248,6 +243,25 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
+
+    // add a prepend button for "Now" for date and time types
+    if (['time', 'date', 'datetime-local'].includes(element.type)) {
+      const inputGroupDiv = document.createElement('div');
+      inputGroupDiv.classList.add('input-group');
+      const prependDiv = document.createElement('div');
+      prependDiv.classList.add('input-group-prepend');
+      // NOW/TODAY button
+      const btn = document.createElement('button');
+      btn.innerText = ['time', 'datetime-local'].includes(element.type) ? i18next.t('now') : i18next.t('today');
+      btn.dataset.action = 'update-to-now';
+      btn.classList.add('btn', 'btn-secondary');
+      prependDiv.appendChild(btn);
+
+      inputGroupDiv.appendChild(prependDiv);
+      // now add the input
+      inputGroupDiv.appendChild(element);
+      return inputGroupDiv;
+    }
     return element;
   }
 
@@ -375,50 +389,56 @@ export class Metadata {
       const wrapperDiv = document.createElement('div');
 
       groups.forEach(group => {
-        const groupWrapperDiv =  document.createElement('div');
-        groupWrapperDiv.classList.add('mt-4');
-        const groupHeader = document.createElement('h4');
-        groupHeader.dataset.action='toggle-next';
-        groupHeader.classList.add('d-inline', 'togglable-section-title');
-        const groupHeaderIcon = document.createElement('i');
-        groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');
-        // only add content to the header if there are more than one group
-        if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
-          groupHeader.textContent = group.name;
-          groupHeader.insertAdjacentElement('afterbegin', groupHeaderIcon);
-        }
-
-        const wrapperUl = document.createElement('ul');
-        wrapperUl.classList.add('list-group', 'mt-2');
-        wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
-
-        for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
-          const listItem = document.createElement('li');
-          listItem.classList.add('list-group-item');
-          const label = document.createElement('label');
-          label.htmlFor = element.element.id;
-          label.innerText = element.name as string;
-
-          // for checkboxes the label comes second
-          if (element.element.type === 'checkbox') {
-            label.classList.add('form-check-label');
-            const wrapperDiv = document.createElement('div');
-            wrapperDiv.classList.add('form-check');
-            listItem.append(wrapperDiv);
-            wrapperDiv.append(element.element);
-            wrapperDiv.append(label);
-            wrapperDiv.append(this.getDescription(element));
-          } else {
-            listItem.append(label);
-            listItem.append(this.getDescription(element));
-            listItem.append(element.element);
+        // make sure there is an element in that group
+        if (Object.prototype.hasOwnProperty.call(groupedArr, group.id)) {
+          const groupWrapperDiv =  document.createElement('div');
+          groupWrapperDiv.classList.add('mt-4');
+          const groupHeader = document.createElement('h4');
+          groupHeader.dataset.action='toggle-next';
+          groupHeader.classList.add('d-inline', 'togglable-section-title');
+          const groupHeaderIcon = document.createElement('i');
+          groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');
+          // only add content to the header if there are more than one group
+          if (groups.length > 1 && groupHeader instanceof HTMLHeadingElement) {
+            groupHeader.textContent = group.name;
+            groupHeader.insertAdjacentElement('afterbegin', groupHeaderIcon);
           }
 
-          wrapperUl.append(listItem);
+          const wrapperUl = document.createElement('ul');
+          wrapperUl.classList.add('list-group', 'mt-2');
+          wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
+
+          for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            const label = document.createElement('label');
+            label.htmlFor = element.element.id;
+            label.innerText = element.name as string;
+            if (element.element.required) {
+              label.classList.add('required-label');
+            }
+
+            // for checkboxes the label comes second
+            if (element.element.type === 'checkbox') {
+              label.classList.add('form-check-label');
+              const wrapperDiv = document.createElement('div');
+              wrapperDiv.classList.add('form-check');
+              listItem.append(wrapperDiv);
+              wrapperDiv.append(element.element);
+              wrapperDiv.append(label);
+              wrapperDiv.append(this.getDescription(element));
+            } else {
+              listItem.append(label);
+              listItem.append(this.getDescription(element));
+              listItem.append(element.element);
+            }
+
+            wrapperUl.append(listItem);
+          }
+          groupWrapperDiv.append(groupHeader);
+          groupWrapperDiv.append(wrapperUl);
+          wrapperDiv.append(groupWrapperDiv);
         }
-        groupWrapperDiv.append(groupHeader);
-        groupWrapperDiv.append(wrapperUl);
-        wrapperDiv.append(groupWrapperDiv);
       });
 
       this.metadataDiv.append(wrapperDiv);

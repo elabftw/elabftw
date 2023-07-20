@@ -16,10 +16,11 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,19 +41,17 @@ try {
 
     $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
+    $TeamTags = new TeamTags($App->Users);
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
     $entityData = array();
+    $changelogData = array();
     if ($App->Request->query->has('templateid')) {
         $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
-        $Revisions = new Revisions(
-            $Templates,
-            (int) $App->Config->configArr['max_revisions'],
-            (int) $App->Config->configArr['min_delta_revisions'],
-            (int) $App->Config->configArr['min_days_revisions'],
-        );
+        $Changelog = new Changelog($Templates);
+        $changelogData = $Changelog->readAll();
     }
 
     // TEAM GROUPS
@@ -102,15 +101,16 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
+        'changes' => $changelogData,
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
+        'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
-        'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );

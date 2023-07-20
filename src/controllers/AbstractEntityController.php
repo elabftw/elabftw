@@ -19,10 +19,8 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
@@ -51,11 +49,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        // items don't need to show the templates in create new menu, so save a sql call here
-        if ($this->Entity instanceof Experiments) {
-            $Templates = new Templates($this->Entity->Users);
-            $this->templatesArr = $Templates->Pins->readAllSimple();
+        $Templates = new Templates($this->Entity->Users);
+        $this->templatesArr = $Templates->Pins->readAllSimple();
+        if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
+            $Entity->Uploads->includeArchived = true;
         }
+
     }
 
     public function getResponse(): Response
@@ -74,7 +73,7 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->type);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 
@@ -161,14 +160,6 @@ abstract class AbstractEntityController implements ControllerInterface
         }
         $this->Entity->setId($id);
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
@@ -189,7 +180,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
@@ -234,14 +224,8 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
         $Teams = new Teams($this->Entity->Users);
+        $TeamTags = new TeamTags($this->App->Users);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
 
@@ -260,8 +244,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'teamsArr' => $Teams->readAll(),
+            'teamTagsArr' => $TeamTags->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

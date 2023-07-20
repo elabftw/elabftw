@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Services\LoginHelper;
@@ -21,8 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
-
-$location = '../../experiments.php';
+$location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
 $Response = new RedirectResponse($location);
 
 try {
@@ -30,12 +30,12 @@ try {
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
         $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
 
-        $Saml = new Saml($App->Config, new Idps());
-        $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+        $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), (string) $App->Request->request->get('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
 
-        $settings = $Saml->getSettingsByEntityId($entId);
+        $settings = $IdpsHelper->getSettingsByEntityId($entId);
         $idpId = $settings['idp_id'];
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 

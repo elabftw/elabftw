@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,10 +25,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Timestamp experiments in bulk
  */
+#[AsCommand(name: 'experiments:timestamp')]
 class ExperimentsTimestamp extends Command
 {
-    protected static $defaultName = 'experiments:timestamp';
-
     protected function configure(): void
     {
         $this->setDescription('Timestamp experiments in bulk')

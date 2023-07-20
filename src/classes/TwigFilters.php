@@ -48,7 +48,8 @@ class TwigFilters
             $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
-        return sprintf("<div class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
+        // "status" role: see WCAG2.1 4.1.3
+        return sprintf("<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
     }
 
     /**

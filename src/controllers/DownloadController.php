@@ -61,6 +61,10 @@ class DownloadController implements ControllerInterface
 
     public function getResponse(): Response
     {
+        // this will disable output buffering and prevent issues when downloading big files
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         // we stream the response to the client
         $Response = new StreamedResponse(function () {
             $outputStream = fopen('php://output', 'wb');

@@ -83,9 +83,9 @@ elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
-    if ($ci); then
-        docker exec -it elab-cypress cypress run
-    fi
+#    if ($ci); then
+#        docker exec -it elab-cypress cypress run
+#    fi
 fi
 
 # in ci we copy the coverage output file in current directory

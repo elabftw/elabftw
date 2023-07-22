@@ -46,6 +46,8 @@ jobs:
             sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
             sed -i 's/elab.local:3148/elabtmp/g' tests/populate-config.yml
+            sed -i 's/toto@yopmail\.com/phpunit@example.com/g' tests/cypress/support/commands.js
+            sed -i 's/totototo/phpunitftw/g' tests/cypress/support/commands.js
       - run:
           name: Build elabtmp image and start containers
           command: |
@@ -146,13 +148,14 @@ jobs:
       - run:
           name: check elabtmp logs
           command: |
-             docker logs elabtmp 2>/dev/null
-             docker logs elabtmp 1>/dev/null
+            docker logs elabtmp 2>/dev/null
+            docker logs elabtmp 1>/dev/null
       - run:
           name: Extract Cypress results
           command: |
-             docker cp elab-cypress:/e2e/tests/cypress/screenshots cypress/screenshots
-             docker cp elab-cypress:/e2e/tests/cypress/videos cypress/videos
+            mkdir -p cypress/{screenshots,videos}
+            docker cp elab-cypress:/e2e/tests/cypress/screenshots cypress/screenshots
+            docker cp elab-cypress:/e2e/tests/cypress/videos cypress/videos
       - store_artifacts:
           path: cypress
           destination: cypress

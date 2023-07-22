@@ -41,7 +41,7 @@ jobs:
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
           name: Preper cypress config for CI
-          command: sed -i 's/elab.local/elab-cypress/g' cypress.config.ts
+          command: sed -i 's/elab.local:3148/elab-cypress:443/g' cypress.config.ts
       - run:
           name: Build elabtmp image and start containers
           command: |
@@ -120,11 +120,11 @@ jobs:
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
-          name: dokcer infos
+          name: docker infos
           command: |
             docker ps -a
             docker network ls
-            docker network inspect elabftw-net
+            docker network inspect tests_elabftw-net
       #- run:
       #    name: Run unit tests
       #    command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html

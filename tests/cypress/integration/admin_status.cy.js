@@ -13,9 +13,9 @@ describe('Status in admin panel', () => {
     cy.get('@newStatus').find('input').first().should('have.value', newname)
     cy.get('@newStatus').find('input').first().type('something')
     cy.get('@newStatus').find('[data-action="update-status"]').click().wait(500)
-    cy.contains('Saved').should('be.visible')
+    cy.get('#overlay').contains('Saved').should('be.visible')
     // destroy
     cy.get('@newStatus').find('[data-action="destroy-status"]').click().wait(500)
-    cy.contains('Saved').should('be.visible')
+    cy.get('#overlay').contains('Saved').should('be.visible')
   });
 });

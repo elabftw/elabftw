@@ -94,5 +94,15 @@ services:
             - TZ=Europe/Paris
         networks:
             - elabftw-net
+
+    cypress:
+        image: elab-cypress
+        container_name: elab-cypress
+        depends_on:
+            - web
+            - mysql
+        networks:
+            - elabftw-net
+
 networks:
     elabftw-net:

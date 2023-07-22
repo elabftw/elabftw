@@ -44,6 +44,7 @@ jobs:
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
@@ -124,6 +125,9 @@ jobs:
       - run:
           name: Extract coverage HTML report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
+      - run:
+          name: Run Cypress e2e tests
+          command: docker exec -it elab-cypress cypress run
       - run:
           name: Generate the php documentation
           # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large

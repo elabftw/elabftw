@@ -42,6 +42,7 @@ jobs:
       - run:
           name: Prepare CI for cypress
           command: |
+            mkdir -p cypress/{screenshots,videos}
             sed -i 's/elab.local:3148/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
@@ -126,12 +127,6 @@ jobs:
             docker exec -it elabtmp chmod -R 777 tests/_output
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
-      - run:
-          name: docker infos
-          command: |
-            docker ps -a
-            docker network ls
-            docker network inspect tests_elabftw-net
       #- run:
       #    name: Run unit tests
       #    command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
@@ -143,18 +138,10 @@ jobs:
       #    command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
       - run:
           name: Run Cypress e2e tests
-          command: |
-            docker exec -it elab-cypress cypress run
-            exit 0
-      - run:
-          name: check elabtmp logs
-          command: |
-            docker logs elabtmp 2>/dev/null
-            docker logs elabtmp 1>/dev/null
+          command: docker exec -it elab-cypress cypress run
       - run:
           name: Extract Cypress results
           command: |
-            mkdir -p cypress/{screenshots,videos}
             docker cp elab-cypress:/e2e/tests/cypress/screenshots cypress/screenshots
             docker cp elab-cypress:/e2e/tests/cypress/videos cypress/videos
       - store_artifacts:

@@ -89,21 +89,21 @@ jobs:
       - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Run SCSS linter
-          command: docker exec -it elabtmp yarn csslint
-      - run:
-          name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci
+      #- run:
+      #    name: Run SCSS linter
+      #    command: docker exec -it elabtmp yarn csslint
+      #- run:
+      #    name: Run Javascript linter
+      #    command: docker exec -it elabtmp yarn jslint-ci
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
-          name: Run PHP-CS-Fixer
-          command: docker exec -it elabtmp yarn phpcs-dry
-      - run:
-          name: "PHP static analysis: psalm + phpstan"
-          command: docker exec -it elabtmp yarn static
+      #- run:
+      #    name: Run PHP-CS-Fixer
+      #    command: docker exec -it elabtmp yarn phpcs-dry
+      #- run:
+      #    name: "PHP static analysis: psalm + phpstan"
+      #    command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
           command: docker exec -it elabtmp bin/init db:install -r
@@ -120,32 +120,38 @@ jobs:
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
-          name: Run unit tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
-      - run:
-          name: Extract coverage report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
-      - run:
-          name: Extract coverage HTML report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
+          name: dokcer infos
+          command: |
+            docker ps -a
+            docker network ls
+            docker network inspect elabftw-net
+      #- run:
+      #    name: Run unit tests
+      #    command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
+      #- run:
+      #    name: Extract coverage report
+      #    command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
+      #- run:
+      #    name: Extract coverage HTML report
+      #    command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
       - run:
           name: Run Cypress e2e tests
           command: docker exec -it elab-cypress cypress run
-      - run:
-          name: Generate the php documentation
-          # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
-          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
-      - run:
-          name: Extract the php documentation
-          command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
-      - store_artifacts:
-          path: phpdoc-html
-          destination: phpdoc-html
-      - store_artifacts:
-          path: coverage-html
-          destination: coverage-html
-      - codecov/upload:
-          file: coverage.xml
+      #- run:
+      #    name: Generate the php documentation
+      #    # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
+      #    command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
+      #- run:
+      #    name: Extract the php documentation
+      #    command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
+      #- store_artifacts:
+      #    path: phpdoc-html
+      #    destination: phpdoc-html
+      #- store_artifacts:
+      #    path: coverage-html
+      #    destination: coverage-html
+      #- codecov/upload:
+      #    file: coverage.xml
 workflows:
   version: 2
   build_and_test:

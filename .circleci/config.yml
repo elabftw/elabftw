@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.12
+          version: 20.10.23
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
       - run:
@@ -41,7 +41,7 @@ jobs:
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
           name: Preper cypress config for CI
-          command: sed -i 's/elab.local:3148/elab-cypress:443/g' cypress.config.ts
+          command: sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
       - run:
           name: Build elabtmp image and start containers
           command: |

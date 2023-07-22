@@ -20,6 +20,7 @@ import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
+import { ValidMetadata } from './metadataInterfaces';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -283,6 +284,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
+
+    // DELETE EXTRA FIELD
+    } else if (el.matches('[data-action="metadata-rm-field"]')) {
+      MetadataC.read().then(metadata => {
+        const name = el.closest('div').querySelector('label').innerText;
+        delete metadata.extra_fields[name];
+        MetadataC.update(metadata as ValidMetadata);
+      });
 
     // INSERT IMAGE AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-image-in-body"]')) {

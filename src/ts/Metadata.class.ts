@@ -411,12 +411,28 @@ export class Metadata {
           for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item');
+            const labelDiv = document.createElement('div');
+            labelDiv.classList.add('d-flex', 'justify-content-between');
+
+            // LABEL
             const label = document.createElement('label');
             label.htmlFor = element.element.id;
             label.innerText = element.name as string;
             if (element.element.required) {
               label.classList.add('required-label');
             }
+            label.classList.add('py-2');
+
+            // add a button to delete the field
+            const deleteBtn = document.createElement('span');
+            deleteBtn.dataset.action = 'metadata-rm-field';
+            deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
+            const deleteIcon = document.createElement('i');
+            deleteIcon.classList.add('fas', 'fa-trash-alt');
+            deleteBtn.appendChild(deleteIcon);
+
+            labelDiv.append(label);
+            labelDiv.append(deleteBtn);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {
@@ -425,10 +441,10 @@ export class Metadata {
               wrapperDiv.classList.add('form-check');
               listItem.append(wrapperDiv);
               wrapperDiv.append(element.element);
-              wrapperDiv.append(label);
+              wrapperDiv.append(labelDiv);
               wrapperDiv.append(this.getDescription(element));
             } else {
-              listItem.append(label);
+              listItem.append(labelDiv);
               listItem.append(this.getDescription(element));
               listItem.append(element.element);
             }

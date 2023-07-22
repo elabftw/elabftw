@@ -7,7 +7,7 @@
  */
 
 export interface ValidMetadata {
-  elabftw: MetadataElabftw,
+  elabftw?: MetadataElabftw,
   extra_fields: ExtraField,
 }
 

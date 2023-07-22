@@ -40,8 +40,10 @@ jobs:
             sed -i '\#volumes:#D' tests/docker-compose.yml
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
-          name: Preper cypress config for CI
-          command: sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
+          name: Prepare CI for cypress
+          command: |
+            sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
+            sed -i 's/elab.local:3148/elabtmp/g' tests/populate-config.yml
       - run:
           name: Build elabtmp image and start containers
           command: |

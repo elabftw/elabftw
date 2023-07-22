@@ -71,7 +71,7 @@ describe('Experiments', () => {
     cy.contains('Create').click()
     cy.get('#createModal').within(() => { cy.contains('Generated').click() })
     entityEdit()
-    cy.get('#category_select').select('Microscope').blur().wait(100)
+    cy.get('#category_select').select('Microscope').blur().wait(500)
     cy.contains('Saved').should('be.visible')
     entityComment()
     entityDuplicate()

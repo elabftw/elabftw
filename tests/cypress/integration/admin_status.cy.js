@@ -12,10 +12,10 @@ describe('Status in admin panel', () => {
     cy.get('ul[data-table="status"]').find('li[data-statusid]').find('input[value="' + newname + '"]').parent().parent().as('newStatus')
     cy.get('@newStatus').find('input').first().should('have.value', newname)
     cy.get('@newStatus').find('input').first().type('something')
-    cy.get('@newStatus').find('[data-action="update-status"]').click().wait(100)
+    cy.get('@newStatus').find('[data-action="update-status"]').click().wait(500)
     cy.contains('Saved').should('be.visible')
     // destroy
-    cy.get('@newStatus').find('[data-action="destroy-status"]').click().wait(100)
+    cy.get('@newStatus').find('[data-action="destroy-status"]').click().wait(500)
     cy.contains('Saved').should('be.visible')
   });
 });

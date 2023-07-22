@@ -35,14 +35,14 @@ Cypress.Commands.add('login', () => {
       cy.request({
         method: 'POST',
         url: '/app/controllers/LoginController.php',
-        failOnStatusCode: false, // dont fail so we can make assertions
+        failOnStatusCode: false, // don't fail so we can make assertions
         form: true, // we are submitting a regular form body
         body: {
-        email: email,
-        password: password,
-        auth_type: 'local',
-        rememberme: 'on',
-        csrf: csrf,
+          email: email,
+          password: password,
+          auth_type: 'local',
+          rememberme: 'on',
+          csrf: csrf,
         },
       })
       .then((resp) => {

@@ -48,6 +48,7 @@ jobs:
             sed -i 's/elab.local:3148/elabtmp/g' tests/populate-config.yml
             sed -i 's/toto@yopmail\.com/phpunit@example.com/g' tests/cypress/support/commands.js
             sed -i 's/totototo/phpunitftw/g' tests/cypress/support/commands.js
+            sed -i 's/Toto/Phpunit/g' tests/cypress/support/commands.js
       - run:
           name: Build elabtmp image and start containers
           command: |

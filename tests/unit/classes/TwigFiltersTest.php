@@ -51,14 +51,31 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
               "value": "",
               "position": 4
             },
+            "number with unit": {
+              "type": "number",
+              "value": 12,
+              "unit": "kPa"
+            },
+            "multi select": {
+              "type": "select",
+              "allow_multi_values": true,
+              "value": ["yep", "yip"],
+              "options": ["yip", "yap", "yep"]
+            },
             "checked checkbox": {
               "type": "checkbox",
               "value": "on"
             }
           }
         }';
-        $expected = '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div><li class="list-group-item"><h5 class="mb-0">first one</h5><h6>first</h6></li><li class="list-group-item"><h5 class="mb-0">second one</h5><h6>second</h6></li><li class="list-group-item"><h5 class="mb-0">unchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" ></h6></li><li class="list-group-item"><h5 class="mb-0">url current tab</h5><h6><a href="https://example.com" >https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">url default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">last one</h5><span class="smallgray">last position</span><h6>last content</h6></li><li class="list-group-item"><h5 class="mb-0">checked checkbox</h5><h6><input class="d-block" disabled type="checkbox" checked></h6></li></div>';
+        $expected = '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div><li class="list-group-item"><h5 class="mb-0">first one</h5><h6>first</h6></li><li class="list-group-item"><h5 class="mb-0">second one</h5><h6>second</h6></li><li class="list-group-item"><h5 class="mb-0">unchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" ></h6></li><li class="list-group-item"><h5 class="mb-0">url current tab</h5><h6><a href="https://example.com" >https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">url default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">last one</h5><span class="smallgray">last position</span><h6>last content</h6></li><li class="list-group-item"><h5 class="mb-0">number with unit</h5><h6>12 kPa</h6></li><li class="list-group-item"><h5 class="mb-0">multi select</h5><h6>yep, yip</h6></li><li class="list-group-item"><h5 class="mb-0">checked checkbox</h5><h6><input class="d-block" disabled type="checkbox" checked></h6></li></div>';
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
+    }
+
+    public function testFormatMetadataEmptyExtrafields(): void
+    {
+        $metadata = '{"hello": "friend"}';
+        $this->assertIsString(TwigFilters::formatMetadata($metadata));
     }
 
     public function testDecrypt(): void

@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DELETE EXTRA FIELD
     } else if (el.matches('[data-action="metadata-rm-field"]')) {
       MetadataC.read().then(metadata => {
-        const name = el.closest('div').querySelector('label').innerText;
+        const name = el.parentElement.closest('div').querySelector('label').innerText;
         delete metadata.extra_fields[name];
         MetadataC.update(metadata as ValidMetadata);
       });

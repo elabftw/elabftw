@@ -447,9 +447,10 @@ button:disabled {
 }
 
 /* required labels/input for extra fields */
-#metadataDiv {
-    /* target the required fields, but only if they are invalid: empty or incorrect */
-    [required]:invalid {
+#metadataDiv,
+#newFieldForm {
+    /* any invalid field will get this red border */
+    :invalid {
         border: 1px solid $lightred;
     }
 

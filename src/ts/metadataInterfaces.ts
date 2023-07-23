@@ -37,6 +37,8 @@ export interface ExtraFieldProperties {
   description?: string;
   allow_multi_values?: boolean;
   required?: boolean;
+  unit?: string;
+  units?: string[];
 }
 
 export interface MetadataElabftw {

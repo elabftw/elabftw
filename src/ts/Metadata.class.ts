@@ -47,24 +47,40 @@ export class Metadata {
   /**
    * Only save a single field value after a change
    */
-  handleEvent(event): Promise<Response> {
+  handleEvent(event: Event): Promise<Response> | boolean {
+    const el = event.target as HTMLFormElement;
+    if (el.reportValidity() === false) {
+      return false;
+    }
+    if (el.dataset.units === '1') {
+      return this.updateUnit(event);
+    }
     // by default the value is simply the value of the input, which is the event target
-    let value = event.target.value;
+    let value = el.value;
     // special case for checkboxes
-    if (event.target.type === 'checkbox') {
-      value = event.target.checked ? 'on': 'off';
+    if (el.type === 'checkbox') {
+      value = el.checked ? 'on': 'off';
     }
     // special case for multiselect
-    if (event.target.hasAttribute('multiple')) {
+    if (el.hasAttribute('multiple')) {
       // collect all the selected options, and the value will be an array
-      value = [...event.target.selectedOptions].map(option => option.value);
+      value = [...el.selectedOptions].map(option => option.value);
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
-    params[event.target.dataset.field] = value;
+    params[el.dataset.field] = value;
     return this.api.patch(`${this.entity.type}/${this.entity.id}`, params);
   }
 
+  updateUnit(event: Event): Promise<Response> {
+    const select = (event.target as HTMLSelectElement);
+    const value = select.value;
+    const name = select.parentElement.parentElement.parentElement.querySelector('label').innerText;
+    return this.read().then(metadata => {
+      metadata.extra_fields[name].unit = value;
+      return this.save(metadata as ValidMetadata);
+    });
+  }
   /**
    * Save the whole json at once, coming from json editor save button
    */
@@ -153,7 +169,11 @@ export class Metadata {
       }
     } else {
       valueEl = document.createElement('div');
-      valueEl.innerText = properties.value as string;
+      let value = properties.value as string;
+      if (properties.unit) {
+        value += ' ' + properties.unit;
+      }
+      valueEl.innerText = value;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
       if (properties.type === 'url') {
@@ -243,6 +263,7 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
+    element.addEventListener('blur', this, false);
 
     // add a prepend button for "Now" for date and time types
     if (['time', 'date', 'datetime-local'].includes(element.type)) {
@@ -262,6 +283,33 @@ export class Metadata {
       inputGroupDiv.appendChild(element);
       return inputGroupDiv;
     }
+
+    // UNITS
+    if (Object.prototype.hasOwnProperty.call(properties, 'units') && properties.units.length > 0) {
+      const inputGroupDiv = document.createElement('div');
+      inputGroupDiv.classList.add('input-group');
+      const appendDiv = document.createElement('div');
+      appendDiv.classList.add('input-group-append');
+      const unitsSel = document.createElement('select');
+      for (const unit of properties.units) {
+        const optionEl = document.createElement('option');
+        optionEl.text = unit;
+        if (properties.unit === unit) {
+          optionEl.setAttribute('selected', '');
+        }
+        unitsSel.add(optionEl);
+      }
+      unitsSel.classList.add('form-control', 'brl-none');
+      // add this so we can differentiat the change event from the main input
+      unitsSel.dataset.units = '1';
+      unitsSel.addEventListener('change', this, false);
+      appendDiv.appendChild(unitsSel);
+      // input first, then append div
+      inputGroupDiv.appendChild(element);
+      inputGroupDiv.appendChild(appendDiv);
+      return inputGroupDiv;
+    }
+
     return element;
   }
 
@@ -424,7 +472,7 @@ export class Metadata {
             label.classList.add('py-2');
 
             // add a button to delete the field
-            const deleteBtn = document.createElement('span');
+            const deleteBtn = document.createElement('div');
             deleteBtn.dataset.action = 'metadata-rm-field';
             deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
             const deleteIcon = document.createElement('i');

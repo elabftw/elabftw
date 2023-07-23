@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'selectradio', 'checkbox'];
+    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -32,15 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newFieldTypeSelect').addEventListener('change', event => {
     const fieldType = (event.target as HTMLSelectElement).value;
     const valueInput = document.getElementById('newFieldValueInput');
-    // start by hiding this one, which is only shown for select
-    document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', true);
 
     switch (fieldType as ExtraFieldInputType) {
     case ExtraFieldInputType.Text:
     case ExtraFieldInputType.Date:
     case ExtraFieldInputType.DateTime:
     case ExtraFieldInputType.Email:
-    case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Url:
     case ExtraFieldInputType.Time:
       valueInput.setAttribute('type', fieldType);
@@ -53,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
+    case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Checkbox:
       toggleContentDiv(fieldType);
       break;
@@ -116,13 +114,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = {};
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
-        if (['text', 'date', 'datetime-local', 'email', 'number', 'time', 'url'].includes(field['type'])) {
+        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
-          document.querySelectorAll('.newFieldOption').forEach(opt => field['options'].push((opt as HTMLInputElement).value));
+          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push((opt as HTMLInputElement).value));
           // just take the first one as selected value
           fieldValue = field['options'][0];
+        } else if (field['type'] === 'number') {
+          fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
+          field['units'] = [];
+          document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
+            const unitValue = (opt as HTMLInputElement).value;
+            // only add non empty values
+            if (unitValue) {
+              field['units'].push(unitValue);
+            }
+          });
+          field['unit'] = '';
+          // if there is at least one value in "units", add it to "unit"
+          if (field['units'].length > 0) {
+            field['unit'] = field['units'][0];
+          }
 
         } else if (field['type'] === 'checkbox') {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
@@ -156,10 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {
       const newInput = document.createElement('input');
-      newInput.classList.add('form-control');
-      newInput.classList.add('newFieldOption');
-      newInput.classList.add('mb-1');
-      document.getElementById('choicesInputDiv').appendChild(newInput);
+      newInput.classList.add('form-control', 'mb-1');
+      el.parentElement.querySelector('div').append(newInput);
     // SAVE NEW GROUP
     } else if (el.matches('[data-action="save-new-fields-group"]')) {
       const nameInput = (document.getElementById('newFieldsGroupKeyInput') as HTMLInputElement);

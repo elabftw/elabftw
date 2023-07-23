@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Mohon tunggu…",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",
+    "saved": "Tersimpan",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
     "tag-delete-warning": "Hapus label ini?",
-    "upload-file-comment": "File komentar",
     "template-title": "Judul templat",
     "today": "Today",
+    "upload-file-comment": "File komentar",
   },
 };
 export default t;

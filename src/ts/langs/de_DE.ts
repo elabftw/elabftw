@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Bitte warten…",
     "replace-edited-file": "Möchten Sie die Datei auf dem Server durch diese Bearbeitung ersetzen?",
     "request-filename": "Geben Sie den Namen der Datei ein",
+    "saved": "Gespeichert",
     "step-delete-warning": "Diesen Schritt löschen?",
     "step-unfinish-warning": "Sind Sie sicher, dass Sie diesen Schritt rückgängig machen wollen?",
     "tag-delete-warning": "Tag löschen?",
-    "upload-file-comment": "Dateikommentar",
     "template-title": "Titel der Vorlage",
     "today": "Today",
+    "upload-file-comment": "Dateikommentar",
   },
 };
 export default t;

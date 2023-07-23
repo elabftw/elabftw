@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Proszę czekać…",
     "replace-edited-file": "Czy chcesz zastąpić plik na serwerze tą edycją?",
     "request-filename": "Wpisz nazwę pliku",
+    "saved": "Zapisane",
     "step-delete-warning": "Usunąć ten krok?",
     "step-unfinish-warning": "Czy na pewno chcesz cofnąć ten krok?",
     "tag-delete-warning": "Usunąć ten tag?",
-    "upload-file-comment": "Komentarz do pliku",
     "template-title": "Tytuł szablonu",
     "today": "Today",
+    "upload-file-comment": "Komentarz do pliku",
   },
 };
 export default t;

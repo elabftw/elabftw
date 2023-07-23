@@ -19,12 +19,13 @@ const t = {
     "please-wait": "请稍候…",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
     "request-filename": "输入文件名",
+    "saved": "已保存",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
     "tag-delete-warning": "删除这个标签？",
-    "upload-file-comment": "档案评论",
     "template-title": "模板标题",
     "today": "Today",
+    "upload-file-comment": "档案评论",
   },
 };
 export default t;

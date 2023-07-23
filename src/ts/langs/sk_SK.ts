@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Prosím počkajte…",
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",
     "request-filename": "Zadajte názov súboru",
+    "saved": "Uložené",
     "step-delete-warning": "Odstrániť tento krok?",
     "step-unfinish-warning": "Naozaj chceš vrátiť krok späť ?",
     "tag-delete-warning": "Odstrániť túto značku?",
-    "upload-file-comment": "Komentár k súboru",
     "template-title": "Názov šablóny",
     "today": "Today",
+    "upload-file-comment": "Komentár k súboru",
   },
 };
 export default t;

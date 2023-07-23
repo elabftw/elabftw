@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Gelieve te wachten…",
     "replace-edited-file": "Wilt u het bestand op de server vervangen met deze wijziging?",
     "request-filename": "Voer de naam van het bestand in",
+    "saved": "Opgeslagen",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
     "tag-delete-warning": "Dit label verwijderen?",
-    "upload-file-comment": "Bestandscommentaar",
     "template-title": "Sjabloon titel",
     "today": "Today",
+    "upload-file-comment": "Bestandscommentaar",
   },
 };
 export default t;

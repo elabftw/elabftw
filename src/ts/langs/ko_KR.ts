@@ -19,12 +19,13 @@ const t = {
     "please-wait": "잠시만 기다려주세요…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "파일 이름 입력",
+    "saved": "저장됨",
     "step-delete-warning": "단계를 삭제할까요?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "이 태그를 삭제할까요?",
-    "upload-file-comment": "파일 코멘트",
     "template-title": "Template title",
     "today": "Today",
+    "upload-file-comment": "파일 코멘트",
   },
 };
 export default t;

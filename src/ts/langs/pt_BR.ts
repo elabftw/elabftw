@@ -19,12 +19,13 @@ const t = {
     "please-wait": "Por favor, aguarde...",
     "replace-edited-file": "Você gostaria de substituir o arquivo no servidor por esta versão editada?",
     "request-filename": "Digite o nome do arquivo",
+    "saved": "Alterações salvas",
     "step-delete-warning": "Deletar esta etapa?",
     "step-unfinish-warning": "Tem certeza que gostaria de desfazer esta etapa?",
     "tag-delete-warning": "Deletar esta tag?",
-    "upload-file-comment": "Comentário no arquivo",
     "template-title": "Título do modelo",
     "today": "Today",
+    "upload-file-comment": "Comentário no arquivo",
   },
 };
 export default t;

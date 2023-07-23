@@ -47,12 +47,13 @@ class i18n4Js
             'please-wait' => _('Please wait…'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'request-filename' => _('Enter name of the file'),
+            'saved' => _('Saved'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
             'tag-delete-warning' => _('Delete this tag?'),
-            'upload-file-comment' => _('File comment'),
             'template-title' => _('Template title'),
             'today' =>_('Today'),
+            'upload-file-comment' => _('File comment'),
         );
     }
 

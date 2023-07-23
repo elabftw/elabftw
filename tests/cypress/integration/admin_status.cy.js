@@ -11,8 +11,9 @@ describe('Status in admin panel', () => {
     cy.get('[data-action="create-status"]').click().wait(500)
     cy.get('ul[data-table="status"]').find('li[data-statusid]').find('input[value="' + newname + '"]').parent().parent().as('newStatus')
     cy.get('@newStatus').find('input').first().should('have.value', newname)
+    // update
     cy.get('@newStatus').find('input').first().type('something')
-    cy.intercept('/api/v2/teams/1/status/17').as('@statusUpdated')
+    cy.intercept('/api/v2/teams/1/status/17').as('statusUpdated')
     cy.get('@newStatus').find('[data-action="update-status"]').click()
     cy.wait('@statusUpdated')
     cy.get('#overlay').contains('Save').should('be.visible')

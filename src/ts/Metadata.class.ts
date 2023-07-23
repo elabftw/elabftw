@@ -10,6 +10,7 @@ import { adjustHiddenState } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 
 export function ResourceNotFoundException(message: string): void {
@@ -19,12 +20,14 @@ export function ResourceNotFoundException(message: string): void {
 
 export class Metadata {
   entity: Entity;
+  editor: JsonEditorHelper;
   model: EntityType;
   api: Api;
   metadataDiv: Element;
 
-  constructor(entity: Entity) {
+  constructor(entity: Entity, jsonEditor: JsonEditorHelper) {
     this.entity = entity;
+    this.editor = jsonEditor;
     this.model = entity.type;
     this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
@@ -69,7 +72,10 @@ export class Metadata {
     const params = {};
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
-    return this.api.patch(`${this.entity.type}/${this.entity.id}`, params);
+    this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
+      this.editor.loadMetadata();
+    });
+    return true;
   }
 
   updateUnit(event: Event): Promise<Response> {

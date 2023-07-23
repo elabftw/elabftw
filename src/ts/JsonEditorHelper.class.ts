@@ -9,9 +9,10 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { notif, notifSaved, reloadElement, getEntity } from './misc';
+import { notif, notifSaved, reloadElement } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
+import { ValidMetadata } from './metadataInterfaces';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -28,7 +29,7 @@ export default class JsonEditorHelper {
     this.entity = entity;
     // this is the div that will hold the editor
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
-    this.MetadataC = new Metadata(entity);
+    this.MetadataC = new Metadata(entity, this);
     this.editorTitle = document.getElementById('jsonEditorTitle');
     this.api = new Api();
   }
@@ -47,6 +48,11 @@ export default class JsonEditorHelper {
           (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
       },
+      onChange: (): void => {
+        // make the save button stand out if the content is changed
+        document.querySelector('[data-action="json-save"]').classList.add('border-danger');
+        document.getElementById('jsonUnsavedChangesWarningDiv').removeAttribute('hidden');
+      },
     };
 
     // instantiate the editor
@@ -55,9 +61,13 @@ export default class JsonEditorHelper {
     if (editable) {
       this.editor.setMode('tree');
     }
-    if (this.editorDiv.dataset.preloadJson === '1') {
+    if (this.editorDiv.dataset.preloadJson === '1' && this.entity.id !== null) {
       this.loadMetadata();
     }
+  }
+
+  refresh(metadata: ValidMetadata): void {
+    this.editor.update(metadata);
   }
 
   focus(): void {
@@ -105,22 +115,13 @@ export default class JsonEditorHelper {
     // set the title
     this.editorTitle.innerText = i18next.t('editing-metadata');
     // Note: metadata is read two times one for the editor, one to display, a get to the entity should ideally only be made once
-    this.MetadataC.read().then(metadata => this.editor.set(metadata));
-    this.editorDiv.dataset.what = 'metadata';
-  }
-
-  loadMetadataFromId(entity: Entity): void {
-    const MetadataC = new Metadata(entity);
-    MetadataC.read().then(metadata => {
-      this.editor.set(metadata);
-    });
+    this.MetadataC.read().then(metadata => this.editor.update(metadata));
     this.editorDiv.dataset.what = 'metadata';
   }
 
   saveMetadata(): void {
-    const MetadataC = new Metadata(this.entity);
     try {
-      MetadataC.update(this.editor.get());
+      this.MetadataC.update(this.editor.get());
     } catch (error) {
       notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
       console.error(error);
@@ -205,11 +206,9 @@ export default class JsonEditorHelper {
   }
 
   toggleDisplayMainText(): void {
-    const entity = getEntity();
-    const MetadataC = new Metadata(entity);
     let json = {};
     // get the current metadata
-    MetadataC.read().then(metadata => {
+    this.MetadataC.read().then(metadata => {
       if (metadata) {
         json = metadata;
       }

@@ -10,6 +10,7 @@ import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="load-metadata-from-textarea"]')) {
       const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
-      const MetadataC = new Metadata(entity);
+      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
@@ -100,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value;
 
-      const MetadataC = new Metadata(entity);
+      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
       let json = {};
       // get the current metadata
       MetadataC.read().then(metadata => {
@@ -176,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const nameInput = (document.getElementById('newFieldsGroupKeyInput') as HTMLInputElement);
 
       const entity = getEntity();
-      const MetadataC = new Metadata(entity);
+      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
       // get the current metadata
       MetadataC.read().then((metadata: ValidMetadata) => {
         // make sure we have an elabftw property

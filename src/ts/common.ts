@@ -33,6 +33,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -548,7 +549,8 @@ document.addEventListener('DOMContentLoaded', () => {
           && !metadata.elabftw.display_main_text
         ) {
           // add extra fields elements from metadata json
-          const MetadataC = new Metadata({type: el.dataset.type as EntityType, id: entityId});
+          const entity = {type: el.dataset.type as EntityType, id: entityId};
+          const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
           MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
             // go over all the type: url elements and create a link dynamically

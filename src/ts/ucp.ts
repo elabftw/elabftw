@@ -17,6 +17,8 @@ import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
+import JsonEditorHelper from './JsonEditorHelper.class';
+import { JsonEditorActions } from './JsonEditorActions.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -36,8 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(document.location.search);
   if (entity.id && params.get('mode') === 'edit') {
     // add extra fields elements from metadata json
-    const MetadataC = new Metadata(entity);
+    const JsonEditorHelperC = new JsonEditorHelper(entity);
+    const MetadataC = new Metadata(entity, JsonEditorHelperC);
     MetadataC.display('edit');
+    // only run if there is the json-editor block
+    if (document.getElementById('json-editor')) {
+      const JsonEditorActionsC = new JsonEditorActions();
+      JsonEditorActionsC.init(JsonEditorHelperC, true);
+    }
   }
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));

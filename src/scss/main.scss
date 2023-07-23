@@ -828,6 +828,10 @@ the form-control fails to do that so we do the border ourselves */
     color: $dangerred !important;
 }
 
+.border-danger {
+    border: 1px solid $lightred !important;
+}
+
 .color-warning {
     color: #856404 !important;
 }

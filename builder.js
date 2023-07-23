@@ -27,7 +27,6 @@ module.exports = (env) => {
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/edit.ts',
-        './src/ts/jsoneditor.ts',
         './src/ts/team.ts',
         './src/ts/uploads.ts',
         './src/ts/todolist.ts',

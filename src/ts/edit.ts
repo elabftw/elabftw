@@ -21,6 +21,8 @@ import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
+import JsonEditorHelper from './JsonEditorHelper.class';
+import { JsonEditorActions } from './JsonEditorActions.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -47,8 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity);
+  const JsonEditorHelperC = new JsonEditorHelper(entity);
+  const MetadataC = new Metadata(entity, JsonEditorHelperC);
   MetadataC.display('edit');
+  // only run if there is the json-editor block
+  if (document.getElementById('json-editor')) {
+    const JsonEditorActionsC = new JsonEditorActions();
+    JsonEditorActionsC.init(JsonEditorHelperC, true);
+  }
 
   // Which editor are we using? md or tiny
   const editor = getEditor();

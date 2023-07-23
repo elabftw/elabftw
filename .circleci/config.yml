@@ -144,6 +144,9 @@ jobs:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
       - run:
+          name: Reset database
+          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+      - run:
           name: Run Cypress e2e tests and extract artifacts
           command: |
             docker exec -it elab-cypress cypress run

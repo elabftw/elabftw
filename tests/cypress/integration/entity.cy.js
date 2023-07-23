@@ -28,9 +28,9 @@ describe('Experiments', () => {
     cy.get('[title="View mode"]').click()
     cy.get('#commentsCreateArea').type('This is a very nice experiment')
     cy.get('[data-action="create-comment"]').click()
-    cy.contains('Toto Le sysadmin commented').should('be.visible')
+    cy.contains('Phpunit TestUser commented').should('be.visible')
     cy.get('[data-action="destroy-comment"]').click()
-    cy.contains('Toto Le sysadmin commented').should('not.exist')
+    cy.contains('Phpunit TestUser commented').should('not.exist')
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click()
   }

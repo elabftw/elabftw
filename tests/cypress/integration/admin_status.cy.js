@@ -8,18 +8,23 @@ describe('Status in admin panel', () => {
     cy.visit('/admin.php?tab=4')
     cy.get('#statusName').type(newname)
     // create
-    cy.get('[data-action="create-status"]').click().wait(500)
-    cy.get('ul[data-table="status"]').find('li[data-statusid]').find('input[value="' + newname + '"]').parent().parent().as('newStatus')
-    cy.get('@newStatus').find('input').first().should('have.value', newname)
+    cy.intercept('/admin.php?tab=4').as('statusCreated')
+    cy.get('[data-action="create-status"]').click()
+    cy.wait('@statusCreated').then(() => {
+      cy.get('ul[data-table="status"]').find('li[data-statusid]').find('input[value="' + newname + '"]').parent().parent().as('newStatus')
+      cy.get('@newStatus').find('input').first().should('have.value', newname)
+    })
     // update
     cy.get('@newStatus').find('input').first().type('something')
     cy.intercept('/api/v2/teams/1/status/17').as('statusUpdated')
     cy.get('@newStatus').find('[data-action="update-status"]').click()
-    cy.wait('@statusUpdated')
-    cy.get('#overlay').should('be.visible').should('contain', 'saved')
+    cy.wait('@statusUpdated').then(() => {
+      cy.get('#overlay').should('be.visible').should('contain', 'saved')
+    })
     // destroy
     cy.get('@newStatus').find('[data-action="destroy-status"]').click()
-    cy.wait('@statusUpdated')
-    cy.get('#overlay').should('be.visible').should('contain', 'saved')
+    cy.wait('@statusUpdated').then(() => {
+      cy.get('#overlay').should('be.visible').should('contain', 'saved')
+    })
   });
 });

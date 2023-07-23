@@ -40,7 +40,6 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
         # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
         docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
-        docker build -q -t elab-cypress -f /tests/elab-cypress.Dockerfile .
     fi
     docker-compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
@@ -83,9 +82,6 @@ elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
-#    if ($ci); then
-#        docker exec -it elab-cypress cypress run
-#    fi
 fi
 
 # in ci we copy the coverage output file in current directory

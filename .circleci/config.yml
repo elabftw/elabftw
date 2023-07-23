@@ -140,8 +140,10 @@ jobs:
           name: Run Cypress e2e tests and extract artifacts
           command: |
             docker exec -it elab-cypress cypress run
+            status=$?
             docker cp elab-cypress:/e2e/tests/cypress/screenshots cypress/screenshots
             docker cp elab-cypress:/e2e/tests/cypress/videos cypress/videos
+            exit $status
       - store_artifacts:
           path: cypress
           destination: cypress

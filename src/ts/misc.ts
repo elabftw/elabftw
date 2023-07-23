@@ -161,7 +161,7 @@ export function notif(info: ResponseMsg): void {
   p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
-  overlay.setAttribute('id','overlay');
+  overlay.setAttribute('id', 'overlay');
   overlay.setAttribute('class', 'overlay ' + 'overlay-' + result);
   // show the overlay
   document.body.appendChild(overlay);

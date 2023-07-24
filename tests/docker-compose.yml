@@ -97,6 +97,9 @@ services:
 
     cypress:
         image: elab-cypress
+        build:
+          context: .
+          dockerfile: ./elab-cypress.Dockerfile
         container_name: elab-cypress
         depends_on:
             - web

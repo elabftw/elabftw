@@ -34,7 +34,7 @@ if [ ! -f tests/elabftw-user.env ]; then
 fi
 
 # launch a fresh environment if needed
-if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
+if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
     if ($ci); then
         # Use the freshly built elabtmp image
         # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer

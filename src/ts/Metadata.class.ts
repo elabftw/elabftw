@@ -432,6 +432,7 @@ export class Metadata {
    */
   edit(): Promise<void> {
     return this.read().then(json => {
+      this.editor.refresh(json as ValidMetadata);
       // do nothing more if there is no extra_fields in our json
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
         return;

@@ -43,7 +43,7 @@ export default class JsonEditorHelper {
     }
     const options = {
       modes: modes,
-      onModeChange: (newMode): void => {
+      onModeChange: (newMode: string): void => {
         if (newMode === 'code') {
           (this.editorDiv.firstChild as HTMLDivElement).style.height = '500px';
         }
@@ -61,13 +61,15 @@ export default class JsonEditorHelper {
     if (editable) {
       this.editor.setMode('tree');
     }
-    if (this.editorDiv.dataset.preloadJson === '1' && this.entity.id !== null) {
+    if (this.editorDiv.dataset.preloadJson === '1') {
       this.loadMetadata();
     }
   }
 
   refresh(metadata: ValidMetadata): void {
-    this.editor.update(metadata);
+    if (this.editor instanceof JSONEditor) {
+      this.editor.update(metadata);
+    }
   }
 
   focus(): void {

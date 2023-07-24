@@ -31,9 +31,7 @@ export class JsonEditorActions {
     document.querySelector('.real-container').addEventListener('click', (event) => {
       const el = (event.target as HTMLElement);
       try {
-        if (el.matches('[data-action="json-load-metadata"]')) {
-          JsonEditorHelperC.loadMetadata();
-        } else if (el.matches('[data-action="json-load-file"]')) {
+        if (el.matches('[data-action="json-load-file"]')) {
           JsonEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
         } else if (el.matches('[data-action="json-save-metadata"]')) {
           JsonEditorHelperC.saveMetadata();

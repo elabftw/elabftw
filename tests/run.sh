@@ -83,14 +83,10 @@ elif [ "${1:-}" = "api" ]; then
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
     docker exec -it elab-cypress cypress run
-    cypressExitCode=$?
-    # in ci we copy the artifacts in cypress output folder
-    if ($ci); then
-        mkdir -p cypress/{videos,screenshots}
-        docker cp elab-cypress:/e2e/tests/cypress/videos ./tests/cypress/videos
-        docker cp elab-cypress:/e2e/tests/cypress/screenshots ./tests/cypress/screenshots
-    fi
-    exit "$cypressExitCode"
+    # copy the artifacts in cypress output folder
+    mkdir -p tests/cypress/{videos,screenshots}
+    docker cp elab-cypress:/e2e/tests/cypress/videos ./tests/cypress/videos
+    docker cp elab-cypress:/e2e/tests/cypress/screenshots ./tests/cypress/screenshots
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

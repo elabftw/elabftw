@@ -5,7 +5,7 @@ FROM cypress/included:12.17.2
 WORKDIR /e2e
 # create cypress output folders
 # this will prevent an error message if tests succeed and no screenshots are taken
-RUN mkdir -p tests/cypress/{videos,screenshots}
+RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
 RUN npm install typescript
 

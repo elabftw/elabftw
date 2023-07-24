@@ -8,9 +8,14 @@
 # Bring all the test containers down
 docker stop elabtmp
 docker stop mysqltmp
+docker stop elab-cypress
+
 # Remove them
 docker rm elabtmp
 docker rm mysqltmp
-# Remove elabtmp image
-docker image rm elabtmp
+docker rm elab-cypress
+
+# Remove elabtmp and elab-cypress images
 # we keep mysql image because it's the official one
+docker image rm elabtmp
+docker image rm elab-cypress

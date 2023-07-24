@@ -8,8 +8,8 @@ services:
     web:
         image: elabtmp
         build:
-          context: .
-          dockerfile: ./elabtmp.Dockerfile
+          context: ..
+          dockerfile: ./tests/elabtmp.Dockerfile
         container_name: elabtmp
         # restrict capabilities of the root user to the strict minimum
         # see CIS Docker Benchmark v1.5 5.3
@@ -98,8 +98,8 @@ services:
     cypress:
         image: elab-cypress
         build:
-          context: .
-          dockerfile: ./elab-cypress.Dockerfile
+          context: ..
+          dockerfile: ./tests/elab-cypress.Dockerfile
         container_name: elab-cypress
         depends_on:
             - web

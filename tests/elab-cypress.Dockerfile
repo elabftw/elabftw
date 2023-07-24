@@ -8,8 +8,8 @@ RUN mkdir -p tests/cypress
 RUN npm install typescript
 
 # copy everything because we can't bind mount
-COPY ../cypress.config.ts .
-COPY ../tests/cypress ./tests/cypress
+COPY cypress.config.ts .
+COPY tests/cypress/ ./tests/cypress/
 
 # overwrite default 'cypress run' entry point, will call it manually later
 # https://github.com/cypress-io/cypress-docker-images/tree/master/included#keep-the-container

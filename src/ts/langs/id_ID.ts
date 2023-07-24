@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Hapus label ini?",
     "template-title": "Judul templat",
     "today": "Today",
+    "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
   },
 };

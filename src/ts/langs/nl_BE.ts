@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Dit label verwijderen?",
     "template-title": "Sjabloon titel",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Bestandscommentaar",
   },
 };

@@ -11,14 +11,11 @@ import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
-import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
-import JsonEditorHelper from './JsonEditorHelper.class';
-import { JsonEditorActions } from './JsonEditorActions.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -34,19 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  // in view mode php takes care of displaying it
-  const params = new URLSearchParams(document.location.search);
-  if (entity.id && params.get('mode') === 'edit') {
-    // add extra fields elements from metadata json
-    const JsonEditorHelperC = new JsonEditorHelper(entity);
-    const MetadataC = new Metadata(entity, JsonEditorHelperC);
-    MetadataC.display('edit');
-    // only run if there is the json-editor block
-    if (document.getElementById('json-editor')) {
-      const JsonEditorActionsC = new JsonEditorActions();
-      JsonEditorActionsC.init(JsonEditorHelperC, true);
-    }
-  }
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 

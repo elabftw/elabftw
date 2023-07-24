@@ -47,9 +47,12 @@ try {
     $templatesArr = $Templates->getWriteableTemplatesList();
     $entityData = array();
     $changelogData = array();
+    $metadataGroups = array();
     if ($App->Request->query->has('templateid')) {
         $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
+        $Metadata = new Metadata($Templates->entityData['metadata']);
+        $metadataGroups = $Metadata->getGroups();
         $Changelog = new Changelog($Templates);
         $changelogData = $Changelog->readAll();
     }
@@ -106,6 +109,7 @@ try {
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
+        'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'teamTagsArr' => $TeamTags->readAll(),

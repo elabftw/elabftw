@@ -17,12 +17,8 @@ import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
-import { ValidMetadata } from './metadataInterfaces';
-import JsonEditorHelper from './JsonEditorHelper.class';
-import { JsonEditorActions } from './JsonEditorActions.class';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -47,16 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
-
-  // add extra fields elements from metadata json
-  const JsonEditorHelperC = new JsonEditorHelper(entity);
-  const MetadataC = new Metadata(entity, JsonEditorHelperC);
-  MetadataC.display('edit');
-  // only run if there is the json-editor block
-  if (document.getElementById('json-editor')) {
-    const JsonEditorActionsC = new JsonEditorActions();
-    JsonEditorActionsC.init(JsonEditorHelperC, true);
-  }
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
@@ -292,14 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
-
-    // DELETE EXTRA FIELD
-    } else if (el.matches('[data-action="metadata-rm-field"]')) {
-      MetadataC.read().then(metadata => {
-        const name = el.parentElement.closest('div').querySelector('label').innerText;
-        delete metadata.extra_fields[name];
-        MetadataC.update(metadata as ValidMetadata);
-      });
 
     // INSERT IMAGE AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-image-in-body"]')) {

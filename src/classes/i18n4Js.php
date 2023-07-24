@@ -52,7 +52,8 @@ class i18n4Js
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
             'tag-delete-warning' => _('Delete this tag?'),
             'template-title' => _('Template title'),
-            'today' =>_('Today'),
+            'today' => _('Today'),
+            'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
         );
     }

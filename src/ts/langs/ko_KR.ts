@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "파일 코멘트",
   },
 };

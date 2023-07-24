@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Odstrániť túto značku?",
     "template-title": "Názov šablóny",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Komentár k súboru",
   },
 };

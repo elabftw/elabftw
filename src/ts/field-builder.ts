@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const grpSel = (document.getElementById('newFieldGroupSelect') as HTMLSelectElement);

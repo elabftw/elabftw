@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Komentar datoteke",
   },
 };

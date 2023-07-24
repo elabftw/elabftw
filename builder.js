@@ -28,6 +28,7 @@ module.exports = (env) => {
         './src/ts/admin.ts',
         './src/ts/edit.ts',
         './src/ts/team.ts',
+        './src/ts/metadata.ts',
         './src/ts/uploads.ts',
         './src/ts/todolist.ts',
         './src/ts/ucp.ts',

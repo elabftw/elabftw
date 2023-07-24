@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Si vuol eliminare questo tag?",
     "template-title": "Titolo del Modello",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Commento sul file",
   },
 };

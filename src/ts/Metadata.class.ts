@@ -419,10 +419,9 @@ export class Metadata {
       return grouped;
     }, {});
 
-    if (Object.keys(groupedArr).length !== groups.length) {
-      // add the undefined group at the end, but only if there are fields without groups
-      // TODO i18n this
-      groups = groups.concat([{id: -1, name: 'Undefined group'}]);
+    // add the undefined group at the end, but only if there are fields without groups
+    if (elements.some(entry => entry.group_id === -1)) {
+      groups = groups.concat([{id: -1, name: i18next.t('undefined-group')}]);
     }
 
     return [groups, groupedArr];

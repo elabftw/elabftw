@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "删除这个标签？",
     "template-title": "模板标题",
     "today": "Today",
+    "undefined-group": "默认分组",
     "upload-file-comment": "档案评论",
   },
 };

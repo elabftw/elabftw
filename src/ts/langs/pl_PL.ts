@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Usunąć ten tag?",
     "template-title": "Tytuł szablonu",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Komentarz do pliku",
   },
 };

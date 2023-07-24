@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "Comentari d’arxiu",
   },
 };

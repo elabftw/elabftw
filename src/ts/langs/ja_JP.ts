@@ -25,6 +25,7 @@ const t = {
     "tag-delete-warning": "このタグを削除しますか？",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
     "upload-file-comment": "ファイルコメント",
   },
 };

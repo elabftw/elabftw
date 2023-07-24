@@ -19,12 +19,12 @@ describe('Status in admin panel', () => {
     cy.intercept('/api/v2/teams/1/status/17').as('statusUpdated')
     cy.get('@newStatus').find('[data-action="update-status"]').click()
     cy.wait('@statusUpdated').then(() => {
-      cy.get('#overlay').should('be.visible').should('contain', 'saved')
+      cy.get('#overlay').should('be.visible').should('contain', 'Saved')
     })
     // destroy
     cy.get('@newStatus').find('[data-action="destroy-status"]').click()
     cy.wait('@statusUpdated').then(() => {
-      cy.get('#overlay').should('be.visible').should('contain', 'saved')
+      cy.get('#overlay').should('be.visible').should('contain', 'Saved')
     })
   });
 });

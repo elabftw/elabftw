@@ -91,7 +91,7 @@
     "clean": "rm -rf apidoc/html _srcdoc src/ts/*.js src/ts/*.js.map web/app/js/*bundle.js src/node/*bundle.js web/app/js/*.LICENSE.txt web/app/js/*.min.js web/app/css/*.min.css web/app/css/*.min.css.map web/assets/ove/*",
     "codespell": "codespell --config src/tools/codespellrc",
     "csslint": "./node_modules/.bin/stylelint src/scss/*.scss",
-    "cy": "yarn run cypress run",
+    "cy": "tests/run.sh cy",
     "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",
     "jslint": "eslint --ext .ts src/ts",
     "jslint-ci": "eslint --ext .ts --quiet src/ts",

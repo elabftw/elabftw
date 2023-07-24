@@ -80,6 +80,10 @@ if [ "${1:-}" = "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
+# acceptance with cypress
+elif [ "${1:-}" = "cy" ]; then
+    docker exec -it elab-cypress cypress run
+    exit 0
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

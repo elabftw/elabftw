@@ -10,6 +10,7 @@ import { adjustHiddenState } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 
 export function ResourceNotFoundException(message: string): void {
@@ -19,12 +20,14 @@ export function ResourceNotFoundException(message: string): void {
 
 export class Metadata {
   entity: Entity;
+  editor: JsonEditorHelper;
   model: EntityType;
   api: Api;
   metadataDiv: Element;
 
-  constructor(entity: Entity) {
+  constructor(entity: Entity, jsonEditor: JsonEditorHelper) {
     this.entity = entity;
+    this.editor = jsonEditor;
     this.model = entity.type;
     this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
@@ -47,24 +50,43 @@ export class Metadata {
   /**
    * Only save a single field value after a change
    */
-  handleEvent(event): Promise<Response> {
+  handleEvent(event: Event): Promise<Response> | boolean {
+    const el = event.target as HTMLFormElement;
+    if (el.reportValidity() === false) {
+      return false;
+    }
+    if (el.dataset.units === '1') {
+      return this.updateUnit(event);
+    }
     // by default the value is simply the value of the input, which is the event target
-    let value = event.target.value;
+    let value = el.value;
     // special case for checkboxes
-    if (event.target.type === 'checkbox') {
-      value = event.target.checked ? 'on': 'off';
+    if (el.type === 'checkbox') {
+      value = el.checked ? 'on': 'off';
     }
     // special case for multiselect
-    if (event.target.hasAttribute('multiple')) {
+    if (el.hasAttribute('multiple')) {
       // collect all the selected options, and the value will be an array
-      value = [...event.target.selectedOptions].map(option => option.value);
+      value = [...el.selectedOptions].map(option => option.value);
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
-    params[event.target.dataset.field] = value;
-    return this.api.patch(`${this.entity.type}/${this.entity.id}`, params);
+    params[el.dataset.field] = value;
+    this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
+      this.editor.loadMetadata();
+    });
+    return true;
   }
 
+  updateUnit(event: Event): Promise<Response> {
+    const select = (event.target as HTMLSelectElement);
+    const value = select.value;
+    const name = select.parentElement.parentElement.parentElement.querySelector('label').innerText;
+    return this.read().then(metadata => {
+      metadata.extra_fields[name].unit = value;
+      return this.save(metadata as ValidMetadata);
+    });
+  }
   /**
    * Save the whole json at once, coming from json editor save button
    */
@@ -153,7 +175,11 @@ export class Metadata {
       }
     } else {
       valueEl = document.createElement('div');
-      valueEl.innerText = properties.value as string;
+      let value = properties.value as string;
+      if (properties.unit) {
+        value += ' ' + properties.unit;
+      }
+      valueEl.innerText = value;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
       if (properties.type === 'url') {
@@ -243,6 +269,7 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
+    element.addEventListener('blur', this, false);
 
     // add a prepend button for "Now" for date and time types
     if (['time', 'date', 'datetime-local'].includes(element.type)) {
@@ -262,6 +289,33 @@ export class Metadata {
       inputGroupDiv.appendChild(element);
       return inputGroupDiv;
     }
+
+    // UNITS
+    if (Object.prototype.hasOwnProperty.call(properties, 'units') && properties.units.length > 0) {
+      const inputGroupDiv = document.createElement('div');
+      inputGroupDiv.classList.add('input-group');
+      const appendDiv = document.createElement('div');
+      appendDiv.classList.add('input-group-append');
+      const unitsSel = document.createElement('select');
+      for (const unit of properties.units) {
+        const optionEl = document.createElement('option');
+        optionEl.text = unit;
+        if (properties.unit === unit) {
+          optionEl.setAttribute('selected', '');
+        }
+        unitsSel.add(optionEl);
+      }
+      unitsSel.classList.add('form-control', 'brl-none');
+      // add this so we can differentiat the change event from the main input
+      unitsSel.dataset.units = '1';
+      unitsSel.addEventListener('change', this, false);
+      appendDiv.appendChild(unitsSel);
+      // input first, then append div
+      inputGroupDiv.appendChild(element);
+      inputGroupDiv.appendChild(appendDiv);
+      return inputGroupDiv;
+    }
+
     return element;
   }
 
@@ -365,10 +419,9 @@ export class Metadata {
       return grouped;
     }, {});
 
-    if (Object.keys(groupedArr).length !== groups.length) {
-      // add the undefined group at the end, but only if there are fields without groups
-      // TODO i18n this
-      groups = groups.concat([{id: -1, name: 'Undefined group'}]);
+    // add the undefined group at the end, but only if there are fields without groups
+    if (elements.some(entry => entry.group_id === -1)) {
+      groups = groups.concat([{id: -1, name: i18next.t('undefined-group')}]);
     }
 
     return [groups, groupedArr];
@@ -411,12 +464,28 @@ export class Metadata {
           for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item');
+            const labelDiv = document.createElement('div');
+            labelDiv.classList.add('d-flex', 'justify-content-between');
+
+            // LABEL
             const label = document.createElement('label');
             label.htmlFor = element.element.id;
             label.innerText = element.name as string;
             if (element.element.required) {
               label.classList.add('required-label');
             }
+            label.classList.add('py-2');
+
+            // add a button to delete the field
+            const deleteBtn = document.createElement('div');
+            deleteBtn.dataset.action = 'metadata-rm-field';
+            deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
+            const deleteIcon = document.createElement('i');
+            deleteIcon.classList.add('fas', 'fa-trash-alt');
+            deleteBtn.appendChild(deleteIcon);
+
+            labelDiv.append(label);
+            labelDiv.append(deleteBtn);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {
@@ -425,10 +494,10 @@ export class Metadata {
               wrapperDiv.classList.add('form-check');
               listItem.append(wrapperDiv);
               wrapperDiv.append(element.element);
-              wrapperDiv.append(label);
+              wrapperDiv.append(labelDiv);
               wrapperDiv.append(this.getDescription(element));
             } else {
-              listItem.append(label);
+              listItem.append(labelDiv);
               listItem.append(this.getDescription(element));
               listItem.append(element.element);
             }

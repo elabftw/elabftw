@@ -17,7 +17,6 @@ import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 
@@ -44,10 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
-
-  // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity);
-  MetadataC.display('edit');
 
   // Which editor are we using? md or tiny
   const editor = getEditor();

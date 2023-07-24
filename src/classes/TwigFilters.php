@@ -94,7 +94,13 @@ class TwigFilters
                     $value = implode(', ', $value);
                 }
 
-                $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s</h6></li>', $field['name'], $description, $value);
+                $unit = '';
+                if (!empty($field['unit'])) {
+                    // a space before the unit so if there are no units we don't have a trailing space
+                    $unit = ' ' . $field['unit'];
+                }
+
+                $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>', $field['name'], $description, $value, $unit);
             }
             $final .= '</div>';
         }

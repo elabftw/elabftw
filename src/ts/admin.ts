@@ -17,6 +17,7 @@ import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   if (entity.id) {
     // add extra fields elements from metadata json
-    const MetadataC = new Metadata(entity);
+    const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
     MetadataC.display('edit');
   }
 

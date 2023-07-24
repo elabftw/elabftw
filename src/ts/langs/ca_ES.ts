@@ -19,12 +19,14 @@ const t = {
     "please-wait": "Espereu ...",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Introduïu el nom del fitxer",
+    "saved": "Guardat",
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
-    "upload-file-comment": "Comentari d’arxiu",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
+    "upload-file-comment": "Comentari d’arxiu",
   },
 };
 export default t;

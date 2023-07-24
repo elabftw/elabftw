@@ -19,12 +19,14 @@ const t = {
     "please-wait": "Пожалуйста, подождите…",
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "request-filename": "Введите имя файла",
+    "saved": "Сохранено",
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",
     "tag-delete-warning": "Удалить этот тег?",
-    "upload-file-comment": "Файловый комментарий",
     "template-title": "Название шаблона",
     "today": "Today",
+    "undefined-group": "Undefined group",
+    "upload-file-comment": "Файловый комментарий",
   },
 };
 export default t;

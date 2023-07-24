@@ -8,31 +8,19 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { getEntity, notifError } from './misc';
+import { notifError } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 
-// JSON editor related stuff
-document.addEventListener('DOMContentLoaded', () => {
-  // only run if there is the json-editor block
-  if (document.getElementById('json-editor')) {
+export class JsonEditorActions {
 
+  init(JsonEditorHelperC: JsonEditorHelper, editable: boolean) {
     // fix the keymaster shortcut library interfering with the editor
     key.filter = (event): boolean => {
       const tagName = (event.target || event.srcElement).tagName;
       return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
     };
 
-    // holds info about the page through data attributes
-    const about = document.getElementById('info').dataset;
-
-    const entity = getEntity();
-    const JsonEditorHelperC = new JsonEditorHelper(entity);
-    JsonEditorHelperC.init((about.page === 'edit' || about.page === 'template-edit'));
-
-    // check if id is present, as it might not be the case in ucp/exp_templates or admin/items_types
-    if (entity.id) {
-      JsonEditorHelperC.loadMetadataFromId(entity);
-    }
+    JsonEditorHelperC.init(editable);
 
     const displayMainTextSliderInput = document.getElementById('displayMainTextSliderInput') as HTMLInputElement;
     displayMainTextSliderInput.addEventListener('change', () => {
@@ -55,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
           JsonEditorHelperC.saveAsFile();
         } else if (el.matches('[data-action="json-save"]')) {
           JsonEditorHelperC.save();
+          // make the save button stand out if the content is changed
+          document.querySelector('[data-action="json-save"]').classList.remove('border-danger');
+          document.getElementById('jsonUnsavedChangesWarningDiv').setAttribute('hidden', '');
         } else if (el.matches('[data-action="json-import-file"]')) {
           document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
         } else if (el.matches('[data-action="json-upload-file"]')) {
@@ -78,4 +69,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
+}

@@ -11,7 +11,6 @@ import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Model, Target } from './interfaces';
 import Templates from './Templates.class';
-import { Metadata } from './Metadata.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
@@ -32,13 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  // in view mode php takes care of displaying it
-  const params = new URLSearchParams(document.location.search);
-  if (entity.id && params.get('mode') === 'edit') {
-    // add extra fields elements from metadata json
-    const MetadataC = new Metadata(entity);
-    MetadataC.display('edit');
-  }
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 

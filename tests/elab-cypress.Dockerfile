@@ -2,12 +2,15 @@
 # Dockerfile for Cypress
 FROM cypress/included:12.17.2
 
-WORKDIR /e2e
+WORKDIR /home/node
+
+USER node
 # create cypress output folders
 # this will prevent an error message if tests succeed and no screenshots are taken
+# use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
-RUN npm install typescript
+RUN npm install --user typescript
 
 # copy everything because we can't bind mount
 COPY cypress.config.ts .

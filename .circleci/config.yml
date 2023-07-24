@@ -158,8 +158,8 @@ jobs:
           command: |
             docker exec -it elab-cypress cypress run
             cypressExitCode=$?
-            docker cp elab-cypress:/e2e/tests/cypress/screenshots cypress/screenshots
-            docker cp elab-cypress:/e2e/tests/cypress/videos cypress/videos
+            docker cp elab-cypress:/home/node/tests/cypress/screenshots cypress/screenshots
+            docker cp elab-cypress:/home/node/tests/cypress/videos cypress/videos
             exit "$cypressExitCode"
       - store_artifacts:
           path: phpdoc-html

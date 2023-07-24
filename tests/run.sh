@@ -85,8 +85,8 @@ elif [ "${1:-}" = "cy" ]; then
     docker exec -it elab-cypress cypress run
     # copy the artifacts in cypress output folder
     mkdir -p tests/cypress/{videos,screenshots}
-    docker cp elab-cypress:/e2e/tests/cypress/videos ./tests/cypress/videos
-    docker cp elab-cypress:/e2e/tests/cypress/screenshots ./tests/cypress/screenshots
+    docker cp elab-cypress:/home/node/tests/cypress/videos ./tests/cypress/videos
+    docker cp elab-cypress:/home/node/tests/cypress/screenshots ./tests/cypress/screenshots
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

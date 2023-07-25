@@ -34,7 +34,7 @@ if [ ! -f tests/elabftw-user.env ]; then
 fi
 
 # launch a fresh environment if needed
-if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
+if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
     if ($ci); then
         # Use the freshly built elabtmp image
         # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
@@ -80,6 +80,13 @@ if [ "${1:-}" = "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
+# acceptance with cypress
+elif [ "${1:-}" = "cy" ]; then
+    docker exec -it elab-cypress cypress run
+    # copy the artifacts in cypress output folder
+    mkdir -p tests/cypress/{videos,screenshots}
+    docker cp elab-cypress:/home/node/tests/cypress/videos ./tests/cypress/videos
+    docker cp elab-cypress:/home/node/tests/cypress/screenshots ./tests/cypress/screenshots
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

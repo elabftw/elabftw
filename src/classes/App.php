@@ -113,6 +113,7 @@ class App
         if ($this->Session->get('is_anon') === 1) {
             // anon user only has access to a subset of pages
             $allowedPages = array(
+                'ApiController.php',
                 'database.php',
                 'download.php',
                 'experiments.php',

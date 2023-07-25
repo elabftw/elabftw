@@ -253,7 +253,7 @@ class Saml implements AuthInterface
         }
 
         if (is_array($teams)) {
-            return ($teams);
+            return $teams;
         }
 
         if (is_string($teams)) {

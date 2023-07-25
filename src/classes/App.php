@@ -44,7 +44,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.8.0-alpha';
+    public const INSTALLED_VERSION = '4.8.0-beta';
 
     public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-480/';
 

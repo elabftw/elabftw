@@ -69,12 +69,11 @@ class Local implements AuthInterface
         AuthResponse $AuthResponse,
         int $enforceMfa
     ): bool {
-        return (!$AuthResponse->mfaSecret
+        return !$AuthResponse->mfaSecret
             && self::isMfaEnforced(
                 $AuthResponse->userid,
                 $enforceMfa,
-            )
-        );
+            );
     }
 
     /**

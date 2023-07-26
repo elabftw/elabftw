@@ -135,7 +135,7 @@ class MakeEln extends MakeStreamZip
                     '@id' => 'comment://' . urlencode($dateCreated),
                     'dateCreated' => $dateCreated,
                     'text' => $comment['comment'],
-                    'author' => $this->getAuthorId($firstname, $lastname, $comment['orcid']),
+                    'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),
                 );
             }
 
@@ -175,7 +175,7 @@ class MakeEln extends MakeStreamZip
             $dataEntities[] = array(
                 '@id' => './' . $currentDatasetFolder,
                 '@type' => 'Dataset',
-                'author' => $this->getAuthorId($firstname, $lastname, $e['orcid']),
+                'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
                 'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
                 'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
                 'identifier' => $e['elabid'] ?? '',
@@ -206,20 +206,20 @@ class MakeEln extends MakeStreamZip
     /**
      * Generate an author node unless it exists already
      */
-    private function getAuthorId(string $firstname, string $lastname, ?string $orcid): string
+    private function getAuthorId(int $userid, string $firstname, string $lastname, ?string $orcid): string
     {
-        $orcidifexists = '';
-        if ($orcid !== null) {
-            $orcidifexists = 'https://orcid.org/' . $orcid;
-        }
-        $id = sprintf('person://%s?hash_algo=%s', hash(self::HASH_ALGO, $firstname . $lastname . $orcidifexists), self::HASH_ALGO);
+        // add firstname and lastname to the hash to get more entropy. Use the userid too so similar names won't collide.
+        $id = sprintf('person://%s?hash_algo=%s', hash(self::HASH_ALGO, (string) $userid . $firstname . $lastname), self::HASH_ALGO);
         $node = array(
             '@id' => $id,
             '@type' => 'Person',
             'familyName' => $lastname,
             'givenName' => $firstname,
-            'identifier' => $orcidifexists,
         );
+        // only add an identifier property if there is an orcid
+        if ($orcid !== null) {
+            $node['identifier'] = 'https://orcid.org/' . $orcid;
+        }
         // only add it if it doesn't exist yet in our list of authors
         if (!in_array($id, array_column($this->authors, '@id'), true)) {
             $this->authors[] = $node;

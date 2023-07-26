@@ -117,10 +117,7 @@ class Eln extends AbstractZip
         // COMMENTS
         if (isset($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
-                $author = $comment['author'];
-                if (is_string($comment['author'])) {
-                    $author = $this->getNodeFromId($comment['author']);
-                }
+                $author = $this->getNodeFromId($comment['author']['@id']);
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
                     $author['givenName'] ?? '',

@@ -111,7 +111,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
         );
         $Import->import();
-        $this->assertEquals(6, $Import->getInserted());
+        $this->assertEquals(2, $Import->getInserted());
     }
 
     public function testImportItems(): void

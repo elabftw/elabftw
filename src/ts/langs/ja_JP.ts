@@ -19,12 +19,14 @@ const t = {
     "please-wait": "お待ちください…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "ファイルの名前を入力してください",
+    "saved": "保存済み",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "このタグを削除しますか？",
-    "upload-file-comment": "ファイルコメント",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
+    "upload-file-comment": "ファイルコメント",
   },
 };
 export default t;

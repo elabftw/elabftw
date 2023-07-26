@@ -7,7 +7,7 @@
  */
 
 export interface ValidMetadata {
-  elabftw: MetadataElabftw,
+  elabftw?: MetadataElabftw,
   extra_fields: ExtraField,
 }
 
@@ -37,6 +37,8 @@ export interface ExtraFieldProperties {
   description?: string;
   allow_multi_values?: boolean;
   required?: boolean;
+  unit?: string;
+  units?: string[];
 }
 
 export interface MetadataElabftw {

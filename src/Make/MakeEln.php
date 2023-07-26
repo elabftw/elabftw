@@ -21,7 +21,11 @@ use ZipStream\ZipStream;
  */
 class MakeEln extends MakeStreamZip
 {
+    private const HASH_ALGO = 'sha256';
+
     protected string $extension = '.eln';
+
+    private array $authors = array();
 
     // name of the folder containing everything
     private string $root;
@@ -39,7 +43,7 @@ class MakeEln extends MakeStreamZip
                     '@type' => 'CreativeWork',
                     'about' => array('@id' => './'),
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
-                    'dateCreated' => $now->format(DateTimeImmutable::ISO8601),
+                    'dateCreated' => $now->format(DateTimeImmutable::ATOM),
                     'sdPublisher' => array(
                         '@type' => 'Organization',
                         'name' => 'eLabFTW',
@@ -116,7 +120,7 @@ class MakeEln extends MakeStreamZip
                 '@type' => 'File',
                 'description' => 'JSON export',
                 'name' => $MakeJson->getFileName(),
-                'contentType' => $MakeJson->getContentType(),
+                'encodingFormat' => $MakeJson->getContentType(),
                 'contentSize' => (string) $MakeJson->getContentSize(),
                 'sha256' => hash('sha256', $json),
             );
@@ -124,15 +128,14 @@ class MakeEln extends MakeStreamZip
             // COMMENTS
             $comments = array();
             foreach ($e['comments'] as $comment) {
+                $firstname = $comment['firstname'] ?? '';
+                $lastname = $comment['lastname'] ?? '';
+                $dateCreated = (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM);
                 $comments[] = array(
-                    'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
+                    '@id' => 'comment://' . urlencode($dateCreated),
+                    'dateCreated' => $dateCreated,
                     'text' => $comment['comment'],
-                    'author' => array(
-                        '@type' => 'Person',
-                        'familyName' => $comment['lastname'] ?? '',
-                        'givenName' => $comment['firstname'] ?? '',
-                        'identifier' => $this->formatOrcid($e['orcid']),
-                    ),
+                    'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),
                 );
             }
 
@@ -167,17 +170,14 @@ class MakeEln extends MakeStreamZip
             }
 
             // MAIN ENTRY
+            $firstname = $e['firstname'] ?? '';
+            $lastname = $e['lastname'] ?? '';
             $dataEntities[] = array(
                 '@id' => './' . $currentDatasetFolder,
                 '@type' => 'Dataset',
-                'author' => array(
-                    '@type' => 'Person',
-                    'familyName' => $e['lastname'] ?? '',
-                    'givenName' => $e['firstname'] ?? '',
-                    'identifier' => $this->formatOrcid($e['orcid']),
-                ),
-                'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ISO8601),
-                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ISO8601),
+                'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
+                'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
+                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
                 'identifier' => $e['elabid'] ?? '',
                 'comment' => $comments,
                 'keywords' => $keywords,
@@ -194,18 +194,36 @@ class MakeEln extends MakeStreamZip
             '@type' => array('Dataset'),
             'hasPart' => $rootParts,
         );
-        $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities);
+
+        // merge all, including authors
+        $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities, $this->authors);
 
         // add the metadata json file containing references to all the content of our crate
         $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
     }
 
-    private function formatOrcid(?string $orcid): ?string
+    /**
+     * Generate an author node unless it exists already
+     */
+    private function getAuthorId(int $userid, string $firstname, string $lastname, ?string $orcid): string
     {
-        if ($orcid === null) {
-            return null;
+        // add firstname and lastname to the hash to get more entropy. Use the userid too so similar names won't collide.
+        $id = sprintf('person://%s?hash_algo=%s', hash(self::HASH_ALGO, (string) $userid . $firstname . $lastname), self::HASH_ALGO);
+        $node = array(
+            '@id' => $id,
+            '@type' => 'Person',
+            'familyName' => $lastname,
+            'givenName' => $firstname,
+        );
+        // only add an identifier property if there is an orcid
+        if ($orcid !== null) {
+            $node['identifier'] = 'https://orcid.org/' . $orcid;
         }
-        return 'https://orcid.org/' . $orcid;
+        // only add it if it doesn't exist yet in our list of authors
+        if (!in_array($id, array_column($this->authors, '@id'), true)) {
+            $this->authors[] = $node;
+        }
+        return $id;
     }
 }

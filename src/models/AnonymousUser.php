@@ -40,5 +40,6 @@ final class AnonymousUser extends Users
         $this->userData['inc_files_pdf'] = '1';
         $this->userData['pdf_format'] = 'A4';
         $this->userData['userid'] = 0;
+        $this->userData['entrypoint'] = 1;
     }
 }

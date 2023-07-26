@@ -25,8 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', () => {
-  const email = 'toto@yopmail.com';
-  const password = 'totototo';
+  const email = 'phpunit@example.com';
+  const password = 'phpunitftw';
   cy.request('/login.php')
     .its('body')
     .then((body) => {
@@ -35,14 +35,14 @@ Cypress.Commands.add('login', () => {
       cy.request({
         method: 'POST',
         url: '/app/controllers/LoginController.php',
-        failOnStatusCode: false, // dont fail so we can make assertions
+        failOnStatusCode: false, // don't fail so we can make assertions
         form: true, // we are submitting a regular form body
         body: {
-        email: email,
-        password: password,
-        auth_type: 'local',
-        rememberme: 'on',
-        csrf: csrf,
+          email: email,
+          password: password,
+          auth_type: 'local',
+          rememberme: 'on',
+          csrf: csrf,
         },
       })
       .then((resp) => {
@@ -62,7 +62,7 @@ const inExperiments = () => {
   cy.getCookie('token').should('exist');
   cy.getCookie('token_team').should('exist');
   // UI should reflect this user being logged in
-  cy.get('h6').should('contain', 'Toto');
+  cy.get('h6').should('contain', 'Phpunit');
 }
 
 /**

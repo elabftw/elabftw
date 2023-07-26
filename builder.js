@@ -21,14 +21,13 @@ module.exports = (env) => {
     entry: {
       main: [
         './src/ts/common.ts',
-        './src/ts/field-builder.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/edit.ts',
-        './src/ts/jsoneditor.ts',
         './src/ts/team.ts',
+        './src/ts/metadata.ts',
         './src/ts/uploads.ts',
         './src/ts/todolist.ts',
         './src/ts/ucp.ts',

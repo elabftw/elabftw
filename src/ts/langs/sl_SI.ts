@@ -19,12 +19,14 @@ const t = {
     "please-wait": "Please wait…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Enter name of the file",
+    "saved": "Saved",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Želite izbrisati to oznako?",
-    "upload-file-comment": "Komentar datoteke",
     "template-title": "Template title",
     "today": "Today",
+    "undefined-group": "Undefined group",
+    "upload-file-comment": "Komentar datoteke",
   },
 };
 export default t;

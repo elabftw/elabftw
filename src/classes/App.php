@@ -44,7 +44,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.8.0-alpha';
+    public const INSTALLED_VERSION = '4.8.0-beta';
 
     public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-480/';
 
@@ -113,6 +113,7 @@ class App
         if ($this->Session->get('is_anon') === 1) {
             // anon user only has access to a subset of pages
             $allowedPages = array(
+                'ApiController.php',
                 'database.php',
                 'download.php',
                 'experiments.php',

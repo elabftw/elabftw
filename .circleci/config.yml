@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.12
+          version: 20.10.23
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
       - run:
@@ -40,10 +40,19 @@ jobs:
             sed -i '\#volumes:#D' tests/docker-compose.yml
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
+          name: Prepare CI for cypress
+          command: |
+            mkdir -p cypress/{screenshots,videos}
+            sed -i 's/elab.local:3148/elabtmp/g' tests/docker-compose.yml
+            sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
+            sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
+            sed -i 's/elab.local:3148/elabtmp/g' tests/populate-config.yml
+      - run:
           name: Build elabtmp image and start containers
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
@@ -131,6 +140,27 @@ jobs:
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
+      - run:
+          name: Reset database
+          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
+      - run:
+          name: Run Cypress e2e tests and extract artifacts
+          # have to save cypress exit code to first extract artifacts
+          command: |
+            docker exec -it elab-cypress cypress run
+            cypressExitCode=$?
+            docker cp elab-cypress:/home/node/tests/cypress/screenshots cypress/screenshots
+            docker cp elab-cypress:/home/node/tests/cypress/videos cypress/videos
+            exit "$cypressExitCode"
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html
@@ -139,6 +169,9 @@ jobs:
           destination: coverage-html
       - codecov/upload:
           file: coverage.xml
+      - store_artifacts:
+          path: cypress
+          destination: cypress
 workflows:
   version: 2
   build_and_test:

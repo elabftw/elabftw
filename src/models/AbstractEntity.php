@@ -223,7 +223,7 @@ abstract class AbstractEntity implements RestInterface
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->query) or !empty($displayParams->extendedQuery)) {
+        if (!empty($displayParams->query) || !empty($displayParams->extendedQuery)) {
             $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
         }
 

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Controllers;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Enums\EntityType;
@@ -41,7 +42,8 @@ class DashboardController implements ControllerInterface
         $Items = new Items($this->App->Users);
         $Templates = new Templates($this->App->Users);
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $Scheduler = new Scheduler($Items);
+        $now = new DateTimeImmutable();
+        $Scheduler = new Scheduler($Items, null, $now->format(DateTimeImmutable::ATOM));
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'categoryArr' => $ItemsTypes->readAll(),

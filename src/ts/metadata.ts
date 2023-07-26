@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
+    const keys = ['classic', 'select', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Select:
       document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
       toggleContentDiv('selectradio');
+      // special case for the select block to allow multiple values
+      document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', false);
       break;
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');

@@ -78,7 +78,7 @@
         {% endfor %}
       </select>
     </div>
-    <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each users.' }}</p>
+    <p class='smallgray'>{{ 'The default language of this instance. It can be overridden by each user.'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
@@ -88,7 +88,7 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'} %}
+    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans } %}
 
     {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
 
@@ -731,7 +731,7 @@
             <hr>
 
             <div class='d-flex justify-content-between'>
-              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding (only Redirect is supported)</label>
+              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding</label>
               <select class='form-control col-md-3' id='ssoBinding_{{ idp.id }}' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='sso_binding'>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>

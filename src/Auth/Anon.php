@@ -28,6 +28,7 @@ class Anon implements AuthInterface
         $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = 0;
         $this->AuthResponse->isAnonymous = true;
+        $this->AuthResponse->isValidated = true;
         $this->AuthResponse->selectedTeam = $team;
     }
 

@@ -116,7 +116,7 @@ class Local implements AuthInterface
     {
         try {
             $Users = ExistingUser::fromEmail($this->email);
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException) {
             // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
             throw new QuantumException(_('Invalid email/password combination.'));
         }
@@ -175,8 +175,7 @@ class Local implements AuthInterface
 
     private function authWithModernAlgo(): void
     {
-        $sql = 'SELECT `users`.`password_hash`, `users`.`mfa_secret`
-            FROM `users` WHERE `userid` = :userid;';
+        $sql = 'SELECT password_hash, mfa_secret, validated FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -197,6 +196,7 @@ class Local implements AuthInterface
 
         $this->AuthResponse->userid = $this->userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $res['validated'];
         $this->AuthResponse->setTeams();
     }
 }

@@ -77,7 +77,7 @@ class TwigFilters
                 $value = $field[MetadataEnum::Value->value];
                 // checkbox is a special case
                 if ($field[MetadataEnum::Type->value] === 'checkbox') {
-                    $checked = $field[MetadataEnum::Value->value] === 'on' ? 'checked' : '';
+                    $checked = $field[MetadataEnum::Value->value] === 'on' ? 'checked="checked"' : '';
                     $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
                 }
                 // url is another special case

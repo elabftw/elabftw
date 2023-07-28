@@ -65,7 +65,7 @@ try {
         // If user is not validated, the password reset form won't work
         // this is because often users don't understand that their account needs to be
         // validated and just reset their password twenty times
-        if ($Users->userData['validated'] === '0') {
+        if ($Users->userData['validated'] === 0) {
             throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 

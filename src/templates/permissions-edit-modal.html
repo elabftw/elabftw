@@ -10,23 +10,23 @@
 
 {# default icon/label are for canread #}
 {% set icon = 'eye' %}
-{% set label = 'Visibility' %}
-{% set modalTitle = 'Select who can see this entry' %}
+{% set label = 'Visibility'|trans %}
+{% set modalTitle = 'Select who can see this entry'|trans %}
 {% if rw == 'canwrite' %}
   {% set icon = 'pencil-alt' %}
-  {% set label = 'Can write' %}
-  {% set modalTitle = 'Select who can edit this entry' %}
+  {% set label = 'Can write'|trans %}
+  {% set modalTitle = 'Select who can edit this entry'|trans %}
 {% elseif rw == 'canbook' %}
   {% set icon = 'calendar-plus' %}
-  {% set label = 'Can book' %}
-  {% set modalTitle = 'Select who can book this entry' %}
+  {% set label = 'Can book'|trans %}
+  {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
 <!-- Modal for permission edit -->
 <div class='modal fade' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel_{{ identifier }}'><i class='fas fa-fw fa-{{ icon }}'></i> {{ modalTitle|trans }}</h5>
+        <h5 class='modal-title' id='permModalLabel_{{ identifier }}'><i class='fas fa-fw fa-{{ icon }}'></i> {{ modalTitle }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>

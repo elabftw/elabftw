@@ -160,6 +160,7 @@ class Saml implements AuthInterface
 
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created

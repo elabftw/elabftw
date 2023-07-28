@@ -35,7 +35,7 @@ class Cookie implements AuthInterface
     {
         // compare the provided token with the token saved in SQL database
         $sql = sprintf(
-            'SELECT userid, mfa_secret, auth_service
+            'SELECT userid, mfa_secret, auth_service, validated
             FROM users WHERE token = :token AND token_created_at + INTERVAL %d MINUTE > NOW() LIMIT 1',
             $this->validityMinutes
         );
@@ -57,6 +57,7 @@ class Cookie implements AuthInterface
 
         $this->AuthResponse->userid = $userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $res['validated'];
         $this->AuthResponse->selectedTeam = $this->team;
 
         // Force user to login again to activate MFA if it is enforced for local auth and there is no mfaSecret

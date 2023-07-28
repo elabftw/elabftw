@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-20 17:08+0200\n"
+"POT-Creation-Date: 2023-07-27 11:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -24,7 +24,7 @@ msgstr ""
 "Impossible de trouver un utilisateur existant. Demandez à un administrateur "
 "système de créer votre compte."
 
-#: src/Auth/Local.php:45 src/Auth/Local.php:122
+#: src/Auth/Local.php:45 src/Auth/Local.php:121
 #: src/controllers/LoginController.php:193
 #: src/exceptions/InvalidCredentialsException.php:21
 msgid "Invalid email/password combination."
@@ -62,7 +62,7 @@ msgid "Input is too short! (minimum: %d)"
 msgstr "Trop court ! (minimum : %d)"
 
 #: src/classes/Metadata.php:63 src/classes/Metadata.php:83
-#: src/templates/field-builder-modal.html:31
+#: src/classes/i18n4Js.php:56 src/templates/field-builder-modal.html:31
 msgid "Undefined group"
 msgstr "Groupe non défini"
 
@@ -150,21 +150,23 @@ msgstr ""
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/classes/i18n4Js.php:50
+#: src/classes/i18n4Js.php:50 web/app/controllers/SortableAjaxController.php:38
+#: web/app/controllers/SysconfigAjaxController.php:36
+#: web/app/controllers/UcpController.php:85
+msgid "Saved"
+msgstr "Enregistré"
+
+#: src/classes/i18n4Js.php:51
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/classes/i18n4Js.php:51
+#: src/classes/i18n4Js.php:52
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/classes/i18n4Js.php:52
+#: src/classes/i18n4Js.php:53
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
-
-#: src/classes/i18n4Js.php:53
-msgid "File comment"
-msgstr "Commentaire du fichier"
 
 #: src/classes/i18n4Js.php:54
 msgid "Template title"
@@ -173,6 +175,10 @@ msgstr "Titre du modèle"
 #: src/classes/i18n4Js.php:55
 msgid "Today"
 msgstr "Aujourd’hui"
+
+#: src/classes/i18n4Js.php:57
+msgid "File comment"
+msgstr "Commentaire du fichier"
 
 #: src/controllers/AbstractEntityController.php:213
 msgid "This item is locked. You cannot edit it!"
@@ -610,12 +616,6 @@ msgstr ""
 msgid "New password inserted. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
-#: web/app/controllers/SortableAjaxController.php:38
-#: web/app/controllers/SysconfigAjaxController.php:36
-#: web/app/controllers/UcpController.php:85
-msgid "Saved"
-msgstr "Enregistré"
-
 #: web/app/controllers/TeamController.php:61
 #, php-format
 msgid "Email sent to %d users"
@@ -698,23 +698,23 @@ msgstr "Équipe"
 msgid "User Control Panel"
 msgstr "Panneau de configuration utilisateur"
 
-#: web/ucp.php:67
+#: web/ucp.php:70
 msgid "New comment notification"
 msgstr "Notification de nouveau commentaire"
 
-#: web/ucp.php:71
+#: web/ucp.php:74
 msgid "Step deadline"
 msgstr "Dernière limite d'étape"
 
-#: web/ucp.php:79
+#: web/ucp.php:82
 msgid "New user created"
 msgstr "Nouvel utilisateur enregistré"
 
-#: web/ucp.php:84
+#: web/ucp.php:87
 msgid "New user need validation"
 msgstr "Un nouvel utilisateur nécessite une validation"
 
-#: web/ucp.php:89
+#: web/ucp.php:92
 msgid "Booking event cancelled"
 msgstr "Réservation annulée"
 
@@ -884,7 +884,7 @@ msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créé
 #: src/templates/edit.html:100 src/templates/edit.html:170
 #: src/templates/editusers.html:75 src/templates/editusers.html:180
 #: src/templates/field-builder-modal.html:23
-#: src/templates/field-builder-modal.html:115 src/templates/json-editor.html:46
+#: src/templates/field-builder-modal.html:126 src/templates/json-editor.html:46
 #: src/templates/ownership-transfer-modal.html:24
 #: src/templates/permissions-edit-modal.html:102
 #: src/templates/steps-links-edit.html:69 src/templates/sysconfig.html:263
@@ -1119,8 +1119,8 @@ msgid "Minimum time before a slot can be cancelled (in minutes)"
 msgstr "Temps minimum avant qu'un créneau puisse être annulé (en minutes)"
 
 #: src/templates/booking-params-modal.html:57 src/templates/editusers.html:103
-#: src/templates/field-builder-modal.html:114
-#: src/templates/field-builder-modal.html:163 src/templates/footer.html:81
+#: src/templates/field-builder-modal.html:125
+#: src/templates/field-builder-modal.html:174 src/templates/footer.html:81
 #: src/templates/head.html:224 src/templates/login.html:24
 #: src/templates/ownership-transfer-modal.html:23
 #: src/templates/permissions-edit-modal.html:101 src/templates/register.html:22
@@ -1212,6 +1212,10 @@ msgstr "Importer depuis un fichier"
 msgid "Welcome %s"
 msgstr "Bienvenue %s"
 
+#: src/templates/dashboard.html:40
+msgid "Scheduled bookings"
+msgstr "Réservations programmées"
+
 #: src/templates/dashboard.html:41 src/templates/team.html:5
 #: src/templates/ucp.html:90
 msgid "Scheduler"
@@ -1283,7 +1287,7 @@ msgstr "Effaceur"
 msgid "Use %sCtrl%s + click to add text"
 msgstr "Utilisez %sCtrl%s + clic pour ajouter du texte"
 
-#: src/templates/edit.html:169 src/templates/json-editor.html:54
+#: src/templates/edit.html:169 src/templates/json-editor.html:55
 #: src/templates/sysconfig.html:266 src/templates/sysconfig.html:280
 #: src/templates/sysconfig.html:430 src/templates/sysconfig.html:436
 #: src/templates/sysconfig.html:461
@@ -1586,7 +1590,7 @@ msgid "Enter a description for this field"
 msgstr "Entrez une description pour ce champs"
 
 #: src/templates/field-builder-modal.html:60
-#: src/templates/field-builder-modal.html:105
+#: src/templates/field-builder-modal.html:94
 msgid "Default value"
 msgstr "Valeur par défaut"
 
@@ -1595,61 +1599,66 @@ msgid "Enter a default value"
 msgstr "Entrez une valeur par défaut"
 
 #: src/templates/field-builder-modal.html:66
-msgid "Blank value on duplicate"
-msgstr "Supprimer la valeur lors de la duplication"
-
-#: src/templates/field-builder-modal.html:76
-msgid "Required"
-msgstr "Requis"
-
-#: src/templates/field-builder-modal.html:87
 msgid "Choices"
 msgstr "Choix"
 
-#: src/templates/field-builder-modal.html:92
+#: src/templates/field-builder-modal.html:71
+#: src/templates/field-builder-modal.html:89
 msgid "Add another choice"
 msgstr "Ajouter un nouveau choix"
 
-#: src/templates/field-builder-modal.html:98
+#: src/templates/field-builder-modal.html:77
 msgid "Allow selection of multiple values?"
 msgstr "Autoriser la sélection de plusieurs valeurs ?"
 
-#: src/templates/field-builder-modal.html:107
+#: src/templates/field-builder-modal.html:84
+msgid "Available units"
+msgstr "Unités disponibles"
+
+#: src/templates/field-builder-modal.html:96
 msgid "Unchecked"
 msgstr "Non coché"
 
-#: src/templates/field-builder-modal.html:108
+#: src/templates/field-builder-modal.html:97
 msgid "Checked"
 msgstr "Coché"
 
-#: src/templates/field-builder-modal.html:127
+#: src/templates/field-builder-modal.html:105
+msgid "Blank value on duplicate"
+msgstr "Supprimer la valeur lors de la duplication"
+
+#: src/templates/field-builder-modal.html:115
+msgid "Required"
+msgstr "Requis"
+
+#: src/templates/field-builder-modal.html:138
 msgid "Load extra fields"
 msgstr "Charger les champs supplémentaires"
 
-#: src/templates/field-builder-modal.html:133
+#: src/templates/field-builder-modal.html:144
 msgid "Load from a database category"
 msgstr "Chargement à partir d'une catégorie de base de données"
 
-#: src/templates/field-builder-modal.html:141
-#: src/templates/field-builder-modal.html:153
+#: src/templates/field-builder-modal.html:152
+#: src/templates/field-builder-modal.html:164
 msgid "Load"
 msgstr "Charger"
 
-#: src/templates/field-builder-modal.html:145
+#: src/templates/field-builder-modal.html:156
 msgid "Load from an experiment template"
 msgstr "Chargement à partir d'un modèle d'expérience"
 
-#: src/templates/field-builder-modal.html:157
+#: src/templates/field-builder-modal.html:168
 msgid "Metadata preview"
 msgstr "Aperçu des métadonnées"
 
-#: src/templates/field-builder-modal.html:159
+#: src/templates/field-builder-modal.html:170
 msgid "Warning: clicking Apply will completely replace any existing metadata!"
 msgstr ""
 "Attention : le fait de cliquer sur Appliquer remplacera complètement toutes "
 "les métadonnées existantes !"
 
-#: src/templates/field-builder-modal.html:164
+#: src/templates/field-builder-modal.html:175
 msgid "Apply"
 msgstr "Appliquer"
 
@@ -1859,17 +1868,21 @@ msgstr "Enregistrer sous..."
 msgid "Save as attachment"
 msgstr "Enregistrer en tant que pièce jointe"
 
-#: src/templates/json-editor.html:63 src/templates/show-view-edit.html:55
+#: src/templates/json-editor.html:50
+msgid "You have unsaved changes"
+msgstr "Vous avez des changements non enregistrés"
+
+#: src/templates/json-editor.html:64 src/templates/show-view-edit.html:55
 #: src/templates/steps-links-edit.html:122
 #: src/templates/steps-links-edit.html:184
 msgid "Import"
 msgstr "Import"
 
-#: src/templates/json-editor.html:70
+#: src/templates/json-editor.html:71
 msgid "Display main text"
 msgstr "Afficher le texte principal"
 
-#: src/templates/json-editor.html:77
+#: src/templates/json-editor.html:78
 msgid "See documentation about extra fields."
 msgstr "Voir documentation à propos des champs supplémentaires."
 
@@ -2039,7 +2052,33 @@ msgstr[1] "Commentaires"
 msgid "Unique eLabID:"
 msgstr "ELabID unique :"
 
+#: src/templates/permissions-edit-modal.html:13
+#: src/templates/view-permissions.html:4
+msgid "Visibility"
+msgstr "Visibilité"
+
+#: src/templates/permissions-edit-modal.html:14
+#: src/templates/view-permissions.html:5
+msgid "Select who can see this entry"
+msgstr "Choisir qui peut voir cette entrée"
+
+#: src/templates/permissions-edit-modal.html:17
+#: src/templates/view-permissions.html:8
+msgid "Can write"
+msgstr "Peut modifier"
+
+#: src/templates/permissions-edit-modal.html:18
+#: src/templates/view-permissions.html:9
+msgid "Select who can edit this entry"
+msgstr "Choisir qui peut éditer cette entrée"
+
+#: src/templates/permissions-edit-modal.html:21
+#: src/templates/view-permissions.html:12
+msgid "Can book"
+msgstr "Peut réserver"
+
 #: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:13
 msgid "Select who can book this entry"
 msgstr "Sélectionner qui peut réserver cette entrée"
 
@@ -2811,6 +2850,13 @@ msgstr "Paramètres"
 msgid "Language"
 msgstr "Langage"
 
+#: src/templates/sysconfig.html:81
+msgid ""
+"The default language of this instance. It can be overridden by each user."
+msgstr ""
+"La langue par défaut de cette instance. Elle peut être modifiée par chaque "
+"utilisateur."
+
 #: src/templates/sysconfig.html:85
 msgid "Address of the Proxy"
 msgstr "Adresse du proxy"
@@ -2826,6 +2872,14 @@ msgstr ""
 #: src/templates/sysconfig.html:91
 msgid "Admins can always delete experiments"
 msgstr "Les admins peuvent toujours supprimer des expériences"
+
+#: src/templates/sysconfig.html:91
+msgid ""
+"Setting this to «no» will completely remove the ability to delete "
+"experiments for everyone."
+msgstr ""
+"La valeur \"non\" supprimera complètement la possibilité de supprimer des "
+"expériences pour tout le monde."
 
 #: src/templates/sysconfig.html:93
 msgid "Allow the base permission setting «Only owner»"
@@ -4063,10 +4117,6 @@ msgid "This entry is archived: it will not appear in the listings by default."
 msgstr ""
 "Cette entrée est archivée : elle n'apparaîtra pas dans les listes par défaut."
 
-#: src/templates/view-permissions.html:12
-msgid "Can book"
-msgstr "Peut réserver"
-
 #: src/templates/view.html:9
 msgid "Viewing an entry"
 msgstr "Affichage d’une entrée"
@@ -4107,17 +4157,8 @@ msgstr "édité"
 #~ msgid "Page generated in"
 #~ msgstr "Page générée en"
 
-#~ msgid "Select who can edit this entry"
-#~ msgstr "Choisir qui peut éditer cette entrée"
-
 #~ msgid "Delete this event"
 #~ msgstr "Supprimer cet événement"
-
-#~ msgid "Visibility"
-#~ msgstr "Visibilité"
-
-#~ msgid "Can write"
-#~ msgstr "Peut modifier"
 
 #~ msgid "Types of items"
 #~ msgstr "Catégories d'items"

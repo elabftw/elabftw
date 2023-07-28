@@ -94,6 +94,33 @@ class LoginController implements ControllerInterface
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
+        ////////////////////
+        // TEAM SELECTION //
+        ////////////////////
+        // if the user is in several teams, we need to redirect to the team selection
+        if ($AuthResponse->isInSeveralTeams) {
+            $this->App->Session->set('team_selection_required', true);
+            $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            // carry over the cookie
+            $this->App->Session->set('rememberme', $icanhazcookies);
+            return new RedirectResponse('/login.php');
+        }
+
+        // no team was found so user must select one
+        if ($AuthResponse->initTeamRequired) {
+            $this->App->Session->set('initial_team_selection_required', true);
+            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
+            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
+            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            return new RedirectResponse('/login.php');
+        }
+
+        // send a helpful message if account requires validation, needs to be after team selection
+        if ($AuthResponse->isValidated === false) {
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
+        }
+
         /////////////////
         // ENFORCE MFA //
         /////////////////
@@ -116,7 +143,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
             $this->App->Session->set('rememberme', $icanhazcookies);
 
-            return new RedirectResponse('../../login.php');
+            return new RedirectResponse('/login.php');
         }
 
         /////////
@@ -129,7 +156,7 @@ class LoginController implements ControllerInterface
             // remember which user is authenticated
             $this->App->Session->set('auth_userid', $AuthResponse->userid);
             $this->App->Session->set('rememberme', $icanhazcookies);
-            return new RedirectResponse('../../login.php');
+            return new RedirectResponse('/login.php');
         }
         if ($AuthResponse->hasVerifiedMfa) {
             $this->App->Session->remove('enforce_mfa');
@@ -137,27 +164,6 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('mfa_secret');
         }
 
-        ////////////////////
-        // TEAM SELECTION //
-        ////////////////////
-        // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->isInSeveralTeams) {
-            $this->App->Session->set('team_selection_required', true);
-            $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
-            // carry over the cookie
-            $this->App->Session->set('rememberme', $icanhazcookies);
-            return new RedirectResponse('../../login.php');
-        }
-
-        // no team was found so user must select one
-        if ($AuthResponse->initTeamRequired) {
-            $this->App->Session->set('initial_team_selection_required', true);
-            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
-            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
-            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            return new RedirectResponse('../../login.php');
-        }
         // All good now we can login the user
         $LoginHelper = new LoginHelper($AuthResponse, $this->App->Session);
         $LoginHelper->login((bool) $icanhazcookies);

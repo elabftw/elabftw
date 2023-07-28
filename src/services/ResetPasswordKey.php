@@ -13,8 +13,9 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
+use Elabftw\Models\ValidatedUser;
+
 use function explode;
 use function implode;
 use function sprintf;
@@ -66,7 +67,7 @@ class ResetPasswordKey
             throw new ImproperActionException(sprintf(_('This link has expired! Password reset links are only valid for %s minutes.'), self::LINK_LIFETIME));
         }
 
-        // if the key is correct, we now have an ExistingUser here
-        return ExistingUser::fromEmail($email);
+        // if the key is correct, we now have a ValidatedUser here
+        return ValidatedUser::fromEmail($email);
     }
 }

@@ -29,6 +29,8 @@ class AuthResponse
     // when user needs to request access to a team
     public bool $initTeamRequired = false;
 
+    public bool $isValidated = false;
+
     // info (email/name) about user that needs to request a team
     public array $initTeamUserInfo = array();
 

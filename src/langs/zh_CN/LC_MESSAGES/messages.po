@@ -105,7 +105,7 @@ msgstr "编辑"
 #: src/templates/edit.html:100 src/templates/edit.html:170
 #: src/templates/editusers.html:75 src/templates/editusers.html:180
 #: src/templates/field-builder-modal.html:23
-#: src/templates/field-builder-modal.html:115 src/templates/json-editor.html:46
+#: src/templates/field-builder-modal.html:126 src/templates/json-editor.html:46
 #: src/templates/ownership-transfer-modal.html:24
 #: src/templates/permissions-edit-modal.html:102
 #: src/templates/steps-links-edit.html:69 src/templates/sysconfig.html:263
@@ -115,7 +115,7 @@ msgstr "编辑"
 msgid "Save"
 msgstr "保存"
 
-#: web/app/controllers/SortableAjaxController.php:38
+#: src/classes/i18n4Js.php:50 web/app/controllers/SortableAjaxController.php:38
 #: web/app/controllers/SysconfigAjaxController.php:36
 #: web/app/controllers/UcpController.php:85
 msgid "Saved"
@@ -746,7 +746,7 @@ msgstr "添加步骤"
 msgid "Draw something"
 msgstr "绘制"
 
-#: src/templates/edit.html:169 src/templates/json-editor.html:54
+#: src/templates/edit.html:169 src/templates/json-editor.html:55
 #: src/templates/sysconfig.html:266 src/templates/sysconfig.html:280
 #: src/templates/sysconfig.html:430 src/templates/sysconfig.html:436
 #: src/templates/sysconfig.html:461
@@ -937,8 +937,8 @@ msgid "commented"
 msgstr "已评论"
 
 #: src/templates/booking-params-modal.html:57 src/templates/editusers.html:103
-#: src/templates/field-builder-modal.html:114
-#: src/templates/field-builder-modal.html:163 src/templates/footer.html:81
+#: src/templates/field-builder-modal.html:125
+#: src/templates/field-builder-modal.html:174 src/templates/footer.html:81
 #: src/templates/head.html:224 src/templates/login.html:24
 #: src/templates/ownership-transfer-modal.html:23
 #: src/templates/permissions-edit-modal.html:101 src/templates/register.html:22
@@ -951,7 +951,7 @@ msgstr "关闭"
 msgid "Todolist"
 msgstr "待办清单"
 
-#: src/templates/json-editor.html:63 src/templates/show-view-edit.html:55
+#: src/templates/json-editor.html:64 src/templates/show-view-edit.html:55
 #: src/templates/steps-links-edit.html:122
 #: src/templates/steps-links-edit.html:184
 msgid "Import"
@@ -979,7 +979,7 @@ msgstr "提示：您可以使用通配符 %"
 
 #: src/templates/head.html:195
 msgid "You can use a TODOlist by pressing '%s'."
-msgstr "您可以按'%s'来使用待办清单。"
+msgstr "您可以按 '%s' 来使用待办清单。"
 
 #: src/templates/login.html:47 src/templates/login.html:50
 #: src/templates/login.html:197 src/templates/login.html:200
@@ -1039,7 +1039,7 @@ msgstr "选择身份提供者"
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
 msgstr "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？"
 
-#: src/classes/i18n4Js.php:52
+#: src/classes/i18n4Js.php:53
 msgid "Delete this tag?"
 msgstr "删除这个标签？"
 
@@ -1131,7 +1131,7 @@ msgstr "输入太短！（最低：%d）"
 
 #: src/models/AbstractEntity.php:178
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
-msgstr "此实验已被%s锁定。您无权解锁。"
+msgstr "此实验已被 %s 锁定。您无权解锁。"
 
 #: src/templates/editusers.html:212
 msgid "Unarchive user"
@@ -1175,7 +1175,7 @@ msgstr "行程宽度"
 msgid "Eraser"
 msgstr "橡皮"
 
-#: src/classes/i18n4Js.php:50
+#: src/classes/i18n4Js.php:51
 msgid "Delete this step?"
 msgstr "删除此步骤？"
 
@@ -1241,7 +1241,7 @@ msgstr "新实验的默认写入权限"
 
 #: src/templates/register.html:58
 msgid "Only emails @%s are authorized to register"
-msgstr "只有@%s的电子邮件才有权注册"
+msgstr "只有 @%s 的电子邮件才有权注册"
 
 #: src/templates/show.html:23
 msgid "Collapse all"
@@ -1249,7 +1249,7 @@ msgstr "折叠所有"
 
 #: src/services/Check.php:38
 msgid "Password must contain at least %d characters."
-msgstr "密码必须至少包含%d个字符。"
+msgstr "密码必须至少包含 %d 个字符。"
 
 #: src/templates/editusers.html:185 src/templates/editusers.html:189
 #: src/templates/upload-dropdown-menu.html:3
@@ -1294,7 +1294,7 @@ msgstr "还没有账户？%s立即注册%s！"
 msgid "Your account is linked to several teams. Select in which team you want to log in"
 msgstr "您的账户已关联到多个团队。 选择您要登录的团队"
 
-#: src/Auth/Local.php:45 src/Auth/Local.php:122
+#: src/Auth/Local.php:45 src/Auth/Local.php:121
 #: src/controllers/LoginController.php:193
 #: src/exceptions/InvalidCredentialsException.php:21
 msgid "Invalid email/password combination."
@@ -1409,7 +1409,7 @@ msgstr "外部认证"
 
 #: src/templates/sysconfig.html:99
 msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
-msgstr "调低数值有助于减小数据库大小。设置为0将允许保存无限数量的修订。"
+msgstr "调低数值有助于减小数据库大小。设置为 0 将允许保存无限数量的修订。"
 
 #: src/templates/sysconfig.html:932
 msgid "External authentication mapping"
@@ -1448,7 +1448,7 @@ msgstr "切换固定状态"
 msgid "Last modified on %s"
 msgstr "最后修改于 %s"
 
-#: src/classes/i18n4Js.php:53
+#: src/classes/i18n4Js.php:57
 msgid "File comment"
 msgstr "档案评论"
 
@@ -1628,7 +1628,7 @@ msgstr "使用TLS"
 
 #: src/templates/login.html:98
 msgid "You are already authenticated"
-msgstr "您已获得认证"
+msgstr "您已通过验证"
 
 #: src/templates/login.html:72 src/templates/login.html:100
 msgid "Continue"
@@ -1685,7 +1685,7 @@ msgstr "设置为高数值有助于减小数据库体积。"
 
 #: src/templates/sysconfig.html:412
 msgid "Set to 0 to disable this feature."
-msgstr "设置为0以禁用该功能."
+msgstr "设置为 0 以禁用该功能。"
 
 #: src/templates/pdf.html:36
 msgid "Created by"
@@ -1698,7 +1698,7 @@ msgstr[0] "链接的项目"
 
 #: src/services/EmailValidator.php:60
 msgid "This email domain is not allowed. Allowed domains: %s"
-msgstr "该邮箱域名不被允许。允许的域名:%s"
+msgstr "该邮箱域名不被允许。允许的域名：%s"
 
 #: src/classes/i18n4Js.php:40 src/templates/edit.html:110
 #: src/templates/templates-view.html:24
@@ -1817,11 +1817,11 @@ msgstr "如果距离上一次修改不小于此天数，则忽略最小字符限
 
 #: src/templates/sysconfig.html:429
 msgid "%d users are currently prevented from logging in from unknown devices."
-msgstr "目前%d个用户被阻止从未知设备登录。"
+msgstr "目前 %d 个用户被阻止从未知设备登录。"
 
 #: src/templates/sysconfig.html:435
 msgid "%d devices are currently denied authentication."
-msgstr "目前%d个设备被阻止授权。"
+msgstr "目前 %d 个设备被阻止授权。"
 
 #: src/templates/ucp.html:66 src/templates/ucp.html:87
 msgid "(default)"
@@ -1838,11 +1838,11 @@ msgstr "您的帐户未被验证。需要您的团队的管理员验证它！"
 
 #: web/app/controllers/ResetPasswordController.php:78
 msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
-msgstr "Hi. 有人（大概率是您自己）请求设置eLabFTW的新密码。%s 请使用此链接重置您的密码：%s %s这个链接只在%s分钟内有效。"
+msgstr "Hi. 有人（大概率是您自己）请求设置eLabFTW的新密码。%s 请使用此链接重置您的密码：%s %s这个链接只在 %s 分钟内有效。"
 
 #: src/services/ResetPasswordKey.php:66
 msgid "This link has expired! Password reset links are only valid for %s minutes."
-msgstr "此链接已失效！密码重置链接仅在%s分钟内有效。"
+msgstr "此链接已失效！密码重置链接仅在 %s 分钟内有效。"
 
 #: src/exceptions/InvalidDeviceTokenException.php:21
 msgid "This browser cannot login anymore because of too many failed attempts."
@@ -1916,7 +1916,7 @@ msgstr "添加标签到收藏"
 msgid "Any category"
 msgstr "任意类别"
 
-#: src/classes/i18n4Js.php:51
+#: src/classes/i18n4Js.php:52
 msgid "Are you sure you want to undo this step?"
 msgstr "确实要撤消此步骤吗？"
 
@@ -1976,19 +1976,19 @@ msgstr "无法添加某些附加的PDF。"
 msgid "Query is too complex!"
 msgstr "查询太复杂了！"
 
-#: web/ucp.php:67
+#: web/ucp.php:70
 msgid "New comment notification"
 msgstr "新评论通知"
 
-#: web/ucp.php:71
+#: web/ucp.php:74
 msgid "Step deadline"
 msgstr "步骤截止期限"
 
-#: web/ucp.php:79
+#: web/ucp.php:82
 msgid "New user created"
 msgstr "新用户已创建"
 
-#: web/ucp.php:84
+#: web/ucp.php:87
 msgid "New user need validation"
 msgstr "新用户需要验证"
 
@@ -2161,13 +2161,13 @@ msgstr "建立或修改过去的事件是不允许的！"
 
 #: src/models/notifications/EventDeleted.php:93 src/services/Transform.php:49
 msgid "A booked slot was deleted from the scheduler."
-msgstr "一个预订位被从调度表中删除了。"
+msgstr "一个预订时段被从调度表中删除了。"
 
 #: src/models/notifications/EventDeleted.php:95
 msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
 msgstr "Hi. %s（由 %s）。请看项目：%s。它曾被从 %s 预订到了 %s。"
 
-#: web/ucp.php:89
+#: web/ucp.php:92
 msgid "Booking event cancelled"
 msgstr "预订事件被取消"
 
@@ -2224,7 +2224,7 @@ msgstr "显示已标记的项目"
 msgid "Use %sCtrl%s + click to add text"
 msgstr "使用 %sCtrl%s+单击 添加文字"
 
-#: src/templates/json-editor.html:77
+#: src/templates/json-editor.html:78
 msgid "See documentation about extra fields."
 msgstr "查看有关额外字段的文档。"
 
@@ -2624,7 +2624,7 @@ msgid "Enter a description for this field"
 msgstr "输入此字段的描述"
 
 #: src/templates/field-builder-modal.html:60
-#: src/templates/field-builder-modal.html:105
+#: src/templates/field-builder-modal.html:94
 msgid "Default value"
 msgstr "默认值"
 
@@ -2632,19 +2632,20 @@ msgstr "默认值"
 msgid "Enter a default value"
 msgstr "输入一个默认值"
 
-#: src/templates/field-builder-modal.html:87
+#: src/templates/field-builder-modal.html:66
 msgid "Choices"
 msgstr "选项"
 
-#: src/templates/field-builder-modal.html:92
+#: src/templates/field-builder-modal.html:71
+#: src/templates/field-builder-modal.html:89
 msgid "Add another choice"
 msgstr "增加一个选项"
 
-#: src/templates/field-builder-modal.html:107
+#: src/templates/field-builder-modal.html:96
 msgid "Unchecked"
 msgstr "未选择"
 
-#: src/templates/field-builder-modal.html:108
+#: src/templates/field-builder-modal.html:97
 msgid "Checked"
 msgstr "已选择"
 
@@ -2694,7 +2695,7 @@ msgstr "复制到剪贴板"
 msgid "Anyone following this link can access this entry."
 msgstr "任何人点击这个链接都可以访问此条目。"
 
-#: src/templates/field-builder-modal.html:98
+#: src/templates/field-builder-modal.html:77
 msgid "Allow selection of multiple values?"
 msgstr "允许多选？"
 
@@ -2711,7 +2712,7 @@ msgid "Timestamping your experiment is like taking a snapshot of your experiment
 msgstr "给您的实验加时间戳就像在这个时刻拍下实验的快照，并将其存储在一个不可变的档案中。此快照由受信任的第三方验证（带时间戳）。"
 
 #: src/classes/Metadata.php:63 src/classes/Metadata.php:83
-#: src/templates/field-builder-modal.html:31
+#: src/classes/i18n4Js.php:56 src/templates/field-builder-modal.html:31
 msgid "Undefined group"
 msgstr "默认分组"
 
@@ -2931,7 +2932,7 @@ msgstr "添加分组"
 msgid "New group name"
 msgstr "新分组名"
 
-#: src/templates/field-builder-modal.html:66
+#: src/templates/field-builder-modal.html:105
 msgid "Blank value on duplicate"
 msgstr "复制条目时清空值"
 
@@ -2951,7 +2952,7 @@ msgstr "另存为"
 msgid "Save as attachment"
 msgstr "另存为附件"
 
-#: src/templates/json-editor.html:70
+#: src/templates/json-editor.html:71
 msgid "Display main text"
 msgstr "显示正文"
 
@@ -2969,7 +2970,7 @@ msgstr "允许个别用户编辑此条目。"
 
 #: src/templates/revisions.html:5
 msgid "This server is configured to store %d revisions per entry maximum."
-msgstr "服务器被设置为每个条目最多存储 %d 个修订。"
+msgstr "此服务器被设置为每个条目最多存储 %d 个修订。"
 
 #: src/templates/search.html:214
 msgid "Enter search query, e.g.: %s"
@@ -3426,7 +3427,7 @@ msgstr "生成PDF的时候嵌入中文、日文和韩文字体"
 
 #: src/templates/ucp.html:168
 msgid "WARNING: this will dramatically increase the file size unless you disable PDF/A"
-msgstr "警告：如未禁用PDF/A，将显著增加文件大小"
+msgstr "警告：如未禁用 PDF/A，将显著增加文件大小"
 
 #: src/templates/ucp.html:178 src/templates/ucp.html:179
 msgid "Add attached files summary to the PDF"
@@ -3550,32 +3551,32 @@ msgstr "验证用户"
 msgid "Time"
 msgstr "时间"
 
-#: src/templates/field-builder-modal.html:127
+#: src/templates/field-builder-modal.html:138
 msgid "Load extra fields"
 msgstr "加载额外字段"
 
-#: src/templates/field-builder-modal.html:133
+#: src/templates/field-builder-modal.html:144
 msgid "Load from a database category"
 msgstr "从数据库类别加载"
 
-#: src/templates/field-builder-modal.html:141
-#: src/templates/field-builder-modal.html:153
+#: src/templates/field-builder-modal.html:152
+#: src/templates/field-builder-modal.html:164
 msgid "Load"
 msgstr "加载"
 
-#: src/templates/field-builder-modal.html:145
+#: src/templates/field-builder-modal.html:156
 msgid "Load from an experiment template"
 msgstr "从实验模式加载"
 
-#: src/templates/field-builder-modal.html:157
+#: src/templates/field-builder-modal.html:168
 msgid "Metadata preview"
 msgstr "元数据预览"
 
-#: src/templates/field-builder-modal.html:159
+#: src/templates/field-builder-modal.html:170
 msgid "Warning: clicking Apply will completely replace any existing metadata!"
 msgstr "警告：点击应用将完全替换任何已存在的元数据！"
 
-#: src/templates/field-builder-modal.html:164
+#: src/templates/field-builder-modal.html:175
 msgid "Apply"
 msgstr "应用"
 
@@ -3703,7 +3704,7 @@ msgstr "所有者从属的所有团队"
 
 #: src/models/Scheduler.php:77
 msgid "You do not have the permission to book this entry."
-msgstr "您没有权限预定此条目。"
+msgstr "您没有权限预订此条目。"
 
 #: src/models/Scheduler.php:186
 msgid "Event cancellation is not permitted."
@@ -3711,19 +3712,19 @@ msgstr "不允许取消事件。"
 
 #: src/models/Scheduler.php:194
 msgid "Cannot cancel slot less than %d minutes before its start."
-msgstr "预订位在开始前 %d 分钟内不能被取消。"
+msgstr "预订时段在开始前 %d 分钟内不能被取消。"
 
 #: src/models/Scheduler.php:376
 msgid "Slot time is limited to %d minutes."
-msgstr "预订位时长被限制小于 %d 分钟。"
+msgstr "预订时段被限制小于 %d 分钟。"
 
 #: src/models/Scheduler.php:393
 msgid "You cannot book any more slots. Maximum of %d reached."
-msgstr "您不能再预订更多的位置。已达到最大值 %d。"
+msgstr "您不能再预订更多的时段。已达到最大值 %d。"
 
 #: src/models/Scheduler.php:426
 msgid "Overlapping booking slots is not permitted."
-msgstr "不允许重叠的预订位。"
+msgstr "不允许重叠的预订时段。"
 
 #: src/models/notifications/EventDeleted.php:97
 msgid "Message:"
@@ -3737,29 +3738,29 @@ msgstr "修改预订参数"
 #: src/templates/booking-params-modal.html:14
 #: src/templates/booking-params-modal.html:15
 msgid "Allow booking this resource"
-msgstr "允许预订这个资源"
+msgstr "允许预订此资源"
 
 #: src/templates/booking-params-modal.html:22
 #: src/templates/booking-params-modal.html:23
 msgid "Allow overlapping slots"
-msgstr "允许预订位重叠"
+msgstr "允许预订时段重叠"
 
 #: src/templates/booking-params-modal.html:31
 msgid "Maximum slot time (in minutes)"
-msgstr "预订位最大时长（分钟）"
+msgstr "预订时段最大时长（分钟）"
 
 #: src/templates/booking-params-modal.html:37
 msgid "Maximum per-user future slot allowed"
-msgstr "每个用户未来允许的最大预定位数量"
+msgstr "每个用户将来允许的最大预订时段数量"
 
 #: src/templates/booking-params-modal.html:44
 #: src/templates/booking-params-modal.html:45
 msgid "Allow cancelling a booking slot"
-msgstr "允许取消预订位"
+msgstr "允许取消预订时段"
 
 #: src/templates/booking-params-modal.html:51
 msgid "Minimum time before a slot can be cancelled (in minutes)"
-msgstr "预订位可以取消之前的最短时间（分钟）"
+msgstr "预订时段可以取消之前的最短时间（分钟）"
 
 #: src/templates/edit.html:88 src/templates/view.html:114
 msgid "Main text"
@@ -3769,17 +3770,18 @@ msgstr "正文"
 msgid "Date and time"
 msgstr "日期和时间"
 
-#: src/templates/field-builder-modal.html:76
+#: src/templates/field-builder-modal.html:115
 msgid "Required"
 msgstr "必填"
 
 #: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:13
 msgid "Select who can book this entry"
 msgstr "选择谁可以预订此条目"
 
 #: src/templates/team.html:68
 msgid "Cancel booking slot"
-msgstr "取消预订位"
+msgstr "取消预订时段"
 
 #: src/templates/team.html:69
 msgid "Add a custom message"
@@ -3788,7 +3790,7 @@ msgstr "添加自定义消息"
 #. What are the specific meanings of "pass and futrue" ? Why do I need to send message to "future users", and how it will happen ?
 #: src/templates/team.html:73
 msgid "Past and future users who booked this resource"
-msgstr "此前和此后预定了这个资源的用户"
+msgstr "过去和将来预定此资源的用户"
 
 #: src/templates/team.html:84
 msgid "Send message and cancel"
@@ -3798,6 +3800,47 @@ msgstr "发送消息并取消"
 msgid "Start by selecting a resource below"
 msgstr "请先在下面选择一个资源"
 
+#: src/templates/permissions-edit-modal.html:21
 #: src/templates/view-permissions.html:12
 msgid "Can book"
 msgstr "可预订"
+
+#: src/templates/dashboard.html:40
+msgid "Scheduled bookings"
+msgstr "预订"
+
+#: src/templates/field-builder-modal.html:84
+msgid "Available units"
+msgstr "可用单位"
+
+#: src/templates/json-editor.html:50
+msgid "You have unsaved changes"
+msgstr "您有未保存的更改"
+
+#: src/templates/permissions-edit-modal.html:13
+#: src/templates/view-permissions.html:4
+msgid "Visibility"
+msgstr "可见性"
+
+#: src/templates/permissions-edit-modal.html:14
+#: src/templates/view-permissions.html:5
+msgid "Select who can see this entry"
+msgstr "选择谁可以查看此条目"
+
+#: src/templates/permissions-edit-modal.html:17
+#: src/templates/view-permissions.html:8
+msgid "Can write"
+msgstr "可写"
+
+#: src/templates/permissions-edit-modal.html:18
+#: src/templates/view-permissions.html:9
+msgid "Select who can edit this entry"
+msgstr "选择谁可以编辑此条目"
+
+#: src/templates/sysconfig.html:81
+msgid "The default language of this instance. It can be overridden by each user."
+msgstr "此实例的默认语言。可以被每个用户的设置覆盖。"
+
+#: src/templates/sysconfig.html:91
+msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
+msgstr "此项设置为 «否» 将移除所有人删除实验记录的权限。"

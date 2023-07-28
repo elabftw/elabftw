@@ -18,6 +18,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
@@ -440,6 +441,28 @@ class Users implements RestInterface
         } catch (InvalidCredentialsException) {
             throw new ImproperActionException('The current password is not valid!');
         }
+    }
+
+    protected static function search(string $column, string $term, bool $validated = false): self
+    {
+        $searchColumn = 'email';
+        if ($column === 'orgid') {
+            $searchColumn = 'orgid';
+        }
+        $validatedFilter = '';
+        if ($validated) {
+            $validatedFilter = ' AND validated = 1 ';
+        }
+        $Db = Db::getConnection();
+        $sql = sprintf('SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1', $searchColumn, $validatedFilter);
+        $req = $Db->prepare($sql);
+        $req->bindParam(':term', $term);
+        $Db->execute($req);
+        $res = $req->fetchColumn();
+        if ($res === false) {
+            throw new ResourceNotFoundException();
+        }
+        return new self((int) $res);
     }
 
     /**

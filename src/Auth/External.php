@@ -65,6 +65,7 @@ class External implements AuthInterface
             $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
         $this->AuthResponse->userid = (int) $Users->userData['userid'];
+        $this->AuthResponse->isValidated = true;
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;

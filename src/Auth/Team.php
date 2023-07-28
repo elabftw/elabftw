@@ -25,6 +25,7 @@ class Team implements AuthInterface
     {
         $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = $userid;
+        $this->AuthResponse->isValidated = true;
         $this->AuthResponse->selectedTeam = $team;
     }
 

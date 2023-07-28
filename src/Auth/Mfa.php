@@ -37,6 +37,7 @@ class Mfa implements AuthInterface
 
         $this->AuthResponse->hasVerifiedMfa = true;
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->userid = $this->MfaHelper->userid;
         $this->AuthResponse->setTeams();
 

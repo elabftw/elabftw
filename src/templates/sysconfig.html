@@ -731,7 +731,7 @@
             <hr>
 
             <div class='d-flex justify-content-between'>
-              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding (only Redirect is supported)</label>
+              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding</label>
               <select class='form-control col-md-3' id='ssoBinding_{{ idp.id }}' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='sso_binding'>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
                 <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>

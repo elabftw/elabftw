@@ -112,6 +112,7 @@ class Ldap implements AuthInterface
 
         $this->AuthResponse->userid = (int) $Users->userData['userid'];
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->setTeams();
 
         return $this->AuthResponse;

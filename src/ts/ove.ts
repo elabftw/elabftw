@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-import { anyToJson } from 'bio-parsers/umd/bio-parsers';
+import { anyToJson } from '@teselagen/bio-parsers';
 import { notif, reloadElement } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
@@ -152,6 +152,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         onSave: function(opts = {} as any): void { // , sequenceDataToSave, editorState, onSuccessCallback could be used as parameter
           savePlasmidMapAsImage(opts);
         },
+        allowMultipleFeatureDirections: true,
         PropertiesProps: {
           // the list of tabs shown in the Properties panel
           propertiesList: [

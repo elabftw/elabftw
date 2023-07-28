@@ -105,7 +105,7 @@ msgstr "Sunting"
 #: src/templates/edit.html:100 src/templates/edit.html:170
 #: src/templates/editusers.html:75 src/templates/editusers.html:180
 #: src/templates/field-builder-modal.html:23
-#: src/templates/field-builder-modal.html:115 src/templates/json-editor.html:46
+#: src/templates/field-builder-modal.html:126 src/templates/json-editor.html:46
 #: src/templates/ownership-transfer-modal.html:24
 #: src/templates/permissions-edit-modal.html:102
 #: src/templates/steps-links-edit.html:69 src/templates/sysconfig.html:263
@@ -115,7 +115,7 @@ msgstr "Sunting"
 msgid "Save"
 msgstr "Simpan"
 
-#: web/app/controllers/SortableAjaxController.php:38
+#: src/classes/i18n4Js.php:50 web/app/controllers/SortableAjaxController.php:38
 #: web/app/controllers/SysconfigAjaxController.php:36
 #: web/app/controllers/UcpController.php:85
 msgid "Saved"
@@ -742,7 +742,7 @@ msgstr "Tambahkan langkah"
 msgid "Draw something"
 msgstr "Gambar sesuatu"
 
-#: src/templates/edit.html:169 src/templates/json-editor.html:54
+#: src/templates/edit.html:169 src/templates/json-editor.html:55
 #: src/templates/sysconfig.html:266 src/templates/sysconfig.html:280
 #: src/templates/sysconfig.html:430 src/templates/sysconfig.html:436
 #: src/templates/sysconfig.html:461
@@ -932,8 +932,8 @@ msgid "commented"
 msgstr "dikomentari"
 
 #: src/templates/booking-params-modal.html:57 src/templates/editusers.html:103
-#: src/templates/field-builder-modal.html:114
-#: src/templates/field-builder-modal.html:163 src/templates/footer.html:81
+#: src/templates/field-builder-modal.html:125
+#: src/templates/field-builder-modal.html:174 src/templates/footer.html:81
 #: src/templates/head.html:224 src/templates/login.html:24
 #: src/templates/ownership-transfer-modal.html:23
 #: src/templates/permissions-edit-modal.html:101 src/templates/register.html:22
@@ -946,7 +946,7 @@ msgstr "Tutup"
 msgid "Todolist"
 msgstr "Daftar Tugas"
 
-#: src/templates/json-editor.html:63 src/templates/show-view-edit.html:55
+#: src/templates/json-editor.html:64 src/templates/show-view-edit.html:55
 #: src/templates/steps-links-edit.html:122
 #: src/templates/steps-links-edit.html:184
 msgid "Import"
@@ -1034,7 +1034,7 @@ msgstr "Pilih penyedia identitas"
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
 msgstr "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?"
 
-#: src/classes/i18n4Js.php:52
+#: src/classes/i18n4Js.php:53
 msgid "Delete this tag?"
 msgstr "Hapus label ini?"
 
@@ -1170,7 +1170,7 @@ msgstr "Lebar guratan"
 msgid "Eraser"
 msgstr "Penghapus"
 
-#: src/classes/i18n4Js.php:50
+#: src/classes/i18n4Js.php:51
 msgid "Delete this step?"
 msgstr "Hapus langkah ini?"
 
@@ -1289,7 +1289,7 @@ msgstr "Belum punya akun? %sDaftarkan%s sekarang!"
 msgid "Your account is linked to several teams. Select in which team you want to log in"
 msgstr "Akun Anda ditautkan ke beberapa tim. Pilih di tim mana Anda ingin masuk"
 
-#: src/Auth/Local.php:45 src/Auth/Local.php:122
+#: src/Auth/Local.php:45 src/Auth/Local.php:121
 #: src/controllers/LoginController.php:193
 #: src/exceptions/InvalidCredentialsException.php:21
 msgid "Invalid email/password combination."
@@ -1443,7 +1443,7 @@ msgstr "Alihkan pin"
 msgid "Last modified on %s"
 msgstr "Terakhir diubah pada %s"
 
-#: src/classes/i18n4Js.php:53
+#: src/classes/i18n4Js.php:57
 msgid "File comment"
 msgstr "File komentar"
 
@@ -1911,7 +1911,7 @@ msgstr "Tambahkan tag sebagai favorit"
 msgid "Any category"
 msgstr "Kategori apa saja"
 
-#: src/classes/i18n4Js.php:51
+#: src/classes/i18n4Js.php:52
 msgid "Are you sure you want to undo this step?"
 msgstr "Anda yakin ingin mengurungkan langkah ini?"
 
@@ -1971,19 +1971,19 @@ msgstr "Beberapa PDF terlampir tidak dapat ditambahkan."
 msgid "Query is too complex!"
 msgstr "Kueri terlalu rumit!"
 
-#: web/ucp.php:67
+#: web/ucp.php:70
 msgid "New comment notification"
 msgstr "Notifikasi komentar baru"
 
-#: web/ucp.php:71
+#: web/ucp.php:74
 msgid "Step deadline"
 msgstr "Tenggat waktu bertahap"
 
-#: web/ucp.php:79
+#: web/ucp.php:82
 msgid "New user created"
 msgstr "Pengguna baru dibuat"
 
-#: web/ucp.php:84
+#: web/ucp.php:87
 msgid "New user need validation"
 msgstr "Pengguna baru membutuhkan validasi"
 
@@ -2161,7 +2161,7 @@ msgstr "Slot yang dipesan telah dihapus dari penjadwal."
 msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
 msgstr "Hai. %s (%s). Lihat item: %s. Item ini dipesan dari %s hingga %s."
 
-#: web/ucp.php:89
+#: web/ucp.php:92
 msgid "Booking event cancelled"
 msgstr "Pemesanan event dibatalkan"
 
@@ -2218,7 +2218,7 @@ msgstr "Tampilkan item-item yang ditandai"
 msgid "Use %sCtrl%s + click to add text"
 msgstr "Gunakan %sCtrl%s + klik untuk menambah teks"
 
-#: src/templates/json-editor.html:77
+#: src/templates/json-editor.html:78
 msgid "See documentation about extra fields."
 msgstr "Lihat dokumentasi mengenai kolom ekstra."
 
@@ -2621,7 +2621,7 @@ msgid "Enter a description for this field"
 msgstr "Masukkan deskripsi untuk kolom ini"
 
 #: src/templates/field-builder-modal.html:60
-#: src/templates/field-builder-modal.html:105
+#: src/templates/field-builder-modal.html:94
 msgid "Default value"
 msgstr "Nilai default"
 
@@ -2629,19 +2629,20 @@ msgstr "Nilai default"
 msgid "Enter a default value"
 msgstr "Masukkan nilai default"
 
-#: src/templates/field-builder-modal.html:87
+#: src/templates/field-builder-modal.html:66
 msgid "Choices"
 msgstr "Pilihan-pilihan"
 
-#: src/templates/field-builder-modal.html:92
+#: src/templates/field-builder-modal.html:71
+#: src/templates/field-builder-modal.html:89
 msgid "Add another choice"
 msgstr "Masukkan pilihan lain"
 
-#: src/templates/field-builder-modal.html:107
+#: src/templates/field-builder-modal.html:96
 msgid "Unchecked"
 msgstr "Tidak dicentang"
 
-#: src/templates/field-builder-modal.html:108
+#: src/templates/field-builder-modal.html:97
 msgid "Checked"
 msgstr "Dicentang"
 
@@ -2691,7 +2692,7 @@ msgstr "Salin ke clipboard"
 msgid "Anyone following this link can access this entry."
 msgstr "Siapa pun yang mengikuti tautan ini bisa mengakses entri ini."
 
-#: src/templates/field-builder-modal.html:98
+#: src/templates/field-builder-modal.html:77
 msgid "Allow selection of multiple values?"
 msgstr "Perbolehkan memilih beberapa nilai?"
 
@@ -2708,7 +2709,7 @@ msgid "Timestamping your experiment is like taking a snapshot of your experiment
 msgstr "Menandai waktu percobaan Anda seperti mengambil cuplikan percobaan Anda pada saat itu juga, dan menyimpannya di samping, dalam arsip yang tidak dapat diubah. Cuplikan ini divalidasi (diberi cap waktu) oleh pihak ketiga yang tepercaya."
 
 #: src/classes/Metadata.php:63 src/classes/Metadata.php:83
-#: src/templates/field-builder-modal.html:31
+#: src/classes/i18n4Js.php:56 src/templates/field-builder-modal.html:31
 msgid "Undefined group"
 msgstr "Kelompok yang tidak terdefinisi"
 
@@ -2928,7 +2929,7 @@ msgstr "Tambahkan Grup"
 msgid "New group name"
 msgstr "Nama grup baru"
 
-#: src/templates/field-builder-modal.html:66
+#: src/templates/field-builder-modal.html:105
 msgid "Blank value on duplicate"
 msgstr "Nilai kosong pada duplikat"
 
@@ -2948,7 +2949,7 @@ msgstr "Simpan sebagai..."
 msgid "Save as attachment"
 msgstr "Simpan sebagai lampiran"
 
-#: src/templates/json-editor.html:70
+#: src/templates/json-editor.html:71
 msgid "Display main text"
 msgstr "Menampilkan teks utama"
 
@@ -3547,32 +3548,32 @@ msgstr "Validasi pengguna"
 msgid "Time"
 msgstr "Waktu"
 
-#: src/templates/field-builder-modal.html:127
+#: src/templates/field-builder-modal.html:138
 msgid "Load extra fields"
 msgstr "Muat kolom ekstra"
 
-#: src/templates/field-builder-modal.html:133
+#: src/templates/field-builder-modal.html:144
 msgid "Load from a database category"
 msgstr "Muat dari kategori database"
 
-#: src/templates/field-builder-modal.html:141
-#: src/templates/field-builder-modal.html:153
+#: src/templates/field-builder-modal.html:152
+#: src/templates/field-builder-modal.html:164
 msgid "Load"
 msgstr "Muat"
 
-#: src/templates/field-builder-modal.html:145
+#: src/templates/field-builder-modal.html:156
 msgid "Load from an experiment template"
 msgstr "Muat dari sebuah templat eksperimen"
 
-#: src/templates/field-builder-modal.html:157
+#: src/templates/field-builder-modal.html:168
 msgid "Metadata preview"
 msgstr "Pratayang metadata"
 
-#: src/templates/field-builder-modal.html:159
+#: src/templates/field-builder-modal.html:170
 msgid "Warning: clicking Apply will completely replace any existing metadata!"
 msgstr "Peringatan: Mengklik 'Terapkan' akan mengganti sepenuhnya metadata yang sudah ada! "
 
-#: src/templates/field-builder-modal.html:164
+#: src/templates/field-builder-modal.html:175
 msgid "Apply"
 msgstr "Menerapkan"
 
@@ -3766,11 +3767,12 @@ msgstr "Teks utama"
 msgid "Date and time"
 msgstr "Tanggal dan waktu"
 
-#: src/templates/field-builder-modal.html:76
+#: src/templates/field-builder-modal.html:115
 msgid "Required"
 msgstr "Diperlukan"
 
 #: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:13
 msgid "Select who can book this entry"
 msgstr "Pilih siapa yang dapat memesan entri ini"
 
@@ -3794,6 +3796,47 @@ msgstr "Kirim pesan dan batalkan"
 msgid "Start by selecting a resource below"
 msgstr "Mulailah dengan memilih sumber daya di bawah ini"
 
+#: src/templates/permissions-edit-modal.html:21
 #: src/templates/view-permissions.html:12
 msgid "Can book"
 msgstr "Dapat memesan"
+
+#: src/templates/dashboard.html:40
+msgid "Scheduled bookings"
+msgstr "Pemesanan terjadwal"
+
+#: src/templates/field-builder-modal.html:84
+msgid "Available units"
+msgstr "Unit yang tersedia"
+
+#: src/templates/json-editor.html:50
+msgid "You have unsaved changes"
+msgstr "Anda memiliki perubahan yang belum tersimpan"
+
+#: src/templates/permissions-edit-modal.html:13
+#: src/templates/view-permissions.html:4
+msgid "Visibility"
+msgstr "Visibilitas"
+
+#: src/templates/permissions-edit-modal.html:14
+#: src/templates/view-permissions.html:5
+msgid "Select who can see this entry"
+msgstr "Pilih siapa yang dapat melihat entri ini"
+
+#: src/templates/permissions-edit-modal.html:17
+#: src/templates/view-permissions.html:8
+msgid "Can write"
+msgstr "Dapat menulis"
+
+#: src/templates/permissions-edit-modal.html:18
+#: src/templates/view-permissions.html:9
+msgid "Select who can edit this entry"
+msgstr "Pilih siapa yang dapat mengedit entri ini"
+
+#: src/templates/sysconfig.html:81
+msgid "The default language of this instance. It can be overridden by each user."
+msgstr "Bahasa default dari instance ini. Bahasa ini dapat diganti oleh setiap pengguna."
+
+#: src/templates/sysconfig.html:91
+msgid "Setting this to «no» will completely remove the ability to delete experiments for everyone."
+msgstr "Mengatur ini ke «tidak» akan sepenuhnya menghilangkan kemampuan menghapus eksperimen untuk semua orang."

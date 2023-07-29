@@ -104,7 +104,7 @@ class TwigFilters
             }
             $final .= '</div>';
         }
-        return $final;
+        return $final . $Metadata->getAnyContent();
     }
 
     public static function decrypt(?string $encrypted): string

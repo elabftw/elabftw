@@ -33,6 +33,16 @@ class Metadata
         return Tools::printArr($this->metadata);
     }
 
+    // get anything that is not with an extra_fields or elabftw key
+    public function getAnyContent(): string
+    {
+        // copy the array, as we will edit in place
+        $res = $this->metadata;
+        unset($res[MetadataEnum::ExtraFields->value]);
+        unset($res[MetadataEnum::Elabftw->value]);
+        return Tools::printArr($res);
+    }
+
     public function getExtraFields(): array
     {
         if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {

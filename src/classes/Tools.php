@@ -164,6 +164,9 @@ class Tools
     public static function printArr(array $arr): string
     {
         $html = '';
+        if (empty($arr)) {
+            return $html;
+        }
         foreach ($arr as $key => $val) {
             if (is_array($val)) {
                 $html .= sprintf('<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span> %s</li>', $key, self::printArr($val));

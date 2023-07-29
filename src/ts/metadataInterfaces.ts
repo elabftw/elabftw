@@ -39,6 +39,7 @@ export interface ExtraFieldProperties {
   required?: boolean;
   unit?: string;
   units?: string[];
+  readonly?: boolean;
 }
 
 export interface MetadataElabftw {

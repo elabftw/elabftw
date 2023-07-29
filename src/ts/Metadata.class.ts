@@ -52,7 +52,7 @@ export class Metadata {
    */
   handleEvent(event: Event): Promise<Response> | boolean {
     const el = event.target as HTMLFormElement;
-    if (el.reportValidity() === false) {
+    if (el.reportValidity() === false || el.hasAttribute('readonly')) {
       return false;
     }
     if (el.dataset.units === '1') {
@@ -253,6 +253,14 @@ export class Metadata {
     if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
+    if (Object.prototype.hasOwnProperty.call(properties, 'readonly')) {
+      // readonly is not supported by select elements, but disabled is
+      if (element instanceof HTMLSelectElement) {
+        element.disabled = true;
+      } else {
+        element.readOnly = true;
+      }
+    }
 
     // by default all inputs get this bootstrap class
     let cssClass = 'form-control';
@@ -306,7 +314,7 @@ export class Metadata {
         unitsSel.add(optionEl);
       }
       unitsSel.classList.add('form-control', 'brl-none');
-      // add this so we can differentiat the change event from the main input
+      // add this so we can differentiate the change event from the main input
       unitsSel.dataset.units = '1';
       unitsSel.addEventListener('change', this, false);
       appendDiv.appendChild(unitsSel);

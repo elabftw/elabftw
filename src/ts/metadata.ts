@@ -183,6 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
           field['required'] = true;
         }
+        // deal with the readonly attribute
+        if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
+          field['readonly'] = true;
+        }
         // deal with the multi select
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;

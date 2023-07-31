@@ -148,14 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
-          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push((opt as HTMLInputElement).value));
+          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
           // just take the first one as selected value
           fieldValue = field['options'][0];
         } else if (field['type'] === 'number') {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
           field['units'] = [];
           document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
-            const unitValue = (opt as HTMLInputElement).value;
+            const unitValue = opt.value;
             // only add non empty values
             if (unitValue) {
               field['units'].push(unitValue);

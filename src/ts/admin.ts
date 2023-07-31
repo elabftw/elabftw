@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // ADD USER TO TEAM GROUP
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
-      const user = parseInt(el.parentNode.parentNode.querySelector('input').value as string, 10);
+      const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
         notifError(new Error('Use the autocompletion menu to add users.'));
         return;

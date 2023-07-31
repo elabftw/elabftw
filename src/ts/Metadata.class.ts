@@ -9,7 +9,7 @@ import { Action, Entity, EntityType } from './interfaces';
 import { adjustHiddenState } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { MetadataElabftw, ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
+import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 
 
@@ -108,7 +108,7 @@ export class Metadata {
 
     const radioInputs = [];
     const radiosName = this.getRandomId();
-    for (const option of (properties.options as Array<string>)) {
+    for (const option of properties.options) {
       const radioInput = document.createElement('input');
       radioInput.classList.add('form-check-input');
       radioInput.type = 'radio';
@@ -205,7 +205,7 @@ export class Metadata {
     const uniqid = this.getRandomId();
 
     // read the type of element
-    switch (properties.type as ExtraFieldInputType) {
+    switch (properties.type) {
     case ExtraFieldInputType.Checkbox:
     case ExtraFieldInputType.Date:
     case ExtraFieldInputType.DateTime:
@@ -222,7 +222,7 @@ export class Metadata {
         element.toggleAttribute('multiple');
       }
       // add options to select element
-      for (const option of properties.options as Array<string>) {
+      for (const option of properties.options) {
         const optionEl = document.createElement('option');
         optionEl.text = option;
         if (properties.allow_multi_values === true && (properties.value as Array<string>).includes(option)) {
@@ -391,7 +391,7 @@ export class Metadata {
     if (properties.description) {
       const descriptionEl = document.createElement('p');
       descriptionEl.classList.add('smallgray');
-      descriptionEl.innerText = properties.description as string;
+      descriptionEl.innerText = properties.description;
       descriptionWrapper.append(descriptionEl);
     }
     return descriptionWrapper;
@@ -414,7 +414,7 @@ export class Metadata {
     let groups: Array<ExtraFieldsGroup> = [];
     if (Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
       if (Object.prototype.hasOwnProperty.call(json.elabftw, 'extra_fields_groups')) {
-        groups = groups.concat((json.elabftw as MetadataElabftw).extra_fields_groups);
+        groups = groups.concat(json.elabftw.extra_fields_groups);
       }
     }
 

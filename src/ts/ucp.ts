@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
-      return ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
+      ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
         const location = resp.headers.get('location').split('/');
         reloadElement('apiTable');
         const warningDiv = document.createElement('div');
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const id = parseInt(el.dataset.apikeyid, 10);
-        return ApiC.delete(`${Model.Apikey}/${id}`).then(() => reloadElement('apiTable'));
+        ApiC.delete(`${Model.Apikey}/${id}`).then(() => reloadElement('apiTable'));
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');

@@ -318,8 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm(i18next.t('generic-delete-warning'))) {
         return;
       }
-      // loop on it and delete stuff
-      checked.forEach(chk => EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove()));
+      // loop on it and delete stuff (use curly braces to avoid implicit return)
+      checked.forEach(chk => {EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 

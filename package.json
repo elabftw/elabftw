@@ -53,7 +53,7 @@
     "@types/file-saver": "^2.0.1",
     "@types/jquery": "^3.5.16",
     "@types/jqueryui": "^1.12.14",
-    "@types/luxon": "^3.0.0",
+    "@types/luxon": "^3.3.1",
     "@types/marked": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",

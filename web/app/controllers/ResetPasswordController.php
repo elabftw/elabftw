@@ -91,7 +91,7 @@ try {
 
         // log the IP for the sysadmin to know who requested it
         // it's also good to keep a trace of such requests
-        $App->Log->info(sprintf('Password reset was requested'), array('email' => $email));
+        $App->Log->info('Password reset was requested', array('email' => $email));
         // show the same message as if the email didn't exist in the db
         // this is done to prevent information disclosure
         throw new QuantumException(_('If the account exists, an email has been sent.'));

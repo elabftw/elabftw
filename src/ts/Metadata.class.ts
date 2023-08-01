@@ -215,6 +215,10 @@ export class Metadata {
     case ExtraFieldInputType.Url:
       element = document.createElement('input');
       element.type = properties.type;
+      // without this, it is not possible to enter floating point values
+      if (properties.type === ExtraFieldInputType.Number) {
+        element.setAttribute('step', 'any');
+      }
       break;
     case ExtraFieldInputType.Select:
       element = document.createElement('select');

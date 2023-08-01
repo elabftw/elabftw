@@ -57,7 +57,7 @@
     "@types/marked": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
-    "eslint": "^8.2.0",
+    "eslint": "^8.46.0",
     "postcss": "^8.4.7",
     "postcss-scss": "^4.0.3",
     "stylelint": "^15.10.1",

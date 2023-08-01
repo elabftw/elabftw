@@ -17,7 +17,7 @@
     "@fullcalendar/interaction": "^6.1.5",
     "@fullcalendar/list": "^6.1.5",
     "@fullcalendar/timegrid": "^6.1.5",
-    "@teselagen/bio-parsers": "^0.3.2",
+    "@teselagen/bio-parsers": "^0.3.3",
     "bootstrap": "^4.5.0",
     "bootstrap-markdown-fa5": "2.10.*",
     "bootstrap-select": "^1.13.18",

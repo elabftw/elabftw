@@ -25,8 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', () => {
-  const email = 'phpunit@example.com';
-  const password = 'phpunitftw';
+  const email = 'toto@yopmail.com';
+  const password = 'totototo';
   cy.request('/login.php')
     .its('body')
     .then((body) => {

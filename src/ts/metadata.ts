@@ -103,6 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.getJson(`${el.dataset.target}/${id}`).then(json => {
         const jsonObj = JSON.parse(json.metadata);
         textarea.value = JSON.stringify(jsonObj, null, 2);
+        // prevent saving an empty value
+        if (jsonObj === null) {
+          return;
+        }
         const applyBtn = (document.getElementById('applyMetadataLoadBtn') as HTMLButtonElement);
         applyBtn.removeAttribute('disabled');
         const warningTxt = document.getElementById('loadMetadataWarning');

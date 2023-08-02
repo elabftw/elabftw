@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DashboardController implements ControllerInterface
 {
+    private const SHOWN_NUMBER = 5;
+
     public function __construct(private App $App)
     {
     }
@@ -35,20 +37,24 @@ class DashboardController implements ControllerInterface
     {
         $template = 'dashboard.html';
 
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, EntityType::Experiments);
-        $DisplayParams->limit = 5;
-        $DisplayParams->orderby = Orderby::Lastchange;
+        $DisplayParamsExp = new DisplayParams($this->App->Users, $this->App->Request, EntityType::Experiments);
+        $DisplayParamsExp->limit = self::SHOWN_NUMBER;
+        $DisplayParamsExp->orderby = Orderby::Lastchange;
         $Experiments = new Experiments($this->App->Users);
         $Items = new Items($this->App->Users);
         $Templates = new Templates($this->App->Users);
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $now = new DateTimeImmutable();
         $Scheduler = new Scheduler($Items, null, $now->format(DateTimeImmutable::ATOM));
+        // for items we need to create a new DisplayParams object, otherwise the show_team setting will also apply here
+        $DisplayParamsItems = new DisplayParams($this->App->Users, $this->App->Request, EntityType::Items);
+        $DisplayParamsItems->limit = self::SHOWN_NUMBER;
+        $DisplayParamsItems->orderby = Orderby::Lastchange;
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'categoryArr' => $ItemsTypes->readAll(),
-            'experimentsArr' => $Experiments->readShow($DisplayParams),
-            'itemsArr' => $Items->readShow($DisplayParams),
+            'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
+            'itemsArr' => $Items->readShow($DisplayParamsItems),
             'templatesArr' => $Templates->Pins->readAllSimple(),
         );
         $Response = new Response();

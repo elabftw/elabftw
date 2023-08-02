@@ -346,7 +346,7 @@
               "</span>"
           )|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control col-md-3' type='password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
         </p>
       {% endif %}
     </div>
@@ -860,7 +860,7 @@
               "</span>"
           )|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control col-md-3' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
+          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
         </p>
       {% endif %}
     </div>

@@ -140,7 +140,10 @@ abstract class AbstractEntityController implements ControllerInterface
     /**
      * Get the items
      */
-    abstract protected function getItemsArr(): array;
+    protected function getItemsArr(): array
+    {
+        return $this->Entity->readShow(new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType));
+    }
 
     /**
      * View mode (one item displayed)

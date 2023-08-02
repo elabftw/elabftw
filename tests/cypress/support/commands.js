@@ -62,7 +62,7 @@ const inExperiments = () => {
   cy.getCookie('token').should('exist');
   cy.getCookie('token_team').should('exist');
   // UI should reflect this user being logged in
-  cy.get('h6').should('contain', 'Phpunit');
+  cy.get('h6').should('contain', 'Toto');
 }
 
 /**

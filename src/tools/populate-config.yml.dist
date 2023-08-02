@@ -11,7 +11,7 @@
 # Copy this file to populate-config.yml and edit it if needed
 
 # set to true to skip confirmation
-skip_confirm: false
+skip_confirm: true
 
 # put some config options that fit with a dev env
 # so we don't have to put them back in again after a populate command
@@ -29,7 +29,8 @@ config:
   ldap_username: cn=admin,dc=example,dc=org
   # increase this a bit
   login_tries: 10
-
+  # the url of the dev install
+  url: "https://elab.local:3148"
 
 teams:
   - name: Alpha
@@ -44,6 +45,7 @@ teams:
 # unless a password is set here
 users:
   - email: toto@yopmail.com
+    password: totototo
     firstname: Toto
     lastname: Le sysadmin
     team: Alpha

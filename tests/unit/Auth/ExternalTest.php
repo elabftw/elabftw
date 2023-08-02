@@ -36,7 +36,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         );
         $this->serverParams = array(
             'auth_firstname' => 'Toto',
-            'auth_lastname' => 'Le Sysadmin',
+            'auth_lastname' => 'Le sysadmin',
             'auth_email' => 'toto@yopmail.com',
             'auth_team' => 'Alpha',
         );

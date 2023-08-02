@@ -32,7 +32,7 @@ class LdapTest extends \PHPUnit\Framework\TestCase
             'hosts' => array('127.0.0.1'),
             'port' => 389,
             'base_dn' => $configArr['ldap_base_dn'],
-            'username' => 'toto',
+            'username' => 'Toto',
             'password' => 'totototo',
             'use_tls' => false,
         );

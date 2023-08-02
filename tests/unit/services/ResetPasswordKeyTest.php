@@ -30,7 +30,7 @@ class ResetPasswordKeyTest extends \PHPUnit\Framework\TestCase
 
     public function testValidate(): void
     {
-        $key = $this->ResetPasswordKey->generate('phpunit@example.com');
+        $key = $this->ResetPasswordKey->generate('toto@yopmail.com');
 
         $Users = $this->ResetPasswordKey->validate($key);
         $this->assertInstanceOf(Users::class, $Users);
@@ -51,7 +51,7 @@ class ResetPasswordKeyTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateExpiredKey(): void
     {
-        $key = $this->ResetPasswordKey->generate('phpunit@example.com');
+        $key = $this->ResetPasswordKey->generate('toto@yopmail.com');
 
         $ResetPasswordKey = new ResetPasswordKey(time() + 1337, $this->secretKey);
         $this->expectException(ImproperActionException::class);

@@ -35,9 +35,9 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             'user_msg_need_local_account_created' => 'yep',
         );
         $this->serverParams = array(
-            'auth_firstname' => 'Phpunit',
-            'auth_lastname' => 'FTW',
-            'auth_email' => 'phpunit@example.com',
+            'auth_firstname' => 'Toto',
+            'auth_lastname' => 'Le Sysadmin',
+            'auth_email' => 'toto@yopmail.com',
             'auth_team' => 'Alpha',
         );
         $this->log = new Logger('elabftw');

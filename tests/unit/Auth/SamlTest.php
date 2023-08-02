@@ -75,8 +75,8 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
         // create fake saml idp response
         $this->samlUserdata = array();
-        $this->samlUserdata['User.email'] = 'phpunit@example.com';
-        $this->samlUserdata['User.firstname'] = 'Phpunit';
+        $this->samlUserdata['User.email'] = 'toto@yopmail.com';
+        $this->samlUserdata['User.firstname'] = 'Toto';
         $this->samlUserdata['User.lastname'] = 'FTW';
         $this->samlUserdata['User.team'] = 'Alpha';
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
@@ -182,7 +182,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     public function testAssertIdpResponseEmailArrayResponse(): void
     {
         $samlUserdata = $this->samlUserdata;
-        $samlUserdata['User.email'] = array('phpunit@example.com');
+        $samlUserdata['User.email'] = array('toto@yopmail.com');
 
         $authResponse = $this->getAuthResponse($samlUserdata);
         $this->assertEquals(1, $authResponse->selectedTeam);
@@ -234,7 +234,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $config['saml_sync_email_idp'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
-        $this->assertEquals(5, $authResponse->userid);
+        $this->assertEquals(7, $authResponse->userid);
     }
 
     /**

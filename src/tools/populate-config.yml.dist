@@ -67,17 +67,13 @@ users:
     create_templates: false
     create_mfa_secret: true
 
-  - email: demo@elabftw.net
-    password: demodemo
-    team: Alpha
-    create_experiments: true
-    create_templates: false
-
   - email: tata@yopmail.com
     team: Bravo
     create_experiments: true
     create_items: true
     create_templates: true
+
+  - team: Bravo
 
   - team: Bravo
 

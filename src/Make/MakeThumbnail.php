@@ -62,6 +62,10 @@ final class MakeThumbnail
         if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {
             return null;
         }
+        // Don't try to process pdf produced by iTextSharp, as they will fail for some unknown reason
+        if ($this->mime === 'application/pdf' && str_contains($this->content, 'iTextSharp')) {
+            return null;
+        }
 
         return $this->useImagick();
     }

@@ -33,7 +33,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $Logger, 'phpunit@example.net');
+        $this->Email = new Email($MockMailer, $Logger, 'toto@yopmail.com');
     }
 
     public function testCheckTsBalance(): void

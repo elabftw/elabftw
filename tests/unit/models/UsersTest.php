@@ -92,7 +92,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Users->isAdminOf(1));
         $this->assertTrue($this->Users->isAdminOf(2));
-        $this->assertFalse($this->Users->isAdminOf(4));
+        $this->assertFalse($this->Users->isAdminOf(5));
         $tata = new Users(4, 2);
         $this->assertFalse($tata->isAdminOf(2));
     }
@@ -133,19 +133,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdatePassword(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd', 'current_password' => 'testPassword')));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo', 'current_password' => 'testPassword')));
     }
 
     public function testResetPassword(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->assertTrue($Users->resetPassword('newPassw0rd'));
+        $this->assertTrue($Users->resetPassword('demodemo'));
     }
 
     public function testUpdatePasswordAsSysadmin(): void
     {
         $Users = new Users(4, 2, new Users(1, 1));
-        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd')));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo')));
     }
 
     public function testTryToBecomeSysadmin(): void
@@ -169,8 +169,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testToggleArchive(): void
     {
         // tata in bravo
-        $Admin = new Users(4, 2);
-        $Users = new Users(5, 2, $Admin);
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
         $this->assertIsArray($Users->patch(Action::Lock, array()));
     }
 
@@ -187,8 +187,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUnArchiveButAnotherUserExists(): void
     {
         // this user is archived already
-        $Admin = new Users(4, 2);
-        $Users = new Users(5, 2, $Admin);
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
         // create another active user with the same email
         ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
         // try to unarchive
@@ -198,12 +198,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllActiveFromTeam(): void
     {
-        $this->assertCount(6, $this->Users->readAllActiveFromTeam());
+        $this->assertCount(7, $this->Users->readAllActiveFromTeam());
     }
 
     public function testDestroy(): void
     {
-        $Admin = new Users(4, 2);
+        $Admin = new Users(5, 2);
         $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->assertTrue($Target->destroy());

@@ -62,7 +62,7 @@ if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
-docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
 # RUN TESTS
 if ($ci); then
     # fix permissions on test output and cache folders
@@ -85,8 +85,8 @@ elif [ "${1:-}" = "cy" ]; then
     docker exec -it elab-cypress cypress run
     # copy the artifacts in cypress output folder
     mkdir -p tests/cypress/{videos,screenshots}
-    docker cp elab-cypress:/home/node/tests/cypress/videos ./tests/cypress/videos
-    docker cp elab-cypress:/home/node/tests/cypress/screenshots ./tests/cypress/screenshots
+    docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
+    docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
 else
     docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
 fi

@@ -29,7 +29,8 @@ config:
   ldap_username: cn=admin,dc=example,dc=org
   # increase this a bit
   login_tries: 10
-
+  # the url of the dev install
+  url: "https://elab.local:3148"
 
 teams:
   - name: Alpha
@@ -44,9 +45,11 @@ teams:
 # unless a password is set here
 users:
   - email: toto@yopmail.com
+    password: totototo
     firstname: Toto
     lastname: Le sysadmin
     team: Alpha
+    orgid: internal_id_1
     api_key: apiKey4Test
     create_experiments: true
     create_items: true
@@ -67,6 +70,12 @@ users:
     create_templates: false
     create_mfa_secret: true
 
+  - email: demo@elabftw.net
+    password: testPassword
+    team: Alpha
+    create_experiments: true
+    create_templates: false
+
   - email: tata@yopmail.com
     team: Bravo
     create_experiments: true
@@ -75,7 +84,10 @@ users:
 
   - team: Bravo
 
-  - team: Bravo
+  - email: somesamluser@example.com
+    team: Bravo
+    create_experiments: false
+    orgid: internal_id_42
 
   - team: Charlie
 

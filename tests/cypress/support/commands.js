@@ -25,8 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', () => {
-  const email = 'phpunit@example.com';
-  const password = 'phpunitftw';
+  const email = 'toto@yopmail.com';
+  const password = 'totototo';
   cy.request('/login.php')
     .its('body')
     .then((body) => {
@@ -62,7 +62,7 @@ const inExperiments = () => {
   cy.getCookie('token').should('exist');
   cy.getCookie('token_team').should('exist');
   // UI should reflect this user being logged in
-  cy.get('h6').should('contain', 'Phpunit');
+  cy.get('h6').should('contain', 'Toto');
 }
 
 /**

@@ -62,7 +62,7 @@ if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
-docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist
+docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
 # RUN TESTS
 if ($ci); then
     # fix permissions on test output and cache folders

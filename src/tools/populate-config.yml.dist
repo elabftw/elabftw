@@ -11,7 +11,7 @@
 # Copy this file to populate-config.yml and edit it if needed
 
 # set to true to skip confirmation
-skip_confirm: true
+skip_confirm: false
 
 # put some config options that fit with a dev env
 # so we don't have to put them back in again after a populate command

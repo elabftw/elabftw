@@ -128,7 +128,7 @@ class DisplayParams
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($this->entityType === EntityType::Experiments && !$this->Users->userData['show_team'] && !$this->Request->query->has('owner') && !$this->Request->query->has('extended')) {
+        if ($this->entityType === EntityType::Experiments && !$this->Users->userData['show_team'] && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
         }

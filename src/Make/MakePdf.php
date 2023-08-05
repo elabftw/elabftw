@@ -348,28 +348,27 @@ class MakePdf extends AbstractMakePdf
     /**
      * Append PDFs attached to an entity
      */
-    private function appendPdfs(array $pdfs, ?Mpdf $mpdf = null): void
+    private function appendPdfs(array $pdfs): void
     {
-        $mpdf = $mpdf ?? $this->mpdf;
         foreach ($pdfs as $pdf) {
             // There will be cases where the merging will fail
             // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
             // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
             // These cases will be caught and ignored
             try {
-                $numberOfPages = $mpdf->setSourceFile($pdf[0]);
+                $numberOfPages = $this->mpdf->setSourceFile($pdf[0]);
 
                 for ($i = 1; $i <= $numberOfPages; $i++) {
                     // Import the ith page of the source PDF file
-                    $page = $mpdf->importPage($i);
+                    $page = $this->mpdf->importPage($i);
 
                     // getTemplateSize() is not documented in the MPDF manual
                     // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
-                    $pageDim = $mpdf->getTemplateSize($page);
+                    $pageDim = $this->mpdf->getTemplateSize($page);
 
                     if (is_array($pageDim)) { // satisfy phpstan
                         // add a new (blank) page with the dimensions of the imported page
-                        $mpdf->AddPageByArray(array(
+                        $this->mpdf->AddPageByArray(array(
                             'orientation' => $pageDim['orientation'],
                             'sheet-size' => array($pageDim['width'], $pageDim['height']),
                         ));
@@ -377,11 +376,11 @@ class MakePdf extends AbstractMakePdf
 
                     // empty the header and footer
                     // cannot be an empty string
-                    $mpdf->SetHTMLHeader(' ', '', true);
-                    $mpdf->SetHTMLFooter(' ', '');
+                    $this->mpdf->SetHTMLHeader(' ', '', true);
+                    $this->mpdf->SetHTMLFooter(' ', '');
 
                     // add the content of the imported page
-                    $mpdf->useTemplate($page);
+                    $this->mpdf->useTemplate($page);
                 }
                 // not all pdf will be able to be integrated, so for the one that will trigger an exception
                 // we simply ignore it and collect information for notification

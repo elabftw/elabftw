@@ -34,7 +34,7 @@ class MfaCode extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // remove spaces from input so we don't have to do it manually
-        $secret = str_replace(' ', '', $input->getArgument('secret'));
+        $secret = str_replace(' ', '', (string) $input->getArgument('secret'));
         $MfaHelper = new MfaHelper(0, $secret);
 
         $output->writeln(sprintf('2FA code: %s', $MfaHelper->getCode()));

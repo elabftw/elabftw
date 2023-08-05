@@ -16,6 +16,7 @@ use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+use function strlen;
 
 /**
  * Make a PNG from one or several experiments or db items showing only minimal info with QR codes
@@ -79,7 +80,10 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         }
         $newImage->setImageFormat('png');
 
-        return $newImage->getImageBlob();
+        $blob = $newImage->getImageBlob();
+        // use strlen for binary data, not mb_strlen
+        $this->contentSize = strlen($blob);
+        return $blob;
     }
 
     /**

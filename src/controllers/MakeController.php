@@ -21,7 +21,6 @@ use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeJson;
-use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
@@ -80,13 +79,6 @@ class MakeController implements ControllerInterface
             case 'pdf':
                 $this->populateIdArr();
                 return $this->makePdf();
-
-            case 'multipdf':
-                $this->populateIdArr();
-                if (count($this->idArr) === 1) {
-                    return $this->makePdf();
-                }
-                return $this->makeMultiPdf();
 
             case 'qrpdf':
                 $this->populateIdArr();
@@ -165,15 +157,12 @@ class MakeController implements ControllerInterface
 
     private function makePdf(): Response
     {
-        $this->Entity->setId((int) $this->Request->query->get('id'));
-        $this->Entity->canOrExplode('read');
+        if (count($this->idArr) === 1) {
+            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->canOrExplode('read');
+        }
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity));
-    }
-
-    private function makeMultiPdf(): Response
-    {
-        return $this->getFileResponse(new MakeMultiPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
+        return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
     }
 
     private function makeQrPdf(): Response
@@ -245,6 +234,7 @@ class MakeController implements ControllerInterface
             200,
             array(
                 'Content-Type' => $Maker->getContentType(),
+                'Content-Size' => $Maker->getContentSize(),
                 'Content-disposition' => 'inline; filename="' . $Maker->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',

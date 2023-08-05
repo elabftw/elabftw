@@ -34,7 +34,7 @@ class EairefRemoteDirectory extends AbstractRemoteDirectory
         if ($endpoint['preg_quote']) {
             $term = preg_quote($term);
         }
-        $url = str_replace('%q%', $term, $endpoint['url']);
+        $url = str_replace('%q%', $term, (string) $endpoint['url']);
         $reqOptions = array('auth' => $endpoint['auth']);
         $Config = Config::getConfig();
         if (!empty($Config->configArr['proxy'])) {

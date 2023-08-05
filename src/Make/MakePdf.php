@@ -69,7 +69,7 @@ class MakePdf extends AbstractMakePdf
 
         $this->pdfa = $mpdfProvider->isPdfa();
 
-        $this->mpdf->SetTitle($this->Entity->entityData['title']);
+        $this->mpdf->SetTitle($this->Entity->entityData['title'] ?? 'eLabFTW PDF');
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
 
         $this->entityIdArr = empty($entityIdArr) ? array($this->Entity->id) : $entityIdArr;

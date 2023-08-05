@@ -252,15 +252,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('eventModal').addEventListener('click', (event) => {
         const el = (event.target as HTMLElement);
+        // CANCEL EVENT ACTION
         if (el.matches('[data-action="cancel-event"]')) {
           ApiC.delete(`event/${el.dataset.id}`).then(() => {
             info.event.remove();
             $('#eventModal').modal('toggle');
           }).catch();
+        // CANCEL EVENT ACTION WITH MESSAGE
         } else if (el.matches('[data-action="cancel-event-with-message"]')) {
-          const target = (document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement).value;
+          const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
           const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target}).then(() => {
+          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
             ApiC.delete(`event/${el.dataset.id}`).then(() => {
               info.event.remove();
               $('#eventModal').modal('toggle');

@@ -46,7 +46,7 @@ jobs:
             sed -i 's/elab.local:3148/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
-            sed -i 's/elab.local:3148/elabtmp/g' tests/populate-config.yml
+            sed -i 's/elab.local:3148/elabtmp/g' src/tools/populate-config.yml.dist
       - run:
           name: Build elabtmp image and start containers
           command: |
@@ -114,7 +114,7 @@ jobs:
           command: docker exec -it elabtmp bin/init db:install -r
       - run:
           name: Populate the database
-          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+          command: docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
       - run:
           name: Fix permissions
           command: |
@@ -142,7 +142,7 @@ jobs:
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
       - run:
           name: Reset database
-          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+          command: docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
       - run:
           name: Fix permissions
           command: |
@@ -158,8 +158,8 @@ jobs:
           command: |
             docker exec -it elab-cypress cypress run
             cypressExitCode=$?
-            docker cp elab-cypress:/home/node/tests/cypress/screenshots cypress/screenshots
-            docker cp elab-cypress:/home/node/tests/cypress/videos cypress/videos
+            docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
+            docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
             exit "$cypressExitCode"
       - store_artifacts:
           path: phpdoc-html

@@ -14,6 +14,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -28,10 +29,10 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 use League\Flysystem\Filesystem;
-use Mpdf\Mpdf;
 use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
+use function strlen;
 use function strtolower;
 
 /**
@@ -53,12 +54,16 @@ class MakePdf extends AbstractMakePdf
 
     private bool $pdfa;
 
+    private bool $isMulti = false;
+
+    private array $entityIdArr;
+
     /**
      * Constructor
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity)
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, array $entityIdArr = array())
     {
         parent::__construct($mpdfProvider, $entity);
 
@@ -66,6 +71,14 @@ class MakePdf extends AbstractMakePdf
 
         $this->mpdf->SetTitle($this->Entity->entityData['title']);
         $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
+
+        $this->entityIdArr = empty($entityIdArr) ? array($this->Entity->id) : $entityIdArr;
+
+        if (count($this->entityIdArr) > 1) {
+            $this->isMulti = true;
+            $this->mpdf->SetTitle(_('Multientry eLabFTW PDF'));
+            $this->mpdf->SetKeywords('');
+        }
 
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
@@ -91,7 +104,10 @@ class MakePdf extends AbstractMakePdf
      */
     public function getFileContent(): string
     {
-        $output = $this->generate()->Output('', 'S');
+        $this->loopOverEntries();
+        $output = $this->mpdf->OutputBinaryData();
+        // use strlen for binary data, not mb_strlen
+        $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
             $Notifications = new PdfGenericError();
             $Notifications->create($this->Entity->Users->userData['userid']);
@@ -104,15 +120,70 @@ class MakePdf extends AbstractMakePdf
      */
     public function getFileName(): string
     {
+        $now = (new DateTimeImmutable())->format('Y-m-d');
+        $date = $this->Entity->entityData['date'] ?? $now;
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
-        $now = new DateTimeImmutable();
-        return ($this->Entity->entityData['date'] ?? $now->format('Y-m-d')) . ' - ' . $title . '.pdf';
+
+        if ($this->isMulti) {
+            $title = 'elabftw-export';
+            $date = $now;
+        }
+
+        return sprintf('%s-%s.pdf', $date, $title);
+    }
+
+    /**
+     * Loop over entries, change the entity id and add its content to the pdf
+     */
+    private function loopOverEntries(): void
+    {
+        $entriesCount = count($this->entityIdArr);
+        foreach ($this->entityIdArr as $key => $id) {
+            $this->Entity->setId((int) $id);
+
+            try {
+                $permissions = $this->Entity->getPermissions();
+            } catch (IllegalActionException) {
+                return;
+            }
+
+            if ($permissions['read']) {
+                $this->addEntry();
+
+                if ($key !== $entriesCount - 1) {
+                    $this->mpdf->AddPageByArray(array(
+                        'sheet-size' => $this->Entity->Users->userData['pdf_format'],
+                    ));
+                }
+            }
+        }
+    }
+
+    /**
+     * Add an entry to mpdf
+     */
+    private function addEntry(): void
+    {
+        // write content
+        $this->mpdf->WriteHTML($this->getContent());
+
+        if ($this->Entity->Users->userData['append_pdfs']) {
+            $this->appendPdfs($this->getAttachedPdfs());
+            if ($this->failedAppendPdfs) {
+                /** @psalm-suppress PossiblyNullArgument */
+                $this->errors[] = new PdfAppendmentFailed(
+                    $this->Entity->id,
+                    $this->Entity->page,
+                    implode(', ', $this->failedAppendPdfs)
+                );
+            }
+        }
     }
 
     /**
      * Get the final html content with tex expressions converted in svg by tex2svg
      */
-    public function getContent(): string
+    private function getContent(): string
     {
         $Tex2Svg = new Tex2Svg($this->log, $this->mpdf, $this->getHtml());
         $content = $Tex2Svg->getContent();
@@ -122,87 +193,7 @@ class MakePdf extends AbstractMakePdf
             /** @psalm-suppress PossiblyNullArgument */
             $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->page);
         }
-        $this->contentSize = mb_strlen($content);
         return $content;
-    }
-
-    /**
-     * Get a list of all PDFs that are attached to an entity
-     *
-     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real_name')
-     */
-    public function getAttachedPdfs(): array
-    {
-        $uploadsArr = $this->Entity->entityData['uploads'];
-        $listOfPdfs = array();
-
-        if (empty($uploadsArr)) {
-            return $listOfPdfs;
-        }
-
-        foreach ($uploadsArr as $upload) {
-            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
-            if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
-                // the real_name is used in case of error appending it
-                // the content is stored in a temporary file so it can be read with appendPdfs()
-                $tmpPath = FsTools::getCacheFile();
-                $filename = basename($tmpPath);
-                $this->cacheFs->writeStream($filename, $storageFs->readStream($upload['long_name']));
-                $listOfPdfs[] = array($tmpPath, $upload['real_name']);
-                // add the temporary file to the trash
-                $this->trash[] = $filename;
-            }
-        }
-
-        return $listOfPdfs;
-    }
-
-    /**
-     * Append PDFs attached to an entity
-     */
-    public function appendPdfs(array $pdfs, ?Mpdf $mpdf = null): void
-    {
-        $mpdf = $mpdf ?? $this->mpdf;
-        foreach ($pdfs as $pdf) {
-            // There will be cases where the merging will fail
-            // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
-            // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
-            // These cases will be caught and ignored
-            try {
-                $numberOfPages = $mpdf->setSourceFile($pdf[0]);
-
-                for ($i = 1; $i <= $numberOfPages; $i++) {
-                    // Import the ith page of the source PDF file
-                    $page = $mpdf->importPage($i);
-
-                    // getTemplateSize() is not documented in the MPDF manual
-                    // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
-                    $pageDim = $mpdf->getTemplateSize($page);
-
-                    if (is_array($pageDim)) { // satisfy phpstan
-                        // add a new (blank) page with the dimensions of the imported page
-                        $mpdf->AddPageByArray(array(
-                            'orientation' => $pageDim['orientation'],
-                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
-                        ));
-                    }
-
-                    // empty the header and footer
-                    // cannot be an empty string
-                    $mpdf->SetHTMLHeader(' ', '', true);
-                    $mpdf->SetHTMLFooter(' ', '');
-
-                    // add the content of the imported page
-                    $mpdf->useTemplate($page);
-                }
-                // not all pdf will be able to be integrated, so for the one that will trigger an exception
-                // we simply ignore it and collect information for notification
-            } catch (FpdiException) {
-                // collect real name of attached pdf
-                $this->failedAppendPdfs[] = $pdf[1];
-                continue;
-            }
-        }
     }
 
     /**
@@ -263,39 +254,8 @@ class MakePdf extends AbstractMakePdf
     }
 
     /**
-     * Build the pdf
+     * Get the body text of an entity and prepare linked images for mpdf
      */
-    private function generate(): Mpdf
-    {
-        // write content
-        $this->mpdf->WriteHTML($this->getContent());
-
-        if ($this->Entity->Users->userData['append_pdfs']) {
-            $this->appendPdfs($this->getAttachedPdfs());
-            if ($this->failedAppendPdfs) {
-                /** @psalm-suppress PossiblyNullArgument */
-                $this->errors[] = new PdfAppendmentFailed($this->Entity->id, $this->Entity->page, implode(', ', $this->failedAppendPdfs));
-            }
-        }
-        return $this->mpdf;
-    }
-
-    /**
-     * Look for links to experiments or database made with the # autocompletion and thus relative.
-     * We need to make them absolute or they will end up wrong.
-     */
-    private function fixLocalLinks(string $body): string
-    {
-        $matches = array();
-        preg_match_all('/href="(experiments|database).php/', $body, $matches);
-        $i = 0;
-        foreach ($matches[0] as $match) {
-            $body = str_replace($match, 'href="' . Config::fromEnv('SITE_URL') . '/' . $matches[1][$i] . '.php', $body);
-            $i += 1;
-        }
-        return $body;
-    }
-
     private function getBody(): string
     {
         $body = $this->Entity->entityData['body'] ?? '';
@@ -337,5 +297,99 @@ class MakePdf extends AbstractMakePdf
         }
 
         return $this->fixLocalLinks($body);
+    }
+
+    /**
+     * Look for links to experiments or database made with the # autocompletion and thus relative.
+     * We need to make them absolute or they will end up wrong.
+     */
+    private function fixLocalLinks(string $body): string
+    {
+        $matches = array();
+        preg_match_all('/href="(experiments|database).php/', $body, $matches);
+        $i = 0;
+        foreach ($matches[0] as $match) {
+            $body = str_replace($match, 'href="' . Config::fromEnv('SITE_URL') . '/' . $matches[1][$i] . '.php', $body);
+            $i += 1;
+        }
+        return $body;
+    }
+
+    /**
+     * Get a list of all PDFs that are attached to an entity
+     *
+     * @return array Empty or array of arrays with information for PDFs array('path/to/file', 'real_name')
+     */
+    private function getAttachedPdfs(): array
+    {
+        $uploadsArr = $this->Entity->entityData['uploads'];
+        $listOfPdfs = array();
+
+        if (empty($uploadsArr)) {
+            return $listOfPdfs;
+        }
+
+        foreach ($uploadsArr as $upload) {
+            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
+            if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
+                // the real_name is used in case of error appending it
+                // the content is stored in a temporary file so it can be read with appendPdfs()
+                $tmpPath = FsTools::getCacheFile();
+                $filename = basename($tmpPath);
+                $this->cacheFs->writeStream($filename, $storageFs->readStream($upload['long_name']));
+                $listOfPdfs[] = array($tmpPath, $upload['real_name']);
+                // add the temporary file to the trash
+                $this->trash[] = $filename;
+            }
+        }
+
+        return $listOfPdfs;
+    }
+
+    /**
+     * Append PDFs attached to an entity
+     */
+    private function appendPdfs(array $pdfs): void
+    {
+        foreach ($pdfs as $pdf) {
+            // There will be cases where the merging will fail
+            // due to incompatibilities of Mpdf (actually fpdi) with the pdfs
+            // See https://manuals.setasign.com/fpdi-manual/v2/limitations/
+            // These cases will be caught and ignored
+            try {
+                $numberOfPages = $this->mpdf->setSourceFile($pdf[0]);
+
+                for ($i = 1; $i <= $numberOfPages; $i++) {
+                    // Import the ith page of the source PDF file
+                    $page = $this->mpdf->importPage($i);
+
+                    // getTemplateSize() is not documented in the MPDF manual
+                    // @return array|bool An array with following keys: width, height, 0 (=width), 1 (=height), orientation (L or P)
+                    $pageDim = $this->mpdf->getTemplateSize($page);
+
+                    if (is_array($pageDim)) { // satisfy phpstan
+                        // add a new (blank) page with the dimensions of the imported page
+                        $this->mpdf->AddPageByArray(array(
+                            'orientation' => $pageDim['orientation'],
+                            'sheet-size' => array($pageDim['width'], $pageDim['height']),
+                        ));
+                    }
+
+                    // empty the header and footer
+                    // cannot be an empty string
+                    $this->mpdf->SetHTMLHeader(' ', '', true);
+                    $this->mpdf->SetHTMLFooter(' ', '');
+
+                    // add the content of the imported page
+                    $this->mpdf->useTemplate($page);
+                }
+                // not all pdf will be able to be integrated, so for the one that will trigger an exception
+                // we simply ignore it and collect information for notification
+            } catch (FpdiException) {
+                // collect real name of attached pdf
+                $this->failedAppendPdfs[] = $pdf[1];
+                continue;
+            }
+        }
     }
 }

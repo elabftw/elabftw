@@ -103,6 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.getJson(`${el.dataset.target}/${id}`).then(json => {
         const jsonObj = JSON.parse(json.metadata);
         textarea.value = JSON.stringify(jsonObj, null, 2);
+        // prevent saving an empty value
+        if (jsonObj === null) {
+          return;
+        }
         const applyBtn = (document.getElementById('applyMetadataLoadBtn') as HTMLButtonElement);
         applyBtn.removeAttribute('disabled');
         const warningTxt = document.getElementById('loadMetadataWarning');
@@ -148,14 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
-          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push((opt as HTMLInputElement).value));
+          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
           // just take the first one as selected value
           fieldValue = field['options'][0];
         } else if (field['type'] === 'number') {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
           field['units'] = [];
           document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
-            const unitValue = (opt as HTMLInputElement).value;
+            const unitValue = opt.value;
             // only add non empty values
             if (unitValue) {
               field['units'].push(unitValue);

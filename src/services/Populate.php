@@ -123,7 +123,8 @@ class Populate
         $lastname = $user['lastname'] ?? $this->faker->lastName();
         $orgid = $user['orgid'] ?? null;
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
-        $email = $user['email'] ?? $this->faker->safeEmail();
+        // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
+        $email = $user['email'] ?? sprintf('elabuser-%d@yopmail.com', $this->faker->randomNumber(6));
 
         $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
-      return ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
+      ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
     // CREATE USER(s) FROM REMOTE DIRECTORY
     } else if (el.matches('[data-action="create-user-from-remote"]')) {
@@ -48,33 +48,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // UPDATE USER
     } else if (el.matches('[data-action="update-user"]')) {
-      return ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
     // TOGGLE ADMIN STATUS
     } else if (el.matches('[data-action="toggle-admin-user"]')) {
       const group = el.dataset.promote === '1' ? 2 : 4;
-      return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElement('editUsersBox'));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
       // show alert
       if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and archived and user will not be able to login anymore.')) {
-        return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive}).then(() => reloadElement('editUsersBox'));
+        ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive}).then(() => reloadElement('editUsersBox'));
       }
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
-      return ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
       const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
       // because we're sysadmin, we don't need to provide the current_password parameter
-      return ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: password});
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: password});
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {
       if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
-        return ApiC.delete(`users/${el.dataset.userid}`).then(() => {
+        ApiC.delete(`users/${el.dataset.userid}`).then(() => {
           reloadElement('editUsersBox');
           if (document.getElementById('unvalidatedUsersBox')) {
             reloadElement('unvalidatedUsersBox');

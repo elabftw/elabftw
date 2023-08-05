@@ -2532,7 +2532,55 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/users'
+                   type: object
+                   properties:
+                     userid:
+                       type: integer
+                     firstname:
+                       type: string
+                     lastname:
+                       type: string
+                     orgid:
+                       type: integer
+                       nullable: true
+                     email:
+                       type: string
+                     validated:
+                       type: integer
+                     archived:
+                       type: integer
+                     last_login:
+                       type: string
+                       format: date-time
+                       nullable: true
+                     valid_until:
+                       type: string
+                       format: date-time
+                       nullable: true
+                     is_sysadmin:
+                       type: integer
+                     fullname:
+                       type: string
+                     orcid:
+                       type: string
+                       nullable: true
+                     auth_service:
+                       type: integer
+                       nullable: true
+              example:
+                - userid: 4
+                  firstname: Brook
+                  lastname: Hegmann
+                  orgid: "u3051"
+                  email: brook@example.com
+                  validated: 1
+                  archived: 0
+                  last_login: "2023-07-29 20:34:04"
+                  valid_until: null
+                  is_sysadmin: 0
+                  fullname: Brook Hegmann
+                  orcid: "0000-0002-7494-5555"
+                  auth_service: null
     post:
       tags: ['Users']
       summary: Create a new user.

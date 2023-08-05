@@ -12,6 +12,7 @@ namespace Elabftw\Make;
 use Elabftw\Interfaces\StringMakerInterface;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use function strlen;
 
 /**
  * Mother class of the Make*Csv services
@@ -38,7 +39,8 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
         $csv->setOutputBOM(Reader::BOM_UTF8);
 
         $content = $csv->toString();
-        $this->contentSize = mb_strlen($content);
+        // mb_strlen doesn't give correct size
+        $this->contentSize = strlen($content);
         return $content;
     }
 

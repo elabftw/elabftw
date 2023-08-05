@@ -47,9 +47,12 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             array('item' => 12, 'start' => $d->format('Y-m-d H:i:s'), 'end' => $d->format('Y-m-d H:i:s')),
             'Daniel Balavoine',
         );
-        $Notifications->postAction(Action::Create, array(
+        $targetCount = $Notifications->postAction(Action::Create, array(
             'msg' => 'Had to cancel booking because my cells died :(',
+            'target' => 'team',
+            'targetid' => 1,
         ));
+        $this->assertEquals(8, $targetCount);
         $this->assertIsArray($Notifications->readOne());
         $this->assertIsArray($Notifications->patch(Action::Update, array()));
         $this->assertIsString($Notifications->getPage());

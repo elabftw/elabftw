@@ -91,7 +91,7 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input as HTMLInputElement;
+      const el = input;
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
       }
@@ -354,7 +354,7 @@ export function addAutocompleteToLinkInputs(): void {
       filterEl.addEventListener('change', () => {
         cache[object.selectElid] = {};
       });
-      ($(`#${object.inputElId}`) as JQuery<HTMLInputElement>).autocomplete({
+      $(`#${object.inputElId}`).autocomplete({
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           if (term in cache[object.selectElid]) {
@@ -387,7 +387,7 @@ export function addAutocompleteToLinkInputs(): void {
 
 export function addAutocompleteToTagInputs(): void {
   const ApiC = new Api();
-  ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
+  $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
         const res = [];

@@ -32,8 +32,8 @@ class LdapTest extends \PHPUnit\Framework\TestCase
             'hosts' => array('127.0.0.1'),
             'port' => 389,
             'base_dn' => $configArr['ldap_base_dn'],
-            'username' => 'phpunit',
-            'password' => 'phpunitftw',
+            'username' => 'Toto',
+            'password' => 'totototo',
             'use_tls' => false,
         );
         $fake = new LdapFake();
@@ -43,7 +43,7 @@ class LdapTest extends \PHPUnit\Framework\TestCase
         ));
         $connection = new ConnectionFake($ldapConfig, $fake);
 
-        $this->AuthService = new Ldap($connection, new Entry(), $configArr, 'phpunit@example.com', 'phpunitftw');
+        $this->AuthService = new Ldap($connection, new Entry(), $configArr, 'toto@yopmail.com', 'totototo');
     }
 
     public function testTryAuth(): void

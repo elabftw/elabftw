@@ -9,5 +9,8 @@ describe('Logging in', () => {
 
     // {enter} causes the form to submit
     cy.get('input[name=password]').type(`${password}{enter}`);
+    cy.getCookie('token').should('exist').then(cookie => {
+      expect(cookie.value).to.match(/^[0-9a-fA-F]{64}$/)
+    })
   });
 });

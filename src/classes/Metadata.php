@@ -22,7 +22,7 @@ class Metadata
 
     public function __construct(?string $json)
     {
-        if ($json === null) {
+        if ($json === null || $json === 'null') {
             return;
         }
         $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);

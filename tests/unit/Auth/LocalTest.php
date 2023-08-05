@@ -18,13 +18,13 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->AuthService = new Local('phpunit@example.com', 'phpunitftw');
+        $this->AuthService = new Local('toto@yopmail.com', 'totototo');
     }
 
     public function testEmptyPassword(): void
     {
         $this->expectException(QuantumException::class);
-        new Local('phpunit@example.com', '');
+        new Local('toto@yopmail.com', '');
     }
 
     public function testTryAuth(): void
@@ -42,7 +42,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthWithInvalidPassword(): void
     {
-        $AuthService = new Local('phpunit@example.com', 'nopenope');
+        $AuthService = new Local('toto@yopmail.com', 'nopenope');
         $this->expectException(InvalidCredentialsException::class);
         $AuthService->tryAuth();
     }
@@ -52,7 +52,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->AuthService::isMfaEnforced(1, 3));
         $this->assertTrue($this->AuthService::isMfaEnforced(1, 1));
         $this->assertFalse($this->AuthService::isMfaEnforced(4, 1));
-        $this->assertTrue($this->AuthService::isMfaEnforced(4, 2));
+        $this->assertTrue($this->AuthService::isMfaEnforced(5, 2));
         $this->assertFalse($this->AuthService::isMfaEnforced(4, 0));
     }
 }

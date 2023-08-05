@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
         (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#policiesModal') as JQuery).modal('toggle');
+        $('#policiesModal').modal('toggle');
       });
 
     // SCROLL TO TOP
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const entity = getEntity();
       const params = {};
       params[Target.UserId] = value;
-      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 
     // ADD USER TO PERMISSIONS
     // create a new li element in the list of existing users, so it is collected at Save action
@@ -343,10 +343,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // create a new key and delete the old one
         params[paramKey] = params[el.dataset.rw];
         delete params[el.dataset.rw];
-        return ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+        ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       } else {
         const entity = getEntity();
-        return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+        ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
 
     /* TOGGLE NEXT ACTION
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
-      ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
+      $('#' + el.dataset.target).modal('toggle');
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {

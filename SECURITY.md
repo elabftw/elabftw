@@ -114,6 +114,10 @@ Subscribe to the [Newsletter](http://eepurl.com/bTjcMj) to receive a notificatio
 
 See [Backup Documentation](https://doc.elabftw.net/backup.html). And secure your backups on a filesystem with immutable snapshots! ;)
 
+### Verifying releases
+
+Releases are tagged with a GPG key, and GitHub displays a green check macaron next to the tag.
+
 # Responsible disclosure hall of fame
 
 These users reported vulnerabilities responsibly:

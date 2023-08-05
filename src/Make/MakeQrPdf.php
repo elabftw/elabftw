@@ -47,7 +47,7 @@ class MakeQrPdf extends AbstractMakePdf
         $Config = Config::getConfig();
         $html = $this->getTwig((bool) $Config->configArr['debug'])->render('qr-pdf.html', $renderArr);
         $this->mpdf->WriteHTML(html_entity_decode($html, ENT_HTML5, 'UTF-8'));
-        return $this->mpdf->Output('', 'S');
+        return $this->mpdf->OutputBinaryData();
     }
 
     /**

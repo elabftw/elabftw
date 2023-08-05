@@ -105,7 +105,7 @@ class MakePdf extends AbstractMakePdf
     public function getFileContent(): string
     {
         $this->loopOverEntries();
-        $output = $this->mpdf->Output('', 'S');
+        $output = $this->mpdf->OutputBinaryData();
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
             $Notifications = new PdfGenericError();

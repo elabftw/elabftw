@@ -132,7 +132,7 @@ class MakePdf extends AbstractMakePdf
     }
 
     /**
-     * Loop over entires, change the entity id and add its content to the pdf
+     * Loop over entries, change the entity id and add its content to the pdf
      */
     private function loopOverEntries(): void
     {

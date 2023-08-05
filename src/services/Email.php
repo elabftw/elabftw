@@ -85,7 +85,7 @@ class Email
         $from = $this->from;
 
         // get all email addresses
-        $emails = $this->getAllEmails($target, $targetId);
+        $emails = self::getAllEmails($target, $targetId);
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
@@ -115,7 +115,7 @@ class Email
 
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
-        $emails = $this->getAllEmails(EmailTarget::Sysadmins);
+        $emails = self::getAllEmails(EmailTarget::Sysadmins);
         $subject = '[eLabFTW] Warning: timestamp balance low!';
         $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
         $message = (new Memail())
@@ -129,7 +129,7 @@ class Email
     /**
      * Get email for all active users on instance, in team or teamgroup
      */
-    public function getAllEmails(EmailTarget $target, ?int $targetId = null, bool $returnUserids = false): array
+    public static function getAllEmails(EmailTarget $target, ?int $targetId = null, bool $returnUserids = false): array
     {
         $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
         switch($target) {

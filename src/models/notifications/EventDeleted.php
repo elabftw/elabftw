@@ -17,10 +17,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
 
 class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
 {
@@ -32,7 +28,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         private array $event,
         private string $actor,
         private string $msg = '',
-        private EmailTarget $target = EmailTarget::ActiveUsers,
+        private EmailTarget $target = EmailTarget::BookableItem,
     ) {
         parent::__construct();
     }
@@ -52,19 +48,9 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         if (!empty($reqBody['msg'])) {
             $this->msg = Filter::body($reqBody['msg']);
         }
-        $Config = Config::getConfig();
-        $Log = new Logger('elabftw');
-        $Log->pushHandler(new ErrorLogHandler());
-        $Email = new Email(
-            new Mailer(Transport::fromDsn($Config->getDsn())),
-            $Log,
-            $Config->configArr['mail_from'],
-        );
-        $targetId = $this->event['item'];
-        if ($this->target === EmailTarget::TeamGroup) {
-            $targetId = (int) explode('_', $reqBody['target'])[1];
-        }
-        $userids = $Email->getAllEmails($this->target, $targetId, true);
+        // target can be bookable_item, team or teamgroup
+        $this->target = EmailTarget::from($reqBody['target']);
+        $userids = Email::getAllEmails($this->target, $reqBody['targetid'], true);
         foreach($userids as $userid) {
             $this->create($userid);
         }

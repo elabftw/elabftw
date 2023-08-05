@@ -29,10 +29,10 @@ use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
 use function implode;
 use League\Flysystem\Filesystem;
-use Mpdf\Mpdf;
 use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
 use function str_replace;
+use function strlen;
 use function strtolower;
 
 /**
@@ -54,7 +54,7 @@ class MakePdf extends AbstractMakePdf
 
     private bool $pdfa;
 
-    private bool $singleEntry = true;
+    private bool $isMulti = false;
 
     private array $entityIdArr;
 
@@ -75,7 +75,7 @@ class MakePdf extends AbstractMakePdf
         $this->entityIdArr = empty($entityIdArr) ? array($this->Entity->id) : $entityIdArr;
 
         if (count($this->entityIdArr) > 1) {
-            $this->singleEntry = false;
+            $this->isMulti = true;
             $this->mpdf->SetTitle(_('Multientry eLabFTW PDF'));
             $this->mpdf->SetKeywords('');
         }
@@ -106,6 +106,7 @@ class MakePdf extends AbstractMakePdf
     {
         $this->loopOverEntries();
         $output = $this->mpdf->OutputBinaryData();
+        // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
             $Notifications = new PdfGenericError();
@@ -123,12 +124,12 @@ class MakePdf extends AbstractMakePdf
         $date = $this->Entity->entityData['date'] ?? $now;
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
 
-        if (!$this->singleEntry) {
-            $title = 'multientry.elabftw';
+        if ($this->isMulti) {
+            $title = 'elabftw-export';
             $date = $now;
         }
-        
-        return $date . ' - ' . $title . '.pdf';
+
+        return sprintf('%s-%s.pdf', $date, $title);
     }
 
     /**

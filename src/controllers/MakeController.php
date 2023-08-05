@@ -234,6 +234,7 @@ class MakeController implements ControllerInterface
             200,
             array(
                 'Content-Type' => $Maker->getContentType(),
+                'Content-Size' => $Maker->getContentSize(),
                 'Content-disposition' => 'inline; filename="' . $Maker->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',

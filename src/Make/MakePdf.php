@@ -54,31 +54,18 @@ class MakePdf extends AbstractMakePdf
 
     private bool $pdfa;
 
-    private bool $isMulti = false;
-
-    private array $entityIdArr;
-
     /**
      * Constructor
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, array $entityIdArr = array())
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr)
     {
         parent::__construct($mpdfProvider, $entity);
 
         $this->pdfa = $mpdfProvider->isPdfa();
-
-        $this->mpdf->SetTitle($this->Entity->entityData['title'] ?? 'eLabFTW PDF');
-        $this->mpdf->SetKeywords(str_replace('|', ' ', $this->Entity->entityData['tags'] ?? ''));
-
-        $this->entityIdArr = empty($entityIdArr) ? array($this->Entity->id) : $entityIdArr;
-
-        if (count($this->entityIdArr) > 1) {
-            $this->isMulti = true;
-            $this->mpdf->SetTitle(_('Multientry eLabFTW PDF'));
-            $this->mpdf->SetKeywords('');
-        }
+        $this->mpdf->SetTitle($this->getTitle());
+        $this->mpdf->SetKeywords($this->getKeywords());
 
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
@@ -124,12 +111,17 @@ class MakePdf extends AbstractMakePdf
         $date = $this->Entity->entityData['date'] ?? $now;
         $title = Filter::forFilesystem($this->Entity->entityData['title']);
 
-        if ($this->isMulti) {
-            $title = 'elabftw-export';
-            $date = $now;
-        }
-
         return sprintf('%s-%s.pdf', $date, $title);
+    }
+
+    protected function getTitle(): string
+    {
+        return $this->Entity->entityData['title'] ?? 'eLabFTW PDF';
+    }
+
+    protected function getKeywords(): string
+    {
+        return str_replace('|', ' ', $this->Entity->entityData['tags'] ?? '');
     }
 
     /**

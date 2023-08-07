@@ -10,20 +10,12 @@
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Models\AbstractEntity;
-use Psr\Log\LoggerInterface;
 
 /**
  * Create a pdf from several Entities
  */
 class MakeMultiPdf extends MakePdf
 {
-    public function __construct(protected LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr = array())
-    {
-        parent::__construct($log, $mpdfProvider, $entity, $this->entityIdArr);
-    }
-
     public function getFileName(): string
     {
         return sprintf('%s-elabftw-export.pdf', (new DateTimeImmutable())->format('Y-m-d'));

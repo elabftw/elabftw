@@ -124,7 +124,7 @@ class Permissions
 
         // it's not our entity, our last chance is to be admin in the same team as owner
         // also make sure that it's not in "useronly" mode
-        if ($this->Users->isAdmin && $this->canwrite['base'] !== BasePermissions::UserOnly->value) {
+        if ($this->Users->isAdmin && $can['base'] !== BasePermissions::UserOnly->value) {
             // if it's an item (has team attribute), we need to be logged in in same team
             if (isset($this->item['team'])) {
                 if ($this->item['team'] === $this->Users->userData['team']) {

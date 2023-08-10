@@ -39,9 +39,11 @@ try {
     $Scheduler = new Scheduler($Items);
     $Templates = new Templates($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
+    $bookableItemData = array();
 
     if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
         $Scheduler->Items->setId($App->Request->query->getInt('item'));
+        $bookableItemData = $Scheduler->Items->readOne();
     }
 
     $entityData = array();
@@ -60,6 +62,7 @@ try {
 
     $template = 'team.html';
     $renderArr = array(
+        'bookableItemData' => $bookableItemData,
         'Entity' => $Templates,
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,

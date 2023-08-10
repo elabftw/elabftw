@@ -174,10 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
       eventTitle.innerText = info.event.extendedProps.title_only;
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
-      // hide the cancel block if event is not cancellable
-      if (info.event.extendedProps.book_is_cancellable === 0) {
-        document.getElementById('bookModalCancelDiv').setAttribute('hidden', '');
-      }
 
       // start and end inputs
       const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);

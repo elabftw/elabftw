@@ -64,27 +64,30 @@
             </div>
         </div>
 
-        <div id='bookModalCancelDiv'>
-          <h5>{{ 'Cancel booking slot'|trans }}</h5>
-          <h6>{{ 'Add a custom message'|trans }}</h6>
-            <textarea id='cancelEventTextarea' class='form-control'></textarea>
-            <label>{{ 'Send to'|trans }}</label>
-            <div class='form-check'>
-              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
-            </div>
-            <div class='form-check'>
-              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
-            </div>
-            {% for teamgroup in teamGroupsArr %}
+        {# only show the cancel block if item is cancellable or user is admin #}
+        {% if bookableItemData.is_cancellable == 1 or App.Users.isAdmin %}
+          <div>
+            <h5>{{ 'Cancel booking slot'|trans }}</h5>
+            <h6>{{ 'Add a custom message'|trans }}</h6>
+              <textarea id='cancelEventTextarea' class='form-control'></textarea>
+              <label>{{ 'Send to'|trans }}</label>
               <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
               </div>
-            {% endfor %}
-            <div class='mt-2'>
-              <button type='button' data-action='cancel-event-with-message' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-              <button type='button' data-action='cancel-event' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+              <div class='form-check'>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+              </div>
+              {% for teamgroup in teamGroupsArr %}
+                <div class='form-check'>
+                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+                </div>
+              {% endfor %}
+              <div class='mt-2'>
+                <button type='button' data-action='cancel-event-with-message' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+                <button type='button' data-action='cancel-event' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+            </div>
           </div>
-        </div>
+        {% endif %}
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

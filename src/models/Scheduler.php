@@ -129,6 +129,7 @@ class Scheduler implements RestInterface
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
+            TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             items.title AS item_title, items.book_is_cancellable,

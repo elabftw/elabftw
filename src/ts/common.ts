@@ -320,6 +320,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="remove-parent"]')) {
       el.parentElement.remove();
 
+    // REMOVE A QUERY PARAMETER AND RELOAD PAGE
+    } else if (el.matches('[data-action="remove-param-reload"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.delete(el.dataset.target);
+      // reload the page
+      document.location.search = params.toString();
+
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};

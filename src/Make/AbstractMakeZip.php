@@ -103,7 +103,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $this->usePdfa,
         );
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        return new MakePdf($log, $MpdfProvider, $this->Entity);
+        return new MakePdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
     }
 
     /**

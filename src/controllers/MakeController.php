@@ -21,6 +21,7 @@ use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeJson;
+use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
@@ -157,12 +158,12 @@ class MakeController implements ControllerInterface
 
     private function makePdf(): Response
     {
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
-            $this->Entity->canOrExplode('read');
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id)));
         }
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
     }
 
     private function makeQrPdf(): Response

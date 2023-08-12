@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    {% if Entity.type == 'items' and Entity.canBook %}
+    {% if Entity.type == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
       <a class='mr-2' title='{{ 'Book item'|trans }}' href='team.php?tab=1&item={{ Entity.id }}'>
         <div class='hl-hover-gray p-2 rounded'>
           <i class='fas fa-calendar-plus fa-fw'></i>

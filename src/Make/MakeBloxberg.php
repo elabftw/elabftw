@@ -123,7 +123,7 @@ class MakeBloxberg extends AbstractMake
             true, // PDF/A always for timestamp pdf
         );
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        $MakePdf = new MakePdf($log, $MpdfProvider, $this->Entity);
+        $MakePdf = new MakePdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
         return $MakePdf->getFileContent();
     }
 

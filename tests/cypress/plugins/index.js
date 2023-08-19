@@ -1,3 +1,4 @@
+https = require('node:https')
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -21,7 +22,7 @@ module.exports = (on, config) => {
   // `config` is the resolved Cypress config
   on('before:browser:launch', (browser = {}, launchOptions) => {
     console.log(
-      'launching browser %s is headless? %s',
+      'Launching browser %s. Is headless: %s',
       browser.name,
       browser.isHeadless,
     )
@@ -31,7 +32,7 @@ module.exports = (on, config) => {
     const width = 1920
     const height = 1080
 
-    console.log('setting the browser window size to %d x %d', width, height)
+    console.log('Setting the browser window size to %d x %d', width, height)
 
     if (browser.name === 'chrome' && browser.isHeadless) {
       launchOptions.args.push(`--window-size=${width},${height}`)
@@ -53,5 +54,65 @@ module.exports = (on, config) => {
 
     // IMPORTANT: return the updated browser launch options
     return launchOptions
+  })
+
+  on('after:run', async results => {
+    function createReport(reportType) {
+      reportUrl = results.config.baseUrl + `/c3/report/${reportType}/`
+      console.log('Creating codecoverage %s report by calling %s', reportType, reportUrl)
+      cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
+        CodeCoverage: `get ${reportType} report`,
+        CodeCoverage_Suite: 'cypress'
+      }))
+      return new Promise((resolve, reject) => {
+        https.get(reportUrl, {headers: {Cookie: cookie}}, res => {
+          if (res.statusCode !== 200) {
+            console.error('Did not get an OK from the server. Status code: %s', res.statusCode)
+            reject()
+          }
+          // We have to consume the data but don't want to store it.
+          // Reports are stored in the elabtmp container and will be extracted from there.
+          res.on('data', () => {});
+          res.on('close', () => {
+            console.log(`Created %s report`, reportType)
+            resolve()
+          });
+        }).on('error', error => {
+          reject(error)
+        })
+      })
+    }
+    try {
+      await createReport('html')
+      await createReport('clover')
+    } catch (error) {
+      console.error(error)
+    }
+  })
+
+  on('before:run', async details => {
+    url = details.config.baseUrl + '/c3/report/clear/'
+    console.log('Clearing potentially existing codecoverage files by calling %s', url)
+    cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
+      CodeCoverage: 'clear codecoverage',
+      CodeCoverage_Suite: 'cypress'
+    }))
+    try {
+      await new Promise((resolve, reject) => {
+        https.get(url, {headers: {Cookie: cookie}}, res => {
+          if (res.statusCode !== 200) {
+            console.error('Did not get an OK from the server. Status code: %s', res.statusCode)
+            reject()
+          }
+          console.log('Reports cleared.')
+          resolve()
+        }).on('error', error => {
+          console.error(error.message)
+          reject(error)
+        })
+      })
+    } catch (error) {
+      console.error(error)
+    }
   })
 }

@@ -50,6 +50,7 @@ services:
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
+            - MAX_PHP_MEMORY=512M
         healthcheck:
             test: /etc/nginx/healthcheck.sh
             interval: 10s

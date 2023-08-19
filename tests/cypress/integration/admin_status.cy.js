@@ -1,6 +1,7 @@
 describe('Status in admin panel', () => {
   beforeEach(() => {
     cy.login()
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0])
   })
 
   it('Create, update and delete a status', () => {

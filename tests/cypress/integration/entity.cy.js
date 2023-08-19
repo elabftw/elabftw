@@ -1,6 +1,7 @@
 describe('Experiments', () => {
   beforeEach(() => {
     cy.login()
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0])
   })
 
   const entityEdit = () => {

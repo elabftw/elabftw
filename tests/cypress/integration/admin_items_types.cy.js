@@ -1,6 +1,7 @@
 describe('Items Types', () => {
   beforeEach(() => {
     cy.login()
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0])
   })
   const newname = 'New test item type'
 

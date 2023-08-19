@@ -1,4 +1,8 @@
 describe('Logging in', () => {
+  beforeEach(() => {
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0])
+  })
+
   it('sets auth cookie when logging in via form submission', function () {
     const email = 'toto@yopmail.com';
     const password = 'totototo';

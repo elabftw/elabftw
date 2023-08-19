@@ -168,16 +168,7 @@ jobs:
       - run :
           name: Merge both coverage reports
           command: |
-            docker exec -it elabtmp cd /elabftw/tests/_output \
-                && mkdir merge_cov \
-                && cp coverage.serialized merge_cov/unit_api.cov \
-                && cp c3tmp/codecoverage.serialized merge_cov/cypress.cov \
-                && cd merge_cov \
-                && sed -i "1i <?php return \unserialize(\<<<'END_OF_COVERAGE_SERIALIZATION'" cypress.cov \
-                && echo "END_OF_COVERAGE_SERIALIZATION);" >> cypress.cov \
-                && phpcov merge --clover merged_coverage.xml . \
-                && mkdir coverage-html-merged \
-                && phpcov merge --html coverage-html-merged .
+            docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
             docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-merged.xml .
             docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-html-merged .
       - store_artifacts:

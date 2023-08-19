@@ -174,7 +174,7 @@ jobs:
                 && cp c3tmp/codecoverage.serialized merge_cov/cypress.cov \
                 && cd merge_cov \
                 && sed -i '1<?php return \unserialize(\<<<\'END_OF_COVERAGE_SERIALIZATION\'' cypress.cov \
-                && echo 'END_OF_COVERAGE_SERIALIZATION);' >> cypress.cov \
+                && echo "END_OF_COVERAGE_SERIALIZATION);" >> cypress.cov \
                 && phpcov merge --clover merged_coverage.xml . \
                 && mkdir coverage-html-merged \
                 && phpcov merge --html coverage-html-merged .

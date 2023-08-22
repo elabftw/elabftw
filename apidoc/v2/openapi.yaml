@@ -25,7 +25,6 @@ components:
           type: string
         created_at:
           type: string
-          format: date-time
         hash:
           type: string
         can_write:
@@ -37,7 +36,6 @@ components:
           type: integer
         created_at:
           type: string
-          format: date-time
         item_id:
           type: integer
         comment:
@@ -46,7 +44,6 @@ components:
           type: integer
         modified_at:
           type: string
-          format: date-time
         fullname:
           type: string
         firstname:
@@ -272,7 +269,6 @@ components:
           description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
-          format: date-time
         date:
           type: string
         elabid:
@@ -305,7 +301,6 @@ components:
           type: string
         modified_at:
           type: string
-          format: date-time
         next_step:
           type: string
         orcid:
@@ -502,7 +497,6 @@ components:
           type: integer
         created_at:
           type: string
-          format: date-time
         userid:
           type: integer
         send_email:
@@ -526,7 +520,6 @@ components:
           type: integer
         created_at:
           type: string
-          format: date-time
         userid:
           type: integer
         metadata:
@@ -593,7 +586,6 @@ components:
           type: string
         created_at:
           type: string
-          format: date-time
         orgid:
           type: string
         public_db:
@@ -678,7 +670,6 @@ components:
           type: string
         created_at:
           type: string
-          format: date-time
         hash:
           type: string
         hash_algorithm:
@@ -2551,11 +2542,9 @@ paths:
                        type: integer
                      last_login:
                        type: string
-                       format: date-time
                        nullable: true
                      valid_until:
                        type: string
-                       format: date-time
                        nullable: true
                      is_sysadmin:
                        type: integer
@@ -2748,7 +2737,6 @@ paths:
                     type: integer
                   created_at:
                     type: string
-                    format: date-time
                   userid:
                     type: integer
     delete:
@@ -3409,7 +3397,6 @@ paths:
                       type: integer
                     created_at:
                       type: string
-                      format: date-time
                     fullname:
                       type: string
   /{entity_type}/{id}/revisions/{subid}:

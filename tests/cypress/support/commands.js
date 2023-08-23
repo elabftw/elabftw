@@ -49,7 +49,7 @@ Cypress.Commands.add('login', () => {
       expect(resp.status).to.eq(200)
     })
   })
-  visitExperiments()
+  //visitExperiments()
 })
 
 /**

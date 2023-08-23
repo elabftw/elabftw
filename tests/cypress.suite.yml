@@ -24,3 +24,5 @@ coverage:
       - src/Storage/*
       - src/traits/*
       - web/*
+    exclude:
+      - src/commands/*

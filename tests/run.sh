@@ -87,6 +87,7 @@ elif [ "${1:-}" = "cy" ]; then
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
     docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
     # copy codecoverage reports
+    docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
     docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar ./tests/_output/cypress_coverage.tar
     mkdir -p ./tests/_output/cypress_coverage_html \
         && tar -xf ./tests/_output/cypress_coverage.tar -C ./tests/_output/cypress_coverage_html

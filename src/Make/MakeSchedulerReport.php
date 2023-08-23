@@ -11,6 +11,7 @@ namespace Elabftw\Make;
 
 use function date;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\UploadTrait;
@@ -31,6 +32,10 @@ class MakeSchedulerReport extends AbstractMakeCsv
     {
         $this->Db = Db::getConnection();
         $this->rows = $scheduler->readAll();
+        if (empty($this->rows)) {
+            throw(new ImproperActionException('There are no events to report'));
+        }
+
     }
 
     /**

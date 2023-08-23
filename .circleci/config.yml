@@ -183,17 +183,17 @@ jobs:
           path: cypress
           destination: cypress
       - store_artifacts:
-          path: cypress_coverage_html
-          destination: cypress_coverage_html
+          path: cypress-coverage-html
+          destination: cypress-coverage-html
       - store_artifacts:
-          path: cypress_coverage.clover.xml
-          destination: cypress_coverage.clover.xml
+          path: cypress-coverage.clover.xml
+          destination: cypress-coverage.clover.xml
       - store_artifacts:
           path: coverage-html-merged
           destination: coverage-html-merged
       - store_artifacts:
-          path: coverage-merged.xml
-          destination: coverage-merged.xml
+          path: coverage-merged.clover.xml
+          destination: coverage-merged.clover.xml
 workflows:
   version: 2
   build_and_test:

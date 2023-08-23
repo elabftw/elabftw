@@ -161,9 +161,9 @@ jobs:
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
             docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
             # extract coverage reports
-            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar cypress_coverage.tar
-            mkdir cypress_coverage_html && tar -xf cypress_coverage.tar -C cypress_coverage_html
-            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress_coverage.clover.xml
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar cypress-coverage.tar
+            mkdir cypress_coverage_html && tar -xf cypress-coverage.tar -C cypress-coverage_html
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress-coverage.clover.xml
             exit "$cypressExitCode"
       - run :
           name: Merge both coverage reports

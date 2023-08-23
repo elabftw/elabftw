@@ -19,5 +19,5 @@ sed -i "1i <?php return \\\unserialize(<<<'END_OF_COVERAGE_SERIALIZATION'" cypre
 echo -e '\nEND_OF_COVERAGE_SERIALIZATION\n);' >> cypress.cov
 
 # merge files and create reports
-phpcov merge --clover coverage-merged.xml .
+phpcov merge --clover coverage-merged.clover.xml .
 phpcov merge --html coverage-html-merged .

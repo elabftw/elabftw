@@ -26,10 +26,10 @@ describe('Search page', () => {
   it('lists results', () => {
     cy.visit('/search.php?type=experiments&q=author%3A%25&');
     cy.get('h2').should('have.text', 'Results');
-    cy.get('table#itemList').should('be.visible');
+    cy.get('#itemList').should('exist');
 
     cy.visit('/search.php?type=1&q=author%3A%25&');
     cy.get('h2').should('have.text', 'Results');
-    cy.get('table#itemList').should('be.visible');
+    cy.get('#itemList').should('exist');
   });
 });

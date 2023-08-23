@@ -58,9 +58,9 @@ module.exports = (on, config) => {
 
   on('after:run', async results => {
     function createReport(reportType) {
-      reportUrl = results.config.baseUrl + `/c3/report/${reportType}/`
+      const reportUrl = results.config.baseUrl + `/c3/report/${reportType}/`
       console.log('Creating codecoverage %s report by calling %s', reportType, reportUrl)
-      cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
+      const cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
         CodeCoverage: `get ${reportType} report`,
         CodeCoverage_Suite: 'cypress'
       }))
@@ -91,9 +91,9 @@ module.exports = (on, config) => {
   })
 
   on('before:run', async details => {
-    url = details.config.baseUrl + '/c3/report/clear/'
+    const url = details.config.baseUrl + '/c3/report/clear/'
     console.log('Clearing potentially existing codecoverage files by calling %s', url)
-    cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
+    const cookie = 'CODECEPTION_CODECOVERAGE=' + encodeURIComponent(JSON.stringify({
       CodeCoverage: 'clear codecoverage',
       CodeCoverage_Suite: 'cypress'
     }))

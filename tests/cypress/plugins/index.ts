@@ -77,16 +77,16 @@ module.exports = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions)
             console.log('Created %s report', reportType);
             resolve();
           });
-        }).on('error', error => {
-          reject(error);
+        }).on('error', e => {
+          reject(e);
         });
       });
     }
     try {
       await createReport('html');
       await createReport('clover');
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     }
   });
 
@@ -106,13 +106,13 @@ module.exports = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions)
           }
           console.log('Reports cleared.');
           resolve(true);
-        }).on('error', error => {
-          console.error(error.message);
-          reject(error);
+        }).on('error', e => {
+          console.error(e.message);
+          reject(e);
         });
       });
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     }
   });
 };

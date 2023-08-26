@@ -99,7 +99,7 @@ jobs:
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci
+          command: docker exec -it elabtmp yarn jslint-ci:all
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
@@ -178,7 +178,7 @@ jobs:
           path: coverage-html
           destination: coverage-html
       - codecov/upload:
-          file: coverage.xml
+          file: coverage-merged.clover.xml
       - store_artifacts:
           path: cypress
           destination: cypress

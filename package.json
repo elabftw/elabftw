@@ -104,7 +104,7 @@
     "phpcs-dry": "./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",
     "phpstan": "./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon",
-    "pre-commit": "yarn static && yarn phpcs-dry && yarn csslint && yarn jslint",
+    "pre-commit": "yarn phpcs-dry && yarn static && yarn csslint && yarn jslint:all",
     "psalm": "psalm --no-progress -c=src/tools/psalm.xml",
     "psalmall": "psalm -c=src/tools/psalm.xml --show-info=true",
     "rector": "./vendor/bin/rector process src --config src/tools/rector.php",

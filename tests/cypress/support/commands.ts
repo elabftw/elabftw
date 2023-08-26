@@ -29,9 +29,9 @@ Cypress.Commands.add('login', () => {
   const password = 'totototo';
   cy.request('/login.php')
     .its('body')
-    .then((body) => {
-      const $html = Cypress.$(body)
-      const csrf = $html.filter('meta[name="csrf-token"]').attr('content')
+    .then(body => {
+      const $html = Cypress.$(body);
+      const csrf: string = $html.filter('meta[name="csrf-token"]').attr('content');
       cy.request({
         method: 'POST',
         url: '/app/controllers/LoginController.php',
@@ -44,47 +44,25 @@ Cypress.Commands.add('login', () => {
           rememberme: 'on',
           csrf: csrf,
         },
-      })
-      .then((resp) => {
-      expect(resp.status).to.eq(200)
-    })
-  })
-  //visitExperiments()
-})
-
-/**
- * A utility function to check that we are seeing the dashboard page
- */
-const inExperiments = () => {
-  cy.url().should('include', '/experiments.php');
-  cy.contains('h1', 'Experiments')
-  // our auth cookie should be present
-  cy.getCookie('token').should('exist');
-  cy.getCookie('token_team').should('exist');
-  // UI should reflect this user being logged in
-  cy.get('h6').should('contain', 'Toto');
-}
-
-/**
- * A utility function to confirm we can visit a protected page
- */
-const visitExperiments = () => {
-  cy.visit('/experiments.php')
-  inExperiments()
-}
+      }).then(resp => {
+        expect(resp.status).to.eq(200);
+        return cy.wrap(csrf);
+      });
+    });
+});
 
 Cypress.Commands.add('enableCodeCoverage', (testFile = 'a cypress test') => {
   cy.setCookie(
     'CODECEPTION_CODECOVERAGE',
     JSON.stringify({
       CodeCoverage: testFile,
-      CodeCoverage_Suite: 'cypress'
+      CodeCoverage_Suite: 'cypress',
     }),
     {
       domain: 'elabtmp',
       path: '/',
       secure: true,
-      httpOnly: true
-    }
+      httpOnly: true,
+    },
   );
-})
+});

@@ -44,7 +44,7 @@ class TeamGroups implements RestInterface
 
     public function getPage(): string
     {
-        return 'api/v2/teamgroups/';
+        return sprintf('api/v2/teams/%d/teamgroups/', $this->Users->userData['team']);
     }
 
     /**

@@ -1,7 +1,7 @@
 describe('Metadata', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Show metadata', () => {

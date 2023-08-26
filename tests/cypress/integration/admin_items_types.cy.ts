@@ -1,7 +1,7 @@
 describe('Items Types', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
   const newname = 'New test item type';
 
@@ -9,8 +9,8 @@ describe('Items Types', () => {
     cy.visit('/admin.php?tab=5');
     cy.intercept('POST', '/api/v2/items_types', req => {
       req.on('before:response', res => {
-          expect(res.statusCode).to.equal(201);
-          expect(res.headers.location).to.include('templateid=10');
+        expect(res.statusCode).to.equal(201);
+        expect(res.headers.location).to.include('templateid=10');
       });
     }).as('create');
     cy.window().then(win => {

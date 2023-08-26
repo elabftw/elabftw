@@ -1,7 +1,7 @@
 describe('Make', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('csv', () => {
@@ -53,7 +53,7 @@ describe('Make', () => {
       expect(resp.headers['content-type']).to.eq('image/png');
     });
     cy.visit('/make.php?format=qrpng&type=experiments&id=1+2');
-    cy.get('div.alert.alert-danger').should('contain', 'QR PNG format is only suitable for one ID.')
+    cy.get('div.alert.alert-danger').should('contain', 'QR PNG format is only suitable for one ID.');
   });
 
   it('report', () => {

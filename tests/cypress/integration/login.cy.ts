@@ -1,9 +1,9 @@
 describe('Login page', () => {
   beforeEach(() => {
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0])
-  })
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+  });
 
-  it('sets auth cookie when logging in via form submission', function () {
+  it('sets auth cookie when logging in via form submission', function() {
     const email = 'toto@yopmail.com';
     const password = 'totototo';
 
@@ -16,7 +16,7 @@ describe('Login page', () => {
     // auth cookies should be present
     cy.getCookie('token').should('exist').then(cookie => {
       expect(cookie.value).to.match(/^[0-9a-fA-F]{64}$/);
-    })
+    });
     cy.getCookie('token_team').should('exist').then(cookie => {
       expect(cookie.value).to.eq('1');
     });
@@ -34,7 +34,7 @@ describe('Login page', () => {
     cy.wait(['@ResetPasswordController', '@login']);
   }
 
-  const answer = 'If the account exists, an email has been sent.'
+  const answer = 'If the account exists, an email has been sent.';
 
   it('resets password of non-existing user', () => {
     fillEmailAddress('does.not@exist.com{enter}');

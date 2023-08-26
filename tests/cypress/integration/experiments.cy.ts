@@ -1,17 +1,18 @@
 describe('Experiments page', () => {
+  let csrf: string;
   beforeEach(() => {
-    cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.login().then(value => csrf = value);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('is visible', () => {
-    cy.visit('/experiments.php')
+    cy.visit('/experiments.php');
     cy.get('h1#pageTitle').should('have.text', 'Experiments');
   });
 
   it('provides import interface and can import eln files', () => {
     cy.visit('/experiments.php');
-    cy.get('div.btn-group div.dropleft button.dropdown-toggle[data-toggle="dropdown"]').click()
+    cy.get('div.btn-group div.dropleft button.dropdown-toggle[data-toggle="dropdown"]').click();
     cy.get('[data-target="importModal"]').should('be.visible').should('contain', 'Import from file').click();
     cy.get('#importModalLabel').should('be.visible').should('have.text', 'Import from file');
     cy.get('#import_modal_target').should('exist').select('experiments:1');
@@ -20,8 +21,8 @@ describe('Experiments page', () => {
     cy.get('#import_modal_file_input').should('exist').selectFile('tests/_data/multiple-experiments.eln');
     cy.intercept('app/controllers/ImportController.php', req => {
       req.on('response', resp => {
-          expect(resp.statusCode).to.equal(302);
-          expect(resp.headers.location).to.include('experiments.php?order=lastchange');
+        expect(resp.statusCode).to.equal(302);
+        expect(resp.headers.location).to.include('experiments.php?order=lastchange');
       });
     }).as('importController');
     cy.get('[data-action="check-max-size"]').should('exist').click();
@@ -30,14 +31,14 @@ describe('Experiments page', () => {
     cy.get('#itemList').should('contain', 'Synthesis of Aspirin');
   });
 
-  function importWrapper(filename, target, canread, canwrite, mimeType, redirectUrl) {
-    // get the csrf token
-    cy.visit('/experiments.php');
-    let csrf;
-    cy.get('meta[name="csrf-token"]').should('exist').invoke('attr', 'content').then(content => {
-      csrf = content;
-    });
-
+  function importWrapper(
+    filename: string,
+    target: string,
+    canread: string,
+    canwrite: string,
+    mimeType: string,
+    redirectUrl: string,
+  ) {
     cy.readFile(`tests/_data/${filename}`, 'binary').then(file => {
       const formData = new FormData();
       formData.append('csrf', csrf);
@@ -47,7 +48,7 @@ describe('Experiments page', () => {
       formData.append(
         'file',
         Cypress.Blob.binaryStringToBlob(file, mimeType),
-        filename
+        filename,
       );
 
       cy.request({
@@ -55,7 +56,7 @@ describe('Experiments page', () => {
         url: 'app/controllers/ImportController.php',
         body: formData,
         headers: {
-          'content-type': 'multipart/form-data'
+          'content-type': 'multipart/form-data',
         },
         followRedirect: false,
       }).then(resp => {

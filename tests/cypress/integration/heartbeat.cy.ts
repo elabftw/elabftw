@@ -1,13 +1,23 @@
 describe('Heart Beat', () => {
   beforeEach(() => {
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('is normal', () => {
     cy.login();
+
+    let phpSessId: string;
+    cy.getCookie('PHPSESSID')
+      .should('exist')
+      .then(c => phpSessId = c.value);
+
     cy.request({
       url: '/app/controllers/HeartBeat.php',
-      headers: { Cookie: { PHPSESSID: cy.getCookie('PHPSESSID').value } },
+      headers: {
+        Cookie: {
+          PHPSESSID: phpSessId,
+        },
+      },
     }).then(resp => {
       expect(resp.status).to.eq(200);
     });

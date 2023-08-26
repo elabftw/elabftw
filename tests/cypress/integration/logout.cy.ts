@@ -1,10 +1,10 @@
 describe('Logout', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath[0]);
+    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
-  it('Logout', () => {
+  it('redirects to login.php', () => {
     cy.request({
       url: '/app/logout.php',
       followRedirect: false,

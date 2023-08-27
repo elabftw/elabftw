@@ -78,7 +78,7 @@ module.exports = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions)
             resolve();
           });
         }).on('error', e => {
-          console.error(e.message.replace(/\n|\r/g, ""));
+          console.error(e.message.replace(/\n|\r/g, ''));
           reject();
         });
       });
@@ -87,7 +87,7 @@ module.exports = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions)
       await createReport('html');
       await createReport('clover');
     } catch (e) {
-      console.error(String(e).replace(/\n|\r/g, ""));
+      console.error(String(e).replace(/\n|\r/g, ''));
     }
   });
 
@@ -108,12 +108,12 @@ module.exports = (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions)
           console.log('Reports cleared.');
           resolve(true);
         }).on('error', e => {
-          console.error(e.message.replace(/\n|\r/g, ""));
+          console.error(e.message.replace(/\n|\r/g, ''));
           reject();
         });
       });
     } catch (e) {
-      console.error(String(e).replace(/\n|\r/g, ""));
+      console.error(String(e).replace(/\n|\r/g, ''));
     }
   });
 };

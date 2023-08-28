@@ -4,7 +4,7 @@ describe('Profile', () => {
     cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
-  it('SHow profile page', () => {
+  it('Shows profile page', () => {
     cy.visit('/profile.php');
     cy.get('h1#pageTitle').should('have.text', 'Profile');
   });

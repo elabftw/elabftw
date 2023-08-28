@@ -35,7 +35,6 @@ class MakeSchedulerReport extends AbstractMakeCsv
         if (empty($this->rows)) {
             throw(new ImproperActionException('There are no events to report'));
         }
-
     }
 
     /**

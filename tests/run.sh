@@ -50,7 +50,7 @@ if ($ci); then
     # install and initial tests
     docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
     docker exec -it elabtmp yarn csslint
-    docker exec -it elabtmp yarn jslint-ci
+    docker exec -it elabtmp yarn jslint-ci:all
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
@@ -77,18 +77,23 @@ if ($ci); then
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
     docker exec -it elab-cypress cypress run
     # copy the artifacts in cypress output folder
-    mkdir -p tests/cypress/{videos,screenshots}
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
     docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
+    # copy codecoverage reports
+    docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
+    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar ./tests/_output/cypress-coverage.tar
+    mkdir -p ./tests/_output/cypress-coverage-html \
+        && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html
+    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml ./tests/_output/cypress-coverage.clover.xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-html --coverage-xml
 fi
 
 # in ci we copy the coverage output file in current directory
@@ -96,9 +101,11 @@ if ($ci); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi
 
-# make a copy with adjusted path for local sonar scanner
-ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
-sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
+if [ "${1:-}" != "cy" ]; then
+    # make a copy with adjusted path for local sonar scanner
+    ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
+    sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
+fi
 # all tests succeeded, display a koala
 cat << WALAEND
 

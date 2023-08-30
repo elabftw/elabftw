@@ -222,7 +222,7 @@ class Users implements RestInterface
             FROM users
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ' ' . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            AND users.archived = 0 ' . $archived . '
+            AND (users.archived = 0 ' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

@@ -113,6 +113,7 @@
     "static": "yarn psalm && yarn phpstan",
     "test": "tests/run.sh",
     "tinymce": "cp node_modules/tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff web/app/css/tinymce/fonts/tinymce-mobile.woff && cp node_modules/tinymce/skins/ui/oxide/*.min.css web/app/css/tinymce/",
+    "twigcs": "php vendor/bin/twigcs src/templates/*.html",
     "unit": "tests/run.sh unit",
     "unit-ci": "php vendor/bin/codecept run unit",
     "watchcss": "sass --quiet-deps --watch src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css",

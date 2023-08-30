@@ -1,4 +1,4 @@
-{% set mode = App.Request.query.get('mode') | default('view') %}
+{% set mode = App.Request.query.get('mode')|default('view') %}
 {% include('ownership-transfer-modal.html') %}
 
 {# TOP TOOLBAR #}

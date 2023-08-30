@@ -2,7 +2,7 @@
 
 {% block title %}
 <div class='d-flex align-content-center'>
-  <h1 id='pageTitle' {% if hideTitle %}hidden{%endif%}>{{ App.pageTitle }}</h1>
+  <h1 id='pageTitle' {% if hideTitle %}hidden{% endif %}>{{ App.pageTitle }}</h1>
 </div>
 {% endblock %}
 
@@ -16,18 +16,18 @@
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}<h4>
-      {% include 'create-new.html' with { 'entityPage' : 'experiments.php' } %}
+      {% include 'create-new.html' with {'entityPage': 'experiments.php'} %}
     </div>
     <ul class='list-group'>
       {% for experiment in experimentsArr %}
-      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ experiment.color }}' class='category-button rounded p-1 mr-2'>{{ experiment.category | raw}}</span>{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ experiment.color }}' class='category-button rounded p-1 mr-2'>{{ experiment.category|raw }}</span>{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
-      {% include 'create-new.html' with { 'entityPage' : 'database.php' } %}
+      {% include 'create-new.html' with {'entityPage': 'database.php'} %}
     </div>
     <ul class='list-group mt-2'>
       {% for item in itemsArr %}
@@ -42,7 +42,7 @@
     </div>
     <ul class='list-group mt-2'>
       {% for booking in bookingsArr %}
-      <a href='team.php?tab=1&item={{ booking.items_id}}&start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title|raw }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s')}}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='team.php?tab=1&item={{ booking.items_id }}&start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title|raw }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>

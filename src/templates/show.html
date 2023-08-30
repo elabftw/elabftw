@@ -2,7 +2,7 @@
 
 {% block title %}
 <div class='d-flex align-content-center'>
-  <h1 id='pageTitle' {% if hideTitle %}hidden{%endif%}>{{ App.pageTitle }}</h1>
+  <h1 id='pageTitle' {% if hideTitle %}hidden{% endif %}>{{ App.pageTitle }}</h1>
   {% if not searchPage %}
     <div class='ml-auto'>
       {% include 'create-new.html' %}
@@ -47,7 +47,7 @@
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='date-desc' href='#'>{{ 'Newest'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='date-asc' href='#'>{{ 'Oldest'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='lastchange-desc' href='#'>{{ 'Recently modified'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc')? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
+          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='cat-desc' href='#'>{{ 'Category'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='cat-asc' href='#'>{{ 'Category (inverted)'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='id-desc' href='#'>{{ 'Highest ID'|trans }}</a>
@@ -82,7 +82,7 @@
             <select name='cat' class='autosubmit mr-1 form-control' aria-label='Filter category'>
               <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
               {% for category in categoryArr %}
-                <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
+                <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected' }}>
                 {{ category.category|raw }}</option>
               {% endfor %}
             </select>
@@ -91,7 +91,7 @@
             <select name='owner' class='autosubmit mr-1 form-control' aria-label='Filter owner'>
               <option value=''>{{ 'Filter owner'|trans }}</option>
               {% for user in usersArr %}
-                <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected'}}>
+                <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
                 {{ user.fullname|raw }}</option>
               {% endfor %}
             </select>
@@ -101,7 +101,7 @@
               <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter visibility'>
                 <option value=''>{{ 'Filter visibility'|trans }}</option>
                 {% for vis in visibilityArr %}
-                <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected'}}>
+                <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
                   {{ vis|raw }}</option>
                 {% endfor %}
               </select>

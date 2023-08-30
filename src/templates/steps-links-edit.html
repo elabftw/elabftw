@@ -4,7 +4,7 @@
     <h4 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }}</h4>
     <!-- ADD STEP -->
     <div id='stepsDiv' class='mt-2' data-save-hidden='stepsDiv'>
-      <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types'}}_steps'>
+      <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types' }}_steps'>
         {% for step in Entity.entityData.steps %}
           <div class='input-group mb-2' id='step_{{ step.id }}'>
             <div class='input-group-prepend'>

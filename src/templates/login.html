@@ -152,9 +152,7 @@
         <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
       {% if App.Config.configArr.local_register %}
-      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
-        "<a href='register.php'>",
-        "</a>")|raw }}</p>
+      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
       {% endif %}
 
     {% endif %}

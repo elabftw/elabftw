@@ -4,7 +4,7 @@
   {# TITLE #}
   {%- block title -%}
     {# this can be overridden by child templates #}
-    <h1 id='pageTitle' {%- if hideTitle -%}hidden{% endif %}>{{ App.pageTitle }}</h1>
+    <h1 id='pageTitle' {%- if hideTitle %} hidden {%- endif %}>{{ App.pageTitle }}</h1>
   {%- endblock -%}
 
 

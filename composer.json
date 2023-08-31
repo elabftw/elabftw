@@ -130,7 +130,10 @@
       "Elabftw\\Traits\\": [
         "src/traits"
       ]
-    }
+    },
+    "classmap": [
+      "src/tools/eLabFtwRuleset.twigcs.php"
+    ]
   },
   "license": "AGPL-3.0-or-later",
   "config": {

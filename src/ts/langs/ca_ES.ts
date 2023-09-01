@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Click to edit",
+    "cancel": "Cancel·lar",
     "comment-add": "Afegir un comentari",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
     "dropzone-filesize-limit": "File size limit:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "Espereu ...",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Introduïu el nom del fitxer",
+    "save": "Guardar",
     "saved": "Guardat",
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",

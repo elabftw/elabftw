@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use function trim;
 
 final class UserParams extends ContentParams implements ContentParamsInterface
 {
@@ -26,7 +27,7 @@ final class UserParams extends ContentParams implements ContentParamsInterface
     {
         return match ($this->target) {
             // checked in update
-            'email' => $this->content,
+            'email' => trim($this->content),
             'firstname', 'lastname', 'orgid' => Filter::sanitize($this->content),
             'valid_until' => (
                 function () {

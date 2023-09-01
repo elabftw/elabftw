@@ -9,6 +9,7 @@
 
 namespace Elabftw\Commands;
 
+use function array_key_exists;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
@@ -167,20 +168,22 @@ class PopulateDatabase extends Command
 
         // delete the default items_types
         // add more items types
-        foreach ($yaml['items_types'] as $items_types) {
-            $user = new Users(1, (int) ($items_types['team'] ?? 1));
-            $ItemsTypes = new ItemsTypes($user);
-            $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
-            $ItemsTypes->bypassWritePermission = true;
-            $defaultPermissions = BasePermissions::MyTeams->toJson();
-            $patch = array(
-                'color' => $items_types['color'],
-                'body' => $items_types['template'] ?? '',
-                'canread' => $defaultPermissions,
-                'canwrite' => $defaultPermissions,
-                'metadata' => $items_types['metadata'] ?? '{}',
-            );
-            $ItemsTypes->patch(Action::Update, $patch);
+        if (array_key_exists('items_types', $yaml)) {
+            foreach ($yaml['items_types'] as $items_types) {
+                $user = new Users(1, (int) ($items_types['team'] ?? 1));
+                $ItemsTypes = new ItemsTypes($user);
+                $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
+                $ItemsTypes->bypassWritePermission = true;
+                $defaultPermissions = BasePermissions::MyTeams->toJson();
+                $patch = array(
+                    'color' => $items_types['color'],
+                    'body' => $items_types['template'] ?? '',
+                    'canread' => $defaultPermissions,
+                    'canwrite' => $defaultPermissions,
+                    'metadata' => $items_types['metadata'] ?? '{}',
+                );
+                $ItemsTypes->patch(Action::Update, $patch);
+            }
         }
 
         // randomize the entries so they look like they are not added at once

@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "单击编辑",
+    "cancel": "取消",
     "comment-add": "添加评论",
     "dropzone-upload-area": "拖动文件到此处进行上传",
     "dropzone-filesize-limit": "文件大小限制:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "请稍候…",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
     "request-filename": "输入文件名",
+    "save": "保存",
     "saved": "已保存",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",

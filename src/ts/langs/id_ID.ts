@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Klik untuk mengedit",
+    "cancel": "Batal",
     "comment-add": "Tambahkan komentar",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "dropzone-filesize-limit": "Batas ukuran berkas:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "Mohon tunggu…",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",
+    "save": "Simpan",
     "saved": "Tersimpan",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",

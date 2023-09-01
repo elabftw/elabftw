@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Click to edit",
+    "cancel": "Prekliči",
     "comment-add": "Dodaj komentar",
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
     "dropzone-filesize-limit": "File size limit:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "Please wait…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Enter name of the file",
+    "save": "Shrani",
     "saved": "Saved",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",

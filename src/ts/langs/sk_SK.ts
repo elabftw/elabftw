@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Click to edit",
+    "cancel": "Zrušiť",
     "comment-add": "Pridať komentár",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
     "dropzone-filesize-limit": "File size limit:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "Prosím počkajte…",
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",
     "request-filename": "Zadajte názov súboru",
+    "save": "Uložiť",
     "saved": "Uložené",
     "step-delete-warning": "Odstrániť tento krok?",
     "step-unfinish-warning": "Naozaj chceš vrátiť krok späť ?",

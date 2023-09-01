@@ -9,7 +9,7 @@
     "3dmol": "^2.0.2",
     "@deltablot/chemdoodle-web-mini": "^9.2.1",
     "@deltablot/malle": "^2.3.0",
-    "@deltablot/tg-oss-ove-umd": "^0.3.2",
+    "@deltablot/tg-oss-ove-umd": "^0.3.9",
     "@fancyapps/fancybox": "3.5.*",
     "@fullcalendar/bootstrap": "^6.1.5",
     "@fullcalendar/core": "^6.1.5",

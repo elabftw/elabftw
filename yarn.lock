@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@deltablot/malle/-/malle-2.5.0.tgz#e2c1e042a6de49431bbd9b94bedd5cf9da4726d2"
   integrity sha512-Bur6mrxLd+tUJrKRP3n+vqSnrgk6ZQWA2GicsRrrdrFWjZPAWT1WpP8n1Dw47bb8CdOQo/adNVJcsdKL35PcsQ==
 
-"@deltablot/tg-oss-ove-umd@^0.3.2":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@deltablot/tg-oss-ove-umd/-/tg-oss-ove-umd-0.3.7.tgz#10c4c2c19749cccf57499a4a4e16cb0df293bcdc"
-  integrity sha512-OFLcyrrDwhc5TaXymckWqdf8cMWIqf0Vd7JGgrXB3sHNGNCs9XbTGUD7JgA1uWq3+iwiUUmlXwD/zPO4seuunQ==
+"@deltablot/tg-oss-ove-umd@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@deltablot/tg-oss-ove-umd/-/tg-oss-ove-umd-0.3.9.tgz#3289bf16e90a8004103176f814b4008c2d5c1c28"
+  integrity sha512-ADFmvB+at72Lm7mgA/TZ07RVZT6D+KIKHQgCOIlsuSN7efFotKgbRxfErf844N3Li1lKz/3sYr9UffytcVjclA==
 
 "@discoveryjs/json-ext@0.5.7", "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"

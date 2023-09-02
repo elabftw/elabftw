@@ -43,6 +43,7 @@
           <div>
             <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
             <div>
+              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
               <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
           </div>
@@ -79,6 +80,7 @@
           <div>
             <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
             <div>
+              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
               <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
           </div>

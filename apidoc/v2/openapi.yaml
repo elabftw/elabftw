@@ -486,6 +486,8 @@ components:
           type: integer
         color:
           type: string
+        link_state:
+          type: integer
     notification:
       type: object
       properties:

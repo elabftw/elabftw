@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
+  // start and end inputs
+  const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+  const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {
     const offset = datetime.getTimezoneOffset() * 60 * 1000;
@@ -175,22 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
 
-      // start and end inputs
-      const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+      // start and end inputs values
       startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
-      const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
       endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
-      // add on change event listener on datetime inputs
-      [startInput, endInput].forEach(input => {
-        input.addEventListener('change', event => {
-          const input = (event.currentTarget as HTMLInputElement);
-          // Note: valueAsDate was not working on Chromium
-          const dt = DateTime.fromMillis(input.valueAsNumber);
-          ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-            calendar.refetchEvents();
-          }).catch(() => calendar.refetchEvents());
-        });
-      });
+      // also adjust the event id so the change listener will send a correct query
+      startInput.dataset.eventid = info.event.id;
+      endInput.dataset.eventid = info.event.id;
 
       if (info.event.extendedProps.experiment != null) {
         $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${info.event.extendedProps.experiment}">${info.event.extendedProps.experiment_title}</a>.`);
@@ -245,28 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
       });
-
-      document.getElementById('eventModal').addEventListener('click', (event) => {
-        const el = (event.target as HTMLElement);
-        // CANCEL EVENT ACTION
-        if (el.matches('[data-action="cancel-event"]')) {
-          ApiC.delete(`event/${el.dataset.id}`).then(() => {
-            info.event.remove();
-            $('#eventModal').modal('toggle');
-          }).catch();
-        // CANCEL EVENT ACTION WITH MESSAGE
-        } else if (el.matches('[data-action="cancel-event-with-message"]')) {
-          const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
-          const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-            ApiC.delete(`event/${el.dataset.id}`).then(() => {
-              info.event.remove();
-              $('#eventModal').modal('toggle');
-            }).catch();
-          });
-        }
-      });
-
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
@@ -313,6 +285,18 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // add on change event listener on datetime inputs
+  [startInput, endInput].forEach(input => {
+    input.addEventListener('change', event => {
+      const input = (event.currentTarget as HTMLInputElement);
+      // Note: valueAsDate was not working on Chromium
+      const dt = DateTime.fromMillis(input.valueAsNumber);
+      ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
+        calendar.refetchEvents();
+      }).catch(() => calendar.refetchEvents());
+    });
+  });
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -320,6 +304,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
+
+    // CANCEL EVENT ACTION
+    } else if (el.matches('[data-action="cancel-event"]')) {
+      ApiC.delete(`event/${el.dataset.id}`).then(() => {
+        calendar.refetchEvents();
+        $('#eventModal').modal('toggle');
+      }).catch();
+    // CANCEL EVENT ACTION WITH MESSAGE
+    } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+      const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
+      const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+      ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
+        ApiC.delete(`event/${el.dataset.id}`).then(() => {
+          calendar.refetchEvents();
+          $('#eventModal').modal('toggle');
+        }).catch();
+      });
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

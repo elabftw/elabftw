@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ca49a5e0668d2b645d19c910e6516b0",
+    "content-hash": "866b824f0a164bb4f49715d00f7913ad",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7448,21 +7448,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.17.13",
+            "version": "0.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "e2003ba7c5bda06d7bb419cf4be8dae5f8672132"
+                "reference": "ee72ef542680a7f47ed8c6784f78b032c0d2f381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/e2003ba7c5bda06d7bb419cf4be8dae5f8672132",
-                "reference": "e2003ba7c5bda06d7bb419cf4be8dae5f8672132",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/ee72ef542680a7f47ed8c6784f78b032c0d2f381",
+                "reference": "ee72ef542680a7f47ed8c6784f78b032c0d2f381",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.10.26"
+                "phpstan/phpstan": "^1.10.31"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -7492,7 +7492,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.17.13"
+                "source": "https://github.com/rectorphp/rector/tree/0.18.1"
             },
             "funding": [
                 {
@@ -7500,7 +7500,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-14T16:33:29+00:00"
+            "time": "2023-08-28T18:01:58+00:00"
         },
         {
             "name": "roave/security-advisories",

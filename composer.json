@@ -58,7 +58,7 @@
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",
     "codeception/c3": "^2.8",
-    "rector/rector": "^0.17.0",
+    "rector/rector": "^0.18.1",
     "phpstan/phpstan": "^1.10"
   },
   "autoload": {

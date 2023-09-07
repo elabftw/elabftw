@@ -107,6 +107,9 @@ jobs:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
       - run:
+          name: Run Twig linter
+          command: docker exec -it elabtmp yarn twigcs
+      - run:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
       - run:

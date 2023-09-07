@@ -31,6 +31,7 @@ config:
   login_tries: 10
   # the url of the dev install
   url: "https://elab.local:3148"
+  s3_region: "us-west-2"
 
 teams:
   - name: Alpha

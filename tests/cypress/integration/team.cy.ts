@@ -7,6 +7,7 @@ describe('Team', () => {
   it('Show team page', () => {
     // Scheduler
     cy.visit('/team.php');
+    cy.htmlvalidate();
     cy.get('h1#pageTitle').should('have.text', 'Team');
     cy.get('[data-tabtarget="1"]').should('have.class', 'selected');
 

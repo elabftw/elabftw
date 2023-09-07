@@ -6,6 +6,7 @@ describe('Experiments', () => {
 
   const entityEdit = () => {
     cy.url().should('include', 'mode=edit');
+
     // update date
     cy.get('#date_input').type('2021-05-01').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
@@ -35,6 +36,8 @@ describe('Experiments', () => {
     cy.get('.stepbox').click();
     cy.get('.text-muted').should('contain', 'completed');
 
+    cy.htmlvalidate();
+
     // delete step
     cy.get('.stepDestroy').click();
     cy.contains('some step').should('not.exist');
@@ -48,6 +51,7 @@ describe('Experiments', () => {
     cy.contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
     cy.contains('Toto Le sysadmin commented').should('not.exist');
+    cy.htmlvalidate();
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();
   };
@@ -73,6 +77,7 @@ describe('Experiments', () => {
 
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
+    cy.htmlvalidate();
     cy.contains('Create').click();
     entityEdit();
     // change status
@@ -85,6 +90,7 @@ describe('Experiments', () => {
 
   it('Create and edit an item', () => {
     cy.visit('/database.php');
+    cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal').should('be.visible').should('contain', 'Generated').contains('Generated').click();
     entityEdit();

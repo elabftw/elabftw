@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     title: string;
   }
 
+  // TODO i18n
   const notsetOpts = {id: null, title: 'Not set', color: 'bdbdbd'};
 
   const malleableStatus = new Malle({
@@ -99,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
     selectOptions: ApiC.getJson(`${Model.Team}/${about.team}/${entity.type}_status`).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
-      // TODO i18n
       statusArr.unshift(notsetOpts);
       return statusArr;
     }),

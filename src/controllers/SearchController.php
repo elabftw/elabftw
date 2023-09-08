@@ -11,8 +11,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 
 /**

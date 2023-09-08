@@ -45,6 +45,7 @@ class EntitySqlBuilder
             $select = 'SELECT DISTINCT entity.id,
                 entity.title,
                 entity.date,
+                entity.category,
                 entity.status,
                 entity.rating,
                 entity.userid,
@@ -67,7 +68,6 @@ class EntitySqlBuilder
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
             statust.title AS status_title,
             statust.color AS status_color,
-            categoryt.id AS category_id,
             categoryt.title AS category_title,
             categoryt.color AS category_color,
             users.firstname, users.lastname, users.orcid,
@@ -76,7 +76,7 @@ class EntitySqlBuilder
             (commentst.recent_comment IS NOT NULL) AS has_comment,";
 
         // add a "color" column that is status for experiments and category for items
-        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color' : 'categoryt.color AS color';
+        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color, statust.title AS mainattr_title' : 'categoryt.color AS color, categoryt.title AS mainattr_title';
 
         $tagsSelect = '';
         $tagsJoin = '';

@@ -51,7 +51,7 @@
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category'><a style='color:#{{ item.category_color }}' href='?cat={{ item.category_id }}'>{{ item.category_title|raw }}</a></span>
+      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' style='color:#{{ item.category_color }}'>{{ item.category_title|raw }}</span>
     </div>
     {# end first line #}
 

@@ -83,10 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // END ITEMS TYPES
 
-  // randomize the input of the color picker so even if user doesn't change the color it's a different one!
+  // set a random color to all the "create new" statuslike modals
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
-  const colorInput = '#' + Math.floor(Math.random()*16777215).toString(16);
-  $('.randomColor').val(colorInput);
+  document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
+    input.value = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+  });
 
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -152,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY STATUS
     } else if (el.matches('[data-action="destroy-status"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement('statusBox'));
+        ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {

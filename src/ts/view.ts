@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   new MutationObserver(() => {
     malleableStatus.listen();
-  malleableCategory.listen();
+    malleableCategory.listen();
   }).observe(document.getElementById('main_section'), {childList: true});
 
   // add an observer so new comments will get an event handler too

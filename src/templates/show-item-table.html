@@ -39,7 +39,12 @@
     {% if item.timestamped %}
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
-    <span class='item-type category-button rounded p-1' style='--bg:#{{ item.color }}'>{{ item.category }}</span>
+    <span data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='item-type category-button rounded p-1' style='--bg:#{{ item.category_color }}'>{{ item.category_title }}</span>
+  </td>
+
+  {# STATUS #}
+  <td class='item-next'>
+    <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='item-type category-button rounded p-1' style='--bg:#{{ item.status_color }}'>{{ item.status_title }}</span>
   </td>
 
   {# TAGS #}
@@ -61,7 +66,7 @@
   </td>
 
   <td class='item-owner'>
-    {{"<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname)|raw }}
+    <span data-action='add-query-filter' data-key='owner' data-value='{{ item.userid }}'>{{ item.fullname|raw }}</span>
   </td>
 
 </tr>

@@ -99,12 +99,12 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, status, elabid, canread, canwrite, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :status, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
-        $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':status', $this->getStatus(), PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $canread, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);

@@ -367,7 +367,7 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-target='experiments_status' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>
@@ -407,7 +407,7 @@
 
             <li class='list-inline-item'>
               <input type='radio' name='itemsstatusdefault' id='itemsstatusDefault_{{ status.id }}' {{ status.is_default ? " checked" }} />
-              <label for='itemsstatusDefault_{{ status.id }}'>{{ 'Default status'|trans }}</label>
+              <label for='itemsstatusDefault_{{ status.id }}'>{{ 'Default'|trans }}</label>
             </li>
 
             <li class='list-inline-item'>
@@ -415,7 +415,7 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-target='items_status' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>

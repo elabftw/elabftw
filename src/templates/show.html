@@ -80,10 +80,19 @@
 
             {# CATEGORY #}
             <select name='cat' class='autosubmit mr-1 form-control' aria-label='Filter category'>
-              <option value=''>{{ Entity.type == 'experiments' ? 'Filter status'|trans : 'Filter by type'|trans }}</option>
+              <option value=''>{{ 'Filter category'|trans }}</option>
               {% for category in categoryArr %}
-                <option value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
-                {{ category.category|raw }}</option>
+                <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected'}}>
+                {{ category.title|raw }}</option>
+              {% endfor %}
+            </select>
+
+            {# STATUS #}
+            <select name='status' class='autosubmit mr-1 form-control' aria-label='Filter status'>
+              <option value=''>{{ 'Filter status'|trans }}</option>
+              {% for status in statusArr %}
+                <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected'}}>
+                {{ status.title|raw }}</option>
               {% endfor %}
             </select>
 

@@ -263,8 +263,8 @@
       <option disabled>----------------</option>
       <option value='database'{{ Request.query.get('type') == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.category_id }}'{{ Request.query.get('type') == category.category_id ? ' selected' }}>
-          {{ category.category }}
+        <option value='{{ category.id }}'{{ Request.query.get('type') == category.id ? ' selected' }}>
+          {{ category.title|raw }}
         </option>
       {% endfor %}
     </select>

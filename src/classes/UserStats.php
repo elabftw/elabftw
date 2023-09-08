@@ -10,7 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use PDO;
@@ -44,7 +44,7 @@ class UserStats
         }
 
         // get all status name and id
-        $Status = new Status(new Teams($this->Users, $this->Users->team));
+        $Status = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
         $statusArr = $Status->readAll();
 
         $sql = 'SELECT COUNT(id)

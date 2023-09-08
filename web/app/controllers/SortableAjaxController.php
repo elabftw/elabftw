@@ -19,7 +19,8 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
@@ -47,11 +48,17 @@ try {
             }
             $Entity = new ItemsTypes($App->Users);
             break;
-        case 'status':
+        case 'experiments_status':
             if (!$App->Users->isAdmin) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
             }
-            $Entity = new Status(new Teams($App->Users));
+            $Entity = new ExperimentsStatus(new Teams($App->Users));
+            break;
+        case 'items_status':
+            if (!$App->Users->isAdmin) {
+                throw new IllegalActionException('Non admin user tried to access admin controller.');
+            }
+            $Entity = new ItemsStatus(new Teams($App->Users));
             break;
         case 'experiments_steps':
             $model = new Experiments($App->Users);

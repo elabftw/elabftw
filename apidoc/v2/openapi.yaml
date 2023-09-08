@@ -457,9 +457,9 @@ components:
     items_type:
       type: object
       properties:
-        category_id:
+        id:
           type: integer
-        category:
+        title:
           type: string
         color:
           type: string

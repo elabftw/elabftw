@@ -49,18 +49,19 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readAll(): array
     {
+        // main category table
         $sql = 'SELECT entity.id AS itemid,
             entity.title,
             entity.elabid,
-            category.title AS category,
+            statust.title AS category,
             ' . ($this instanceof ItemsLinks ? 'entity.is_bookable,' : '') . '
-            category.color,
+            statust.color,
             entity.state AS link_state
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
-            LEFT JOIN ' . $this->getCategoryTable() . ' AS category ON (entity.category = category.id)
+            LEFT JOIN ' . $this->getCategoryTable() . ' AS statust ON (entity.status = statust.id)
             WHERE ' . $this->getTable() . '.item_id = :id AND entity.state = :state OR entity.state = :statearchived
-            ORDER by category.title ASC, entity.date ASC, entity.title ASC';
+            ORDER by statust.title ASC, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -191,6 +192,8 @@ abstract class AbstractLinks implements RestInterface
     abstract protected function getTargetType(): string;
 
     abstract protected function getCategoryTable(): string;
+
+    abstract protected function getStatusTable(): string;
 
     abstract protected function getTable(): string;
 

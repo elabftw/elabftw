@@ -31,7 +31,9 @@ use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -287,7 +289,11 @@ class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
-                'status' => new Status($this->Model, $this->subId),
+                // backward compatibility: status == experiments_status
+                'status' => new ExperimentsStatus($this->Model, $this->subId),
+                'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
+                'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
+                'items_status' => new ItemsStatus($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
             };

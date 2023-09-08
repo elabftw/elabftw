@@ -79,8 +79,11 @@ enum Model {
   Config = 'config',
   FavTag = 'favtags',
   Idp = 'idps',
+  ItemsStatus = 'items_status',
   Link = 'links',
   Notification = 'notifications',
+  // TODO rename ExperimentsStatus
+  ExperimentsStatus = 'experiments_status',
   Status = 'status',
   Step = 'steps',
   Tag = 'tags',

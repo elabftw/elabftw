@@ -17,7 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use function hash_file;
@@ -195,7 +195,7 @@ class Eln extends AbstractZip
                     // try and adjust the status for experiments
                     $sourceStatus = $json['category'];
                     // let's see if we can find a status like this in target instance
-                    $targetStatusArr = (new Status(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
+                    $targetStatusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
                     $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {
                         return $status['category'] === $sourceStatus;
                     });

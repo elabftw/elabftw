@@ -400,20 +400,23 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
-export async function updateCategory(entity: Entity, value: string): Promise<string> {
-  const resp = await (new Api()).patch(`${entity.type}/${entity.id}`, {'category': value});
-  const json = await resp.json();
-  // we need to change the category next to the title for db items
-  const title = document.getElementById('documentTitle');
-  // it's only there is view mode, and for database items
-  const url = new URL(document.location.href);
-  if (title && url.pathname.split('/').pop() === 'database.php') {
-    const categoryName = (title.firstElementChild as HTMLElement);
-    categoryName.innerText = json.category;
-    // also adjust to the new color
-    categoryName.style.color = `#${json.color}`;
+// update category or status, returns the color as string
+export async function updateCatStat(target: string, entity: Entity, value: string): Promise<string> {
+  const params = {};
+  params[target] = value;
+  const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
+  if (target === 'category') {
+    // we need to change the category next to the title for db items
+    const title = document.getElementById('documentTitle');
+    // it's only there is view mode, and for database items
+    const url = new URL(document.location.href);
+    if (title && url.pathname.split('/').pop() === 'database.php') {
+      const categoryName = (title.firstElementChild as HTMLElement);
+      categoryName.innerText = newEntity.category_title;
+      categoryName.style.color = `#${newEntity.category_color}`;
+    }
   }
-  return json.category;
+  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
 export function showContentPlainText(el: HTMLElement): void {

@@ -12,7 +12,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 
 /**
@@ -26,7 +26,7 @@ class SearchController extends AbstractEntityController
 
         // on search page, the categories can be status or itemstypes depending on where one searches
         if ($this->App->Request->query->get('type') === 'experiments') {
-            $Category = new Status(new Teams($this->App->Users, $this->App->Users->team));
+            $Category = new ExperimentsStatus(new Teams($this->App->Users, $this->App->Users->team));
         } else {
             $Category = new ItemsTypes($this->App->Users);
         }

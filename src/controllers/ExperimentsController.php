@@ -11,7 +11,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 
 /**
@@ -26,7 +27,9 @@ class ExperimentsController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $Category = new Status(new Teams($this->App->Users, $this->App->Users->team));
+        $Category = new ExperimentsCategories(new Teams($this->App->Users, $this->App->Users->team));
         $this->categoryArr = $Category->readAll();
+        $Status = new ExperimentsStatus(new Teams($this->App->Users, $this->App->Users->team));
+        $this->statusArr = $Status->readAll();
     }
 }

@@ -5,7 +5,7 @@
   {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
 {% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color|default('bdbdbd') }};'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -51,7 +51,7 @@
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category|raw }}</a></span>
+      <span class='item-category'><a style='color:#{{ item.category_color }}' href='?cat={{ item.category_id }}'>{{ item.category_title|raw }}</a></span>
     </div>
     {# end first line #}
 

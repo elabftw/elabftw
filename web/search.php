@@ -15,7 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
@@ -39,7 +39,7 @@ $Database = new Items($App->Users);
 $TeamTags = new TeamTags($App->Users, $App->Users->userData['team']);
 
 $itemsTypesArr = (new ItemsTypes($App->Users))->readAll();
-$categoryArr = $statusArr = (new Status(new Teams($App->Users, $App->Users->team)))->readAll();
+$categoryArr = $statusArr = (new ExperimentsStatus(new Teams($App->Users, $App->Users->team)))->readAll();
 if ($App->Request->query->get('type') !== 'experiments') {
     $categoryArr = $itemsTypesArr;
 }

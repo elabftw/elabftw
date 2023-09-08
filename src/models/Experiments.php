@@ -239,7 +239,7 @@ class Experiments extends AbstractConcreteEntity
         // go pick what is the default status upon creating experiment
         // there should be only one because upon making a status default,
         // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
+        $sql = 'SELECT id FROM experiments_status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -248,7 +248,7 @@ class Experiments extends AbstractConcreteEntity
         // if there is no is_default status
         // we take the first status that come
         if (!$status) {
-            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
+            $sql = 'SELECT id FROM experiments_status WHERE team = :team LIMIT 1';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $this->Db->execute($req);

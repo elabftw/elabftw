@@ -45,7 +45,7 @@ class EntitySqlBuilder
             $select = 'SELECT DISTINCT entity.id,
                 entity.title,
                 entity.date,
-                entity.category,
+                entity.status,
                 entity.rating,
                 entity.userid,
                 entity.locked,
@@ -65,13 +65,18 @@ class EntitySqlBuilder
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
+            statust.title AS status_title,
+            statust.color AS status_color,
             categoryt.id AS category_id,
-            categoryt.title AS category,
-            categoryt.color,
+            categoryt.title AS category_title,
+            categoryt.color AS category_color,
             users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment";
+            (commentst.recent_comment IS NOT NULL) AS has_comment,";
+
+        // add a "color" column that is status for experiments and category for items
+        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color' : 'categoryt.color AS color';
 
         $tagsSelect = '';
         $tagsJoin = '';
@@ -103,7 +108,7 @@ class EntitySqlBuilder
             $this->entity->Users->userData['team']
         );
 
-        $categoryTable = $this->entity->type === 'experiments' ? 'status' : 'items_types';
+        $categoryTable = $this->entity->type === 'experiments' ? 'experiments_categories' : 'items_types';
         $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
 
         $commentsJoin = 'LEFT JOIN (
@@ -147,6 +152,7 @@ class EntitySqlBuilder
             $select,
             $tagsSelect,
             $from,
+            sprintf('LEFT JOIN %s_status AS statust ON (statust.id = entity.status)', $this->entity->type),
             $categoryJoin,
             $commentsJoin,
             $tagsJoin,

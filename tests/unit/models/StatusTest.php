@@ -14,11 +14,11 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
-    private Status $Status;
+    private ExperimentsStatus $Status;
 
     protected function setUp(): void
     {
-        $this->Status = new Status(new Teams(new Users(1, 1), 1), 1);
+        $this->Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), 1);
     }
 
     public function testCreate(): void
@@ -35,7 +35,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testUpdate(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
+        $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['category']);
         $this->assertEquals('121212', $status['color']);
@@ -47,7 +47,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
+        $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
         $this->expectException(ImproperActionException::class);
         $this->Status->destroy();

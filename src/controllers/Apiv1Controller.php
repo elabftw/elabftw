@@ -24,7 +24,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
@@ -172,7 +172,7 @@ class Apiv1Controller extends AbstractApiController
                 $this->Category = new ItemsTypes($this->Users);
                 break;
             case 'status':
-                $this->Category = new Status(new Teams($this->Users, $this->Users->team));
+                $this->Category = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
                 break;
             case 'events':
                 $this->Entity = new Items($this->Users, $this->id);

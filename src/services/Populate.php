@@ -17,7 +17,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
@@ -48,7 +48,7 @@ class Populate
     public function generate(Experiments | Items $Entity): void
     {
         if ($Entity instanceof Experiments) {
-            $Category = new Status(new Teams($Entity->Users, $Entity->Users->team));
+            $Category = new ExperimentsStatus(new Teams($Entity->Users, $Entity->Users->team));
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);

@@ -121,25 +121,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
     // CREATE STATUS
-    } else if (el.matches('[data-action="create-status"]')) {
-      const nameInput = (document.getElementById('statusName') as HTMLInputElement);
-      const content = nameInput.value;
-      if (!content) {
+    } else if (el.matches('[data-action="create-statuslike"]')) {
+      const holder = el.parentElement.parentElement;
+      const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
+      const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
+      const name = nameInput.value;
+      if (!name) {
         notifError(new Error('Invalid status name'));
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;
       }
-      const color = (document.getElementById('statusColor') as HTMLInputElement).value;
-      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${Model.Status}`, {'name': content, 'color': color}).then(() => reloadElement('statusBox'));
+      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}`, {'name': name, 'color': color}).then(() => reloadElement(`${el.dataset.target}Div`));
     // UPDATE STATUS
     } else if (el.matches('[data-action="update-status"]')) {
       const id = el.dataset.id;
-      const title = (document.getElementById('statusName_' + id) as HTMLInputElement).value;
-      const color = (document.getElementById('statusColor_' + id) as HTMLInputElement).value;
-      const isDefault = (document.getElementById('statusDefault_' + id) as HTMLInputElement).checked;
+      let target = Model.ExperimentsStatus;
+      if (el.dataset.target === 'items') {
+        target = Model.ItemsStatus;
+      }
+      const holder = el.parentElement.parentElement;
+      const title = (holder.querySelector('input[type="text"]') as HTMLInputElement).value;
+      const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
+      const isDefault = (holder.querySelector('input[type="radio"]') as HTMLInputElement).checked;
       const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
-      ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${id}`, params);
+      ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${target}/${id}`, params);
     // DESTROY STATUS
     } else if (el.matches('[data-action="destroy-status"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

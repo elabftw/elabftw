@@ -64,13 +64,7 @@ class ItemsTypes extends AbstractTemplateEntity
      */
     public function readAll(): array
     {
-        $sql = 'SELECT items_types.id AS category_id,
-            items_types.title AS category,
-            items_types.color,
-            items_types.body,
-            items_types.ordering,
-            items_types.canread,
-            items_types.canwrite
+        $sql = 'SELECT id, title, color, body, ordering, canread, canwrite
             FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);

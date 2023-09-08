@@ -37,6 +37,8 @@ abstract class AbstractEntityController implements ControllerInterface
 {
     protected array $categoryArr = array();
 
+    protected array $statusArr = array();
+
     protected array $visibilityArr = array();
 
     protected array $templatesArr = array();
@@ -112,6 +114,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'statusArr' => $this->statusArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
@@ -231,7 +234,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamTags = new TeamTags($this->App->Users);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
-
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
@@ -246,6 +248,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
+            'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,

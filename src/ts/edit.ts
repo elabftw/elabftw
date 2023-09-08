@@ -6,7 +6,7 @@
  * @package elabftw
  */
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCatStat, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import { DateTime } from 'luxon';
@@ -309,8 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // CATEGORY SELECT
-  $(document).on('change', '#category_select', function() {
-    updateCategory(entity, String($(this).val()));
+  $(document).on('change', '.catstatSelect', function() {
+    updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
   // TITLE STUFF

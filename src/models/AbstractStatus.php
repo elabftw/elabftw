@@ -12,7 +12,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\CategoryTrait;
@@ -39,7 +38,6 @@ abstract class AbstractStatus extends AbstractCategory
 
     public function __construct(private Teams $Teams, ?int $id = null)
     {
-        $this->countableTable = 'experiments';
         $this->Db = Db::getConnection();
         $this->setId($id);
     }
@@ -104,15 +102,10 @@ abstract class AbstractStatus extends AbstractCategory
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();
-        // don't allow deletion of a status with experiments
-        if ($this->countEntities() > 0) {
-            throw new ImproperActionException(_('Remove all experiments with this status before deleting this status.'));
-        }
 
-        $sql = sprintf('DELETE FROM %s WHERE id = :id AND team = :team', $this->table);
+        $sql = sprintf('DELETE FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
     }

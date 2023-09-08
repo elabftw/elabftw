@@ -13,7 +13,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
@@ -34,7 +33,6 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->entityType = EntityType::ItemsTypes;
         $this->Db = Db::getConnection();
         $this->ItemsLinks = new ItemsLinks($this);
-        $this->countableTable = 'items';
         $this->Steps = new Steps($this);
         $this->setId($id);
     }
@@ -95,17 +93,5 @@ class ItemsTypes extends AbstractTemplateEntity
     public function duplicate(): int
     {
         return 1;
-    }
-
-    /**
-     * Destroy an item type
-     */
-    public function destroy(): bool
-    {
-        // don't allow deletion of an item type with items
-        if ($this->countEntities() > 0) {
-            throw new ImproperActionException(_('There are still items associated with this type. Make sure to remove them completely with bin/console prune:items command so even deleted ones are removed.'));
-        }
-        return parent::destroy();
     }
 }

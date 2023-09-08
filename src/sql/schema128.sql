@@ -7,11 +7,13 @@ CREATE TABLE `items_status` (
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
   `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ALTER TABLE `items` ADD `status` INT UNSIGNED NULL DEFAULT NULL;
 ALTER TABLE `experiments` CHANGE `category` `status` INT UNSIGNED NOT NULL;
 ALTER TABLE `experiments` ADD `category` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_status` ADD `state` INT UNSIGNED NOT NULL DEFAULT 1;
 CREATE TABLE `experiments_categories` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int UNSIGNED NOT NULL,
@@ -19,6 +21,7 @@ CREATE TABLE `experiments_categories` (
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
   `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ALTER TABLE `experiments` CHANGE `status` `status` INT UNSIGNED NULL DEFAULT NULL;

@@ -1,4 +1,5 @@
 -- revert schema 128
+ALTER TABLE `experiments_status` DROP COLUMN `state`;
 RENAME TABLE `experiments_status` TO `status`;
 DROP TABLE IF EXISTS `items_status`;
 ALTER TABLE `items` DROP COLUMN `status`;

@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
-    // CREATE STATUS
+    // CREATE STATUSLIKE
     } else if (el.matches('[data-action="create-statuslike"]')) {
       const holder = el.parentElement.parentElement;
       const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
@@ -132,7 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.borderColor = 'red';
         return;
       }
-      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}`, {'name': name, 'color': color}).then(() => reloadElement(`${el.dataset.target}Div`));
+      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}`, {'name': name, 'color': color}).then(() => {
+        $(`#create${el.dataset.target}Modal`).modal('hide');
+        reloadElement(`${el.dataset.target}Div`);
+      });
     // UPDATE STATUS
     } else if (el.matches('[data-action="update-status"]')) {
       const id = el.dataset.id;

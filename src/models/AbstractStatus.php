@@ -12,9 +12,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -23,7 +23,6 @@ use PDO;
  */
 abstract class AbstractStatus extends AbstractCategory
 {
-    use CategoryTrait;
     use SetIdTrait;
 
     private const DEFAULT_BLUE = '29AEB9';
@@ -83,9 +82,10 @@ abstract class AbstractStatus extends AbstractCategory
     public function readAll(): array
     {
         $sql = sprintf('SELECT id, title, color, is_default
-            FROM %s WHERE team = :team ORDER BY ordering ASC', $this->table);
+            FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -102,12 +102,8 @@ abstract class AbstractStatus extends AbstractCategory
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();
-
-        $sql = sprintf('DELETE FROM %s WHERE id = :id', $this->table);
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
+        // set state to deleted
+        return $this->update(new StatusParams('state', (string) State::Deleted->value));
     }
 
     private function create(string $title, string $color, int $isDefault = 0): int

@@ -14,7 +14,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -25,7 +24,6 @@ use PDO;
 class ItemsTypes extends AbstractTemplateEntity
 {
     use SortableTrait;
-    use CategoryTrait;
 
     public function __construct(public Users $Users, ?int $id = null)
     {

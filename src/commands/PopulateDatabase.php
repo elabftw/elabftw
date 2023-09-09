@@ -17,9 +17,11 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -104,10 +106,30 @@ class PopulateDatabase extends Command
         $Teams = new Teams($Users);
         $Teams->bypassReadPermission = true;
         $Teams->bypassWritePermission = true;
+        $Status = new ItemsStatus($Teams);
+        $Category = new ExperimentsCategories($Teams);
+        $faker = \Faker\Factory::create();
+
         foreach ($yaml['teams'] as $team) {
             $id = $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
+            $Teams->setId($id);
+
+            // create fake categories and status
+            $Category->postAction(Action::Create, array('name' => 'Projet X', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Tests', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Above Top Secret', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Production', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'R&D', 'color' => $faker->hexColor(), 'is_default' => 0));
+
+            $Status->postAction(Action::Create, array('name' => 'Maintenance mode', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Operational', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'In stock', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Need to reorder', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Destroyed', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Processed', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Waiting', 'color' => $faker->hexColor(), 'is_default' => 0));
+
             if (isset($team['visible'])) {
-                $Teams->setId($id);
                 $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
             }
         }

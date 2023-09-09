@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +36,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
-        $this->assertEquals('Updated', $status['category']);
+        $this->assertEquals('Updated', $status['title']);
         $this->assertEquals('121212', $status['color']);
         $this->assertEquals(0, $status['is_default']);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
@@ -49,7 +48,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
-        $this->expectException(ImproperActionException::class);
-        $this->Status->destroy();
+        $this->assertTrue($this->Status->destroy());
     }
 }

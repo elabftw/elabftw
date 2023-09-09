@@ -15,8 +15,10 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
@@ -47,14 +49,18 @@ class Populate
      */
     public function generate(Experiments | Items $Entity): void
     {
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
-            $Category = new ExperimentsStatus(new Teams($Entity->Users, $Entity->Users->team));
+            $Category = new ExperimentsCategories($Teams);
+            $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = (int) $Category->readAll()[0]['category_id'];
+            $Status = new ItemsStatus($Teams);
+            $tpl = (int) $Category->readAll()[0]['id'];
         }
         $categoryArr = $Category->readAll();
+        $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
@@ -64,6 +70,7 @@ class Populate
             BasePermissions::User->toJson(),
             BasePermissions::UserOnly->toJson(),
         );
+
 
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
@@ -89,9 +96,13 @@ class Populate
                 $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
             }
 
-            // change the category (status/item type)
+            // CATEGORY
             $category = $this->faker->randomElement($categoryArr);
-            $Entity->patch(Action::Update, array('category' => (string) $category['category_id']));
+            $Entity->patch(Action::Update, array('category' => (string) $category['id']));
+
+            // STATUS
+            $status = $this->faker->randomElement($statusArr);
+            $Entity->patch(Action::Update, array('status' => (string) $status['id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {

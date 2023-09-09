@@ -102,6 +102,7 @@ abstract class AbstractStatus extends AbstractCategory
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();
+        // TODO fix FK constraints so it sets NULL instead of deleting entries
         // set state to deleted
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
     }

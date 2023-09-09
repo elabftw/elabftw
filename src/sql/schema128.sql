@@ -11,7 +11,7 @@ CREATE TABLE `items_status` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ALTER TABLE `items` ADD `status` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments` CHANGE `category` `status` INT UNSIGNED NOT NULL;
+ALTER TABLE `experiments` CHANGE `category` `status` INT UNSIGNED NULL DEFAULT NULL;
 ALTER TABLE `experiments` ADD `category` INT UNSIGNED NULL DEFAULT NULL;
 ALTER TABLE `experiments_status` ADD `state` INT UNSIGNED NOT NULL DEFAULT 1;
 CREATE TABLE `experiments_categories` (
@@ -24,6 +24,5 @@ CREATE TABLE `experiments_categories` (
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-ALTER TABLE `experiments` CHANGE `status` `status` INT UNSIGNED NULL DEFAULT NULL;
 ALTER TABLE `items` CHANGE `category` `category` INT UNSIGNED NULL DEFAULT NULL;
 UPDATE config SET conf_value = 128 WHERE conf_name = 'schema';

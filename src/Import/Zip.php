@@ -51,7 +51,7 @@ class Zip extends AbstractZip
      */
     private function getDefaultStatus(): int
     {
-        $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
+        $sql = 'SELECT id FROM experiments_status WHERE team = :team AND is_default = 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->execute();

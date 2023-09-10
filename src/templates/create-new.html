@@ -25,8 +25,8 @@
           </a>
         {% else %}
           {% for category in categoryArr %}
-            <div data-action='create-entity' data-type='items' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
-              {{ category.category }}
+            <div data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+              {{ category.title|raw }}
             </div>
           {% endfor %}
         {% endif %}

@@ -29,8 +29,6 @@ config:
   ldap_username: cn=admin,dc=example,dc=org
   # increase this a bit
   login_tries: 10
-  # the url of the dev install
-  url: "https://elab.local:3148"
 
 teams:
   - name: Alpha

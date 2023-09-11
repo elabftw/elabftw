@@ -46,7 +46,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'userid' => 3,
             'team' => 1,
             'target' => 'is_owner',
-            'content' => 'on',
+            'content' => '1',
         );
         $this->assertEquals(1, $this->Users2Teams->patchUser2Team(new Users(1, 1), $params));
         $this->expectException(IllegalActionException::class);

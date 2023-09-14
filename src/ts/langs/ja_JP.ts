@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Click to edit",
+    "cancel": "キャンセル",
     "comment-add": "コメントを追加",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
     "dropzone-filesize-limit": "File size limit:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "お待ちください…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "ファイルの名前を入力してください",
+    "save": "保存",
     "saved": "保存済み",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "Are you sure you want to undo this step?",

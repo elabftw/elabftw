@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "click-to-edit": "Click to edit",
+    "cancel": "Отмена",
     "comment-add": "Добавить комментарий",
     "dropzone-upload-area": "Перетащите сюда файлы для загрузки",
     "dropzone-filesize-limit": "File size limit:",
@@ -19,6 +20,7 @@ const t = {
     "please-wait": "Пожалуйста, подождите…",
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "request-filename": "Введите имя файла",
+    "save": "Сохранить",
     "saved": "Сохранено",
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",

@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
+  // start and end inputs
+  const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+  const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {
     const offset = datetime.getTimezoneOffset() * 60 * 1000;
@@ -148,8 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'title': title,
       };
       ApiC.post(`events/${itemid}`, postParams).then(()=> {
-        // FIXME: it would be best to just properly render the event instead of reloading the whole page
-        window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
+        // note: here the event is shown without a title, until the user clicks somewhere. Still better than a full page reload.
+        calendar.refetchEvents();
       }).catch(() => {
         calendar.unselect();
         return;
@@ -175,47 +179,36 @@ document.addEventListener('DOMContentLoaded', () => {
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
 
-      // start and end inputs
-      const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+      // start and end inputs values
       startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
-      const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
       endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
-      // add on change event listener on datetime inputs
-      [startInput, endInput].forEach(input => {
-        input.addEventListener('change', event => {
-          const input = (event.currentTarget as HTMLInputElement);
-          // Note: valueAsDate was not working on Chromium
-          const dt = DateTime.fromMillis(input.valueAsNumber);
-          ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-            calendar.refetchEvents();
-          }).catch(() => calendar.refetchEvents());
-        });
-      });
+      // also adjust the event id so the change listener will send a correct query
+      startInput.dataset.eventid = info.event.id;
+      endInput.dataset.eventid = info.event.id;
+      document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
 
-      if (info.event.extendedProps.experiment != null) {
-        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${info.event.extendedProps.experiment}">${info.event.extendedProps.experiment_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      function refreshBoundDivs(extendedProps) {
+        if (extendedProps.experiment != null) {
+          $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
+          $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+        }
+        if (extendedProps.item_link != null) {
+          $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
+          $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+        }
       }
-      if (info.event.extendedProps.item_link != null) {
-        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${info.event.extendedProps.item_link}">${info.event.extendedProps.item_link_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
-      }
+
+      refreshBoundDivs(info.event.extendedProps);
+
       // BIND AN ENTITY TO THE EVENT
       $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
         const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
         if (entityid > 0) {
-          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(() => {
-            $('#eventModal').modal('toggle');
-            window.location.replace(`team.php?tab=1&item=${selectedItem}&start=${encodeURIComponent(info.event.start.toString())}`);
+          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(res => res.json()).then(json => {
+            calendar.refetchEvents();
+            refreshBoundDivs(json);
           });
         }
-      });
-      // remove the binding
-      $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': null}).then(() => {
-          $('#eventModal').modal('toggle');
-          window.location.replace(`team.php?tab=1&item=${selectedItem}&start=${encodeURIComponent(info.event.start.toString())}`);
-        });
       });
       // BIND AUTOCOMPLETE
       // TODO refactor this
@@ -245,28 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
       });
-
-      document.getElementById('eventModal').addEventListener('click', (event) => {
-        const el = (event.target as HTMLElement);
-        // CANCEL EVENT ACTION
-        if (el.matches('[data-action="cancel-event"]')) {
-          ApiC.delete(`event/${el.dataset.id}`).then(() => {
-            info.event.remove();
-            $('#eventModal').modal('toggle');
-          }).catch();
-        // CANCEL EVENT ACTION WITH MESSAGE
-        } else if (el.matches('[data-action="cancel-event-with-message"]')) {
-          const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
-          const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-          ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-            ApiC.delete(`event/${el.dataset.id}`).then(() => {
-              info.event.remove();
-              $('#eventModal').modal('toggle');
-            }).catch();
-          });
-        }
-      });
-
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
@@ -313,6 +284,28 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // add on change event listener on datetime inputs
+  [startInput, endInput].forEach(input => {
+    input.addEventListener('change', event => {
+      const input = (event.currentTarget as HTMLInputElement);
+      // Note: valueAsDate was not working on Chromium
+      const dt = DateTime.fromMillis(input.valueAsNumber);
+      ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
+        calendar.refetchEvents();
+      }).catch(() => calendar.refetchEvents());
+    });
+  });
+
+  function clearBoundDiv(type: string) {
+    if (type === 'experiment') {
+      $('#eventBoundExp').html('');
+      $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
+      return;
+    }
+    $('#eventBoundDb').html('');
+    $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
+  }
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -320,6 +313,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
+
+    // CANCEL EVENT ACTION
+    } else if (el.matches('[data-action="cancel-event"]')) {
+      ApiC.delete(`event/${el.dataset.id}`).then(() => {
+        calendar.refetchEvents();
+        $('#eventModal').modal('toggle');
+      }).catch();
+    // CANCEL EVENT ACTION WITH MESSAGE
+    } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+      const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
+      const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+      ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
+        ApiC.delete(`event/${el.dataset.id}`).then(() => {
+          calendar.refetchEvents();
+          $('#eventModal').modal('toggle');
+        }).catch();
+      });
+
+    } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
+      const bindType = el.dataset.type;
+      ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
+        clearBoundDiv(bindType);
+        // clear the inputs
+        document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
+        calendar.refetchEvents();
+      });
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

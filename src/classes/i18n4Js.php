@@ -31,6 +31,7 @@ class i18n4Js
     {
         return array(
             'click-to-edit' => _('Click to edit'),
+            'cancel' => _('Cancel'),
             'comment-add' => _('Add a comment'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
@@ -47,6 +48,7 @@ class i18n4Js
             'please-wait' => _('Please wait…'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'request-filename' => _('Enter name of the file'),
+            'save' => _('Save'),
             'saved' => _('Saved'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),

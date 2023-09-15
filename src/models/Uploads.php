@@ -374,7 +374,12 @@ class Uploads implements RestInterface
     private function archive(): array
     {
         $this->canWriteOrExplode();
-        $this->update(new UploadParams('state', (string) State::Archived->value));
+        $targetState = State::Archived->value;
+        // if already archived, unarchive
+        if ($this->uploadData['state'] === State::Archived->value) {
+            $targetState = State::Normal->value;
+        }
+        $this->update(new UploadParams('state', (string) $targetState));
         return $this->readOne();
     }
 

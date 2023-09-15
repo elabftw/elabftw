@@ -255,7 +255,7 @@ final class Config implements RestInterface
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);
-            $this->configArr[$name] = $value;
+            $this->configArr[$name] = (string) $value;
         }
 
         return $this->readAll();

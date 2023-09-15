@@ -14,7 +14,6 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
@@ -54,7 +53,7 @@ class Users2Teams
         }
 
         // currently only other value for target is: is_owner
-        return $this->patchIsOwner($requester, $userid, $teamid, $params['content']);
+        return $this->patchIsOwner($requester, $userid, $teamid, (int) $params['content']);
     }
 
     /**
@@ -111,13 +110,12 @@ class Users2Teams
         return $group;
     }
 
-    private function patchIsOwner(Users $requester, int $userid, int $teamid, string $content): int
+    private function patchIsOwner(Users $requester, int $userid, int $teamid, int $content): int
     {
         // only sysdamin can do that
         if ($requester->userData['is_sysadmin'] === 0) {
             throw new IllegalActionException('Only a sysadmin can modify is_owner value.');
         }
-        $content = Filter::OnToBinary($content);
         $sql = 'UPDATE users2teams SET is_owner = :content WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content, PDO::PARAM_INT);

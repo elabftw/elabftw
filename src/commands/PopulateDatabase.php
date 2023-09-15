@@ -97,7 +97,7 @@ class PopulateDatabase extends Command
         // adjust global config
         $Config = Config::getConfig();
         // Wait for sql server to settle. Without it the config settings from the yaml file are not inserted
-        // Not sure why it is necessary but probably becasue the entire database structure is loaded
+        // Not sure why it is necessary but probably because the entire database structure is loaded
         $output->write('Waiting for mysql to settle...');
         while (empty($Config->readAll())) {
             sleep(1);

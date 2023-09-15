@@ -94,6 +94,10 @@ class PopulateDatabase extends Command
         $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();
 
+        // wait for sql server to settle.
+        // Not sure why it is necessary but without it the config settings from the yaml file are not inserted
+        sleep(45);
+
         // adjust global config
         $configArr = $yaml['config'] ?? array();
         $Config = Config::getConfig();

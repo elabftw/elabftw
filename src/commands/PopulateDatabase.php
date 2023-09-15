@@ -94,15 +94,19 @@ class PopulateDatabase extends Command
         $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();
 
-        // wait for sql server to settle.
-        // Not sure why it is necessary but without it the config settings from the yaml file are not inserted
-        sleep(45);
-
         // adjust global config
-        $configArr = $yaml['config'] ?? array();
         $Config = Config::getConfig();
-        $Config->patch(Action::Update, $configArr);
+        // Wait for sql server to settle. Without it the config settings from the yaml file are not inserted
+        // Not sure why it is necessary but probably becasue the entire database structure is loaded
+        $output->write('Waiting for mysql to settle...');
+        while (empty($Config->readAll())) {
+            sleep(1);
+            $output->write('.');
+        }
+        $output->writeln('.');
+        $Config->patch(Action::Update, $yaml['config'] ?? array());
 
+        $output->writeln('Creating teams, users, experiments, and resources...');
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
@@ -231,12 +235,12 @@ class PopulateDatabase extends Command
     private function dropAndInitDb(): void
     {
         $Db = Db::getConnection();
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
         $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
         $Db->q('USE ' . Config::fromEnv('DB_NAME'));
 
         // load structure
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
     }
 }

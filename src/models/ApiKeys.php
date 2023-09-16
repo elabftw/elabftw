@@ -55,7 +55,7 @@ class ApiKeys implements RestInterface
 
     /**
      * Create a known key so we can test against it in dev mode
-     * This function should only be called from the dev:populate command
+     * This function should only be called from the db:populate command
      */
     public function createKnown(string $apiKey): void
     {

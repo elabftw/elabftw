@@ -53,16 +53,16 @@ export function listenTrigger(): void {
   document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
     el.addEventListener(el.dataset.trigger, event => {
       event.preventDefault();
+      // for a checkbox element, look at the checked attribute, not the value
+      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.customAction === 'patch-user2team-is-owner') {
         // currently only for modifying is_owner of a user in a given team
         const team = parseInt(el.dataset.team, 10);
         const userid = parseInt(el.dataset.userid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: el.value});
+        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
         return;
       }
 
-      // for a checkbox element, look at the checked attribute, not the value
-      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.transform === 'permissionsToJson') {
         value = permissionsToJson(parseInt(value, 10), []);
       }

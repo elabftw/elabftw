@@ -479,9 +479,11 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromCategory(int $category): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
         $req->execute();
 
@@ -490,8 +492,10 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromUser(int $userid): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid);
         $req->execute();
 

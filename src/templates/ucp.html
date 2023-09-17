@@ -84,10 +84,11 @@
     <div class='d-flex justify-content-between'>
       <label for='entrypoint' class='col-form-label'>{{ 'Which page will be loaded first'|trans }}</label>
       <select id='entrypoint' data-trigger='change' data-model='users/me' data-target='entrypoint' class='form-control col-md-3'>
-        <option value='0' {{ App.Users.userData.entrypoint == 'dashboard' ? ' selected' }}>{{ 'Dashboard'|trans }} {{ '(default)'|trans }}</option>
-        <option value='1' {{ App.Users.userData.entrypoint == 'experiments' ? ' selected' }}>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</option>
-        <option value='2' {{ App.Users.userData.entrypoint == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
-        <option value='3' {{ App.Users.userData.entrypoint == 'scheduler' ? ' selected' }}>{{ 'Scheduler'|trans }}</option>
+        {# NOTE: it is currently not practical to use enums in twig. So we hardcode the value for now. FIXME. See: https://github.com/twigphp/Twig/issues/3681 #}
+        <option value='0' {{ App.Users.userData.entrypoint == '0' ? ' selected' }}>{{ 'Dashboard'|trans }} {{ '(default)'|trans }}</option>
+        <option value='1' {{ App.Users.userData.entrypoint == '1' ? ' selected' }}>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</option>
+        <option value='2' {{ App.Users.userData.entrypoint == '2' ? ' selected' }}>{{ 'Database'|trans }}</option>
+        <option value='3' {{ App.Users.userData.entrypoint == '3' ? ' selected' }}>{{ 'Scheduler'|trans }}</option>
       </select>
     </div>
     <hr>

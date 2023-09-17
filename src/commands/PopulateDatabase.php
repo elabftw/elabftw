@@ -45,7 +45,7 @@ use Symfony\Component\Yaml\Yaml;
  * Populate the database with example data. Useful to get a fresh dev env.
  * For dev purposes, should not be used by normal users.
  */
-#[AsCommand(name: 'dev:populate')]
+#[AsCommand(name: 'db:populate')]
 class PopulateDatabase extends Command
 {
     /** @var int DEFAULT_ITERATIONS number of things to create */

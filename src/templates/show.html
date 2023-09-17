@@ -67,8 +67,7 @@
   <div hidden id='filtersDiv' data-save-hidden='filtersDiv'>
     <div class='d-flex'>
       {# LEFT MENU: FILTER/ORDER/SORT/LIMIT #}
-      {# we hide this menu for small devices #}
-      <div class='d-none d-sm-block {{ searchPage ? 'mt-2' }}'>
+      <div class='{{ searchPage ? 'mt-2' }}'>
         <form>
           <div class='form-group form-inline'>
             {% if not searchPage %}

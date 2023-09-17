@@ -2690,6 +2690,25 @@ paths:
                     password:
                       type: string
                       description: New password.
+                - type: object
+                  description: Modify ownership of a team
+                  properties:
+                    action:
+                      enum: ['patchuser2team']
+                      type: string
+                    team:
+                      type: integer
+                      description: ID of the team
+                    userid:
+                      type: integer
+                      description: Target userid
+                    target:
+                      type: string
+                      enum: ['is_owner']
+                      description: The attribute to modify
+                    content:
+                      type: integer
+                      description: Binary value for ownership
       responses:
         '200':
           description: Public properties of a user.

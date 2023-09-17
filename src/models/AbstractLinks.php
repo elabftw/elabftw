@@ -60,7 +60,7 @@ abstract class AbstractLinks implements RestInterface
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
             LEFT JOIN ' . $this->getCategoryTable() . ' AS statust ON (entity.status = statust.id)
-            WHERE ' . $this->getTable() . '.item_id = :id AND entity.state = :state OR entity.state = :statearchived
+            WHERE ' . $this->getTable() . '.item_id = :id AND (entity.state = :state OR entity.state = :statearchived)
             ORDER by statust.title ASC, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);

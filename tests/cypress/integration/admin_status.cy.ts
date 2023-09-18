@@ -6,10 +6,10 @@ describe('Status in admin panel', () => {
 
   it('Create, update and delete a status', () => {
     const newname = 'New cypress test status';
-    cy.visit('/admin.php?tab=4');
+    cy.visit('/admin.php?tab=5');
     cy.get('#statusName').type(newname);
     // create
-    cy.intercept('/admin.php?tab=4').as('statusCreated');
+    cy.intercept('/admin.php?tab=5').as('statusCreated');
     cy.get('[data-action="create-status"]').click();
     cy.wait('@statusCreated').then(() => {
       cy.get('ul[data-table="status"]').find('li[data-statusid]').find('input[value="' + newname + '"]').parent().parent().as('newStatus');

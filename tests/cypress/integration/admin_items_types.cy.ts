@@ -6,7 +6,7 @@ describe('Items Types', () => {
   const newname = 'New test item type';
 
   it('Create and delete an item type', () => {
-    cy.visit('/admin.php?tab=5');
+    cy.visit('/admin.php?tab=4');
     cy.intercept('POST', '/api/v2/items_types', req => {
       req.on('before:response', res => {
         expect(res.statusCode).to.equal(201);
@@ -27,7 +27,7 @@ describe('Items Types', () => {
       cy.stub(win, 'confirm').returns(true);
       cy.get('[data-action="itemstypes-destroy"]').click();
       cy.wait('@delete').then(() => {
-        cy.location('search').should('contain', 'tab=5').should('not.contain', 'templateid=10');
+        cy.location('search').should('contain', 'tab=4').should('not.contain', 'templateid=10');
         cy.get('[data-table="items_types"]').get('#itemstypes_10').should('not.exist');
       });
     });

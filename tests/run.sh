@@ -88,6 +88,15 @@ elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
+    if [ ! "$(docker images elab-cypress)" ]; then
+        echo "Building fresh cypress image..."
+        docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
+    fi
+    if [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+        echo "Launching fresh cypress container..."
+        docker run --name elab-cypress -d elab-cypress
+    fi
+    echo "Running cypress..."
     docker exec -it elab-cypress cypress run
     # copy the artifacts in cypress output folder
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos

@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
       el.selectedIndex = 0;
       window.location.href = `make.php?format=${format}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
-    // UPDATE CATEGORY
-    } else if (el.matches('[data-action="update-category-selected-entities"]')) {
+    // UPDATE CATEGORY OR STATUS
+    } else if (el.matches('[data-action="update-catstat-selected-entities"]')) {
       const ajaxs = [];
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
@@ -96,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'category': el.value}));
+        const params = {};
+        params[el.dataset.target] = el.value;
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, params));
       });
       // reload the page once it's done
       // a simple reload would not work here
@@ -105,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
       notif({'msg': 'Saved', 'res': true});
-
 
     // UPDATE VISIBILITY
     } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {

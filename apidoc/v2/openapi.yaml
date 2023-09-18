@@ -2704,11 +2704,11 @@ paths:
                       description: Target userid
                     target:
                       type: string
-                      enum: ['is_owner']
+                      enum: ['group', 'is_owner']
                       description: The attribute to modify
                     content:
                       type: integer
-                      description: Binary value for ownership
+                      description: Binary value for `is_owner`, integer for `group` (2 for Admin, 4 for User)
       responses:
         '200':
           description: Public properties of a user.

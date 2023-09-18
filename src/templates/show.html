@@ -177,19 +177,23 @@
       <div id='withSelected' class='d-none'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         <div class='row mx-0 form-inline'>
-          <!-- Change category -->
-          <select data-action='update-category-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-              <option selected disabled>
-              {% if Entity.type == 'experiments' %}
-                  {{ 'Change status'|trans }}
-              {% else %}
-                  {{ 'Change item type'|trans }}
-              {% endif %}
-              </option>
-
-              {% for category in categoryArr %}
-                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
-              {% endfor %}
+          {# CHANGE CATEGORY #}
+          <select data-action='update-catstat-selected-entities' data-target='category' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>
+              {{ 'Change category'|trans }}
+            </option>
+            {% for category in categoryArr %}
+                <option value='{{ category.id }}'>{{ category.title|raw }}</option>
+            {% endfor %}
+          </select>
+          {# CHANGE STATUS #}
+          <select data-action='update-catstat-selected-entities' data-target='status' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>
+              {{ 'Change status'|trans }}
+            </option>
+            {% for status in statusArr %}
+                <option value='{{ status.id }}'>{{ status.title|raw }}</option>
+            {% endfor %}
           </select>
 
           <!-- Change visibility -->

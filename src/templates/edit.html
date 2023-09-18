@@ -60,16 +60,18 @@
     <input id='title_input' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
   </div>
 
-  <!-- CATEGORIES (status for exp and itemstypes for items) -->
+  {# CATEGORIES #}
   <div class='d-flex mb-2 align-items-center'>
     <label for='category_select' class='col-form-label mr-3 edit-mode-label'>{{ 'Category'|trans }}</label>
     <select id='category_select' data-target='category' class='form-control col-md-2 catstatSelect'>
       <!-- TODO add a box with color -->
-        <option value='0'
-                {{ Entity.entityData.category is null ? ' selected' }}>{{ 'Not set'|trans }}</option>
+      <option value='0'
+        {{ Entity.entityData.category is null ? ' selected' }}>{{ 'Not set'|trans }}
+      </option>
       {% for category in categoryArr %}
         <option value='{{ category.id }}'
-        {{ Entity.entityData.category == category.id ? ' selected' }}>{{ category.title|raw }}</option>
+          {{ Entity.entityData.category == category.id ? ' selected' }}>{{ category.title|raw }}
+        </option>
       {% endfor %}
     </select>
   </div>

@@ -259,7 +259,7 @@
   </div>
 
   {# RESOURCES CATEGORIES #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
+  <h3 id='resourcesCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
@@ -272,13 +272,13 @@
     </div>
 
   {% if App.Request.query.has('templateid') %}
-    <a href='?tab=5' class='btn hl-hover-gray'>
+    <a href='?tab=4' class='btn hl-hover-gray'>
       <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
     </a>
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=5&templateid={{ itemType.id }}' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title | raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#resourcesCategoriesAnchor' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title | raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>

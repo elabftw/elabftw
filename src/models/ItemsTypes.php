@@ -37,7 +37,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function getPage(): string
     {
-        return 'admin.php?tab=5&templateid=';
+        return 'admin.php?tab=4&templateid=';
     }
 
     public function create(string $title): int

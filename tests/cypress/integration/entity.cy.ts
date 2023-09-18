@@ -75,7 +75,8 @@ describe('Experiments', () => {
     cy.visit('/experiments.php');
     cy.contains('Create').click();
     entityEdit();
-    cy.get('#category_select').select('Success').blur();
+    // change status
+    cy.get('#status_select').select('Success').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();

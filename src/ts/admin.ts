@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location'));
+        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location') + '#resourcesCategoriesAnchor');
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=5');
+        ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=4');
       }
     // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {

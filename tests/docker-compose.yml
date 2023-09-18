@@ -58,6 +58,8 @@ services:
             retries: 3
         volumes:
             - ..:/elabftw
+        tmpfs:
+            - /elabftw/cache:uid=1000,gid=1000
         networks:
             - elabftw-net
         # make sure we wait for mysql to be available before starting

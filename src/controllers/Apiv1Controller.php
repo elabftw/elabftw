@@ -665,7 +665,7 @@ class Apiv1Controller extends AbstractApiController
         }
         // check that the id we have is a valid item type from our team
         $ItemsTypes = new ItemsTypes($this->Users);
-        $validIds = array_column($ItemsTypes->readAll(), 'category_id');
+        $validIds = array_column($ItemsTypes->readAll(), 'id');
         if (!in_array($this->id, $validIds, true)) {
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }

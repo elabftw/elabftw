@@ -54,7 +54,15 @@ if ($ci); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+else
+    # we need to add the parser because it's in cache/ and it's tmpfs mounted now
+    docker exec -it elabtmp yarn buildparser
 fi
+# fix permissions on cache folders
+docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
+docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
+
 # install the database
 echo "Initializing the database..."
 docker exec -it elabtmp bin/init db:install -r -q
@@ -65,9 +73,7 @@ fi
 docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
 # RUN TESTS
 if ($ci); then
-    # fix permissions on test output and cache folders
-    sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-    sudo chmod -R 777 cache
+    # fix permissions on test output and uploads
     sudo chmod -R 777 tests/_output
     sudo chmod -R 777 uploads
     if (${SCRUTINIZER:-false}); then

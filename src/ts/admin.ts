@@ -137,12 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $(`#create${el.dataset.target}Modal`).modal('hide');
         reloadElement(`${el.dataset.target}Div`);
       });
-    // UPDATE STATUS
+    // UPDATE STATUSLIKE
     } else if (el.matches('[data-action="update-status"]')) {
       const id = el.dataset.id;
       let target = Model.ExperimentsStatus;
       if (el.dataset.target === 'items') {
         target = Model.ItemsStatus;
+      }
+      if (el.dataset.target === 'expcat') {
+        target = Model.ExperimentsCategories;
       }
       const holder = el.parentElement.parentElement;
       const title = (holder.querySelector('input[type="text"]') as HTMLInputElement).value;

@@ -128,7 +128,7 @@ abstract class AbstractStatus extends AbstractCategory
     private function update(StatusParams $params): bool
     {
         // make sure there is only one default status
-        if ($params->getTarget() === 'default' && $params->getContent() === 1) {
+        if ($params->getTarget() === 'is_default' && $params->getContent() === 1) {
             $this->setDefaultFalse();
         }
 

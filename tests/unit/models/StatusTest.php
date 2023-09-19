@@ -31,6 +31,11 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Status->readOne());
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->Status->getPage());
+    }
+
     public function testUpdate(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));

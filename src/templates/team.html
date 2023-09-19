@@ -65,7 +65,7 @@
         </div>
 
         {# only show the cancel block if item is cancellable or user is admin #}
-        {% if bookableItemData.is_cancellable == 1 or App.Users.isAdmin %}
+        {% if bookableItemData.book_is_cancellable == 1 or App.Users.isAdmin %}
           <div>
             <h5>{{ 'Cancel booking slot'|trans }}</h5>
             <h6>{{ 'Add a custom message'|trans }}</h6>

@@ -117,7 +117,7 @@ jobs:
           command: docker exec -it elabtmp bin/init db:install -r
       - run:
           name: Populate the database
-          command: docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
       - run:
           name: Fix permissions
           command: |
@@ -145,7 +145,7 @@ jobs:
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
       - run:
           name: Reset database
-          command: docker exec -it elabtmp bin/console dev:populate src/tools/populate-config.yml.dist -y
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
       - run:
           name: Fix permissions
           command: |

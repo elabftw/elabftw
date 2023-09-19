@@ -51,7 +51,6 @@ $Application->add(new SnapFingers());
 $Application->add(new ForceSchema());
 $Application->add(new GenCache());
 $Application->add(new GenSchema(FsTools::getFs(dirname(__DIR__) . '/src/sql')));
-$Application->add(new PopulateDatabase());
 $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());

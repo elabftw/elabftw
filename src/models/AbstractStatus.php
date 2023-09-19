@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
@@ -39,6 +40,12 @@ abstract class AbstractStatus extends AbstractCategory
     {
         $this->Db = Db::getConnection();
         $this->setId($id);
+    }
+
+    public function updateOrdering(OrderingParams $params): void
+    {
+        $this->Teams->canWriteOrExplode();
+        parent::updateOrdering($params);
     }
 
     public function getPage(): string

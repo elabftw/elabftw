@@ -219,7 +219,7 @@
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createexperiments_categoriesModal'>{{ 'Create'|trans }}</button>
       </div>
     </div>
-    <ul class='list-group sortable' data-axis='y' data-table='experiments_status'>
+    <ul class='list-group sortable' data-axis='y' data-table='experiments_categories'>
       {% for cat in experimentsCategoriesArr %}
         <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ status.id }}' class='list-group-item'>
           <ul class='list-inline'>

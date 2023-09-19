@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -17,6 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
@@ -39,9 +39,12 @@ $Response->setData(array(
     'msg' => _('Saved'),
 ));
 
-$reqBody = json_decode((string) $App->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+$reqBody = json_decode((string) $App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
 try {
     switch ($reqBody['table']) {
+        case 'experiments_categories':
+            $Entity = new ExperimentsCategories(new Teams($App->Users));
+            break;
         case 'items_types':
             if (!$App->Users->isAdmin) {
                 throw new IllegalActionException('Non admin user tried to access admin controller.');
@@ -49,15 +52,9 @@ try {
             $Entity = new ItemsTypes($App->Users);
             break;
         case 'experiments_status':
-            if (!$App->Users->isAdmin) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
             $Entity = new ExperimentsStatus(new Teams($App->Users));
             break;
         case 'items_status':
-            if (!$App->Users->isAdmin) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
             $Entity = new ItemsStatus(new Teams($App->Users));
             break;
         case 'experiments_steps':

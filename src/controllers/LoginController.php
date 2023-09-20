@@ -39,7 +39,6 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
  * For all your authentication/login needs
@@ -306,35 +305,30 @@ class LoginController implements ControllerInterface
 
     private function enableMFA(): string
     {
-        $flashBag = $this->App->Session->getBag('flashes');
-        $flashKey = 'ko';
-        $flashValue = _('Two Factor Authentication was not enabled!');
+        $flashBag = $this->App->Session->getFlashBag();
 
-        // Only save if user didn't click Cancel button
-        if ($this->App->Request->request->get('Submit') === 'submit') {
-            $userid = isset($this->App->Users->userData['userid'])
-                ? (int) $this->App->Users->userData['userid']
-                : $this->App->Session->get('auth_userid');
-            $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
-
-            // check the input code against the secret stored in session
-            if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
-                if ($flashBag instanceof FlashBag) {
-                    $flashBag->add($flashKey, _('The code you entered is not valid!'));
-                }
-                return '../../login.php';
-            }
-
-            // all good, save the secret in the database now that we now the user can authenticate against it
-            $MfaHelper->saveSecret();
-            $flashKey = 'ok';
-            $flashValue = _('Two Factor Authentication is now enabled!');
-            $this->App->Session->remove('enable_mfa');
+        if ($this->App->Request->request->get('Submit') === 'cancel') {
+            $this->App->Session->clear();
+            $flashBag->add('ko', _('Two Factor Authentication was not enabled!'));
+            return '/login.php';
         }
 
-        if ($flashBag instanceof FlashBag) {
-            $flashBag->add($flashKey, $flashValue);
+        $userid = isset($this->App->Users->userData['userid'])
+            ? (int) $this->App->Users->userData['userid']
+            : $this->App->Session->get('auth_userid');
+        $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
+
+        // check the input code against the secret stored in session
+        if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
+            $flashBag->add('ko', _('The code you entered is not valid!'));
+            return '/login.php';
         }
+
+        // all good, save the secret in the database now that we now the user can authenticate against it
+        $MfaHelper->saveSecret();
+        $this->App->Session->remove('enable_mfa');
+
+        $flashBag->add('ok', _('Two Factor Authentication is now enabled!'));
 
         $location = $this->App->Session->get('mfa_redirect_origin', '');
 

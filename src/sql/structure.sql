@@ -234,6 +234,7 @@ CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
+  `category` INT UNSIGNED NULL DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -248,6 +249,7 @@ CREATE TABLE `experiments_templates` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -491,6 +493,7 @@ CREATE TABLE `items_types` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;

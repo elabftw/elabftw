@@ -132,7 +132,8 @@
       <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
       <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
     </div>
-
+    {# CATEGORY / STATUS #}
+    {% include('catstat-edit.html') %}
     {# TAGS #}
     {% include('edit-tags.html') %}
     {# PERMISSIONS #}

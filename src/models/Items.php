@@ -47,11 +47,12 @@ class Items extends AbstractConcreteEntity
         $ItemsTypes = new ItemsTypes($this->Users, $template);
         $itemTemplate = $ItemsTypes->readOne();
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, elabid, canread, canwrite, canbook, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata)
+            VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
+        $req->bindParam(':status', $itemTemplate['status'], PDO::PARAM_STR);
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);

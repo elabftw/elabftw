@@ -25,4 +25,7 @@ CREATE TABLE `experiments_categories` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ALTER TABLE `items` CHANGE `category` `category` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD `status` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD `category` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD `status` INT UNSIGNED NULL DEFAULT NULL;
 UPDATE config SET conf_value = 128 WHERE conf_name = 'schema';

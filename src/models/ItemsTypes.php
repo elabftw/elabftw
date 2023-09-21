@@ -72,7 +72,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, team, color, title, body, canread, canwrite, metadata, state
+        $sql = 'SELECT id, team, color, title, status, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

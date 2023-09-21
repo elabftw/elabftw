@@ -53,6 +53,8 @@ class Experiments extends AbstractConcreteEntity
 
         // defaults
         $title = _('Untitled');
+        $category = null;
+        $status = $this->getStatus();
         $body = null;
         $canread = BasePermissions::MyTeams->toJson();
         $canwrite = BasePermissions::User->toJson();
@@ -64,6 +66,8 @@ class Experiments extends AbstractConcreteEntity
             $Templates->setId($template);
             $templateArr = $Templates->readOne();
             $title = $templateArr['title'];
+            $category = $templateArr['category'];
+            $status = $templateArr['status'];
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
@@ -99,12 +103,13 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, status, elabid, canread, canwrite, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :status, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
-        $req->bindValue(':status', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':category', $category, PDO::PARAM_INT);
+        $req->bindValue(':status', $status, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $canread, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);

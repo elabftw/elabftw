@@ -2,6 +2,9 @@
 <h1 id='documentTitle' class='mb-4 title text-dark'>
   {{ Entity.entityData.title|raw }}
 </h1>
+
+{% include('catstat-view.html') %}
+
 {# TAGS #}
 {% if entityData.tags|length > 0 %}
   <span class='tags'><i class='fas fa-tags'></i></span>
@@ -28,4 +31,4 @@
   <hr>
 {% endif %}
 {% include 'steps-links-view.html' %}
-<div id='info' data-page='template-view' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+<div id='info' data-page='template-view' data-team='{{ App.Users.userData.team }}' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

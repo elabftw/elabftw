@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const about = document.getElementById('info').dataset;
 
   // only run in view mode
-  if (about.page !== 'view') {
+  if (about.page !== 'view' && about.page !== 'template-view') {
     return;
   }
 
@@ -83,6 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // TODO i18n
   const notsetOpts = {id: null, title: 'Not set', color: 'bdbdbd'};
 
+  let categoryEndpoint = `${EntityType.ItemType}`;
+  let statusEndpoint = `${Model.Team}/${about.team}/items_status`;
+  if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
+    categoryEndpoint = `${Model.Team}/${about.team}/experiments_categories`;
+    statusEndpoint = `${Model.Team}/${about.team}/experiments_status`;
+  }
+
   const malleableStatus = new Malle({
     // use the after hook to change the background color of the new element
     after: (elem, _, value) => {
@@ -99,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(`${Model.Team}/${about.team}/${entity.type}_status`).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
+    selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
       statusArr.unshift(notsetOpts);
       return statusArr;
     }),
@@ -111,10 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // UPDATE MALLEABLE CATEGORY
-  let endpoint = `${EntityType.ItemType}`;
-  if (entity.type === EntityType.Experiment) {
-    endpoint = `${Model.Team}/${about.team}/experiments_categories`;
-  }
 
   const malleableCategory = new Malle({
     // use the after hook to change the background color of the new element
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(endpoint).then(json => [notsetOpts, ...Array.from(json)]),
+    selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),

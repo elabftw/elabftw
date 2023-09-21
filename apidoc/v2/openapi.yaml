@@ -380,6 +380,12 @@ components:
           type: string
         body:
           type: string
+        category:
+          type: integer
+        category_title:
+          type: string
+        category_color:
+          type: string
         userid:
           type: integer
         canread:
@@ -400,6 +406,12 @@ components:
           type: integer
         is_pinned:
           type: integer
+        status:
+          type: integer
+        status_title:
+          type: string
+        status_color:
+          type: string
         tags:
           type: string
         tags_id:
@@ -461,6 +473,8 @@ components:
           type: integer
         title:
           type: string
+        status:
+          type: integer
         color:
           type: string
         body:

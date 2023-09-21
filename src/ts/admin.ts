@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement } from './misc';
+import { notif, notifError, reloadElement, updateCatStat } from './misc';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
@@ -87,6 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
     input.value = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+  });
+
+  // CATEGORY SELECT
+  $(document).on('change', '.catstatSelect', function() {
+    const url = new URL(window.location.href);
+    const queryParams = new URLSearchParams(url.search);
+    updateCatStat($(this).data('target'), {type: EntityType.ItemType, id: queryParams.get('templateid')}, String($(this).val()));
   });
 
   document.getElementById('container').addEventListener('click', event => {

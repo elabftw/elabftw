@@ -51,7 +51,10 @@
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' style='color:#{{ item.category_color }}'>{{ item.category_title|raw }}</span>
+      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
+      {% if item.status is not null and item.category is not null %} 〉 {% endif %}
+      {# status #}
+      <span class='item-category' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'>{{ item.status_title|raw }}</span>
     </div>
     {# end first line #}
 

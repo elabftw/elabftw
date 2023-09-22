@@ -169,10 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const isDefault = (holder.querySelector('input[type="radio"]') as HTMLInputElement).checked;
       const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
       ApiC.patch(`${Model.Team}/${el.dataset.teamid}/${target}/${id}`, params);
-    // DESTROY STATUS
-    } else if (el.matches('[data-action="destroy-status"]')) {
+    // DESTROY CATEGORY/STATUS
+    } else if (el.matches('[data-action="destroy-catstat"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${Model.Status}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
+        ApiC.delete(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {

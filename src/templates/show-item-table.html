@@ -25,7 +25,7 @@
       <i class='fas fa-box-archive fa-fw'></i>
     {% endif %}
     {# toggle body #}
-    <span class='p-2 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></span>
+    <span class='p-1 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></span>
     <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
   </td>
 

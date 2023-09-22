@@ -83,10 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // END ITEMS TYPES
 
+  function getRandomColor(): string {
+    return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+  }
+
   // set a random color to all the "create new" statuslike modals
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
   document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
-    input.value = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    input.value = getRandomColor();
   });
 
   // CATEGORY SELECT
@@ -131,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE STATUSLIKE
     } else if (el.matches('[data-action="create-statuslike"]')) {
       const holder = el.parentElement.parentElement;
-      const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
+      const colorInput = (holder.querySelector('input[type="color"]') as HTMLInputElement);
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
@@ -140,8 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.borderColor = 'red';
         return;
       }
-      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}`, {'name': name, 'color': color}).then(() => {
+      ApiC.post(`${Model.Team}/${el.dataset.teamid}/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
         $(`#create${el.dataset.target}Modal`).modal('hide');
+        // clear the name
+        nameInput.value = '';
+        // assign a new random color
+        colorInput.value = getRandomColor();
+        // display newly added entry
         reloadElement(`${el.dataset.target}Div`);
       });
     // UPDATE STATUSLIKE

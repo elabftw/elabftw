@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('change', '.catstatSelect', function() {
     const url = new URL(window.location.href);
     const queryParams = new URLSearchParams(url.search);
-    updateCatStat($(this).data('target'), {type: EntityType.ItemType, id: queryParams.get('templateid')}, String($(this).val()));
+    updateCatStat($(this).data('target'), {type: EntityType.ItemType, id: parseInt(queryParams.get('templateid'), 10)}, String($(this).val()));
   });
 
   document.getElementById('container').addEventListener('click', event => {

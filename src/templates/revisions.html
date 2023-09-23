@@ -6,13 +6,12 @@
 {{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
 
 {% if Entity.type == 'experiments_templates' %}
-  <a href='ucp.php?tab=3&templateid={{ Entity.id }}'>
+  <a href='ucp.php?tab=3&templateid={{ Entity.id }}'
 {% else %}
-  <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
+  <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'
 {% endif %}
-  <button class='btn hl-hover-gray'>
+   class='btn hl-hover-gray' role='button'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
-  </button>
 </a>
 <div id='compareRevisionsDiv' class='mt-3' hidden>
   <button class='btn btn-secondary btn-sm' id='compareRevisionsButton' disabled data-action='compare-revisions' data-type='{{ Entity.type }}' aria-label='{{ 'Compare revisions'|trans }}'>

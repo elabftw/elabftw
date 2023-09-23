@@ -29,6 +29,7 @@ config:
   ldap_username: cn=admin,dc=example,dc=org
   # increase this a bit
   login_tries: 10
+  s3_region: "us-west-2"
 
 teams:
   - name: Alpha

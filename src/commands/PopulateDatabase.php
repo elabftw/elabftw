@@ -95,10 +95,10 @@ class PopulateDatabase extends Command
         $this->dropAndInitDb();
 
         // adjust global config
-        $configArr = $yaml['config'] ?? array();
         $Config = Config::getConfig();
-        $Config->patch(Action::Update, $configArr);
+        $Config->patch(Action::Update, $yaml['config'] ?? array());
 
+        $output->writeln('Creating teams, users, experiments, and resources...');
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
@@ -227,12 +227,12 @@ class PopulateDatabase extends Command
     private function dropAndInitDb(): void
     {
         $Db = Db::getConnection();
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
         $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
         $Db->q('USE ' . Config::fromEnv('DB_NAME'));
 
         // load structure
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
     }
 }

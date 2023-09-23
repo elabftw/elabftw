@@ -16,9 +16,17 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
 
+    private array $setupValues;
+
     protected function setUp(): void
     {
         $this->Config= Config::getConfig();
+        $this->setupValues = $this->Config->configArr;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->Config->patch(Action::Update, $this->setupValues);
     }
 
     public function testRead(): void

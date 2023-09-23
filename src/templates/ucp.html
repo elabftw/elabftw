@@ -253,7 +253,6 @@
       <label for='default-read-select' class='col-form-label'>{{ 'Default visibility for new experiments'|trans }}</label>
       <div>
         {% set rw = 'canread' %}
-        {% set can = App.Users.userData.default_read|canToHuman %}
         {{ include('view-permissions-details.html', {identifier: 'canreaddefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
         <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>
@@ -267,7 +266,6 @@
       <label for='default-write-select' class='col-form-label'>{{ 'Default write permission for new experiments'|trans }}</label>
       <div>
         {% set rw = 'canwrite' %}
-        {% set can = App.Users.userData.default_write|canToHuman %}
         {{ include('view-permissions-details.html', {identifier: 'canwritedefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
         <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>

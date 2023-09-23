@@ -59,7 +59,8 @@
     "codeception/module-phpbrowser": "^3.0",
     "codeception/c3": "^2.8",
     "rector/rector": "^0.17.0",
-    "phpstan/phpstan": "^1.10"
+    "phpstan/phpstan": "^1.10",
+    "friendsoftwig/twigcs": "^6.2"
   },
   "autoload": {
     "psr-4": {
@@ -129,7 +130,10 @@
       "Elabftw\\Traits\\": [
         "src/traits"
       ]
-    }
+    },
+    "classmap": [
+      "src/tools/eLabFtwRuleset.twigcs.php"
+    ]
   },
   "license": "AGPL-3.0-or-later",
   "config": {

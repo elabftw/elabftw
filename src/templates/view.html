@@ -58,7 +58,7 @@
     <div class='edit-mode-label'>
       <i aria-hidden='true' class='fas fa-folder mr-1'></i>{{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
     </div>
-    <span id='categoryView' style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category | raw}}</span>
+    <span id='categoryView' style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category|raw }}</span>
   </div>
 
   {# TAGS #}
@@ -69,7 +69,7 @@
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
         {% for tag in Entity.Tags.readAll() %}
-        <a class='tag {{ tag.is_favorite ? 'favorite'}}' href='?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+        <a class='tag {{ tag.is_favorite ? 'favorite' }}' href='?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
         {% endfor %}
       </span>
     {% endif %}
@@ -184,6 +184,7 @@
     data-id='{{ Entity.id }}'
     data-team='{{ App.Users.userData.team }}'
     data-isanon='{{ App.Session.get('is_anon') }}'
+>
 </div>
 
 {% endblock body %}

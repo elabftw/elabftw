@@ -1,4 +1,4 @@
-import { defineConfig } from 'cypress'
+import { defineConfig } from 'cypress';
 
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
@@ -8,7 +8,7 @@ export default defineConfig({
   viewportHeight: 900,
   e2e: {
     setupNodeEvents(on, config) {
-      return require('./tests/cypress/plugins/index.ts')(on, config)
+      return require('./tests/cypress/plugins/index.ts')(on, config);
     },
     baseUrl: 'https://elab.local:3148',
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
@@ -18,4 +18,4 @@ export default defineConfig({
   defaultCommandTimeout: 8000,
   requestTimeout: 10000,
   responseTimeout: 130000,
-})
+});

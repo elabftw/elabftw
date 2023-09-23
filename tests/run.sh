@@ -54,6 +54,7 @@ if ($ci); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+    docker exec -it elabtmp yarn twigcs
 fi
 # install the database
 echo "Initializing the database..."

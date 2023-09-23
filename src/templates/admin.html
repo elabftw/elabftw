@@ -285,7 +285,7 @@
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=5&templateid={{ itemType.category_id }}' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.category | raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=5&templateid={{ itemType.category_id }}' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.category|raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>

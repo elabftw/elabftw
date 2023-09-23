@@ -131,7 +131,7 @@
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
-                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge'}}'>{{ team.name }}</div>
+                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge' }}'>{{ team.name }}</div>
                     {% endfor %}
                   </div>
                 </td>

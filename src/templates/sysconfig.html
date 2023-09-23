@@ -88,7 +88,7 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans } %}
+    {% include 'binary-setting.html' with {'label': 'Admins can always delete experiments'|trans, 'slug': 'deletable_xp', 'help': 'Setting this to «no» will completely remove the ability to delete experiments for everyone.'|trans} %}
 
     {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
 
@@ -124,9 +124,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans } %}
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans} %}
 
-    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans } %}
+    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
@@ -141,7 +141,7 @@
 
     {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register'} %}
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
-    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans } %}
+    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
@@ -341,10 +341,7 @@
       {% else %}
         <p>
           {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("
-              <span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>",
-              "</span>"
-          )|raw }}
+          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>", "</span>")|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
           <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
         </p>
@@ -412,9 +409,9 @@
     <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Allow setting an authentication cookie'|trans, 'slug': 'remember_me_allowed', 'help': 'Disabling this setting will hide the "remember me" checkbox on login page.'|trans } %}
+    {% include 'binary-setting.html' with {'label': 'Allow setting an authentication cookie'|trans, 'slug': 'remember_me_allowed', 'help': 'Disabling this setting will hide the "remember me" checkbox on login page.'|trans} %}
 
-    {% include 'binary-setting.html' with {'label': 'Check the "remember me" box on login page by default'|trans, 'slug': 'remember_me_checked' } %}
+    {% include 'binary-setting.html' with {'label': 'Check the "remember me" box on login page by default'|trans, 'slug': 'remember_me_checked'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='cookie_validity_time' class='col-form-label'>{{ 'Validity period of an authentication cookie (in minutes)'|trans }}</label>
@@ -427,7 +424,7 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled'}} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
@@ -447,7 +444,7 @@
     <div class='pl-3'>
       <div class='d-flex justify-content-between'>
         <label for='{{ slug }}_name' class='col-form-label'>{{ 'Link name'|trans }}</label>
-        <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='{{ slug }}_name' type='text' value='{{ configArr[ slug ~ '_name'] }}' id='{{ slug }}_name' />
+        <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='{{ slug }}_name' type='text' value='{{ configArr[slug ~ '_name'] }}' id='{{ slug }}_name' />
       </div>
       <hr>
       {% if not configArr[slug] %}
@@ -844,7 +841,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_username' class='col-form-label'>LDAP {{ 'Username'|trans }} (keep empty to use anonymous bind)</label>
-      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_username' autocomplete='off' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username}}' id='ldap_username' />
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_username' autocomplete='off' placeholder='cn=admin,dc=example,dc=com' value='{{ App.Config.configArr.ldap_username }}' id='ldap_username' />
     </div>
     <hr>
 
@@ -855,10 +852,7 @@
       {% else %}
         <p>
           {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("
-              <span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>",
-              "</span>"
-          )|raw }}
+          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>", "</span>")|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
           <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
         </p>

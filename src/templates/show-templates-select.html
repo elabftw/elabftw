@@ -39,7 +39,7 @@
               <a href='?tab=3&mode=edit&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>
             {% endif %}
               {# clickable toggle pin button #}
-              <span title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ template.id }}' id='toggle-pin-icon-div' class='{{ template.is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-1 rounded'><i id='toggle-pin-icon' class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></span>
+              <span title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ template.id }}' class='{{ template.is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-1 rounded'><i data-toggle-pin-icon='' class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></span>
               {{ template.title|raw }}</td>
           <td>
             <span class='category-button rounded p-1' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>

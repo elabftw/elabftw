@@ -120,10 +120,10 @@
                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
@@ -134,7 +134,7 @@
                 <!-- IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format -->
                 <div class='viewer_3Dmoljs'
                   data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
-                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
+                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick' }}"
                   data-backgroundcolor='0xffffff'
                   id='3Dmol_{{ upload.id }}'>
                 </div>
@@ -160,7 +160,7 @@
               {% elseif ext matches '/(mp4|webm)$/i' %}
                 <div class='text-center'>
                   <video controls width='300' preload='metadata'>
-                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name}}' type='video/{{ ext }}'>
+                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' type='video/{{ ext }}'>
                   </video>
                 </div>
 

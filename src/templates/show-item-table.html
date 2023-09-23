@@ -79,11 +79,10 @@
 {# container to hold the body of the entity if it is toggled with the +/- icon #}
 {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
 <tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.color }}'>
-  <td colspan='100%'>
+  <td colspan='7'>
     <div style='overflow:auto;margin: 10px 0 0 20px'></div>
   </td>
 </tr>
 
 {# Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css #}
-<tr hidden></tr>
-</div>
+<tr hidden><td colspan='7'></td></tr>

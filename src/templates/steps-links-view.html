@@ -68,7 +68,7 @@
 
 <!-- ITEMS LINKS -->
 {% if Entity.entityData.items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked items'|trans }}</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }}</h3>
   <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
     <div class='ml-3 mt-3 col-md-12'>
       {% for link in Entity.entityData.items_links %}

@@ -83,9 +83,7 @@ enum Model {
   Link = 'links',
   Notification = 'notifications',
   ExperimentsCategories = 'experiments_categories',
-  // TODO rename ExperimentsStatus
   ExperimentsStatus = 'experiments_status',
-  Status = 'status',
   Step = 'steps',
   Tag = 'tags',
   Team = 'teams',

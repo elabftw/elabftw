@@ -24,11 +24,6 @@ class ItemsLinks extends AbstractLinks
         return 'items_types';
     }
 
-    protected function getStatusTable(): string
-    {
-        return 'items_status';
-    }
-
     protected function getTable(): string
     {
         if ($this->Entity instanceof Experiments) {

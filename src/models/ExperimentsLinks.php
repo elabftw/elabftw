@@ -26,11 +26,6 @@ class ExperimentsLinks extends AbstractLinks
         return 'experiments_categories';
     }
 
-    protected function getStatusTable(): string
-    {
-        return 'experiments_status';
-    }
-
     protected function getTable(): string
     {
         if ($this->Entity instanceof Experiments) {

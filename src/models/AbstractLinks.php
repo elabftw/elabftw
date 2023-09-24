@@ -193,8 +193,6 @@ abstract class AbstractLinks implements RestInterface
 
     abstract protected function getCategoryTable(): string;
 
-    abstract protected function getStatusTable(): string;
-
     abstract protected function getTable(): string;
 
     abstract protected function getRelatedTable(): string;

@@ -593,12 +593,13 @@ components:
           type: integer
         metadata:
           type: string
-    status:
+    # experiments_status, experiments_categories and items_status are statuslike
+    statuslike:
       type: object
       properties:
-        category_id:
+        id:
           type: integer
-        category:
+        title:
           type: string
         color:
           type: string
@@ -2243,8 +2244,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/team'
 
-  # STATUS
-  /teams/{id}/status:
+  # EXPERIMENTS CATEGORIES
+  /teams/{id}/experiments_categories:
     parameters:
       - name: id
         in: path
@@ -2253,22 +2254,22 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Status']
-      summary: Read status of a team.
-      operationId: read-team-status
+      tags: ['Experiments categories']
+      summary: Read experiments categories of a team.
+      operationId: read-team-experiments-categories
       responses:
         '200':
-          description: A list of status for the team.
+          description: A list of experiments categories for the team.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/status'
+                  $ref: '#/components/schemas/statuslike'
     post:
-      tags: ['Status']
-      operationId: post-team-one-status
-      summary: Create a new status.
+      tags: ['Experiments categories']
+      operationId: post-team-one-expcat
+      summary: Create a new experiments status.
       requestBody:
         description: Parameters for creating a status.
         content:
@@ -2294,7 +2295,8 @@ paths:
               description: An URL to the status that was created.
               schema:
                 type: string
-  /teams/{id}/status/{subid}:
+  # ONE EXPERIMENTS CATEGORY
+  /teams/{id}/experiments_categories/{subid}:
     parameters:
       - name: id
         in: path
@@ -2309,8 +2311,105 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Status']
-      operationId: read-team-one-status
+      tags: ['Experiments categories']
+      operationId: read-team-one-expcat
+      summary: Read a status.
+      responses:
+        '200':
+          description: Read a category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    patch:
+      tags: ['Experiments categories']
+      operationId: patch-expcat
+      summary: Modify a category.
+      requestBody:
+        description: Parameters for modifying a category.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/statuslike'
+      responses:
+        '200':
+          description: The updated category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    delete:
+      tags: ['Experiments categories']
+      summary: Delete a category.
+      operationId: delete-expcat
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The category was removed.
+
+  # EXPERIMENTS STATUS
+  /teams/{id}/experiments_status:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Experiments status']
+      summary: Read experiments status of a team.
+      operationId: read-team-experiments-status
+      responses:
+        '200':
+          description: A list of status for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/statuslike'
+    post:
+      tags: ['Experiments status']
+      operationId: post-team-one-expstatus
+      summary: Create a new experiments status.
+      requestBody:
+        description: Parameters for creating a status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Status name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default status for the team?
+  # ONE EXPERIMENTS STATUS
+  /teams/{id}/experiments_status/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the status
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Experiments status']
+      operationId: read-team-one-expstatus
       summary: Read a status.
       responses:
         '200':
@@ -2318,28 +2417,126 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/statuslike'
     patch:
-      tags: ['Status']
-      operationId: patch-status
+      tags: ['Experiments status']
+      operationId: patch-expstatus
       summary: Modify a status.
       requestBody:
         description: Parameters for modifying a status.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/status'
+              $ref: '#/components/schemas/statuslike'
       responses:
         '200':
           description: The updated status.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/statuslike'
     delete:
-      tags: ['Status']
+      tags: ['Experiments status']
       summary: Delete a status.
-      operationId: delete-status
+      operationId: delete-expstatus
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The status was removed.
+  # ITEMS STATUS
+  /teams/{id}/items_status:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Resources status']
+      summary: Read resources status of a team.
+      operationId: read-team-items-status
+      responses:
+        '200':
+          description: A list of resources status for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/statuslike'
+    post:
+      tags: ['Resources status']
+      operationId: post-team-one-resstat
+      summary: Create a new experiments status.
+      requestBody:
+        description: Parameters for creating a resources status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Status name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default status for the team?
+
+
+  # ONE ITEMS STATUS
+  /teams/{id}/items_status/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the status
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Resources status']
+      operationId: read-team-one-resstatus
+      summary: Read a status.
+      responses:
+        '200':
+          description: Read a status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    patch:
+      tags: ['Resources status']
+      operationId: patch-resstatus
+      summary: Modify a status.
+      requestBody:
+        description: Parameters for modifying a status.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/statuslike'
+      responses:
+        '200':
+          description: The updated status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    delete:
+      tags: ['Resources status']
+      summary: Delete a status.
+      operationId: delete-resstatus
       requestBody:
         content:
           application/json: {}

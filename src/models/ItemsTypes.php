@@ -55,6 +55,11 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->Db->lastInsertId();
     }
 
+    public function getDefault(): ?int
+    {
+        return null;
+    }
+
     /**
      * SQL to get all items type
      */

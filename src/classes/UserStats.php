@@ -59,12 +59,12 @@ class UserStats
         // populate arrays
         foreach ($statusArr as $status) {
             $statusArr = array();
-            $statusArr['name'] = $status['category'];
-            $statusArr['id'] = $status['category_id'];
+            $statusArr['name'] = $status['title'];
+            $statusArr['id'] = $status['id'];
             $statusArr['color'] = '#' . $status['color'];
 
             // now get the count
-            $req->bindParam(':category', $status['category_id'], PDO::PARAM_INT);
+            $req->bindParam(':category', $status['id'], PDO::PARAM_INT);
             $req->execute();
             $statusArr['count'] = $req->fetchColumn();
 

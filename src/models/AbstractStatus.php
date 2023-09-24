@@ -9,7 +9,6 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
@@ -35,12 +34,6 @@ abstract class AbstractStatus extends AbstractCategory
     private const DEFAULT_RED = 'C24F3D';
 
     protected string $table;
-
-    public function __construct(private Teams $Teams, ?int $id = null)
-    {
-        $this->Db = Db::getConnection();
-        $this->setId($id);
-    }
 
     public function updateOrdering(OrderingParams $params): void
     {

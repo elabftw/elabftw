@@ -15,7 +15,12 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Services\Filter;
 use function is_readable;
@@ -45,20 +50,6 @@ class Zip extends AbstractZip
     }
 
     /**
-     * Select a status for our experiments.
-     *
-     * @return int The default status ID of the team
-     */
-    private function getDefaultStatus(): int
-    {
-        $sql = 'SELECT id FROM experiments_status WHERE team = :team AND is_default = 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->execute();
-        return (int) $req->fetchColumn();
-    }
-
-    /**
      * The main SQL to create a new item with the title and body we have
      *
      * @param array<string, mixed> $item the item to insert
@@ -66,13 +57,18 @@ class Zip extends AbstractZip
      */
     private function dbInsert($item): void
     {
+        $Teams = new Teams($this->Users, $this->Users->userData['team']);
         // the body is updated after it has been fixed by the uploaded files with correct long_name
-        $sql = 'INSERT INTO items(team, title, date, userid, category, canread, canwrite, canbook, elabid, metadata)
-            VALUES(:team, :title, :date, :userid, :category, :canread, :canwrite, :canbook, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, userid, category, status, canread, canwrite, canbook, elabid, metadata)
+            VALUES(:team, :title, :date, :userid, :category, :status, :canread, :canwrite, :canbook, :elabid, :metadata)';
+        $Category = new ItemsTypes($this->Users);
+        $Status = new ItemsStatus($Teams);
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, elabid, metadata)
-                VALUES(:title, :date, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
+            $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, status, elabid, metadata)
+                VALUES(:title, :date, :userid, :canread, :canwrite, :category, :status, :elabid, :metadata)';
+            $Category = new ExperimentsCategories($Teams);
+            $Status = new ExperimentsStatus($Teams);
         }
 
         // make sure there is an elabid (might not exist for items before v4.0)
@@ -84,17 +80,18 @@ class Zip extends AbstractZip
         }
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
+        $req->bindValue(':status', $Status->getDefault());
         $req->bindValue(':canread', $this->canread);
         $req->bindValue(':canwrite', $this->canwrite);
         $req->bindParam(':elabid', $elabid);
         $req->bindParam(':metadata', $item['metadata']);
-        if ($this->Entity instanceof Items) {
+        if ($this->Entity instanceof Experiments) {
+            $req->bindParam(':userid', $this->targetNumber, PDO::PARAM_INT);
+            $req->bindValue(':category', $Category->getDefault());
+        } else {
             $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->targetNumber, PDO::PARAM_INT);
             $req->bindParam(':canbook', $this->canread);
-        } else {
-            $req->bindParam(':userid', $this->targetNumber, PDO::PARAM_INT);
-            $req->bindValue(':category', $this->getDefaultStatus());
         }
 
         $this->Db->execute($req);

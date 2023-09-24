@@ -128,8 +128,8 @@ jobs:
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
-          name: Run unit and api tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
+          name: Run unit and apiv2 tests
+          command: docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip cypress --coverage --coverage-xml --coverage-html
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .

@@ -246,20 +246,33 @@ components:
     entity:
       type: object
       properties:
+        access_key:
+          type: string
+          nullable: true
         body:
           type: string
+          nullable: true
         body_html:
           type: string
+          nullable: true
         canread:
           type: string
+          description: JSON string for read permissions.
         canwrite:
           type: string
+          description: JSON string for write permissions.
         category:
           type: string
-        category_id:
-          type: integer
+          nullable: true
+        category_color:
+          type: string
+          nullable: true
+        category_title:
+          type: string
+          nullable: true
         color:
           type: string
+          nullable: true
         comments:
           type: array
           items:
@@ -273,6 +286,10 @@ components:
           type: string
         elabid:
           type: string
+        experiments_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         firstname:
           type: string
         fullname:
@@ -283,58 +300,82 @@ components:
           type: integer
         id:
           type: integer
+        items_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         lastchangeby:
           type: integer
         lastname:
           type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
         locked:
           type: integer
         lockedby:
           type: integer
-        lockedwhen:
+          nullable: true
+        locked_at:
           type: string
+          nullable: true
+        mainattr_title:
+          type: string
+          nullable: true
+          description: The title of the status for experiments and category for resources.
         metadata:
           type: string
+          nullable: true
         modified_at:
           type: string
         next_step:
           type: string
+          nullable: true
         orcid:
           type: string
+          nullable: true
         page:
           type: string
         rating:
           type: integer
         recent_comment:
           type: string
+          nullable: true
         sharelink:
           type: string
         state:
           type: integer
+        status:
+          type: integer
+          nullable: true
+        status_color:
+          type: string
+          nullable: true
+        status_title:
+          type: string
+          nullable: true
         steps:
           type: array
           items:
             $ref: '#/components/schemas/step'
         tags:
           type: string
+          nullable: true
         tags_id:
           type: string
+          nullable: true
         timestamped:
           type: integer
         timestampedby:
           type: integer
+          nullable: true
         timestamped_at:
           type: string
+          nullable: true
         title:
           type: string
         type:
           type: string
         up_item_id:
           type: integer
+          nullable: true
         uploads:
           type: array
           items:
@@ -380,12 +421,16 @@ components:
           type: string
         body:
           type: string
+          nullable: true
         category:
           type: integer
+          nullable: true
         category_title:
           type: string
+          nullable: true
         category_color:
           type: string
+          nullable: true
         userid:
           type: integer
         canread:
@@ -396,26 +441,33 @@ components:
           type: integer
         lockedby:
           type: integer
-        lockedwhen:
+          nullable: true
+        locked_at:
           type: string
         fullname:
           type: string
         metadata:
           type: string
+          nullable: true
         teams_id:
           type: integer
         is_pinned:
           type: integer
         status:
           type: integer
+          nullable: true
         status_title:
           type: string
+          nullable: true
         status_color:
           type: string
+          nullable: true
         tags:
           type: string
+          nullable: true
         tags_id:
           type: string
+          nullable: true
     idp:
       type: object
       properties:
@@ -500,6 +552,7 @@ components:
           type: integer
         color:
           type: string
+          nullable: true
         link_state:
           type: integer
     notification:

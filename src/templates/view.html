@@ -47,9 +47,6 @@
 
   {# TITLE #}
   <h1 id='documentTitle' class='mb-4 title text-dark'>
-    {% if Entity.type == 'items' %}
-      <span style='color:#{{ Entity.entityData.category_color }}'>{{ Entity.entityData.category_title }}</span>
-    {% endif %}
     {{ Entity.entityData.title|raw }}
   </h1>
 

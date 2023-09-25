@@ -12,6 +12,7 @@ namespace Elabftw\Controllers;
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Interfaces\ControllerInterface;
@@ -50,12 +51,15 @@ class DashboardController implements ControllerInterface
         $DisplayParamsItems = new DisplayParams($this->App->Users, $this->App->Request, EntityType::Items);
         $DisplayParamsItems->limit = self::SHOWN_NUMBER;
         $DisplayParamsItems->orderby = Orderby::Lastchange;
+        $PermissionsHelper = new PermissionsHelper();
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'categoryArr' => $ItemsTypes->readAll(),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'templatesArr' => $Templates->Pins->readAllSimple(),
+            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
+            'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         );
         $Response = new Response();
         $Response->prepare($this->App->Request);

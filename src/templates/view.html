@@ -47,19 +47,10 @@
 
   {# TITLE #}
   <h1 id='documentTitle' class='mb-4 title text-dark'>
-    {% if Entity.type == 'items' %}
-      <span style='color:#{{ Entity.entityData.color }}'>{{ Entity.entityData.category }}</span>
-    {% endif %}
     {{ Entity.entityData.title|raw }}
   </h1>
 
-  {# CATEGORY #}
-  <div class='d-flex mb-2 align-items-center'>
-    <div class='edit-mode-label'>
-      <i aria-hidden='true' class='fas fa-folder mr-1'></i>{{ Entity.type == 'experiments' ? 'Status'|trans : 'Category'|trans }}
-    </div>
-    <span id='categoryView' style='--bg: #{{ Entity.entityData.color }}' class='category-button malleableCategory hl-hover-gray rounded p-1'>{{ Entity.entityData.category|raw }}</span>
-  </div>
+  {% include('catstat-view.html') %}
 
   {# TAGS #}
   <div class='d-flex mb-2 align-items-center'>

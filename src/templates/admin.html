@@ -22,8 +22,8 @@
   <li data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Resources categories'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
   <li data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</li>
   <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
 </ul>
@@ -32,6 +32,11 @@
 <div class='d-flex justify-content-center' id='loading-spinner'>
   <div class='lds-dual-ring'></div>
 </div>
+
+{% include 'create-statuslike-modal.html' with {'target': 'experiments_categories', 'title': 'Create new experiments category'|trans} %}
+{% include 'create-statuslike-modal.html' with {'target': 'experiments_status', 'title': 'Create new experiments status'|trans} %}
+{% include 'create-statuslike-modal.html' with {'target': 'items_status', 'title': 'Create new resources status'|trans} %}
+
 
 {# set variables for binary-settings template and other inputs with a data-model #}
 {% set src = App.teamArr %}
@@ -202,32 +207,21 @@
   {% include 'editusers.html' %}
 </div>
 
-<!-- TAB 4 STATUS -->
+{# TAB 4 CATEGORIES #}
 <div data-tabcontent='4' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Add a New Status'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5'>
-    <div class='d-flex justify-content-between'>
-      <label for='statusName' class='col-form-label'>{{ 'Name'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='statusName' />
+  {# EXPERIMENTS CATEGORIES #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
+  <div class='pl-3 mb-5' id='experiments_categoriesDiv'>
+    <div class='mb-2 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
+      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      <div>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createexperiments_categoriesModal'>{{ 'Create'|trans }}</button>
+      </div>
     </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='statusColor' class='col-form-label'>{{ 'Color'|trans }}</label>
-      <input class='form-control randomColor col-md-3' type='color' id='statusColor' />
-    </div>
-    <hr>
-
-    <div class='mt-3 text-center'>
-      <button class='btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='create-status'>{{ 'Save'|trans }}</button>
-    </div>
-  </div>
-
-    <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Edit an Existing Status'|trans }}</h3>
-    <div class='pl-3' id='statusBox'>
-    <ul class='list-group sortable' data-axis='y' data-table='status'>
-      {% for status in statusArr %}
-        <li id='status_{{ status.category_id }}' data-statusid='status_{{ status.category_id }}' class='list-group-item'>
+    <ul class='list-group sortable' data-axis='y' data-table='experiments_categories'>
+      {% for cat in experimentsCategoriesArr %}
+        <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ status.id }}' class='list-group-item'>
           <ul class='list-inline'>
             <li class='list-inline-item'>
               <span class='draggable sortableHandle'>
@@ -236,37 +230,35 @@
             </li>
 
             <li class='list-inline-item'>
-              <label for='statusName_{{ status.category_id }}'>{{ 'Name'|trans }}</label>
-              <input class='form-control' required type='text' id='statusName_{{ status.category_id }}' value='{{ status.category|raw }}' />
+              <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
+              <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' value='{{ cat.title|raw }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>
-              <label for='statusColor_{{ status.category_id }}'>{{ 'Color'|trans }}</label>
-              <input class='form-control' type='color' id='statusColor_{{ status.category_id }}' value='#{{ status.color }}' />
+              <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
+              <input class='form-control' type='color' id='expcatColor_{{ cat.id }}' value='#{{ cat.color }}' />
             </li>
 
             <li class='list-inline-item'>
-              <input type='radio' name='defaultRadio' id='statusDefault_{{ status.category_id }}' {{ status.is_default ? " checked" }} />
-              <label for='statusDefault_{{ status.category_id }}'>{{ 'Default status'|trans }}</label>
+              <input type='radio' name='expexpcatdefault' id='expcatDefault_{{ cat.id }}' {{ cat.is_default ? " checked" }} />
+              <label for='expcatDefault_{{ cat.id }}'>{{ 'Default'|trans }}</label>
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.category_id }}' class='btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-action='update-status'>{{ 'Save'|trans }}</button>
+              <button data-id='{{ cat.id }}' class='btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-target='expcat' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.category_id }}' data-teamid='{{ App.Users.userData.team }}' data-action='destroy-status' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button data-id='{{ cat.id }}' data-teamid='{{ App.Users.userData.team }}' data-target='experiments_categories' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>
       {% endfor %}
     </ul>
   </div>
-</div>
 
-<!-- TAB 5 ITEMS TYPES-->
-<div data-tabcontent='5' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
+  {# RESOURCES CATEGORIES #}
+  <h3 id='resourcesCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
@@ -279,13 +271,13 @@
     </div>
 
   {% if App.Request.query.has('templateid') %}
-    <a href='?tab=5' class='btn hl-hover-gray'>
+    <a href='?tab=4' class='btn hl-hover-gray'>
       <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
     </a>
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.category_id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=5&templateid={{ itemType.category_id }}' class='mr-2'><i class='fas fa-pencil-alt'></i></a>{{ itemType.category|raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#resourcesCategoriesAnchor'><span class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>{{ itemType.title|raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
@@ -308,6 +300,7 @@
         </li>
 
       </ul>
+      {% include('catstat-edit.html') %}
       {% include('edit-permissions.html') %}
 
       <div>
@@ -327,9 +320,106 @@
       <!-- METADATA editor for items types -->
       {% include 'json-editor.html' %}
     {% endif %}
-
   </div>
+</div>
 
+{# TAB 5 STATUS #}
+<div data-tabcontent='5' hidden>
+  {# EXPERIMENTS STATUS #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments Status'|trans }}</h3>
+  <div class='pl-3 mb-5' id='experiments_statusDiv'>
+    <div class='mb-2 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
+      {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
+      <div>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createexperiments_statusModal'>{{ 'Create'|trans }}</button>
+      </div>
+    </div>
+    <ul class='list-group sortable mb-5' data-axis='y' data-table='experiments_status'>
+      {% for status in statusArr %}
+        <li id='status_{{ status.id }}' data-statusid='status_{{ status.id }}' class='list-group-item'>
+          <ul class='list-inline'>
+            <li class='list-inline-item'>
+              <span class='draggable sortableHandle'>
+                <i class='fas fa-grip-vertical fa-fw'></i>
+              </span>
+            </li>
+
+            <li class='list-inline-item'>
+              <label for='statusName_{{ status.id }}'>{{ 'Name'|trans }}</label>
+              <input class='form-control' required type='text' id='statusName_{{ status.id }}' value='{{ status.title|raw }}' />
+            </li>
+
+            <li class='list-inline-item col-1 align-top'>
+              <label for='statusColor_{{ status.id }}'>{{ 'Color'|trans }}</label>
+              <input class='form-control' type='color' id='statusColor_{{ status.id }}' value='#{{ status.color }}' />
+            </li>
+
+            <li class='list-inline-item'>
+              <input type='radio' name='expstatusdefault' id='statusDefault_{{ status.id }}' {{ status.is_default ? " checked" }} />
+              <label for='statusDefault_{{ status.id }}'>{{ 'Default'|trans }}</label>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-id='{{ status.id }}' class='btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-target='experiments' data-action='update-status'>{{ 'Save'|trans }}</button>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-target='experiments_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+            </li>
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+
+  {# RESOURCES STATUS #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Resources Status'|trans }}</h3>
+  <div class='pl-3' id='items_statusDiv'>
+    <div class='mb-2 d-flex justify-content-between'>
+      <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
+      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      <div>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createitems_statusModal'>{{ 'Create'|trans }}</button>
+      </div>
+    </div>
+    <ul class='list-group sortable' data-axis='y' data-table='items_status'>
+      {% for status in itemsStatusArr %}
+        <li id='itemsstatus_{{ status.id }}' data-statusid='itemsstatus_{{ status.id }}' class='list-group-item'>
+          <ul class='list-inline'>
+            <li class='list-inline-item'>
+              <span class='draggable sortableHandle'>
+                <i class='fas fa-grip-vertical fa-fw'></i>
+              </span>
+            </li>
+
+            <li class='list-inline-item'>
+              <label for='itemsstatusName_{{ status.id }}'>{{ 'Name'|trans }}</label>
+              <input class='form-control' required type='text' id='itemsstatusName_{{ status.id }}' value='{{ status.title|raw }}' />
+            </li>
+
+            <li class='list-inline-item col-1 align-top'>
+              <label for='itemsstatusColor_{{ status.id }}'>{{ 'Color'|trans }}</label>
+              <input class='form-control' type='color' id='itemsstatusColor_{{ status.id }}' value='#{{ status.color }}' />
+            </li>
+
+            <li class='list-inline-item'>
+              <input type='radio' name='itemsstatusdefault' id='itemsstatusDefault_{{ status.id }}' {{ status.is_default ? " checked" }} />
+              <label for='itemsstatusDefault_{{ status.id }}'>{{ 'Default'|trans }}</label>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-id='{{ status.id }}' class='btn btn-primary' data-teamid='{{ App.Users.userData.team }}' data-target='items' data-action='update-status'>{{ 'Save'|trans }}</button>
+            </li>
+
+            <li class='list-inline-item'>
+              <button data-id='{{ status.id }}' data-teamid='{{ App.Users.userData.team }}' data-target='items_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+            </li>
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  </div>
 </div>
 
 
@@ -341,7 +431,7 @@
       <label for='categoryExport' class='col-form-label'>{{ 'Select what to export'|trans }}</label>
       <select class='form-control col-md-3' id='categoryExport' autocomplete='off'>
         {% for itemsType in itemsCategoryArr %}
-          <option value='{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+          <option value='{{ itemsType.id }}'>{{ itemsType.title }}</option>
         {% endfor %}
       </select>
     </div>

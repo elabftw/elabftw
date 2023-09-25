@@ -23,7 +23,7 @@ class ExperimentsLinks extends AbstractLinks
 
     protected function getCategoryTable(): string
     {
-        return 'status';
+        return 'experiments_categories';
     }
 
     protected function getTable(): string

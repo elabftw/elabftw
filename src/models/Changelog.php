@@ -69,7 +69,10 @@ class Changelog
     {
         $changes = $this->readAll();
         foreach ($changes as &$change) {
-            $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Config::fromEnv('SITE_URL')), $change['content']);
+            // content can be NULL, which will make str_replace explode
+            if (is_string($change['content'])) {
+                $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Config::fromEnv('SITE_URL')), $change['content']);
+            }
         }
         return $changes;
     }

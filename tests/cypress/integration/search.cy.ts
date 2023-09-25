@@ -13,7 +13,6 @@ describe('Search page', () => {
     cy.get('select#dateOperator').should('exist');
     cy.get('input#date').should('exist');
     cy.get('input#dateTo').should('exist');
-    cy.get('select#status').should('exist');
     cy.get('select#visibility').should('exist');
     cy.get('select#rating').should('exist');
     cy.get('select#locked').should('exist');

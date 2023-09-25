@@ -8,7 +8,7 @@
 
 {% block body %}
 
-{% include 'create-new-item-modal.html' %}
+{% include 'show-view-edit.html' %}
 <h2>{{ 'Welcome %s'|trans|format(App.Users.userData.firstname) }}</h2>
 
 <hr>
@@ -20,7 +20,7 @@
     </div>
     <ul class='list-group'>
       {% for experiment in experimentsArr %}
-      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ experiment.color }}' class='category-button rounded p-1 mr-2'>{{ experiment.category|raw }}</span>{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ experiment.color }}' class='category-button rounded p-1 mr-2'>{{ experiment.mainattr_title|raw }}</span>{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>
@@ -31,7 +31,7 @@
     </div>
     <ul class='list-group mt-2'>
       {% for item in itemsArr %}
-      <a href='database.php?mode=view&id={{ item.id }}'  class='list-group-item hl-hover-gray'><span style='--bg: #{{ item.color }}' class='category-button rounded p-1 mr-2'>{{ item.category }}</span>{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='database.php?mode=view&id={{ item.id }}'  class='list-group-item hl-hover-gray'><span style='--bg: #{{ item.color }}' class='category-button rounded p-1 mr-2'>{{ item.mainattr_title }}</span>{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>

@@ -195,12 +195,12 @@ class Teams implements RestInterface
          * so don't rely on fk to delete the status, but run it through the Status->delete first,
          * it will check if experiments have the status and show an error
          */
-        $sql = 'SELECT id FROM status WHERE team = :team';
+        $sql = 'SELECT id FROM experiments_status WHERE team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $statusArr = $req->fetchAll();
-        $Status = new Status($this);
+        $Status = new ExperimentsStatus($this);
         foreach ($statusArr as $status) {
             $Status->setId($status['id']);
             $Status->destroy();
@@ -284,7 +284,7 @@ class Teams implements RestInterface
 
         $user = new Users();
         // create default status
-        $Status = new Status(new self($user, $newId));
+        $Status = new ExperimentsStatus(new self($user, $newId));
         $Status->createDefault();
 
         // create default item type

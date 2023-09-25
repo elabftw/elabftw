@@ -21,6 +21,7 @@ final class StatusParams extends ContentParams
             'color' => Check::color($this->content),
             'is_default' => Filter::toBinary($this->content),
             'title' => parent::getContent(),
+            'state' => $this->getInt(),
             default => throw new ImproperActionException('Incorrect parameter for status.'),
         };
     }

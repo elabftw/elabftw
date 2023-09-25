@@ -54,8 +54,16 @@ if ($ci); then
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+else
+    # we need to add the parser because it's in cache/ and it's tmpfs mounted now
+    docker exec -it elabtmp yarn buildparser
     docker exec -it elabtmp yarn twigcs
 fi
+# fix permissions on cache folders
+docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
+docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
+
 # install the database
 echo "Initializing the database..."
 docker exec -it elabtmp bin/init db:install -r -q
@@ -66,9 +74,7 @@ fi
 docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
 # RUN TESTS
 if ($ci); then
-    # fix permissions on test output and cache folders
-    sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-    sudo chmod -R 777 cache
+    # fix permissions on test output and uploads
     sudo chmod -R 777 tests/_output
     sudo chmod -R 777 uploads
     if (${SCRUTINIZER:-false}); then
@@ -80,9 +86,18 @@ fi
 if [ "${1:-}" = "unit" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
+    if [ ! "$(docker images elab-cypress)" ]; then
+        echo "Building fresh cypress image..."
+        docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
+    fi
+    if [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+        echo "Launching fresh cypress container..."
+        docker run --name elab-cypress -d elab-cypress
+    fi
+    echo "Running cypress..."
     docker exec -it elab-cypress cypress run
     # copy the artifacts in cypress output folder
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
@@ -94,7 +109,7 @@ elif [ "${1:-}" = "cy" ]; then
         && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html
     docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml ./tests/_output/cypress-coverage.clover.xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip cypress --coverage --coverage-html --coverage-xml
 fi
 
 # in ci we copy the coverage output file in current directory

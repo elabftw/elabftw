@@ -17,7 +17,7 @@
           <select class='form-control' id='import_modal_target' autocomplete='off' name='target'>
             <option disabled>{{ 'Import in database'|trans }}</option>
             {% for itemsType in itemsCategoryArr %}
-              <option value='items:{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+              <option value='items:{{ itemsType.id }}'>{{ itemsType.title }}</option>
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
             {# if we are admin we can import in other users experiments, otherwise just for ourself #}

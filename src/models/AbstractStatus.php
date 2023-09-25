@@ -9,22 +9,20 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Enums\State;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
 /**
- * Experiments have a Status which is expressed as a Category, the same way Items have an ItemType
+ * Status for experiments or items
  */
-class Status extends AbstractCategory
+abstract class AbstractStatus extends AbstractCategory
 {
-    use CategoryTrait;
     use SetIdTrait;
 
     private const DEFAULT_BLUE = '29AEB9';
@@ -35,16 +33,17 @@ class Status extends AbstractCategory
 
     private const DEFAULT_RED = 'C24F3D';
 
-    public function __construct(private Teams $Teams, ?int $id = null)
+    protected string $table;
+
+    public function updateOrdering(OrderingParams $params): void
     {
-        $this->countableTable = 'experiments';
-        $this->Db = Db::getConnection();
-        $this->setId($id);
+        $this->Teams->canWriteOrExplode();
+        parent::updateOrdering($params);
     }
 
     public function getPage(): string
     {
-        return sprintf('api/v2/teams/%d/status/', $this->Teams->id ?? 0);
+        return sprintf('api/v2/teams/%d/%s/', $this->Teams->id ?? 0, $this->table);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -69,8 +68,8 @@ class Status extends AbstractCategory
 
     public function readOne(): array
     {
-        $sql = 'SELECT id as category_id, title as category, color, is_default
-            FROM status WHERE id = :id';
+        $sql = sprintf('SELECT id, title, color, is_default
+            FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -82,13 +81,11 @@ class Status extends AbstractCategory
      */
     public function readAll(): array
     {
-        $sql = 'SELECT status.id AS category_id,
-            status.title AS category,
-            status.color,
-            status.is_default
-            FROM status WHERE team = :team ORDER BY ordering ASC';
+        $sql = sprintf('SELECT id, title, color, is_default
+            FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -105,17 +102,9 @@ class Status extends AbstractCategory
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();
-        // don't allow deletion of a status with experiments
-        if ($this->countEntities() > 0) {
-            throw new ImproperActionException(_('Remove all experiments with this status before deleting this status.'));
-        }
-
-        $sql = 'DELETE FROM status WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
+        // TODO fix FK constraints so it sets NULL instead of deleting entries
+        // set state to deleted
+        return $this->update(new StatusParams('state', (string) State::Deleted->value));
     }
 
     private function create(string $title, string $color, int $isDefault = 0): int
@@ -124,8 +113,8 @@ class Status extends AbstractCategory
         $color = Check::color($color);
         $isDefault = Filter::toBinary($isDefault);
 
-        $sql = 'INSERT INTO status(title, color, team, is_default)
-            VALUES(:title, :color, :team, :is_default)';
+        $sql = sprintf('INSERT INTO %s (title, color, team, is_default)
+            VALUES(:title, :color, :team, :is_default)', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':color', $color, PDO::PARAM_STR);
@@ -139,11 +128,11 @@ class Status extends AbstractCategory
     private function update(StatusParams $params): bool
     {
         // make sure there is only one default status
-        if ($params->getTarget() === 'default' && $params->getContent() === 1) {
+        if ($params->getTarget() === 'is_default' && $params->getContent() === 1) {
             $this->setDefaultFalse();
         }
 
-        $sql = 'UPDATE status SET ' . $params->getColumn() . ' = :content WHERE id = :id';
+        $sql = sprintf('UPDATE %s SET ' . $params->getColumn() . ' = :content WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -157,7 +146,7 @@ class Status extends AbstractCategory
      */
     private function setDefaultFalse(): void
     {
-        $sql = 'UPDATE status SET is_default = 0 WHERE team = :team';
+        $sql = sprintf('UPDATE %s SET is_default = 0 WHERE team = :team', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);

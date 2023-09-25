@@ -60,24 +60,8 @@
     <input id='title_input' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
   </div>
 
-  <!-- CATEGORIES (status for exp and itemstypes for items) -->
-  <div class='d-flex mb-2 align-items-center'>
-    <label for='category_select' class='col-form-label mr-3 edit-mode-label'>
-    {% if Entity.type == 'experiments' %}
-      {% trans %}Status{% plural 1 %}Status{% endtrans %}
-    {% else %}
-      {{ 'Category'|trans }}
-    {% endif %}
-    </label>
-    <select id='category_select' class='form-control col-md-2'>
-      <!-- TODO add a box with color -->
-      {% for category in categoryArr %}
-        <option value='{{ category.category_id }}'
-        {{ Entity.entityData.category_id == category.category_id ? ' selected' }}>{{ category.category|raw }}</option>
-      {% endfor %}
-    </select>
-  </div>
-
+  {# CATEGORY / STATUS #}
+  {% include('catstat-edit.html') %}
   {# TAGS #}
   {% include('edit-tags.html') %}
   {# PERMISSIONS #}

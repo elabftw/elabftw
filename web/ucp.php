@@ -17,6 +17,8 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -45,6 +47,8 @@ try {
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
+    $Category = new ExperimentsCategories($Teams);
+    $Status = new ExperimentsStatus($Teams);
     $entityData = array();
     $changelogData = array();
     $metadataGroups = array();
@@ -104,6 +108,7 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
+        'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
@@ -112,6 +117,7 @@ try {
         'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
+        'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),

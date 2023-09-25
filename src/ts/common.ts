@@ -259,6 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#policiesModal').modal('toggle');
       });
 
+    } else if (el.matches('[data-action="add-query-filter"]')) {
+      const params = new URLSearchParams(document.location.search.substring(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.location.href = `?${params.toString()}`;
+
     // SCROLL TO TOP
     } else if (el.matches('[data-action="scroll-top"]')) {
       document.documentElement.scrollTo({

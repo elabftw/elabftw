@@ -86,7 +86,8 @@ CREATE TABLE `experiments` (
   `title` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `body` mediumtext,
-  `category` int(255) UNSIGNED NOT NULL,
+  `category` INT UNSIGNED NULL DEFAULT NULL,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `userid` int(10) UNSIGNED NOT NULL,
   `elabid` varchar(255) NOT NULL,
@@ -233,6 +234,7 @@ CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
+  `category` INT UNSIGNED NULL DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -247,6 +249,7 @@ CREATE TABLE `experiments_templates` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -377,7 +380,7 @@ CREATE TABLE `items` (
   `body` mediumtext,
   `elabid` varchar(255) NOT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `category` int(255) UNSIGNED NOT NULL,
+  `category` INT UNSIGNED NULL DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
@@ -391,6 +394,7 @@ CREATE TABLE `items` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -489,6 +493,7 @@ CREATE TABLE `items_types` (
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -603,21 +608,53 @@ CREATE TABLE `pin_items2users` (
 
 
 --
--- Table structure for table `status`
+-- Table structure for table `experiments_status`
 --
 
-CREATE TABLE `status` (
+CREATE TABLE `experiments_status` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `status`:
+--   `team`
+--       `teams` -> `id`
+--
+
+CREATE TABLE `experiments_categories` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `team` int UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+--
+-- Table structure for table `items_status`
+--
+
+CREATE TABLE `items_status` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `team` int(10) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `items_status`:
 --   `team`
 --       `teams` -> `id`
 --
@@ -952,7 +989,7 @@ ALTER TABLE `api_keys`
 ALTER TABLE `experiments`
   ADD KEY `fk_experiments_users_userid` (`userid`),
   ADD KEY `idx_experiments_state` (`state`),
-  ADD KEY `fk_experiments_status_id` (`category`);
+  ADD KEY `fk_experiments_status_id` (`status`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -1050,8 +1087,12 @@ ALTER TABLE `notifications`
 --
 -- Indexes for table `status`
 --
-ALTER TABLE `status`
-  ADD KEY `fk_status_teams_team_id` (`team`);
+ALTER TABLE `experiments_status`
+  ADD KEY `fk_experiments_status_teams_team_id` (`team`);
+ALTER TABLE `items_status`
+  ADD KEY `fk_items_status_teams_team_id` (`team`);
+ALTER TABLE `experiments_categories`
+  ADD KEY `fk_experiments_categories_teams_team_id` (`team`);
 
 --
 -- Indexes for table `tags`
@@ -1103,7 +1144,7 @@ ALTER TABLE `api_keys`
 --
 ALTER TABLE `experiments`
   ADD CONSTRAINT `fk_experiments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_status_id` FOREIGN KEY (`category`) REFERENCES `status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_experiments_status_id` FOREIGN KEY (`status`) REFERENCES `experiments_status` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_changelog`
@@ -1213,8 +1254,12 @@ ALTER TABLE `notifications`
 --
 -- Constraints for table `status`
 --
-ALTER TABLE `status`
-  ADD CONSTRAINT `fk_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `experiments_status`
+  ADD CONSTRAINT `fk_experiments_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `items_status`
+  ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `experiments_categories`
+  ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tags`

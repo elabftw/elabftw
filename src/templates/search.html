@@ -256,39 +256,62 @@
 <hr>
 
 <div class='row mb-2'>
-  <!-- SEARCH IN-->
-  <div class='col-md-6'>
+  {# SEARCH IN #}
+  <div class='col-md-4'>
     <label for='searchin'>{{ 'Search in'|trans }}</label>
     <select name='type' id='searchin' class='form-control'>
       <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
-      <option disabled>----------------</option>
-      <option value='database'{{ Request.query.get('type') == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
-      {% for category in itemsTypesArr %}
-        <option value='{{ category.category_id }}'{{ Request.query.get('type') == category.category_id ? ' selected' }}>
-          {{ category.category }}
+      <option value='items'{{ Request.query.get('type') == 'items' ? ' selected' }}>{{ 'Resources'|trans }}</option>
+    </select>
+  </div>
+  {# EXPERIMENTS CATEGORIES #}
+  <div class='col-md-4' id='experimentsCategoriesDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
+    <label for='experimentsCategoriesSelect'>{{ 'And category is'|trans }}</label>
+    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+      <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
+      {% for category in experimentsCategoriesArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
         </option>
       {% endfor %}
     </select>
   </div>
-  <!-- END SEARCH IN -->
-  <!-- AUTHOR/OWNER HELPER -->
-  <div class='col-md-6'>
-    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
-    <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
-      <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
-      <optgroup label='{{ 'Users'|trans }}'>
-        {% for user in usersArr %}
-          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
-        {% endfor %}
-      </optgroup>
-      <optgroup label='{{ 'Groups'|trans }}'>
-        {% for group in teamGroups %}
-          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
-        {% endfor %}
-      </optgroup>
+  {# RESOURCES CATEGORIES (items types) #}
+  <div class='col-md-4' id='resourcesCategoriesDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
+    <label for='resourcesCategoriesSelect'>{{ 'And category is'|trans }}</label>
+    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+      <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
+      {% for category in itemsTypesArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
     </select>
   </div>
-  <!-- END AUTHOR/OWNER HELPER -->
+  {# EXPERIMENTS STATUS #}
+  <div class='col-md-4' id='experimentsStatusDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
+    <label for='experimentsStatusSelect'>{{ 'And status is'|trans }}</label>
+    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
+      <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+      {% for category in experimentsStatusArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  {# RESOURCES STATUS #}
+  <div class='col-md-4' id='resourcesStatusDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
+    <label for='resourcesStatusSelect'>{{ 'And status is'|trans }}</label>
+    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
+      <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+      {% for category in itemsStatusArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 </div>
 
 <div class='row mb-2'>
@@ -320,37 +343,27 @@
 
 <!-- NEW ROW -->
 <div class='row mb-2'>
-  <div class='col-md-6'>
-    <!-- STATUS ONLY FOR EXPERIMENTS -->
-    <div id='searchStatus'>
-      <label for='status'>{{ 'And status is'|trans }}</label>
-      <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
-        <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
-        {% for status in statusArr %}
-          <option {{- Request.query.get('status') == status.category ? ' selected' }}>
-            {{ status.category }}
-          </option>
+  {# AUTHOR/OWNER HELPER #}
+  <div class='col-md-4'>
+    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+    <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
+      <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
+      <optgroup label='{{ 'Users'|trans }}'>
+        {% for user in usersArr %}
+          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
         {% endfor %}
-      </select>
-    </div>
-    <!-- END STATUS -->
-    <!-- CATEGORY ONLY FOR DATABASE -->
-    <div id='searchCategory' hidden>
-      <label for='category'>{{ 'And category is'|trans }}</label>
-      <select id='category' name='category' data-filter='category' class='form-control filterHelper'>
-        <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
-        {% for category in itemsTypesArr %}
-          <option {{- Request.query.get('category') == category.category ? ' selected' }}>
-            {{ category.category }}
-          </option>
+      </optgroup>
+      <optgroup label='{{ 'Groups'|trans }}'>
+        {% for group in teamGroups %}
+          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
         {% endfor %}
-      </select>
-    </div>
-    <!-- END CATEGORY -->
+      </optgroup>
+    </select>
   </div>
+  <!-- END AUTHOR/OWNER HELPER -->
 
   <!-- VISIBILITY SEARCH -->
-  <div class='col-md-6'>
+  <div class='col-md-4'>
     <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
     <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>

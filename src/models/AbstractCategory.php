@@ -13,6 +13,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
+use PDO;
 
 /**
  * A category is a status for experiments and item type for db item
@@ -24,8 +25,33 @@ abstract class AbstractCategory implements RestInterface
 
     protected Db $Db;
 
+    protected string $table;
+
+    public function __construct(protected Teams $Teams, ?int $id = null)
+    {
+        $this->Db = Db::getConnection();
+        $this->setId($id);
+    }
+
     /**
      * Get all the things
      */
     abstract public function readAll(): array;
+
+    public function getDefault(): ?int
+    {
+        // there should be only one because upon making a status default,
+        // all the others are made not default
+        $sql = 'SELECT id FROM ' . $this->table . ' WHERE is_default = true AND team = :team LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $status = $req->fetchColumn();
+
+        // if there is no is_default, null is fine
+        if (!$status) {
+            return null;
+        }
+        return (int) $status;
+    }
 }

@@ -70,8 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (['/team.php', '/ucp.php'].includes(window.location.pathname) && !urlParams.has('templateid')) {
           window.location.replace('?tab=3');
         } else {
-          document.getElementById('toggle-pin-icon').classList.toggle('color-weak');
-          ['bgnd-gray', 'hl-hover-gray'].forEach(cl => document.getElementById('toggle-pin-icon-div').classList.toggle(cl));
+          const container = document.getElementById('container');
+          container.querySelectorAll('[data-toggle-pin-icon]').forEach(el => {
+            el.classList.toggle('color-weak');
+          });
+          container.querySelectorAll('[data-action="toggle-pin"]').forEach(el => {
+            ['bgnd-gray', 'hl-hover-gray'].forEach(cl => el.classList.toggle(cl));
+          });
         }
       });
 

@@ -106,8 +106,8 @@
         {% endif %}
         <span class='item-date color-medium'>{{ item.date|date('Y-m-d') }}</span>
         {% if isPinned %}
-          <span title='{{ 'Toggle pin'|trans }}' data-id='{{ item.id }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='hl-hover-gray p-1 rounded'>
-            <i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw'></i>
+          <span title='{{ 'Toggle pin'|trans }}' data-id='{{ item.id }}' data-action='toggle-pin' class='hl-hover-gray p-1 rounded'>
+            <i data-toggle-pin-icon='' class='fas fa-thumbtack fa-fw'></i>
           </span>
         {% endif %}
       </div>

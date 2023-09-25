@@ -64,8 +64,8 @@
     <div class='ml-auto d-flex align-items-center' id='toolbarRightDiv'>
       {# TOGGLE PIN #}
       <div class='mr-2'>
-        <div title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
-          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
+        <div title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
+          <i data-toggle-pin-icon='' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
         </div>
       </div>
 

@@ -137,8 +137,8 @@
 
       {# TOGGLE PIN #}
       <div class='mr-2'>
-        <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
-          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
+        <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
+          <i data-toggle-pin-icon='' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
         </div>
       </div>
 

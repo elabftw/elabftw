@@ -1,18 +1,19 @@
-<!-- PERMISSIONS -->
+{# PERMISSIONS display block #}
+{# 'can' var is used in view-permissions-details.html #}
 <hr>
 <div class='d-flex mb-2 align-items-center'>
-  <!-- CAN READ -->
+  {# CANREAD #}
   {% set rw = 'canread' %}
   {% set can = Entity.entityData.canread|canToHuman %}
   {% include('view-permissions.html') %}
 </div>
 <div class='d-flex mb-2 align-items-center'>
-  <!-- CAN WRITE -->
+  {# CANWRITE #}
   {% set rw = 'canwrite' %}
   {% set can = Entity.entityData.canwrite|canToHuman %}
   {% include('view-permissions.html') %}
 </div>
-{# CAN BOOK for items #}
+{# CANBOOK #}
 {% if Entity.entityData.is_bookable %}
   <div class='d-flex mb-2 align-items-center'>
     {% set rw = 'canbook' %}

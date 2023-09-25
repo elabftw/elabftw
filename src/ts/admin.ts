@@ -7,7 +7,6 @@
  */
 import { notif, notifError, reloadElement, updateCatStat } from './misc';
 import $ from 'jquery';
-import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { MdEditor } from './Editor.class';

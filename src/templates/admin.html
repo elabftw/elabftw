@@ -190,7 +190,7 @@
             <div class='input-group-prepend'>
               <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
             </div>
-            <input type='text' class='form-control autocompleteUsers' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
+            <input type='text' class='form-control' data-complete-target='users' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
             <div class='input-group-append'>
               <button class='btn btn-primary' data-action='adduser-teamgroup' data-teamid='{{ App.Users.userData.team }}' data-groupid='{{ teamGroup.id }}' type='button'>{{ 'Add user'|trans }}</button>
             </div>

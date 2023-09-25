@@ -176,25 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // AUTOCOMPLETE input with users
-  $(document).on('focus', '.autocompleteUsers', function() {
-    if (!$(this).data('autocomplete')) {
-      $(this).autocomplete({
-        // necessary or the autocomplete will get under the modal
-        appendTo: '#autocompleteUsersDiv' + $(this).data('identifier'),
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(user => {
-              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
-            });
-            response(res);
-          });
-        },
-      });
-    }
-  });
-
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
@@ -269,6 +250,24 @@ document.addEventListener('DOMContentLoaded', () => {
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
+      });
+
+    // AUTOCOMPLETE
+    } else if (el.matches('[data-complete-target]')) {
+      // depending on the type of results, we will want different attributes and formatting
+      let transformer = entity => `${entity.id} - ${entity.mainattr_title} - ${entity.title}`;
+      if (el.dataset.completeTarget === 'users') {
+        transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
+      }
+      // use autocomplete jquery-ui plugin
+      $(el).autocomplete({
+        // this option is necessary or the autocomplete box will get lost under the permissions modal
+        appendTo: el.dataset.identifier ? `#autocompleteUsersDiv${el.dataset.identifier}` : '',
+        source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
+            response(json.map(entry => transformer(entry)));
+          });
+        },
       });
 
     // TRANSFER OWNERSHIP

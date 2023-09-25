@@ -360,7 +360,7 @@ export function addAutocompleteToLinkInputs(): void {
           if (term in cache[object.selectElid]) {
             const res = [];
             cache[object.selectElid][term].forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
             return;
@@ -369,7 +369,7 @@ export function addAutocompleteToLinkInputs(): void {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
           });

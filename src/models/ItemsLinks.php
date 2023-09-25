@@ -19,9 +19,14 @@ class ItemsLinks extends AbstractLinks
         return 'items';
     }
 
-    protected function getCategoryTable(): string
+    protected function getCatStatTable(): string
     {
         return 'items_types';
+    }
+
+    protected function getCatStatEntityColumn(): string
+    {
+        return 'category';
     }
 
     protected function getTable(): string

@@ -3,17 +3,20 @@
 <div class='d-flex mb-2 align-items-center'>
   <!-- CAN READ -->
   {% set rw = 'canread' %}
+  {% set can = Entity.entityData.canread|canToHuman %}
   {% include('view-permissions.html') %}
 </div>
 <div class='d-flex mb-2 align-items-center'>
   <!-- CAN WRITE -->
   {% set rw = 'canwrite' %}
+  {% set can = Entity.entityData.canwrite|canToHuman %}
   {% include('view-permissions.html') %}
 </div>
 {# CAN BOOK for items #}
 {% if Entity.entityData.is_bookable %}
   <div class='d-flex mb-2 align-items-center'>
     {% set rw = 'canbook' %}
+    {% set can = Entity.entityData.canbook|canToHuman %}
     {% include('view-permissions.html') %}
   </div>
 {% endif %}

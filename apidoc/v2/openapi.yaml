@@ -546,11 +546,11 @@ components:
           type: string
         elabid:
           type: string
-        category:
+        mainattr_title:
           type: string
         is_bookable:
           type: integer
-        color:
+        mainattr_color:
           type: string
           nullable: true
         link_state:

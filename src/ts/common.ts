@@ -255,7 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // AUTOCOMPLETE
     } else if (el.matches('[data-complete-target]')) {
       // depending on the type of results, we will want different attributes and formatting
-      let transformer = entity => `${entity.id} - ${entity.mainattr_title} - ${entity.title}`;
+      let transformer = entity => {
+        const cat = entity.category_title ? `${entity.category_title} - ` : '';
+        const stat = entity.status_title ? `${entity.status_title} - ` : '';
+        return `${entity.id} - ${cat}${stat}${entity.title}`;
+      };
+      // useid data attribute is used in admin panel to grab the userid from input
       if (el.dataset.completeTarget === 'users') {
         transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
       }

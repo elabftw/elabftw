@@ -71,6 +71,59 @@ class Populate
             BasePermissions::UserOnly->toJson(),
         );
 
+        $tagsArr = array(
+            'Project X',
+            'collaboration',
+            'SCP-2702',
+            'Western Blot',
+            'HeLa',
+            'Fly',
+            'Dark Arts',
+            'COVID-24',
+            'FLIM',
+            'FRET',
+            'Open Source',
+            'Software',
+            'Secret',
+            'Copper',
+            'nanotechnology',
+            'spectroscopy',
+            'hardness testing',
+            'cell culture',
+            'DNA sequencing',
+            'PCR',
+            'gene expression',
+            'protein purification',
+            'biological samples',
+            'data analysis',
+            'lab safety',
+            'genetics',
+            'molecular biology',
+            'cell biology',
+            'biotechnology',
+            'biochemistry',
+            'microbiology',
+            'ecology',
+            'bioinformatics',
+            'research methodology',
+            'lab techniques',
+            'experimental design',
+            'ethics in research',
+            'laboratory management',
+            'scientific collaboration',
+            'lab supplies',
+            'scientific discovery',
+            'data interpretation',
+            'hypothesis testing',
+            'cell culture techniques',
+            'genomic analysis',
+            'protein analysis',
+            'molecular cloning',
+            'biomolecular assays',
+            'statistical analysis',
+            'scientific literature',
+        );
+
 
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
@@ -79,7 +132,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->postAction(Action::Create, array('tag' => $this->faker->word() . $this->faker->word()));
+                $Tags->postAction(Action::Create, array('tag' => $this->faker->randomElement($tagsArr)));
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');

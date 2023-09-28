@@ -182,18 +182,6 @@
               <br>
               {% include('upload-comment.html') %}
 
-              <!-- SHOW TXT CONTENT -->
-              {% if ext matches '/txt$/i' %}
-                <div class='clickable'>
-                  <i class='fas fa-fw fa-eye mr-1'></i>
-                  <p data-action='show-plain-text'
-                     data-storage='{{ upload.storage }}'
-                     data-path='{{ upload.long_name }}'
-                     data-name='{{ upload.real_name }}'
-                     class='d-inline'>{{ 'Show content of file'|trans }}</p>
-                </div>
-              {% endif %}
-
               {% include('upload-more-info.html') %}
               </div><!-- end div.caption -->
               {% include('upload-replace-form.html') %}

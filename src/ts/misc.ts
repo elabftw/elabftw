@@ -409,22 +409,6 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
-export function showContentPlainText(el: HTMLElement): void {
-  // set the title for modal window
-  document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
-  // get the file content
-  fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-    return response.text();
-  }).then(fileContent => {
-    const plainTextContentDiv = document.getElementById('plainTextContentDiv');
-    if (el.dataset.ext === 'md') {
-      plainTextContentDiv.innerHTML = marked(fileContent);
-    } else {
-      plainTextContentDiv.innerText = fileContent;
-    }
-  });
-}
-
 // used in edit.ts to build search patterns from strings that contain special characters
 // taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
 export function escapeRegExp(string: string): string {

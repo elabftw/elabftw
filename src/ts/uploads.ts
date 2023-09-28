@@ -9,10 +9,11 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, display3DMolecules, getEntity, reloadElement, showContentPlainText } from './misc';
+import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { marked } from 'marked';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
@@ -100,7 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
-      showContentPlainText(el);
+      // set the title for modal window
+      document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
+      // get the file content
+      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+        return response.text();
+      }).then(fileContent => {
+        const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+        if (el.dataset.ext === 'md') {
+          plainTextContentDiv.innerHTML = marked(fileContent);
+        } else {
+          plainTextContentDiv.innerText = fileContent;
+        }
+      });
 
     // TOGGLE SHOW ARCHIVED
     } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {

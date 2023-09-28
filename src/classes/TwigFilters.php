@@ -92,7 +92,7 @@ class TwigFilters
                 if (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
-                    $value = sprintf("<a href='%s.php?mode=view&id=%d' %s>%s</a>", $page, $id, $newTab, $value);
+                    $value = sprintf("<a href='/%s.php?mode=view&id=%d' %s>%s</a>", $page, $id, $newTab, $value);
                 }
 
                 // multi select will be an array

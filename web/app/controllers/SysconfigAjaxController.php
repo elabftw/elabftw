@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -20,6 +21,9 @@ use Elabftw\Models\Idps;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 
 /**
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
@@ -33,20 +37,25 @@ $Response->setData(array(
 ));
 
 try {
-    if (!$App->Session->get('is_sysadmin')) {
+    if (!$App->Users->userData['is_sysadmin']) {
         throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
     }
 
-    $Email = new Email($App->Config, $App->Log);
+    $Email = new Email(
+        new Mailer(Transport::fromDsn($App->Config->getDsn())),
+        $App->Log,
+        $App->Config->configArr['mail_from'],
+    );
 
     // SEND TEST EMAIL
     if ($Request->request->has('testemailSend')) {
-        $Email->testemailSend((string) $Request->request->get('email'));
+        $Email->testemailSend($Request->request->getString('email'));
     }
 
     // SEND MASS EMAIL
     if ($Request->request->has('massEmail')) {
-        $Email->massEmail((string) $Request->request->get('subject'), (string) $Request->request->get('body'));
+        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
+        $Email->massEmail(EmailTarget::from($Request->request->getString('target')), null, $Request->request->getString('subject'), $Request->request->getString('body'), $replyTo);
     }
 
     // DESTROY IDP

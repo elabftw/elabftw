@@ -1,0 +1,175 @@
+{% set mode = App.Request.query.get('mode')|default('view') %}
+{% include('ownership-transfer-modal.html') %}
+
+{# TOP TOOLBAR #}
+<hr>
+<div class='d-flex align-items-center'>
+  <a title='{{ 'Back to listing'|trans }}' href='?tab=3'>
+    <div class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-arrow-left fa-fw'></i>
+    </div>
+  </a>
+
+  <div class='vertical-separator mx-3'></div>
+
+  {% if mode == 'edit' %}
+    {# VIEW #}
+    <a class='mr-2' title='{{ 'View mode'|trans }}' href='?tab=3&mode=view&templateid={{ Entity.id }}'>
+      <div class='hl-hover-gray p-2 rounded main-action-button'>
+        <i class='fas fa-eye fa-fw'></i>
+      </div>
+    </a>
+  {% else %}
+    {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
+      {# EDIT #}
+      <a class='mr-2' title='{{ 'Edit'|trans }}' href='?tab=3&mode=edit&templateid={{ Entity.id }}'>
+        <div class='hl-hover-gray p-2 rounded main-action-button'>
+          <i class='fas fa-pencil fa-fw'></i>
+        </div>
+      </a>
+    {% endif %}
+  {% endif %}
+
+  {# CREATE EXPERIMENT #}
+  <div class='mr-2'>
+    <div title='{{ 'Create experiment from template'|trans }}' data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-circle-plus fa-fw'></i>
+    </div>
+  </div>
+
+  {# DUPLICATE TEMPLATE #}
+  <div class='mr-2'>
+    <div title='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-copy fa-fw'></i>
+    </div>
+  </div>
+
+  {# DOWNLOAD #}
+  <div class='mr-2'>
+    <div title='{{ 'Download template'|trans }}' data-action='download-template' data-id='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
+      <i class='fas fa-download fa-fw'></i>
+    </div>
+  </div>
+
+  {% if App.Request.getScriptName|split('/')|last == 'team.php' %}
+    {# IMPORT #}
+    <div class='mr-2'>
+      <div title='{{ 'Import to your profile'|trans }}' data-action='import-template' data-id='{{ Entity.id }}' class='hl-hover-gray p-2 rounded'>
+        <i class='fas fa-file-import fa-fw'></i>
+      </div>
+    </div>
+  {% endif %}
+
+  {# RIGHT PART #}
+    <div class='ml-auto d-flex align-items-center' id='toolbarRightDiv'>
+      {# TOGGLE PIN #}
+      <div class='mr-2'>
+        <div title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
+          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
+        </div>
+      </div>
+
+      {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
+        {# LOCK #}
+        {% set lockIcon = 'fa-lock-open' %}
+        {% set alt = 'Lock/Unlock item'|trans %}
+        {% if Entity.entityData.locked %}
+            {% set lockIcon = 'fa-lock' %}
+            {% set alt = Entity.entityData.locked_at %}
+        {% endif %}
+        <div title='{{ alt }}' data-action='toggle-lock' data-id='{{ Entity.id }}' class='{{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 rounded'>
+          <i class='fas {{ lockIcon }} fa-fw'></i>
+        </div>
+
+        <div class='vertical-separator mx-3'></div>
+
+        <!-- MORE OPTIONS -->
+        <div class='dropdown'>
+          <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded'>
+            <i class='fas fa-ellipsis-v'></i>
+          </div>
+
+          <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+            {% if mode == 'edit' %}
+              {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
+              <a class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}' href='#'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</a>
+            {% endif %}
+            {# REVISIONS #}
+            <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+            <!-- CHANGELOG -->
+            <a class='dropdown-item' href='?templateid={{ Entity.id }}&mode=changelog&tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+            {# TRANSFER OWNERSHIP #}
+            {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
+              <a class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</a>
+            {% endif %}
+
+            {# DELETE #}
+            {% if not Entity.entityData.locked %}
+              <!-- DESTROY -->
+              <div class='dropdown-divider'></div>
+              <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
+                <i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    <hr>
+  </div>
+</div>
+<hr>
+
+<div id='templatesDiv'>
+  {% if mode == 'view' %}
+    {# VIEW MODE #}
+    {% include 'templates-view.html' %}
+  {% elseif mode == 'changelog' %}
+    {% include 'changelog-block.html' %}
+  {% else %}
+    {# EDIT MODE #}
+    {# TITLE #}
+    <div class='d-flex mb-2 justify-content-between align-items-center'>
+      <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
+      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
+    </div>
+    {# CATEGORY / STATUS #}
+    {% include('catstat-edit.html') %}
+    {# TAGS #}
+    {% include('edit-tags.html') %}
+    {# PERMISSIONS #}
+    {% include('edit-permissions.html') %}
+
+    {# MAIN CONTENT #}
+    <div class='mt-4'>
+      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
+      {% if editor == 'md' %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% else %}
+        <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
+          <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
+        </div>
+      {% endif %}
+      <div class='text-center mt-4'>
+        <button data-action='update-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+
+    {# EXTRA FIELDS #}
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+    <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
+      {# this div is filled in JS by Metadata.class.ts edit() #}
+      <div id='metadataDiv'></div>
+      <div class='mt-3'>
+        <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+        <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+      </div>
+    </div>
+    <hr>
+    {% set mode = 'edit-template' %}
+    {% include 'steps-links-edit.html' %}
+    {% include 'json-editor.html' %}
+  {% endif %}
+
+</div>
+
+<div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

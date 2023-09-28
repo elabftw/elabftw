@@ -14,6 +14,16 @@ namespace Elabftw\Models;
  */
 class ValidatedUser extends ExistingUser
 {
+    public static function fromEmail(string $email): Users
+    {
+        return self::search('email', $email, true);
+    }
+
+    public static function fromOrgid(string $orgid): Users
+    {
+        return self::search('orgid', $orgid, true);
+    }
+
     public static function fromExternal(string $email, array $teams, string $firstname, string $lastname): Users
     {
         return parent::fromScratch($email, $teams, $firstname, $lastname, null, true);

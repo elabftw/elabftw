@@ -9,7 +9,7 @@
   {% if mode == 'edit' %}
     <!-- INSERT IN TEXT in edit mode for images -->
     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-      <a class='dropdown-item inserter clickable' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
+    <a class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
     {% endif %}
 
@@ -18,19 +18,28 @@
       <a class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
         <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
     {% endif %}
+  {% endif %}
 
-    <!-- Edit filename -->
-    {% if not upload.immutable %}
+    <!-- Edit filename (available in view mode too) -->
+    {% if not upload.immutable and not Entity.isReadOnly %}
       <a class='dropdown-item' data-action='rename-upload' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
         data-itemid='{{ upload.item_id }}' data-msg='{{ 'Edit filename'|trans }}' title='{{ 'Edit filename'|trans }}'>
         <i class='fas fa-fw fa-pencil-alt mr-1'></i>{{ 'Edit filename'|trans }}</a>
     {% endif %}
 
+  {% if mode == 'edit' %}
 
     <!-- Annotate image -->
     {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
     <a class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
+    {% endif %}
+
+    <!-- LOAD IN JSON EDITOR -->
+    {% if ext matches '/(json)$/i' %}
+      <a class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file'>
+        <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
+      </a>
     {% endif %}
 
     <!-- Save mol file as png -->
@@ -63,9 +72,13 @@
     <a class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 
-  {% if mode == 'edit' and not upload.immutable %}
-    <!-- DESTROY -->
+  {% if not upload.immutable and not Entity.isReadOnly %}
+    {# ARCHIVE #}
     <div class='dropdown-divider'></div>
+    <a class='dropdown-item hover-warning' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+      <i class='fas fa-fw fa-box-archive fa-fw mr-1' title='{{ 'Archive/Unarchive'|trans }}'></i>{{ 'Archive/Unarchive'|trans }}
+    </a>
+    {# DESTROY #}
     <a class='dropdown-item hover-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-trash-alt fa-fw mr-1' title='{{ 'Delete'|trans }}'></i>{{ 'Delete'|trans }}
     </a>

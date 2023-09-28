@@ -14,9 +14,10 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+          {{ App.Session.get('csrf')|csrf }}
           <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
           <div class='text-center'>
-            <button class='button btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+            <button class='btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
           </div>
         </form>
       </div>
@@ -60,7 +61,7 @@
 
         <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
         <input class='form-control' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
-        <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
+        <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
       </div>
     </form>
   <!-- Show message when initial team selection is done -->
@@ -69,12 +70,15 @@
       {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
     {% else %}
       {{ 'Your account has been created and is now active. Try logging in again.'|trans|msg('ok') }}
-      <a href='login.php?rm_teaminit=1'><button class='button btn btn-primary'>{{ 'Continue'|trans }}</button></a>
+      <a href='login.php?rm_teaminit=1'><button class='btn btn-primary'>{{ 'Continue'|trans }}</button></a>
     {% endif %}
 
   {% elseif App.Session.has('team_selection_required') %}
     <form method='post' action='app/controllers/LoginController.php'>
       <input type='hidden' name='auth_type' value='team'>
+      {% if App.Session.get('rememberme') == '1' %}
+        <input type='hidden' name='rememberme' value='on'>
+      {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
@@ -84,7 +88,7 @@
           {% endfor %}
         </select>
       </div>
-      <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
+      <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
   {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
     <!-- user is already authed with external auth, so just present a continue button
@@ -94,7 +98,7 @@
         <input type='hidden' name='auth_type' value='external'>
         <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
         <br>
-        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
+        <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Continue'|trans }}</button>
       </form>
     {% else %}
 
@@ -119,11 +123,13 @@
             </div>
           </div>
 
-          <!-- Remember me checkbox -->
-          <div class='form-check mt-2'>
-            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme-1' />
-            <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-          </div>
+          {# Remember me checkbox #}
+          {% if App.Config.configArr.remember_me_allowed %}
+            <div class='form-check mt-2'>
+              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
+              <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+            </div>
+          {% endif %}
         </div>
 
         {% if App.Config.configArr.ldap_toggle %}
@@ -143,12 +149,10 @@
         {% endif %}
 
         <!-- Login button -->
-        <button type='submit' class='button btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
+        <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
       {% if App.Config.configArr.local_register %}
-      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format(
-        "<a href='register.php'>",
-        "</a>")|raw }}</p>
+      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
       {% endif %}
 
     {% endif %}
@@ -164,17 +168,19 @@
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
           <select name='idpId' class='form-control' id='idp_login_select'>
             {% for idp in idpsArr %}
-              {% if idp.active %}
+              {% if idp.enabled %}
                 <option value='{{ idp.id }}'>{{ idp.name }}</option>
               {% endif %}
             {% endfor %}
           </select>
           <!-- Remember me checkbox -->
-          <div class='form-check mt-2'>
-            <input type='checkbox' class='form-check-input' checked name='rememberme' id='rememberme-2' />
-            <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-          </div>
-          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+          {% if App.Config.configArr.remember_me_allowed %}
+            <div class='form-check mt-2'>
+              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-2' />
+              <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+            </div>
+          {% endif %}
+          <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>
     {% endif %}
@@ -198,7 +204,7 @@
               {% endfor %}
             </select>
           </div>
-          <button class='button btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+          <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>
     {% endif %}

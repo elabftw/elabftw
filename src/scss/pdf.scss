@@ -14,7 +14,7 @@
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'DejaVu', sans-serif;
     font-kerning: normal;
 }
 
@@ -26,6 +26,11 @@ a {
 code {
     background-color: #eee;
     border: 1px dotted #ccc;
+}
+
+/* fix metadata extra fields having numbers in pdf */
+.no-list-style li {
+    list-style-type: none;
 }
 
 table {

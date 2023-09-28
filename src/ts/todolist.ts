@@ -10,7 +10,6 @@ import Todolist from './Todolist.class';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { Model } from './interfaces';
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -54,14 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem(`is${TodolistC.model}Open`) === '1') {
     TodolistC.toggle();
   }
-  // use shortcut
-  const todoSc = document.getElementById('todoSc');
-  if (todoSc) {
-    key(todoSc.dataset.toggle, () => {
-      TodolistC.toggle();
-    });
-  }
-
   scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
   scopeSwitch.addEventListener('change', () => {
     if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
@@ -85,11 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // UPDATE TODOITEM
   const malleableTodoitem = new Malle({
+    // will only work if the editable class is present (class is removed on check)
+    before: original => {
+      return original.classList.contains('editable');
+    },
     inputClasses: ['form-control'],
     fun: async (value, original) => {
       return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
         .then(resp => resp.json()).then(json => json.body);
     },
+    returnedValueIsTrustedHtml: true,
     listenOn: '.todoItem',
     tooltip: i18next.t('click-to-edit'),
   }).listen();
@@ -115,15 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY TODOITEM
     } else if (el.matches('[data-action="destroy-todoitem"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const todoitemId = parseInt(el.dataset.todoitemid);
-        TodolistC.destroy(todoitemId).then(() => {
-          // hide item
-          $('#todoItem_' + todoitemId).css('background', '#29AEB9').toggle('blind');
-        });
-      }
+      const todoitemId = parseInt(el.dataset.todoitemid);
+      TodolistC.destroy(todoitemId).then(() => {
+        // check item text
+        const content = (el.nextElementSibling as HTMLSpanElement);
+        content.style.textDecoration = 'line-through';
+        // make it non editable (before function checks for that in malle)
+        content.classList.remove('editable');
+        // disable the checkbox
+        el.setAttribute('disabled', 'disabled');
+      });
 
-    // TOGGLE TODOITEM
+    // TOGGLE TODOLIST
     } else if (el.matches('[data-action="toggle-todolist"]')) {
       TodolistC.toggle();
     }

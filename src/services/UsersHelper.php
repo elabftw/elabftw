@@ -29,7 +29,7 @@ class UsersHelper
 
     public function cannotBeDeleted(): bool
     {
-        return $this->hasExperiments() || $this->hasItems() || $this->isSysadmin();
+        return $this->hasExperiments() || $this->hasItems() || $this->isSysadmin() || $this->hasComments() || $this->hasTemplates() || $this->hasUploads();
     }
 
     /**
@@ -75,7 +75,7 @@ class UsersHelper
      */
     public function getTeamsFromUserid(): array
     {
-        $sql = 'SELECT DISTINCT teams.id, teams.name FROM teams
+        $sql = 'SELECT DISTINCT teams.id, teams.name, users2teams.groups_id AS usergroup, users2teams.is_owner FROM teams
             CROSS JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = teams.id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
@@ -100,6 +100,33 @@ class UsersHelper
         return array_column($this->getTeamsFromUserid(), 'name');
     }
 
+    private function countComments(): int
+    {
+        $sql = 'SELECT SUM(comment_count) AS total_comment_count
+            FROM (
+                SELECT COUNT(*) AS comment_count
+                FROM experiments_comments
+                WHERE userid = :userid
+                UNION ALL
+                SELECT COUNT(*) AS comment_count
+                FROM items_comments
+                WHERE userid = :userid
+            ) AS subquery;';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    private function countTable(string $table): int
+    {
+        $sql = sprintf('SELECT COUNT(id) FROM %s WHERE userid = :userid', $table);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     private function hasExperiments(): bool
     {
         return $this->countExperiments() > 0;
@@ -108,6 +135,21 @@ class UsersHelper
     private function hasItems(): bool
     {
         return $this->countItems() > 0;
+    }
+
+    private function hasComments(): bool
+    {
+        return $this->countComments() > 0;
+    }
+
+    private function hasTemplates(): bool
+    {
+        return $this->countTable('experiments_templates') > 0;
+    }
+
+    private function hasUploads(): bool
+    {
+        return $this->countTable('uploads') > 0;
     }
 
     private function isSysadmin(): bool

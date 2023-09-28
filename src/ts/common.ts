@@ -7,13 +7,14 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
+import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, permissionsToJson } from './misc';
+import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, relativeMoment, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
-import { Action, EntityType, Model } from './interfaces';
+import { Action, EntityType, Model, Target } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -31,6 +32,8 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
+import { KeyboardShortcuts } from './KeyboardShortcuts.class';
+import JsonEditorHelper from './JsonEditorHelper.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -57,10 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const TableSortingC = new TableSorting();
   TableSortingC.init();
 
+  const userPrefs = document.getElementById('user-prefs').dataset;
   // set the language for js translated strings
-  i18next.changeLanguage(document.getElementById('user-prefs').dataset.lang);
+  i18next.changeLanguage(userPrefs.lang);
 
   makeSortableGreatAgain();
+
+  if (userPrefs.scDisabled === '0') {
+    const kbd = new KeyboardShortcuts(
+      userPrefs.scCreate,
+      userPrefs.scEdit,
+      userPrefs.scTodolist,
+      userPrefs.scFavorite,
+      userPrefs.scSearch,
+    );
+    kbd.init();
+  }
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('div');
@@ -104,31 +119,45 @@ document.addEventListener('DOMContentLoaded', () => {
   observer.observe(document.querySelector('footer'));
   // END BACK TO TOP BUTTON
 
-  // Add a listener for all elements triggered by an event
-  // and POST an update request
-  // select will be on change, text inputs on blur
-  function listenTrigger(): void {
-    document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
-      el.addEventListener(el.dataset.trigger, event => {
-        event.preventDefault();
-        // for a checkbox element, look at the checked attribute, not the value
-        const value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-        const params = {};
-        params[el.dataset.target] = value;
-        ApiC.patch(`${el.dataset.model}`, params).then(() => {
-          if (el.dataset.reload) {
-            reloadElement(el.dataset.reload).then(() => {
-              // make sure we listen to the new element too
-              listenTrigger();
-            });
-          }
-        });
-      });
-    });
-  }
   listenTrigger();
 
   adjustHiddenState();
+
+  // show human friendly moments
+  relativeMoment();
+
+  // look for elements that should have focus
+  const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);
+  if (needFocus) {
+    needFocus.focus();
+  }
+
+  // Listen for malleable columns
+  new Malle({
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: true,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
 
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility
@@ -147,30 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // AUTOCOMPLETE input with users
-  $(document).on('focus', '.autocompleteUsers', function() {
-    if (!$(this).data('autocomplete')) {
-      $(this).autocomplete({
-        // necessary or the autocomplete will get under the modal
-        appendTo: '#autocompleteUsersDiv' + $(this).data('rw'),
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(user => {
-              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
-            });
-            response(res);
-          });
-        },
-      });
-    }
-  });
-
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
   document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = document.getElementById(el.dataset.icon);
+    const iconEl = el.querySelector('i');
     let contentDiv: HTMLElement;
     if (el.dataset.iconTarget) {
       contentDiv = document.getElementById(el.dataset.iconTarget);
@@ -178,13 +188,25 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv = el.nextElementSibling as HTMLElement;
     }
     if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-chevron-circle-down');
-      iconEl.classList.add('fa-chevron-circle-right');
+      iconEl.classList.remove('fa-caret-down');
+      iconEl.classList.add('fa-caret-right');
     } else {
-      iconEl.classList.add('fa-chevron-circle-down');
-      iconEl.classList.remove('fa-chevron-circle-right');
+      iconEl.classList.add('fa-caret-down');
+      iconEl.classList.remove('fa-caret-right');
     }
   });
+
+  /**
+  * Add an event listener on wheel event to prevent scrolling down with a number input selected.
+  * Without this, the number will change to the next integer and information entered is lost.
+  * Use the "passive" option to avoid impact on performance.
+  */
+  document.addEventListener('wheel', () => {
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLInputElement && activeElement.type === 'number') {
+      activeElement.blur();
+    }
+  }, { passive: true });
 
   /**
    * MAIN click event listener bound to container
@@ -194,16 +216,34 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     // SHOW PRIVACY POLICY
-    if (el.matches('[data-action="show-privacy-policy"]')) {
+    if (el.matches('[data-action="show-policy"]')) {
       fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
-        let policy = json.privacy_policy;
-        if (!policy) {
-          policy = 'No privacy policy is set.';
+        const policy = json[el.dataset.policy];
+        let title: string;
+        // TODO i18n
+        switch (el.dataset.policy) {
+        case 'tos':
+          title = 'Terms of Service';
+          break;
+        case 'a11y':
+          title = 'Accessibility Statement';
+          break;
+        case 'legal':
+          title = 'Legal notice';
+          break;
+        default:
+          title = 'Privacy Policy';
         }
-        (document.getElementById('privacyModalBody') as HTMLDivElement).innerHTML = policy;
+        (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
+        (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
         // modal plugin requires jquery
-        ($('#privacyModal') as JQuery).modal('toggle');
+        $('#policiesModal').modal('toggle');
       });
+
+    } else if (el.matches('[data-action="add-query-filter"]')) {
+      const params = new URLSearchParams(document.location.search.substring(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.location.href = `?${params.toString()}`;
 
     // SCROLL TO TOP
     } else if (el.matches('[data-action="scroll-top"]')) {
@@ -212,11 +252,42 @@ document.addEventListener('DOMContentLoaded', () => {
         behavior: 'smooth',
       });
 
+    // AUTOCOMPLETE
+    } else if (el.matches('[data-complete-target]')) {
+      // depending on the type of results, we will want different attributes and formatting
+      let transformer = entity => {
+        const cat = entity.category_title ? `${entity.category_title} - ` : '';
+        const stat = entity.status_title ? `${entity.status_title} - ` : '';
+        return `${entity.id} - ${cat}${stat}${entity.title}`;
+      };
+      // useid data attribute is used in admin panel to grab the userid from input
+      if (el.dataset.completeTarget === 'users') {
+        transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
+      }
+      // use autocomplete jquery-ui plugin
+      $(el).autocomplete({
+        // this option is necessary or the autocomplete box will get lost under the permissions modal
+        appendTo: el.dataset.identifier ? `#autocompleteUsersDiv${el.dataset.identifier}` : '',
+        source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
+            response(json.map(entry => transformer(entry)));
+          });
+        },
+      });
+
+    // TRANSFER OWNERSHIP
+    } else if (el.matches('[data-action="transfer-ownership"]')) {
+      const value = (document.getElementById('new_owner') as HTMLInputElement).value;
+      const entity = getEntity();
+      const params = {};
+      params[Target.UserId] = value;
+      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+
     // ADD USER TO PERMISSIONS
     // create a new li element in the list of existing users, so it is collected at Save action
     } else if (el.matches('[data-action="add-user-to-permissions"]')) {
       // collect userid + name + email from input
-      const addUserPermissionsInput = (document.getElementById(`${el.dataset.rw}_select_users`) as HTMLInputElement);
+      const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
         notifError(new Error('Use the autocompletion menu to add users.'));
@@ -250,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.insertAdjacentElement('beforeend', deleteSpan);
 
       // and insert it into the list
-      document.getElementById(`${el.dataset.rw}_list_users`).appendChild(li);
+      document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
 
       // clear input
       addUserPermissionsInput.value = '';
@@ -258,21 +329,41 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="remove-parent"]')) {
       el.parentElement.remove();
 
+    // REMOVE A QUERY PARAMETER AND RELOAD PAGE
+    } else if (el.matches('[data-action="remove-param-reload"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.delete(el.dataset.target);
+      // reload the page
+      document.location.search = params.toString();
+
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};
       // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-      const existingUsers = Array.from(document.getElementById(`${el.dataset.rw}_list_users`).children)
+      const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
         .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
       params[el.dataset.rw] = permissionsToJson(
-        parseInt(($('#' + el.dataset.rw + '_select_base').val() as string), 10),
-        ($('#' + el.dataset.rw + '_select_teams').val() as string[])
-          .concat($('#' + el.dataset.rw + '_select_teamgroups').val() as string[])
+        parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
+        ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
+          .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
           .concat(existingUsers),
       );
-      const entity = getEntity();
-      return ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.rw + 'Div'));
+      // if we're editing the default read/write permissions for experiments, this data attribute will be set
+      if (el.dataset.isUserDefault) {
+        // we need to replace canread/canwrite with default_read/default_write for user attribute
+        let paramKey = 'default_read';
+        if (el.dataset.rw === 'canwrite') {
+          paramKey = 'default_write';
+        }
+        // create a new key and delete the old one
+        params[paramKey] = params[el.dataset.rw];
+        delete params[el.dataset.rw];
+        ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+      } else {
+        const entity = getEntity();
+        ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+      }
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
@@ -289,14 +380,22 @@ document.addEventListener('DOMContentLoaded', () => {
         targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
-      if (el.dataset.icon) {
-        const iconEl = document.getElementById(el.dataset.icon);
-        if (targetEl.hasAttribute('hidden')) {
-          iconEl.classList.remove('fa-chevron-circle-down');
-          iconEl.classList.add('fa-chevron-circle-right');
+
+      if (el.dataset.toggleTargetExtra) {
+        document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
+      }
+      const iconEl = el.querySelector('i');
+      if (iconEl) {
+        if (el.dataset.togglePlusIcon) {
+          togglePlusIcon(iconEl);
         } else {
-          iconEl.classList.add('fa-chevron-circle-down');
-          iconEl.classList.remove('fa-chevron-circle-right');
+          if (targetEl.hasAttribute('hidden')) {
+            iconEl.classList.remove('fa-caret-down');
+            iconEl.classList.add('fa-caret-right');
+          } else {
+            iconEl.classList.add('fa-caret-down');
+            iconEl.classList.remove('fa-caret-right');
+          }
         }
       }
       // save the hidden state of the target element in localStorage
@@ -317,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE MODAL
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
-      ($('#' + el.dataset.target) as JQuery<HTMLDivElement>).modal('toggle');
+      $('#' + el.dataset.target).modal('toggle');
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
@@ -360,7 +459,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
 
     } else if (el.matches('[data-action="export-user"]')) {
-      const source = (document.getElementById('userExport') as HTMLSelectElement).value;
+      let source: string;
+      // profile page will set this attribute on the action button
+      if (el.dataset.userid) {
+        source = el.dataset.userid;
+      } else {
+        // admin page will provide it from a select element
+        source = (document.getElementById('userExport') as HTMLSelectElement).value;
+      }
       const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
       window.location.href = `make.php?format=${format}&owner=${source}&type=experiments`;
 
@@ -374,39 +480,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE EXPERIMENT or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
-      const path = window.location.pathname;
-      const page = path.split('/').pop();
-      // team.php and ucp.php for "create experiment from this template
-      if (page === 'experiments.php' || page === 'team.php' || page === 'ucp.php') {
-        const tplid = el.dataset.tplid;
-        const urlParams = new URLSearchParams(document.location.search);
-        const tags = urlParams.getAll('tags[]');
-        (new EntityClass(EntityType.Experiment)).create(tplid, tags).then(resp => {
-          const location = resp.headers.get('location').split('/');
-          const newId = location[location.length -1];
-          window.location.href = `experiments.php?mode=edit&id=${newId}`;
-        });
-      } else {
-        // for database items, show a selection modal
-        // modal plugin requires jquery
-        ($('#createModal') as JQuery).modal('toggle');
-      }
-    } else if (el.matches('[data-action="import-file"]')) {
-      ($('#importModal') as JQuery).modal('toggle');
+      // look for any tag present in the url, we will create the experiment with these tags
+      const urlParams = new URLSearchParams(document.location.search);
+      const entityC = new EntityClass(el.dataset.type as EntityType);
+      entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
+        const location = resp.headers.get('location').split('/');
+        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${location[location.length -1]}`;
+      });
+
+    } else if (el.matches('[data-action="navigate-twitter"]')) {
+      event.preventDefault();
+      el.querySelector('i').classList.add('moving-bird');
+      setTimeout(() => window.location.assign('https://twitter.com/elabftw'), 666);
+
     } else if (el.matches('[data-action="report-bug"]')) {
       event.preventDefault();
       el.querySelector('i').classList.add('moving-bug');
       setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
 
-    } else if (el.matches('[data-action="create-item"]')) {
-      const tplid = el.dataset.tplid;
-      const urlParams = new URLSearchParams(document.location.search);
-      const tags = urlParams.getAll('tags[]');
-      (new EntityClass(EntityType.Item)).create(tplid, tags).then(resp => {
-        const location = resp.headers.get('location').split('/');
-        const newId = location[location.length -1];
-        window.location.href = `database.php?mode=edit&id=${newId}`;
-      });
     // DOWNLOAD TEMPLATE
     } else if (el.matches('[data-action="download-template"]')) {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
@@ -441,17 +532,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      const plusMinusIcon = el.querySelector('.fas');
+      if (el.dataset.togglePlusIcon) {
+        togglePlusIcon(el.querySelector('.fas'));
+      }
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
-        plusMinusIcon.classList.remove('fa-plus-circle');
-        plusMinusIcon.classList.add('fa-minus-circle');
         action = 'show';
-      } else {
-        plusMinusIcon.classList.add('fa-plus-circle');
-        plusMinusIcon.classList.remove('fa-minus-circle');
       }
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
@@ -460,31 +548,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const contentDiv = bodyDiv.querySelector('div');
+
       // prepare the get request
-      const entityType = el.dataset.type === 'experiments' ? EntityType.Experiment : EntityType.Item;
       const entityId = parseInt(el.dataset.id, 10);
-      (new EntityClass(entityType)).read(entityId).then(json => {
-        // do we display the body
+      let queryUrl = `${el.dataset.type}/${entityId}`;
+      // special case for revisions
+      if (el.dataset.revid) {
+        queryUrl += `/revisions/${el.dataset.revid}`;
+      }
+      ApiC.getJson(queryUrl).then(json => {
+        // do we display the body?
         const metadata = JSON.parse(json.metadata || '{}');
         if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
           && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
           && !metadata.elabftw.display_main_text
         ) {
           // add extra fields elements from metadata json
-          const MetadataC = new Metadata({type: entityType, id: entityId});
-          MetadataC.metadataDiv = bodyDiv;
+          const entity = {type: el.dataset.type as EntityType, id: entityId};
+          const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+          MetadataC.metadataDiv = contentDiv;
           MetadataC.display('view').then(() => {
-            bodyDiv.classList.remove('col-md-12');
-            bodyDiv.style.border = '0';
-            bodyDiv.style.padding = '0 20px';
-            bodyDiv.firstChild.remove();
-
             // go over all the type: url elements and create a link dynamically
             generateMetadataLink();
           });
         } else {
           // add html content
-          bodyDiv.innerHTML = json.body_html;
+          contentDiv.innerHTML = json.body_html;
 
           // adjust the width of the children
           // get the width of the parent. The -30 is to make it smaller than parent even with the margins

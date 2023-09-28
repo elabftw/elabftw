@@ -9,6 +9,7 @@
 
 namespace Elabftw\Factories;
 
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
@@ -39,7 +40,7 @@ class NotificationsFactory
             Notifications::UserCreated => new UserCreated($this->body['userid'], $this->body['team']),
             Notifications::UserNeedValidation => new UserNeedValidation($this->body['userid'], $this->body['team']),
             Notifications::StepDeadline => new StepDeadline($this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),
-            Notifications::EventDeleted => new EventDeleted($this->body['event'], $this->body['actor']),
+            Notifications::EventDeleted => new EventDeleted($this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
             Notifications::SelfNeedValidation => new SelfNeedValidation(),
             Notifications::SelfIsValidated => new SelfIsValidated(),
             default => throw new ImproperActionException('This notification is not mailable.'),

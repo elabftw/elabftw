@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (e.key === 'Enter' || e.type === 'focusout') {
       ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
-        reloadElement('tags_div_' + entity.id);
         $(this).val('');
+        reloadElement('tags_div_' + entity.id).then(() => addAutocompleteToTagInputs());
       });
     }
   });
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return json.find((tag: Record<string, string|number>) => tag.id === parseInt(original.dataset.id, 10)).tag;
     },
     listenOn: '.tag.editable',
+    returnedValueIsTrustedHtml: true,
     tooltip: i18next.t('click-to-edit'),
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'ml-1'],
@@ -118,8 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
-        ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElement(`tags_div_${entity.id}`));
+        ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElement(`tags_div_${entity.id}`).then(() => addAutocompleteToTagInputs()));
       }
+    // ADD SUGGESTED TAGS
+    } else if (el.matches('[data-action="add-suggested-tag"]')) {
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Add, 'tag': el.innerText}).then(() => reloadElement(`tags_div_${entity.id}`).then(() => addAutocompleteToTagInputs()));
     // DESTROY (from admin panel/tag manager)
     } else if (el.matches('[data-action="destroy-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {

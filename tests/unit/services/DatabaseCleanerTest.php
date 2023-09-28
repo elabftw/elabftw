@@ -14,6 +14,6 @@ class DatabaseCleanerTest extends \PHPUnit\Framework\TestCase
     public function testCleanup(): void
     {
         $DatabaseCleaner = new DatabaseCleaner();
-        $DatabaseCleaner->cleanup();
+        $this->assertEquals(0, $DatabaseCleaner->cleanup());
     }
 }

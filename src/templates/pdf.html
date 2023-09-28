@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>{{ endityData.title }}</title>
     <style>{{ css|raw }}</style>
     {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
   </head>
@@ -40,37 +39,37 @@
 {{ body|raw }}
 
 {% if entityData.metadata %}
-<section class='no-break'>
+<section class='no-break no-list-style'>
   {{ entityData.metadata|formatMetadata }}
 </section>
 {% endif %}
 
-{% if entityData.links.items %}
+{% if entityData.experiments_links %}
   <section class='no-break'>
     <h3>{% trans %}
-      Linked item
-      {% plural links.items|length %}
-      Linked items
+      Linked experiment
+      {% plural entityData.experiments_links|length %}
+      Linked experiments
       {% endtrans %}</h3>
 
-    {% for link in entityData.links.items %}
+    {% for link in entityData.experiments_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>
 {% endif %}
-{% if entityData.links.experiments %}
+{% if entityData.items_links %}
   <section class='no-break'>
     <h3>{% trans %}
-      Linked experiment
-      {% plural links.experiments|length %}
-      Linked experiments
+      Linked item
+      {% plural entityData.items_links|length %}
+      Linked items
       {% endtrans %}</h3>
 
-    {% for link in entityData.links.experiments %}
+    {% for link in entityData.items_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>

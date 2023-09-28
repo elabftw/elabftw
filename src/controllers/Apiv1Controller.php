@@ -21,14 +21,13 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Status;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Uploads;
-use Elabftw\Services\MakeBackupZip;
 use Exception;
 use function implode;
 use function in_array;
@@ -36,8 +35,6 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipStream\ZipStream;
 
 /**
  * For API v1 requests
@@ -66,7 +63,6 @@ class Apiv1Controller extends AbstractApiController
                 case Request::METHOD_GET:
                     return match ($this->endpoint) {
                         'uploads' => $this->getUpload(),
-                        'backupzip' => $this->getBackupZip(),
                         'experiments', 'items' => $this->getEntity(),
                         'templates' => $this->getTemplate(),
                         'status', 'items_types' => $this->getCategory(),
@@ -154,9 +150,6 @@ class Apiv1Controller extends AbstractApiController
         // load Entity
         // if endpoint is uploads we don't actually care about the entity type
         switch ($this->endpoint) {
-            case 'backupzip':
-                $this->Entity = new Experiments($this->Users);
-                break;
             case 'experiments':
             case 'uploads':
             case 'tags':
@@ -179,7 +172,7 @@ class Apiv1Controller extends AbstractApiController
                 $this->Category = new ItemsTypes($this->Users);
                 break;
             case 'status':
-                $this->Category = new Status(new Teams($this->Users, $this->Users->team));
+                $this->Category = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
                 break;
             case 'events':
                 $this->Entity = new Items($this->Users, $this->id);
@@ -303,7 +296,7 @@ class Apiv1Controller extends AbstractApiController
     private function getEntity(): Response
     {
         if ($this->id === null) {
-            $DisplayParams = new DisplayParams($this->Users, $this->Request);
+            $DisplayParams = new DisplayParams($this->Users, $this->Request, $this->Entity->entityType);
 
             // remove 1 to limit as there is 1 added in the sql query
             $DisplayParams->limit = $this->limit - 1;
@@ -377,44 +370,6 @@ class Apiv1Controller extends AbstractApiController
     private function getTags(): Response
     {
         return new JsonResponse($this->Entity->Tags->readAll());
-    }
-
-    /**
-     * @api {get} /backupzip/:period Get backup zip
-     * @apiName GetBackupZip
-     * @apiGroup Backup
-     * @apiParam {String} period time period FROM-TO in the format YYYYMMDD-YYYMMDD (e.g. 20191129-20200501)
-     * @apiPermission Sysadmin
-     * @apiDescription Get a zip with the experiments from a time period, ordered by users, only the ones changed in the time period
-     * @apiExample {python} Python example
-     * import elabapy
-     * import datetime
-     * from datetime import timedelta
-     * manager = elabapy.Manager(endpoint="https://elab.example.org/api/v1/", token="3148")
-     * # get all modified experiments from last week
-     * now = datetime.datetime.now()
-     * lastweek = now - timedelta(weeks=1)
-     * period = "-".join((lastweek.strftime('%Y%m%d'), now.strftime('%Y%m%d')))
-     * with open(period + '.zip', 'wb') as zipfile:
-     *     zipfile.write(manager.get_backup_zip(period))
-     * @apiExample {shell} Curl example
-     * export TOKEN="3148"
-     * curl -H "Authorization: $TOKEN" "https://elab.example.org/api/v1/backupzip/202000224-20200701" --output out.zip
-     * @apiSuccess {Binary} zip Zip file with experiments modified during `period`
-     */
-    private function getBackupZip(): Response
-    {
-        // only let a sysadmin get that
-        if (!$this->Users->userData['is_sysadmin']) {
-            throw new IllegalActionException('Only a sysadmin can use this endpoint!');
-        }
-        $Zip = new ZipStream();
-        $Make = new MakeBackupZip($Zip, $this->Entity, $this->param);
-        $Response = new StreamedResponse();
-        $Response->setCallback(function () use ($Make) {
-            $Make->getStreamZip();
-        });
-        return $Response;
     }
 
     /**
@@ -710,7 +665,7 @@ class Apiv1Controller extends AbstractApiController
         }
         // check that the id we have is a valid item type from our team
         $ItemsTypes = new ItemsTypes($this->Users);
-        $validIds = array_column($ItemsTypes->readAll(), 'category_id');
+        $validIds = array_column($ItemsTypes->readAll(), 'id');
         if (!in_array($this->id, $validIds, true)) {
             return new Response('Cannot create an item with an item type id not in your team!', 403);
         }

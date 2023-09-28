@@ -14,21 +14,27 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
+use Elabftw\Services\DummyRemoteDirectory;
+use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use function filter_var;
+
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExepectedObjectPropAccessButGotNull
+$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExpectedObjectPropAccessButGotNull
 $Response = new Response();
 $Response->prepare($Request);
 
@@ -36,23 +42,26 @@ $template = 'error.html';
 $renderArr = array();
 
 try {
-    if (!$App->Session->get('is_admin')) {
+    if (!$App->Users->isAdmin) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
     $ItemsTypes = new ItemsTypes($App->Users);
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
-    $Status = new Status($Teams);
+    $Status = new ExperimentsStatus($Teams);
+    $ItemsStatus = new ItemsStatus($Teams);
     $Tags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
     $itemsCategoryArr = $ItemsTypes->readAll();
+    $ExperimentsCategories = new ExperimentsCategories($Teams);
+    $experimentsCategoriesArr = $ExperimentsCategories->readAll();
     if ($Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
-    $teamConfigArr = $Teams->readOne();
+    $itemsStatusArr = $ItemsStatus->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -67,7 +76,9 @@ try {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
-            $App->Users->userData['team']
+            $App->Users->userData['team'],
+            $App->Request->query->getBoolean('includeArchived'),
+            $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
@@ -75,9 +86,27 @@ try {
         }
     }
 
+    // Remote directory search
+    $remoteDirectoryUsersArr = array();
+    if ($App->Request->query->has('remote_dir_query')) {
+        if ($App->Config->configArr['remote_dir_service'] === 'eairef') {
+            $RemoteDirectory = new EairefRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        } else {
+            $RemoteDirectory = new DummyRemoteDirectory(new Client(), $App->Config->configArr['remote_dir_config']);
+        }
+        $remoteDirectoryUsersArr = $RemoteDirectory->search($App->Request->query->getString('remote_dir_query'));
+        if (empty($remoteDirectoryUsersArr)) {
+            $App->warning[] = _('No users found. Try another search.');
+        }
+    }
 
     // all the tags for the team
     $tagsArr = $Tags->readFull();
+
+    $metadataGroups = array();
+    if (isset($ItemsTypes->entityData['metadata'])) {
+        $metadataGroups = (new Metadata($ItemsTypes->entityData['metadata']))->getGroups();
+    }
 
     $template = 'admin.html';
     $renderArr = array(
@@ -86,11 +115,14 @@ try {
         'tagsArr' => $tagsArr,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
-        'teamConfigArr' => $teamConfigArr,
+        'experimentsCategoriesArr' => $experimentsCategoriesArr,
+        'itemsStatusArr' => $itemsStatusArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+        'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'teamsArr' => $teamsArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

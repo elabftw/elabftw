@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,14 +6,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Services\LoginHelper;
-use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use OneLogin\Saml2\Response as SamlResponse;
@@ -22,8 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
-
-$location = '../../experiments.php';
+$location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
 $Response = new RedirectResponse($location);
 
 try {
@@ -31,12 +30,12 @@ try {
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
         $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
 
-        $Saml = new Saml($App->Config, new Idps());
-        $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+        $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), (string) $App->Request->request->get('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
 
-        $settings = $Saml->getSettingsByEntityId($entId);
+        $settings = $IdpsHelper->getSettingsByEntityId($entId);
         $idpId = $settings['idp_id'];
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
@@ -68,7 +67,7 @@ try {
             $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
             $location = '../../login.php';
 
-        // if the user is in several teams, we need to redirect to the team selection
+            // if the user is in several teams, we need to redirect to the team selection
         } elseif ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);

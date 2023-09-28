@@ -34,7 +34,7 @@ if [ ! -f tests/elabftw-user.env ]; then
 fi
 
 # launch a fresh environment if needed
-if [ ! "$(docker ps -q -f name=mysqltmp)" ]; then
+if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
     if ($ci); then
         # Use the freshly built elabtmp image
         # use DOCKER_BUILDKIT env instead of calling "docker buildx" or it fails in scrutinizer
@@ -50,24 +50,31 @@ if ($ci); then
     # install and initial tests
     docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
     docker exec -it elabtmp yarn csslint
-    docker exec -it elabtmp yarn jslint-ci
+    docker exec -it elabtmp yarn jslint-ci:all
     docker exec -it elabtmp yarn buildall:dev
     docker exec -it elabtmp composer install --no-progress -q
     docker exec -it elabtmp yarn phpcs-dry
+else
+    # we need to add the parser because it's in cache/ and it's tmpfs mounted now
+    docker exec -it elabtmp yarn buildparser
+    docker exec -it elabtmp yarn twigcs
 fi
+# fix permissions on cache folders
+docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
+docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
+
 # install the database
 echo "Initializing the database..."
-docker exec -it elabtmp bin/console db:install -r -q
+docker exec -it elabtmp bin/init db:install -r -q
 if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
-docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
 # RUN TESTS
 if ($ci); then
-    # fix permissions on test output and cache folders
-    sudo mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-    sudo chmod -R 777 cache
+    # fix permissions on test output and uploads
     sudo chmod -R 777 tests/_output
     sudo chmod -R 777 uploads
     if (${SCRUTINIZER:-false}); then
@@ -77,11 +84,32 @@ if ($ci); then
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip unit --skip cypress --coverage --coverage-html --coverage-xml
+# acceptance with cypress
+elif [ "${1:-}" = "cy" ]; then
+    if [ ! "$(docker images elab-cypress)" ]; then
+        echo "Building fresh cypress image..."
+        docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
+    fi
+    if [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+        echo "Launching fresh cypress container..."
+        docker run --name elab-cypress -d elab-cypress
+    fi
+    echo "Running cypress..."
+    docker exec -it elab-cypress cypress run
+    # copy the artifacts in cypress output folder
+    docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
+    docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
+    # copy codecoverage reports
+    docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
+    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar ./tests/_output/cypress-coverage.tar
+    mkdir -p ./tests/_output/cypress-coverage-html \
+        && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html
+    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml ./tests/_output/cypress-coverage.clover.xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip cypress --coverage --coverage-html --coverage-xml
 fi
 
 # in ci we copy the coverage output file in current directory
@@ -89,9 +117,11 @@ if ($ci); then
     docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
 fi
 
-# make a copy with adjusted path for local sonar scanner
-ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
-sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
+if [ "${1:-}" != "cy" ]; then
+    # make a copy with adjusted path for local sonar scanner
+    ROOT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && cd .. && pwd )
+    sed -e "s:/elabftw/:$ROOT_DIR/:g" tests/_output/coverage.xml > tests/_output/coverage-sonar.xml
+fi
 # all tests succeeded, display a koala
 cat << WALAEND
 

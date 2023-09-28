@@ -30,11 +30,11 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected string $endpoint;
 
-    // used by backupzip to get the period
-    protected string $param;
-
     public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
     {
+        if ($Users->userData['archived'] === 1) {
+            throw new ImproperActionException('Cannot use API with an archived account!');
+        }
     }
 
     protected function parseReq(): array
@@ -45,8 +45,8 @@ abstract class AbstractApiController implements ControllerInterface
         /**
          * Nginx rewrite config (https://github.com/elabftw/elabimg/blob/4c9b4c2565323f1aa065d8ce5c87eb3e821895b4/src/nginx/common.conf#L74)
          * will put the request in 'req' query
-         * example for /api/v2/experiments/42:
-         *   array(5) {
+         * example for /api/v2/experiments/42/uploads/4:
+         *   array(7) {
          *   [0]=>
          *   string(0) ""
          *   [1]=>
@@ -56,7 +56,11 @@ abstract class AbstractApiController implements ControllerInterface
          *   [3]=>
          *   string(11) "experiments"
          *   [4]=>
-         *   string(1) "42"
+         *   string(2) "42"
+         *   [5]=>
+         *   string(7) "uploads"
+         *   [6]=>
+         *   string(1) "4"
          *   }
          */
         $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));
@@ -85,10 +89,11 @@ abstract class AbstractApiController implements ControllerInterface
         if (($req[4] ?? '') === 'me') {
             $this->id = $this->Users->userData['userid'];
         }
+        // allow using "current" to refer to the current logged in team
+        if (($req[4] ?? '') === 'current') {
+            $this->id = $this->Users->userData['team'];
+        }
 
-        // used by backup zip only for now
-        // TODO remove with apiv1
-        $this->param = $req[4] ?? '';
         return $req;
     }
 }

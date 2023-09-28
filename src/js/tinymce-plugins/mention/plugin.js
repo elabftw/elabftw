@@ -318,7 +318,7 @@
             this.editor.insertContent(this.insert(item));
         },
 
-        // Note: not used, overriden in options
+        // Note: not used, overridden in options
         insert: function (item) {
             return '<span>' + item.category + ' ' + item[this.options.queryBy] + '</span>&nbsp;';
         },

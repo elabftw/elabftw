@@ -9,6 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
+
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;
@@ -24,21 +27,19 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getPage());
+    }
+
     public function testCreate(): void
     {
-        $this->assertTrue($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
+        $this->assertIsInt($this->Revisions->postAction(Action::Create, array('body' => 'Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')));
     }
 
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Revisions->readAll());
-    }
-
-    public function testReadCount(): void
-    {
-        $this->assertIsInt($this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Items($this->Users, 1), 10, 100, 10);
-        $this->assertIsInt($this->Revisions->readCount());
     }
 
     public function testRestore(): void
@@ -47,13 +48,32 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $new = $Experiment->create(0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
-        $this->Revisions->create('Ohai');
-        $this->assertTrue($this->Revisions->restore($new));
+        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $this->Revisions->setId($id);
+        $this->assertIsArray($this->Revisions->patch(Action::Replace, array()));
+    }
+
+    public function testRestoreLocked(): void
+    {
+        $Experiment = new Experiments($this->Users, 1);
+        $new = $Experiment->create(0);
+        $Experiment->setId($new);
+        $this->Revisions = new Revisions($Experiment, 10, 100, 10);
+        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $this->Revisions->setId($id);
+        $Experiment->patch(Action::Lock, array());
+        $this->expectException(ImproperActionException::class);
+        $this->Revisions->patch(Action::Replace, array());
+    }
+
+    public function testPrune(): void
+    {
+        $this->assertEquals(0, $this->Revisions->prune());
     }
 
     public function testDestroy(): void
     {
-        $this->Revisions->setId(1);
-        $this->assertTrue($this->Revisions->destroy());
+        $this->expectException(ImproperActionException::class);
+        $this->Revisions->destroy();
     }
 }

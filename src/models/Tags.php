@@ -15,8 +15,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
-use function implode;
 use PDO;
 use function sprintf;
 
@@ -37,7 +37,7 @@ class Tags implements RestInterface
 
     public function getPage(): string
     {
-        return $this->Entity->getPage();
+        return sprintf('api/v2/%s/%d/tags/', $this->Entity->page, $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -47,21 +47,22 @@ class Tags implements RestInterface
 
     public function readOne(): array
     {
-        $TeamTags = new TeamTags($this->Entity->Users, $this->id);
-        return $TeamTags->readOne();
+        return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
     public function readAll(): array
     {
         $sql = sprintf(
-            'SELECT DISTINCT tag, tags2%1$s.tags_id
+            'SELECT DISTINCT tag, tags2%1$s.tags_id, (favtags2users.tags_id IS NOT NULL) AS is_favorite
                 FROM tags2%1$s
                 LEFT JOIN tags ON (tags2%1$s.tags_id = tags.id)
+                LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
                 WHERE %1$s_id = :entity_id',
             $this->Entity->type,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -112,6 +113,7 @@ class Tags implements RestInterface
         return $this->Db->execute($req);
     }
 
+    // ToDo: check if this is still needed
     /**
      * Get a list of entity id filtered by tags
      *
@@ -171,7 +173,8 @@ class Tags implements RestInterface
             // check if we can actually create tags (for non-admins)
             $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
             $teamConfigArr = $Teams->readOne();
-            if ($teamConfigArr['user_create_tag'] === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
+            $TeamsHelper = new TeamsHelper((int) $this->Entity->Users->userData['team']);
+            if ($teamConfigArr['user_create_tag'] === 0 && $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']) === false) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 
@@ -191,7 +194,7 @@ class Tags implements RestInterface
     }
 
     /**
-     * Unreference a tag from an entity
+     * Unreference a tag from an entity, and possibly delete it if it's the last of its kind
      */
     private function unreference(): array
     {
@@ -207,19 +210,18 @@ class Tags implements RestInterface
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        // now check if another entity is referencing it, if not, remove it from the tags table
-        $sqlfragments = array_map(function (string $entityType): string {
+        // tag is removed from tags table if no other entity is referencing it
+        $selectArr = array_map(function (string $entityType): string {
             return 'SELECT tags_id FROM tags2' . $entityType . ' WHERE tags_id = :tags_id';
         }, EntityType::getAllValues());
-        $sql = implode(' UNION ALL ', $sqlfragments);
+        $sql = sprintf(
+            'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (%s)',
+            implode(' UNION ', $selectArr),
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $tags = $req->fetchAll();
 
-        if (empty($tags)) {
-            (new TeamTags($this->Entity->Users, $this->id))->destroy();
-        }
         return $this->Entity->readOne();
     }
 }

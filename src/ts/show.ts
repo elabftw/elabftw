@@ -5,13 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
+import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -29,21 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
-
-  // CREATE EXPERIMENT or DATABASE item with shortcut
-  key(document.getElementById('shortcuts').dataset.create, function() {
-    if (about.type === 'experiments') {
-      const el = document.querySelector('[data-action="create-entity"]') as HTMLButtonElement;
-      const tplid = el.dataset.tplid;
-      const urlParams = new URLSearchParams(document.location.search);
-      const tags = urlParams.getAll('tags[]');
-      EntityC.create(tplid, tags).then(resp => window.location.href = resp.headers.get('location'));
-    } else {
-      // for database items, show a selection modal
-      // modal plugin requires jquery
-      $('#createModal').modal('toggle');
-    }
-  });
 
   // THE CHECKBOXES
   const nothingSelectedError = {
@@ -99,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
       el.selectedIndex = 0;
       window.location.href = `make.php?format=${format}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
 
-    // UPDATE CATEGORY
-    } else if (el.matches('[data-action="update-category-selected-entities"]')) {
+    // UPDATE CATEGORY OR STATUS
+    } else if (el.matches('[data-action="update-catstat-selected-entities"]')) {
       const ajaxs = [];
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
@@ -110,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and update the status/item type
       checked.forEach(chk => {
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'category': el.value}));
+        const params = {};
+        params[el.dataset.target] = el.value;
+        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, params));
       });
       // reload the page once it's done
       // a simple reload would not work here
@@ -119,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
       notif({'msg': 'Saved', 'res': true});
-
 
     // UPDATE VISIBILITY
     } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
@@ -166,6 +153,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-favtags"]')) {
       FavTagC.toggle();
 
+    // TOGGLE DISPLAY
+    } else if (el.matches('[data-action="toggle-items-layout"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.getJson(`${Model.User}/me`).then(json => {
+        let target = 'it';
+        if (json['display_mode'] === 'it') {
+          target = 'tb';
+        }
+        ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
+          reloadElement('showModeContent');
+        });
+      });
+
     // TOGGLE text input to add a new favorite tag
     } else if (el.matches('[data-action="toggle-addfav"]')) {
       const input = document.getElementById('createFavTagInput');
@@ -195,13 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(parseInt(el.dataset.id, 10)).then(() => el.closest('.item').remove());
-
-    // toggle visibility of the trash icon for favtags
-    } else if (el.matches('[data-action="toggle-favtags-edit"]')) {
-      document.querySelectorAll('[data-action="destroy-favtags"]').forEach(el => {
-        el.toggleAttribute('hidden');
-      });
+      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.item').remove());
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
@@ -325,8 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm(i18next.t('generic-delete-warning'))) {
         return;
       }
-      // loop on it and delete stuff
-      checked.forEach(chk => EntityC.destroy(chk.id).then(() => $('#parent_' + chk.randomid).hide(200)));
+      // loop on it and delete stuff (use curly braces to avoid implicit return)
+      checked.forEach(chk => {EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 
@@ -335,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // so check for the type param in url that will be present on search page
   const params = new URLSearchParams(document.location.search.slice(1));
   if (!params.get('type')) {
-    document.getElementById('favtags-opener').removeAttribute('hidden');
+    document.getElementById('sidepanel-buttons').removeAttribute('hidden');
   }
 
   // FAVTAGS PANEL

@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let clickX = [];
   let clickY = [];
   // bool to store the state of painting
-  let isPainting;
-  let wasPainting;
+  let isPainting: boolean;
+  let wasPainting: boolean;
 
   const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     path.closePath();
 
     context.globalCompositeOperation = 'source-over';
-    context.strokeStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value as string;
+    context.strokeStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value;
     if ((document.getElementById('doodleEraser') as HTMLInputElement).checked) {
       context.globalCompositeOperation = 'destination-out';
       context.strokeStyle = 'rgba(0,0,0,1)';
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addText(x: number, y: number, text: string): void {
     context.font = '18px Arial';
-    context.fillStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value as string;
+    context.fillStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value;
     context.fillText(text, x, y);
   }
 

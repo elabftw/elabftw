@@ -33,7 +33,7 @@ use RuntimeException;
 use function setlocale;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use function textdomain;
 
 /**
@@ -44,23 +44,30 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '4.5.10';
+    public const INSTALLED_VERSION = '4.8.6';
+
+    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-480/';
 
     public Users $Users;
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public string $pageTitle = 'Lab manager';
 
     public array $teamArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ok = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $ko = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
 
+    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $warning = array();
 
-    public function __construct(public Request $Request, public SessionInterface $Session, public Config $Config, public Logger $Log)
+    public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
     {
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
@@ -106,6 +113,7 @@ class App
         if ($this->Session->get('is_anon') === 1) {
             // anon user only has access to a subset of pages
             $allowedPages = array(
+                'ApiController.php',
                 'database.php',
                 'download.php',
                 'experiments.php',
@@ -137,7 +145,7 @@ class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig($this->Config)->render($template, array_merge(array('App' => $this), $variables));
+            return $this->getTwig((bool) $this->Config->configArr['debug'])->render($template, array_merge(array('App' => $this), $variables));
         } catch (RuntimeException $e) {
             echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
             echo '<h2>Error message: ' . $e->getMessage() . '</h2>';
@@ -158,9 +166,10 @@ class App
         return $this->Config->configArr['lang'];
     }
 
+    /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
-        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::English);
+        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::EnglishGB);
     }
 
     /**

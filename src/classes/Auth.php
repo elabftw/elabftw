@@ -10,11 +10,12 @@
 namespace Elabftw\Elabftw;
 
 use function basename;
+use Elabftw\Auth\Anon;
+use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieToken;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
-use Elabftw\Services\AnonAuth;
-use Elabftw\Services\CookieAuth;
 use Elabftw\Services\TeamFinder;
 use function in_array;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,10 +71,11 @@ class Auth implements AuthInterface
         switch ($authType) {
             // AUTH WITH COOKIE
             case 'cookie':
-                return new CookieAuth(
-                    (string) $this->Request->cookies->get('token'),
-                    $this->Request->cookies->getDigits('token_team'),
-                    $this->Config->configArr,
+                return new Cookie(
+                    (int) $this->Config->configArr['cookie_validity_time'],
+                    (int) $this->Config->configArr['enforce_mfa'],
+                    new CookieToken($this->Request->cookies->getString('token')),
+                    $this->Request->cookies->getInt('token_team'),
                 );
             case 'access_key':
                 // now we need to know in which team we autologin the user
@@ -83,13 +85,13 @@ class Auth implements AuthInterface
                 if ($team === 0) {
                     throw new UnauthorizedException();
                 }
-                return new AnonAuth($this->Config->configArr, $team);
+                return new Anon($this->Config->configArr, $team);
             case 'open':
                 // don't do it if we have elabid in url
                 // only autologin on selected pages and if we are not authenticated with an account
                 $autoAnon = array('experiments.php', 'database.php', 'search.php');
                 if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                    return new AnonAuth($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
+                    return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
                 }
                 // no break
             default:

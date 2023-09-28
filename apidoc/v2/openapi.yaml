@@ -55,9 +55,11 @@ components:
     config:
       type: object
       properties:
-        admin_validate:
-          type: string
         admins_create_users:
+          type: string
+        admins_create_users_remote_dir:
+          type: string
+        admin_validate:
           type: string
         announcement:
           type: string
@@ -69,6 +71,8 @@ components:
           type: string
         blox_enabled:
           type: string
+        cookie_validity_time:
+          type: integer
         debug:
           type: string
         deletable_xp:
@@ -137,6 +141,10 @@ components:
           type: string
         proxy:
           type: string
+        remote_dir_config:
+          type: string
+        remote_dir_service:
+          type: string
         s3_bucket_name:
           type: string
         s3_endpoint:
@@ -144,6 +152,8 @@ components:
         s3_path_prefix:
           type: string
         s3_region:
+          type: string
+        s3_verify_cert:
           type: string
         saml_acs_binding:
           type: string
@@ -236,36 +246,50 @@ components:
     entity:
       type: object
       properties:
+        access_key:
+          type: string
+          nullable: true
         body:
           type: string
+          nullable: true
         body_html:
           type: string
+          nullable: true
         canread:
           type: string
+          description: JSON string for read permissions.
         canwrite:
           type: string
+          description: JSON string for write permissions.
         category:
           type: string
-        category_id:
-          type: integer
+          nullable: true
+        category_color:
+          type: string
+          nullable: true
+        category_title:
+          type: string
+          nullable: true
         color:
           type: string
+          nullable: true
         comments:
           type: array
           items:
             $ref: '#/components/schemas/comment'
         content_type:
           type: integer
+          description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
         date:
           type: string
         elabid:
           type: string
-        events_id:
-          type: string
-        events_item_id:
-          type: string
+        experiments_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         firstname:
           type: string
         fullname:
@@ -276,60 +300,82 @@ components:
           type: integer
         id:
           type: integer
-        is_bound:
-          type: string
+        items_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         lastchangeby:
           type: integer
         lastname:
           type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
         locked:
           type: integer
         lockedby:
           type: integer
-        lockedwhen:
+          nullable: true
+        locked_at:
           type: string
+          nullable: true
+        mainattr_title:
+          type: string
+          nullable: true
+          description: The title of the status for experiments and category for resources.
         metadata:
           type: string
+          nullable: true
         modified_at:
           type: string
         next_step:
           type: string
+          nullable: true
         orcid:
           type: string
+          nullable: true
         page:
           type: string
         rating:
           type: integer
         recent_comment:
           type: string
+          nullable: true
         sharelink:
           type: string
         state:
           type: integer
+        status:
+          type: integer
+          nullable: true
+        status_color:
+          type: string
+          nullable: true
+        status_title:
+          type: string
+          nullable: true
         steps:
           type: array
           items:
             $ref: '#/components/schemas/step'
         tags:
           type: string
+          nullable: true
         tags_id:
           type: string
+          nullable: true
         timestamped:
           type: integer
         timestampedby:
           type: integer
+          nullable: true
         timestamped_at:
           type: string
+          nullable: true
         title:
           type: string
         type:
           type: string
         up_item_id:
           type: integer
+          nullable: true
         uploads:
           type: array
           items:
@@ -375,6 +421,16 @@ components:
           type: string
         body:
           type: string
+          nullable: true
+        category:
+          type: integer
+          nullable: true
+        category_title:
+          type: string
+          nullable: true
+        category_color:
+          type: string
+          nullable: true
         userid:
           type: integer
         canread:
@@ -385,34 +441,94 @@ components:
           type: integer
         lockedby:
           type: integer
-        lockedwhen:
+          nullable: true
+        locked_at:
           type: string
         fullname:
           type: string
         metadata:
           type: string
+          nullable: true
         teams_id:
           type: integer
         is_pinned:
           type: integer
+        status:
+          type: integer
+          nullable: true
+        status_title:
+          type: string
+          nullable: true
+        status_color:
+          type: string
+          nullable: true
         tags:
           type: string
+          nullable: true
         tags_id:
+          type: string
+          nullable: true
+    idp:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        entityid:
+          type: string
+        sso_url:
+          type: string
+        sso_binding:
+          type: string
+        slo_url:
+          type: string
+        slo_binding:
+          type: string
+        x509:
+          type: string
+        x509_new:
+          type: string
+        enabled:
+          type: integer
+        email_attr:
+          type: string
+        team_attr:
+          type: string
+        fname_attr:
+          type: string
+        lname_attr:
           type: string
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
+        - type: object
+          properties:
+            is_bookable:
+              type: integer
+            canbook:
+              type: string
+            book_max_minutes:
+              type: integer
+            book_max_slots:
+              type: integer
+            book_can_overlap:
+              type: integer
+            book_is_cancellable:
+              type: integer
+            book_cancel_minutes:
+              type: integer
     items_type:
       type: object
       properties:
-        category_id:
+        id:
           type: integer
-        category:
+        title:
           type: string
+        status:
+          type: integer
         color:
           type: string
-        bookable:
-          type: integer
         body:
           type: string
         ordering:
@@ -430,12 +546,15 @@ components:
           type: string
         elabid:
           type: string
-        category:
+        mainattr_title:
           type: string
-        bookable:
+        is_bookable:
           type: integer
-        color:
+        mainattr_color:
           type: string
+          nullable: true
+        link_state:
+          type: integer
     notification:
       type: object
       properties:
@@ -455,12 +574,32 @@ components:
           type: string
         body:
           type: string
-    status:
+    revision:
       type: object
       properties:
-        category_id:
+        id:
           type: integer
-        category:
+        item_id:
+          type: integer
+        body:
+          type: string
+        body_html:
+          type: string
+        content_type:
+          type: integer
+        created_at:
+          type: string
+        userid:
+          type: integer
+        metadata:
+          type: string
+    # experiments_status, experiments_categories and items_status are statuslike
+    statuslike:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
           type: string
         color:
           type: string
@@ -628,8 +767,6 @@ components:
           type: string
         validated:
           type: integer
-        usergroup:
-          type: integer
         archived:
           type: integer
         last_login:
@@ -638,8 +775,27 @@ components:
           type: string
         orcid:
           type: string
+        orgid:
+          type: string
         auth_service:
           type: integer
+        is_sysadmin:
+          type: integer
+        entrypoint:
+          type: integer
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              usergroup:
+                type: integer
+              is_owner:
+                type: integer
 
 
 security:
@@ -690,7 +846,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apikey'
+                type: array
+                items:
+                  $ref: '#/components/schemas/apikey'
   /apikeys/{id}:
     summary: Actions on an api key
     delete:
@@ -829,6 +987,14 @@ paths:
             type: integer
           description: |
             The status id of the experiments.
+        - name: tags[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            An array of tags for filtering results containing all of these tags.
         - name: limit
           in: query
           schema:
@@ -955,7 +1121,56 @@ paths:
         '204':
           description: The experiment was deleted
 
-  # Items
+  # INFO
+  /info:
+    summary: Information about the instance
+    get:
+      tags: ['Info']
+      summary: Get information about the instance.
+      description: Get information about the instance.
+      operationId: get-info
+      responses:
+        '200':
+          description: Information about the instance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  elabftw_version:
+                    type: string
+                    description: Current eLabFTW version
+                    example: 4.8.0
+                  ts_balance:
+                    type: integer
+                    description: Number of timestamp tokens left
+                    example: 461
+                  all_users_count:
+                    type: integer
+                    description: Total count of all users
+                    example: 389
+                  active_users_count:
+                    type: integer
+                    description: Total count of active users
+                    example: 311
+                  items_count:
+                    type: integer
+                    description: Total count of items
+                    example: 666
+                  teams_count:
+                    type: integer
+                    description: Total count of teams
+                    example: 18
+                  experiments_count:
+                    type: integer
+                    description: Total count of experiments
+                    example: 10189
+                  experiments_timestamped_count:
+                    type: integer
+                    description: Total count of experiments with timestamps
+                    example: 1601
+
+  # ITEMS
   /items:
     summary: Actions on items
     post:
@@ -971,10 +1186,8 @@ paths:
               properties:
                 category_id:
                   type: integer
-                  description: >-
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
+                  description: |
+                    Mandatory parameter, an ID corresponding to an items_types in the team.
                 tags:
                   type: array
                   items:
@@ -1022,6 +1235,14 @@ paths:
             type: integer
           description: |
             The category id of the items.
+        - name: tags[]
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: |
+            An array of tags for filtering results containing all of these tags.
         - name: limit
           in: query
           schema:
@@ -1824,6 +2045,8 @@ paths:
                     type: string
                   id:
                     type: integer
+                  item_count:
+                    type: integer
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -1860,7 +2083,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['deduplicate']
+                  const: 'deduplicate'
               description: Find all duplicate tags and deduplicate them.
       responses:
         '200':
@@ -1910,7 +2133,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['updatetag']
+                  const: 'updatetag'
                 tag:
                   type: string
                   description: The content of the tag.
@@ -1977,10 +2200,20 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the team.
+        description: ID of the team or `current`.
         required: true
         schema:
-          type: integer
+          oneOf:
+            - type: integer
+            - type: string
+              const: 'current'
+        examples:
+          first:
+            summary: Access the current team.
+            value: 'current'
+          second:
+            summary: Access team with ID 3.
+            value: 3
     get:
       tags: ['Teams']
       summary: Read a team. Requires Admin permissions.
@@ -2011,8 +2244,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/team'
 
-  # STATUS
-  /teams/{id}/status:
+  # EXPERIMENTS CATEGORIES
+  /teams/{id}/experiments_categories:
     parameters:
       - name: id
         in: path
@@ -2021,22 +2254,22 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Status']
-      summary: Read status of a team.
-      operationId: read-team-status
+      tags: ['Experiments categories']
+      summary: Read experiments categories of a team.
+      operationId: read-team-experiments-categories
       responses:
         '200':
-          description: A list of status for the team.
+          description: A list of experiments categories for the team.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/status'
+                  $ref: '#/components/schemas/statuslike'
     post:
-      tags: ['Status']
-      operationId: post-team-one-status
-      summary: Create a new status.
+      tags: ['Experiments categories']
+      operationId: post-team-one-expcat
+      summary: Create a new experiments status.
       requestBody:
         description: Parameters for creating a status.
         content:
@@ -2062,7 +2295,8 @@ paths:
               description: An URL to the status that was created.
               schema:
                 type: string
-  /teams/{id}/status/{subid}:
+  # ONE EXPERIMENTS CATEGORY
+  /teams/{id}/experiments_categories/{subid}:
     parameters:
       - name: id
         in: path
@@ -2077,8 +2311,105 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Status']
-      operationId: read-team-one-status
+      tags: ['Experiments categories']
+      operationId: read-team-one-expcat
+      summary: Read a status.
+      responses:
+        '200':
+          description: Read a category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    patch:
+      tags: ['Experiments categories']
+      operationId: patch-expcat
+      summary: Modify a category.
+      requestBody:
+        description: Parameters for modifying a category.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/statuslike'
+      responses:
+        '200':
+          description: The updated category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    delete:
+      tags: ['Experiments categories']
+      summary: Delete a category.
+      operationId: delete-expcat
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The category was removed.
+
+  # EXPERIMENTS STATUS
+  /teams/{id}/experiments_status:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Experiments status']
+      summary: Read experiments status of a team.
+      operationId: read-team-experiments-status
+      responses:
+        '200':
+          description: A list of status for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/statuslike'
+    post:
+      tags: ['Experiments status']
+      operationId: post-team-one-expstatus
+      summary: Create a new experiments status.
+      requestBody:
+        description: Parameters for creating a status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Status name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default status for the team?
+  # ONE EXPERIMENTS STATUS
+  /teams/{id}/experiments_status/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the status
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Experiments status']
+      operationId: read-team-one-expstatus
       summary: Read a status.
       responses:
         '200':
@@ -2086,28 +2417,126 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/statuslike'
     patch:
-      tags: ['Status']
-      operationId: patch-status
+      tags: ['Experiments status']
+      operationId: patch-expstatus
       summary: Modify a status.
       requestBody:
         description: Parameters for modifying a status.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/status'
+              $ref: '#/components/schemas/statuslike'
       responses:
         '200':
           description: The updated status.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/statuslike'
     delete:
-      tags: ['Status']
+      tags: ['Experiments status']
       summary: Delete a status.
-      operationId: delete-status
+      operationId: delete-expstatus
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The status was removed.
+  # ITEMS STATUS
+  /teams/{id}/items_status:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Resources status']
+      summary: Read resources status of a team.
+      operationId: read-team-items-status
+      responses:
+        '200':
+          description: A list of resources status for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/statuslike'
+    post:
+      tags: ['Resources status']
+      operationId: post-team-one-resstat
+      summary: Create a new experiments status.
+      requestBody:
+        description: Parameters for creating a resources status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Status name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default status for the team?
+
+
+  # ONE ITEMS STATUS
+  /teams/{id}/items_status/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the status
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Resources status']
+      operationId: read-team-one-resstatus
+      summary: Read a status.
+      responses:
+        '200':
+          description: Read a status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    patch:
+      tags: ['Resources status']
+      operationId: patch-resstatus
+      summary: Modify a status.
+      requestBody:
+        description: Parameters for modifying a status.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/statuslike'
+      responses:
+        '200':
+          description: The updated status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    delete:
+      tags: ['Resources status']
+      summary: Delete a status.
+      operationId: delete-resstatus
       requestBody:
         content:
           application/json: {}
@@ -2360,7 +2789,53 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/users'
+                   type: object
+                   properties:
+                     userid:
+                       type: integer
+                     firstname:
+                       type: string
+                     lastname:
+                       type: string
+                     orgid:
+                       type: integer
+                       nullable: true
+                     email:
+                       type: string
+                     validated:
+                       type: integer
+                     archived:
+                       type: integer
+                     last_login:
+                       type: string
+                       nullable: true
+                     valid_until:
+                       type: string
+                       nullable: true
+                     is_sysadmin:
+                       type: integer
+                     fullname:
+                       type: string
+                     orcid:
+                       type: string
+                       nullable: true
+                     auth_service:
+                       type: integer
+                       nullable: true
+              example:
+                - userid: 4
+                  firstname: Brook
+                  lastname: Hegmann
+                  orgid: "u3051"
+                  email: brook@example.com
+                  validated: 1
+                  archived: 0
+                  last_login: "2023-07-29 20:34:04"
+                  valid_until: null
+                  is_sysadmin: 0
+                  fullname: Brook Hegmann
+                  orcid: "0000-0002-7494-5555"
+                  auth_service: null
     post:
       tags: ['Users']
       summary: Create a new user.
@@ -2384,17 +2859,19 @@ paths:
                 email:
                   type: string
                   description: User's email address.
-                usergroup:
-                  type: string
-                  enum: ['1', '2', '4']
-                  description: |
-                    1: Sysadmin, 2: Admin, 4: regular user.
                 team:
                   type: integer
                   description: The team id.
                 valid_until:
                   type: string
                   description: Date in the YYYY-MM-DD format for account expiration date.
+                orgid:
+                  type: string
+                  description: Internal id.
+                usergroup:
+                  type: integer
+                  description: Which permissions level the user will get? `1` is Sysadmin, `2` is Admin, `4` is user (default)
+                  enum: [1, 2, 4]
       responses:
         '201':
           description: The user has been created.
@@ -2414,7 +2891,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2450,6 +2927,12 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/users'
                 - type: object
+                  description: Archive or validate a user (will toggle the attribute)
+                  properties:
+                    action:
+                      type: string
+                      enum: ['archive', 'validate']
+                - type: object
                   description: Add or remove a user from a team.
                   properties:
                     action:
@@ -2458,6 +2941,38 @@ paths:
                     team:
                       type: integer
                       description: ID of the team
+                - type: object
+                  description: Change the password
+                  properties:
+                    action:
+                      const: 'updatepassword'
+                      type: string
+                    current_password:
+                      type: string
+                      description: |
+                        Current password. Note: Sysadmin user doesn't need to provide it.
+                    password:
+                      type: string
+                      description: New password.
+                - type: object
+                  description: Modify ownership of a team
+                  properties:
+                    action:
+                      enum: ['patchuser2team']
+                      type: string
+                    team:
+                      type: integer
+                      description: ID of the team
+                    userid:
+                      type: integer
+                      description: Target userid
+                    target:
+                      type: string
+                      enum: ['group', 'is_owner']
+                      description: The attribute to modify
+                    content:
+                      type: integer
+                      description: Binary value for `is_owner`, integer for `group` (2 for Admin, 4 for User)
       responses:
         '200':
           description: Public properties of a user.
@@ -2477,7 +2992,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2530,7 +3045,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              enum: ['me']
+              const: 'me'
         examples:
           first:
             summary: Access our own user.
@@ -2731,6 +3246,18 @@ paths:
               description: An URL to the tag that was created.
               schema:
                 type: string
+    delete:
+      tags: ['Tags']
+      summary: Delete all tags.
+      description: All the tags from that entity get removed.
+      operationId: delete-tag
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The tags were deleted.
+
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -2779,7 +3306,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: ['unreference']
+                  const: 'unreference'
       responses:
         '200':
           description: The updated tag.
@@ -2787,18 +3314,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
-    delete:
-      tags: ['Tags']
-      summary: Delete all tags.
-      description: All the tags from that entity get removed.
-      operationId: delete-tag
-      requestBody:
-        content:
-          application/json: {}
-      responses:
-        '204':
-          description: The tags were deleted.
-
 
   # UPLOADS
   /{entity_type}/{id}/uploads:
@@ -2839,6 +3354,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required: ['file']
               properties:
                 file:
                   type: string
@@ -2912,10 +3428,18 @@ paths:
       requestBody:
         description: Parameters for replacing an upload.
         content:
-          application/octet-stream:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              type: object
+              required: ['file']
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+                comment:
+                  type: string
+                  description: Optional file comment.
       responses:
         '201':
           description: The file has been uploaded.
@@ -2927,19 +3451,32 @@ paths:
     patch:
       tags: ['Uploads']
       summary: |
-        Actions on an upload.
+        Modify attributes such as "real_name", "comment" or "state" of an upload.
       operationId: patch-upload
       requestBody:
-        description: Parameters for modifying an upload.
+        description: Parameters for modifying an upload attributes.
         content:
           application/json:
             schema:
               type: object
-              required: ['action']
               properties:
                 action:
                   type: string
-                  enum: ['update']
+                  const: 'update'
+                real_name:
+                  type: string
+                comment:
+                  type: string
+                state:
+                  type: integer
+                  enum: [1, 2, 3]
+            anyOf:
+              - required:
+                  - real_name
+              - required:
+                  - comment
+              - required:
+                  - state
       responses:
         '200':
           description: The updated upload.
@@ -2958,3 +3495,248 @@ paths:
       responses:
         '204':
           description: The upload was deleted.
+
+  # IDPS
+  /idps:
+    get:
+      tags: ['Idps']
+      summary: Read all IDPs.
+      operationId: read-idps
+      responses:
+        '200':
+          description: A list of idps.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp'
+    post:
+      tags: ['Idps']
+      summary: Create an idp.
+      operationId: post-idp
+      requestBody:
+        description: Parameters for creating an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'x509', 'x509_new', 'email_attr']
+              properties:
+                name:
+                  type: string
+                  description: A name for the IDP.
+                entityid:
+                  type: string
+                  description: Entityid.
+                sso_url:
+                  type: string
+                  description: URL for Single Sign-On.
+                sso_binding:
+                  type: string
+                  description: Binding for SSO.
+                slo_url:
+                  type: string
+                  description: URL for Single Log-Out.
+                slo_binding:
+                  type: string
+                  description: Binding for SLO.
+                x509:
+                  type: string
+                  description: Certificate in PEM format.
+                x509_new:
+                  type: string
+                  description: Certificate in PEM format for renewal period.
+                email_attr:
+                  type: string
+                  description: What attribute to look for the email.
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                fname_attr:
+                  type: string
+                  description: What attribute to look for the firstname.
+                lname_attr:
+                  type: string
+                  description: What attribute to look for the lastname.
+                orgid_attr:
+                  type: string
+                  description: What attribute to look for the internal id.
+      responses:
+        '201':
+          description: The idp has been created.
+          headers:
+            location:
+              description: An URL to the idp that was created.
+              schema:
+                type: string
+  /idps/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read an idp.
+      operationId: read-idp
+      responses:
+        '200':
+          description: An idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    patch:
+      tags: ['Idps']
+      summary: Actions on an idp.
+      operationId: patch-idp
+      requestBody:
+        description: Parameters for modifying an idp.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['action']
+              properties:
+                action:
+                  type: string
+                  const: 'update'
+      responses:
+        '200':
+          description: The updated idp.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp'
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp.
+      description: The idp gets deleted.
+      operationId: delete-idp
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The idp was deleted.
+
+  # REVISIONS
+  /{entity_type}/{id}/revisions:
+    summary: Actions on revisions of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: ['Revisions']
+      summary: Create a revision.
+      operationId: post-entity-revisions
+      requestBody:
+        description: Parameters for creating a revision
+        content:
+          application/json:
+            schema:
+              required: ['body']
+              type: object
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: The revision has been created.
+          headers:
+            location:
+              description: An URL to the revision that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Revisions']
+      summary: Read all revisions of that entity.
+      operationId: read-entity-revisions
+      responses:
+        '200':
+          description: A list of revisions for that entity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    content_type:
+                      type: integer
+                    created_at:
+                      type: string
+                    fullname:
+                      type: string
+  /{entity_type}/{id}/revisions/{subid}:
+    summary: Actions on a revision of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the revision
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Revisions']
+      summary: Read a revision of that entity.
+      operationId: read-entity-revision
+      responses:
+        '200':
+          description: A revision.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/revision'
+    patch:
+      tags: ['Revisions']
+      summary: Restore a revision.
+      operationId: patch-entity-revision
+      requestBody:
+        description: Parameters for restoring an entity revision.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  const: 'replace'
+                  description: |
+                    The `replace` action will restore the revision body to the entity.
+      responses:
+        '200':
+          description: The (unchanged) revision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/revision'

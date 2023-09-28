@@ -19,16 +19,15 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\AccessKeyHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -37,6 +36,8 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractEntityController implements ControllerInterface
 {
     protected array $categoryArr = array();
+
+    protected array $statusArr = array();
 
     protected array $visibilityArr = array();
 
@@ -50,11 +51,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        // items don't need to show the templates in create new menu, so save a sql call here
-        if ($this->Entity instanceof Experiments) {
-            $Templates = new Templates($this->Entity->Users);
-            $this->templatesArr = $Templates->Pins->readAllSimple();
+        $Templates = new Templates($this->Entity->Users);
+        $this->templatesArr = $Templates->Pins->readAllSimple();
+        if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
+            $Entity->Uploads->includeArchived = true;
         }
+
     }
 
     public function getResponse(): Response
@@ -73,21 +75,9 @@ abstract class AbstractEntityController implements ControllerInterface
     public function show(bool $isSearchPage = false): Response
     {
         // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
+        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
-
-        // TAG FILTER
-        if (!empty(($this->App->Request->query->all('tags'))[0])) {
-            // get all the ids with that tag
-            $tagsFromGet = $this->App->Request->query->all('tags');
-            $tagsFromGet = array_map(function ($t) {
-                return (string) $t;
-            }, $tagsFromGet);
-            $ids = $this->Entity->Tags->getIdFromTags($tagsFromGet);
-            $this->Entity->idFilter = Tools::getIdFilterSql($ids);
-            $DisplayParams->searchType = 'tags';
-        }
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
@@ -95,6 +85,11 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         $itemsArr = $this->getItemsArr();
+        // if there is only one result, redirect to the entry directly
+        if ($isSearchPage && count($itemsArr) === 1) {
+            return new RedirectResponse(sprintf('%s.php?mode=view&id=%d', $this->Entity->page, $itemsArr[0]['id']));
+        }
+
         // get tags separately
         $tagsArr = array();
         if (!empty($itemsArr)) {
@@ -119,6 +114,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'statusArr' => $this->statusArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
@@ -147,7 +143,10 @@ abstract class AbstractEntityController implements ControllerInterface
     /**
      * Get the items
      */
-    abstract protected function getItemsArr(): array;
+    protected function getItemsArr(): array
+    {
+        return $this->Entity->readShow(new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType));
+    }
 
     /**
      * View mode (one item displayed)
@@ -167,14 +166,6 @@ abstract class AbstractEntityController implements ControllerInterface
         }
         $this->Entity->setId($id);
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
@@ -184,16 +175,17 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
+            'hideTitle' => true,
             'teamsArr' => $Teams->readAll(),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
@@ -238,30 +230,28 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
-        // REVISIONS
-        $Revisions = new Revisions(
-            $this->Entity,
-            (int) $this->App->Config->configArr['max_revisions'],
-            (int) $this->App->Config->configArr['min_delta_revisions'],
-            (int) $this->App->Config->configArr['min_days_revisions'],
-        );
         $Teams = new Teams($this->Entity->Users);
+        $TeamTags = new TeamTags($this->App->Users);
 
+        $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             // Do we display the main body of a concrete entity? Default is true
-            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'displayMainText' => $Metadata->getDisplayMainText(),
+            'hideTitle' => true,
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
+            'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
+            'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll(),
+            'teamTagsArr' => $TeamTags->readAll(),
             'myTeamgroupsArr' => $this->teamGroupsFromUser,
-            'revNum' => $Revisions->readCount(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
@@ -305,7 +295,7 @@ abstract class AbstractEntityController implements ControllerInterface
             $deletableXp = false;
         }
         // an admin is able to delete
-        if ($this->App->Users->userData['is_admin']) {
+        if ($this->App->Users->isAdmin) {
             $deletableXp = true;
         }
         return $deletableXp;

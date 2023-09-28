@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,11 +6,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,6 +19,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Email;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 
 /**
  * Actions from team.php
@@ -32,12 +36,27 @@ try {
     }
 
     // EMAIL TEAM
-    if ($Request->request->has('emailTeam')) {
-        $Email = new Email($App->Config, $App->Log);
+    if ($Request->request->has('emailUsers')) {
+        $target = (string) $Request->request->get('target');
+        // default to team
+        $targetId = $App->Users->userData['team'];
+        $targetType = EmailTarget::Team;
+        if (str_starts_with($target, 'teamgroup')) {
+            $targetId = (int) explode('_', $target)[1];
+            $targetType = EmailTarget::TeamGroup;
+        }
+        $Email = new Email(
+            new Mailer(Transport::fromDsn($App->Config->getDsn())),
+            $App->Log,
+            $App->Config->configArr['mail_from'],
+        );
+        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
         $sent = $Email->massEmail(
-            (string) $Request->request->get('subject'),
-            (string) $Request->request->get('body'),
-            $App->Users->userData['team'],
+            $targetType,
+            $targetId,
+            $Request->request->getString('subject'),
+            $Request->request->getString('body'),
+            $replyTo,
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }

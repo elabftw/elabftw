@@ -99,13 +99,15 @@ class TeamTags implements RestInterface
             $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
             $count[] = sprintf('COUNT(tags2%1$s.%1$s_id)', $entityType);
         }
-        $sql = 'SELECT tag, tags.id, ' . implode('+', $count) . ' AS item_count
+        $sql = 'SELECT tag, tags.id, ' . implode('+', $count) . ' AS item_count, (favtags2users.tags_id IS NOT NULL) AS is_favorite
             FROM tags
             ' . implode(' ', $joins) . '
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.tag LIKE :query
             GROUP BY tags.id
             ORDER BY item_count DESC';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
         $this->Db->execute($req);
@@ -140,7 +142,7 @@ class TeamTags implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        if ($this->Users->userData['is_admin'] !== 1) {
+        if (!$this->Users->isAdmin) {
             throw new IllegalActionException('Only an admin can do this!');
         }
         return match ($action) {
@@ -155,7 +157,7 @@ class TeamTags implements RestInterface
      */
     public function destroy(): bool
     {
-        if ($this->Users->userData['is_admin'] !== 1) {
+        if (!$this->Users->isAdmin) {
             throw new IllegalActionException('Only an admin can delete a tag!');
         }
 

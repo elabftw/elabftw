@@ -1,173 +1,251 @@
-<div class='box form-group'>
-  <form class='form-inline' method='get' id ='userSearchForm'>
-    <label for='searchUsers' class='mb-2'>{{ 'Search users'|trans }}</label>
-    <input type='text' autocomplete='off' class='form-control col-md-4 mb-2' id='searchUsers' value='{{ App.Request.query.get('q') }}' name='q' />
-    <!-- stay on correct tab -->
-    <input type='hidden' value='3' name='tab' />
-    {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
-      <label for='teamFilter' class='ml-2 mb-2'>{{ 'limit to team'|trans }}</label>
-      <select class='form-control mb-2' name='teamFilter' id='teamFilter'>
-        <option value=''>{{ 'All teams'|trans }}</option>
-        {% for team in teamsArr %}
-          <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
-        {% endfor %}
-      </select>
-    {% endif %}
-    <input type='submit' class='button btn btn-primary ml-2 mb-2' value='{{ 'Search'|trans }}' />
-    <input type='button' id='editusersShowAll' class='button btn btn-secondary ml-2 mb-2' value='{{ 'Show all'|trans }}' />
-  </form>
+<h3 class='p-2 pl-3 section-title'>{{ 'Search users'|trans }}</h3>
+<div class='pl-3'>
+  <div class='form-group'>
+    <form method='get' id ='userSearchForm'>
+      <!-- stay on correct tab -->
+      <input type='hidden' value='3' name='tab' />
+
+      <div class='input-group mt-3'>
+        <div class='input-group-prepend'>
+          <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+        </div>
+        {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
+          <div class='input-group-prepend'>
+            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter'>
+              <option value=''>{{ 'All teams'|trans }}</option>
+              {% for team in teamsArr %}
+                <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+        <input type='text' class='form-control' value='{{ App.Request.query.get('q') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
+        <div class='input-group-append'>
+          <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
+        </div>
+        <div class='input-group-append'>
+          <button class='btn btn-secondary' id='editusersShowAll' type='button'>{{ 'Show all'|trans }}</button>
+        </div>
+        <div class='input-group-append'>
+          <div class='input-group-text'>
+            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
+          </div>
+        </div>
+        <div class='input-group-append'>
+          <div class='input-group-text'>
+            <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 {% if isSearching %}
-    <div id='editUsersBox' class='box'>
-        <h3>{{ 'Edit Users'|trans }}</h3>
-        <hr>
-        {% if usersArr %}
-        <ul class='list-group'>
-
-            {% for user in usersArr %}
-            <li class='list-group-item'>
-              <ul class='list-inline'>
-                <p class='float-right'>
-                  {% if user.mfa_secret %}
-                    <span class='elab-tooltip'><span>{{ '2FA enabled'|trans }}</span><i title='' class='fas fa-user-shield'></i></span>
-                  {% endif %}
-                  <span class='elab-tooltip badge badge-secondary'><span>{{ 'User ID'|trans }}</span>{{ user.userid }}</span>
-                </p>
-                <p>Last login: {{ user.last_login ?? 'never' }}</p>
-                <!-- TEAM -->
-                <li class='list-inline-item mb-2'>
-                  <label for='usersUpdateTeam_{{ user.userid }}'>{{ 'Team(s)'|trans }}</label>
-                  {% for team in user.teams %}
-                  <span data-action='destroy-user2team' data-teamid='{{ team.id }}' data-userid='{{ user.userid }}' class='btn btn-secondary {{ App.Request.getScriptName|split('/')|last == 'sysconfig.php' ? 'hover-danger' }}'>{{ team.name }}</span>
-                  {% endfor %}
-                  {% if App.Session.get('is_sysadmin') and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
-                    {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
-                    {% if addableToTeams %}
-                      <span class='btn btn-primary' data-action='toggle-next'><i class='color-white fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                      <span class='form-group form-inline mt-2' hidden>
-                        <select class='form-control'>
-                          {% for team in addableToTeams %}
-                          <option value='{{ team.id }}'>{{ team.name }}</option>
+  <div id='editUsersBox'>
+    <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
+    <div class='pl-3'>
+      {% if usersArr %}
+        {% for user in usersArr %}
+          {# Modal for managing users to teams, generated for each user #}
+          <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-label='{{ 'Manage teams for user'|trans }}' aria-hidden='true'>
+            <div class='modal-dialog modal-xl' role='document'>
+              <div class='modal-content'>
+                <div class='modal-header'>
+                  <h5 class='modal-title'>{{ 'Manage teams for user'|trans }} - {{ user.fullname|raw }}</h5>
+                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div class='modal-body'>
+                  <div class='d-flex flex-row flex-wrap'>
+                    {% for team in user.teams %}
+                      {% set currentTeam = user.teams|filter(t => t.id == team.id)|first %}
+                      <div class='user-badge px-2 py-1 rounded mr-2 mt-2'>{{ team.name }}
+                        {# prevent deleting association of the team we are currently logged in, allow it for other users #}
+                        {% if team.id != App.Users.userData.team or user.userid != App.Users.userData.userid %}
+                          <span title='{{ 'Delete'|trans }}' class='hl-hover-gray p-1 rounded clickable m-1' data-action='destroy-user2team' data-userid='{{ user.userid }}' data-teamid='{{ team.id }}'><i class='fas fa-xmark' style='color:#29AEB9'></i></span>
+                        {% endif %}
+                        <div class='d-flex justify-content-between'>
+                          <span class='form-group form-inline mt-2'>
+                            <select class='form-control brr-none' autocomplete='off'>
+                              <option value='2' {{ currentTeam.usergroup == 2 ? 'selected' }}>{{ 'Admin'|trans }}</option>
+                              <option value='4' {{ currentTeam.usergroup == 4 ? 'selected' }}>{{ 'User'|trans }}</option>
+                            </select>
+                            <button data-action='patch-user2team-group' data-userid='{{ user.userid }}' data-team='{{ team.id }}' data-target='usergroup' class='btn btn-primary brl-none'>{{ 'Save'|trans }}</button>
+                          </span>
+                        </div>
+                        <div class='d-flex justify-content-between'>
+                          <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'>{{ 'Is Owner'|trans }}</label>
+                          <label class='switch ucp-align'>
+                            <input type='checkbox' autocomplete='off' data-trigger='change' data-custom-action='patch-user2team-is-owner' data-userid='{{ user.userid }}' data-team='{{ team.id }}' {{ currentTeam.is_owner ? 'checked="checked"' }} id='user_{{ user.id }}_isOwnerTeam_{{ team.id }}'>
+                            <span class='slider'></span>
+                          </label>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
+                  {% if addableToTeams %}
+                    <hr>
+                    <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='form-group form-inline mt-2' hidden>
+                      <select class='form-control'>
+                        {% for team in addableToTeams %}
+                        <option value='{{ team.id }}'>{{ team.name }}</option>
                         {% endfor %}
                       </select>
                       <button data-action='create-user2team' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Go'|trans }}</button>
-                      </span>
-                    {% endif %}
+                    </span>
                   {% endif %}
-                </li>
+                </div>
+                <div class='modal-footer'>
+                  <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {# end modal #}
+        {% endfor %}
 
+        <table id='usersTable' class='table' aria-label='users table' data-table-sort='true'>
+          <thead>
+            <tr>
+              <th scope='col'>{{ 'User ID'|trans }}</th>
+              <th scope='col'>{{ 'Team(s)'|trans }}</th>
+              <th scope='col'>{{ 'Firstname'|trans }}</th>
+              <th scope='col'>{{ 'Lastname'|trans }}</th>
+              <th scope='col'>{{ 'Email'|trans }}</th>
+              <th scope='col'>{{ 'Last login'|trans }}</th>
+              <th scope='col'>{{ 'Valid until'|trans }}</th>
+              <th scope='col'>{{ 'Internal ID'|trans }}</th>
+              <th scope='col'>{{ 'Is Sysadmin'|trans }}</th>
+              <th scope='col'>2FA</th>
+              <th scope='col'>{{ 'Actions'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in usersArr %}
+              <tr {{ user.archived ? "class='bg-medium'" }}>
+                <td><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
+                <td style='max-width: 270px'>
+                  <div class='d-flex flex-row flex-wrap'>
+                    {% for team in user.teams %}
+                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge' }}'>{{ team.name }}</div>
+                    {% endfor %}
+                  </div>
+                </td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span>
+                </td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span>
+                </td>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
+                </td>
+                <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
+                <td>
+                  {% if user.validated == 0 %}
+                    <span class='p-1 rounded alert-warning'>{{ 'Unvalidated'|trans }}</span>
+                  {% else %}
+                    <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='date' data-endpoint='users' data-id='{{ user.userid }}' data-target='valid_until'>{{ user.valid_until ? user.valid_until|date('Y-m-d') : '3000-01-01' }}</span>
+                  {% endif %}
+                </td>
 
-                <div class='form-group'>
-                  <!-- you need to be sysadmin to edit things like firstname/lastname/email -->
-                  <!-- FIRSTNAME -->
-                  <li class='list-inline-item'>
-                    {# add the userid in the for and id to prevent having more than one id on the page. Label wrapping wouldn't display nice #}
-                    <label for='usersUpdateFirstname_{{ user.userid }}'>{{ 'Firstname'|trans }}</label>
-                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateFirstname_{{ user.userid }}' type='text' value='{{ user.firstname|raw }}' name='firstname' />
-                  </li>
-
-                  <!-- LASTNAME -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateLastname_{{ user.userid }}'>{{ 'Lastname'|trans }}</label>
-                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateLastname_{{ user.userid }}' type='text' value='{{ user.lastname|raw }}' name='lastname' />
-                  </li>
-
-                  <!-- EMAIL -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateEmail_{{ user.userid }}'>{{ 'Email'|trans }}</label>
-                    <input autocomplete='off' {{ App.Users.userData.usergroup != '1' ? 'disabled' }} class='form-control custom-control-inline' id='usersUpdateEmail_{{ user.userid }}' type='email' value='{{ user.email }}' name='email' />
-                  </li>
-
-                  <!-- PERMISSION GROUP -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateUsergroup_{{ user.userid }}'>{{ 'Permission group'|trans }}</label>
-                    <select {{ App.Users.userData.usergroup != '1' and user.usergroup == '1' ? 'disabled' }} class='form-control custom-control-inline' name='usergroup' id='usersUpdateUsergroup_{{ user.userid }}'>
-                      {% if App.Users.userData.usergroup == '1' %}
-                        <option value='1' {{ user.usergroup == '1' ? " selected='selected'" }}>Sysadmins</option>
-                      {% endif %}
-                      <option value='2' {{ user.usergroup == '2' ? " selected='selected'" }}>Admins</option>
-                      <option value='4' {{ user.usergroup == '4' ? " selected='selected'" }}>Users</option>
-                    </select>
-                  </li>
-
-                  {% if App.Users.userData.usergroup == '1' %}
-                    <!-- RESET PASSWORD -->
-                    <li class='list-inline-item'>
-                      <label for='usersUpdatePassword_{{ user.userid }}'>{{ 'Reset user password'|trans }}
-                        <p class='smallgray'>({{ minPasswordLength() }} {{ 'characters minimum'|trans }})</p>
-                      </label>
-                      <!-- add empty input to prevent FF from putting password in field because autocomplete doesn't work. from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox -->
-                      <!-- chrome will continue to behave badly. See crbug.com/468153 and crbug.com/587466 -->
-                      <input type='text' data-ignore='1' hidden>
-                      <input type='password' data-ignore='1' hidden>
+                <td>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
+                </td>
+                <td>
+                  <div class='d-flex justify-content-between'>
+                    <label class='switch ucp-align {{ App.Users.userData.is_sysadmin == 0 ? 'disabled' }}'>
+                      <input type='checkbox' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} data-trigger='change' data-model='users/{{ user.userid }}' data-target='is_sysadmin' {{ user.is_sysadmin ? 'checked="checked"' }}>
+                      <span class='slider'></span>
+                    </label>
+                  </div>
+                </td>
+                <td>{% if user.mfa_secret %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                <td>
+                  {% if App.Users.userData.is_sysadmin == '1' %}
+                    <div class='clickable p-2 hl-hover-gray text-center rounded' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>
+                      <i class='fas fa-fw fa-key mr-1'></i>
+                    </div>
+                    <div hidden class='input-group'>
                       {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-                      <div class='input-group'>
-                        <input autocomplete='new-password' class='form-control' id='usersUpdatePassword_{{ user.userid }}' type='password' pattern='{{ pattern }}' value='' name='password' />
-                        <div class='input-group-append'>
-                          <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='usersUpdatePassword_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
-                        </div>
+                      <input class='form-control' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ pattern }}' />
+                      <div class='input-group-append'>
+                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
                       </div>
-                    </li>
+                      <div class='input-group-append'>
+                        <button data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+                      </div>
+                    </div>
                   {% endif %}
-
-                  <!-- ACTIVE ACCOUNT -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateValidated_{{ user.userid }}'>{{ 'Has an active account?'|trans }}</label>
-                    <select class='form-control custom-control-inline' autocomplete='off' name='validated' id='usersUpdateValidated_{{ user.userid }}'>
-                      <option value='1' {{ user.validated ? " selected='selected'" }}>{{ 'Yes'|trans }}</option>
-                      <option value='0' {{ not user.validated ? " selected='selected'" }}>{{ 'No'|trans }}</option>
-                    </select>
-                  </li>
-
-                  <!-- VALID UNTIL -->
-                  <li class='list-inline-item'>
-                    <label for='usersUpdateValidUntil_{{ user.userid }}'>{{ 'Valid until'|trans }}</label>
-                    <input autocomplete='off' value='{{ user.valid_until ? user.valid_until|date('Y-m-d') }}' type='date' class='form-control custom-control-inline' name='valid_until' id='usersUpdateValidUntil_{{ user.userid }}'>
-                  </li>
-
-                  <!-- SAVE -->
-                  <li class='list-inline-item'>
-                    <button data-action='update-user' data-userid='{{ user.userid }}' class='button btn btn-primary'>{{ 'Save'|trans }}</button>
-                  </li>
-
-                  <!-- ARCHIVE USER -->
-                  <li class='list-inline-item'>
-                    {% if user.archived %}
-                      <button class='button btn btn-neutral' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>{{ 'Unarchive user'|trans }}</button>
-                    {% else %}
-                      <button class='button btn btn-danger' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>{{ 'Archive user'|trans }}</button>
-                    {% endif %}
-                  </li>
-
-                  {# this is disabled for now, so remove the button by adding "and false" #}
-                  {% if App.Users.userData.usergroup == '1' and false %}
-                    <!-- DESTROY USER -->
-                    <li class='list-inline-item'>
-                      <button class='button btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete user'|trans }}</button>
-                   </li>
-                 {% endif %}
-                <hr>
-              </ul>
-            </li>
+                  <div class='dropdown'>
+                    <div class='clickable p-2 hl-hover-gray text-center rounded' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
+                      <i class='fas fa-ellipsis-v'></i>
+                    </div>
+                    {# Archive user #}
+                    <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+                      {# Manage teams #}
+                      {% if App.Users.userData.is_sysadmin and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
+                        <div class='dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>
+                          <i class='mr-1 fas fa-pencil fa-fw'></i>{{ 'Manage teams for user'|trans }}
+                        </div>
+                      {% endif %}
+                      {# on admin page, allow promoting someone to admin of the same team #}
+                      {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+                        {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
+                        {% if currentTeam.usergroup == 4 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
+                          </div>
+                        {% endif %}
+                        {% if currentTeam.usergroup == 2 %}
+                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                            <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
+                          </div>
+                        {% endif %}
+                      {% endif %}
+                      {% if user.archived %}
+                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
+                        </div>
+                      {% else %}
+                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
+                        </div>
+                      {% endif %}
+                      {% if user.validated == 0 %}
+                        <div class='dropdown-item' data-action='validate-user' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
+                        </div>
+                      {% endif %}
+                      <div class='dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'><i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
             {% endfor %}
-        </ul>
-    {% else %}
+          </tbody>
+        </table>
+      {% else %}
         <p>{{ 'No user found!'|trans }}</p>
-    {% endif %}
+      {% endif %}
     </div>
+  </div>
 {% endif %}
 
-{% if App.Config.configArr.admins_create_users or App.Users.userData.is_sysadmin %}
+{% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
 <!-- CREATE USER ACCOUNT -->
-<div class='box'>
-  <h3>{{ 'Add account'|trans }}</h3>
-  <p>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
+<h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
+<div class='pl-3'>
+  <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
-    <div class='row form-group'>
+    <div class='row mb-2'>
       <!-- TEAM -->
-      <div class='col-md-2'>
-        <label for='create-user-team'>{{ 'Team'|trans }}</label>
+      <div class='col-md-6'>
+        <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
         <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
           {% for team in teamsArr %}
             <option value='{{ team.id }}' {{ App.Users.userData.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
@@ -175,41 +253,111 @@
         </select>
       </div>
 
-      <!-- EMAIL -->
-      <div class='col-md-2'>
-        <label for='email'>{{ 'Email'|trans }}</label>
-        <input name='email' class='form-control' type='email' id='email' required />
-      </div>
-
-      <!-- FIRSTNAME -->
-      <div class='col-md-2'>
-        <label for='firstname'>{{ 'Firstname'|trans }}</label>
-        <input name='firstname' class='form-control' type='text' id='firstname' required />
-      </div>
-
-      <!-- LASTNAME -->
-      <div class='col-md-2'>
-        <label for='lastname'>{{ 'Lastname'|trans }}</label>
-        <input name='lastname' class='form-control' type='text' id='lastname' required />
-      </div>
-
       <!-- GROUP -->
-      <div class='col-md-2'>
-        <label for='create-user-group'>{{ 'Permission group'|trans }}</label>
+      <div class='col-md-6'>
+        <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
-          {% if App.Session.get('is_sysadmin') %}
+          {% if App.Users.userData.is_sysadmin %}
             <option value='1'>Sysadmins</option>
           {% endif %}
           <option value='2'>Admins</option>
           <option value='4' selected='selected'>Users</option>
         </select>
       </div>
-
-      <!-- SUBMIT -->
-      <div class='col-md-2'>
-        <button style='margin-top: 26px' data-action='create-user' class='button btn btn-primary'>{{ 'create'|trans }}</button>
+    </div>
+    <div class='row mb-2'>
+      <!-- FIRSTNAME -->
+      <div class='col-md-6'>
+        <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
+        <input name='firstname' class='form-control' type='text' id='firstname' required />
       </div>
+
+      <!-- LASTNAME -->
+      <div class='col-md-6'>
+        <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
+        <input name='lastname' class='form-control' type='text' id='lastname' required />
+      </div>
+    </div>
+
+    <div class='row mb-2'>
+      <!-- EMAIL -->
+      <div class='col-md-12'>
+        <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
+        <input name='email' class='form-control' type='email' id='email' required />
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class='col-md-12 text-center mt-2'>
+      <button data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>
   </div>
 </div>
+{% endif %}
+
+{% if App.Config.configArr.admins_create_users_remote_dir %}
+  {# CREATE USER ACCOUNT through remote API call #}
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account from external directory'|trans }}</h3>
+  <div class='pl-3'>
+    <form method='GET'>
+      <input type='hidden' name='tab' value='3' />
+      <div class='form-group'>
+        <div class='row mb-2'>
+          {# EMAIL #}
+          <div class='col-md-12'>
+            <label for='email' class='col-form-label'>{{ 'Search term'|trans }}</label>
+            <input class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
+          </div>
+        </div>
+
+        {# SEARCH #}
+        <div class='col-md-12 text-center mt-2'>
+          <button type='submit' class='btn btn-primary'>{{ 'Search'|trans }}</button>
+        </div>
+      </div>
+    </form>
+
+    {% if App.Request.query.has('remote_dir_query') %}
+      <div class='mt-2'>
+        <table class='table' id='remoteDirectoryUsersTable' aria-label='Remote directory users list' data-table-sort='true'>
+          <thead>
+            <tr>
+              <th scope='col'>{{ 'Selection'|trans }}</th>
+              <th scope='col'>{{ 'Firstname'|trans }}</th>
+              <th scope='col'>{{ 'Lastname'|trans }}</th>
+              <th scope='col'>{{ 'Email'|trans }}</th>
+              <th scope='col'>{{ 'Internal ID'|trans }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in remoteDirectoryUsersArr %}
+              <tr>
+                <td><input {{ user.disabled ? "disabled='disabled'" }} type='checkbox' /></td>
+                <td>{{ user.firstname }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.orgid }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class='col-md-12 text-center mt-2'>
+          <div class='input-group'>
+          {# team selection dropdown, disabled on admin page #}
+          <div class='input-group-prepend'>
+            <select class='custom-select brr-none' id='remoteUserTeam' {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }}>
+              {% for team in teamsArr %}
+                <option value='{{ team.id }}' {{- App.Users.userData.team == team.id ? ' selected' }}>{{ team.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        <div class='input-group-prepend'>
+          <div class='input-group-text'>
+            <input type='checkbox' class='mr-1' id='remoteUserIsAdmin'>{{ 'Admin'|trans }}
+          </div>
+        </div>
+          <button data-action='create-user-from-remote' class='brl-none btn btn-primary'>{{ 'Add selected'|trans }}</button>
+      </div>
+    {% endif %}
+  </div>
 {% endif %}

@@ -31,3 +31,5 @@ web/app/css/tinymce/fonts/*.woff
 src/ts/langs/*.js
 *.gz
 tests/elabftw-user.env
+/todo
+/ideas

@@ -15,9 +15,11 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
@@ -31,17 +33,15 @@ class Populate
     /** @var string DEFAULT_PASSWORD the password to use if none are provided */
     private const DEFAULT_PASSWORD = 'totototo';
 
+    /** @var int TEMPLATES_ITER number of templates to generate */
+    private const TEMPLATES_ITER = 5;
+
     private \Faker\Generator $faker;
 
-    // number of things to generate
-    private int $iter = 50;
-
-    public function __construct(?int $iter = null)
+    // iter: iterations: number of things to generate
+    public function __construct(private int $iter = 50)
     {
         $this->faker = \Faker\Factory::create();
-        if ($iter !== null) {
-            $this->iter = $iter;
-        }
     }
 
     /**
@@ -49,14 +49,18 @@ class Populate
      */
     public function generate(Experiments | Items $Entity): void
     {
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
-            $Category = new Status(new Teams($Entity->Users, $Entity->Users->team));
+            $Category = new ExperimentsCategories($Teams);
+            $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = (int) $Category->readAll()[0]['category_id'];
+            $Status = new ItemsStatus($Teams);
+            $tpl = (int) $Category->readAll()[0]['id'];
         }
         $categoryArr = $Category->readAll();
+        $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
@@ -67,7 +71,60 @@ class Populate
             BasePermissions::UserOnly->toJson(),
         );
 
-        printf("Generating %s \n", $Entity->type);
+        $tagsArr = array(
+            'Project X',
+            'collaboration',
+            'SCP-2702',
+            'Western Blot',
+            'HeLa',
+            'Fly',
+            'Dark Arts',
+            'COVID-24',
+            'FLIM',
+            'FRET',
+            'Open Source',
+            'Software',
+            'Secret',
+            'Copper',
+            'nanotechnology',
+            'spectroscopy',
+            'hardness testing',
+            'cell culture',
+            'DNA sequencing',
+            'PCR',
+            'gene expression',
+            'protein purification',
+            'biological samples',
+            'data analysis',
+            'lab safety',
+            'genetics',
+            'molecular biology',
+            'cell biology',
+            'biotechnology',
+            'biochemistry',
+            'microbiology',
+            'ecology',
+            'bioinformatics',
+            'research methodology',
+            'lab techniques',
+            'experimental design',
+            'ethics in research',
+            'laboratory management',
+            'scientific collaboration',
+            'lab supplies',
+            'scientific discovery',
+            'data interpretation',
+            'hypothesis testing',
+            'cell culture techniques',
+            'genomic analysis',
+            'protein analysis',
+            'molecular cloning',
+            'biomolecular assays',
+            'statistical analysis',
+            'scientific literature',
+        );
+
+
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
             $Entity->setId($id);
@@ -75,7 +132,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->postAction(Action::Create, array('tag' => $this->faker->word() . $this->faker->word()));
+                $Tags->postAction(Action::Create, array('tag' => $this->faker->randomElement($tagsArr)));
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
@@ -92,9 +149,13 @@ class Populate
                 $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
             }
 
-            // change the category (status/item type)
+            // CATEGORY
             $category = $this->faker->randomElement($categoryArr);
-            $Entity->patch(Action::Update, array('category' => (string) $category['category_id']));
+            $Entity->patch(Action::Update, array('category' => (string) $category['id']));
+
+            // STATUS
+            $status = $this->faker->randomElement($statusArr);
+            $Entity->patch(Action::Update, array('status' => (string) $status['id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {
@@ -111,8 +172,12 @@ class Populate
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
+
+            // maybe make it bookable
+            if ($Entity instanceof Items && $this->faker->randomDigit() > 6) {
+                $Entity->patch(Action::Update, array('is_bookable' => '1'));
+            }
         }
-        printf("Generated %d %s \n", $this->iter, $Entity->type);
     }
 
     // create a user based on options provided in yaml file
@@ -120,12 +185,19 @@ class Populate
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
+        $orgid = $user['orgid'] ?? null;
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getContent();
-        $email = $user['email'] ?? $this->faker->safeEmail();
+        // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
+        $email = $user['email'] ?? sprintf('elabuser-%d@yopmail.com', $this->faker->randomNumber(6));
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false);
+        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
-        $Users = new Users($userid, (int) $team[0]['id']);
+        $Requester = new Users(1, 1);
+        $Users = new Users($userid, (int) $team[0]['id'], $Requester);
+
+        if ($user['is_sysadmin'] ?? false) {
+            $Users->patch(Action::Update, array('is_sysadmin' => 1));
+        }
 
         if ($user['create_mfa_secret'] ?? false) {
             $MfaHelper = new MfaHelper($userid);
@@ -143,10 +215,13 @@ class Populate
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key']);
         }
+        if (isset($user['user_preferences'])) {
+            $Users->patch(Action::Update, $user['user_preferences']);
+        }
 
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
-            for ($i = 0; $i < $this->iter; $i++) {
+            for ($i = 0; $i <= self::TEMPLATES_ITER; $i++) {
                 $id = $Templates->create($this->faker->sentence());
                 $Templates->setId($id);
                 $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));

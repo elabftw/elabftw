@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2023 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+namespace Elabftw\Commands;
+
+use Symfony\Component\Console\Application;
+use function dirname;
+
+/**
+ * This file is separated from bin/console because Config doesn't exist yet
+ */
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$Application = new Application();
+$Application->add(new Install());
+$Application->add(new PopulateDatabase());
+$Application->run();

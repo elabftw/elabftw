@@ -42,6 +42,7 @@
           <label for='team'>{{ 'Team'|trans }}</label>
           <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
+            {# on this page, only show the visible teams #}
             {% for team in teamsArr|filter(v => v.visible == 1) %}
               <option value='{{ team.id }}'>{{ team.name }}</option>
             {% endfor %}
@@ -96,7 +97,7 @@
 
         <!-- SUBMIT -->
         <div class='mt-4 text-center'>
-          <button type='submit' name='Submit' class='button btn btn-primary'>{{ 'create'|trans }}</button>
+          <button type='submit' name='Submit' class='btn btn-primary'>{{ 'Create'|trans }}</button>
         </div>
       </div>
     </form>

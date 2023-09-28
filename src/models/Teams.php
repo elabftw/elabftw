@@ -14,13 +14,16 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use RuntimeException;
 
 /**
  * All about the teams
@@ -38,6 +41,9 @@ class Teams implements RestInterface
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
+            $id = (int) $Users->userData['team'];
+        }
         $this->setId($id);
     }
 
@@ -96,27 +102,27 @@ class Teams implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($reqBody['name'] ?? 'New team name'),
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Default')),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
     }
 
     /**
-     * Read from the current team
+     * Read one team
      */
     public function readOne(): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
 
     /**
-     * Get all the teams
+     * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
     public function readAll(): array
     {
@@ -189,12 +195,12 @@ class Teams implements RestInterface
          * so don't rely on fk to delete the status, but run it through the Status->delete first,
          * it will check if experiments have the status and show an error
          */
-        $sql = 'SELECT id FROM status WHERE team = :team';
+        $sql = 'SELECT id FROM experiments_status WHERE team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $statusArr = $req->fetchAll();
-        $Status = new Status($this);
+        $Status = new ExperimentsStatus($this);
         foreach ($statusArr as $status) {
             $Status->setId($status['id']);
             $Status->destroy();
@@ -207,39 +213,18 @@ class Teams implements RestInterface
     }
 
     /**
-     * Get statistics for the whole install
-     */
-    public function getAllStats(): array
-    {
-        $sql = 'SELECT
-        (SELECT COUNT(users.userid) FROM users) AS totusers,
-        (SELECT COUNT(items.id) FROM items) AS totdb,
-        (SELECT COUNT(teams.id) FROM teams) AS totteams,
-        (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $res = $req->fetch(PDO::FETCH_NAMED);
-        if ($res === false) {
-            return array();
-        }
-
-        return $res;
-    }
-
-    /**
      * Get statistics for a team
      */
     public function getStats(int $team): array
     {
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.timestamped = 1) AS totxpts';
+        (SELECT COUNT(items.id) FROM items WHERE items.team = :team AND items.state = :state) AS totdb,
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch(PDO::FETCH_NAMED);
@@ -265,16 +250,21 @@ class Teams implements RestInterface
 
     public function canWriteOrExplode(): void
     {
-        if ($this->bypassWritePermission) {
+        if ($this->bypassWritePermission || $this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->Users->userData['is_sysadmin'] || ($this->Users->userData['is_admin'] && $this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id))) {
+        if ($this->id === null) {
+            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+        }
+        $TeamsHelper = new TeamsHelper($this->id);
+
+        if ($TeamsHelper->isAdminInTeam((int) $this->Users->userData['userid'])) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name): int
+    private function create(string $name, string $defaultCategoryName): int
     {
         $this->canWriteOrExplode();
         $name = Filter::title($name);
@@ -294,13 +284,13 @@ class Teams implements RestInterface
 
         $user = new Users();
         // create default status
-        $Status = new Status(new self($user, $newId));
+        $Status = new ExperimentsStatus(new self($user, $newId));
         $Status->createDefault();
 
         // create default item type
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
-        $ItemsTypes->setId($ItemsTypes->create('Edit me'));
+        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
         $defaultPermissions = BasePermissions::MyTeams->toJson();
@@ -309,7 +299,6 @@ class Teams implements RestInterface
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
             'canread' => $defaultPermissions,
             'canwrite' => $defaultPermissions,
-            'bookable' => '0',
         );
         $ItemsTypes->patch(Action::Update, $extra);
 
@@ -327,7 +316,14 @@ class Teams implements RestInterface
 
     private function canReadOrExplode(): void
     {
-        if ($this->bypassReadPermission || $this->Users->userData['is_sysadmin']) {
+        if ($this->bypassReadPermission) {
+            return;
+        }
+        if ($this->id === null) {
+            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+        }
+
+        if ($this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
         if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {

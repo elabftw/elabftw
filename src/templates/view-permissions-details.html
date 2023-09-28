@@ -1,0 +1,31 @@
+{# only display the html for permissions. Required vars: "can" from canToHuman filter on a permissions json and identifier  #}
+<div id='{{ identifier|default(rw) }}Div'>
+  {{ can.base }}
+  {% if can.teams %}
+    <details><summary>{{ 'Teams'|trans }}</summary>
+      <ul>
+      {% for team in can.teams %}
+        <li>{{ team.name }}</li>
+      {% endfor %}
+      </ul>
+    </details>
+  {% endif %}
+  {% if can.teamgroups %}
+    <details><summary>{{ 'Groups'|trans }}</summary>
+      <ul>
+      {% for group in can.teamgroups %}
+        <li>{{ group.name }}</li>
+      {% endfor %}
+      </ul>
+    </details>
+  {% endif %}
+  {% if can.users %}
+    <details><summary>{{ 'Users'|trans }}</summary>
+      <ul>
+      {% for user in can.users %}
+        <li>{{ user.fullname }}</li>
+      {% endfor %}
+      </ul>
+    </details>
+  {% endif %}
+</div>

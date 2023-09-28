@@ -13,8 +13,10 @@ namespace Elabftw\Models;
 use function count;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\DestroyableInterface;
+use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use function mb_strlen;
 use PDO;
@@ -22,11 +24,11 @@ use PDO;
 /**
  * All about the revisions
  */
-class Revisions implements DestroyableInterface
+class Revisions implements RestInterface
 {
     use SetIdTrait;
 
-    private Db $Db;
+    protected Db $Db;
 
     public function __construct(private AbstractEntity $Entity, private int $maxRevisions, private int $minDelta, private int $minDays, ?int $id = null)
     {
@@ -34,18 +36,20 @@ class Revisions implements DestroyableInterface
         $this->id = $id;
     }
 
-    /**
-     * Add a revision if the changeset is big enough
-     */
-    public function create(string $body): bool
+    public function getPage(): string
+    {
+        return sprintf('api/v2/%s/%d/revisions/', $this->Entity->page, $this->Entity->id ?? 0);
+    }
+
+    public function postAction(Action $action, array $reqBody): int
     {
         if ($this->Entity instanceof ItemsTypes) {
-            return false;
+            return 0;
         }
         $this->Entity->canOrExplode('write');
 
-        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
-            return false;
+        if (!$this->satisfyDeltaConstraint($reqBody['body']) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
+            return 0;
         }
 
         // destroy the oldest revision if we're reaching the max count
@@ -57,24 +61,30 @@ class Revisions implements DestroyableInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':body', $body);
+        $req->bindParam(':body', $reqBody['body']);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
-    /**
-     * Get how many revisions we have
-     */
-    public function readCount(): int
+    // the Action should be Replace, but we have only one so we don't check for it
+    public function patch(Action $action, array $params): array
     {
-        $sql = 'SELECT COUNT(*) FROM ' . $this->Entity->type . '_revisions
-             WHERE item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $this->Entity->canOrExplode('write');
+        // check for lock
+        if ($this->Entity->entityData['locked']) {
+            throw new ImproperActionException(_('You cannot restore a revision of a locked item!'));
+        }
 
-        return (int) $req->fetchColumn();
+        $rev = $this->readOne();
+
+        $sql = 'UPDATE ' . $this->Entity->type . ' SET body = :body WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':body', $rev['body']);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $rev;
     }
 
     /**
@@ -82,12 +92,11 @@ class Revisions implements DestroyableInterface
      */
     public function readAll(): array
     {
-        // we limit to 42 until some pagination/offset is properly implemented
-        $sql = 'SELECT ' . $this->Entity->type . "_revisions.*,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM " . $this->Entity->type . '_revisions
-            LEFT JOIN users ON (users.userid = ' . $this->Entity->type . '_revisions.userid)
-            WHERE item_id = :item_id ORDER BY savedate DESC LIMIT 42';
+        $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
+            CONCAT(users.firstname, " ", users.lastname) AS fullname
+            FROM %1$s_revisions
+            LEFT JOIN users ON (users.userid = %1$s_revisions.userid)
+            WHERE item_id = :item_id ORDER BY created_at DESC', $this->Entity->type);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -95,32 +104,9 @@ class Revisions implements DestroyableInterface
         return $req->fetchAll();
     }
 
-    /**
-     * Restore a revision from revision id
-     */
-    public function restore(int $revId): bool
-    {
-        // check for lock
-        if ($this->Entity->entityData['locked']) {
-            throw new ImproperActionException(_('You cannot restore a revision of a locked item!'));
-        }
-
-        $body = $this->readRev($revId);
-
-        $sql = 'UPDATE ' . $this->Entity->type . ' SET body = :body WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':body', $body);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     public function destroy(): bool
     {
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
+        throw new ImproperActionException(_('Revisions cannot be deleted.'));
     }
 
     /**
@@ -137,6 +123,37 @@ class Revisions implements DestroyableInterface
         return $numberToRemove;
     }
 
+    public function readOne(): array
+    {
+        $sql = 'SELECT * FROM ' . $this->Entity->type . '_revisions WHERE id = :rev_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':rev_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $entityData = $this->Db->fetch($req);
+        // add the body as html
+        $entityData['body_html'] = $entityData['body'];
+        // convert from markdown only if necessary
+        if ($entityData['content_type'] === AbstractEntity::CONTENT_MD) {
+            $entityData['body_html'] = Tools::md2html($entityData['body'] ?? '');
+        }
+        return $entityData;
+    }
+
+    /**
+     * Get how many revisions we have
+     */
+    private function readCount(): int
+    {
+        $sql = 'SELECT COUNT(*) FROM ' . $this->Entity->type . '_revisions
+             WHERE item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return (int) $req->fetchColumn();
+    }
+
     /**
      * Destroy old revisions
      *
@@ -145,28 +162,12 @@ class Revisions implements DestroyableInterface
     private function destroyOld(int $num = 1): void
     {
         $oldestRevisions = array_slice(array_reverse($this->readAll()), 0, $num);
-        foreach ($oldestRevisions as $revision) {
-            $idToDelete = (int) $revision['id'];
-            $this->setId($idToDelete);
-            $this->destroy();
-        }
-    }
-
-    /**
-     * Get the body of a revision
-     */
-    private function readRev(int $revId): string
-    {
-        $sql = 'SELECT body FROM ' . $this->Entity->type . '_revisions WHERE id = :rev_id';
+        $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            return '';
+        foreach ($oldestRevisions as $revision) {
+            $req->bindParam(':id', $revision['id'], PDO::PARAM_INT);
+            $this->Db->execute($req);
         }
-        return (string) $res;
     }
 
     /**

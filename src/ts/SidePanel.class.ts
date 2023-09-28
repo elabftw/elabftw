@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import $ from 'jquery';
 import { Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -25,14 +26,24 @@ export default class SidePanel {
     document.getElementById(this.panelId).toggleAttribute('hidden', true);
     // store the current state
     localStorage.setItem(`is${this.model}Open`, '0');
+    const opener = document.getElementById(`${this.panelId}Opener`);
+    opener.classList.add('bounce-right');
+    opener.classList.remove('bounce-left');
+    opener.classList.remove('sidepanel-opened');
+    opener.classList.add('sidepanel-closed');
   }
 
   show(): void {
-    $('#container').css('width', '78%').css('margin-left', 'max(22%, 300px)');
+    $('#container').css('width', '76%').css('margin-left', 'max(24%, 330px)');
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
     localStorage.setItem(`is${this.model}Open`, '1');
+    const opener = document.getElementById(`${this.panelId}Opener`);
+    opener.classList.remove('bounce-right');
+    opener.classList.add('bounce-left');
+    opener.classList.add('sidepanel-opened');
+    opener.classList.remove('sidepanel-closed');
   }
 
   // TOGGLE PANEL VISIBILITY

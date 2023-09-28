@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
       }
     },
+    returnedValueIsTrustedHtml: true,
     tooltip: i18next.t('upload-file-comment'),
   });
   malleableFilecomment.listen();
@@ -77,8 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
       const filenameInput = document.createElement('input');
       filenameInput.dataset.id = el.dataset.id;
+      filenameInput.classList.add('form-control');
       filenameInput.value = filenameLink.textContent;
       const parentSpan = filenameLink.parentElement;
+      parentSpan.classList.add('form-inline');
       filenameInput.addEventListener('blur', event => {
         processNewFilename(event, filenameLink, parentSpan);
       });
@@ -94,6 +97,24 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
         reloadElement('filesdiv');
       });
+
+    // TOGGLE SHOW ARCHIVED
+    } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
+      const url = new URL(window.location.href);
+      const queryParams = new URLSearchParams(url.search);
+
+      // toggle "archived" query parameter
+      if (queryParams.has('archived')) {
+        queryParams.delete('archived');
+      } else {
+        queryParams.set('archived', 'on');
+      }
+
+      // Update the query parameters in the URL
+      url.search = queryParams.toString();
+      url.hash = 'filesDiv';
+      const modifiedUrl = url.toString();
+      window.location.replace(modifiedUrl);
 
     // REPLACE UPLOAD
     } else if (el.matches('[data-action="replace-upload"]')) {
@@ -120,6 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+
+    // ARCHIVE UPLOAD
+    } else if (el.matches('[data-action="archive-upload"]')) {
+      const uploadid = parseInt(el.dataset.uploadid, 10);
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive}).then(() => reloadElement('filesdiv'));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

@@ -29,16 +29,14 @@ class AuthResponse
     // when user needs to request access to a team
     public bool $initTeamRequired = false;
 
+    public bool $isValidated = false;
+
     // info (email/name) about user that needs to request a team
     public array $initTeamUserInfo = array();
 
     public bool $isAnonymous = false;
 
     public ?string $mfaSecret = null;
-
-    public bool $isAdmin = false;
-
-    public bool $isSysAdmin = false;
 
     public bool $hasVerifiedMfa = false;
 

@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.12
+          version: 20.10.23
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
       - run:
@@ -40,10 +40,19 @@ jobs:
             sed -i '\#volumes:#D' tests/docker-compose.yml
             sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
+          name: Prepare CI for cypress
+          command: |
+            mkdir -p cypress/{screenshots,videos}
+            sed -i 's/elab.local:3148/elabtmp/g' tests/docker-compose.yml
+            sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
+            sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
+            sed -i 's/elab.local:3148/elabtmp/g' src/tools/populate-config.yml.dist
+      - run:
           name: Build elabtmp image and start containers
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       # Restore dependency cache
@@ -90,7 +99,7 @@ jobs:
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci
+          command: docker exec -it elabtmp yarn jslint-ci:all
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
@@ -98,14 +107,17 @@ jobs:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
       - run:
+          name: Run Twig linter
+          command: docker exec -it elabtmp yarn twigcs
+      - run:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
       - run:
           name: Install the database
-          command: docker exec -it elabtmp bin/console db:install -r
+          command: docker exec -it elabtmp bin/init db:install -r
       - run:
           name: Populate the database
-          command: docker exec -it elabtmp bin/console dev:populate tests/populate-config.yml
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
       - run:
           name: Fix permissions
           command: |
@@ -116,8 +128,8 @@ jobs:
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
-          name: Run unit tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
+          name: Run unit and apiv2 tests
+          command: docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip cypress --coverage --coverage-xml --coverage-html
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
@@ -126,10 +138,42 @@ jobs:
           command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
       - run:
           name: Generate the php documentation
-          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html --setting=graphs.enabled=true
+          # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
+          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
+      - run:
+          name: Reset database
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
+      - run:
+          name: Run Cypress e2e tests and extract artifacts
+          # have to save cypress exit code to first extract artifacts
+          command: |
+            docker exec -it elab-cypress cypress run
+            cypressExitCode=$?
+            docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
+            docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
+            # extract coverage reports
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar cypress-coverage.tar
+            mkdir cypress-coverage-html && tar -xf cypress-coverage.tar -C cypress-coverage-html
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress-coverage.clover.xml
+            exit "$cypressExitCode"
+      - run :
+          name: Merge both coverage reports
+          command: |
+            docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
+            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-merged.clover.xml .
+            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-html-merged .
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html
@@ -137,7 +181,22 @@ jobs:
           path: coverage-html
           destination: coverage-html
       - codecov/upload:
-          file: coverage.xml
+          file: coverage-merged.clover.xml
+      - store_artifacts:
+          path: cypress
+          destination: cypress
+      - store_artifacts:
+          path: cypress-coverage-html
+          destination: cypress-coverage-html
+      - store_artifacts:
+          path: cypress-coverage.clover.xml
+          destination: cypress-coverage.clover.xml
+      - store_artifacts:
+          path: coverage-html-merged
+          destination: coverage-html-merged
+      - store_artifacts:
+          path: coverage-merged.clover.xml
+          destination: coverage-merged.clover.xml
 workflows:
   version: 2
   build_and_test:

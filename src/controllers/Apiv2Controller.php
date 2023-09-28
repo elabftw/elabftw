@@ -21,13 +21,19 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsLinks;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\Idps;
+use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Status;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -37,6 +43,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,6 +108,17 @@ class Apiv2Controller extends AbstractApiController
                 'description' => $e->getMessage(),
             );
             return new JsonResponse($error, $error['code']);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            if ($e->getPrevious() !== null) {
+                $message .= ' ' . $e->getPrevious()->getMessage();
+            }
+            $error = array(
+                'code' => 500,
+                'message' => 'Unexpected error',
+                'description' => $message,
+            );
+            return new JsonResponse($error, $error['code']);
         }
     }
 
@@ -136,11 +154,11 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Request->getContent()) {
             try {
                 // SET REQBODY
-                $this->reqBody = json_decode((string) $this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+                $this->reqBody = json_decode($this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
                 // SET ACTION
                 $this->action = Action::tryFrom((string) ($this->reqBody['action'] ?? '')) ?? $this->action;
-            } catch (JsonException) {
-                throw new ImproperActionException('Error decoding json payload.');
+            } catch (JsonException $e) {
+                throw new ImproperActionException(sprintf('Error decoding json payload: %s', $e->getMessage()));
             } catch (ValueError) {
                 throw new ImproperActionException('Incorrect action value.');
             }
@@ -208,6 +226,10 @@ class Apiv2Controller extends AbstractApiController
                 return new ApiKeys($this->Users, $this->id);
             case 'config':
                 return Config::getConfig();
+            case 'idps':
+                return new Idps($this->id);
+            case 'info':
+                return new Info();
             case 'experiments':
             case 'items':
             case 'experiments_templates':
@@ -240,26 +262,38 @@ class Apiv2Controller extends AbstractApiController
             case 'users':
                 return new Users($this->id, $this->Users->team, $this->Users);
             default:
-                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
+                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
         }
     }
 
     private function getSubModel(string $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
+            $Config = Config::getConfig();
             return match ($submodel) {
                 'comments' => new Comments($this->Model, $this->subId),
                 'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
                 'items_links' => new ItemsLinks($this->Model, $this->subId),
+                'revisions' => new Revisions(
+                    $this->Model,
+                    (int) $Config->configArr['max_revisions'],
+                    (int) $Config->configArr['min_delta_revisions'],
+                    (int) $Config->configArr['min_days_revisions'],
+                    $this->subId
+                ),
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
-                'status' => new Status($this->Model, $this->subId),
+                // backward compatibility: status == experiments_status
+                'status' => new ExperimentsStatus($this->Model, $this->subId),
+                'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
+                'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
+                'items_status' => new ItemsStatus($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
             };
@@ -270,12 +304,18 @@ class Apiv2Controller extends AbstractApiController
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }
+        if ($this->Model instanceof Scheduler) {
+            return match ($submodel) {
+                'notifications' => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
+                default => throw new ImproperActionException('Incorrect submodel for event: available models are: notifications.'),
+            };
+        }
         throw new ImproperActionException('Incorrect endpoint.');
     }
 
     private function applyRestrictions(): void
     {
-        if ($this->Model instanceof Config && $this->Users->userData['is_sysadmin'] !== 1) {
+        if (($this->Model instanceof Config || $this->Model instanceof Idps) && $this->Users->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 

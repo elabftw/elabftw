@@ -41,7 +41,7 @@ class UserNotifications implements RestInterface
     {
         // for step deadline only select notifications where deadline is in the next hour
         $sql = 'SELECT id, category, body, is_ack, created_at, userid FROM notifications WHERE userid = :userid AND (
-                category != :deadline OR
+                (category != :deadline AND category NOT IN (20, 30)) OR
                 (category = :deadline and JSON_UNQUOTE(JSON_EXTRACT(body, :deadline_json_path)) > (NOW() - INTERVAL 1 HOUR))
             ) ORDER BY created_at DESC LIMIT 10';
         $req = $this->Db->prepare($sql);

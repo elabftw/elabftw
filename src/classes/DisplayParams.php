@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
@@ -20,6 +21,7 @@ use function implode;
 use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
+use PDO;
 use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
 use function trim;
@@ -52,24 +54,26 @@ class DisplayParams
     // start metadata stuff
     public bool $hasMetadataSearch = false;
 
-    public array $metadataFilter = array();
-
     public array $metadataKey = array();
 
     public array $metadataValuePath = array();
 
     public array $metadataValue = array();
-
-    private array $metadataHaving = array();
     // end metadata stuff
 
-    public function __construct(Users $Users, private Request $Request)
+    public bool $includeArchived = false;
+
+    private array $metadataHaving = array();
+
+    public function __construct(private Users $Users, private Request $Request, public EntityType $entityType)
     {
         // load user's preferences first
-        $this->limit = $Users->userData['limit_nb'];
-        $this->orderby = Orderby::tryFrom($Users->userData['orderby']) ?? $this->orderby;
-        $this->sort = Sort::tryFrom($Users->userData['sort']) ?? $this->sort;
+        $this->limit = $Users->userData['limit_nb'] ?? $this->limit;
+        $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
+        $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
         $this->adjust();
+        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
+        $this->includeArchived = $this->Request->query->has('archived');
     }
 
     public function appendFilterSql(FilterableColumn $column, int $value): void
@@ -99,9 +103,7 @@ class DisplayParams
         $this->metadataKey[] = $jsonPath;
         $this->metadataValuePath[] = $jsonPath . '.value';
         $this->metadataValue[] = Filter::sanitize($searchTerm);
-
-        $this->metadataFilter[] = sprintf(" AND JSON_CONTAINS_PATH(entity.metadata, 'one', :metadata_key_%d) ", $i);
-        $this->metadataHaving[] = sprintf('JSON_UNQUOTE(JSON_EXTRACT(entity.metadata, :metadata_value_path_%1$d)) LIKE :metadata_value_%1$d', $i);
+        $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
     }
 
     /**
@@ -123,6 +125,38 @@ class DisplayParams
             $this->extendedQuery = trim((string) $this->Request->query->get('extended'));
             $this->searchType = 'extended';
         }
+        // filter by user if we don't want to show the rest of the team, only for experiments
+        // looking for an owner will bypass the user preference
+        // same with an extended search: we show all
+        if ($this->entityType === EntityType::Experiments && !$this->Users->userData['show_team'] && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
+            // Note: the cast to int is necessary here (not sure why)
+            $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
+        }
+        // TAGS SEARCH
+        if (!empty(($this->Request->query->all('tags'))[0])) {
+            // get all the ids with that tag
+            $tags = $this->Request->query->all('tags');
+            // look for item ids that have all the tags not only one of them
+            // the HAVING COUNT is necessary to make an AND search between tags
+            // Note: we cannot use a placeholder for the IN of the tags because we need the quotes
+            $Db = Db::getConnection();
+            $inPlaceholders = implode(' , ', array_map(function ($key) {
+                return ":tag$key";
+            }, array_keys($tags)));
+            $sql = 'SELECT tags2entity.item_id FROM `tags2entity`
+                INNER JOIN (SELECT id FROM tags WHERE tags.tag IN ( ' . $inPlaceholders . ' )) tg ON tags2entity.tag_id = tg.id
+                WHERE tags2entity.item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tags2entity.tag_id) = :count';
+            $req = $Db->prepare($sql);
+            // bind the tags in IN clause
+            foreach ($tags as $key => $tag) {
+                $req->bindValue(":tag$key", $tag, PDO::PARAM_STR);
+            }
+            $req->bindValue(':type', $this->entityType->value, PDO::PARAM_STR);
+            $req->bindValue(':count', count($tags), PDO::PARAM_INT);
+            $req->execute();
+            $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
+            $this->searchType = 'tags';
+        }
         // now get pref from the filter-order-sort menu
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
         $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
@@ -136,6 +170,11 @@ class DisplayParams
         if (Check::id($this->Request->query->getInt('cat')) !== false) {
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
             $this->searchType = 'category';
+        }
+        // STATUS FILTER
+        if (Check::id($this->Request->query->getInt('status')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
+            $this->searchType = 'status';
         }
 
         // OWNER (USERID) FILTER

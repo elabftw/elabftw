@@ -5,18 +5,18 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { getEntity, notif, reloadElement, updateCategory, showContentPlainText, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCatStat, showContentPlainText, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
+import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
+import $ from 'jquery';
 import i18next from 'i18next';
-import { Metadata } from './Metadata.class';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 
@@ -44,20 +44,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
 
-  // add extra fields elements from metadata json
-  const MetadataC = new Metadata(entity);
-  MetadataC.display('edit');
-
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init();
 
   // UPLOAD FORM
   const dropZoneElement = '#elabftw-dropzone';
+  const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
   const dropZoneOptions = {
     // i18n message to user
-    dictDefaultMessage: i18next.t('dropzone-upload-area'),
-    maxFilesize: parseInt(document.getElementById('info').dataset.maxsize, 10), // MB
+    dictDefaultMessage: i18next.t('dropzone-upload-area') + `<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
+    maxFilesize: maxsize,
     timeout: 900000,
     headers: {
       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
@@ -96,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bodyRecovery = $('<div></div>', {
       class : 'alert alert-warning',
       id: 'recoveryDiv',
-      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="button btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
+      html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button class="btn btn-primary recover-yes">YES</button> <button class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
     });
     $('#main_section').before(bodyRecovery);
   }
@@ -125,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
       for (const upload of json as Array<Upload>) {
         const extension = upload.real_name.split('.').pop();
+        // unfortunately, loading .rxn files here doesn't work as it expects json or mol only
         if (['mol', 'chemjson'].includes(extension)) {
           mols.push([upload.real_name, upload.long_name]);
         }
@@ -172,9 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // KEYBOARD SHORTCUT
-  key(about.scsubmit, () => updateEntityBody());
-
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
   const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
@@ -192,17 +187,43 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
+    // CLICK the NOW button of a time or date extra field
+    } else if (el.matches('[data-action="update-to-now"]')) {
+      const input = el.closest('.input-group').querySelector('input');
+      // use Luxon lib here
+      const now = DateTime.local();
+      // date format
+      let format = 'yyyy-MM-dd';
+      if (input.type === 'time') {
+        format = 'HH:mm';
+      }
+      if (input.type === 'datetime-local') {
+        /* eslint-disable-next-line quotes */
+        format = "yyyy-MM-dd'T'HH:mm";
+      }
+      input.value = now.toFormat(format);
+      // trigger change event so it is saved
+      input.dispatchEvent(new Event('change'));
+
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));
       if (realName === null || realName === '') {
         return;
       }
-      const content = el.dataset.filetype === 'chemjson' ?
-        // CHEMJSON
-        JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes))
-        // PNG
-        : (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+      let content: string;
+      switch (el.dataset.filetype) {
+      case 'chemjson':
+        content = JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes));
+        break;
+      case 'png':
+        // note: this is the same as ChemDoodle.io.png.string(sketcher)
+        content = (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
+        break;
+      case 'rxn':
+        content = new ChemDoodle.io.RXNInterpreter().write(sketcher.molecules, sketcher.shapes);
+        break;
+      }
 
       const params = {
         'action': Action.CreateFromString,
@@ -218,10 +239,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const doodleDiv = document.getElementById('doodleDiv');
       doodleDiv.removeAttribute('hidden');
       doodleDiv.scrollIntoView();
-      // adjust chevron icon
+      // adjust caret icon
       const doodleDivIcon = document.getElementById('doodleDivIcon');
-      doodleDivIcon.classList.remove('fa-chevron-circle-right');
-      doodleDivIcon.classList.add('fa-chevron-circle-down');
+      doodleDivIcon.classList.remove('fa-caret-right');
+      doodleDivIcon.classList.add('fa-caret-down');
 
       const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
       const img = new Image();
@@ -254,20 +275,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return editor.setContent(content);
       });
 
-    // DESTROY ENTITY
-    } else if (el.matches('[data-action="destroy"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
-      }
-
     // SHOW CONTENT OF PLAIN TEXT FILES
     } else if (el.matches('[data-action="show-plain-text"]')) {
       showContentPlainText(el);
 
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      EntityC.pin(entity.id).then(() => reloadElement('toggle-pin-icon-div'));
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-image-in-body"]')) {
+      // link to the image
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // switch for markdown or tinymce editor
+      let content: string;
+      if (editor.type === 'md') {
+        content = '\n![image](' + url + ')\n';
+      } else if (editor.type === 'tiny') {
+        content = '<img src="' + url + '" />';
+      }
+      editor.setContent(content);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
@@ -285,15 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // TRANSFER OWNERSHIP
-  document.getElementById('new_owner').addEventListener('change', () => {
-    const value = (document.getElementById('new_owner') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.UserId, value).then(() => window.location.reload());
-  });
-
   // CATEGORY SELECT
-  $(document).on('change', '#category_select', function() {
-    updateCategory(entity, String($(this).val()));
+  $(document).on('change', '.catstatSelect', function() {
+    updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
   // TITLE STUFF
@@ -317,15 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // update the page's title
       document.title = content + ' - eLabFTW';
     }
-  });
-
-  // STAR RATING
-  $(document).on('click', '.rating-cancel', function() {
-    EntityC.update(entity.id, Target.Rating, '0');
-  });
-
-  $(document).on('click', '.star', function() {
-    EntityC.update(entity.id, Target.Rating, $(this).data('rating').current[0].innerText);
   });
 
   // no tinymce stuff when md editor is selected
@@ -444,25 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // INSERT IMAGE AT CURSOR POSITION IN TEXT
-  $(document).on('click', '.inserter',  function() {
-    // link to the image
-    const url = `app/download.php?f=${$(this).data('link')}&storage=${$(this).data('storage')}`;
-    // switch for markdown or tinymce editor
-    let content;
-    if (editor.type === 'md') {
-      content = '\n![image](' + url + ')\n';
-    } else if (editor.type === 'tiny') {
-      content = '<img src="' + url + '" />';
-    }
-    editor.setContent(content);
-  });
-
-  $(document).on('blur', '#date_input', function() {
-    const content = (document.getElementById('date_input') as HTMLInputElement).value;
-    EntityC.update(entity.id, Target.Date, content);
-  });
 
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesdiv').addEventListener('submit', event => {

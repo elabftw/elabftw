@@ -13,20 +13,17 @@
 /* override bootstrap theme */
 $theme-colors: (
     'primary': $elabblue,
+    'secondary': $medium,
     'danger': $dangerred,
-    'neutral': $maingray,
+    'neutral': $medium,
 );
 /* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: $nottoodarkgray;
-$text-muted: $lightgray;
+$navbar-dark-color: $secondlevel;
+$text-muted: $medium;
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-select/sass/bootstrap-select';
 @import '../../node_modules/prismjs/themes/prism';
 @import '../../node_modules/dropzone/dist/dropzone';
-@import '../../node_modules/@fullcalendar/common/main';
-@import '../../node_modules/@fullcalendar/bootstrap/main';
-@import '../../node_modules/@fullcalendar/list/main';
-@import '../../node_modules/@fullcalendar/timegrid/main';
 @import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
 @import '../../node_modules/jquery-ui/themes/base/core';
 @import '../../node_modules/jquery-ui/themes/base/autocomplete';
@@ -39,27 +36,78 @@ $text-muted: $lightgray;
 @import './fontawesome/brands';
 @import './fontawesome/regular';
 
+@import 'animations';
 @import 'autocomplete';
 @import 'chemdoodle';
 @import 'footer';
 @import 'header';
-@import 'jquery-rating';
+@import 'star-rating';
 @import 'jsoneditor';
 @import 'ove';
-@import 'todolist';
 @import 'search-syntax-highlighting';
 
 /* Font is Lato */
 @font-face {
     font-display: swap;
     font-family: 'Lato';
-    src: url('fonts/lato-medium-webfont.ttf');
-    src: url('fonts/lato-medium-webfont.eot');
+    font-style: normal;
+    font-weight: 400;
     src:
-        url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
-        url('fonts/lato-medium-webfont.woff') format('woff'),
-        url('fonts/lato-medium-webfont.ttf') format('truetype'),
-        url('fonts/lato-medium-webfont.svg#webfont') format('svg');
+        url('fonts/lato-regular.woff2') format('woff2'),
+        url('fonts/lato-regular.ttf') format('truetype');
+}
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 400;
+    src:
+        url('fonts/lato-italic.woff2') format('woff2'),
+        url('fonts/lato-italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 700;
+    src:
+        url('fonts/lato-bold.woff2') format('woff2'),
+        url('fonts/lato-bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 700;
+    src:
+        url('fonts/lato-bold-italic.woff2') format('woff2'),
+        url('fonts/lato-bold-italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 900;
+    src:
+        url('fonts/lato-black.woff2') format('woff2'),
+        url('fonts/lato-black.ttf') format('truetype');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Lato';
+    font-style: italic;
+    font-weight: 900;
+    src:
+        url('fonts/lato-black-italic.woff2') format('woff2'),
+        url('fonts/lato-black-italic.ttf') format('truetype');
+}
+
+body {
+    background: $mainbackground;
 }
 
 /* little shadow on top of the screen for no reasons */
@@ -76,7 +124,6 @@ body::before {
 
 /* this is the big white thing that holds everything */
 #container {
-    background: #fff;
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     font-weight: 500;
     padding: 0;
@@ -120,47 +167,39 @@ a:hover,
     margin: 0;
 }
 
-/* input and select */
-/* TODO this is a bit too wide: padding will apply to jsoneditor search bar for instance */
-input,
-select,
-textarea {
-    border: 1px solid #e3e3e3;
-    border-radius: 4px;
-    color: $maingray;
-    padding: 7px;
+/* a toolbar button in blue */
+.main-action-button {
+    background-color: $elabblue;
+
+    i {
+        color: $white;
+    }
 }
 
-select {
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -moz-appearance: none;
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -webkit-appearance: none;
-    background: #fff url('images/ico-arrow.png') no-repeat 93% 56%;
+select:not([multiple]) {
+    appearance: none;
+    background: #fff url('images/ico-arrow.png') no-repeat 97% 56%;
+}
+
+/* prevent the caret from being too close from text */
+/* stylelint-disable-next-line selector-no-qualifying-type */
+select.form-control {
     padding-right: 31px;
 }
 
-.form-control {
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -moz-appearance: none;
-    /* stylelint-disable-next-line property-no-vendor-prefix */
-    -webkit-appearance: none;
-    padding-right: 31px;
-}
-
-#dropdownMenu1 {
-    border: 1px solid #ced4da;
-}
-
-.form-control:focus,
-#dropdownMenu1:focus {
+.form-control:focus {
     border-color: $elabblue;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
     z-index: 3;
 }
 
+/* fix bootstrap setting it to nowrap, it results in long content making the whole thing super wide */
+.dropdown-item.wrap {
+    white-space: normal;
+}
+
 .dropdown-item > a {
-    color: #000;
+    color: $strongest;
 }
 
 .dropdown-item:hover a {
@@ -193,40 +232,34 @@ blockquote::before {
 
 /* TITLES */
 h1 {
-    color: $maingray;
+    color: $medium;
     font-size: 200%;
     font-weight: normal;
     margin-top: 0;
 }
 
 h2 {
-    color: $maingray;
+    color: $medium;
     font-size: 180%;
     font-weight: normal;
     margin-top: 0;
 }
 
 h3 {
-    color: $maingray;
+    color: $medium;
     font-size: 160%;
     margin: 0 auto;
 }
 
 h4 {
-    color: $maingray;
+    color: $medium;
     font-size: 150%;
     font-weight: normal;
 }
 
 h5 {
-    color: $maingray;
+    color: $medium;
     font-size: 130%;
-}
-
-label {
-    color: $maingray;
-    font-size: 120%;
-    font-weight: normal;
 }
 
 /* HEAD */
@@ -244,13 +277,13 @@ label {
 
 /*  MENU is below main nav */
 .tabbed-menu {
-    border-bottom: 1px solid $bordersgray;
+    border-bottom: 1px solid $firstlevel;
     line-height: 200%;
     margin: 30px 0 20px;
     padding: 0;
 
     li {
-        color: $maingray;
+        color: $medium;
         cursor: pointer;
         display: inline;
         margin-right: 2%;
@@ -258,7 +291,7 @@ label {
     }
 
     .selected {
-        border-bottom: 5px solid $elabblue;
+        border-bottom: 6px solid $elabblue;
         padding-bottom: 0;
     }
 }
@@ -270,7 +303,7 @@ label {
 
 .alert a,
 .alert a:hover {
-    color: $darkgray;
+    color: $mediumstrong;
 }
 
 .alert-success {
@@ -289,7 +322,10 @@ label {
     background-color: $lightred;
     border-color: $darkred;
     color: $darkred;
-    transition-duration: 500ms;
+}
+
+.hover-warning:hover {
+    background-color: $warningbg;
 }
 
 .hover-action:hover {
@@ -306,136 +342,12 @@ label {
     color: #36b1c0;
 }
 
-/* TOOLTIP */
-
-.elab-tooltip {
-    outline: none;
-    position: relative;
-}
-
-.elab-tooltip:hover {
-    text-decoration: none;
-}
-
-.elab-tooltip span {
-    border-radius: 2px;
-    box-shadow: 1px 1px 2px #666;
-    display: none;
-    font-weight: normal;
-    line-height: 16px;
-    margin: 25px auto 0;
-    padding: 5px 10px 8px;
-    position: relative;
-    text-align: center;
-    white-space: nowrap;
-    width: auto;
-    z-index: 10;
-}
-
-.elab-tooltip:hover span {
-    background: $darkgray;
-    color: #fff;
-    display: inline;
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    top: 0;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.elab-tooltip span::after {
-    border: 4px solid transparent;
-    border-bottom-color: $darkgray;
-    bottom: 100%;
-    content: ' ';
-    height: 0;
-    left: 50%;
-    margin-left: -4px;
-    pointer-events: none;
-    position: absolute;
-    width: 0;
-}
-
-.elab-tooltip-top {
-    outline: none;
-    position: relative;
-}
-
-.elab-tooltip-top:hover {
-    text-decoration: none;
-}
-
-.elab-tooltip-top span {
-    border-radius: 2px;
-    box-shadow: 1px 1px 2px #666;
-    display: none;
-    font-weight: normal;
-    line-height: 16px;
-    margin: 0 auto 25px;
-    padding: 5px 10px 8px;
-    position: relative;
-    text-align: center;
-    text-transform: none;
-    white-space: nowrap;
-    width: auto;
-    z-index: 10;
-}
-
-.elab-tooltip-top:hover span {
-    background: $darkgray;
-    bottom: 0;
-    color: #fff;
-    display: inline;
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.elab-tooltip-top span::after {
-    border: solid transparent;
-    border-top-color: $darkgray;
-    border-width: 4px;
-    content: ' ';
-    height: 0;
-    left: 50%;
-    margin-left: -4px;
-    pointer-events: none;
-    position: absolute;
-    top: 100%;
-    width: 0;
-}
-
-
-/* BUTTONS */
-.button {
-    border-radius: 25px;
-    color: #fff;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 10px 20px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.button-small {
-    border-radius: 25px;
-    color: #fff;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 5px 10px;
-    text-align: center;
-    text-transform: uppercase;
-}
-
 button:disabled {
     cursor: not-allowed;
 }
 
 .separator {
-    border-bottom: 1px solid $bordersgray;
+    border-bottom: 1px solid $firstlevel;
     margin: 20px 0;
     padding-bottom: 30px;
 }
@@ -459,10 +371,7 @@ button:disabled {
     transform: rotate(35deg);
 }
 
-/* body in view mode is black for more lisibility
-github issue #52 */
 #body_view p {
-    color: #000;
     // break super long words, see #4169
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -473,62 +382,34 @@ github issue #52 */
     overflow: auto;
 }
 
-/* size of the editable box in edit mode */
-.mceditable {
-    height: 500px;
-}
+.table {
+    tbody {
+        background-color: $white;
 
-/* prettier tables in mceditable area */
-#body_view table:not([border]),
-#body_view table td:not([border]) {
-    border: 1px solid $maingray;
-}
+        /* stylelint-disable-next-line selector-no-qualifying-type */
+        &.bgnd-transparent {
+            background-color: $mainbackground;
+        }
+    }
 
-table td {
-    padding: 0 5px;
-}
+    th {
+        white-space: nowrap;
 
-table td input {
-    width: 100%;
-}
-
-table th {
-    background-color: $bordersgray;
-    color: $maingray;
-    font-size: 90%;
-    padding: 0 5px;
-    text-align: left;
-    text-transform: uppercase;
+        &:not(:last-child) {
+            border-right: $firstlevel 1px solid;
+        }
+    }
 }
 
 /* TABLE SHOW MODE */
-
 .item-table {
-    width: 100%;
-
-    th {
-        border-left: solid $darkgray;
-        border-right: solid $darkgray;
-    }
-
-    th:first-child {
-        // So that the title has the left part matching
-        // the experiments
-        border-left: solid $darkgray 6px;
-    }
-
-    td {
-        border-left: solid $bordersgray;
-        border-right: solid $bordersgray;
-    }
-
     .title {
         font-size: 100%;
-        min-width: 400px;
     }
 
-    .actions-item-table {
-        width: auto;
+    .item-date,
+    .item-owner {
+        white-space: nowrap;
     }
 
     .item-next {
@@ -542,15 +423,40 @@ table th {
         max-width: 20ch;
     }
 
-    // Force item-info and item-date not to break into two lines
-    .item-info {
-        // Overwrite this
-        padding-left: 5px;
-        white-space: nowrap;
+    .item-rating {
+        min-width: 66px;
+        text-align: center;
     }
 
-    .item-date {
-        white-space: nowrap;
+    .item-owner a {
+        color: $medium;
+
+        &:hover {
+            color: $secondlevel;
+        }
+    }
+}
+
+/* table in view mode, always add borders, see #4436 */
+#body_view {
+    table,
+    td,
+    tr {
+        border: 1px solid $secondlevel;
+    }
+}
+
+/* required labels/input for extra fields */
+#metadataDiv,
+#newFieldForm {
+    /* any invalid field will get this red border */
+    :invalid {
+        border: 1px solid $lightred;
+    }
+
+    .required-label::after {
+        color: $dangerred;
+        content: ' *';
     }
 }
 
@@ -558,13 +464,24 @@ table th {
     margin: 1px;
 }
 
-/* color one row every other row */
-tr:nth-child(even) {
-    background-color: #fff;
+.vertical-separator {
+    border-right: 1px solid $secondlevel;
+    height: 1.8rem;
+
+    /* separator disappears on small screens */
+    @media (max-width: 550px) {
+        display: none;
+    }
 }
 
-tr:nth-child(odd) {
-    background-color: $verylightgray;
+/* SHOW MODE */
+.rating-show {
+    background-color: $lightgold;
+    font-size: 70%;
+
+    i {
+        color: $gold;
+    }
 }
 
 /* OVERLAY */
@@ -599,6 +516,10 @@ tr:nth-child(odd) {
     color: #000;
 }
 
+.opacity-8 {
+    opacity: 0.8;
+}
+
 .full-screen-overlay {
     background: rgba(0, 0, 0, 0.8);
     height: 100vh;
@@ -621,23 +542,111 @@ tr:nth-child(odd) {
 
 /* ITEMS */
 .item {
-    border: 1px solid $bordersgray;
+    background-color: $white;
+    border: 1px solid $firstlevel;
     border-left: 6px solid var(--left-color);
     border-radius: 5px;
     margin: 5px auto;
     min-width: 100%;
     opacity: var(--opacity);
-    padding: 5px 10px 0 5px;
+    padding: 5px 10px 5px 5px;
 
     p {
         margin-bottom: 0;
     }
+
+    .fa-square-plus {
+        color: $medium;
+    }
+
+    .fa-comments,
+    .fa-paperclip,
+    .fa-tags {
+        color: $secondlevel;
+    }
+
+    .fa-tags {
+        margin-top: 3px;
+    }
+
+    .owner {
+        a {
+            color: $medium;
+
+            &:hover {
+                color: $secondlevel;
+            }
+        }
+    }
+
+    .left-icon {
+        padding: 8px 10px;
+
+        i:not(.fa-lock) {
+            color: $white;
+        }
+
+        .fa-lock {
+            background-color: $firstlevel;
+            color: $medium;
+        }
+
+        &.bgnd-dark {
+            background-color: $medium;
+
+            &:hover {
+                background-color: $secondlevel;
+            }
+        }
+    }
+}
+
+.bgnd-gray {
+    background-color: $firstlevel;
+}
+
+/* make the text of buttons in bold to increase readability because contrast ratio is not great */
+.btn {
+    font-weight: bold;
 }
 
 /* SIDE PANEL */
+.sidepanel-btn {
+    border-radius: 0 5px 5px 0;
+    padding: 10px 5px;
+
+    &.sidepanel-closed {
+        background-color: $firstlevel;
+        border: 1px solid $firstlevel;
+        box-shadow: -1rem 0 0 $firstlevel;
+
+        i {
+            color: $strongest;
+        }
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+    }
+
+    &.sidepanel-opened {
+        background-color: $mediumstrong;
+        box-shadow: -1rem 0 0 $mediumstrong;
+
+        i {
+            color: $mainbackground;
+        }
+
+        &:hover {
+            background-color: $medium;
+        }
+    }
+}
+
 .side-panel {
-    background: $darkgray;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    background: $mediumstrong;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    color: $mainbackground;
     height: 100%;
     left: 0;
     overflow: hidden;
@@ -645,50 +654,45 @@ tr:nth-child(odd) {
     padding-top: 10px;
     position: fixed;
     top: 0;
-    width: max(22%, 300px);
+    width: max(24%, 330px);
 
     hr {
-        background-color: $lightwhite;
+        background-color: $mainbackground;
     }
 
     h2,
     h3,
     .fas,
     .far {
-        color: $lightwhite;
+        color: $mainbackground;
     }
 
-    ul {
-        padding-left: 0;
-    }
-
-    li {
-        background-color: $lightgray;
-        color: $lightwhite;
-        font-size: 18px;
-        list-style-type: none;
+    .side-panel-item {
         padding: 5px 0 5px 10px;
-        text-align: left;
 
-        /* see why this line is lint-disabled: https://github.com/stylelint/stylelint/issues/5020 */
-        &.selected { /* stylelint-disable-line selector-no-qualifying-type */
+        /* Favtags will show up as selected */
+        &.selected {
             background-color: $elabblue;
-            color: $lightwhite;
             cursor: initial;
         }
 
         &:hover:not(.selected) {
-            background-color: $maingray;
+            background-color: $medium;
+        }
+
+        i {
+            color: $secondlevel;
+        }
+
+        .relative-moment {
+            color: $secondlevel;
+            font-size: 80%;
         }
     }
-}
 
-/* display_size stuff */
-
-.item-show-xs {
-    &:not(.item-show-last) {
-        /* stylelint-disable-next-line declaration-property-value-disallowed-list */
-        border-bottom: none !important;
+    /* Make the titles that you can click on to toggle the steps visibly clickable */
+    [data-action='toggle-next']:hover {
+        background-color: $medium;
     }
 }
 
@@ -696,9 +700,19 @@ tr:nth-child(odd) {
     padding-left: 20px;
 }
 
-.item-next {
-    padding-left: 20px;
+.next-step-text {
+    color: $medium;
+    font-size: 80%;
+    text-transform: uppercase;
+}
 
+/* for steps highlight, because .active only works on list-group-item */
+.highlighted {
+    background-color: $elabblue;
+    color: $white;
+}
+
+.item-next {
     .item-next-step {
         color: #000;
     }
@@ -707,38 +721,7 @@ tr:nth-child(odd) {
 .item-category {
     font-size: 80%;
     text-transform: uppercase;
-}
-
-@mixin item-show-inline {
-    .title,
-    .item-next,
-    .item-info,
-    .item-date {
-        display: inline;
-    }
-
-    .item-next,
-    .item-info {
-        padding-left: 0;
-    }
-}
-
-.item-show-xs {
-    @include item-show-inline;
-    margin: 0 !important;
-    padding: 0 !important;
-
-    .title {
-        font-size: 100%;
-    }
-}
-
-.item-show-md {
-    @include item-show-inline;
-
-    .title {
-        font-size: 130%;
-    }
+    color: $medium;
 }
 
 .item a p:hover {
@@ -746,7 +729,7 @@ tr:nth-child(odd) {
 }
 
 .box {
-    border: 1px solid $bordersgray;
+    border: 1px solid $firstlevel;
     border-radius: 5px;
     margin-top: 10px;
     overflow: auto;
@@ -757,20 +740,11 @@ tr:nth-child(odd) {
     margin-bottom: 15px;
 }
 
-.box label {
-    margin: 0 10px 0 0;
-}
-
-/* stylelint-disable-next-line selector-no-qualifying-type */
-input[type='checkbox'] {
-    position: relative;
-}
-
 /* EXPERIMENT STEPS */
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
 .step-static {
-    border: 1px solid $bordersgray;
+    border: 1px solid $firstlevel;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -779,31 +753,14 @@ the form-control fails to do that so we do the border ourselves */
     color: $green;
 }
 
-.col-md-6 label {
-    margin: 0;
-}
-
 .draggable {
     cursor: move;
-}
-
-/*
- * fix the white space when columned items don't have the same height
- * see https://medium.com/wdstack/varying-column-heights-in-bootstrap-4e8dd5338643
- */
-.row.display-flex {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.row.display-flex > [class*='col-'] {
-    display: flex;
-    flex-direction: column;
 }
 
 /* fix for bootstrap's thumbnail class */
 .thumbnail {
     overflow: hidden;
+    overflow-wrap: break-word;
 }
 
 .thumb {
@@ -814,15 +771,6 @@ the form-control fails to do that so we do the border ourselves */
     width: 100px;
 }
 
-/* EDITABLE */
-.editable:hover {
-    cursor: pointer;
-}
-
-.comment-header {
-    background-color: $verylightgray;
-}
-
 /* highlight on hover: for editable/malleable elements
  * it's $elabblue but less opaque
  */
@@ -831,15 +779,14 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .hl-hover-gray:hover {
-    background-color: $verylightgray;
+    background-color: $firstlevel;
 }
 
-#commentsCreateArea {
-    border-radius: 5px;
-    margin: 10px 0;
-    padding: 20px;
-    width: 100%;
+/* COMMENTS */
+.comment-header {
+    background-color: $firstlevel;
 }
+
 
 /* END COMMENTS */
 
@@ -848,32 +795,65 @@ the form-control fails to do that so we do the border ourselves */
 .title {
     font-size: 160%;
     hyphens: auto;
-    margin: 0 20px 0 0;
+    line-height: 110%;
     overflow-wrap: break-word;
-    padding-left: 20px;
     word-break: break-word;
 
     a {
-        color: $maingray;
+        color: $mediumstrong;
 
         &:hover {
-            color: $elabblue !important;
-            transition-duration: 500ms;
+            color: $secondlevel;
         }
     }
 }
 
-.overflow-break-word {
-    overflow-wrap: break-word;
+/* for icons such as pin, need important to override default icon color */
+.color-weak {
+    color: $secondlevel !important;
 }
 
-.item-date {
-    color: $maingray;
-    padding: 0 5px;
+.color-medium {
+    color: $medium;
+}
+
+.color-white {
+    color: $white !important;
+}
+
+.color-success {
+    color: $elabblue !important;
+}
+
+.color-danger {
+    color: $dangerred !important;
+}
+
+.border-danger {
+    border: 1px solid $lightred !important;
+}
+
+.color-warning {
+    color: #856404 !important;
+}
+
+.togglable-section-title {
+    color: $medium;
+    font-size: 100%;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.category-button {
+    background-color: var(--bg);
+    color: $white;
+    font-size: 75%;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .smallgray {
-    color: $lightgray;
+    color: $medium;
     font-size: 80%;
 }
 
@@ -883,34 +863,45 @@ the form-control fails to do that so we do the border ourselves */
     border: 1px solid $elabblue;
 }
 
-/* title on editXP */
-#title_input {
-    margin: 0 0 15px;
-    width: 100%;
-}
+.edit-mode-label {
+    min-width: 93px;
 
-.maingray {
-    color: $maingray;
+    @media (max-width: 992px) {
+        min-width: 0;
+    }
 }
 
 /* elabid */
 .elabid {
-    color: $maingray;
-    overflow-wrap: break-word;
-}
-
-.thumbnail {
+    color: $medium;
     overflow-wrap: break-word;
 }
 
 /* TAGS */
 .tag {
-    border: 1px solid $maingray;
+    background-color: $firstlevel;
     border-radius: 5px;
-    color: $maingray;
-    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    color: $mediumstrong;
+    font: bold 80% Verdana, Arial, Helvetica, sans-serif;
     padding: 2px 5px;
 
+    &:hover {
+        background-color: $mediumstrong;
+        color: $white !important;
+    }
+
+    &.favorite {
+        background-color: $gold;
+    }
+}
+
+.box {
+    background-color: $white;
+}
+
+/* background for archived users */
+.bg-medium {
+    background-color: $secondlevel;
 }
 
 /* print only the main div */
@@ -933,7 +924,6 @@ the form-control fails to do that so we do the border ourselves */
     .real-container > span,
     .real-container > hr,
     .real-container > form,
-    .elab-tooltip,
     .col-md-10,
     .col-md-2,
     .smallgray,
@@ -1028,7 +1018,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .eye-overlay:hover::after {
-    background-color: $maingray;
+    background-color: $medium;
     color: $white;
     content: '\f06e';
     display: block;
@@ -1043,46 +1033,25 @@ the form-control fails to do that so we do the border ourselves */
     width: 66px;
 }
 
-/* fix for 3Dmoljs uploaded files */
-.file-uploaded {
+/* fix the canvas for 3Dmoljs uploaded files */
+/* stylelint-disable-next-line selector-class-pattern */
+.viewer_3Dmoljs {
     height: 250px;
+    position: relative;
     width: 100%;
 }
 
-/* fix dropzone css */
+/* make dropzone blue border on hover */
 .dropzone {
-    border: 1px solid #fff;
-    border-radius: 5px;
-}
+    border: 1px solid $white;
 
-.dropzone:hover {
-    border: 1px solid $elabblue;
-    border-radius: 5px;
-}
-
-/* doodle canvas */
-.doodle {
-    border: 1px solid $bordersgray;
-    border-radius: 5px;
-    display: block;
-    margin: 10px 0;
-}
-
-#doodleStrokeWidthContainer {
-    align-items: center;
-    display: flex;
-}
-
-/* don't register clicks with the fontawesome icons
- * this way the click event is registered by the parent and all is well
- */
-.far,
-.fas,
-.fab, {
-    pointer-events: none;
+    &:hover {
+        border: 1px solid $elabblue;
+    }
 }
 
 .clickable:hover,
+.editable:hover,
 [data-action] {
     cursor: pointer;
 }
@@ -1093,26 +1062,26 @@ the form-control fails to do that so we do the border ourselves */
     transition: color 0.8s ease;
 }
 
-/* font awesome icons color */
+/*
+ * font awesome icons color
+ * don't register clicks with the fontawesome icons
+ * this way the click event is registered by the parent and all is well
+ */
 .far,
 .fas,
 .fab {
-    color: $maingray;
+    color: $medium;
+    pointer-events: none;
 }
 
 .fa-bell.active {
     color: $elabblue;
 }
 
-/* for icons such as pin */
-.grayed-out {
-    color: $lightgraybutnottoolight;
-}
-
 /* caption for tinymce */
 .image {
     background: #f5f2f0;
-    border: 1px solid $maingray;
+    border: 1px solid $medium;
     display: inline-block;
     margin: 0 2px 0 1px;
 }
@@ -1131,21 +1100,18 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* stylelint-disable selector-no-qualifying-type */
+/* stylelint-disable-next-line selector-no-qualifying-type */
 input[type='color'] {
     padding: 5px 10px;
 }
 
 .user-badge {
-    border: 1px solid #c0c0c0;
-    border-radius: 5px;
-    font-size: 110%;
-    margin-right: 5px;
-    padding: 5px;
+    background-color: $lightblue;
 }
 
-.color-white {
-    color: #fff;
+.admin-badge {
+    background-color: $lightblue;
+    border: 1px solid $gold;
 }
 
 /* give the togglePassword some borders like input */
@@ -1163,6 +1129,17 @@ input[type='color'] {
     @media (min-width: 992px) {
         height: 43px;
     }
+
+    /* prevent wrap on whitespace for elements of the menu so it doesn't take two lines when screen size is getting small */
+    .nav-item {
+        white-space: nowrap;
+    }
+}
+
+/* to make the pie smaller */
+.pie-chart-container {
+    max-width: 450px;
+    padding: 66px;
 }
 
 /* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */
@@ -1177,24 +1154,11 @@ input[type='color'] {
 
 .pie-percent {
     background: var(--bg);
-    color: #fff;
+    border-radius: 5px;
+    color: $white;
     padding: 10px;
     text-align: center;
     text-shadow: 0 0 1px #000;
-}
-
-.pie-legend {
-    border-collapse: separate;
-    display: table;
-    list-style: none;
-
-    > li {
-        display: table-row;
-
-        > * {
-            display: table-cell;
-        }
-    }
 }
 
 .fa-2x {
@@ -1233,41 +1197,16 @@ input[type='color'] {
     }
 }
 
-.switch-btn {
-    border: 1px solid $lightwhite;
-    border-radius: 5px;
-    padding: 3px;
-}
-
-/* loading spinner */
-.lds-dual-ring::after {
-    animation: lds-dual-ring 1.3s linear infinite;
-    border: 8px solid $elabblue;
-    border-color: $elabblue transparent $elabblue transparent;
-    border-radius: 50%;
-    content: ' ';
-    display: block;
-    height: 150px;
-    margin: 4px;
-    width: 150px;
-}
-
-@keyframes lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+.border-white {
+    border: 1px solid $mainbackground;
 }
 
 /* notifications */
 .notification {
-    border-top: 1px solid $verylightgray;
+    border-top: 1px solid $mainbackground;
 
     .relative-moment {
-        color: $lightgray;
+        color: $medium;
         font-size: 80%;
     }
 }
@@ -1276,23 +1215,82 @@ input[type='color'] {
     background-color: $elabblue;
 
     span {
-        color: $lightwhite;
+        color: $mainbackground;
     }
 }
 
-/* To generate a path, use Inkscape and draw Bezier curves and save as svg */
-.moving-bug {
-    animation: crawl 3s forwards linear;
-    offset-path: path('M 0.32956666,-0.05334692 C 12.665605,11.589579 11.928138,3.2275405 17.89012,3.9059119 22.510445,4.4316258 31.215218,-0.63454953 31.84037,3.9733749 32.752011,10.692973 42.510567,21.856688 46.363102,20.322735 52.62615,17.828995 55.24992,-0.95807772 60.359661,0.99422564 67.355357,3.6671046 74.588748,22.375307 80.733546,25.741014 99.56382,36.054972 110.72842,20.776429 103.01153,15.283795 c -6.77062,-4.819109 15.68715,-14.31937313 21.1714,-8.0753273 5.97593,6.8038503 12.04769,-6.92044453 18.96241,-6.66581506 7.76736,0.28602767 13.62434,13.59179536 19.12289,6.81266596 6.21245,-7.65928702 10.26095,14.2467484 17.98362,12.7003124 4.57794,-0.916714 28.94474,12.145381 28.94474,12.145381');
-    transform: rotate(90deg);
+
+/* The switch - the box around the slider */
+.switch {
+    display: inline-block;
+    height: 22px;
+    position: relative;
+    width: 42px;
+
+    /* Hide default HTML checkbox */
+    input {
+        height: 0;
+        opacity: 0;
+        width: 0;
+    }
+
+    /* align the slider to the label in ucp */
+    &.ucp-align {
+        margin-top: 0.5rem;
+    }
+
+    &.disabled {
+        opacity: 0.7;
+
+        .slider {
+            cursor: default;
+        }
+    }
 }
 
-@keyframes crawl {
-    0% {
-        offset-distance: 0%;
-    }
+/* The slider */
+.slider {
+    background-color: $medium;
+    border-radius: 34px;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 355ms;
 
-    100% {
-        offset-distance: 100%;
+    &::before {
+        background-color: $white;
+        border-radius: 50%;
+        bottom: 2px;
+        content: '';
+        height: 18px;
+        left: 2px;
+        position: absolute;
+        transition: 355ms;
+        width: 18px;
     }
+}
+
+input:checked + .slider {
+    background-color: $elabblue;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px $elabblue;
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.section-title {
+    background-color: $firstlevel;
+    font-size: 120%;
+}
+
+/* PROFILE page */
+.counter {
+    color: $secondlevel;
 }

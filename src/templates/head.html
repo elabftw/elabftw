@@ -6,7 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
 -->
-<html lang='{{ App.getLang() | slice(0, 2) }}'>
+<html lang='{{ App.getLang()|slice(0, 2) }}'>
 
 <head>
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
@@ -21,18 +21,16 @@
   <link rel="icon" href="app/img/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="app/img/apple-touch-icon.png"><!-- 180×180 -->
 
-  <title>{{ block('title') }} - eLabFTW</title>
+  <title>{{ App.pageTitle }} - eLabFTW</title>
   <!-- load open vector editor -->
-  <link rel='stylesheet' type='text/css' href='assets/ove/main.css?v={{ v }}'>
-  <script defer src='assets/ove/open-vector-editor.min.js?v={{ v }}'></script>
+  <link rel='stylesheet' type='text/css' href='assets/ove/style.css?v={{ v }}'>
+  <script defer src='assets/ove/index.umd.js?v={{ v }}'></script>
 
   <!-- see builder.js to see what gets inside these files -->
   <!-- CSS -->
   <link rel='stylesheet' media='all' href='assets/vendor.min.css?v={{ v }}' />
   <link rel='stylesheet' media='all' href='assets/elabftw.min.css?v={{ v }}' />
 
-  <!-- disable tracking of 3dmol.js, has to be loaded before vendor.bundle.js -->
-  <script src='assets/3Dmol-notrack.bundle.js?v={{ v }}'></script>
   <!-- all js dependencies bundled by webpack (see builder.js) -->
   <script defer src='assets/vendor.bundle.js?v={{ v }}'></script>
   <!-- the main JS bundle with all the elabftw TS code (see builder.js) -->
@@ -58,33 +56,35 @@
     </button>
     {% endif %}
     <!-- logo -->
-    <a href='index.php'><img class='navbar-brand d-xs-none d-sm-none d-lg-none d-xl-block' src='assets/images/logo-header.png' width='110' height='40' alt='elabftw' /></a>
+    <a href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><img class='navbar-brand d-xs-none d-sm-none d-lg-none d-xl-block' src='assets/images/logo-header.svg' width='110' height='40' alt='elabftw logo' /></a>
 
+    {% set scriptName = App.Request.getScriptName|split('/')|last %}
     {% if App.Session.has('is_auth') %}
     <!-- everything in there will be part of the burger -->
     <div class='collapse navbar-collapse' id='main-nav'>
         <div class='navbar-nav'>
-            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'experiments.php' ? 'active' }}'
+            <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
                 href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
-            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'database.php' ? 'active' }}'
-                href='database.php'>{{ 'Database'|trans }}</a>
+            <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
+                href='database.php'>{{ 'Resources'|trans }}</a>
 
             {% if not App.Session.has('is_anon') %}
-            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'team.php' ? 'active' }}'
+            <a class='nav-item nav-link {{ scriptName == 'team.php' ? 'active' }}'
                 href='team.php'>{{ 'Team'|trans }}</a>
             {% endif %}
 
-            <a class='nav-item nav-link {{ App.Request.getScriptName|split('/')|last == 'search.php' ? 'active' }}'
+            <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
             <a class='nav-item nav-link' href='{{ App.teamArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamArr.link_name }}</a>
 
         </div>
 
-        <!-- SEARCH BAR -->
-        <form class='nav-item form-inline ml-auto' method='get' action='{{ App.Request.getScriptName }}'>
-            {% if App.Request.getScriptName|split('/')|last == 'experiments.php' or App.Request.getScriptName|split('/')|last == 'database.php' %}
-            <input class='form-control big-search' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
-            {% endif %}
+        {# SEARCH BAR #}
+        {# search in experiments everywhere, or in database on database page #}
+        {% set actionPage = (scriptName == 'experiments.php' or scriptName == 'database.php') ? scriptName : 'experiments.php' %}
+        <form class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
+          {# the id is for making it easy to find the element when focusing it with the keyboard shortcut #}
+          <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='Search' size='20' value='{{ App.Request.query.get('q') }}' />
         </form>
 
         <!-- Notification bell -->
@@ -111,9 +111,10 @@
         <div class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='navbarDropdownHelp' role='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></a>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
-            <a class='dropdown-item' href='https://www.deltablot.com/posts/release-450/' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
+            <a class='dropdown-item' href="{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}" target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' data-action='toggle-modal' data-target='helpModal'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> {{ 'Documentation'|trans }}</a>
+            <a class='dropdown-item' href='https://doc.elabftw.net/api.html' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='{{ App.Config.configArr.support_url }}' target='_blank' rel='noopener'><i class='fas fa-bell-concierge fa-fw'></i> {{ 'Support'|trans }}</a>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/discussions/' target='_blank' rel='noopener'><i class='fas fa-comments fa-fw'></i> {{ 'Community forum'|trans }}</a>
             <a class='dropdown-item' href='https://gitter.im/elabftw/elabftw' target='_blank' rel='noopener'><i class='fas fa-comment-dots fa-fw'></i> {{ 'Chat room'|trans }}</a>
@@ -132,14 +133,15 @@
             {% endif %}
             <div class='dropdown-divider'></div>
             {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
+              <a class='dropdown-item' href='dashboard.php'><i class='fas fa-table-columns fa-fw'></i> {{ 'Dashboard'|trans }}</a>
               <a class='dropdown-item' href='ucp.php?tab=3'><i class='fas fa-layer-group fa-fw'></i> {{ 'My templates'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user fa-fw'></i> {{ 'My profile'|trans }}</a>
               <a class='dropdown-item' data-action='toggle-todolist' href='#'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
               <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'User panel'|trans }}</a>
-              {% if App.Session.get('is_admin') %}
+              {% if App.Users.isAdmin %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}
-              {% if App.Session.get('is_sysadmin') %}
+              {% if App.Users.userData.is_sysadmin %}
                 <a class='dropdown-item' href='sysconfig.php'><i class='fas fa-tools fa-fw' style='color:#e6614c'></i> {{ 'Sysadmin panel'|trans }}</a>
               {% endif %}
 
@@ -153,9 +155,19 @@
 </nav>
 
 <!-- SHOW FAVTAGS PANEL -->
-<a class='float-left' data-action='toggle-favtags' id='favtags-opener' title='{{ 'Open favorite tags'|trans }}' hidden>
-  <i class='fas fa-chevron-right fa-2x'></i>
-</a>
+<div class='pr-2 mt-3 float-left' id='sidepanel-buttons' hidden>
+  <div id='favtags-opener'>
+    <div class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-favtags' title='{{ 'Toggle favorite tags'|trans }}'>
+      <i class='fas fa-folder-tree'></i>
+    </div>
+  </div>
+  <!-- SHOW TODOLIST PANEL -->
+  <div class='mt-3' id='todolist-opener'>
+    <div class='bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-todolist' title='{{ 'Toggle todolist'|trans }}'>
+      <i class='fas fa-list-check'></i>
+    </div>
+  </div>
+</div>
 <div class='real-container'>
 
 <noscript><!-- show warning if javascript is disabled -->
@@ -214,28 +226,3 @@
     </div>
   </div>
 </div>
-<!-- TITLE -->
-<!-- login and register pages will have this title hidden -->
-<h1 id='pageTitle' {% if hideTitle %}hidden{%endif%}>{% block title %}{{ App.pageTitle }}{% endblock %}</h1>
-
-<!-- INFO BOX (FLASH MESSAGES) -->
-{% for ok in App.ok %}
-  {{ ok|msg('ok') }}
-{% endfor %}
-{% for ko in App.ko %}
-  {{ ko|msg('ko') }}
-{% endfor %}
-{% for warning in App.warning %}
-  {{ warning|msg('warning') }}
-{% endfor %}
-<!-- ANNOUNCEMENTS -->
-{# general sysconfig announcement #}
-{% if App.Config.configArr.announcement %}
-  {{ App.Config.configArr.announcement|msg('warning') }}
-{% endif %}
-
-{# team level announcement #}
-{% if App.teamArr.announcement %}
-  {{ App.teamArr.announcement|msg('warning') }}
-{% endif %}
-<div id='output'></div>

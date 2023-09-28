@@ -7,11 +7,12 @@
  */
 declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'jquery-ui/ui/widgets/sortable';
-import * as $3Dmol from '3dmol/build/3Dmol-nojquery.js';
-import { CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
+import * as $3Dmol from '3dmol';
+import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
+import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 
@@ -44,15 +45,53 @@ export function relativeMoment(): void {
   });
 }
 
+// Add a listener for all elements triggered by an event
+// and POST an update request
+// select will be on change, text inputs on blur
+export function listenTrigger(): void {
+  const ApiC = new Api();
+  document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
+    el.addEventListener(el.dataset.trigger, event => {
+      event.preventDefault();
+      // for a checkbox element, look at the checked attribute, not the value
+      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+      if (el.dataset.customAction === 'patch-user2team-is-owner') {
+        // currently only for modifying is_owner of a user in a given team
+        const team = parseInt(el.dataset.team, 10);
+        const userid = parseInt(el.dataset.userid, 10);
+        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
+        return;
+      }
+
+      if (el.dataset.transform === 'permissionsToJson') {
+        value = permissionsToJson(parseInt(value, 10), []);
+      }
+      if (el.dataset.value) {
+        value = el.dataset.value;
+      }
+      const params = {};
+      params[el.dataset.target] = value;
+      ApiC.patch(`${el.dataset.model}`, params).then(() => {
+        if (el.dataset.reload) {
+          reloadElement(el.dataset.reload).then(() => {
+            // make sure we listen to the new element too
+            listenTrigger();
+          });
+        }
+      });
+    });
+  });
+}
+
 /**
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  */
 export function collectForm(form: HTMLElement): object {
   let params = {};
-  ['input', 'select'].forEach(inp => {
+  ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input as HTMLInputElement;
+      const el = input;
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
       }
@@ -117,10 +156,12 @@ export function notif(info: ResponseMsg): void {
   }
 
   const p = document.createElement('p');
+  // "status" role: see WCAG2.1 4.1.3
+  p.role = 'status';
   p.innerText = info.msg;
   const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
-  overlay.setAttribute('id','overlay');
+  overlay.setAttribute('id', 'overlay');
   overlay.setAttribute('class', 'overlay ' + 'overlay-' + result);
   // show the overlay
   document.body.appendChild(overlay);
@@ -246,6 +287,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
       return;
     }
     document.getElementById(id).innerHTML = html.getElementById(id).innerHTML;
+    listenTrigger();
   });
 }
 
@@ -256,6 +298,7 @@ export async function reloadElement(elementId: string): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+  listenTrigger();
 }
 
 /**
@@ -265,11 +308,16 @@ export async function reloadElement(elementId: string): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
     const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
+    const caretIcon = el.previousElementSibling.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
+      caretIcon.classList.remove('fa-caret-down');
+      caretIcon.classList.add('fa-caret-right');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
+      caretIcon.classList.remove('fa-caret-right');
+      caretIcon.classList.add('fa-caret-down');
     }
   });
 }
@@ -306,13 +354,13 @@ export function addAutocompleteToLinkInputs(): void {
       filterEl.addEventListener('change', () => {
         cache[object.selectElid] = {};
       });
-      ($(`#${object.inputElId}`) as JQuery<HTMLInputElement>).autocomplete({
+      $(`#${object.inputElId}`).autocomplete({
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           if (term in cache[object.selectElid]) {
             const res = [];
             cache[object.selectElid][term].forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
             return;
@@ -321,7 +369,7 @@ export function addAutocompleteToLinkInputs(): void {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
           });
@@ -339,7 +387,7 @@ export function addAutocompleteToLinkInputs(): void {
 
 export function addAutocompleteToTagInputs(): void {
   const ApiC = new Api();
-  ($('[data-autocomplete="tags"]') as JQuery<HTMLInputElement>).autocomplete({
+  $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
         const res = [];
@@ -352,28 +400,12 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
-export async function updateCategory(entity: Entity, value: string): Promise<string> {
-  const resp = await (new Api()).patch(`${entity.type}/${entity.id}`, {'category': value});
-  const json = await resp.json();
-  // change the color of the item border
-  // we first remove any status class
-  $('#main_section').css('border', null);
-  // and we add our new border color
-  // first : get what is the color of the new status
-  const css = '6px solid #' + json.color;
-  $('#main_section').css('border-left', css);
-
-  // we also need to change the category next to the title for db items
-  const title = document.getElementById('documentTitle');
-  // it's only there is view mode, and for database items
-  const url = new URL(document.location.href);
-  if (title && url.pathname.split('/').pop() === 'database.php') {
-    const categoryName = (title.firstElementChild as HTMLElement);
-    categoryName.innerText = json.category;
-    // also adjust to the new color
-    categoryName.style.color = `#${json.color}`;
-  }
-  return json.category;
+// update category or status, returns the color as string
+export async function updateCatStat(target: string, entity: Entity, value: string): Promise<string> {
+  const params = {};
+  params[target] = value;
+  const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
+  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
 export function showContentPlainText(el: HTMLElement): void {
@@ -430,9 +462,21 @@ export function permissionsToJson(base: number, extra: string[]): string {
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
     const link = document.createElement('a');
+    link.classList.add('d-block');
     const url = (el as HTMLSpanElement).innerText;
     link.href = url;
     link.text = url;
     el.replaceWith(link);
   });
+}
+
+// transform the + icon in - and vice versa
+export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
+  if (plusMinusIcon.classList.contains('fa-square-plus')) {
+    plusMinusIcon.classList.remove('fa-square-plus');
+    plusMinusIcon.classList.add('fa-square-minus');
+  } else {
+    plusMinusIcon.classList.add('fa-square-plus');
+    plusMinusIcon.classList.remove('fa-square-minus');
+  }
 }

@@ -11,10 +11,13 @@ namespace Elabftw\Elabftw;
 
 use function array_column;
 use function array_unique;
+
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Services\UsersHelper;
 
 class EntitySqlBuilder
 {
@@ -33,21 +36,21 @@ class EntitySqlBuilder
     {
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
-            $select = 'SELECT DISTINCT entity.*,
-                GROUP_CONCAT(DISTINCT (team_events.experiment IS NOT NULL OR team_events.item_link IS NOT NULL)) AS is_bound,
-                GROUP_CONCAT(DISTINCT team_events.item) AS events_item_id,
-                GROUP_CONCAT(DISTINCT team_events.id) AS events_id,
-                "' . $this->entity->page . '" AS page,
-                "' . $this->entity->type. '" AS type,';
+            $select = sprintf("SELECT DISTINCT entity.*,
+                GROUP_CONCAT(team_events.start ORDER BY team_events.start SEPARATOR '|') AS events_start,
+                '%s' AS page,
+                '%s' AS type,", $this->entity->page, $this->entity->type);
         } else {
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
                 entity.title,
                 entity.date,
                 entity.category,
+                entity.status,
                 entity.rating,
                 entity.userid,
                 entity.locked,
+                entity.state,
                 entity.canread,
                 entity.canwrite,
                 entity.modified_at,';
@@ -63,13 +66,17 @@ class EntitySqlBuilder
         }
         $select .= "uploads.up_item_id, uploads.has_attachment,
             SUBSTRING_INDEX(GROUP_CONCAT(stepst.next_step ORDER BY steps_ordering, steps_id SEPARATOR '|'), '|', 1) AS next_step,
-            categoryt.id AS category_id,
-            categoryt.title AS category,
-            categoryt.color,
+            statust.title AS status_title,
+            statust.color AS status_color,
+            categoryt.title AS category_title,
+            categoryt.color AS category_color,
             users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment";
+            (commentst.recent_comment IS NOT NULL) AS has_comment,";
+
+        // add a "color" column that is status for experiments and category for items
+        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color, statust.title AS mainattr_title' : 'categoryt.color AS color, categoryt.title AS mainattr_title';
 
         $tagsSelect = '';
         $tagsJoin = '';
@@ -101,7 +108,7 @@ class EntitySqlBuilder
             $this->entity->Users->userData['team']
         );
 
-        $categoryTable = $this->entity->type === 'experiments' ? 'status' : 'items_types';
+        $categoryTable = $this->entity->type === 'experiments' ? 'experiments_categories' : 'items_types';
         $categoryJoin = 'LEFT JOIN ' . $categoryTable . ' AS categoryt ON (categoryt.id = entity.category)';
 
         $commentsJoin = 'LEFT JOIN (
@@ -130,20 +137,22 @@ class EntitySqlBuilder
             $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
-            $select .= ', categoryt.bookable';
-            $eventsColumn = 'item_link';
+            $select .= ', entity.is_bookable';
+            $eventsColumn = 'item_link = entity.id OR team_events.item';
         } else {
             throw new IllegalActionException('Nope.');
         }
         $eventsJoin = '';
         if ($fullSelect) {
-            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id)';
+            // only select events from the future
+            $eventsJoin = 'LEFT JOIN team_events ON (team_events.' . $eventsColumn . ' = entity.id AND team_events.start > NOW())';
         }
 
         $sqlArr = array(
             $select,
             $tagsSelect,
             $from,
+            sprintf('LEFT JOIN %s_status AS statust ON (statust.id = entity.status)', $this->entity->type),
             $categoryJoin,
             $commentsJoin,
             $tagsJoin,
@@ -157,5 +166,56 @@ class EntitySqlBuilder
 
         // replace all %1$s by 'experiments' or 'items'
         return sprintf(implode(' ', $sqlArr), $this->entity->type);
+    }
+
+    public function getCanFilter(string $can): string
+    {
+        $sql = '';
+        // teamFilter is to restrict to the team for items only
+        // as they have a team column
+        $teamFilter = '';
+        if ($this->entity instanceof Items) {
+            $teamFilter = ' AND users2teams.teams_id = entity.team';
+        }
+        // for anon add an AND base = full (public)
+        if ($this->entity->isAnon) {
+            $sql .= sprintf(" AND JSON_EXTRACT(entity.%s, '$.base') = %s ", $can, BasePermissions::Full->value);
+        }
+        // add pub/org/team filter
+        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
+        if ($this->entity->Users->userData['show_public']) {
+            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
+        }
+        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.%s, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.%s, '$.base') = %d ", $sqlPublicOrg, $can, BasePermissions::MyTeams->value, $teamFilter, $can, BasePermissions::User->value);
+        // admin will see the experiments with visibility user for user of their team
+        if ($this->entity->Users->isAdmin) {
+            $sql .= 'AND entity.userid = users2teams.users_id)';
+        } else {
+            $sql .= 'AND entity.userid = :userid)';
+        }
+        // add entities in useronly visibility only if we own them
+        $sql .= sprintf(" OR (JSON_EXTRACT(entity.%s, '$.base') = %d AND entity.userid = :userid)", $can, BasePermissions::UserOnly->value);
+        // look for teams
+        $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
+        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        if (!empty($teamsOfUser)) {
+            foreach ($teamsOfUser as $team) {
+                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teams'))", $team, $can);
+            }
+        }
+        // look for teamgroups
+        // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
+        // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
+        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
+        if (!empty($teamgroupsOfUser)) {
+            foreach ($teamgroupsOfUser as $teamgroup) {
+                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teamgroups'))", $teamgroup, $can);
+            }
+        }
+        // look for our userid in users part of the json
+        $sql .= sprintf(" OR (:userid MEMBER OF (entity.%s->>'$.users'))", $can);
+        $sql .= ')';
+
+        return $sql;
     }
 }

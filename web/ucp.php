@@ -9,18 +9,21 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Local;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Changelog;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
-use Elabftw\Services\LocalAuth;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,23 +43,25 @@ try {
 
     $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
+    $TeamTags = new TeamTags($App->Users);
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();
+    $Category = new ExperimentsCategories($Teams);
+    $Status = new ExperimentsStatus($Teams);
     $entityData = array();
+    $changelogData = array();
+    $metadataGroups = array();
     if ($App->Request->query->has('templateid')) {
         $Templates->setId((int) $App->Request->query->get('templateid'));
         $entityData = $Templates->readOne();
-        $Revisions = new Revisions(
-            $Templates,
-            (int) $App->Config->configArr['max_revisions'],
-            (int) $App->Config->configArr['min_delta_revisions'],
-            (int) $App->Config->configArr['min_days_revisions'],
-        );
+        $Metadata = new Metadata($Templates->entityData['metadata']);
+        $metadataGroups = $Metadata->getGroups();
+        $Changelog = new Changelog($Templates);
+        $changelogData = $Changelog->readAll();
     }
 
     // TEAM GROUPS
-    $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
     // the items categoryArr for add link input
@@ -75,7 +80,7 @@ try {
         ),
     );
 
-    if ($App->Users->userData['is_admin']) {
+    if ($App->Users->isAdmin) {
         $notificationsSettings[] =
             array(
                 'designation' => _('New user created'),
@@ -93,26 +98,31 @@ try {
             );
     }
 
-    $showMfa = !LocalAuth::isMfaEnforced(
-        (bool) $App->Users->userData['is_admin'],
-        (bool) $App->Users->userData['is_sysadmin'],
+    $showMfa = !Local::isMfaEnforced(
+        $App->Users->userData['userid'],
         (int) $App->Config->configArr['enforce_mfa'],
     );
+
 
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
+        'categoryArr' => $Category->readAll(),
+        'changes' => $changelogData,
         'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
+        'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
+        'statusArr' => $Status->readAll(),
+        'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $templatesArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
-        'revNum' => isset($Revisions) ? $Revisions->readCount() : 0,
         'showMFA' => $showMfa,
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 } catch (ImproperActionException $e) {
     // show message to user

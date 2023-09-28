@@ -28,7 +28,6 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
             'body' => 'body',
             'canread' => BasePermissions::MyTeams->toJson(),
             'canwrite' => BasePermissions::MyTeams->toJson(),
-            'bookable' => '0',
         );
         $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
         $this->ItemsTypes->patch(Action::Update, $extra);

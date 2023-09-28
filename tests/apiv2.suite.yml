@@ -8,7 +8,7 @@ coverage:
       verify_peer_name: false
       allow_self_signed: true
 modules:
-  enabled:
+    enabled:
         - \Helper\Api
         - REST:
             url: https://elabtmp/api/v2/

@@ -9,16 +9,16 @@
 
 namespace Elabftw\Services;
 
-use function bin2hex;
+use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieToken;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
-use function hash;
+use Elabftw\Models\Config;
+
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
-use function random_bytes;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -86,7 +86,7 @@ class LoginHelper
         if ($this->AuthResponse->isAnonymous) {
             return;
         }
-        $sql = 'SELECT IFNULL(valid_until, "3000-01-01") > NOW() FROM users WHERE userid = :userid';
+        $sql = "SELECT IFNULL(valid_until, '3000-01-01') > NOW() FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -112,7 +112,7 @@ class LoginHelper
     }
 
     /**
-     * Store userid and permissions in session
+     * Store userid in session
      */
     private function populateSession(): void
     {
@@ -128,44 +128,30 @@ class LoginHelper
         // ANON LOGIN
         if ($this->AuthResponse->isAnonymous) {
             $this->Session->set('is_anon', 1);
-            $this->Session->set('is_admin', 0);
-            $this->Session->set('is_sysadmin', 0);
-            return;
         }
-
-        // NORMAL LOGIN
-        // load the permissions
-        $Users = new Users($this->AuthResponse->userid);
-        $this->Session->set('is_admin', $Users->userData['is_admin']);
-        $this->Session->set('is_sysadmin', $Users->userData['is_sysadmin']);
     }
 
     /**
      * Set a $_COOKIE['token'] and update the database with this token.
-     * Works only in HTTPS, valable for 1 month.
-     * 1 month = 60*60*24*30 =  2592000
+     * Also set a token_team cookie for the team
      */
     private function setToken(): void
     {
-        $token = hash('sha256', bin2hex(random_bytes(16)));
+        $CookieToken = new CookieToken();
+        $CookieToken->saveToken($this->AuthResponse->userid);
+
+        $expirationSeconds = time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
 
         // create cookie for login
         $cookieOptions = array(
-            'expires' => time() + 2592000,
+            'expires' => $expirationSeconds,
             'path' => '/',
             'domain' => '',
             'secure' => true,
             'httponly' => true,
             'samesite' => 'Lax',
         );
-        setcookie('token', $token, $cookieOptions);
+        setcookie('token', $CookieToken->token, $cookieOptions);
         setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
-
-        // Update the token in SQL
-        $sql = 'UPDATE users SET token = :token WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $token);
-        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 }

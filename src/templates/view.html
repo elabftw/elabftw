@@ -46,7 +46,7 @@
   </div>
 
   {# TITLE #}
-  <h1 id='documentTitle' class='mb-4 title text-dark'>
+  <h1 id='documentTitle' class='mb-4 title text-dark malleableColumn hl-hover-gray py-1 rounded' data-target='title' data-endpoint='{{ Entity.type }}' data-id='{{ Entity.id }}'>
     {{ Entity.entityData.title|raw }}
   </h1>
 
@@ -118,7 +118,7 @@
 
 <hr>
 
-<!-- METADATA view -->
+{# METADATA view #}
 {% if Entity.entityData.metadata %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
   <div class='mt-2 col-md-6' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>

@@ -117,13 +117,20 @@ class Eln extends AbstractZip
         // COMMENTS
         if (isset($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
-                $author = $this->getNodeFromId($comment['author']['@id']);
+                // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
+                $fullComment = $comment;
+                // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
+                if (count($comment) === 1) {
+                    // resolve the id to get the full node content
+                    $fullComment = $this->getNodeFromId($comment['@id']);
+                }
+                $author = $this->getNodeFromId($fullComment['author']['@id']);
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
                     $author['givenName'] ?? '',
-                    $author['familyName'] ?? 'Unknown',
-                    $comment['dateCreated'],
-                    $comment['text'],
+                    $author['familyName'] ?? $author['name'] ?? 'Unknown',
+                    $fullComment['dateCreated'],
+                    $fullComment['text'],
                 );
                 $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }

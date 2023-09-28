@@ -128,11 +128,17 @@ class MakeEln extends MakeStreamZip
             // COMMENTS
             $comments = array();
             foreach ($e['comments'] as $comment) {
+                // the comment creation date will be used as part of the id
+                $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
+                $id = 'comment://' . urlencode($dateCreated);
+                // we add the reference to the comment in hasPart
+                $comments[] = array('@id' => $id);
+                // now we build a root node for the comment, with the same id as the one referenced in the main entity
                 $firstname = $comment['firstname'] ?? '';
                 $lastname = $comment['lastname'] ?? '';
-                $dateCreated = (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM);
-                $comments[] = array(
-                    '@id' => 'comment://' . urlencode($dateCreated),
+                $dataEntities[] = array(
+                    '@id' => $id,
+                    '@type' => 'Comment',
                     'dateCreated' => $dateCreated,
                     'text' => $comment['comment'],
                     'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),

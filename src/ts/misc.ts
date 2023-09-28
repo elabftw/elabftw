@@ -15,7 +15,6 @@ declare const MathJax: MathJaxObject;
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { marked } from 'marked';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{

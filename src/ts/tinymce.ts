@@ -154,6 +154,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Go', value: 'go'},
       {text: 'Java', value: 'java'},
       {text: 'JavaScript', value: 'javascript'},
+      {text: 'Json', value: 'json'},
       {text: 'Julia', value: 'julia'},
       {text: 'Latex', value: 'latex'},
       {text: 'Lua', value: 'lua'},

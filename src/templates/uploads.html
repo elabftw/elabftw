@@ -147,7 +147,7 @@
                 </div>
 
               <!-- TEXT -->
-              {% elseif ext matches '/(txt|md)$/i' %}
+              {% elseif ext matches '/(txt|md|json)$/i' %}
                 <span class='eye-overlay'
                   data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
                   data-storage='{{ upload.storage }}'

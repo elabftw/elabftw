@@ -76,13 +76,17 @@ class EntitySqlBuilder
             (commentst.recent_comment IS NOT NULL) AS has_comment,";
 
         // add a "color" column that is status for experiments and category for items
-        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color, statust.title AS mainattr_title' : 'categoryt.color AS color, categoryt.title AS mainattr_title';
+        $select .= ($this->entity instanceof Experiments)
+            ? 'statust.color AS color, statust.title AS mainattr_title'
+            : 'categoryt.color AS color, categoryt.title AS mainattr_title';
 
         $tagsSelect = '';
         $tagsJoin = '';
         if ($getTags) {
-            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags, GROUP_CONCAT(DISTINCT tags.id) as tags_ids";
-            $tagsJoin = 'LEFT JOIN tags2%1$s ON (entity.id = tags2%1$s.%1$s_id) LEFT JOIN tags ON (tags2%1$s.tags_id = tags.id)';
+            $tagsSelect = ", GROUP_CONCAT(DISTINCT tags.tag ORDER BY tags.id SEPARATOR '|') as tags,
+                GROUP_CONCAT(DISTINCT tags.id) as tags_ids";
+            $tagsJoin = 'LEFT JOIN tags2%1$s ON (entity.id = tags2%1$s.%1$s_id)
+                LEFT JOIN tags ON (tags2%1$s.tags_id = tags.id)';
         }
 
         // only include columns if actually searching for comments/filenames

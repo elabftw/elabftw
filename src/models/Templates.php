@@ -129,8 +129,8 @@ class Templates extends AbstractTemplateEntity
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            LEFT JOIN tags2" . $this->type . ' ON (experiments_templates.id = tags2' . $this->type . '.' . $this->type . '_id)
+            LEFT JOIN tags ON (tags2' . $this->type . ".tags_id = tags.id)
             LEFT JOIN experiments_categories AS categoryt ON (experiments_templates.category = categoryt.id)
             LEFT JOIN experiments_status AS statust ON (experiments_templates.status = statust.id)
             WHERE experiments_templates.id = :id";

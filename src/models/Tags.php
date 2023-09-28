@@ -113,40 +113,6 @@ class Tags implements RestInterface
         return $this->Db->execute($req);
     }
 
-    // ToDo: check if this is still needed
-    /**
-     * Get a list of entity id filtered by tags
-     *
-     * @param array<array-key, string> $tags tags from the query string
-     */
-    public function getIdFromTags(array $tags): array
-    {
-        $sql = 'SELECT id FROM tags WHERE tag IN ("' . implode('", "', $tags) . '")';
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-        $tagIds = $req->fetchAll(PDO::FETCH_COLUMN);
-        if (empty($tagIds)) {
-            return array();
-        }
-
-        // look for item ids that have all the tags not only one of them
-        // note: you can't have a parameter for the IN clause
-        // the HAVING COUNT is necessary to make an AND search between tags
-        $sql = sprintf(
-            'SELECT %1$s_id
-                FROM tags2%1$s
-                WHERE tags_id IN (' . implode(',', $tagIds) . ')
-                GROUP BY %1$s_id
-                HAVING COUNT(DISTINCT tags_id) = :count',
-            $this->Entity->type,
-        );
-        $req = $this->Db->prepare($sql);
-        // note: we count on the number of provided tags, not the result of the first query as the same tag can appear mutiple times (from different teams)
-        $req->bindValue(':count', count($tags), PDO::PARAM_INT);
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_COLUMN);
-    }
-
     /**
      * Create a tag
      */

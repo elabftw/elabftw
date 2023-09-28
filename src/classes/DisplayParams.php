@@ -140,18 +140,24 @@ class DisplayParams
             // the HAVING COUNT is necessary to make an AND search between tags
             // Note: we cannot use a placeholder for the IN of the tags because we need the quotes
             $Db = Db::getConnection();
-            $inPlaceholders = implode(' , ', array_map(function ($key) {
+            $inPlaceholdersArr = array_map(function ($key) {
                 return ":tag$key";
-            }, array_keys($tags)));
-            $sql = 'SELECT tags2entity.item_id FROM `tags2entity`
-                INNER JOIN (SELECT id FROM tags WHERE tags.tag IN ( ' . $inPlaceholders . ' )) tg ON tags2entity.tag_id = tg.id
-                WHERE tags2entity.item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tags2entity.tag_id) = :count';
+            }, array_keys($tags));
+            $sql = sprintf(
+                'SELECT tags2%1$s.%1$s_id
+                    FROM tags2%1$s
+                    INNER JOIN (SELECT id FROM tags WHERE tags.tag IN (%2$s)) tg
+                        ON tags2%1$s.tag_id = tg.id
+                    GROUP BY item_id
+                    HAVING COUNT(DISTINCT tags2entity.tag_id) = :count',
+                $this->entityType->value,
+                implode(', ', $inPlaceholdersArr),
+            );
             $req = $Db->prepare($sql);
             // bind the tags in IN clause
             foreach ($tags as $key => $tag) {
                 $req->bindValue(":tag$key", $tag, PDO::PARAM_STR);
             }
-            $req->bindValue(':type', $this->entityType->value, PDO::PARAM_STR);
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));

@@ -410,24 +410,21 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
 }
 
 export function showContentPlainText(el: HTMLElement): void {
-  document.getElementById('plainTextAreaLabel').textContent = el.dataset.name;
+  // set the title for modal window
+  document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
+  // get the file content
   fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
     return response.text();
   }).then(fileContent => {
-    (document.getElementById('plainTextArea') as HTMLTextAreaElement).value = fileContent;
-    const mdPreviewWrapper = document.getElementById('mdPreviewWrapper') as HTMLDivElement;
-    mdPreviewWrapper.classList.add('d-none');
-    const modalDialog = (document.getElementById('plainTextModal') as HTMLDivElement).firstElementChild;
-    modalDialog.classList.remove('modal-lg');
+    const plainTextContentDiv = document.getElementById('plainTextContentDiv');
     if (el.dataset.ext === 'md') {
-      mdPreviewWrapper.classList.remove('d-none');
-      modalDialog.classList.add('modal-lg');
-      const mdPreview = document.getElementById('mdPreview') as HTMLDivElement;
-      mdPreview.innerHTML = marked(fileContent);
+      plainTextContentDiv.innerHTML = marked(fileContent);
+    } else {
+      plainTextContentDiv.innerText = fileContent;
     }
-    $('#plainTextModal').modal();
   });
 }
+
 // used in edit.ts to build search patterns from strings that contain special characters
 // taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
 export function escapeRegExp(string: string): string {

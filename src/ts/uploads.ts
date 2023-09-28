@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
+import { displayMolFiles, display3DMolecules, getEntity, reloadElement, showContentPlainText } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -97,6 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
         reloadElement('filesdiv');
       });
+
+    // SHOW CONTENT OF PLAIN TEXT FILES
+    } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
+      showContentPlainText(el);
 
     // TOGGLE SHOW ARCHIVED
     } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {

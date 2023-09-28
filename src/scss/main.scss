@@ -740,14 +740,6 @@ button:disabled {
     margin-bottom: 15px;
 }
 
-#plainTextArea,
-#mdPreview {
-    height: calc(100vh - 300px);
-    max-height: calc(100vh - 300px);
-    overflow-y: auto;
-    resize: none;
-}
-
 /* EXPERIMENT STEPS */
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */

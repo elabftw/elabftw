@@ -8,7 +8,7 @@
 import i18next from 'i18next';
 import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
-import { getEntity, updateCatStat, relativeMoment, reloadElement, showContentPlainText } from './misc';
+import { getEntity, updateCatStat, relativeMoment, reloadElement } from './misc';
 import { EntityType, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,11 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    // SHOW CONTENT OF PLAIN TEXT FILES
-    if (el.matches('[data-action="show-plain-text"]')) {
-      showContentPlainText(el);
     // CREATE COMMENT
-    } else if (el.matches('[data-action="create-comment"]')) {
+    if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
       ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
 

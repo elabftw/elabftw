@@ -9,7 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Models\Config;
 use function implode;
 use function is_array;
 
@@ -45,68 +48,76 @@ class TwigFilters
             $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times;</a>";
         }
 
-        $begin = "<div class='alert alert-" . $alert .
-            "'><i class='fas " . $icon .
-            "'></i>";
-        $end = '</div>';
-
-        return $begin . $crossLink . ' ' . $message . $end;
-    }
-
-    /**
-     * Display the stars rating for an entity
-     *
-     * @param int $rating The number of stars to display
-     * @return string HTML of the stars
-     */
-    public static function showStars(int $rating): string
-    {
-        $green = "<i style='color:#54aa08' class='fas fa-star' title='☻'></i>";
-        $gray = "<i style='color:gray' class='fas fa-star' title='☺'></i>";
-
-        return str_repeat($green, $rating) . str_repeat($gray, 5 - $rating);
+        // "status" role: see WCAG2.1 4.1.3
+        return sprintf("<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
     }
 
     /**
      * Process the metadata json string into html
+     * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates
      */
     public static function formatMetadata(string $json): string
     {
         $final = '';
-        $extraFields = (new Metadata($json))->getExtraFields();
-        if ($extraFields === null) {
-            return $final;
+        $Metadata = new Metadata($json);
+        $extraFields = $Metadata->getExtraFields();
+        if (empty($extraFields)) {
+            return $Metadata->getRaw();
         }
-        // sort the elements based on the position attribute. If not set, will be at the end.
-        uasort($extraFields, function (array $a, array $b): int {
-            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
-        });
-        foreach ($extraFields as $key => $properties) {
-            $description = isset($properties[MetadataEnum::Description->value])
-                ? sprintf('<h5>%s</h5>', $properties[MetadataEnum::Description->value])
-                : '';
-            $value = $properties[MetadataEnum::Value->value];
-            // checkbox is a special case
-            if ($properties[MetadataEnum::Type->value] === 'checkbox') {
-                $checked = $properties[MetadataEnum::Value->value] === 'on' ? 'checked' : '';
-                $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
-            }
-            // url is another special case
-            if ($properties[MetadataEnum::Type->value] === 'url') {
+
+        $grouped = $Metadata->getGroupedExtraFields();
+
+        foreach ($grouped as $group) {
+            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", $group['name']);
+            $final .= '<div>';
+            foreach ($group['extra_fields'] as $field) {
                 $newTab = 'target="_blank" rel="noopener"';
-                if (($properties['open_in_current_tab'] ?? false) === true) {
+                if (($field['open_in_current_tab'] ?? false) === true) {
                     $newTab = '';
                 }
-                $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
-            }
+                $description = isset($field[MetadataEnum::Description->value])
+                    ? sprintf('<span class="smallgray">%s</span>', $field[MetadataEnum::Description->value])
+                    : '';
+                $value = $field[MetadataEnum::Value->value];
+                // checkbox is a special case
+                if ($field[MetadataEnum::Type->value] === 'checkbox') {
+                    $checked = $field[MetadataEnum::Value->value] === 'on' ? 'checked="checked"' : '';
+                    $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
+                }
+                // url is another special case
+                if ($field[MetadataEnum::Type->value] === 'url') {
+                    $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+                }
+                // exp/items is another special case
+                if (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
+                    $id = (int) $field[MetadataEnum::Value->value];
+                    $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
+                    $value = sprintf("<a href='/%s.php?mode=view&id=%d' %s>%s</a>", $page, $id, $newTab, $value);
+                }
 
-            // multi select will be an array
-            if (is_array($value)) {
-                $value = implode(', ', $value);
-            }
+                // multi select will be an array
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
 
-            $final .= sprintf('<h4 class="m-0">%s</h4>%s<p>%s</p>', $key, $description, $value);
+                $unit = '';
+                if (!empty($field['unit'])) {
+                    // a space before the unit so if there are no units we don't have a trailing space
+                    $unit = ' ' . $field['unit'];
+                }
+
+                $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>', $field['name'], $description, $value, $unit);
+            }
+            $final .= '</div>';
         }
-        return $final;
+        return $final . $Metadata->getAnyContent();
+    }
+
+    public static function decrypt(?string $encrypted): string
+    {
+        if (empty($encrypted)) {
+            return '';
+        }
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
     }
 }

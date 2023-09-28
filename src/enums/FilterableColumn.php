@@ -11,9 +11,10 @@ namespace Elabftw\Enums;
 
 enum FilterableColumn: string
 {
-    case Bookable = 'categoryt.bookable';
+    case Bookable = 'entity.is_bookable';
     case Canread = 'entity.canread';
     case Category = 'categoryt.id';
     case Owner = 'entity.userid';
     case Related = 'linkst.link_id';
+    case Status = 'statust.id';
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -20,7 +19,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 // default location to redirect to
-$location = '../../login.php';
+$location = '/login.php';
 
 try {
     // check for disabled local register
@@ -63,16 +62,16 @@ try {
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-    $location = '../../register.php';
+    $location = '/register.php';
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-    $location = '../../register.php';
+    $location = '/register.php';
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
     $App->Session->getFlashBag()->add('ko', Tools::error());
-    $location = '../../register.php';
+    $location = '/register.php';
 } finally {
     $Response = new RedirectResponse($location);
     $Response->send();

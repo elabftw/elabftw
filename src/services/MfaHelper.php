@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,13 +7,13 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
+use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
 use RuntimeException;
 
@@ -31,9 +31,6 @@ class MfaHelper
     /** @var int PERIOD number of seconds a code will be valid */
     private const PERIOD = 30;
 
-    /** @var string ALGO algorithm used */
-    private const ALGO = 'sha1';
-
     /** @var int DISCREPANCY discrepancy parameter to verify the code */
     private const DISCREPANCY = 2;
 
@@ -50,7 +47,7 @@ class MfaHelper
             self::ISSUER,
             self::DIGITS,
             self::PERIOD,
-            self::ALGO,
+            Algorithm::Sha1,
             new MpdfQrProvider(),
         );
         $this->Db = Db::getConnection();

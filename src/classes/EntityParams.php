@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
@@ -24,9 +23,10 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             // MySQL with throw an error if this param is incorrect
             'date', 'metadata' => $this->getUnfilteredContent(),
             'body', 'bodyappend' => $this->getBody(),
-            'canread', 'canwrite' => Check::Visibility($this->content),
+            'canread', 'canwrite', 'canbook' => Check::Visibility($this->content),
             'color' => Check::color($this->content),
-            'category', 'bookable', 'content_type', 'rating', 'userid', 'state' => $this->getInt(),
+            'is_bookable', 'book_can_overlap', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'rating', 'userid', 'state' => $this->getInt(),
+            'status', 'category' => $this->getIntOrNull(),
             default => throw new ImproperActionException('Invalid update target.'),
         };
     }
@@ -37,11 +37,5 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             return 'body';
         }
         return parent::getColumn();
-    }
-
-    public function getState(): int
-    {
-        $state = State::tryFrom((int) $this->content) ?? State::Normal;
-        return $state->value;
     }
 }

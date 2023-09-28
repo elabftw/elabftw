@@ -13,9 +13,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\CategoryTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -26,21 +24,20 @@ use PDO;
 class ItemsTypes extends AbstractTemplateEntity
 {
     use SortableTrait;
-    use CategoryTrait;
 
     public function __construct(public Users $Users, ?int $id = null)
     {
         $this->type = EntityType::ItemsTypes->value;
+        $this->entityType = EntityType::ItemsTypes;
         $this->Db = Db::getConnection();
         $this->ItemsLinks = new ItemsLinks($this);
-        $this->countableTable = 'items';
         $this->Steps = new Steps($this);
         $this->setId($id);
     }
 
     public function getPage(): string
     {
-        return 'admin.php?tab=5&templateid=';
+        return 'admin.php?tab=4&templateid=';
     }
 
     public function create(string $title): int
@@ -58,19 +55,17 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->Db->lastInsertId();
     }
 
+    public function getDefault(): ?int
+    {
+        return null;
+    }
+
     /**
      * SQL to get all items type
      */
     public function readAll(): array
     {
-        $sql = 'SELECT items_types.id AS category_id,
-            items_types.title AS category,
-            items_types.color,
-            items_types.bookable,
-            items_types.body,
-            items_types.ordering,
-            items_types.canread,
-            items_types.canwrite
+        $sql = 'SELECT id, title, color, body, ordering, canread, canwrite
             FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -82,7 +77,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, team, color, bookable, title, body, canread, canwrite, metadata, state
+        $sql = 'SELECT id, team, color, title, status, body, canread, canwrite, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -101,17 +96,5 @@ class ItemsTypes extends AbstractTemplateEntity
     public function duplicate(): int
     {
         return 1;
-    }
-
-    /**
-     * Destroy an item type
-     */
-    public function destroy(): bool
-    {
-        // don't allow deletion of an item type with items
-        if ($this->countEntities() > 0) {
-            throw new ImproperActionException(_('There are still items associated with this type. Make sure to remove them completely with bin/console prune:items command so even deleted ones are removed.'));
-        }
-        return parent::destroy();
     }
 }

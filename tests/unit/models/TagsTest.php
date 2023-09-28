@@ -26,7 +26,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/experiments/', $this->Experiments->Tags->getPage());
+        $this->assertEquals('api/v2/experiments/1/tags/', $this->Experiments->Tags->getPage());
     }
 
     public function testCreate(): void
@@ -55,20 +55,9 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->Tags->readAll());
         $this->Experiments->Tags->setId(1);
         $this->assertIsArray($this->Experiments->Tags->readOne());
-        /* TODO test with query
-        $res = $this->Experiments->Tags->readAll('my');
-        $this->assertEquals('my tag', $res[0]['tag']);
-         */
-
         $Items = new Items($this->Users, 1);
         $Tags = new Tags($Items);
         $this->assertIsArray($Tags->readAll());
-    }
-
-    public function testGetIdFromTags(): void
-    {
-        $this->assertContains(1, $this->Experiments->Tags->getIdFromTags(array('my tag')));
-        $this->assertEmpty($this->Experiments->Tags->getIdFromTags(array('oOoOoOoOoO')));
     }
 
     public function testCopyTags(): void

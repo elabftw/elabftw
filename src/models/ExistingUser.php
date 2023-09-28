@@ -9,27 +9,19 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ResourceNotFoundException;
-
 /**
- * A user that exists in the db, so we have a userid but not necessarily a team
+ * A user that exists in the db, so we have a userid but not necessarily a team, and they might not be validated
  */
 class ExistingUser extends Users
 {
     public static function fromEmail(string $email): Users
     {
-        $Db = Db::getConnection();
-        $sql = 'SELECT userid FROM users
-            WHERE email = :email AND archived = 0 AND validated = 1 LIMIT 1';
-        $req = $Db->prepare($sql);
-        $req->bindParam(':email', $email);
-        $Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
-            throw new ResourceNotFoundException();
-        }
-        return new self((int) $res);
+        return self::search('email', $email);
+    }
+
+    public static function fromOrgid(string $orgid): Users
+    {
+        return self::search('orgid', $orgid);
     }
 
     public static function fromScratch(

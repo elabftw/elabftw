@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use function array_column;
+use function array_keys;
 use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
@@ -19,7 +20,7 @@ use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
@@ -30,7 +31,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
@@ -71,6 +71,9 @@ abstract class AbstractEntity implements RestInterface
     // string representation of EntityType
     public string $type = '';
 
+    // replaces $type string above
+    public EntityType $entityType;
+
     // use that to ignore the canOrExplode calls
     public bool $bypassReadPermission = false;
 
@@ -90,7 +93,7 @@ abstract class AbstractEntity implements RestInterface
     // inserted in sql
     public array $extendedValues = array();
 
-    protected TeamGroups $TeamGroups;
+    public TeamGroups $TeamGroups;
 
     // inserted in sql
     private string $extendedFilter = '';
@@ -128,13 +131,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Only Experiments will currently implement this correctly
-     */
-    public function updateTimestamp(string $responseTime): void
-    {
-    }
-
-    /**
      * Count the number of timestamped experiments during past month (sliding window)
      */
     public function getTimestampLastMonth(): int
@@ -146,18 +142,29 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
+     * Simply update the modified_at column of the entity
+     */
+    public function touch(): bool
+    {
+        $sql = sprintf('UPDATE %s SET modified_at = NOW() WHERE id = :id', $this->entityType->value);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
      * Lock/unlock
      */
     public function toggleLock(): array
     {
         $this->getPermissions();
-        if (!$this->Users->userData['is_admin'] && $this->entityData['userid'] !== $this->Users->userData['userid']) {
+        if (!$this->Users->isAdmin && $this->entityData['userid'] !== $this->Users->userData['userid']) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
         $locked = $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && !$this->Users->userData['is_admin'] && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if ($locked === 1 && !$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -187,7 +194,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readAll(): array
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals()), true);
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
     }
 
     /**
@@ -213,19 +220,22 @@ abstract class AbstractEntity implements RestInterface
      *          Here be dragons!
      *  @psalm-suppress UnusedForeachValue
      */
-    public function readShow(DisplayParams $displayParams, bool $extended = false): array
+    public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->query) or !empty($displayParams->extendedQuery)) {
+        if (!empty($displayParams->query) || !empty($displayParams->extendedQuery)) {
             $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
-        $teamgroupsOfUser = array_column($this->TeamGroups->readGroupsFromUser(), 'id');
 
-        // first where is the state
-        $sql .= ' WHERE entity.state = :state';
+        // first WHERE is the state, possibly including archived
+        $stateSql = 'entity.state = :normal';
+        if ($displayParams->includeArchived) {
+            $stateSql = '(entity.state = :normal OR entity.state = :archived)';
+        }
+        $sql .= ' WHERE ' . $stateSql;
 
         // add externally added filters
         $sql .= $this->filterSql;
@@ -233,52 +243,8 @@ abstract class AbstractEntity implements RestInterface
         // add filters like related, owner or category
         $sql .= $displayParams->filterSql;
 
-        // metadata filter (this will just be empty if we're not doing anything metadata related)
-        $sql .= implode(' ', $displayParams->metadataFilter);
-
-        // teamFilter is to restrict to the team for items only
-        // as they have a team column
-        $teamFilter = '';
-        if ($this instanceof Items) {
-            $teamFilter = ' AND users2teams.teams_id = entity.team';
-        }
-        // for anon add an AND base = full (public)
-        if ($this->isAnon) {
-            $sql .= sprintf(" AND JSON_EXTRACT(entity.canread, '$.base') = %s ", BasePermissions::Full->value);
-        }
-        // add pub/org/team filter
-        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
-        if ($this->Users->userData['show_public']) {
-            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d) OR ", BasePermissions::Full->value, BasePermissions::Organization->value);
-        }
-        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.canread, '$.base') = %d ", $sqlPublicOrg, BasePermissions::MyTeams->value, $teamFilter, BasePermissions::User->value);
-        // admin will see the experiments with visibility user for user of their team
-        if ($this->Users->userData['is_admin']) {
-            $sql .= 'AND entity.userid = users2teams.users_id)';
-        } else {
-            $sql .= 'AND entity.userid = :userid)';
-        }
-        // add entities in useronly visibility only if we own them
-        $sql .= sprintf(" OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)", BasePermissions::UserOnly->value);
-        // look for teams
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
-            foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teams"))', $team);
-            }
-        }
-        // look for teamgroups
-        // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
-        // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
-            }
-        }
-        // look for our userid in users part of the json
-        $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
-        $sql .= ')';
+        // add the json permissions
+        $sql .= $EntitySqlBuilder->getCanFilter($can);
 
         $sqlArr = array(
             $this->extendedFilter,
@@ -300,10 +266,12 @@ abstract class AbstractEntity implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
+        if ($displayParams->includeArchived) {
+            $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        }
         if ($displayParams->hasMetadataSearch) {
-            foreach ($displayParams->metadataKey as $i => $v) {
-                $req->bindParam(sprintf(':metadata_key_%d', $i), $displayParams->metadataKey[$i]);
+            foreach (array_keys($displayParams->metadataKey) as $i) {
                 $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
                 $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
             }
@@ -323,12 +291,14 @@ abstract class AbstractEntity implements RestInterface
     public function getTags(array $items): array
     {
         $sqlid = 'tags2entity.item_id IN (' . implode(',', array_column($items, 'id')) . ')';
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag
+        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag, (tags_id IS NOT NULL) AS is_favorite
             FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
             WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $allTags = array();
         foreach ($req->fetchAll() as $tags) {
@@ -345,6 +315,18 @@ abstract class AbstractEntity implements RestInterface
         }
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
+            Action::Archive => (
+                function () {
+                    $targetState = State::Normal;
+                    if ($this->entityData['state'] === $targetState->value) {
+                        $targetState = State::Archived;
+                        if ($this->entityData['locked'] === 0) {
+                            $this->toggleLock();
+                        }
+                    }
+                    $this->update(new EntityParams('state', (string) $targetState->value));
+                }
+            )(),
             Action::Lock => $this->toggleLock(),
             Action::Pin => $this->Pins->togglePin(),
             Action::UpdateMetadataField => (
@@ -497,9 +479,11 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromCategory(int $category): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
         $req->execute();
 
@@ -508,8 +492,10 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromUser(int $userid): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid';
+        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid);
         $req->execute();
 
@@ -518,6 +504,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function destroy(): bool
     {
+        $this->canOrExplode('write');
         if ($this instanceof AbstractConcreteEntity) {
             // mark all uploads related to that entity as deleted
             $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
@@ -559,7 +546,11 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
         // add a share link
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d&access_key=%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $this->entityData['access_key'] ?? '');
+        $ak = '';
+        if (!empty($this->entityData['access_key'])) {
+            $ak = sprintf('&access_key=%s', $this->entityData['access_key']);
+        }
+        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $ak);
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
@@ -597,7 +588,7 @@ abstract class AbstractEntity implements RestInterface
                 (int) $Config->configArr['min_delta_revisions'],
                 (int) $Config->configArr['min_days_revisions'],
             );
-            $Revisions->create((string) $content);
+            $Revisions->postAction(Action::Create, array('body' => (string) $content));
         }
 
         $Changelog = new Changelog($this);
@@ -665,11 +656,11 @@ abstract class AbstractEntity implements RestInterface
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         if ($rw === 'canread') {
-            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->isAdmin) {
                 throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
             }
         } else {
-            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->userData['is_admin']) {
+            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->isAdmin) {
                 throw new ImproperActionException(_('Write permissions enforced by admin. Aborting change.'));
             }
         }

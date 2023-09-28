@@ -13,7 +13,6 @@ use Elabftw\Exceptions\ImproperActionException;
 
 final class TeamGroupParams extends ContentParams
 {
-    // TODO remove this as it's same as parent?
     public function getContent(): string|int
     {
         return match ($this->target) {

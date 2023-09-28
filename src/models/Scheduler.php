@@ -11,12 +11,12 @@ namespace Elabftw\Models;
 
 use DateTime;
 use DateTimeImmutable;
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -73,13 +73,17 @@ class Scheduler implements RestInterface
         if ($this->Items->id === null) {
             throw new ImproperActionException('An item id is needed.');
         }
+        if (!$this->Items->canBook()) {
+            throw new ImproperActionException(_('You do not have the permission to book this entry.'));
+        }
         $title = Filter::title($reqBody['title'] ?? _('Untitled'));
 
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);
+        $this->checkConstraints($start, $end);
 
         // users won't be able to create an entry in the past
-        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ISO8601, $start));
+        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ATOM, $start));
 
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
@@ -125,9 +129,10 @@ class Scheduler implements RestInterface
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
+            TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
             CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
-            items.title AS item_title,
+            items.title AS item_title, items.book_is_cancellable,
             CONCAT('#', items_types.color) AS color,
             team_events.experiment,
             items.category AS items_category,
@@ -177,21 +182,33 @@ class Scheduler implements RestInterface
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
+        $event = $this->readOne();
+        if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
+            throw new ImproperActionException(_('Event cancellation is not permitted.'));
+        }
+        if ($event['book_cancel_minutes'] !== 0 && !$this->Items->Users->isAdmin) {
+            $now = new DateTimeImmutable();
+            $eventStart = new DateTimeImmutable($event['start']);
+            $interval = $now->diff($eventStart);
+            $totalMinutes = ($interval->h * 60) + $interval->i;
+            if ($totalMinutes < $event['book_cancel_minutes']) {
+                throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
+            }
+        }
         $sql = 'DELETE FROM team_events WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         // send a notification to all team admins
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
-        $Notifications = new Notifications($this->Items->Users);
-        $Notifications->createMultiUsers(
-            new CreateNotificationParams(
-                Notifications::EVENT_DELETED,
-                array('event' => $this->readOne(), 'actor' => $this->Items->Users->userData['fullname']),
-            ),
-            $TeamsHelper->getAllAdminsUserid(),
-            $this->Items->Users->userData['userid'],
-        );
+        $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
+        $admins = $TeamsHelper->getAllAdminsUserid();
+        array_map(function ($userid) use ($Notif) {
+            if ($userid === $this->Items->Users->userData['userid']) {
+                return;
+            }
+            $Notif->create($userid);
+        }, $admins);
         return $this->Db->execute($req);
     }
 
@@ -210,7 +227,7 @@ class Scheduler implements RestInterface
             CONCAT('#', items_types.color) AS color,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title,
-            items.title AS item_title
+            items.title AS item_title, items.book_is_cancellable
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
@@ -234,6 +251,8 @@ class Scheduler implements RestInterface
      */
     private function updateEpoch(string $column, string $epoch): bool
     {
+        $event = $this->readOne();
+        $this->checkConstraints($event['start'], $event['end']);
         $new = DateTimeImmutable::createFromFormat('U', $epoch);
         if ($new === false) {
             throw new ImproperActionException('Invalid date format received.');
@@ -250,7 +269,7 @@ class Scheduler implements RestInterface
 
     private function readOneEvent(): array
     {
-        $sql = 'SELECT team_events.id, team_events.team, team_events.item, team_events.start, team_events.end, team_events.title, team_events.userid, team_events.experiment, team_events.item_link,
+        $sql = 'SELECT team_events.id, team_events.team, team_events.item, team_events.start, team_events.end, team_events.title, team_events.userid, team_events.experiment, team_events.item_link, items.book_is_cancellable, items.book_cancel_minutes,
             team_events.title AS title_only,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title
@@ -262,7 +281,9 @@ class Scheduler implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $this->Db->fetch($req);
+        $event = $this->Db->fetch($req);
+        $this->Items->setId($event['item']);
+        return $event;
     }
 
     /**
@@ -273,8 +294,8 @@ class Scheduler implements RestInterface
     private function updateStart(array $delta): bool
     {
         $event = $this->readOne();
-        $oldStart = DateTime::createFromFormat(DateTime::ISO8601, $event['start']);
-        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
+        $oldStart = DateTime::createFromFormat(DateTime::ATOM, $event['start']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = substr((string) $delta['milliseconds'], 0, -3);
@@ -283,6 +304,7 @@ class Scheduler implements RestInterface
         $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
+        $this->checkConstraints($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -301,13 +323,14 @@ class Scheduler implements RestInterface
     private function updateEnd(array $delta): bool
     {
         $event = $this->readOne();
-        $oldEnd = DateTime::createFromFormat(DateTime::ISO8601, $event['end']);
+        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = substr((string) $delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
+        $this->checkConstraints($event['start'], $newEnd->format(DateTime::ATOM));
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -341,6 +364,70 @@ class Scheduler implements RestInterface
         return $this->Db->execute($req);
     }
 
+    private function checkSlotTime(string $start, string $end): void
+    {
+        if ($this->Items->entityData['book_max_minutes'] === 0) {
+            return;
+        }
+        $start = new DateTimeImmutable($start);
+        $end = new DateTimeImmutable($end);
+        $interval = $start->diff($end);
+        $totalMinutes = ($interval->h * 60) + $interval->i;
+        if ($totalMinutes > $this->Items->entityData['book_max_minutes']) {
+            throw new ImproperActionException(sprintf(_('Slot time is limited to %d minutes.'), $this->Items->entityData['book_max_minutes']));
+        }
+    }
+
+    private function checkMaxSlots(): void
+    {
+        if ($this->Items->entityData['book_max_slots'] === 0) {
+            return;
+        }
+        $sql = 'SELECT count(id) FROM team_events WHERE start > NOW() AND item = :item AND userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $count = $req->fetchColumn();
+        if ($count >= $this->Items->entityData['book_max_slots']) {
+            throw new ImproperActionException(
+                sprintf(_('You cannot book any more slots. Maximum of %d reached.'), $this->Items->entityData['book_max_slots'])
+            );
+        }
+    }
+
+    private function checkConstraints(string $start, string $end): void
+    {
+        $this->checkMaxSlots();
+        $this->checkOverlap($start, $end);
+        $this->checkSlotTime($start, $end);
+    }
+
+    /**
+     * Look if another slot is present for the same item at the same time and throw exception if yes
+     */
+    private function checkOverlap(string $start, string $end): void
+    {
+        if ($this->Items->entityData['book_can_overlap'] === 1) {
+            return;
+        }
+        $sql = 'SELECT id FROM team_events WHERE :start < end AND :end > start AND item = :item';
+        if ($this->id !== null) {
+            $sql .= ' AND id != :id';
+        }
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':start', $start, PDO::PARAM_STR);
+        $req->bindParam(':end', $end, PDO::PARAM_STR);
+        $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
+        if ($this->id !== null) {
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+        if (!empty($req->fetchAll())) {
+            throw new ImproperActionException(_('Overlapping booking slots is not permitted.'));
+        }
+    }
+
     /**
      * Check that the date is in the future
      * Unlike Admins, Users can't create/modify something in the past
@@ -351,7 +438,7 @@ class Scheduler implements RestInterface
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-        if ($this->Items->Users->userData['is_admin']) {
+        if ($this->Items->Users->isAdmin) {
             return;
         }
         $now = new DateTime();
@@ -361,12 +448,12 @@ class Scheduler implements RestInterface
     }
 
     /**
-     * Date can be Y-m-d or ISO::8601
+     * Date can be Y-m-d or ISO::ATOM
      * Make sure we have the time, too
      */
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
-        if (DateTime::createFromFormat(DateTime::ISO8601, $date) === false) {
+        if (DateTime::createFromFormat(DateTime::ATOM, $date) === false) {
             $dateOnly = DateTime::createFromFormat('Y-m-d', $date);
             if ($dateOnly === false) {
                 throw new ImproperActionException('Could not understand date format!');
@@ -376,7 +463,7 @@ class Scheduler implements RestInterface
             if ($rmDay) {
                 $dateOnly->modify('-3min');
             }
-            return $dateOnly->format(DateTime::ISO8601);
+            return $dateOnly->format(DateTime::ATOM);
         }
         return $date;
     }
@@ -395,7 +482,7 @@ class Scheduler implements RestInterface
 
         // if it's not, we need to be admin in the same team as the event/user
         $TeamsHelper = new TeamsHelper($event['team']);
-        return $TeamsHelper->isUserInTeam($this->Items->Users->userData['userid']) && $this->Items->Users->userData['usergroup'] <= 2;
+        return $TeamsHelper->isAdminInTeam($this->Items->Users->userData['userid']);
     }
 
     private function canWriteOrExplode(): void

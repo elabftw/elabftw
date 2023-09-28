@@ -10,8 +10,8 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\UserParams;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
@@ -19,9 +19,6 @@ class UserCreator
 {
     public function __construct(private Users $requester, private array $reqBody)
     {
-        if ($this->requester->userData['is_admin'] !== 1) {
-            throw new IllegalActionException('User creation is limited to Admins and Sysadmins only.');
-        }
     }
 
     /**
@@ -36,13 +33,17 @@ class UserCreator
         if ($this->requester->userData['is_sysadmin'] === 0) {
             $Config = Config::getConfig();
             // check for instance setting allowing/disallowing creation of users by admins
-            if ($Config->configArr['admins_create_users'] === '0') {
+            if ($Config->configArr['admins_create_users'] === '0' && $Config->configArr['admins_create_users_remote_dir'] === '0') {
                 throw new IllegalActionException('Admin tried to create user but user creation is disabled for admins.');
             }
             // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
         }
         $validUntil = $this->reqBody['valid_until'] ?? null;
+        $orgid = null;
+        if (isset($this->reqBody['orgid'])) {
+            $orgid = (new UserParams('orgid', $this->reqBody['orgid']))->getContent();
+        }
         return (new Users())->createOne(
             (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
@@ -50,24 +51,13 @@ class UserCreator
             (new UserParams('lastname', $this->reqBody['lastname']))->getContent(),
             // password is never set by admin/sysadmin
             '',
-            $this->checkUsergroup(),
+            Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? 4)))->value,
             // automatically validate user
             true,
             // don't alert admin
             false,
             $validUntil,
+            $orgid,
         );
-    }
-
-    /**
-     * Check to prevent a non sysadmin to create a sysadmin user
-     */
-    private function checkUsergroup(): int
-    {
-        $usergroup = Check::usergroup((int) ($this->reqBody['usergroup'] ?? 4));
-        if ($usergroup === 1 && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
-        }
-        return $usergroup;
     }
 }

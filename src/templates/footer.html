@@ -1,58 +1,46 @@
 <footer>
   <p class='footer-left'>
-    <a class='elab-tooltip-top' style='color:#343434' href='https://twitter.com/elabftw'>
-      <span>{{ 'Follow eLabFTW on Twitter!'|trans }}</span>
-        <i title='Twitter' class='fab fa-twitter fa-lg'></i>
+    <a title='{{ 'Follow eLabFTW on Twitter!'|trans }}' data-action='navigate-twitter' style='color:#343434' href='#'>
+      <i title='Twitter' class='fab fa-twitter fa-lg'></i>
     </a>
 
-    <a class='elab-tooltip-top' style='color:#343434' href='https://github.com/elabftw/elabftw'>
-      <span>{{ 'Code repository on GitHub'|trans }}</span>
-        <i title='GitHub' class='fab fa-github fa-lg'></i>
+    <a title='{{ 'Code repository on GitHub'|trans }}' style='color:#343434' href='https://github.com/elabftw/elabftw'>
+      <i title='GitHub' class='fab fa-github fa-lg'></i>
     </a>
 
-    <a class='elab-tooltip-top' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
-      <span>{{ 'Join the discussion on Gitter'|trans }}</span>
-        <i title='Gitter' class='fas fa-comment-dots fa-lg'></i>
+    <a title='{{ 'Join the discussion on Gitter'|trans }}' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
+      <i title='Gitter' class='fas fa-comment-dots fa-lg'></i>
     </a>
 
-    <a class='elab-tooltip-top' data-action='report-bug' style='color:#343434' href='#'>
-      <span>{{ 'Submit feedback'|trans }}</span>
-        <i title='Report bug' class='fas fa-bug fa-lg'></i>
+    <a title='{{ 'Submit feedback'|trans }}' data-action='report-bug' style='color:#343434' href='#'>
+      <i title='Report bug' class='fas fa-bug fa-lg'></i>
     </a>
 
     <span>
-      {% if App.Session.has('is_auth') and App.Session.get('is_sysadmin') %}
-        <a href='sysconfig.php'>{{ 'Sysadmin panel'|trans }}</a>
-      {% endif %}
-
-      {% if App.Session.has('is_auth') and App.Session.get('is_admin') %}
-      {% set unvalidatedUsersCount = App.Users.readAllFromTeam()|filter(u => u.validated == 0)|length %}
-        <a href='admin.php'>{{ 'Admin panel'|trans }}
-
-          {% if unvalidatedUsersCount > 0 %}
-            <span class='badge badge-dark p-1' title='{{ 'Unconfirmed users'|trans }}'>{{ unvalidatedUsersCount }}</span>
-            <span class='sr-only'>{{ 'Unconfirmed users'|trans }}</span>
-          {% endif %}
-        </a>
-      {% endif %}
-
-      {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
-        <a href='ucp.php'>{{ 'User panel'|trans }}</a>
-      {% endif %}
+      {%- if App.Config.configArr.privacy_policy -%}
+        <a href='#' data-policy='privacy' data-action='show-policy'>{{ App.Config.configArr.privacy_policy_name }}</a>
+      {%- endif -%}
+      {%- if App.Config.configArr.terms_of_service -%}
+        <a href='#' data-policy='tos' data-action='show-policy'>{{ App.Config.configArr.terms_of_service_name }}</a>
+      {%- endif -%}
+      {%- if App.Config.configArr.a11y_statement -%}
+        <a href='#' data-policy='a11y' data-action='show-policy'>{{ App.Config.configArr.a11y_statement_name }}</a>
+      {%- endif -%}
+      {%- if App.Config.configArr.legal_notice -%}
+        <a href='#' data-policy='legal' data-action='show-policy'>{{ App.Config.configArr.legal_notice_name }}</a>
+      {%- endif -%}
     </span>
   </p>
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {{ App.Session.has('is_auth') ? constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}<br>
-    {% if App.Config.configArr.privacy_policy %}
-      <a href='#' data-action='show-privacy-policy'>{{ 'Privacy policy'|trans }}</a><br>
-    {% endif %}
-        {{ 'Page generated in'|trans }} {{ generationTime() }} {{ 'seconds'|trans }}
+    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
+    Made with ♥ by <a href='https://www.deltablot.com'>Deltablot</a>
     {% if App.Config.configArr.debug %}
-        ({{ numberOfQueries() }} SQL)
-        <br>{{ 'Memory usage:'|trans }}
-        {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
+      <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
+      ({{ numberOfQueries() }} SQL)
+      <br>{{ 'Memory usage:'|trans }}
+      {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
     {% endif %}
   </p>
 </footer>
@@ -64,6 +52,12 @@
   data-lang='{{ App.getLang }}'
   data-jslang='{{ App.getJsLang }}'
   data-isodate='{{ App.Session.has('is_auth') ? App.Users.userData.use_isodate : '0' }}'
+  data-sc-search='{{ App.Users.userData.sc_search|default('s') }}'
+  data-sc-todolist='{{ App.Users.userData.sc_todo|default('t') }}'
+  data-sc-create='{{ App.Users.userData.sc_create|default('c') }}'
+  data-sc-edit='{{ App.Users.userData.sc_edit|default('e') }}'
+  data-sc-favorite='{{ App.Users.userData.sc_favorite|default('f') }}'
+  data-sc-disabled='{{ App.Users.userData.disable_shortcuts|default('0') }}'
   ></div>
 
 {% if App.Session.has('is_auth') %}
@@ -71,17 +65,17 @@
   <div id='is-auth'></div>
 {% endif %}
 
-<!-- Modal for privacy policy -->
-<div class='modal fade' id='privacyModal' tabindex='-1' role='dialog' aria-labelledby='privacyModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+<!-- Modal for policies -->
+<div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='privacyModalLabel'>{{ 'Privacy policy'|trans }}</h5>
+        <h5 class='modal-title' id='policiesModalLabel'></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' id='privacyModalBody'>
+      <div class='modal-body' id='policiesModalBody'>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -89,7 +83,7 @@
     </div>
   </div>
 </div>
-<!-- end privacy policy modal -->
+<!-- end policies policy modal -->
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

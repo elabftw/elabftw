@@ -13,7 +13,7 @@
   <div class='lds-dual-ring'></div>
 </div>
 
-<!-- Modal for event click -->
+{# Modal for event click #}
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
@@ -34,63 +34,83 @@
         </div>
 
         <!-- BIND EXPERIMENT -->
-        <div id='eventBoundExp'></div>
-        <button data-action='scheduler-rm-bind' data-type='experiment' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
+          <div id='eventBoundExp'></div>
+          <button data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
             <div id='binddivexp' class='input-group mb-3'>
                 <div class='input-group-prepend'>
                     <span class='input-group-text'>{{ 'Search'|trans }}</span>
                 </div>
-                <input type='text' id='bindexpinput' class='form-control' />
+                <input type='text' id='bindexpinput' class='form-control bindInput' />
                 <div class='input-group-append'>
                   <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
                 </div>
             </div>
         </div>
         <!-- BIND ITEM -->
-        <div id='eventBoundDb'></div>
-        <button data-action='scheduler-rm-bind' data-type='item_link' aria-hidden='true' class='button btn btn-danger' type='button'>{{ 'Unbind'|trans }}</button>
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an item'|trans }}</h5>
+          <div id='eventBoundDb'></div>
+          <button data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
             <div id='binddivdb' class='input-group mb-3'>
                 <div class='input-group-prepend'>
                     <span class='input-group-text'>{{ 'Search'|trans }}</span>
                 </div>
-                <input type='text' id='binddbinput' class='form-control' />
+                <input type='text' id='binddbinput' class='form-control bindInput' />
                 <div class='input-group-append'>
                   <button class='btn btn-primary' data-input='binddbinput'  data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
                 </div>
             </div>
         </div>
 
-
-        <h5>{{ 'Delete this event'|trans }}</h5>
-        <button type='button' id='deleteEvent' class='button btn btn-danger'>{{ 'Delete'|trans }}</button>
+        {# only show the cancel block if item is cancellable or user is admin #}
+        {% if bookableItemData.book_is_cancellable == 1 or App.Users.isAdmin %}
+          <div>
+            <h5>{{ 'Cancel booking slot'|trans }}</h5>
+            <h6>{{ 'Add a custom message'|trans }}</h6>
+              <textarea id='cancelEventTextarea' class='form-control'></textarea>
+              <label>{{ 'Send to'|trans }}</label>
+              <div class='form-check'>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
+              </div>
+              <div class='form-check'>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+              </div>
+              {% for teamgroup in teamGroupsArr %}
+                <div class='form-check'>
+                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+                </div>
+              {% endfor %}
+              <div class='mt-2'>
+                <button type='button' data-action='cancel-event-with-message' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+                <button type='button' data-action='cancel-event' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+            </div>
+          </div>
+        {% endif %}
       </div>
       <div class='modal-footer'>
-        <button type='button' class='button btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>
     </div>
   </div>
 </div>
-
 
 <!-- TAB 1 SCHEDULER -->
 <div data-tabcontent='1' hidden>
   {% if itemsArr|length == 0 %}
     {{ 'No bookable items.'|trans|msg('warning', false) }}
   {% else %}
+  <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
   <div class='row mb-3'>
     <div class='col-md-3'>
       <!-- CATEGORY -->
-      {# Note: option color doesn't show up in firefox #}
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
-          {% for category in bookableCategoryArr %}
-            <option style='color:#{{ category.color }}' value='{{ category.category_id }}'{{ App.Request.query.get('cat') == category.category_id ? ' selected'}}>
-          {{ category.category|raw }}</option>
+          {% for category in bookableItemsTypes %}
+            <option style='color:#{{ category.color }}' value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+          {{ category.title|raw }}</option>
           {% endfor %}
         </select>
       </form>
@@ -99,91 +119,107 @@
     <div class='col-md-3'>
       <!-- ITEM LIST -->
       <form>
-        <select name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
+        <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
           {% for item in itemsArr %}
-            <option style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected'}}>
-            {{ item.category }} - {{ item.title }}</option>
+            {# data-color is used to set the background during initial drag #}
+            <option data-color='{{ item.color }}' style='color:#{{ item.color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
+            {{ item.category_title|raw }} - {{ item.title|raw }}</option>
           {% endfor %}
         </select>
       </form>
     </div>
+
+    {% if bookableItemData %}
+      <div class='col-md-3 ml-auto'>
+        <div class='input-group justify-content-end'>
+          <div class='input-group-prepend'>
+            <button class='btn btn-secondary' data-action='remove-param-reload' data-target='item'>X</button>
+          </div>
+          <a href='database.php?mode=view&id={{ bookableItemData.id }}'  class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.color }}' class='category-button rounded p-1 mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title|raw }}</a>
+        </div>
+      </div>
+    {% endif %}
   </div>
   {% endif %}
-  <div id='scheduler' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
 <!-- TAB 2 INFO -->
 <div data-tabcontent='2' hidden>
-    <div class='alert alert-success'><i class='fas fa-info-circle'></i>
-    {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-    {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
-    </div>
+  <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
+  {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  </div>
 
-<section class='box'>
-    <h5><i class='fas fa-users'></i> {{ 'Members'|trans }}</h5>
-    <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
-      <thead>
-        <tr>
-            <th>{{ 'Name'|trans }}</th>
-            <th>{{ 'Email'|trans }}</th>
-            <th>ORCID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- archived users are hidden on this page -->
-        {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
-        <tr>
-          <td>
-            <a href='experiments.php?owner={{ user.userid }}'>
-              <span>
-                {{ user.fullname|raw }}
-                {% if user.usergroup in range(1, 3) %}
-                  ({{ 'Admin'|trans }})
-                {% endif %}
-              </span>
-            </a>
-          </td>
-          <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
-          <td>{{ user.orcid }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-</section>
-
+  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
+  <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
+    <thead>
+      <tr>
+          <th>{{ 'Name'|trans }}</th>
+          <th>{{ 'Email'|trans }}</th>
+          <th>ORCID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- archived users are hidden on this page -->
+      {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
+      <tr>
+        <td>
+          <a href='experiments.php?owner={{ user.userid }}'>
+            <span>
+              {{ user.fullname|raw }}
+              {% if user.usergroup in range(1, 3) %}
+                ({{ 'Admin'|trans }})
+              {% endif %}
+            </span>
+          </a>
+        </td>
+        <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
+        <td>{{ user.orcid }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <!-- TAB 3 TEMPLATE -->
 <div data-tabcontent='3' hidden>
-  {% include 'show-templates-view.html' %}
+  <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
+  {% if App.Request.query.has('templateid') %}
+    {% include 'view-edit-template.html' %}
+  {% else %}
+    {% include 'show-templates-select.html' %}
+  {% endif %}
 </div>
 
         <!--p>{{ 'No templates from other members of the team to display!'|trans }}</p-->
 
 <!-- TAB 4 EMAIL -->
 <div data-tabcontent='4' hidden>
-<section class='box'>
-    <h5><i class='fas fa-envelope'></i> {{ 'Send an email to all team members'|trans }}</h5>
-    <form id='emailTeamForm' method="post" action="app/controllers/TeamController.php">
-        {{ App.Session.get('csrf')|csrf }}
-        <input type='hidden' name='emailTeam' />
-        <div class="form-group">
-            <label for="emailSubject">{{ 'Subject'|trans }}</label>
-            <input type='text' id='emailSubject' name='subject' class='form-control' required />
-            <label for="emailBody">{{ 'Content'|trans }}</label>
-            <textarea form='emailTeamForm' id='emailBody' name='body' class='form-control' rows='10' required></textarea>
-        </div>
-        <div class='mt-4 text-center'>
-            <button type='submit' class='button btn btn-primary'>{{ 'Send'|trans }}</button>
-        </div>
-    </form>
-
-</section>
+  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-envelope'></i> {{ 'Send an email to users'|trans }}</h3>
+  <form class='pl-3' method='post' action='app/controllers/TeamController.php'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='emailUsers' />
+    <label>{{ 'Send to'|trans }}</label>
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='target' value='team' id='targetTeam' checked> <label class='form-check-label' for='targetTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+    </div>
+    {% for teamgroup in teamGroupsArr %}
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='target' value='teamgroup_{{ teamgroup.id }}' id='targetTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+      </div>
+    {% endfor %}
+    <div class='form-group'>
+      <label for='emailSubject'>{{ 'Subject'|trans }}</label>
+      <input type='text' id='emailSubject' name='subject' class='form-control' required />
+      <label for='emailBody'>{{ 'Content'|trans }}</label>
+      <textarea id='emailBody' name='body' class='form-control' rows='10' required></textarea>
+    </div>
+    <div class='mt-4 text-center'>
+      <button type='submit' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+    </div>
+  </form>
 </div>
 
-<div id='info'
-    data-calendarlang="{{ App.getJsLang }}"
-    data-item="{{ selectedItem }}"
-    data-all="{{ allItems }}"></div>
 {% endblock body %}

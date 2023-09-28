@@ -28,7 +28,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/teamgroups/', $this->TeamGroups->getPage());
+        $this->assertEquals('api/v2/teams/1/teamgroups/', $this->TeamGroups->getPage());
     }
 
     public function testReadOne(): void

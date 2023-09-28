@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use PDO;
@@ -38,8 +39,11 @@ class UserArchiver
         if ($this->target->userData['validated'] === 0) {
             throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
         }
+        if ($this->target->userData['is_sysadmin'] === 1) {
+            throw new ImproperActionException('A sysadmin account cannot be archived.');
+        }
         // if we are archiving a user, also lock all experiments
-        return $this->lockExperiments();
+        return $this->lockAndArchiveExperiments();
     }
 
     private function unarchive(): bool
@@ -71,12 +75,13 @@ class UserArchiver
     /**
      * Lock all the experiments owned by user
      */
-    private function lockExperiments(): bool
+    private function lockAndArchiveExperiments(): bool
     {
         $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, locked_at = CURRENT_TIMESTAMP WHERE userid = :userid';
+            SET locked = :locked, lockedby = :userid, locked_at = CURRENT_TIMESTAMP, state = :archived WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
+        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

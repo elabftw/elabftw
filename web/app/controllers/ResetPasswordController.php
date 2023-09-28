@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -26,6 +25,8 @@ use function nl2br;
 use function random_int;
 use function sleep;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use function time;
@@ -36,11 +37,15 @@ $Response = new RedirectResponse('../../login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {
-    $Email = new Email($App->Config, $App->Log);
+    $Email = new Email(
+        new Mailer(Transport::fromDsn($App->Config->getDsn())),
+        $App->Log,
+        $App->Config->configArr['mail_from'],
+    );
 
     // PART 1: we receive the email from the login page/forgot password form
     if ($Request->request->has('email')) {
-        $email = (string) $Request->request->get('email');
+        $email = $Request->request->getString('email');
 
         // check email is valid. Input field is of type email so browsers should not let users send invalid email.
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -60,7 +65,7 @@ try {
         // If user is not validated, the password reset form won't work
         // this is because often users don't understand that their account needs to be
         // validated and just reset their password twenty times
-        if ($Users->userData['validated'] === '0') {
+        if ($Users->userData['validated'] === 0) {
             throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 
@@ -86,7 +91,7 @@ try {
 
         // log the IP for the sysadmin to know who requested it
         // it's also good to keep a trace of such requests
-        $App->Log->info(sprintf('Password reset was requested'), array('email' => $email));
+        $App->Log->info('Password reset was requested', array('email' => $email));
         // show the same message as if the email didn't exist in the db
         // this is done to prevent information disclosure
         throw new QuantumException(_('If the account exists, an email has been sent.'));
@@ -96,9 +101,9 @@ try {
     if ($Request->request->has('password')) {
         // verify the key received is valid
         // we get the Users object from the email encrypted in the key
-        $Users = $ResetPasswordKey->validate((string) $Request->request->get('key'));
+        $Users = $ResetPasswordKey->validate($Request->request->getString('key'));
         // Replace new password in database
-        $Users->patch(Action::Update, array('password' => $Request->request->get('password')));
+        $Users->resetPassword($Request->request->getString('password'));
         $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }

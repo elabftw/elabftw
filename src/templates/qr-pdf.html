@@ -2,7 +2,7 @@
 <html lang='en'>
   <head>
     <title>QR Codes PDF</title>
-    <style>{{ css }}</style>
+    <style>{{ css|raw }}</style>
     {{ useCjk ? '<style>td { font-family:sun-extA; }</style>' }}
   </head>
   <body {{ useCjk ? " style='font-family:sun-extA;'" }}>
@@ -15,13 +15,6 @@
     </htmlpageheader>
 
   <htmlpagefooter name='footer'>
-    {% if pdfSig %}
-      <div class='footer-block signatures'>
-        User's signature:<br><br>
-        Witness' name:<br><br>
-        Witness' signature:<br><br>
-      </div>
-    {% endif %}
     <div class='footer-block footer'>
       PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
       <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:i}</p>

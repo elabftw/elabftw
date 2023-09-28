@@ -13,30 +13,34 @@ use function count;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
+use Elabftw\Make\MakeCsv;
+use Elabftw\Make\MakeEln;
+use Elabftw\Make\MakeJson;
+use Elabftw\Make\MakeMultiPdf;
+use Elabftw\Make\MakePdf;
+use Elabftw\Make\MakeQrPdf;
+use Elabftw\Make\MakeQrPng;
+use Elabftw\Make\MakeReport;
+use Elabftw\Make\MakeSchedulerReport;
+use Elabftw\Make\MakeStreamZip;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\MakeCsv;
-use Elabftw\Services\MakeEln;
-use Elabftw\Services\MakeJson;
-use Elabftw\Services\MakeMultiPdf;
-use Elabftw\Services\MakePdf;
-use Elabftw\Services\MakeQrPdf;
-use Elabftw\Services\MakeReport;
-use Elabftw\Services\MakeSchedulerReport;
-use Elabftw\Services\MakeStreamZip;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Services\MpdfQrProvider;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipStream\Option\Archive as ArchiveOptions;
 use ZipStream\ZipStream;
 
 /**
@@ -77,16 +81,13 @@ class MakeController implements ControllerInterface
                 $this->populateIdArr();
                 return $this->makePdf();
 
-            case 'multipdf':
-                $this->populateIdArr();
-                if (count($this->idArr) === 1) {
-                    return $this->makePdf();
-                }
-                return $this->makeMultiPdf();
-
             case 'qrpdf':
                 $this->populateIdArr();
                 return $this->makeQrPdf();
+
+            case 'qrpng':
+                $this->populateIdArr();
+                return $this->makeQrPng();
 
             case 'report':
                 if (!$this->Users->userData['is_sysadmin']) {
@@ -95,7 +96,7 @@ class MakeController implements ControllerInterface
                 return $this->makeReport();
 
             case 'schedulerReport':
-                if (!$this->Users->userData['is_admin']) {
+                if (!$this->Users->isAdmin) {
                     throw new IllegalActionException('Non admin user tried to generate scheduler report.');
                 }
                 return $this->makeSchedulerReport();
@@ -120,7 +121,7 @@ class MakeController implements ControllerInterface
             $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
-            if (!$this->Users->userData['is_admin'] && $this->Request->query->getInt('owner') !== $this->Users->userData['userid']) {
+            if (!$this->Users->isAdminOf($this->Request->query->getInt('owner'))) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user
@@ -142,10 +143,7 @@ class MakeController implements ControllerInterface
 
     private function getZipStreamLib(): ZipStream
     {
-        $opt = new ArchiveOptions();
-        // crucial option for a stream output
-        $opt->setZeroHeader(true);
-        return new ZipStream(null, $opt);
+        return new ZipStream(sendHttpHeaders:false);
     }
 
     private function makeEln(): Response
@@ -160,19 +158,26 @@ class MakeController implements ControllerInterface
 
     private function makePdf(): Response
     {
-        $this->Entity->setId((int) $this->Request->query->get('id'));
-        $this->Entity->canOrExplode('read');
-        return $this->getFileResponse(new MakePdf($this->getMpdfProvider(), $this->Entity));
-    }
-
-    private function makeMultiPdf(): Response
-    {
-        return $this->getFileResponse(new MakeMultiPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        if (count($this->idArr) === 1) {
+            $this->Entity->setId((int) $this->idArr[0]);
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id)));
+        }
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
     }
 
     private function makeQrPdf(): Response
     {
         return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
+    }
+
+    private function makeQrPng(): Response
+    {
+        // only works for 1 entry
+        if (count($this->idArr) !== 1) {
+            throw new ImproperActionException('QR PNG format is only suitable for one ID.');
+        }
+        return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
     }
 
     private function makeReport(): Response
@@ -230,6 +235,7 @@ class MakeController implements ControllerInterface
             200,
             array(
                 'Content-Type' => $Maker->getContentType(),
+                'Content-Size' => $Maker->getContentSize(),
                 'Content-disposition' => 'inline; filename="' . $Maker->getFileName() . '"',
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',

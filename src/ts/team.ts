@@ -5,17 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import EntityClass from './Entity.class';
-import { EntityType } from './interfaces';
-import { Api } from './Apiv2.class';
-import { notif } from './misc';
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
 import { Malle } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
+import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
 import caLocale from '@fullcalendar/core/locales/ca';
 import deLocale from '@fullcalendar/core/locales/de';
 import enLocale from '@fullcalendar/core/locales/en-gb';
@@ -33,10 +29,15 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import EntityClass from './Entity.class';
+import { Action, EntityType } from './interfaces';
+import { Api } from './Apiv2.class';
+import { notif } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,21 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
+  // start and end inputs
+  const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+  const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {
     const offset = datetime.getTimezoneOffset() * 60 * 1000;
     return datetime.valueOf() - offset;
   }
+  const params = new URLSearchParams(document.location.search.substring(1));
 
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
-  if (info.all) {
+  if (info.all || !params.has('item')) {
     editable = false;
     selectable = false;
+    document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
   }
   // get the start parameter from url and use that as start time if it's there
-  const params = new URLSearchParams(document.location.search.substring(1));
   const start = params.get('start');
   let selectedDate = new Date().valueOf();
   if (start !== null) {
@@ -75,6 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
+  let selectedItem = '';
+  if (params.has('item') && params.get('item') !== 'all') {
+    selectedItem = params.get('item');
+  }
   // allow filtering the category of items in events
   let queryString = '?';
   if (params.get('cat')) {
@@ -94,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // all available locales
     locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
-    locale: info.calendarlang,
+    locale: calendarEl.dataset.lang,
     initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
@@ -111,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: `api/v2/events/${info.item}${queryString}`,
+        url: `api/v2/events/${selectedItem}${queryString}`,
       },
     ],
     // first day is monday
@@ -119,10 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: $('#dropdownMenu1 > span:nth-child(1)').css('color'),
+    eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
     // selection
     select: function(info): void {
-      if (!editable) { return; }
       const title = prompt(i18next.t('comment-add'));
       if (!title) {
         // make the selected area disappear
@@ -142,9 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'end': info.endStr,
         'title': title,
       };
-      ApiC.post(`events/${itemid}`, postParams).then(() => {
-        // FIXME: it would be best to just properly render the event instead of reloading the whole page
-        window.location.replace(`team.php?tab=1&item=${itemid}&start=${encodeURIComponent(info.startStr)}`);
+      ApiC.post(`events/${itemid}`, postParams).then(()=> {
+        // note: here the event is shown without a title, until the user clicks somewhere. Still better than a full page reload.
+        calendar.refetchEvents();
+      }).catch(() => {
+        calendar.unselect();
+        return;
       });
     },
     // on click activate modal window
@@ -157,13 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
-      // delete button in modal
-      $('#deleteEvent').on('click', function(): void {
-        ApiC.delete(`event/${info.event.id}`).then(() => {
-          info.event.remove();
-          $('#eventModal').modal('toggle');
-        });
-      });
+      // set the event id on the cancel button
+      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => { btn.dataset.id = info.event.id; });
       // FILL THE BOUND DIV
 
       // title
@@ -172,47 +179,36 @@ document.addEventListener('DOMContentLoaded', () => {
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
 
-      // start and end inputs
-      const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
+      // start and end inputs values
       startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
-      const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
       endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
-      // add on change event listener on datetime inputs
-      [startInput, endInput].forEach(input => {
-        input.addEventListener('change', event => {
-          const input = (event.currentTarget as HTMLInputElement);
-          const dt = DateTime.fromJSDate(input.valueAsDate);
-          ApiC.patch(`event/${info.event.id}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-            calendar.refetchEvents();
-          });
-        });
-      });
+      // also adjust the event id so the change listener will send a correct query
+      startInput.dataset.eventid = info.event.id;
+      endInput.dataset.eventid = info.event.id;
+      document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
 
-      if (info.event.extendedProps.experiment != null) {
-        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${info.event.extendedProps.experiment}">${info.event.extendedProps.experiment_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      function refreshBoundDivs(extendedProps) {
+        if (extendedProps.experiment != null) {
+          $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
+          $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+        }
+        if (extendedProps.item_link != null) {
+          $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
+          $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+        }
       }
-      if (info.event.extendedProps.item_link != null) {
-        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${info.event.extendedProps.item_link}">${info.event.extendedProps.item_link_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
-      }
+
+      refreshBoundDivs(info.event.extendedProps);
+
       // BIND AN ENTITY TO THE EVENT
       $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
         const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
         if (entityid > 0) {
-          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(() => {
-            $('#bindinput').val('');
-            $('#eventModal').modal('toggle');
-            window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
+          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(res => res.json()).then(json => {
+            calendar.refetchEvents();
+            refreshBoundDivs(json);
           });
         }
-      });
-      // remove the binding
-      $('[data-action="scheduler-rm-bind"]').on('click', function(): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': null}).then(() => {
-          $('#eventModal').modal('toggle');
-          window.location.replace('team.php?tab=1&item=' + $('#info').data('item') + '&start=' + encodeURIComponent(info.event.start.toString()));
-        });
       });
       // BIND AUTOCOMPLETE
       // TODO refactor this
@@ -242,30 +238,27 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
       });
-
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
       if (editable) {
-        $(info.el).css('box-shadow', '5px 4px 4px #474747');
+        info.el.style.boxShadow = '5px 4px 4px #474747';
       }
-      $(info.el).attr('title', info.event.title);
+      info.el.setAttribute('title', info.event.title);
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      $(info.el).css('box-shadow', 'unset');
+      info.el.style.boxShadow = 'unset';
     },
     // a drop means we change start date
     eventDrop: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
       if (!editable) { return; }
-      // TODO catch error and use info.revert();
-      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta});
+      ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
 
@@ -279,17 +272,39 @@ document.addEventListener('DOMContentLoaded', () => {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      const eventid = parseInt(original.dataset.eventid, 10);
+    fun: async (value, original) => {
       const params = {'target': 'title', 'content': value};
-      ApiC.patch(`event/${eventid}`, params);
-      return value;
+      return ApiC.patch(`event/${original.dataset.eventid}`, params)
+        .then(resp => resp.json()).then(json => json.title);
     },
     listenOn: '#eventTitle',
+    returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
+
+  // add on change event listener on datetime inputs
+  [startInput, endInput].forEach(input => {
+    input.addEventListener('change', event => {
+      const input = (event.currentTarget as HTMLInputElement);
+      // Note: valueAsDate was not working on Chromium
+      const dt = DateTime.fromMillis(input.valueAsNumber);
+      ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
+        calendar.refetchEvents();
+      }).catch(() => calendar.refetchEvents());
+    });
+  });
+
+  function clearBoundDiv(type: string) {
+    if (type === 'experiment') {
+      $('#eventBoundExp').html('');
+      $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
+      return;
+    }
+    $('#eventBoundDb').html('');
+    $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
+  }
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -298,10 +313,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
-    // TOGGLE TPL PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      TemplateC.pin(parseInt(el.dataset.id))
-        .then(() => window.location.replace('team.php?tab=3'));
+
+    // CANCEL EVENT ACTION
+    } else if (el.matches('[data-action="cancel-event"]')) {
+      ApiC.delete(`event/${el.dataset.id}`).then(() => {
+        calendar.refetchEvents();
+        $('#eventModal').modal('toggle');
+      }).catch();
+    // CANCEL EVENT ACTION WITH MESSAGE
+    } else if (el.matches('[data-action="cancel-event-with-message"]')) {
+      const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
+      const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+      ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
+        ApiC.delete(`event/${el.dataset.id}`).then(() => {
+          calendar.refetchEvents();
+          $('#eventModal').modal('toggle');
+        }).catch();
+      });
+
+    } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
+      const bindType = el.dataset.type;
+      ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
+        clearBoundDiv(bindType);
+        // clear the inputs
+        document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
+        calendar.refetchEvents();
+      });
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {

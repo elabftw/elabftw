@@ -1,23 +1,4 @@
-<!-- Modal for create new database -->
-<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel'>{{ 'Select type'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        {% for category in categoryArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-item' data-tplid='{{ category.category_id }}'>{{ category.category }}</a>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-</div>
-<!-- end modal -->
-
+{% include 'create-new-item-modal.html' %}
 <!-- Modal for import -->
 <div class='modal fade' id='importModal' tabindex='-1' role='dialog' aria-labelledby='importModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
@@ -29,18 +10,18 @@
         </button>
       </div>
       <div class='modal-body'>
-        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
+        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' rel='noopener'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
         <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post'>
           {{ App.Session.get('csrf')|csrf }}
           <label for='import_modal_target'>{{ '1. Select where to import:'|trans }}</label>
           <select class='form-control' id='import_modal_target' autocomplete='off' name='target'>
             <option disabled>{{ 'Import in database'|trans }}</option>
             {% for itemsType in itemsCategoryArr %}
-              <option value='items:{{ itemsType.category_id }}'>{{ itemsType.category }}</option>
+              <option value='items:{{ itemsType.id }}'>{{ itemsType.title }}</option>
             {% endfor %}
             <option disabled>{{ 'Import in experiments'|trans }}</option>
             {# if we are admin we can import in other users experiments, otherwise just for ourself #}
-            {% for user in usersArr|filter(u => App.Users.userData.is_admin ? true : u.userid == App.Users.userData.userid ? u) %}
+            {% for user in usersArr|filter(u => App.Users.isAdmin ? true : u.userid == App.Users.userData.userid ? u) %}
               <option value='experiments:{{ user.userid }}'>{{ user.fullname|raw }}</option>
             {% endfor %}
           </select>
@@ -71,7 +52,7 @@
 
           <div class='mt-4 text-center'>
             <div id='errorHolder' class='alert-danger m-2'></div>
-            <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='button btn btn-primary'>{{ 'Import'|trans }}</button>
+            <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='btn btn-primary'>{{ 'Import'|trans }}</button>
           </div>
 
         </form>

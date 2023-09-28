@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
         reloadElement('stepsDiv');
       });
+    // ADD STEP
+    } else if (el.matches('[data-action="create-step"]')) {
+      createStep(el.parentElement.parentElement.querySelector('input'));
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
       StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
@@ -59,36 +62,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // CREATE
-  $(document).on('keypress blur', '.stepinput', function(e) {
+  $(document).on('keypress', '.stepinput', function(e) {
     // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      const content = e.currentTarget.value;
-      if (content.length > 0) {
-        StepC.create(content).then(() => {
-          reloadElement('stepsDiv');
-          // clear input field
-          e.currentTarget.value = '';
-        });
-      }
+    if (e.which === 13) {
+      createStep(e.currentTarget);
     }
   });
+
+  function createStep(input: HTMLInputElement): void
+  {
+    const content = input.value;
+    if (content.length > 0) {
+      StepC.create(content).then(() => {
+        reloadElement('stepsDiv').then(() => {
+          // clear input field
+          input.value = '';
+          input.focus();
+        });
+      });
+    }
+  }
 
   // UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
   const malleableStep = new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
-    fun: (value, original) => {
-      StepC.update(
-        parseInt(original.dataset.stepid, 10),
-        value,
-        original.dataset.target as Target,
-      ).then(() => {
-        reloadElement('stepsDiv');
-      });
-      return value;
+    fun: async (value, original) => {
+      return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
+        .then(resp => resp.json()).then(json => json.body);
     },
     listenOn: '.step.editable',
+    returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -160,9 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElements(['linksDiv', 'linksExpDiv']);
-        // clear input field
-        $(this).val('');
+        reloadElements(['linksDiv', 'linksExpDiv']).then(() => {
+          // clear input field
+          $(this).val('');
+          addAutocompleteToLinkInputs();
+        });
       });
     }
   });
@@ -188,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
       });
       $(this).val('');
+      addAutocompleteToLinkInputs();
     }
   });
 

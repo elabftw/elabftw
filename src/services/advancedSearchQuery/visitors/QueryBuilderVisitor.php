@@ -169,11 +169,12 @@ class QueryBuilderVisitor implements Visitor
         // Attachment:   uploads.has_attachment
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
-        // Category:     categoryt.id, if entity == items, should set entity!
+        // Category:     categoryt.title
         // ELabID:       entity.elabid
+        // Id:           entity.id
         // Locked:       entity.locked
         // Rating:       entity.rating
-        // Status:       categoryt.id, if entity == experiment, should set entity!
+        // Status:       statust.title
         // Timestamped:  entity.timestamped, if entity == experiment
         // Title:        entity.title
         // Visibility:   entity.canread
@@ -368,6 +369,15 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector('(' . implode(' OR ', $queryParts) . ')', $bindValues);
     }
 
+    private function visitFieldId(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        return $this->getWhereCollector(
+            'entity.id = ',
+            $searchTerm,
+            PDO::PARAM_INT,
+        );
+    }
+
     private function visitFieldLocked(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
@@ -389,7 +399,7 @@ class QueryBuilderVisitor implements Visitor
     private function visitFieldStatus(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
-            'categoryt.title LIKE ',
+            'statust.title LIKE ',
             $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
         );

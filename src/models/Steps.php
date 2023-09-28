@@ -9,12 +9,12 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateNotificationParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
@@ -38,7 +38,7 @@ class Steps implements RestInterface
 
     public function getPage(): string
     {
-        return $this->Entity->getPage();
+        return sprintf('api/v2/%s/%d/steps/', $this->Entity->page, $this->Entity->id ?? 0);
     }
 
     /**
@@ -114,6 +114,7 @@ class Steps implements RestInterface
     public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode('write');
+        $this->Entity->touch();
         match ($action) {
             Action::Finish => $this->toggleFinished(),
             Action::Notif => $this->toggleNotif(),
@@ -132,12 +133,15 @@ class Steps implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->Entity->canOrExplode('write');
+        $this->Entity->touch();
         return $this->create($reqBody['body'] ?? 'RTFM');
     }
 
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+        $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -158,7 +162,6 @@ class Steps implements RestInterface
 
     private function create(string $body): int
     {
-        $this->Entity->canOrExplode('write');
         $body = Filter::title($body);
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
@@ -194,16 +197,13 @@ class Steps implements RestInterface
         $step = $req->fetch();
 
         // now create a notification if none exist for this step id already
-        $Notifications = new Notifications($this->Entity->Users);
-        $Notifications->createIfNotExists(new CreateNotificationParams(
-            Notifications::STEP_DEADLINE,
-            array(
-                'step_id' => $this->id,
-                'entity_id' => $this->Entity->entityData['id'],
-                'entity_page' => $this->Entity->page,
-                'deadline' => $step['deadline'],
-            ),
-        ));
+        $Notifications = new StepDeadline(
+            $this->id,
+            $this->Entity->entityData['id'],
+            $this->Entity->page,
+            $step['deadline'],
+        );
+        $Notifications->create($this->Entity->Users->userData['userid']);
 
         // update the deadline_notif column so we now if this step has a notif set for deadline or not
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';

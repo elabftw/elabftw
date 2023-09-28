@@ -16,6 +16,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
  * Make sure that the user is still logged in
  */
 require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+// only used for tests in dev mode
+if (file_exists(dirname(__DIR__, 3) . '/c3.php')) {
+    require_once dirname(__DIR__, 3) . '/c3.php';
+}
 
 $Session = new Session();
 $Session->start();

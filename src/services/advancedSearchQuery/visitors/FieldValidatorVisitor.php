@@ -176,9 +176,6 @@ class FieldValidatorVisitor implements Visitor
 
     private function visitFieldCategory(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
-        if ($parameters->getEntityType() !== 'items') {
-            return new InvalidFieldCollector(array('category: is only allowed when searching in database.'));
-        }
         return new InvalidFieldCollector();
     }
 
@@ -202,6 +199,11 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
+    private function visitFieldId(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
     private function visitFieldLocked(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
         return new InvalidFieldCollector();
@@ -214,9 +216,6 @@ class FieldValidatorVisitor implements Visitor
 
     private function visitFieldStatus(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
-        if ($parameters->getEntityType() !== 'experiments') {
-            return new InvalidFieldCollector(array('status: is only allowed when searching in experiments.'));
-        }
         return new InvalidFieldCollector();
     }
 

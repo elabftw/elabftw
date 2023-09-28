@@ -1,15 +1,34 @@
+{# TITLE #}
+<h1 id='documentTitle' class='mb-4 title text-dark'>
+  {{ Entity.entityData.title|raw }}
+</h1>
+
+{% include('catstat-view.html') %}
+
+{# TAGS #}
 {% if entityData.tags|length > 0 %}
   <span class='tags'><i class='fas fa-tags'></i></span>
-  {% set tagsValueArr = entityData.tags|split('|') %}
-  {% for tag in tagsValueArr %}
-    <span class='tag'>{{ tag|raw }}</span>
+  {% for tag in Entity.Tags.readAll() %}
+    <span class='tag {{ tag.is_favorite ? 'favorite' }}'>{{ tag.tag|raw }}</span>
   {% endfor %}
 {% endif %}
 
+<hr>
 {% if (Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD')) and Entity.entityData.body is not null %}
   {% set body = Entity.entityData.body|md2html %}
 {% else %}
   {% set body = Entity.entityData.body %}
 {% endif %}
 <div id='body_view'>{{ body|raw }}</div>
+
+{# METADATA view #}
+{% if Entity.entityData.metadata and Entity.entityData.metadata != '{}' %}
+  <hr>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+  <div class='mt-2' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
+    {{ Entity.entityData.metadata|formatMetadata }}
+  </div>
+  <hr>
+{% endif %}
 {% include 'steps-links-view.html' %}
+<div id='info' data-page='template-view' data-team='{{ App.Users.userData.team }}' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

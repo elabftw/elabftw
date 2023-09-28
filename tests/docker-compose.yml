@@ -8,18 +8,20 @@ services:
     web:
         image: elabtmp
         build:
-          context: .
-          dockerfile: ./elabtmp.Dockerfile
+          context: ..
+          dockerfile: ./tests/elabtmp.Dockerfile
         container_name: elabtmp
-        # drop some capabilities
+        # restrict capabilities of the root user to the strict minimum
+        # see CIS Docker Benchmark v1.5 5.3
+        # see ANSSI-FT-082 23/09/2020 R8
         cap_drop:
-            - SYS_ADMIN
-            - AUDIT_WRITE
-            - MKNOD
-            - SYS_CHROOT
-            - SETFCAP
-            - NET_RAW
-            - SYS_PTRACE
+            - ALL
+        cap_add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            - FOWNER
+            - DAC_OVERRIDE
         env_file:
             - elabftw-user.env
         environment:
@@ -48,6 +50,7 @@ services:
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
+            - MAX_PHP_MEMORY=512M
         healthcheck:
             test: /etc/nginx/healthcheck.sh
             interval: 10s
@@ -55,6 +58,8 @@ services:
             retries: 3
         volumes:
             - ..:/elabftw
+        tmpfs:
+            - /elabftw/cache:uid=1000,gid=1000
         networks:
             - elabftw-net
         # make sure we wait for mysql to be available before starting
@@ -92,5 +97,18 @@ services:
             - TZ=Europe/Paris
         networks:
             - elabftw-net
+
+    cypress:
+        image: elab-cypress
+        build:
+          context: ..
+          dockerfile: ./tests/elab-cypress.Dockerfile
+        container_name: elab-cypress
+        depends_on:
+            - web
+            - mysql
+        networks:
+            - elabftw-net
+
 networks:
     elabftw-net:

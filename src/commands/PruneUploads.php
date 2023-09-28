@@ -10,6 +10,7 @@
 namespace Elabftw\Commands;
 
 use Elabftw\Services\UploadsPruner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,35 +18,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * To remove deleted files completely
  */
+#[AsCommand(name: 'prune:uploads')]
 class PruneUploads extends Command
 {
-    // the name of the command (the part after "bin/console")
-    protected static $defaultName = 'prune:uploads';
-
     protected function configure(): void
     {
-        $this
-            // the short description shown while running "php bin/console list"
-            ->setDescription('Remove deleted uploaded files')
-
-            // the full command description shown when running the command with
-            // the "--help" option
+        $this->setDescription('Remove deleted uploaded files')
             ->setHelp('Remove uploaded files marked as deleted from the filesystem and from the database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($output->isVerbose()) {
-            $output->writeln(array(
-                'Pruning uploads',
-                '===============',
-            ));
-        }
+        $output->writeln(array(
+            'Pruning uploads',
+            '===============',
+        ));
         $Cleaner = new UploadsPruner();
         $cleanedNumber = $Cleaner->cleanup();
-        if ($output->isVerbose()) {
-            $output->writeln(sprintf('Removed %d uploads', $cleanedNumber));
-        }
-        return 0;
+        $output->writeln(sprintf('Removed %d uploads', $cleanedNumber));
+        return Command::SUCCESS;
     }
 }

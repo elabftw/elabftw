@@ -13,15 +13,12 @@ use function bindtextdomain;
 use function count;
 use function dirname;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
-use Elabftw\Models\Notifications;
+use Elabftw\Enums\Notifications;
+use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\Users;
-use function json_decode;
 use PDO;
 use function putenv;
 use function setlocale;
-use function sprintf;
 use Symfony\Component\Mime\Address;
 use function textdomain;
 
@@ -30,6 +27,8 @@ use function textdomain;
  */
 class EmailNotifications
 {
+    private const BASE_SUBJECT = '[eLabFTW] ';
+
     protected Db $Db;
 
     public function __construct(private Email $emailService)
@@ -44,8 +43,9 @@ class EmailNotifications
             $targetUser = new Users((int) $notif['userid']);
             $this->setLang((int) $notif['userid']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $email = $this->notif2Email($notif);
-            if ($this->emailService->sendEmail($to, $email['subject'], $email['body'])) {
+            $Factory = new NotificationsFactory((int) $notif['category'], $notif['body']);
+            $email = $Factory->getMailable()->getEmail();
+            if ($this->emailService->sendEmail($to, self::BASE_SUBJECT . $email['subject'], $email['body'])) {
                 $this->setEmailSent((int) $notif['id']);
             }
         }
@@ -78,80 +78,11 @@ class EmailNotifications
 
     private function getNotificationsToSend(): array
     {
-        $sql = 'SELECT id, userid, category, body FROM notifications WHERE send_email = 1 AND email_sent = 0 AND (
-            CASE WHEN category = :deadline THEN CAST(NOW() AS DATETIME) > CAST(
-                DATE_ADD(
-                    CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
-            ELSE 1=1 END)';
+        $sql='SELECT id, userid, category, body,CASE WHEN category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME) THEN 1 ELSE 0 END AS is_deadline_expired FROM notifications WHERE send_email = 1 AND email_sent = 0';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':deadline', Notifications::STEP_DEADLINE, PDO::PARAM_INT);
+        $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    /**
-     * Transform a notification in an array with subject and body for sending an email
-     */
-    private function notif2Email(array $notif): array
-    {
-        $subject = '[eLabFTW] ';
-        $notifBody = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
-        switch ((int) $notif['category']) {
-            case Notifications::COMMENT_CREATED:
-                $subject .= _('New comment posted');
-                $commenter = new Users((int) $notifBody['commenter_userid']);
-                $url = Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $notifBody['experiment_id'];
-
-                $body = sprintf(
-                    _('Hi. %s left a comment on your experiment. Have a look: %s'),
-                    $commenter->userData['fullname'],
-                    $url,
-                );
-                break;
-            case Notifications::EVENT_DELETED:
-                $info = _('A booked slot was deleted from the scheduler.');
-                $subject .= $info;
-                $url = Config::fromEnv('SITE_URL') . '/team.php?item=' . $notifBody['event']['item'];
-                $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $notifBody['actor'], $url, $notifBody['event']['start'], $notifBody['event']['end']);
-                break;
-            case Notifications::USER_CREATED:
-                $subject .= sprintf(_('New user added to team: %s'), $notifBody['team']);
-                $user = new Users((int) $notifBody['userid']);
-                $body = sprintf(
-                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
-                    $user->userData['fullname'],
-                    $user->userData['email'],
-                );
-                break;
-            case Notifications::USER_NEED_VALIDATION:
-                $subject .= sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $notifBody['team']);
-                $user = new Users((int) $notifBody['userid']);
-                $base = sprintf(
-                    _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
-                    $user->userData['fullname'],
-                    $user->userData['email'],
-                );
-                $url = Config::fromEnv('SITE_URL') . '/admin.php';
-                $body = $base . ' ' . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
-                break;
-            case Notifications::SELF_NEED_VALIDATION:
-                $subject .= _('Your account has been created');
-                $body = _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.');
-                break;
-            case Notifications::SELF_IS_VALIDATED:
-                $subject .= _('Account validated');
-                $url = Config::fromEnv('SITE_URL') . '/login.php';
-                $body = _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: ') . $url;
-                break;
-            case Notifications::STEP_DEADLINE:
-                $subject .= _('A step deadline is approaching');
-                $url = Config::fromEnv('SITE_URL') . '/' . $notifBody['entity_page'] . '.php?mode=view&id=' . $notifBody['entity_id'] . '&highlightstep=' . $notifBody['step_id'] . '#step_view_' . $notifBody['step_id'];
-                $body = _('Hello. A step deadline is approaching: ') . $url;
-                break;
-            default:
-                throw new ImproperActionException('Invalid notification category');
-        }
-        return array('subject' => $subject, 'body' => $body);
     }
 }

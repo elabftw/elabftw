@@ -49,21 +49,24 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readAll(): array
     {
+        // main category table
         $sql = 'SELECT entity.id AS itemid,
             entity.title,
             entity.elabid,
-            category.title AS category,
-            ' . ($this instanceof ExperimentsLinks ? '' : 'category.bookable,') . '
-            category.color
+            attrt.title AS mainattr_title,
+            attrt.color AS mainattr_color,
+            ' . ($this instanceof ItemsLinks ? 'entity.is_bookable,' : '') . '
+            entity.state AS link_state
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
-            LEFT JOIN ' . $this->getCategoryTable() . ' AS category ON (entity.category = category.id)
-            WHERE ' . $this->getTable() . '.item_id = :id AND entity.state = :state
-            ORDER by category.title ASC, entity.date ASC, entity.title ASC';
+            LEFT JOIN ' . $this->getCatStatTable() . ' AS attrt ON (entity.' . $this->getCatStatEntityColumn() . ' = attrt.id)
+            WHERE ' . $this->getTable() . '.item_id = :id AND (entity.state = :state OR entity.state = :statearchived)
+            ORDER by attrt.title ASC, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -82,14 +85,14 @@ abstract class AbstractLinks implements RestInterface
         $sql = 'SELECT entity.id AS entityid, entity.title';
 
         if ($this instanceof ItemsLinks) {
-            $sql .= ', category.title as category, category.bookable, category.color';
+            $sql .= ', category.title as category, entity.is_bookable, category.color';
         }
 
         $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)';
 
         if ($this instanceof ItemsLinks) {
-            $sql .= ' LEFT JOIN ' . $this->getCategoryTable() . ' AS category ON (entity.category = category.id)';
+            $sql .= ' LEFT JOIN ' . $this->getCatStatTable() . ' AS category ON (entity.category = category.id)';
         }
 
         // Only load entities from database for which the user has read permission.
@@ -177,6 +180,7 @@ abstract class AbstractLinks implements RestInterface
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
+        $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -187,7 +191,9 @@ abstract class AbstractLinks implements RestInterface
 
     abstract protected function getTargetType(): string;
 
-    abstract protected function getCategoryTable(): string;
+    abstract protected function getCatStatTable(): string;
+
+    abstract protected function getCatStatEntityColumn(): string;
 
     abstract protected function getTable(): string;
 
@@ -204,10 +210,12 @@ abstract class AbstractLinks implements RestInterface
      */
     protected function create(): int
     {
-        // don't insert a link to the same entity
-        if ($this->Entity->id === $this->id) {
+        // don't insert a link to the same entity, make sure we check for the type too
+        if ($this->Entity->id === $this->id && $this->Entity->type === $this->getTargetType()) {
             return 0;
         }
+        $this->Entity->touch();
+
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);

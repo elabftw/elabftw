@@ -1,14 +1,24 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<div class='d-flex align-content-center'>
+  <h1 id='pageTitle' {% if hideTitle %}hidden{% endif %}>{{ App.pageTitle }}</h1>
+  {% if not searchPage %}
+    <div class='ml-auto'>
+      {% include 'create-new.html' %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
 {% block body %}
 
   {% if not searchPage %}
     {% include 'show-view-edit.html' %}
   {% endif %}
-  {% include 'filter-order-sort.html' %}
 
   <hr>
-  <div class='d-flex'>
+  <div class='d-flex align-items-center'>
     <p class='smallgray mr-auto'>
       <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
       - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
@@ -18,15 +28,26 @@
       </span>
     </p>
 
-    <!-- ORDER -->
-    <div class='form-group'>
+    <div class='d-flex align-items-center'>
+      <div title='{{ 'Switch layout'|trans }}' class='hl-hover-gray rounded p-1 align-self-baseline mr-1' data-action='toggle-items-layout'>
+        <i class='fas fa-fw fa-list'></i>
+        <i class='fas fa-fw fa-table'></i>
+      </div>
+
+      <div class='mr-2'>
+        <div class='btn btn-secondary btn-sm' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}'>
+          <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
+        </div>
+      </div>
+
+      {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}'>{{ 'Sort'|trans }}</button>
+        <button class='btn btn-secondary btn-sm dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1 color-white'></i>{{ 'Sort'|trans }}</button>
         <div class='dropdown-menu dropdown-menu-right'>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='date-desc' href='#'>{{ 'Newest'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='date-asc' href='#'>{{ 'Oldest'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='lastchange-desc' href='#'>{{ 'Recently modified'|trans }}</a>
-          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc')? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
+          <a class='dropdown-item {{ (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='lastchange-asc' href='#'>{{ 'Least recently modified'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='cat-desc' href='#'>{{ 'Category'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='cat-asc' href='#'>{{ 'Category (inverted)'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='id-desc' href='#'>{{ 'Highest ID'|trans }}</a>
@@ -43,6 +64,94 @@
     </div>
   </div>
 
+  <div id='filtersDiv' hidden data-save-hidden='filtersDiv'>
+    <div class='d-flex'>
+      {# LEFT MENU: FILTER/ORDER/SORT/LIMIT #}
+      <div class='{{ searchPage ? 'mt-2' }}'>
+        <form>
+          <div class='form-group form-inline'>
+            {% if not searchPage %}
+              <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+            {% endif %}
+            {% if DisplayParams.searchType == 'related' %}
+              <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
+            {% endif %}
+
+            {# CATEGORY #}
+            <select name='cat' class='autosubmit mr-1 form-control' aria-label='Filter category'>
+              <option value=''>{{ 'Filter category'|trans }}</option>
+              {% for category in categoryArr %}
+                <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+                {{ category.title|raw }}</option>
+              {% endfor %}
+            </select>
+
+            {# STATUS #}
+            <select name='status' class='autosubmit mr-1 form-control' aria-label='Filter status'>
+              <option value=''>{{ 'Filter status'|trans }}</option>
+              {% for status in statusArr %}
+                <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected' }}>
+                {{ status.title|raw }}</option>
+              {% endfor %}
+            </select>
+
+            {# OWNER filter #}
+            <select name='owner' class='autosubmit mr-1 form-control' aria-label='Filter owner'>
+              <option value=''>{{ 'Filter owner'|trans }}</option>
+              {% for user in usersArr %}
+                <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
+                {{ user.fullname|raw }}</option>
+              {% endfor %}
+            </select>
+
+            {% if not searchPage %}
+              {# VISIBILITY filter #}
+              <select name='extended' class='autosubmit mr-1 form-control' aria-label='Filter visibility'>
+                <option value=''>{{ 'Filter visibility'|trans }}</option>
+                {% for vis in visibilityArr %}
+                <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+                  {{ vis|raw }}</option>
+                {% endfor %}
+              </select>
+
+            {% endif %}
+            <input type='hidden' name='mode' value='show' />
+
+            {# LIMIT if there is nothing in the query params, take the user configured one #}
+            {% set thelimit = App.Request.query.get('limit') %}
+            {% if thelimit is empty %}
+              {% set thelimit = App.Users.userData.limit_nb %}
+            {% endif %}
+            <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 form-control' aria-label='Number of results shown'>
+              <option value=''>{{ 'Results per page'|trans }}</option>
+              {% for option in limitOptions(DisplayParams.limit) %}
+                <option{{ option == thelimit ? ' selected' }} value='{{ option }}'>{{ option }}</option>
+              {% endfor %}
+            </select>
+
+            {# SEARCH WITH TAG #}
+            <select multiple name='tags[]' class='form-control mr-1 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
+              {% for tag in tagsArrForSelect %}
+                <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+              {% endfor %}
+            </select>
+            {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
+            {# ARCHIVED filter #}
+            <div class='input-group mr-1'>
+              <div class='input-group-prepend'>
+                <div class='input-group-text'>
+                  <input type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1' aria-label='{{ 'Show archived'|trans }}'>{{ 'Show archived'|trans }}
+                </div>
+              </div>
+            </div>
+
+            <button class='btn btn-primary'>{{ 'Go'|trans }}</button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   {% set count = itemsArr|length %}
 
@@ -56,7 +165,7 @@
     </div>
     <div class='row d-flex'>
       <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
-        <button class='button btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+        <button class='btn btn-primary'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
       </a>
     </div>
   {% elseif count == 0 and searchType == '' and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
@@ -68,19 +177,23 @@
       <div id='withSelected' class='d-none'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         <div class='row mx-0 form-inline'>
-          <!-- Change category -->
-          <select data-action='update-category-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-              <option selected disabled>
-              {% if Entity.type == 'experiments' %}
-                  {{ 'Change status'|trans }}
-              {% else %}
-                  {{ 'Change item type'|trans }}
-              {% endif %}
-              </option>
-
-              {% for category in categoryArr %}
-                  <option value='{{ category.category_id }}'>{{ category.category }}</option>
-              {% endfor %}
+          {# CHANGE CATEGORY #}
+          <select data-action='update-catstat-selected-entities' data-target='category' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>
+              {{ 'Change category'|trans }}
+            </option>
+            {% for category in categoryArr %}
+                <option value='{{ category.id }}'>{{ category.title|raw }}</option>
+            {% endfor %}
+          </select>
+          {# CHANGE STATUS #}
+          <select data-action='update-catstat-selected-entities' data-target='status' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled>
+              {{ 'Change status'|trans }}
+            </option>
+            {% for status in statusArr %}
+                <option value='{{ status.id }}'>{{ status.title|raw }}</option>
+            {% endfor %}
           </select>
 
           <!-- Change visibility -->
@@ -97,7 +210,7 @@
             <option value='eln'>{{ 'ELN Archive'|trans }}</option>
             <option value='zip'>{{ 'ZIP Archive'|trans }}</option>
             <option value='csv'>{{ 'CSV File'|trans }}</option>
-            <option value='multipdf'>{{ 'PDF File'|trans }}</option>
+            <option value='pdf'>{{ 'PDF File'|trans }}</option>
             <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
@@ -131,19 +244,19 @@
             </div>
           </div>
 
-          <button data-action='lock-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          <button data-action='lock-selected-entities' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
           {% if Entity.type == 'experiments' %}
-            <button data-action='timestamp-selected-entities' class='button btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+            <button data-action='timestamp-selected-entities' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
           {% endif %}
           {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-            <button data-action='destroy-selected-entities' class='button btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+            <button data-action='destroy-selected-entities' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
           {% endif %}
         </div>
       </div>
 
       <!-- PINNED ENTITIES -->
       {% if pinnedArr and not searchPage %}
-        <div id='pinned-entities' class='row display-flex'>
+        <div id='pinned-entities' class='d-flex flex-column'>
           {% set isPinned = true %}
           {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
             {% include 'show-item.html' %}
@@ -154,58 +267,79 @@
       {% endif %}
 
       {% if App.Users.userData.display_mode == 'it' %}
-        <div class='row display-flex' id='itemList'>
+        <div class='d-flex flex-column' id='itemList'>
         {% for item in itemsArr|slice(0, DisplayParams.limit) %}
           {% include 'show-item.html' %}
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' -%}
-        <table id='itemList' class='item-table' aria-describedby='pageTitle'>
-          <tr>
-            <th>
-              {{ 'Date'|trans }} <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
-            </th>
-            <th class='title-item-table'>
-              {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
-            </th>
-            <th class='step-item-table'>
-              {{ 'Next step'|trans }}
-            </th>
-            <th class='category-item-table'>
-              {{ 'Category'|trans }} <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
-            </th>
-            <th class='tags-item-table'>
-              {{ 'Tags'|trans }}
-            </th>
-            <th class='actions-item-table'>
-              {{ 'Actions'|trans }}
-            </th>
-            <th class='actions-item-rating'>
-              {{ 'Rating'|trans }} <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
-            </th>
-            <th class='actions-item-owner'>
-              {{ 'Owner'|trans }} <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
-            </th>
-          </tr>
-        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include 'show-item-table.html' %}
-        {% endfor %}
+        <table id='itemList' class='table item-table' aria-describedby='pageTitle'>
+          <thead>
+            <tr>
+              <th>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Date'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
+                </div>
+              </th>
+              <th class='title-item-table col-8'>
+                <div class='d-flex justify-content-between'>
+                  {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
+                </div>
+              </th>
+              <th class='step-item-table col-2'>
+                {{ 'Next step'|trans }}
+              </th>
+              <th class='category-item-table w-20'>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Category'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
+                </div>
+              </th>
+              <th class='category-item-table w-20'>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Status'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='status'><i class='fas {{ sortIcon("status") }}'></i></a>
+                </div>
+              </th>
+              <th class='tags-item-table w-20'>
+                {{ 'Tags'|trans }}
+              </th>
+              <th class='actions-item-rating w-10'>
+                <div class='d-flex justify-content-between'>
+                  {# add mr-1 here because column is small #}
+                  <span class='mr-1'>{{ 'Rating'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
+                </div>
+              </th>
+              <th class='actions-item-owner col-2'>
+                <div class='d-flex justify-content-between'>
+                  <span>{{ 'Owner'|trans }}</span>
+                  <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+              {% include 'show-item-table.html' %}
+            {% endfor %}
+          </tbody>
         </table>
       {% endif %}
 
       <!-- PREVIOUS/NEXT PAGE buttons -->
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
-          <button class='button btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
+          <button class='btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
         {% endif %}
         {% if DisplayParams.limit < itemsArr|length %}
-          <button class='button btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
+          <button class='btn btn-primary nextPage' data-action='next-page'>{{ 'Next page'|trans }}</button>
         {% endif %}
       </div>
 
   {% endif %}
 
-  <div id='shortcuts' data-create='{{ Entity.Users.userData.sc_create }}'></div>
   <div id='info'
       data-page='show'
       data-type='{{ Entity.type }}'

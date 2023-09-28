@@ -11,6 +11,7 @@
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
@@ -26,16 +27,30 @@
 **eLabFTW** is an electronic lab notebook manager for research teams.
 
 It lets you store and organize your research experiments easily. It also features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
-It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers around the globe.
+It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at in many research institutions around the globe. It is also a great solution for companies looking into improving the traceability and reproducibility of their processes.
 
-Click the image below to see it in bigger size:
-[![Demo gif](https://www.elabftw.net/img/view-edit.gif)](https://gfycat.com/tangibleequatorialbrant)
+## Features
+
+* Lab notebook for experiments
+* Database for lab reagents, equipment, storage, cell lines, etc...
+* Trusted timestamping
+* Blockchain timestamping
+* Import and export in various formats
+* Calendar to manage booking of equipment
+* Support for various scientific file formats
+* Molecule/equation editor
+* LaTeX support
+* Todolist
+* Public REST API
+* Available in 17 languages
+* Advanced permissions system
+* Audited, secure codebase suitable for sensitive research results
+
+## How it works
 
 **eLabFTW** is designed to be installed on a server, and people from the team can log in from their browser.
 
 ![server client](https://i.imgur.com/BcfFgQS.gif)
-
-Without a server, even an old computer with 1 GB of RAM and an old CPU can be used. Make sure to install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation
 
@@ -49,11 +64,9 @@ The documentation explains everything:
 
 **eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/contributing.html) to see how you can help with translation or code.
 
-If you have found a security issue, please report it by email to the address associated to my GPG key:
+# Security
 
-~~~bash
-gpg --search-keys "Nicolas CARPi"
-~~~
+See [SECURITY.md](./SECURITY.md).
 
 # Support
 
@@ -69,7 +82,7 @@ PRO support and professional hosting are available from [Deltablot](https://www.
 
 # Stay tuned
 
-[Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be notified when a new release is out!
+[Subscribe to the newsletter](https://eepurl.com/bTjcMj) to be notified when a new release is out!
 
 Or use GitHub to follow releases:
 
@@ -77,15 +90,15 @@ Or use GitHub to follow releases:
 
 # Funding
 
-As you know, eLabFTW is distributed without charge.
-
-If you find this project useful, please consider making a small donation either:
+eLabFTW is distributed without charge. If you find this project useful, please consider making a small donation either:
 
 * as a [GitHub Sponsor](https://github.com/sponsors/NicolasCARPi)
 
 * or with [Liberapay](https://liberapay.com/NicolasCARPi/donate)
 
-This project is backed by [Institut Curie](https://science.curie.fr/) and [Deltablot](https://www.deltablot.com).
+## Gold sponsors
+
+This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 <p align='center'>
   <a href="https://www.deltablot.com">
@@ -93,21 +106,25 @@ This project is backed by [Institut Curie](https://science.curie.fr/) and [Delta
   </a>
 </p>
 
-Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)
+* Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)
+* Department for the Development of Innovative Digital Use – French National Research Institute for Sustainable Development
+* Institut Curie – Centre de Recherche
+* Vrije Universiteit Brussel
+* Institute of Medical Biometry and Statistics, Faculty of Medicine and Medical Center – University of Freiburg, Germany
 
 # Related projects
 
 ## API libraries
 
 * [elabftw/elabapi-python](https://github.com/elabftw/elabapi-python/): python library for interacting with APIv2
-* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1
+* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1 (deprecated)
 * [elabftw/elabapi-javascript-example](https://github.com/elabftw/elabapi-javascript-example#readme): example code for interacting with APIv2 through JavaScript
 
 ## Communities
 
 * [The ELN Consortium](https://github.com/TheELNConsortium/): a consortium of ELN vendors interested in improving interoperability between ELNs
 
-## Third party libraries
+## Third party libraries or scripts
 
 These projects were created by users of eLabFTW, check them out if interested!
 
@@ -117,3 +134,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [Elab::Client](https://metacpan.org/pod/ELab::Client): perl module for eLab API by Andreas K. Hüttel
 * [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper
 * [Matlab client](https://github.com/baillon/eLabAPI): Matlab package to facilitate working with eLabFTW API
+* [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
+
+
+Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

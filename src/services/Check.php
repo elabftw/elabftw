@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,12 +6,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
+
 use function filter_var;
 
 use JsonException;
@@ -24,9 +25,6 @@ class Check
 {
     /** the minimum password length */
     public const MIN_PASSWORD_LENGTH = 8;
-
-    /** cookie is a sha256 sum: 64 chars */
-    private const COOKIE_LENGTH = 64;
 
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
@@ -53,14 +51,6 @@ class Check
             ),
         );
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
-    }
-
-    public static function usergroup(int $gid): int
-    {
-        return match ($gid) {
-            1, 2, 4 => $gid,
-            default => throw new ImproperActionException('Invalid usergroup value.'),
-        };
     }
 
     /**
@@ -117,17 +107,6 @@ class Check
         return $visibility;
     }
 
-    /**
-     * Check the cookie token
-     */
-    public static function token(string $token): string
-    {
-        if (mb_strlen($token) !== self::COOKIE_LENGTH) {
-            throw new IllegalActionException('Invalid cookie!');
-        }
-        return Filter::sanitize($token);
-    }
-
     public static function accessKey(string $ak): string
     {
         if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-1[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i', $ak) === 1) {
@@ -147,5 +126,17 @@ class Check
         }
         $remainder = $sum % 11;
         return $checksum === ((12 - $remainder) % 11);
+    }
+
+    public static function usergroup(Users $requester, Usergroup $group): Usergroup
+    {
+        if ($group === Usergroup::Sysadmin && $requester->userData['is_sysadmin'] === 0) {
+            throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
+        }
+        // if requester is not Admin (and not Sysadmin either), the only valid usergroup is User
+        if (!$requester->isAdmin && $requester->userData['is_sysadmin'] === 0) {
+            return Usergroup::User;
+        }
+        return $group;
     }
 }

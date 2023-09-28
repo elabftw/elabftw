@@ -22,10 +22,12 @@ enum Action: string
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';
+    case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';
     case Timestamp = 'timestamp';
     case Update = 'update';
+    case UpdatePassword = 'updatepassword';
     case UpdateTag = 'updatetag';
     case UpdateMetadataField = 'updatemetadatafield';
     case Unreference = 'unreference';

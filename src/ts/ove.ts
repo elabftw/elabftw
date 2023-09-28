@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-import { anyToJson } from 'bio-parsers/umd/bio-parsers';
+import { anyToJson } from '@teselagen/bio-parsers';
 import { notif, reloadElement } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
@@ -136,7 +136,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
           const clipboardData = event.clipboardData;
-          clipboardData.setData('text/plain', copiedSequenceData.sequence);
+          clipboardData.setData('text/plain', copiedSequenceData.textToCopy);
           data.selection = editorState.selectionLayer;
           data.openVECopied = copiedSequenceData;
           convertToFeaturedDNASequence(editorState.sequenceData);
@@ -152,6 +152,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         onSave: function(opts = {} as any): void { // , sequenceDataToSave, editorState, onSuccessCallback could be used as parameter
           savePlasmidMapAsImage(opts);
         },
+        allowMultipleFeatureDirections: true,
         PropertiesProps: {
           // the list of tabs shown in the Properties panel
           propertiesList: [

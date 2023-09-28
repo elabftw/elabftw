@@ -18,6 +18,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -91,10 +92,45 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testCreateFromStringNoExtension(): void
+    {
+        $id = $this->Entity->Uploads->postAction(Action::CreateFromString, array(
+            'file_type' => FileFromString::Mol->value,
+            'real_name' => 'no_extension',
+            'content' => 'molfilecontent',
+        ));
+        $this->Entity->Uploads->setId($id);
+        $this->assertEquals('no_extension.mol', $this->Entity->Uploads->uploadData['real_name']);
+    }
+
     public function testUploadingPhpFile(): void
     {
         $this->expectException(ImproperActionException::class);
         $this->Entity->Uploads->create(new CreateUpload('some.php', __FILE__));
+    }
+
+    public function testReadBinary(): void
+    {
+        $id = $this->Entity->Uploads->create(new CreateUpload('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $this->assertInstanceOf(Response::class, $this->Entity->Uploads->readBinary());
+    }
+
+    public function testPatch(): void
+    {
+        $id = $this->Entity->Uploads->create(new CreateUpload('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $this->Entity->Uploads->patch(Action::Archive, array());
+        $this->Entity->Uploads->patch(Action::Update, array(
+            'real_name' => 'new real name',
+            'comment' => 'new file comment',
+            'state' => (string) State::Deleted->value,
+        ));
+    }
+
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->Entity->Uploads->getPage());
     }
 
     public function testEditAnImmutableFile(): void
@@ -111,14 +147,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
         $Uploads->setId($id);
         $this->assertEquals($Uploads->uploadData['storage'], $Uploads->getStorageFromLongname($Uploads->uploadData['long_name']));
-    }
-
-    public function testGetIdFromLongname(): void
-    {
-        $Uploads = new Uploads($this->Entity);
-        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
-        $Uploads->setId($id);
-        $this->assertEquals($Uploads->uploadData['id'], $Uploads->getIdFromLongname($Uploads->uploadData['long_name']));
     }
 
     public function testReplace(): void
@@ -141,6 +169,14 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(IllegalActionException::class);
         $this->Entity->Uploads->setId(0);
+    }
+
+    public function testReadAll(): void
+    {
+        $this->assertIsArray($this->Entity->Uploads->readAll());
+        // same including archived uploads
+        $this->Entity->Uploads->includeArchived = true;
+        $this->assertIsArray($this->Entity->Uploads->readAll());
     }
 
     public function testDestroyAll(): void

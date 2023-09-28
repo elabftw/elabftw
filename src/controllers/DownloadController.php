@@ -61,6 +61,10 @@ class DownloadController implements ControllerInterface
 
     public function getResponse(): Response
     {
+        // this will disable output buffering and prevent issues when downloading big files
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         // we stream the response to the client
         $Response = new StreamedResponse(function () {
             $outputStream = fopen('php://output', 'wb');
@@ -91,6 +95,7 @@ class DownloadController implements ControllerInterface
             'image/jpeg',
             'image/png',
             'video/mp4',
+            'image/svg+xml',
             'text/plain',
         );
         if (!in_array($mime, $safeMimeTypes, true)) {
@@ -98,7 +103,7 @@ class DownloadController implements ControllerInterface
         }
 
         $disposition = HeaderUtils::DISPOSITION_INLINE;
-        // change the diposition to attachment
+        // change the disposition to attachment
         if ($this->forceDownload) {
             $disposition = HeaderUtils::DISPOSITION_ATTACHMENT;
         }

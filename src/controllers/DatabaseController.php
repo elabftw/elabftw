@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,14 +6,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Teams;
 
 /**
  * For database.php
@@ -26,14 +26,7 @@ class DatabaseController extends AbstractEntityController
 
         $Category = new ItemsTypes($this->App->Users);
         $this->categoryArr = $Category->readAll();
-    }
-
-    /**
-     * Get the results from main sql query with items to display
-     */
-    protected function getItemsArr(): array
-    {
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request);
-        return $this->Entity->readShow($DisplayParams);
+        $Status = new ItemsStatus(new Teams($this->App->Users, $this->App->Users->team));
+        $this->statusArr = $Status->readAll();
     }
 }

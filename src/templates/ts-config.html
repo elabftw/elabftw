@@ -1,39 +1,58 @@
 <!-- SELECT TIMESTAMPING EXTERNAL SERVICE -->
-<label for='ts_authority'>{{ 'Select timestamping authority (TSA):'|trans }}</label>
-<select class='form-control col-md-4' data-trigger='change' data-model='config' data-target='ts_authority' id='ts_authority' autocomplete='off'>
-  <option value='dfn' {{ App.Config.configArr.ts_authority == 'dfn' ? 'selected' }}>{{ 'DFN (free, no account required)'|trans }}</option>
-  <option value='universign' {{ App.Config.configArr.ts_authority == 'universign' ? 'selected' }}>{{ 'Universign (requires account)'|trans }}</option>
-  <option value='digicert' {{ App.Config.configArr.ts_authority == 'digicert' ? 'selected' }}>{{ 'Digicert (free, no account required)'|trans }}</option>
-  <option value='sectigo' {{ App.Config.configArr.ts_authority == 'sectigo' ? 'selected' }}>{{ 'Sectigo (free, no account required)'|trans }}</option>
-  <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>{{ 'GlobalSign (free, no account required)'|trans }}</option>
-  <option value='custom' {{ App.Config.configArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
-</select>
+<div class='d-flex justify-content-between'>
+  <label for='ts_authority' class='col-form-label'>{{ 'Select timestamping authority (TSA)'|trans }}</label>
+  <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='ts_authority' id='ts_authority' autocomplete='off'>
+    <option value='dfn' {{ App.Config.configArr.ts_authority == 'dfn' ? 'selected' }}>{{ 'DFN (free, no account required)'|trans }}</option>
+    <option value='universign' {{ App.Config.configArr.ts_authority == 'universign' ? 'selected' }}>{{ 'Universign (requires account)'|trans }}</option>
+    <option value='digicert' {{ App.Config.configArr.ts_authority == 'digicert' ? 'selected' }}>{{ 'Digicert (free, no account required)'|trans }}</option>
+    <option value='sectigo' {{ App.Config.configArr.ts_authority == 'sectigo' ? 'selected' }}>{{ 'Sectigo (free, no account required)'|trans }}</option>
+    <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>{{ 'GlobalSign (free, no account required)'|trans }}</option>
+    <option value='custom' {{ App.Config.configArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
+  </select>
+</div>
+<hr>
 
 <div id='ts_loginpass' {{ App.Config.configArr.ts_authority == 'dfn' or App.Config.configArr.ts_authority == 'digicert' or App.Config.configArr.ts_authority == 'sectigo' or App.Config.configArr.ts_authority == 'globalsign' ? 'hidden' : '' }}>
-  <!-- TIMESTAMP LOGIN -->
-  <label for='ts_login'>{{ 'Login for external timestamping service:'|trans }}</label>
-  <input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_login' type='text' value='{{ App.Config.configArr.ts_login }}' id='ts_login' autocomplete='off' />
+  <div class='d-flex justify-content-between'>
+    <!-- TIMESTAMP LOGIN -->
+    <label for='ts_login' class='col-form-label'>{{ 'Login for external timestamping service'|trans }}</label>
+    <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_login' type='text' value='{{ App.Config.configArr.ts_login }}' id='ts_login' autocomplete='off' />
+  </div>
+  <hr>
 
-  <!-- TIMESTAMP PASSWORD -->
-  <label for='ts_password'>{{ 'Password for external timestamping service:'|trans }}</label>
-  {% if App.Config.configArr.ts_password %}
-    <p>A password is already set.
-    <span class='link-like' data-action='destroy-ts-password'>Clear it</span> or change it below:</p>
-  {% endif %}
-  <!-- note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome -->
-  <input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_password' data-reload='ts_loginpass' autocomplete='new-password' maxlength='200' type='password' id='ts_password' />
+  <div class='d-flex justify-content-between'>
+    <!-- TIMESTAMP PASSWORD -->
+    <label for='ts_password' class='col-form-label'>{{ 'Password for external timestamping service'|trans }}</label>
+    {% if App.Config.configArr.ts_password %}
+      <p>A password is already set.
+      <span class='link-like' data-action='destroy-ts-password'>Clear it</span> or change it below:</p>
+    {% endif %}
+    <!-- note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome -->
+    <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_password' data-reload='ts_loginpass' autocomplete='new-password' maxlength='200' type='password' id='ts_password' />
+  </div>
+  <hr>
 </div>
 
 <div id='ts_urldiv' {{ App.Config.configArr.ts_authority != 'custom' ? 'hidden' : '' }}>
-  <label for='ts_url'>{{ 'URL for external timestamping service:'|trans }}</label>
-  <input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_url' type='url' placeholder='https://tsa.example.com' value='{{ App.Config.configArr.ts_url }}' id='ts_url' autocomplete='off' />
+  <div class='d-flex justify-content-between'>
+    <label for='ts_url' class='col-form-label'>{{ 'URL for external timestamping service:'|trans }}</label>
+    <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_url' type='url' placeholder='https://tsa.example.com' value='{{ App.Config.configArr.ts_url }}' id='ts_url' autocomplete='off' />
+  </div>
   <p class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</p>
+  <hr>
 </div>
 
-<label for='ts_limit'>{{ 'Number of allowed timestamps per month (0 means no limit):'|trans }}</label>
-<input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_limit' type='number' value='{{ App.Config.configArr.ts_limit }}' id='ts_limit' autocomplete='off' />
+<div class='d-flex justify-content-between'>
+  <label for='ts_limit' class='col-form-label'>{{ 'Number of allowed timestamps per month (0 means no limit):'|trans }}</label>
+  <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_limit' type='number' value='{{ App.Config.configArr.ts_limit }}' id='ts_limit' autocomplete='off' />
+</div>
 <p class='smallgray'>{{ 'Number of timestamps over the last 30 days: %d'|trans|format(timestampLastMonth) }}</p>
+<hr>
 
-<label for='ts_balance'>{{ 'Available timestamps left (0 means no balance):'|trans }}</label>
-<input class='form-control col-md-4' data-trigger='blur' data-model='config' data-target='ts_balance' type='number' value='{{ App.Config.configArr.ts_balance }}' id='ts_balance' autocomplete='off' />
+
+<div class='d-flex justify-content-between'>
+  <label for='ts_balance' class='col-form-label'>{{ 'Available timestamps left (0 means no balance):'|trans }}</label>
+  <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_balance' type='number' value='{{ App.Config.configArr.ts_balance }}' id='ts_balance' autocomplete='off' />
+</div>
 <p class='smallgray'>{{ 'You can set a number of available timestamps here and it will be decremented by 1 on every timestamp.'|trans }}</p>
+<hr>

@@ -10,8 +10,10 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\DatabaseErrorException;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\UnableToReadFile;
+use Symfony\Component\Console\Output\Output;
 
 class SqlTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,12 +21,22 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Sql = new Sql(Storage::FIXTURES->getStorage()->getFs());
+        $outMock = $this->createMock(Output::class);
+        $this->Sql = new Sql(Storage::FIXTURES->getStorage()->getFs(), $outMock);
     }
 
     public function testExecFile(): void
     {
         $this->assertEquals(3, $this->Sql->execFile('dummy.sql'));
+    }
+
+    public function testExecBrokenFile(): void
+    {
+        // exec with force option
+        $this->assertEquals(3, $this->Sql->execFile('dummy-broken.sql', true));
+        // no force this time, so we can expect an error
+        $this->expectException(DatabaseErrorException::class);
+        $this->assertEquals(3, $this->Sql->execFile('dummy-broken.sql'));
     }
 
     public function testExecNonExistingFile(): void

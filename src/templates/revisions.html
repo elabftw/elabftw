@@ -2,23 +2,45 @@
 
 {% block body %}
 
+<p>{{ 'This server is configured to store %d revisions per entry maximum.'|trans|format(App.Config.configArr.max_revisions) }}
+{{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
+
 {% if Entity.type == 'experiments_templates' %}
-<a href='ucp.php?tab=3&templateid={{ Entity.id }}'>
+  <a href='ucp.php?tab=3&templateid={{ Entity.id }}'
 {% else %}
-<a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'>
+  <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'
 {% endif %}
+   class='btn hl-hover-gray' role='button'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
-{% for revision in revisionsArr %}
-  <div class='box'>
-    <span class='relative-moment' title='{{ revision.savedate }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }} {% if not Entity.isReadOnly %}<a href='app/controllers/RevisionsController.php?item_id={{ Entity.id }}&type={{ Entity.type }}&action=restore&rev_id={{ revision.id }}'>{{ 'Restore'|trans }}</a>{% endif %}<br>
-    {% set body = revision.body %}
-    {% if revision.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD') %}
-      {% set body = revision.body|md2html %}
-    {% endif %}
-    {{ body|raw }}
-  </div>
-{% endfor %}
+<div id='compareRevisionsDiv' class='mt-3' hidden>
+  <button class='btn btn-secondary btn-sm' id='compareRevisionsButton' disabled data-action='compare-revisions' data-type='{{ Entity.type }}' aria-label='{{ 'Compare revisions'|trans }}'>
+    <i class='fas fa-code-compare fa-fw mr-1 color-white'></i>{{ 'Compare revisions'|trans }}
+  </button>
+  <div id='compareRevisionsDiffDiv'></div>
+</div>
+
+<ul class='list-group mt-3'>
+  {% for revision in revisionsArr %}
+    {% set randomId = random() %}
+    <li id='parent_{{ randomId }}' class='list-group-item'>
+      <div class='d-flex'>
+        <div>
+          <input autocomplete='off' type='checkbox' data-action='checkbox-revision' data-id='{{ Entity.id }}' data-revid='{{ revision.id }}' data-type='{{ Entity.type }}' aria-label='Select' class='mr-2' />
+          <span title='{{ 'Revision ID'|trans }}' class='badge badge-secondary mr-2'>{{ revision.id }}</span>
+          <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+            <i class='fas fa-square-plus fa-fw'></i>
+          </span>
+          <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }}
+        </div>
+        <div class='ml-auto'>
+          {% if not Entity.isReadOnly %}<button data-action='restore-revision' data-id='{{ Entity.id }}' data-type='{{ Entity.type }}' data-revid='{{ revision.id }}' class='btn hl-hover-gray'>{{ 'Restore'|trans }}</button>{% endif %}
+        </div>
+      </div>
+      <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
+    </li>
+  {% endfor %}
+</ul>
 
 <div id='info' data-page='revisions'></div>
 {% endblock body %}

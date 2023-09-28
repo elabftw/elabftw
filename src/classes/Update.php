@@ -28,7 +28,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const REQUIRED_SCHEMA = 111;
+    public const REQUIRED_SCHEMA = 128;
 
     private Db $Db;
 
@@ -58,9 +58,9 @@ class Update
     /**
      * Update the database schema if needed
      */
-    public function runUpdateScript(): array
+    public function runUpdateScript(bool $force = false): array
     {
-        // at the end of the update, warnings can be displayed for important informations
+        // at the end of the update, warnings can be displayed for important information
         $warn = array();
 
         // make sure we run MySQL version 8 at least
@@ -81,7 +81,7 @@ class Update
         // new style with SQL files instead of functions
         while ($this->currentSchema < self::REQUIRED_SCHEMA) {
             ++$this->currentSchema;
-            $this->Sql->execFile('schema' . (string) ($this->currentSchema) . '.sql');
+            $this->Sql->execFile('schema' . (string) ($this->currentSchema) . '.sql', $force);
             // schema57: add an elabid to existing database items
             if ($this->currentSchema === 57) {
                 $this->addElabidToItems();

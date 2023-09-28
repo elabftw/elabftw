@@ -14,8 +14,8 @@ use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
-use function implode;
 use PDO;
 
 /**
@@ -35,7 +35,7 @@ class Tags implements RestInterface
 
     public function getPage(): string
     {
-        return $this->Entity->getPage();
+        return sprintf('api/v2/%s/%d/tags/', $this->Entity->page, $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -45,17 +45,17 @@ class Tags implements RestInterface
 
     public function readOne(): array
     {
-        $TeamTags = new TeamTags($this->Entity->Users, $this->id);
-        return $TeamTags->readOne();
+        return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
     public function readAll(): array
     {
-        $sql = 'SELECT DISTINCT tag, tags2entity.tag_id FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+        $sql = 'SELECT DISTINCT tag, tags2entity.tag_id, (tags_id IS NOT NULL) AS is_favorite FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id) LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
             WHERE item_id = :item_id AND item_type = :item_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':item_type', $this->Entity->type);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -108,34 +108,6 @@ class Tags implements RestInterface
     }
 
     /**
-     * Get a list of entity id filtered by tags
-     *
-     * @param array<array-key, string> $tags tags from the query string
-     */
-    public function getIdFromTags(array $tags): array
-    {
-        $sql = 'SELECT id FROM tags WHERE tag IN ("' . implode('", "', $tags) . '")';
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-        $tagIds = $req->fetchAll(PDO::FETCH_COLUMN);
-        if (empty($tagIds)) {
-            return array();
-        }
-
-        // look for item ids that have all the tags not only one of them
-        // note: you can't have a parameter for the IN clause
-        // the HAVING COUNT is necessary to make an AND search between tags
-        $sql = 'SELECT item_id FROM `tags2entity` WHERE tag_id IN (' . implode(',', $tagIds) . ')
-            AND item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tag_id) = :count';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $this->Entity->type, PDO::PARAM_STR);
-        // note: we count on the number of provided tags, not the result of the first query as the same tag can appear mutiple times (from different teams)
-        $req->bindValue(':count', count($tags), PDO::PARAM_INT);
-        $req->execute();
-        return $req->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    /**
      * Create a tag
      */
     private function create(TagParam $params): int
@@ -157,7 +129,8 @@ class Tags implements RestInterface
             // check if we can actually create tags (for non-admins)
             $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
             $teamConfigArr = $Teams->readOne();
-            if ($teamConfigArr['user_create_tag'] === 0 && $this->Entity->Users->userData['is_admin'] === 0) {
+            $TeamsHelper = new TeamsHelper((int) $this->Entity->Users->userData['team']);
+            if ($teamConfigArr['user_create_tag'] === 0 && $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']) === false) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 
@@ -178,7 +151,7 @@ class Tags implements RestInterface
     }
 
     /**
-     * Unreference a tag from an entity
+     * Unreference a tag from an entity, and possibly delete it if it's the last of its kind
      */
     private function unreference(): array
     {
@@ -190,16 +163,12 @@ class Tags implements RestInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        // now check if another entity is referencing it, if not, remove it from the tags table
-        $sql = 'SELECT tag_id FROM tags2entity WHERE tag_id = :tag_id';
+        // tag is removed from tags table if no other entity is referencing it
+        $sql = 'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (SELECT tag_id FROM tags2entity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $tags = $req->fetchAll();
 
-        if (empty($tags)) {
-            (new TeamTags($this->Entity->Users, $this->id))->destroy();
-        }
         return $this->Entity->readOne();
     }
 }

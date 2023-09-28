@@ -17,4 +17,6 @@ use League\Flysystem\Filesystem;
 interface StorageInterface
 {
     public function getFs(): Filesystem;
+
+    public function getPath(): string;
 }

@@ -114,7 +114,7 @@ class Pins
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'INSERT INTO pin_' . $this->Entity->type . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
+        $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->type . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);

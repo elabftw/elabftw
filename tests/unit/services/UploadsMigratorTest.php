@@ -15,7 +15,7 @@ class UploadsMigratorTest extends \PHPUnit\Framework\TestCase
 {
     public function testMigrate(): void
     {
-        // create a non-persistant filesystem stored in memory
+        // create a non-persistent filesystem stored in memory
         $sourceFs = Storage::LOCAL->getStorage()->getFs();
         $targetFs = Storage::MEMORY->getStorage()->getFs();
         $UploadsMigrator = new UploadsMigrator($sourceFs, $targetFs);

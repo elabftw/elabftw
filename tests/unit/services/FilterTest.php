@@ -47,4 +47,13 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('blah', Filter::forFilesystem('=blah/'));
     }
+
+    public function testHexits(): void
+    {
+        // we use uniqid here so it changes every time
+        $input = hash('sha512', uniqid('', true));
+        $this->assertEquals($input, Filter::hexits($input));
+        $this->assertEquals('abc', Filter::hexits('zzzazzzbzzzczzz'));
+        $this->assertEmpty(Filter::hexits('zzzzz'));
+    }
 }

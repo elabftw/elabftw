@@ -31,7 +31,8 @@ try {
     if ($App->Request->getMethod() === Request::METHOD_OPTIONS) {
         return new JsonResponse();
     }
-    if ($App->Request->server->has('HTTP_AUTHORIZATION')) {
+    // check if the authorization header starts with Basic it means it's a basic auth header and we ignore it.
+    if ($App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
         $keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
@@ -47,6 +48,9 @@ try {
     if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
         $Controller = new Apiv2Controller($App->Users, $App->Request, $canWrite);
     } else {
+        if (!str_contains($App->Request->server->get('QUERY_STRING'), 'apiv1_is_dead')) {
+            throw new ImproperActionException('APIv1 is deprecated and will be removed in future versions. Use APIv2. To suppress this message, add the query string "apiv1_is_dead". e.g. /experiments/32?apiv1_is_dead');
+        }
         $Controller = new Apiv1Controller($App->Users, $App->Request, $canWrite);
     }
     $Controller->getResponse()->send();

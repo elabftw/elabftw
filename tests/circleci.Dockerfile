@@ -24,6 +24,8 @@ COPY ../package.json /elabftw
 COPY ../yarn.lock /elabftw
 
 # install phpDocumentor
-RUN curl -sSL https://phpdoc.org/phpDocumentor.phar -o phpdoc && chmod +x phpdoc
+ARG PHP_DOCUMENTOR_VERSION=v3.3.1
+ADD --chmod=755 https://github.com/phpDocumentor/phpDocumentor/releases/download/$PHP_DOCUMENTOR_VERSION/phpDocumentor.phar phpdoc
+
 # phpDocumentor requires ext-iconv and plantuml, graphviz for generating the svg graph
 RUN apk add --update --no-cache plantuml graphviz php81-iconv

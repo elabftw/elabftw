@@ -13,11 +13,13 @@ use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use PDO;
+use function urlencode;
 
 /**
  * The general config table
@@ -49,22 +51,6 @@ final class Config implements RestInterface
     }
 
     /**
-     * Disallow cloning the class
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
-     */
-    private function __clone()
-    {
-    }
-
-    /**
-     * Disallow wakeup also
-     * @norector \Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector
-     */
-    public function __wakeup()
-    {
-    }
-
-    /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
@@ -75,11 +61,15 @@ final class Config implements RestInterface
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('autologout_time', '0'),
+            ('cookie_validity_time', '43200'),
+            ('remember_me_checked', '1'),
+            ('remember_me_allowed', '1'),
             ('debug', '0'),
             ('lang', 'en_GB'),
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),
             ('proxy', ''),
+            ('user_msg_need_local_account_created', ''),
             ('smtp_address', 'mail.smtp2go.com'),
             ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
@@ -117,6 +107,13 @@ final class Config implements RestInterface
             ('open_science', '0'),
             ('open_team', NULL),
             ('privacy_policy', NULL),
+            ('privacy_policy_name', 'Privacy policy'),
+            ('terms_of_service', NULL),
+            ('terms_of_service_name', 'Terms of service'),
+            ('a11y_statement', NULL),
+            ('a11y_statement_name', 'Accessibility statement'),
+            ('legal_notice', NULL),
+            ('legal_notice_name', 'Legal notice'),
             ('announcement', NULL),
             ('login_announcement', NULL),
             ('saml_nameidencrypted', 0),
@@ -132,8 +129,10 @@ final class Config implements RestInterface
             ('saml_wantxmlvalidation', 1),
             ('saml_relaxdestinationvalidation', 0),
             ('saml_lowercaseurlencoding', 0),
+            ('saml_fallback_orgid', '0'),
             ('email_domain', NULL),
             ('saml_sync_teams', 0),
+            ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
             ('allow_useronly', 1),
@@ -163,8 +162,13 @@ final class Config implements RestInterface
             ('s3_path_prefix', ''),
             ('s3_region', ''),
             ('s3_endpoint', ''),
+            ('s3_verify_cert', '1'),
             ('blox_anon', '0'),
-            ('blox_enabled', '1')";
+            ('blox_enabled', '1'),
+            ('enforce_mfa', '0'),
+            ('admins_create_users_remote_dir', '0'),
+            ('remote_dir_service', 'eairef'),
+            ('remote_dir_config', NULL)";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
@@ -213,6 +217,11 @@ final class Config implements RestInterface
         $this->Db->execute($req);
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
 
+        // special case for remote_dir_config where we decrypt it in output so it can be used by external scripts
+        if (!empty($config['remote_dir_config'])) {
+            $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
+        }
+
         return array_map(function ($v): mixed {
             return $v[0];
         }, $config);
@@ -227,12 +236,12 @@ final class Config implements RestInterface
      */
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password', 'ts_password');
+        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
-            // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
+                // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
             }
@@ -246,7 +255,7 @@ final class Config implements RestInterface
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);
-            $this->configArr[$name] = $value;
+            $this->configArr[$name] = (string) $value;
         }
 
         return $this->readAll();
@@ -255,6 +264,28 @@ final class Config implements RestInterface
     public function getPage(): string
     {
         return 'api/v2/config/';
+    }
+
+    public function getDsn(): string
+    {
+        $username = '';
+        $password = '';
+        if ($this->configArr['smtp_password']) {
+            $username = $this->configArr['smtp_username'];
+            $password = Crypto::decrypt(
+                $this->configArr['smtp_password'],
+                Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY'))
+            );
+        }
+
+        return sprintf(
+            'smtp://%s:%s@%s:%d?verify_peer=%s',
+            $username,
+            urlencode($password),
+            $this->configArr['smtp_address'],
+            $this->configArr['smtp_port'],
+            $this->configArr['smtp_verify_cert'],
+        );
     }
 
     public function postAction(Action $action, array $reqBody): int

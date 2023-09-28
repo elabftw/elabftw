@@ -7,9 +7,18 @@
   <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
   <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
     <input type='hidden' name='auth_type' value='mfa'>
+    {% if App.Session.get('rememberme') == '1' %}
+      <input type='hidden' name='rememberme' value='on'>
+    {% endif %}
     {{ App.Session.get('csrf')|csrf }}
     {% if App.Session.has('enable_mfa') %}
-      <p>{{ 'Open your authenticator application and scan the QR code.'|trans }}</p>
+      <p>
+        {% if App.Session.has('enforce_mfa') %}
+          {{ 'It is mandatory to activate 2FA.'|trans }}
+          <br>
+        {% endif %}
+        {{ 'Open your authenticator application and scan the QR code.'|trans }}
+      </p>
       <p><img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' /></p>
 
       <div class='text-center col-md-5 mx-auto'>
@@ -23,13 +32,14 @@
       </div>
     {% endif %}
     <div class='col-md-4 mx-auto mt-4 form-group'>
-      <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
-      <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' />
+      <i class='fas fa-mobile-screen fa-2x'></i>
       <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
+      <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
+      <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' data-focus='1' />
     </div>
-    <button type='submit' class='button btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
+    <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {% if App.Session.has('enable_mfa') %}
-      <button type='submit' class='button btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
+      <button type='submit' class='btn btn-danger' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
   </form>
 </section>

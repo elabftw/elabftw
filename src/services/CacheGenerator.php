@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,13 +6,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use function dirname;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Models\Config;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\StorageAttributes;
 
@@ -29,7 +27,7 @@ class CacheGenerator
      */
     public function generate(): void
     {
-        $TwigEnvironment = $this->getTwig(Config::getConfig());
+        $TwigEnvironment = $this->getTwig(false);
         $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
         // iterate over all the templates
         $templates = $tplFs->listContents('.')->filter(function (StorageAttributes $attributes) {

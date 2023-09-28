@@ -25,12 +25,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->Users= new Users(1, 1, $requester);
     }
 
-    protected function tearDown(): void
-    {
-        // make titi user again
-        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '4'));
-    }
-
     public function testPopulate(): void
     {
         $this->assertTrue(is_array($this->Users->userData));
@@ -56,7 +50,6 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'firstname' => 'Tata',
             'lastname' => 'Yep',
             'orcid' => '0000-0002-7494-5555',
-            'password' => 'new super password',
         );
         $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
@@ -69,46 +62,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, array('orcid' => 'blah'));
     }
 
-    public function testUpdateUsergroupToSysadmin(): void
-    {
-        $params = array(
-            'usergroup' => '1',
-        );
-        $this->expectException(ImproperActionException::class);
-        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
-    }
-
-    public function testPatchFromOtherTeam(): void
-    {
-        $params = array(
-            'usergroup' => '2',
-        );
-        $this->expectException(IllegalActionException::class);
-        (new Users(2, 1, new Users(4, 2)))->patch(Action::Update, $params);
-    }
-
-    public function testDemoteSysadmin(): void
-    {
-        // first make titi admin so we can use it to try and demote toto
-        (new Users(2, 1, new Users(1, 1)))->patch(Action::Update, array('usergroup' => '2'));
-        // now use titi to try and demote toto
-        $this->expectException(ImproperActionException::class);
-        (new Users(1, 1, new Users(2, 1)))->patch(Action::Update, array('usergroup' => '2'));
-    }
-
     public function testUpdatePreferences(): void
     {
         $prefsArr = array(
             'limit_nb' => 12,
             'sc_create' => 'c',
             'sc_edit' => 'e',
-            'sc_submit' => 's',
+            'sc_favorite' => 'f',
             'sc_todo' => 't',
+            'sc_search' => 's',
             'show_team' => 'on',
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_read' => BasePermissions::Organization->toJson(),
-            'display_size' => 'lg',
             'display_mode' => 'it',
             'sort' => 'date',
             'orderby' => 'desc',
@@ -126,7 +92,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Users->isAdminOf(1));
         $this->assertTrue($this->Users->isAdminOf(2));
-        $this->assertTrue($this->Users->isAdminOf(4));
+        $this->assertFalse($this->Users->isAdminOf(5));
         $tata = new Users(4, 2);
         $this->assertFalse($tata->isAdminOf(2));
     }
@@ -143,6 +109,52 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users->patch(Action::Update, array('password' => 'short'));
     }
 
+    public function testUpdatePasswordNoCurrentPasswordProvided(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd'));
+    }
+
+    public function testUpdatePasswordIncorrectCurrentPasswordProvided(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => 'newPassw0rd', 'current_password' => 'incorrectPassword'));
+    }
+
+    public function testUpdatePasswordWithEmptyPassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::UpdatePassword, array('password' => '', 'current_password' => 'testPassword'));
+    }
+
+    public function testUpdatePassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo', 'current_password' => 'testPassword')));
+    }
+
+    public function testResetPassword(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->assertTrue($Users->resetPassword('demodemo'));
+    }
+
+    public function testUpdatePasswordAsSysadmin(): void
+    {
+        $Users = new Users(4, 2, new Users(1, 1));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo')));
+    }
+
+    public function testTryToBecomeSysadmin(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Update, array('is_sysadmin' => 1));
+    }
+
     public function testInvalidateToken(): void
     {
         $this->assertTrue($this->Users->invalidateToken());
@@ -156,8 +168,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleArchive(): void
     {
-        $Admin = new Users(4, 2);
-        $Users = new Users(5, 2, $Admin);
+        // tata in bravo
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
         $this->assertIsArray($Users->patch(Action::Lock, array()));
     }
 
@@ -174,8 +187,8 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUnArchiveButAnotherUserExists(): void
     {
         // this user is archived already
-        $Admin = new Users(4, 2);
-        $Users = new Users(5, 2, $Admin);
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
         // create another active user with the same email
         ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
         // try to unarchive
@@ -183,33 +196,17 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users->patch(Action::Lock, array());
     }
 
-    public function testUserTryToPromoteToAdmin(): void
-    {
-        $Users = new Users(5, 2);
-        $Target = new Users(5, 2, $Users);
-        $res = $Target->patch(Action::Update, array('usergroup' => '2'));
-        $this->assertEquals(4, $res['usergroup']);
-    }
-
-    public function testUserPatchUsergroup(): void
-    {
-        $Users = new Users(5, 2);
-        $Target = new Users(5, 2, $Users);
-        $res = $Target->patch(Action::Update, array('usergroup' => '4'));
-        $this->assertEquals(4, $res['usergroup']);
-    }
-
     public function testReadAllActiveFromTeam(): void
     {
-        $this->assertCount(4, $this->Users->readAllActiveFromTeam());
+        $this->assertCount(7, $this->Users->readAllActiveFromTeam());
     }
 
     public function testDestroy(): void
     {
-        $Admin = new Users(4, 2);
+        $Admin = new Users(5, 2);
         $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
         $Target = new Users($id, 2, $Admin);
-        $this->assertFalse($Target->destroy());
+        $this->assertTrue($Target->destroy());
     }
 
     public function testDestroyWithExperiments(): void

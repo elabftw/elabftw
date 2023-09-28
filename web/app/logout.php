@@ -9,10 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Idps;
-use Elabftw\Services\SamlAuth;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use OneLogin\Saml2\LogoutRequest as SamlLogoutRequest;
@@ -67,7 +67,12 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        [$sessionIndex, $idpId] = SamlAuth::decodeToken($App->Request->cookies->getAlnum('saml_token'));
+        $samlToken = $App->Request->cookies->getAlnum('saml_token');
+        $sessionIndex = null;
+        $idpId = null;
+        if (!empty($samlToken)) {
+            [$sessionIndex, $idpId] = SamlAuth::decodeToken($samlToken);
+        }
     } catch (Exception $e) {
         // log error and show general error message
         $destroySession();  // destroy session anyway
@@ -81,8 +86,8 @@ if ($App->Request->cookies->has('saml_token')) {
 
 // check SAML LogoutRequest/Response first
 if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest') || $App->Request->query->has('SAMLResponse'))) {
-    $Saml = new Saml($App->Config, new Idps());
-    $tmpSettings = $Saml->getSettings(); // get temporary settings to decode message
+    $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+    $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
     if ($App->Request->query->has('SAMLRequest')) {
         $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLRequest'));
         $entId = SamlLogoutRequest::getIssuer($req->getXML());
@@ -96,7 +101,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         throw new UnauthorizedException($error);
     }
 
-    $settings = $Saml->getSettingsByEntityId($entId);
+    $settings = $IdpsHelper->getSettingsByEntityId($entId);
     // another IdP should not be able to destroy random sessions
     if (!empty($idpId) && $idpId != $settings['idp_id']) {
         $error = 'Wrong IdP sent Logout Message!';
@@ -134,8 +139,8 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
 } elseif ($App->Request->cookies->has('saml_token')) {
     // originally logged in using saml, we should try initiating SLO
     try {
-        $Saml = new Saml($App->Config, new Idps());
-        $settings = $Saml->getSettings($idpId ?? 0);
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+        $settings = $IdpsHelper->getSettings($idpId ?? 0);
 
         // manually overwrite basepath with basepath + /app, to workaround php-saml#249
         $settings['baseurl'] .= '/app';

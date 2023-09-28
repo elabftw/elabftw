@@ -9,7 +9,6 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -40,26 +39,11 @@ try {
     $Scheduler = new Scheduler($Items);
     $Templates = new Templates($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
+    $bookableItemData = array();
 
-    $DisplayParams = new DisplayParams($App->Users, $App->Request);
-    // we only want the bookable type of items
-    $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
-    // make limit very big because we want to see ALL the bookable items here
-    $DisplayParams->limit = 900000;
-    $itemData = null;
-
-    $allItems = true;
-    $selectedItem = null;
-    if ($App->Request->query->get('item')) {
-        if ($App->Request->query->get('item') === 'all'
-            || !$App->Request->query->has('item')) {
-        } else {
-            $Scheduler->Items->setId($App->Request->query->getInt('item'));
-            $selectedItem = $App->Request->query->get('item');
-            $allItems = false;
-            // itemData is to display the name/category of the selected item
-            $itemData = $Scheduler->Items->readOne();
-        }
+    if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
+        $Scheduler->Items->setId($App->Request->query->getInt('item'));
+        $bookableItemData = $Scheduler->Items->readOne();
     }
 
     $entityData = array();
@@ -69,18 +53,19 @@ try {
     }
 
     // only the bookable categories
-    $bookableCategoryArr = array_filter($ItemsTypes->readAll(), function ($c) {
-        return $c['bookable'] === 1;
+    $bookableItemsArr = $Items->readBookable();
+    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
+    $allItemsTypes = $ItemsTypes->readAll();
+    $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
+        return in_array($a['id'], $categoriesOfBookableItems, true);
     });
 
     $template = 'team.html';
     $renderArr = array(
+        'bookableItemData' => $bookableItemData,
         'Entity' => $Templates,
-        'allItems' => $allItems,
-        'bookableCategoryArr' => $bookableCategoryArr,
-        'itemsArr' => $Items->readShow($DisplayParams),
-        'itemData' => $itemData,
-        'selectedItem' => $selectedItem,
+        'bookableItemsTypes' => $bookableItemsTypes,
+        'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),

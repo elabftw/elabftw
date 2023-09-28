@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, reloadElement, removeEmpty } from './misc';
+import { collectForm, notif, notifError, reloadElement, removeEmpty } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -13,6 +13,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
+import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const warningDiv = document.createElement('div');
       warningDiv.classList.add('alert', 'alert-warning');
       const chevron = document.createElement('i');
-      chevron.classList.add('fas', 'fa-chevron-right');
+      chevron.classList.add('fas', 'fa-chevron-right', 'color-warning', 'fa-fw');
       warningDiv.appendChild(chevron);
       const text = document.createElement('span');
       text.classList.add('ml-1');
@@ -60,11 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
       warningDiv.appendChild(text);
       const updateLink = document.createElement('a');
       updateLink.href = 'https://doc.elabftw.net/how-to-update.html';
-      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       updateLink.innerText = 'Update elabftw';
       const changelogLink = document.createElement('a');
       changelogLink.href = 'https://doc.elabftw.net/changelog.html';
-      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white');
+      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       changelogLink.innerText = 'Read changelog';
       warningDiv.appendChild(updateLink);
       warningDiv.appendChild(changelogLink);
@@ -77,6 +78,26 @@ document.addEventListener('DOMContentLoaded', () => {
       latestVersionDiv.appendChild(successIcon);
     }
   }).catch(error => latestVersionDiv.append(error));
+
+
+  document.querySelectorAll('[data-action="load-file-on-change"]').forEach(input => {
+    input.addEventListener('change', (event) => {
+      const el = (event.target as HTMLInputElement);
+      const file = el.files[0];
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function() {
+        try {
+          const target = (document.getElementById(el.dataset.target) as HTMLInputElement);
+          target.value = (reader.result as string);
+          // trigger blur so it is saved if it is a save trigger
+          target.dispatchEvent(new Event('blur'));
+        } catch (error) {
+          notifError(error);
+        }
+      };
+    });
+  });
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -93,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE TEAM
     } else if (el.matches('[data-action="create-team"]')) {
-      const name = (document.getElementById('teamsName') as HTMLInputElement).value;
+      const name = (document.getElementById('newTeamName') as HTMLInputElement).value;
       ApiC.post(Model.Team, {'name': name}).then(() => reloadElement('teamsDiv'));
     // UPDATE TEAM
     } else if (el.matches('[data-action="patch-team-sysadmin"]')) {
@@ -115,14 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);
       const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
       const userid = parseInt(el.dataset.userid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement(`manageUsers2teamsModal_${userid}`));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const userid = parseInt(el.dataset.userid, 10);
         const team = parseInt(el.dataset.teamid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement('editUsersBox'));
+        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement(`manageUsers2teamsModal_${userid}`));
       }
+    // MODIFY USER GROUP IN TEAM
+    } else if (el.matches('[data-action="patch-user2team-group"]')) {
+      // will be 1 for Admin, 0 for user
+      const selectEl = (el.previousElementSibling as HTMLSelectElement);
+      const group = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
+      const team = parseInt(el.dataset.team, 10);
+      const userid = parseInt(el.dataset.userid, 10);
+      // add the userid in params too for Users2Teams
+      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group, userid: userid});
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
       ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
@@ -144,14 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // PATCH POLICY - save or clear
     } else if (el.matches('[data-action="patch-policy"]')) {
-      let content = tinymce.get('privacyPolicyInput').getContent();
+      let content = tinymce.get(el.dataset.textarea).getContent();
       if (el.dataset.operation === 'clear') {
         content = '';
       }
-      ApiC.patch('config', {'privacy_policy': content});
-    // PATCH STORAGE
-    } else if (el.matches('[data-action="patch-storage"]')) {
-      return ApiC.patch('config', collectForm(el.closest('div.form-group')));
+      const params = {};
+      params[el.dataset.confname] = content;
+      ApiC.patch('config', params);
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);
@@ -163,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button));
     // MASS MAIL
     } else if (el.matches('[data-action="send-mass-email"]')) {
+      const massEmailDiv = document.getElementById('massEmailDiv');
+      const targetRadio = (massEmailDiv.querySelector('input[name="target"]:checked') as HTMLInputElement);
       const button = (el as HTMLButtonElement);
       button.disabled = true;
       button.innerText = 'Sending…';
@@ -170,7 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const body = (document.getElementById('massBody') as HTMLInputElement).value;
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
-        { 'massEmail': '1', 'subject': subject, 'body': body }).then(resp => handleEmailResponse(resp, button));
+        { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button));
+    } else if (el.matches('[data-action="create-idp"]')) {
+      const params = collectForm(document.getElementById('createIdpForm'));
+      ApiC.post(Model.Idp, params).then(() => {
+        $('#createIdpModal').modal('hide');
+        reloadElement('idpsDiv');
+      });
     } else if (el.matches('[data-action="destroy-idp"]')) {
       event.preventDefault();
       if (confirm(i18next.t('generic-delete-warning'))) {

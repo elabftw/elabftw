@@ -30,7 +30,7 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $Entity = EntityType::from((string) $App->Request->query->get('type'))->toInstance($App->Users);
+    $Entity = EntityType::from($App->Request->query->getString('type'))->toInstance($App->Users);
     $Entity->setId($App->Request->query->getInt('item_id'));
     $Entity->canOrExplode('read');
 

@@ -28,7 +28,7 @@ final class TagParam implements ParamInterface
         if ($tag === false) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
         }
-        $tag = trim(str_replace(array('\\', '|'), array('', ' '), $tag));
+        $tag = trim(str_replace(array('\\', '|'), array('', ' '), (string) $tag));
         // empty tags are disallowed
         if ($tag === '') {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));

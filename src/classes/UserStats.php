@@ -9,7 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Status;
+use Elabftw\Enums\State;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use PDO;
@@ -43,25 +44,27 @@ class UserStats
         }
 
         // get all status name and id
-        $Status = new Status(new Teams($this->Users, $this->Users->team));
+        $Status = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
         $statusArr = $Status->readAll();
 
         $sql = 'SELECT COUNT(id)
             FROM experiments
             WHERE userid = :userid
-            AND category = :category';
+            AND category = :category
+            AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
 
         // populate arrays
         foreach ($statusArr as $status) {
             $statusArr = array();
-            $statusArr['name'] = $status['category'];
-            $statusArr['id'] = $status['category_id'];
+            $statusArr['name'] = $status['title'];
+            $statusArr['id'] = $status['id'];
             $statusArr['color'] = '#' . $status['color'];
 
             // now get the count
-            $req->bindParam(':category', $status['category_id'], PDO::PARAM_INT);
+            $req->bindParam(':category', $status['id'], PDO::PARAM_INT);
             $req->execute();
             $statusArr['count'] = $req->fetchColumn();
 

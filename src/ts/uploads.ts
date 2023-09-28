@@ -118,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
           response.json().then(content => {
             // use prismjs to display highlighted pretty-printed json content
             codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
+            // make sure to blank any previous content before appending
+            plainTextContentDiv.innerHTML = '';
             plainTextContentDiv.appendChild(preBlock);
           });
         } else { // TXT

@@ -71,6 +71,10 @@ class TwigFilters
             $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", $group['name']);
             $final .= '<div>';
             foreach ($group['extra_fields'] as $field) {
+                $newTab = 'target="_blank" rel="noopener"';
+                if (($field['open_in_current_tab'] ?? false) === true) {
+                    $newTab = '';
+                }
                 $description = isset($field[MetadataEnum::Description->value])
                     ? sprintf('<span class="smallgray">%s</span>', $field[MetadataEnum::Description->value])
                     : '';
@@ -82,11 +86,13 @@ class TwigFilters
                 }
                 // url is another special case
                 if ($field[MetadataEnum::Type->value] === 'url') {
-                    $newTab = 'target="_blank" rel="noopener"';
-                    if (($field['open_in_current_tab'] ?? false) === true) {
-                        $newTab = '';
-                    }
                     $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+                }
+                // exp/items is another special case
+                if (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
+                    $id = (int) $field[MetadataEnum::Value->value];
+                    $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
+                    $value = sprintf("<a href='/%s.php?mode=view&id=%d' %s>%s</a>", $page, $id, $newTab, $value);
                 }
 
                 // multi select will be an array

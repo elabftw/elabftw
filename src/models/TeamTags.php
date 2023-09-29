@@ -97,7 +97,7 @@ class TeamTags implements RestInterface
         $count = array();
         foreach (EntityType::getAllValues() as $entityType) {
             $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
-            $count[] = sprintf('COUNT(tags2%1$s.%1$s_id)', $entityType);
+            $count[] = sprintf('COUNT(DISTINCT tags2%1$s.%1$s_id)', $entityType);
         }
         $sql = sprintf(
             'SELECT tag, tags.id, %1$s AS item_count, (favtags2users.tags_id IS NOT NULL) AS is_favorite

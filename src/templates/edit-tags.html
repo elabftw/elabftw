@@ -6,7 +6,7 @@
       <div class='d-flex flex-wrap mb-1'>
         {% set attachedTags = Entity.Tags.readAll() %}
         {% for tag in attachedTags %}
-          <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite' }}' data-action='unreference-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag|raw }}</a>
+          <a class='tag margin-1px hover-danger {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite' }}' data-action='unreference-tag' data-tagid='{{ tag.tags_id }}'>{{ tag.tag|raw }}</a>
         {%- endfor -%}
       </div>
       <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
@@ -29,7 +29,7 @@
       {% endfor %}
 
       {% for tag in filteredTags|slice(0, 30) %}
-        <a class='tag margin-1px opacity-8 {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite' }}' data-action='add-suggested-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag|raw }}</a>
+        <a class='tag margin-1px opacity-8 {{ loop.last ? 'mr-2' }} {{ tag.is_favorite ? 'favorite' }}' data-action='add-suggested-tag' data-tagid='{{ tag.id }}'>{{ tag.tag|raw }}</a>
       {%- endfor -%}
     </div>
   </div>

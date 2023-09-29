@@ -147,9 +147,9 @@ class DisplayParams
                 'SELECT tags2%1$s.%1$s_id
                     FROM tags2%1$s
                     INNER JOIN (SELECT id FROM tags WHERE tags.tag IN (%2$s)) tg
-                        ON tags2%1$s.tag_id = tg.id
-                    GROUP BY item_id
-                    HAVING COUNT(DISTINCT tags2entity.tag_id) = :count',
+                        ON tags2%1$s.tags_id = tg.id
+                    GROUP BY %1$s_id
+                    HAVING COUNT(DISTINCT tags2%1$s.tags_id) = :count',
                 $this->entityType->value,
                 implode(', ', $inPlaceholdersArr),
             );

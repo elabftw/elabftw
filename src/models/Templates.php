@@ -130,10 +130,10 @@ class Templates extends AbstractTemplateEntity
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
             LEFT JOIN tags2" . $this->type . ' ON (experiments_templates.id = tags2' . $this->type . '.' . $this->type . '_id)
-            LEFT JOIN tags ON (tags2' . $this->type . ".tags_id = tags.id)
+            LEFT JOIN tags ON (tags2' . $this->type . '.tags_id = tags.id)
             LEFT JOIN experiments_categories AS categoryt ON (experiments_templates.category = categoryt.id)
             LEFT JOIN experiments_status AS statust ON (experiments_templates.status = statust.id)
-            WHERE experiments_templates.id = :id";
+            WHERE experiments_templates.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

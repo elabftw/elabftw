@@ -19,7 +19,7 @@ export class SemverCompare {
    */
   isOld(): boolean
   {
-    for (let i = 0;  i < 3; i++) {
+    for (let i = 0; i < 3; i++) {
       if (this.current[i] < this.latest[i]) {
         return true;
       }

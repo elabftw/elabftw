@@ -27,7 +27,7 @@ enum EnforceMfa: int
             EnforceMfa::Disabled => _('Disabled'),
             EnforceMfa::SysAdmins => _('Sysadmins'),
             EnforceMfa::Admins => _('Admins'),
-            EnforceMfa::Everyone  => _('Everyone'),
+            EnforceMfa::Everyone => _('Everyone'),
         };
     }
 

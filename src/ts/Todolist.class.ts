@@ -58,7 +58,7 @@ export default class Todolist extends SidePanel {
     this.loadUnfinishedStep();
   }
 
-  loadUnfinishedStep(): void  {
+  loadUnfinishedStep(): void {
     this.getUnfinishedStep(EntityType.Experiment);
     this.getUnfinishedStep(EntityType.Item);
   }

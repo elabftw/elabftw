@@ -31,7 +31,7 @@
     </div>
     <ul class='list-group mt-1'>
       {% for item in itemsArr %}
-      <a href='database.php?mode=view&id={{ item.id }}'  class='list-group-item hl-hover-gray'><span style='--bg: #{{ item.color }}' class='category-button rounded p-1 mr-2'>{{ item.mainattr_title }}</span>{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='database.php?mode=view&id={{ item.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ item.color }}' class='category-button rounded p-1 mr-2'>{{ item.mainattr_title }}</span>{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>

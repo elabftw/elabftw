@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
@@ -17,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
+use function implode;
 use PDO;
 use function sprintf;
 

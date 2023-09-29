@@ -9,6 +9,7 @@
 
 namespace Elabftw\Enums;
 
+use function array_column;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;

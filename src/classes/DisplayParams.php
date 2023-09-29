@@ -9,6 +9,8 @@
 
 namespace Elabftw\Elabftw;
 
+use function array_keys;
+use function array_map;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Metadata as MetadataEnum;

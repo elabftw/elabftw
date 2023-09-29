@@ -128,15 +128,19 @@ class TeamTags implements RestInterface
         $count = array();
         foreach (EntityType::getAllValues() as $entityType) {
             $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
-            $count[] = sprintf('COUNT(tags2%1$s.%1$s_id)', $entityType);
+            $count[] = sprintf('COUNT(DISTINCT tags2%1$s.%1$s_id)', $entityType);
         }
 
-        $sql = 'SELECT tags.tag, tags.id, ' . implode('+', $count) . ' AS item_count
-            FROM tags
-            ' . implode(' ', $joins) . '
-            WHERE team = :team
-            GROUP BY tags.id
-            ORDER BY item_count DESC';
+        $sql = sprintf(
+            'SELECT tags.tag, tags.id, %1$s AS item_count
+                FROM tags
+                %2$s
+                WHERE team = :team
+                GROUP BY tags.id
+                ORDER BY item_count DESC',
+            implode('+', $count),
+            implode(' ', $joins),
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);

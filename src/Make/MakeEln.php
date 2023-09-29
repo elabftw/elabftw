@@ -95,8 +95,7 @@ class MakeEln extends MakeStreamZip
                 $mentions[] = array(
                     '@id' => Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
-                    // TODO: check why category is not always present
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
@@ -104,7 +103,7 @@ class MakeEln extends MakeStreamZip
                 $mentions[] = array(
                     '@id' => Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'],
                     '@type' => 'Dataset',
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }

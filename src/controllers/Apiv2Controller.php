@@ -252,7 +252,9 @@ class Apiv2Controller extends AbstractApiController
             case 'favtags':
                 return new FavTags($this->Users, $this->id);
             case 'team_tags':
-                return new TeamTags($this->Users, $this->id);
+                $TeamTags = new TeamTags($this->Users, $this->id);
+                $TeamTags->setReadAllQuery((string) $this->Request->query->get('q'));
+                return $TeamTags;
             case 'teams':
                 return new Teams($this->Users, $this->id);
             case 'todolist':

@@ -44,6 +44,7 @@ try {
     $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $TeamTags = new TeamTags($App->Users);
+    $TeamTags->setReadAllQuery((string) $App->Request->query->get('q'));
 
     $Templates = new Templates($App->Users);
     $templatesArr = $Templates->getWriteableTemplatesList();

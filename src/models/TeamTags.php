@@ -18,7 +18,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the tag but seen from a team perspective, not an entity
@@ -28,6 +27,8 @@ class TeamTags implements RestInterface
     use SetIdTrait;
 
     protected Db $Db;
+
+    private string $readAllQuery = '';
 
     public function __construct(public Users $Users, ?int $id = null)
     {
@@ -59,7 +60,7 @@ class TeamTags implements RestInterface
         $res = $req->fetch();
         // insert the tag if it doesn't exist
         if ($res === false) {
-            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag,  :team)';
+            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindValue(':tag', $tag, PDO::PARAM_STR);
@@ -88,9 +89,6 @@ class TeamTags implements RestInterface
      */
     public function readAll(): array
     {
-        // TODO move this out of here
-        $Request = Request::createFromGlobals();
-        $query = Filter::sanitize($Request->query->getString('q'));
         $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
@@ -98,10 +96,15 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $req->bindValue(':query', '%' . $this->readAllQuery . '%', PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function setReadAllQuery(string $query): void
+    {
+        $this->readAllQuery = Filter::sanitize($query);
     }
 
     /**

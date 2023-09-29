@@ -232,6 +232,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
+        $TeamTags->setReadAllQuery((string) $this->App->Request->query->get('q'));
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(

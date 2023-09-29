@@ -50,7 +50,7 @@ try {
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
     $Status = new ExperimentsStatus($Teams);
     $ItemsStatus = new ItemsStatus($Teams);
-    $Tags = new TeamTags($App->Users);
+    $TeamTags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
@@ -100,9 +100,6 @@ try {
         }
     }
 
-    // all the tags for the team
-    $tagsArr = $Tags->readFull();
-
     $metadataGroups = array();
     if (isset($ItemsTypes->entityData['metadata'])) {
         $metadataGroups = (new Metadata($ItemsTypes->entityData['metadata']))->getGroups();
@@ -112,7 +109,8 @@ try {
     $renderArr = array(
         'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
-        'tagsArr' => $tagsArr,
+        // all the tags for the team
+        'tagsArr' => $TeamTags->readFull(),
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,

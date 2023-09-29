@@ -294,7 +294,7 @@ abstract class AbstractEntity implements RestInterface
         $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag, (tags_id IS NOT NULL) AS is_favorite
             FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid  AND favtags2users.tags_id = tags.id)
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE tags2entity.item_type = :type AND ' . $sqlid;
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);

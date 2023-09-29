@@ -454,8 +454,8 @@
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input'  data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input'  data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   {% endmacro %}

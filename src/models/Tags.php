@@ -178,14 +178,14 @@ class Tags implements RestInterface
 
         // tag is removed from tags table if no other entity is referencing it
         $selectArr = array_map(function (string $entityType): string {
-            return 'SELECT tags_id FROM tags2' . $entityType . ' WHERE tags_id = :tags_id';
+            return 'SELECT tags_id FROM tags2' . $entityType . ' WHERE tags_id = :tag_id';
         }, EntityType::getAllValues());
         $sql = sprintf(
             'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (%s)',
             implode(' UNION ', $selectArr),
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tags_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Entity->readOne();

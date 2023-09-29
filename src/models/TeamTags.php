@@ -91,26 +91,9 @@ class TeamTags implements RestInterface
     public function readAll(): array
     {
         // TODO move this out of here
-        $Request = Request::createFromGlobals();
-        $query = Filter::sanitize((string) $Request->query->get('q'));
-        $joins = array();
-        $count = array();
-        foreach (EntityType::getAllValues() as $entityType) {
-            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
-            $count[] = sprintf('COUNT(DISTINCT tags2%1$s.%1$s_id)', $entityType);
-        }
-        $sql = sprintf(
-            'SELECT tag, tags.id, %1$s AS item_count, (favtags2users.tags_id IS NOT NULL) AS is_favorite
-                FROM tags
-                %2$s
-                LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-                WHERE team = :team AND tags.tag LIKE :query
-                GROUP BY tags.id
-                ORDER BY item_count DESC',
-            implode('+', $count),
-            implode(' ', $joins),
-        );
-        $req = $this->Db->prepare($sql);
+        $query = Filter::sanitize((string) (Request::createFromGlobals())->query->get('q'));
+
+        $req = $this->Db->prepare($this->readSqlBuilder(true));
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
@@ -124,24 +107,7 @@ class TeamTags implements RestInterface
      */
     public function readFull(): array
     {
-        $joins = array();
-        $count = array();
-        foreach (EntityType::getAllValues() as $entityType) {
-            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
-            $count[] = sprintf('COUNT(DISTINCT tags2%1$s.%1$s_id)', $entityType);
-        }
-
-        $sql = sprintf(
-            'SELECT tags.tag, tags.id, %1$s AS item_count
-                FROM tags
-                %2$s
-                WHERE team = :team
-                GROUP BY tags.id
-                ORDER BY item_count DESC',
-            implode('+', $count),
-            implode(' ', $joins),
-        );
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare($this->readSqlBuilder());
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -252,5 +218,29 @@ class TeamTags implements RestInterface
 
         $this->Db->execute($req);
         return $this->readAll();
+    }
+
+    private function readSqlBuilder(bool $readAll=false): string
+    {
+        $joins = array();
+        $count = array();
+        foreach (EntityType::getAllValues() as $entityType) {
+            $joins[] = sprintf('LEFT JOIN tags2%1$s ON tags2%1$s.tags_id = tags.id', $entityType);
+            $count[] = sprintf('COUNT(DISTINCT tags2%1$s.%1$s_id)', $entityType);
+        }
+        return sprintf(
+            'SELECT tags.tag, tags.id, %1$s AS item_count %3$s
+                FROM tags
+                %2$s
+                %4$s
+                WHERE team = :team %5$s
+                GROUP BY tags.id
+                ORDER BY item_count DESC',
+            implode('+', $count),
+            implode(' ', $joins),
+            $readAll ? ', (favtags2users.tags_id IS NOT NULL) AS is_favorite' : '',
+            $readAll ? 'LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)' : '',
+            $readAll ? 'AND tags.tag LIKE :query' : '',
+        );
     }
 }

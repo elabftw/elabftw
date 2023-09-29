@@ -81,7 +81,7 @@ class MakeEln extends MakeStreamZip
             $hasPart = array();
             try {
                 $this->Entity->setId((int) $id);
-            } catch (IllegalActionException $e) {
+            } catch (IllegalActionException) {
                 continue;
             }
             $e = $this->Entity->entityData;

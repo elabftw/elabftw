@@ -51,6 +51,8 @@ class i18n4Js
             'request-filename' => _('Enter name of the file'),
             'save' => _('Save'),
             'saved' => _('Saved'),
+            'sort-column' => _('Sort column'),
+            'sort-by-column' => _('Sort by column'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
             'tag-delete-warning' => _('Delete this tag?'),

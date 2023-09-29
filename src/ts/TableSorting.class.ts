@@ -7,6 +7,8 @@
  * @package elabftw
  */
 
+import i18next from 'i18next';
+
 type decoratedRow = {row: HTMLTableRowElement, value: string};
 type getComparerReturnType = (a: decoratedRow, b: decoratedRow) => number;
 
@@ -68,28 +70,31 @@ export default class TableSorting {
 
     const hasThead = table.tHead ? true : false;
     const headSelector = ':scope > ' + (hasThead ? 'thead' : 'tbody') + ' > tr:first-of-type > th';
-    let prevSortIcon;
+    let prevSortIcon: HTMLElement;
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button
       // need span because .fas has pointer-events:none
-      th.innerHTML = '<span class="d-flex justify-content-between"><span>' + th.innerHTML + '</span><span class="ml-2" role="button"><i class="fas fa-sort"></i></span></span>';
+      th.innerHTML = `<span class='d-flex justify-content-between align-items-center'><span>${th.innerHTML}</span><button class='btn btn-link p-0 ml-2' type='button' title='${i18next.t('sort-column')}' aria-label='${i18next.t('sort-by-column')} ${th.innerHTML}'><i class='fas fa-sort'></i></button></span>`;
 
-      th.firstChild.addEventListener('click', (event => {
+      th.firstChild.firstChild.nextSibling.addEventListener('click', (event => {
         const icon = (event.target as HTMLElement).firstChild as HTMLElement;
 
         // reset previous icon
         if (prevSortIcon && prevSortIcon != icon) {
           prevSortIcon.classList.remove('fa-sort-up', 'fa-sort-down');
           prevSortIcon.classList.add('fa-sort');
+          prevSortIcon.closest('th').removeAttribute('aria-sort');
           prevSortIcon.closest('th').removeAttribute('data-order');
         }
 
         // update current icon
         if (!th.dataset.order || th.dataset.order === 'desc') {
+          th.setAttribute('aria-sort', 'ascending');
           th.dataset.order = 'asc';
           icon.classList.remove('fa-sort', 'fa-sort-down');
           icon.classList.add('fa-sort-up');
         } else {
+          th.setAttribute('aria-sort', 'descending');
           th.dataset.order = 'desc';
           icon.classList.replace('fa-sort-up', 'fa-sort-down');
         }

@@ -65,19 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
-        // for team/ucp page view mode of list of templates, we reload the full page because the ordering will be different
-        const urlParams = new URLSearchParams(window.location.search);
-        if (['/team.php', '/ucp.php'].includes(window.location.pathname) && !urlParams.has('templateid')) {
-          window.location.replace('?tab=3');
-        } else {
-          const container = document.getElementById('container');
-          container.querySelectorAll('[data-toggle-pin-icon]').forEach(el => {
-            el.classList.toggle('color-weak');
-          });
-          container.querySelectorAll('[data-action="toggle-pin"]').forEach(el => {
-            ['bgnd-gray', 'hl-hover-gray'].forEach(cl => el.classList.toggle(cl));
-          });
-        }
+        // toggle appearance of button and icon
+        ['bgnd-gray', 'hl-hover-gray'].forEach(cl => el.classList.toggle(cl));
+        el.querySelector('i').classList.toggle('color-weak');
       });
 
     // TIMESTAMP button in modal

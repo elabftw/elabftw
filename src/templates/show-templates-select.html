@@ -40,7 +40,7 @@
             {% endif %}
               {# clickable toggle pin button #}
               <span title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ template.id }}' class='{{ template.is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-1 rounded'>
-                <i data-toggle-pin-icon='' class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i>
+                <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i>
               </span>
               {{ template.title|raw }}</td>
           <td>

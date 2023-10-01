@@ -60,7 +60,7 @@
     "cypress": "^13.2.0",
     "eslint": "^8.2.0",
     "postcss": "^8.4.7",
-    "postcss-scss": "^4.0.3",
+    "postcss-scss": "^4.0.9",
     "stylelint": "^15.10.1",
     "stylelint-config-sass-guidelines": "^10.0.0",
     "webpack-bundle-analyzer": "^4.1.0"

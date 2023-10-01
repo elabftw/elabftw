@@ -426,10 +426,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jquery@*", "@types/jquery@^3.5.16":
-  version "3.5.18"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.18.tgz#2a4979866954e601361ddc62ea304c9e46311b77"
-  integrity sha512-sNm7O6LECFhHmF+3KYo6QIl2fIbjlPYa0PDgDQwfOaEJzwpK20Eub9Ke7VKkGsSJ2K0HUR50S266qYzRX4GlSw==
+"@types/jquery@*", "@types/jquery@^3.5.20":
+  version "3.5.20"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.20.tgz#a23eece847591c7aaa47c52d6910052af473df4e"
+  integrity sha512-UI+EGhgYD4LdSZ8gaiziFqXYIIB38VQSDsnAs8jL/div7FGrzrShx4HKCykVzk3tPfiIlusdNP9Wi3G60LCF2Q==
   dependencies:
     "@types/sizzle" "*"
 

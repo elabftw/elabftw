@@ -12,7 +12,7 @@
     "@deltablot/tg-oss-ove-umd": "^0.3.2",
     "@fancyapps/fancybox": "3.5.*",
     "@fullcalendar/bootstrap": "^6.1.5",
-    "@fullcalendar/core": "^6.1.5",
+    "@fullcalendar/core": "^6.1.9",
     "@fullcalendar/daygrid": "^6.1.5",
     "@fullcalendar/interaction": "^6.1.5",
     "@fullcalendar/list": "^6.1.5",

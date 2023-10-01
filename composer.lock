@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.280.2",
+            "version": "3.282.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d68b83b3bc39b70bf33e9b8b5166facbe3e4fe9b"
+                "reference": "79a3ed5bb573f592823f8b1cffe0dbac3132e6b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d68b83b3bc39b70bf33e9b8b5166facbe3e4fe9b",
-                "reference": "d68b83b3bc39b70bf33e9b8b5166facbe3e4fe9b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/79a3ed5bb573f592823f8b1cffe0dbac3132e6b4",
+                "reference": "79a3ed5bb573f592823f8b1cffe0dbac3132e6b4",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.280.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.282.0"
             },
-            "time": "2023-09-01T18:06:10+00:00"
+            "time": "2023-09-28T18:09:20+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -2964,16 +2964,16 @@
         },
         {
             "name": "psr/http-client",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-client.git",
-                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31"
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/0955afe48220520692d2d09f7ab7e0f93ffd6a31",
-                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
                 "shasum": ""
             },
             "require": {
@@ -3010,9 +3010,9 @@
                 "psr-18"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-client/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-client"
             },
-            "time": "2023-04-10T20:12:12+00:00"
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",

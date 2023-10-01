@@ -395,10 +395,10 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.1.tgz#aa22750962f3bf0e79d753d3cc067f010c95f194"
   integrity sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==
 
-"@types/fancybox@^3.5.2":
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/@types/fancybox/-/fancybox-3.5.3.tgz#a9c68c8e6ad198d1ec872a7926c2449c93e2ae39"
-  integrity sha512-VmlqpN7Ez/HvSHBdxALh/4gnkBEYLroYe6bTmXkJtQpPVkHTg1SzS/hIdzZKtKLjxeb6zPGK02RqnnB7VQIKtg==
+"@types/fancybox@^3.5.4":
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/@types/fancybox/-/fancybox-3.5.4.tgz#3f232f067d3eb764b5fb92ba4b1611475e35eb5c"
+  integrity sha512-hAhV/mCVXtkcBH2KaYr5lbR7ELzSGJaFIstZKyTZRcLJPzaMOjGlmnUhDa8jUXb07Pp4dsuS5poakq/Rsc/oLw==
   dependencies:
     "@types/jquery" "*"
 

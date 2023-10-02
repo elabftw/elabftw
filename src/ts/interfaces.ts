@@ -61,6 +61,7 @@ enum Action {
   Archive = 'archive',
   Bloxberg = 'bloxberg',
   Deduplicate = 'deduplicate',
+  Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
   Lock = 'lock',
   PatchUser2Team = 'patchuser2team',

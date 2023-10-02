@@ -43,6 +43,17 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Users->readAllFromTeam());
     }
 
+    public function testDisable2fa(): void
+    {
+        $this->assertIsArray($this->Users->patch(Action::Disable2fa, array()));
+    }
+
+    public function testIllegalDisable2fa(): void
+    {
+        $this->expectException(IllegalActionException::class);
+        (new Users(2, 1, new Users(3, 1)))->patch(Action::Disable2fa, array());
+    }
+
     public function testUpdateAccount(): void
     {
         $params = array(

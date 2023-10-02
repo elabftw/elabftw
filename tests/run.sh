@@ -64,9 +64,6 @@ docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,
 worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
 docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 
-# install the database
-echo "Initializing the database..."
-docker exec -it elabtmp bin/init db:install -r -q
 if ($ci); then
     docker exec -it elabtmp yarn static
 fi

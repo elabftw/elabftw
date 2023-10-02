@@ -21,9 +21,12 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
     }
 
-    public function testCreate(): void
+    public function testCreateAndDestroy(): void
     {
-        $this->assertIsInt($this->ApiKeys->postAction(Action::Create, array('name' => 'test key', 'canwrite' => 1)));
+        $id = $this->ApiKeys->postAction(Action::Create, array('name' => 'test key', 'canwrite' => 1));
+        $this->assertIsInt($id);
+        $this->ApiKeys->setId($id);
+        $this->assertTrue($this->ApiKeys->destroy());
     }
 
     public function testPatch(): void
@@ -48,6 +51,10 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     {
         $this->ApiKeys->createKnown('phpunit');
         $this->assertIsArray($this->ApiKeys->readFromApiKey('phpunit'));
+    }
+
+    public function testInvalidKey(): void
+    {
         $this->expectException(ImproperActionException::class);
         $this->ApiKeys->readFromApiKey('unknown key');
     }
@@ -56,13 +63,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     {
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
-        $this->assertSame('test key', $res[1]['name']);
+        $this->assertSame('known key used for tests', $res[1]['name']);
         $this->assertSame(1, $res[1]['can_write']);
-    }
-
-    public function testDestroy(): void
-    {
-        $this->ApiKeys->setId(2);
-        $this->assertTrue($this->ApiKeys->destroy());
     }
 }

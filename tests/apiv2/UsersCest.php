@@ -8,6 +8,7 @@
  */
 
 use \Codeception\Util\HttpCode;
+use Elabftw\Enums\Action;
 
 class UsersCest
 {
@@ -21,17 +22,17 @@ class UsersCest
     {
         $I->wantTo('Disable mfa for a user');
         // this user doesn't have 2fa but it's okay
-        $I->sendPATCH('/users/2');
+        $I->sendPATCH('/users/2', array('action' => Action::Disable2fa->value));
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
     }
 
     public function illegalDisableMfaTest(Apiv2Tester $I)
     {
+        // use Tata (Bravo team Admin) to try and disable 2fa for another user in their team
         $I->haveHttpHeader('Authorization', 'apiKey4Test_tata');
-        $I->haveHttpHeader('Content-Type', 'application/json');
         $I->wantTo('Disable mfa for a user but we should not be able to');
-        $I->sendPATCH('/users/2');
+        $I->sendPATCH('/users/6', array('action' => Action::Disable2fa->value));
         $I->seeResponseCodeIs(HttpCode::FORBIDDEN); // 403
         $I->seeResponseIsJson();
     }

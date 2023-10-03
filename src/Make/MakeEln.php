@@ -98,7 +98,7 @@ class MakeEln extends MakeStreamZip
                 $dataEntities[] = array(
                     '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
@@ -108,7 +108,7 @@ class MakeEln extends MakeStreamZip
                 $dataEntities[] = array(
                     '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }

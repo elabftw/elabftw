@@ -57,18 +57,19 @@ class ApiKeys implements RestInterface
      * Create a known key so we can test against it in dev mode
      * This function should only be called from the db:populate command
      */
-    public function createKnown(string $apiKey): void
+    public function createKnown(string $apiKey): int
     {
         $hash = password_hash($apiKey, PASSWORD_BCRYPT);
 
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', 'test key');
+        $req->bindValue(':name', 'known key used for tests');
         $req->bindParam(':hash', $hash);
         $req->bindValue(':can_write', 1, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
     /**

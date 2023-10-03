@@ -1,12 +1,15 @@
 actor: Apiv2Tester
 coverage:
-  enabled: true
-  c3_url: 'https://elabtmp'
-  remote_context_options:
-    ssl:
-      verify_peer: false
-      verify_peer_name: false
-      allow_self_signed: true
+    enabled: true
+    c3_url: 'https://elabtmp'
+    remote_context_options:
+        ssl:
+            verify_peer: false
+            verify_peer_name: false
+            allow_self_signed: true
+    include:
+        - web/app/init.inc.php
+        - web/app/controllers/ApiController.php
 modules:
     enabled:
         - \Helper\Apiv2

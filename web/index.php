@@ -65,14 +65,14 @@ try {
             $App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $location = '../../login.php';
+            $location = '/login.php';
 
             // if the user is in several teams, we need to redirect to the team selection
         } elseif ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $App->Session->set('auth_userid', $AuthResponse->userid);
-            $location = '../../login.php';
+            $location = '/login.php';
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login($rememberMe);

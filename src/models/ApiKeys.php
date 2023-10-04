@@ -32,6 +32,8 @@ class ApiKeys implements RestInterface
 
     private string $key = '';
 
+    private int $keyId = 0;
+
     public function __construct(private Users $Users, ?int $id = null)
     {
         $this->Db = Db::getConnection();
@@ -50,7 +52,7 @@ class ApiKeys implements RestInterface
 
     public function getPage(): string
     {
-        return $this->key;
+        return sprintf('%d-%s', $this->keyId, $this->key);
     }
 
     /**
@@ -60,16 +62,7 @@ class ApiKeys implements RestInterface
     public function createKnown(string $apiKey): int
     {
         $hash = password_hash($apiKey, PASSWORD_BCRYPT);
-
-        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', 'known key used for tests');
-        $req->bindParam(':hash', $hash);
-        $req->bindValue(':can_write', 1, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->lastInsertId();
+        return $this->insert('known key used for tests', 1, $hash);
     }
 
     /**
@@ -77,7 +70,7 @@ class ApiKeys implements RestInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, name, created_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team';
+        $sql = 'SELECT id, name, created_at, last_used_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team ORDER BY last_used_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
@@ -93,15 +86,30 @@ class ApiKeys implements RestInterface
 
     /**
      * Get a user from an API key
+     * Note: at some point we should drop support for keys without id header
      */
     public function readFromApiKey(string $apiKey): array
     {
-        $sql = 'SELECT hash, userid, can_write, team FROM api_keys';
+        $idFilter = '';
+        // do we have userid information? old keys don't have it
+        if (str_contains($apiKey, '-')) {
+            // extract the keyId from the key
+            $exploded = explode('-', $apiKey, 2);
+            $this->keyId = (int) $exploded[0];
+            // we reassign it to this variable so it's transparent for the code below
+            $apiKey = $exploded[1] ?? '';
+            $idFilter = ' WHERE id = :id';
+        }
+        $sql = 'SELECT hash, userid, can_write, team FROM api_keys' . $idFilter;
         $req = $this->Db->prepare($sql);
+        if ($idFilter) {
+            $req->bindParam(':id', $this->keyId, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
         foreach ($req->fetchAll() as $key) {
             if (password_verify($apiKey, $key['hash'])) {
-                return array('userid' => $key['userid'], 'canWrite' => $key['can_write'], 'team' => $key['team']);
+                $this->touch();
+                return $key;
             }
         }
         throw new ImproperActionException('No corresponding API key found!');
@@ -116,6 +124,20 @@ class ApiKeys implements RestInterface
         return $this->Db->execute($req);
     }
 
+    public function create(string $name, int $canwrite): int
+    {
+        $hash = password_hash($this->generateKey(), PASSWORD_BCRYPT);
+        return $this->insert(Filter::title($name), $canwrite, $hash);
+    }
+
+    private function touch(): bool
+    {
+        $sql = 'UPDATE api_keys SET last_used_at = NOW() WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->keyId, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     private function generateKey(): string
     {
         // keep it in the object so we can display it to the user after
@@ -123,14 +145,8 @@ class ApiKeys implements RestInterface
         return $this->key;
     }
 
-    /**
-     * Create a new key for current user
-     */
-    private function create(string $name, int $canwrite): int
+    private function insert(string $name, int $canwrite, string $hash): int
     {
-        $name = Filter::title($name);
-        $hash = password_hash($this->generateKey(), PASSWORD_BCRYPT);
-
         $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
@@ -140,6 +156,8 @@ class ApiKeys implements RestInterface
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $this->Db->lastInsertId();
+        // we store the id of the key in the object to serve it as part of the key
+        $this->keyId = $this->Db->lastInsertId();
+        return $this->keyId;
     }
 }

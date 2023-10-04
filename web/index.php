@@ -22,8 +22,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
-$location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
-$Response = new RedirectResponse($location);
 
 try {
     // SAML: IDP will redirect to this page after user login on IDP website
@@ -76,13 +74,15 @@ try {
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login($rememberMe);
+            // we redirect on the same page but this time we will be auth and it will redirect us to the correct location
+            $location = '/index.php';
         }
         // the redirect cookie is ignored for saml auth. See #2438.
         // we don't use a RedirectResponse but show a temporary redirection page or it will not work properly
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
         exit;
     }
-
+    $location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
     $Response = new RedirectResponse($location);
     $Response->send();
 } catch (ImproperActionException $e) {

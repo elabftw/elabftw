@@ -56,7 +56,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     public function testInvalidKey(): void
     {
         $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->readFromApiKey('unknown key');
+        $this->ApiKeys->readFromApiKey('666-unknown key');
     }
 
     public function testReadAll(): void

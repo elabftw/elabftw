@@ -35,10 +35,10 @@ try {
     if ($App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
-        $keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
+        $key = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         // replace the Users in App
-        $App->Users = new Users($keyArr['userid'], $keyArr['team']);
-        $canWrite = (bool) $keyArr['canWrite'];
+        $App->Users = new Users($key['userid'], $key['team']);
+        $canWrite = (bool) $key['can_write'];
     } else {
         if ($App->Session->get('is_auth') !== 1) {
             throw new UnauthorizedException();

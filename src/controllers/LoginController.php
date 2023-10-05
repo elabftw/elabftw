@@ -297,7 +297,7 @@ class LoginController implements ControllerInterface
             // will display the appropriate message to user
             $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
             $this->App->Session->remove('initial_team_selection_required');
-            $location = '../../login.php';
+            $location = '/login.php';
             echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
             exit;
         }

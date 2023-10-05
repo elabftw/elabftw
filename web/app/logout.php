@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once 'init.inc.php';
 
-$redirectUrl = '../login.php';
+$redirectUrl = '/login.php';
 
 // add log line when user logs out
 $App->Log->info('User is logging out', array('userid' => $App->Users->userData['userid'] ?? 0));
@@ -60,7 +60,7 @@ $destroySession = function () use ($App): void {
 if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
-        $redirectUrl = '../login.php';
+        $redirectUrl = '/login.php';
     }
 }
 
@@ -78,7 +78,7 @@ if ($App->Request->cookies->has('saml_token')) {
         $destroySession();  // destroy session anyway
 
         $App->Log->info('', array('Exception' => $e));
-        $Response = new RedirectResponse('../../login.php');
+        $Response = new RedirectResponse('/login.php');
         $Response->send();
         exit;
     }

@@ -81,9 +81,9 @@ if ($ci); then
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip unit --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
     if [ ! "$(docker images elab-cypress)" ]; then
@@ -106,7 +106,7 @@ elif [ "${1:-}" = "cy" ]; then
         && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html
     docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml ./tests/_output/cypress-coverage.clover.xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --skip api --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-html --coverage-xml
 fi
 
 # in ci we copy the coverage output file in current directory

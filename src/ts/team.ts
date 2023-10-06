@@ -69,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (info.all || !params.has('item')) {
     editable = false;
     selectable = false;
-    document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
+    if (document.getElementById('selectBookableWarningDiv')) {
+      document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
+    }
   }
   // get the start parameter from url and use that as start time if it's there
   const start = params.get('start');
@@ -89,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let queryString = '?';
   if (params.get('cat')) {
     queryString += 'cat=' + params.get('cat');
+  }
+
+  let eventBackgroundColor = 'a9a9a9';
+  if (document.getElementById('itemSelect')) {
+    eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
 
   // SCHEDULER
@@ -129,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
+    eventBackgroundColor: '#' + eventBackgroundColor,
     // selection
     select: function(info): void {
       const title = prompt(i18next.t('comment-add'));

@@ -73,7 +73,7 @@
             {% endfor %}
           </ul>
           <!-- add user to permissions input -->
-          <div id='autocompleteUsersDiv{{ identifier }}' class='input-group'>
+          <div id='autocompleteAnchorDiv_{{ identifier }}' class='input-group'>
             <input id='{{ identifier }}_select_users' data-identifier='{{ identifier }}' data-complete-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
             <div class='input-group-append'>
               <button class='btn btn-primary' data-rw='{{ rw }}' data-identifier='{{ identifier }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>

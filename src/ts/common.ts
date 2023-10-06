@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // use autocomplete jquery-ui plugin
       $(el).autocomplete({
         // this option is necessary or the autocomplete box will get lost under the permissions modal
-        appendTo: el.dataset.identifier ? `#autocompleteUsersDiv${el.dataset.identifier}` : '',
+        appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
           ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
             response(json.map(entry => transformer(entry)));

@@ -77,14 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
     title: string;
   }
 
-  // TODO i18n
-  const notsetOpts = {id: null, title: 'Not set', color: 'bdbdbd'};
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
 
   let categoryEndpoint = `${EntityType.ItemType}`;
-  let statusEndpoint = `${Model.Team}/${about.team}/items_status`;
+  let statusEndpoint = `${Model.Team}/current/items_status`;
   if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
-    categoryEndpoint = `${Model.Team}/${about.team}/experiments_categories`;
-    statusEndpoint = `${Model.Team}/${about.team}/experiments_status`;
+    categoryEndpoint = `${Model.Team}/current/experiments_categories`;
+    statusEndpoint = `${Model.Team}/current/experiments_status`;
   }
 
   const malleableStatus = new Malle({

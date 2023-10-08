@@ -5,6 +5,7 @@ coverage:
     include:
         - src/Auth/*
         - src/classes/*
+        - src/commands/*
         - src/controllers/*
         - src/enums/*
         - src/exceptions/*
@@ -15,6 +16,7 @@ coverage:
         - src/services/*
         - src/Storage/*
         - src/traits/*
+        - web/*
 actor: Tester
 paths:
     tests: tests

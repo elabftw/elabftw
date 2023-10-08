@@ -3,9 +3,6 @@
 # Suite for unit (internal) tests.
 
 class_name: UnitTester
-coverage:
-    include:
-        - src/commands/*
 modules:
     enabled:
         - Asserts

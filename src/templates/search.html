@@ -218,7 +218,7 @@
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
-      Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+      {{ 'Press %sctrl + enter%s or %s⌘ + enter%s to submit search.'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}
     </p>
   </div>
 </div>
@@ -410,14 +410,6 @@
     </select>
   </div>
   <!-- END LOCK -->
-</div>
-
-<div class='row'>
-  <div class='col'>
-    <small class='form-text text-muted'>
-      Tip: Add a field/value pair to the query at the cursor position by pressing <kbd>ctrl</kbd> or <kbd>⌘</kbd> while selecting.
-    </small>
-  </div>
 </div>
 
 <hr>

@@ -73,7 +73,7 @@ class MakePdf extends AbstractMakePdf
         error_reporting(E_ERROR);
 
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
-        if ($this->includeAttachments === false && $this->Entity->Users->userData['inc_files_pdf']) {
+        if ($this->pdfa === true || $this->Entity->Users->userData['inc_files_pdf']) {
             $this->includeAttachments = true;
         }
     }

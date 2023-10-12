@@ -57,7 +57,7 @@
   <div class='d-flex mb-2 justify-content-between align-items-center'>
     <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
     <!-- no data-trigger here because custom code in edit.ts -->
-    <input id='title_input' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
+    <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|raw }}' required />
   </div>
 
   {# CATEGORY / STATUS #}

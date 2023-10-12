@@ -790,14 +790,22 @@ the form-control fails to do that so we do the border ourselves */
 
 /* END COMMENTS */
 
-/* TITLE */
-/* add several rules for the word-wrap, see https://stackoverflow.com/a/36555643 */
-.title {
-    font-size: 160%;
+@mixin breakable {
     hyphens: auto;
     line-height: 110%;
     overflow-wrap: break-word;
     word-break: break-word;
+}
+
+.breakable {
+    @include breakable;
+}
+
+/* TITLE */
+/* add several rules for the word-wrap, see https://stackoverflow.com/a/36555643 */
+.title {
+    @include breakable;
+    font-size: 160%;
 
     a {
         color: $mediumstrong;

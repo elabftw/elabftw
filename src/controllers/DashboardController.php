@@ -17,9 +17,11 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -52,10 +54,12 @@ class DashboardController implements ControllerInterface
         $DisplayParamsItems->limit = self::SHOWN_NUMBER;
         $DisplayParamsItems->orderby = Orderby::Lastchange;
         $PermissionsHelper = new PermissionsHelper();
+        $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'categoryArr' => $ItemsTypes->readAll(),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
+            'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'templatesArr' => $Templates->Pins->readAllSimple(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),

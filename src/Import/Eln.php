@@ -107,8 +107,15 @@ class Eln extends AbstractZip
         // LINKS
         if (isset($dataset['mentions']) && !empty($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
-            foreach ($dataset['mentions'] as $link) {
-                $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
+            foreach($dataset['mentions'] as $mention) {
+                // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
+                $fullMention = $mention;
+                // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
+                if (count($mention) === 1) {
+                    // resolve the id to get the full node content
+                    $fullMention = $this->getNodeFromId($mention['@id']);
+                }
+                $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $fullMention['@id'], $fullMention['name']);
             }
             $linkHtml .= '</ul>';
             $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));

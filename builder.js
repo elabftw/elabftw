@@ -53,6 +53,7 @@ module.exports = (env) => {
         'prismjs/components/prism-go.js',
         'prismjs/components/prism-java.js',
         'prismjs/components/prism-javascript.js',
+        'prismjs/components/prism-json.js',
         'prismjs/components/prism-julia.js',
         'prismjs/components/prism-latex.js',
         'prismjs/components/prism-lua.js',

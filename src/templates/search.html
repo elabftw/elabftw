@@ -218,35 +218,35 @@
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
-      Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+      {{ 'Press %sctrl + enter%s or %s⌘ + enter%s to submit search.'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}
     </p>
   </div>
 </div>
 
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
-  <p>Allowed Fields (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>):</p>
+  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
     <div class='col-md-6'>
       <ul class='list-unstyled'>
-        <li class='mb-2'><kbd>attachment:</kbd> yes, no, Simple or Quoted term</li>
-        <li class='mb-2'><kbd>author:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>body:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>category:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>date:</kbd> see date format</li>
-        <li class='mb-2'><kbd>elabid:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>group:</kbd> Simple or Quoted term</li>
+        <li class='mb-2'><kbd>attachment:</kbd> {{ 'yes, no, simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>author:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
+        <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
 
     <div class='col-md-6'>
       <ul class='list-unstyled'>
-        <li class='mb-2'><kbd>locked:</kbd> yes or no</li>
-        <li class='mb-2'><kbd>rating:</kbd> 1, 2, 3, 4, 5, or unrated or 0</li>
-        <li class='mb-2'><kbd>status:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>timestamped:</kbd> yes or no</li>
-        <li class='mb-2'><kbd>title:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>visibility:</kbd> Simple or Quoted term</li>
+        <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
+        <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
+        <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>timestamped:</kbd> {{ 'yes or no'|trans }}</li>
+        <li class='mb-2'><kbd>title:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>visibility:</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
   </div>
@@ -410,14 +410,6 @@
     </select>
   </div>
   <!-- END LOCK -->
-</div>
-
-<div class='row'>
-  <div class='col'>
-    <small class='form-text text-muted'>
-      Tip: Add a field/value pair to the query at the cursor position by pressing <kbd>ctrl</kbd> or <kbd>⌘</kbd> while selecting.
-    </small>
-  </div>
 </div>
 
 <hr>

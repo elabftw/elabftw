@@ -42,9 +42,9 @@ class ImportController implements ControllerInterface
         );
         $this->app->Session->getFlashBag()->add('ok', $msg);
         if (str_starts_with((string) $this->request->request->get('target'), 'items')) {
-            return new RedirectResponse('../../database.php?order=lastchange');
+            return new RedirectResponse('/database.php?order=lastchange');
         }
-        return new RedirectResponse('../../experiments.php?order=lastchange');
+        return new RedirectResponse('/experiments.php?order=lastchange');
     }
 
     private function getImporter(): ImportInterface

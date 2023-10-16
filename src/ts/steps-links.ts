@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     fun: async (value, original) => {
       return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
-        .then(resp => resp.json()).then(json => json.body);
+        .then(resp => resp.json()).then(json => original.dataset.target === Target.Body ? json.body : json.deadline);
     },
     listenOn: '.step.editable',
     returnedValueIsTrustedHtml: true,

@@ -63,7 +63,7 @@ class TeamTags implements RestInterface
         $res = $req->fetch();
         // insert the tag if it doesn't exist
         if ($res === false) {
-            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag,  :team)';
+            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindValue(':tag', $tag, PDO::PARAM_STR);

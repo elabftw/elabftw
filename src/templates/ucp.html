@@ -405,20 +405,20 @@
   <table id='apiTable' class='table' aria-describedby='existingKeys' data-table-sort='true'>
     <thead>
       <tr>
-        <th scope='col'>#</th>
         <th scope='col'>{{ 'Name'|trans }}</th>
         <th scope='col'>{{ 'Permissions'|trans }}</th>
         <th scope='col'>{{ 'Creation date'|trans }}</th>
+        <th scope='col'>{{ 'Last used'|trans }}</th>
         <th scope='col'>{{ 'Action'|trans }}</th>
       </tr>
     </thead>
     <tbody>
       {% for key in apiKeysArr %}
         <tr>
-          <th scope='row'>{{ loop.index }}</th>
           <td>{{ key.name }}</td>
           <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
-          <td>{{ key.created_at }}</td>
+          <td><span class='relative-moment' title='{{ key.created_at }}'></span></td>
+          <td><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
           <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt'></i></a></td>
         </tr>
       {% endfor %}

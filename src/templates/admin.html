@@ -139,7 +139,7 @@
     </textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template' data-id='{{ App.teamArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
     <hr>
 
@@ -147,7 +147,7 @@
     <textarea style='height:400px' class='markdown-textarea form-control mt-2' name="common_template_md" id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template-md' data-id='{{ App.teamArr.id }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
   </div>
@@ -329,7 +329,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments Status'|trans }}</h3>
   <div class='pl-3 mb-5' id='experiments_statusDiv'>
     <div class='mb-2 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
+      <p class='col-form-label'>{{ 'Create and modify the status available to experiments.'|trans }}</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createexperiments_statusModal'>{{ 'Create'|trans }}</button>
@@ -376,7 +376,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Resources Status'|trans }}</h3>
   <div class='pl-3' id='items_statusDiv'>
     <div class='mb-2 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
+      <p class='col-form-label'>{{ 'Create and modify the status available to resources.'|trans }}</p>
       <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createitems_statusModal'>{{ 'Create'|trans }}</button>

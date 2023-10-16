@@ -1,16 +1,15 @@
 <!-- Modal to display plain text content -->
 <div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='plainTextModalLabel'>{{ 'File content'|trans }}</h5>
+        <h5 class='modal-title' id='plainTextModalLabel'></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
-        <textarea class='form-control' name='plainTextArea' id='plainTextArea' rows='10' readonly></textarea>
+      <div class='modal-body row'>
+        <div class='col' id='plainTextContentDiv'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -102,7 +101,7 @@
 
               <!-- MOLECULES -->
               {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
-                <!--  build control dropdown to change the representation style -->
+                <!-- build control dropdown to change the representation style -->
                 <div style='padding-bottom: 5px' class='btn-group'>
                   <button type='button'
                     class='btn btn-secondary btn-xs dropdown-toggle'
@@ -148,9 +147,9 @@
                 </div>
 
               <!-- TEXT -->
-              {% elseif ext matches '/txt$/i' %}
+              {% elseif ext matches '/(txt|md|json)$/i' %}
                 <span class='eye-overlay'
-                  data-action='show-plain-text'
+                  data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
                   data-storage='{{ upload.storage }}'
                   data-path='{{ upload.long_name }}'
                   data-name='{{ upload.real_name }}'>
@@ -182,18 +181,6 @@
                 </p>
               <br>
               {% include('upload-comment.html') %}
-
-              <!-- SHOW TXT CONTENT -->
-              {% if ext matches '/txt$/i' %}
-                <div class='clickable'>
-                  <i class='fas fa-fw fa-eye mr-1'></i>
-                  <p data-action='show-plain-text'
-                     data-storage='{{ upload.storage }}'
-                     data-path='{{ upload.long_name }}'
-                     data-name='{{ upload.real_name }}'
-                     class='d-inline'>{{ 'Show content of file'|trans }}</p>
-                </div>
-              {% endif %}
 
               {% include('upload-more-info.html') %}
               </div><!-- end div.caption -->

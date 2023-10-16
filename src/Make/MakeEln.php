@@ -89,19 +89,24 @@ class MakeEln extends MakeStreamZip
             $this->folder = $this->root . '/' . $currentDatasetFolder;
             $rootParts[] = array('@id' => './' . $currentDatasetFolder);
 
-            // LINKS
+            // LINKS (mentions)
+            // this array will be added to the "mentions" attribute of the main dataset
             $mentions = array();
             foreach ($e['items_links'] as $link) {
-                $mentions[] = array(
-                    '@id' => Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'],
+                $id = Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'];
+                $mentions[] = array('@id' => $id);
+                $dataEntities[] = array(
+                    '@id' => $id,
                     '@type' => 'Dataset',
                     'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
             foreach ($e['experiments_links'] as $link) {
-                $mentions[] = array(
-                    '@id' => Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'],
+                $id = Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'];
+                $mentions[] = array('@id' => $id);
+                $dataEntities[] = array(
+                    '@id' => $id,
                     '@type' => 'Dataset',
                     'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],

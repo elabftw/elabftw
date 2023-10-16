@@ -137,8 +137,8 @@
 
       {# TOGGLE PIN #}
       <div class='mr-2'>
-        <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
-          <i id='toggle-pin-icon' class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
+        <div title='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' class='{{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 rounded'>
+          <i class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
         </div>
       </div>
 
@@ -157,7 +157,7 @@
     <div class='vertical-separator mx-3'></div>
     <!-- MORE OPTIONS -->
     <div class='dropdown'>
-      <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' id='toggle-pin-icon-div' class='hl-hover-gray p-2 px-3 rounded'>
+      <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' class='hl-hover-gray p-2 px-3 rounded'>
         <i class='fas fa-ellipsis-v'></i>
       </div>
 

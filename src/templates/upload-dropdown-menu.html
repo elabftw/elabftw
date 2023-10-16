@@ -57,8 +57,8 @@
   {% endif %}
 
     <!-- Show content of plain text -->
-    {% if ext matches '/txt$/i' %}
-      <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
+    {% if ext matches '/(txt|md|json)$/i' %}
+      <a class='dropdown-item' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
         <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
     {% endif %}
 

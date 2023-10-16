@@ -26,6 +26,7 @@ use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
+use Elabftw\Services\MfaHelper;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
@@ -305,6 +306,7 @@ class Users implements RestInterface
         $this->canWriteOrExplode();
         match ($action) {
             Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
@@ -463,6 +465,16 @@ class Users implements RestInterface
             throw new ResourceNotFoundException();
         }
         return new self((int) $res);
+    }
+
+    private function disable2fa(): array
+    {
+        // only sysadmin or same user can disable 2fa
+        if ($this->requester->userData['userid'] === $this->userData['userid'] || $this->requester->userData['is_sysadmin'] === 1) {
+            (new MfaHelper($this->userData['userid']))->removeSecret();
+            return $this->readOne();
+        }
+        throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
     /**

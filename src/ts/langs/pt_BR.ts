@@ -15,6 +15,7 @@ const t = {
     "generic-delete-warning": "Deletar isso aqui?",
     "link-delete-warning": "Deletar este link?",
     "new-apikey-warning": "Esta é a única vez que a chave será exibida! Não se esqueça de guardá-la em um local seguro, pois você não poderá vê-la novamente:",
+    "not-set": "Não definido",
     "nothing-selected": "Nada foi selecionado!",
     "now": "Agora",
     "please-wait": "Por favor, aguarde...",

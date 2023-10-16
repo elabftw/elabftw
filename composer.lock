@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "affa4ec142592db8107a5fbd2b398fd2",
+    "content-hash": "8c4dbb2e6b81bfaaf5a9ace2984a95da",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5549,16 +5549,16 @@
         },
         {
             "name": "codeception/c3",
-            "version": "2.8.1",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/c3.git",
-                "reference": "0b16f22ec0c46bc131063a3f704bdf9761192d6e"
+                "reference": "e23298a1cd5e7745973ea26a53572a3d9b013439"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/c3/zipball/0b16f22ec0c46bc131063a3f704bdf9761192d6e",
-                "reference": "0b16f22ec0c46bc131063a3f704bdf9761192d6e",
+                "url": "https://api.github.com/repos/Codeception/c3/zipball/e23298a1cd5e7745973ea26a53572a3d9b013439",
+                "reference": "e23298a1cd5e7745973ea26a53572a3d9b013439",
                 "shasum": ""
             },
             "require": {
@@ -5600,22 +5600,22 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/c3/issues",
-                "source": "https://github.com/Codeception/c3/tree/2.8.1"
+                "source": "https://github.com/Codeception/c3/tree/2.9.0"
             },
-            "time": "2023-02-10T18:07:43+00:00"
+            "time": "2023-10-15T17:57:07+00:00"
         },
         {
             "name": "codeception/codeception",
-            "version": "5.0.11",
+            "version": "5.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/Codeception.git",
-                "reference": "1998a287a3d7f2771c9591aef1c528d9d44cc4b4"
+                "reference": "7f528f5fd8cdcd05cd0a85eb1e24d05df989e0c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/1998a287a3d7f2771c9591aef1c528d9d44cc4b4",
-                "reference": "1998a287a3d7f2771c9591aef1c528d9d44cc4b4",
+                "url": "https://api.github.com/repos/Codeception/Codeception/zipball/7f528f5fd8cdcd05cd0a85eb1e24d05df989e0c4",
+                "reference": "7f528f5fd8cdcd05cd0a85eb1e24d05df989e0c4",
                 "shasum": ""
             },
             "require": {
@@ -5710,7 +5710,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeception/Codeception/issues",
-                "source": "https://github.com/Codeception/Codeception/tree/5.0.11"
+                "source": "https://github.com/Codeception/Codeception/tree/5.0.12"
             },
             "funding": [
                 {
@@ -5718,7 +5718,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-08-22T06:42:39+00:00"
+            "time": "2023-10-15T18:04:50+00:00"
         },
         {
             "name": "codeception/lib-asserts",

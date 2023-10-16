@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#team_groups_div').on('click', '.teamGroupDelete', function() {
     if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${Model.Team}/${$(this).data('teamid')}/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
+      ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
     }
   });
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
     const user = $(this).data('user');
     const group = $(this).data('group');
-    ApiC.patch(`${Model.Team}/me/${Model.TeamGroup}/${group}`, {'how': Action.Unreference, 'userid': user}).then(() => reloadElement('team_groups_div'));
+    ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${group}`, {'how': Action.Unreference, 'userid': user}).then(() => reloadElement('team_groups_div'));
   });
 
   // edit the team group name
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
     fun: async (value, original) => {
-      return ApiC.patch(`${Model.Team}/me/${Model.TeamGroup}/${original.dataset.id}`, {'name': value})
+      return ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${original.dataset.id}`, {'name': value})
         .then(resp => resp.json()).then(json => json.name);
     },
     listenOn: '.malleableTeamgroupName',
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
-      ApiC.post(`${Model.Team}/me/${Model.TeamGroup}`, {'name': input.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {
         reloadElement('team_groups_div');
         input.value = '';
       });
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notifError(new Error('Use the autocompletion menu to add users.'));
         return;
       }
-      ApiC.patch(`${Model.Team}/me/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
+      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
     // CREATE STATUSLIKE
     } else if (el.matches('[data-action="create-statuslike"]')) {
       const holder = el.parentElement.parentElement;
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.borderColor = 'red';
         return;
       }
-      ApiC.post(`${Model.Team}/me/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
         $(`#create${el.dataset.target}Modal`).modal('hide');
         // clear the name
         nameInput.value = '';
@@ -167,11 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
       const isDefault = (holder.querySelector('input[type="radio"]') as HTMLInputElement).checked;
       const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
-      ApiC.patch(`${Model.Team}/me/${target}/${id}`, params);
+      ApiC.patch(`${Model.Team}/current/${target}/${id}`, params);
     // DESTROY CATEGORY/STATUS
     } else if (el.matches('[data-action="destroy-catstat"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/me/${el.dataset.target}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
+        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {
@@ -190,11 +190,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = {};
       params['common_template'] = tinymce.get('common_template').getContent();
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
-      ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
+      ApiC.patch(`${Model.Team}/current`, params);
     } else if (el.matches('[data-action="patch-team-common-template-md"]')) {
       const params = {};
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
-      ApiC.patch(`${Model.Team}/${el.dataset.id}`, params);
+      ApiC.patch(`${Model.Team}/current`, params);
     } else if (el.matches('[data-action="export-scheduler"]')) {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;

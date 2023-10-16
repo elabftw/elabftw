@@ -10,7 +10,7 @@ describe('Logout', () => {
       followRedirect: false,
     }).then(resp => {
       expect(resp.status).to.eq(302);
-      expect(resp.headers.location).to.eq('../login.php');
+      expect(resp.headers.location).to.eq('/login.php');
     });
   });
 });

@@ -15,6 +15,7 @@ const t = {
     "generic-delete-warning": "Eliminar això?",
     "link-delete-warning": "Voleu eliminar aquest enllaç?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "not-set": "Not set",
     "nothing-selected": "Nothing selected!",
     "now": "Now",
     "please-wait": "Espereu ...",

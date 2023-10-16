@@ -1,28 +1,10 @@
 actor: CypressTester
 coverage:
-  enabled: true
-  c3_url: 'https://elabtmp'
-  remote: true
-  remote_context_options:
-    ssl:
-      verify_peer: false
-      verify_peer_name: false
-      allow_self_signed: true
-  whitelist:
-    include:
-      - src/Auth/*
-      - src/classes/*
-      - src/commands/*
-      - src/controllers/*
-      - src/enums/*
-      - src/exceptions/*
-      - src/factories/*
-      - src/Import/*
-      - src/Make/*
-      - src/models/*
-      - src/services/*
-      - src/Storage/*
-      - src/traits/*
-      - web/*
-    exclude:
-      - src/commands/*
+    enabled: true
+    remote: true
+    c3_url: 'https://elabtmp'
+    remote_context_options:
+        ssl:
+            verify_peer: false
+            verify_peer_name: false
+            allow_self_signed: true

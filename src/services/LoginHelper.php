@@ -9,7 +9,6 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;

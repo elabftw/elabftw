@@ -114,7 +114,7 @@ class Items extends AbstractConcreteEntity
             'canread' => $this->entityData['canread'],
             'canwrite' => $this->entityData['canwrite'],
             'canbook' => $this->entityData['canbook'],
-            'category' => $this->entityData['category_id'],
+            'category' => $this->entityData['category'],
             'metadata' => $metadata,
             'content_type' => $this->entityData['content_type'],
         ));

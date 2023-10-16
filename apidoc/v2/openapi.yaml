@@ -25,6 +25,8 @@ components:
           type: string
         created_at:
           type: string
+        last_used_at:
+          type: string
         hash:
           type: string
         can_write:
@@ -2942,10 +2944,16 @@ paths:
                       type: integer
                       description: ID of the team
                 - type: object
+                  description: Disable 2FA (requires Sysadmin privilege or acting on ourself)
+                  properties:
+                    action:
+                      enum: ['disable2fa']
+                      type: string
+                - type: object
                   description: Change the password
                   properties:
                     action:
-                      const: 'updatepassword'
+                      enum: ['updatepassword']
                       type: string
                     current_password:
                       type: string

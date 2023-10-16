@@ -77,14 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
     title: string;
   }
 
-  // TODO i18n
-  const notsetOpts = {id: null, title: 'Not set', color: 'bdbdbd'};
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
 
   let categoryEndpoint = `${EntityType.ItemType}`;
-  let statusEndpoint = `${Model.Team}/${about.team}/items_status`;
+  let statusEndpoint = `${Model.Team}/current/items_status`;
   if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
-    categoryEndpoint = `${Model.Team}/${about.team}/experiments_categories`;
-    statusEndpoint = `${Model.Team}/${about.team}/experiments_status`;
+    categoryEndpoint = `${Model.Team}/current/experiments_categories`;
+    statusEndpoint = `${Model.Team}/current/experiments_status`;
   }
 
   const malleableStatus = new Malle({
@@ -145,12 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
   new MutationObserver(() => {
     malleableStatus.listen();
     malleableCategory.listen();
-  }).observe(document.getElementById('main_section'), {childList: true});
-
-  // add an observer so new comments will get an event handler too
-  new MutationObserver(() => {
     malleableComments.listen();
     relativeMoment();
-  }).observe(document.getElementById('commentsDiv'), {childList: true});
-  // END COMMENTS
+  }).observe(document.getElementById('container'), {childList: true});
 });

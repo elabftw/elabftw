@@ -158,7 +158,7 @@
           <div class='input-group'>
             <select class='form-control' id='loadMetadataSelect_items_types'>
               {% for itemType in itemsCategoryArr %}
-                <option value="{{ itemType.category_id }}">{{ itemType.category }}</option>
+                <option value="{{ itemType.id }}">{{ itemType.title|raw }}</option>
               {% endfor %}
             </select>
             <div class='input-group-append'>

@@ -69,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (info.all || !params.has('item')) {
     editable = false;
     selectable = false;
-    document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
+    if (document.getElementById('selectBookableWarningDiv')) {
+      document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
+    }
   }
   // get the start parameter from url and use that as start time if it's there
   const start = params.get('start');
@@ -89,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let queryString = '?';
   if (params.get('cat')) {
     queryString += 'cat=' + params.get('cat');
+  }
+
+  let eventBackgroundColor = 'a9a9a9';
+  if (document.getElementById('itemSelect')) {
+    eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
 
   // SCHEDULER
@@ -129,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: '#' + (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color,
+    eventBackgroundColor: '#' + eventBackgroundColor,
     // selection
     select: function(info): void {
       const title = prompt(i18next.t('comment-add'));
@@ -188,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
 
       function refreshBoundDivs(extendedProps) {
+        // start by clearing the divs
+        $('#eventBoundExp').html('');
+        $('#eventBoundDb').html('');
         if (extendedProps.experiment != null) {
           $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
           $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
@@ -202,41 +212,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // BIND AN ENTITY TO THE EVENT
       $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
-        const entityid = parseInt(($('#' + $(this).data('input')).val() as string), 10);
+        const inputEl = $(this).parent().parent().find('input');
+        const entityid = parseInt((inputEl.val() as string), 10);
         if (entityid > 0) {
           ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(res => res.json()).then(json => {
             calendar.refetchEvents();
             refreshBoundDivs(json);
+            inputEl.val('');
           });
         }
-      });
-      // BIND AUTOCOMPLETE
-      // TODO refactor this
-      // NOTE: previously the input div had ui-front jquery ui class to make the autocomplete list show properly, but with the new item input below
-      // it didn't work well, so now the automplete uses appendTo option
-      $('#bindexpinput').autocomplete({
-        appendTo: '#binddivexp',
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${EntityType.Experiment}/&q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
-            });
-            response(res);
-          });
-        },
-      });
-      $('#binddbinput').autocomplete({
-        appendTo: '#binddivdb',
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${EntityType.Item}/&q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
-            });
-            response(res);
-          });
-        },
       });
     },
     // on mouse enter add shadow and show title

@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="update-user"]')) {
       ApiC.patch(`users/${el.dataset.userid}`, collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
 
+    // REMOVE 2FA
+    } else if (el.matches('[data-action="remove-user-2fa"]')) {
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Disable2fa}).then(() => reloadElement('editUsersBox'));
+
     // TOGGLE ADMIN STATUS
     } else if (el.matches('[data-action="toggle-admin-user"]')) {
       const group = el.dataset.promote === '1' ? 2 : 4;

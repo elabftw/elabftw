@@ -83,7 +83,7 @@
 
         <div class='vertical-separator mx-3'></div>
 
-        <!-- MORE OPTIONS -->
+        {# MORE OPTIONS #}
         <div class='dropdown'>
           <div data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button' title='{{ 'Toggle pin'|trans }}' class='hl-hover-gray p-2 px-3 rounded'>
             <i class='fas fa-ellipsis-v'></i>
@@ -96,7 +96,7 @@
             {% endif %}
             {# REVISIONS #}
             <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
-            <!-- CHANGELOG -->
+            {# CHANGELOG #}
             <a class='dropdown-item' href='?templateid={{ Entity.id }}&mode=changelog&tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
             {# TRANSFER OWNERSHIP #}
             {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
@@ -105,7 +105,7 @@
 
             {# DELETE #}
             {% if not Entity.entityData.locked %}
-              <!-- DESTROY -->
+              {# DESTROY #}
               <div class='dropdown-divider'></div>
               <a href='#' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
                 <i class='fas fa-trash-alt fa-fw mr-1'></i>{{ 'Destroy template'|trans }}
@@ -145,7 +145,7 @@
       {% if editor == 'md' %}
         <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
       {% else %}
-        <div><!-- << this div is added around the textarea to fix an issue on mobile editor. See #3107 -->
+        <div>{# << this div is added around the textarea to fix an issue on mobile editor. See #3107 #}
           <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
         </div>
       {% endif %}

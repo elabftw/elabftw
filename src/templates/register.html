@@ -5,7 +5,7 @@
   <i class='fas fa-chevron-left'></i> {{ 'go back to login page'|trans }}
 </a>
 
-<!-- Modal for privacy policy -->
+{# Modal for privacy policy #}
 <div class='modal fade' id='policyModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
@@ -28,7 +28,7 @@
 <section class='text-center'>
     <img src='/assets/images/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
     <h2 class='mb-2 mt-2'>{{ 'Create your account'|trans }}</h2>
-    <!-- Register form -->
+    {# Register form #}
     {# min pass length minimum, no maximum #}
     {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
 
@@ -37,7 +37,7 @@
       {{ App.Session.get('csrf')|csrf }}
 
       <div class='form-group mx-auto col-md-4'>
-        <!-- TEAM -->
+        {# TEAM #}
         <div class='row'>
           <label for='team'>{{ 'Team'|trans }}</label>
           <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
@@ -49,7 +49,7 @@
           </select>
         </div>
 
-        <!-- EMAIL -->
+        {# EMAIL #}
         <div class='row'>
           <label for='email'>{{ 'Email'|trans }}</label>
           <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
@@ -60,7 +60,7 @@
           {% endif %}
         </div>
 
-        <!-- PASSWORD -->
+        {# PASSWORD #}
         <div class='row'>
           <label for='password'>{{ 'Password'|trans }}</label>
           <div class='input-group'>
@@ -71,19 +71,19 @@
           </div>
         </div>
 
-        <!-- FIRSTNAME -->
+        {# FIRSTNAME #}
         <div class='row'>
           <label for='firstname'>{{ 'Firstname'|trans }}</label>
           <input name='firstname' class='form-control' type='text' id='firstname' autocomplete='given-name' required />
         </div>
 
-        <!-- LASTNAME -->
+        {# LASTNAME #}
         <div class='row'>
           <label for='lastname'>{{ 'Lastname'|trans }}</label>
           <input name='lastname' class='form-control' type='text' id='lastname' autocomplete='family-name' required />
         </div>
 
-        <!-- PRIVACY POLICY -->
+        {# PRIVACY POLICY #}
         {% if App.Config.configArr.privacy_policy %}
         <div class='row'>
           <div class='form-group form-check'>
@@ -95,14 +95,14 @@
         </div>
         {% endif %}
 
-        <!-- SUBMIT -->
+        {# SUBMIT #}
         <div class='mt-4 text-center'>
           <button type='submit' name='Submit' class='btn btn-primary'>{{ 'Create'|trans }}</button>
         </div>
       </div>
     </form>
 
-<!-- end register form -->
+{# end register form #}
 </section>
 <div id='info' data-page='register'></div>
 {% endblock body %}

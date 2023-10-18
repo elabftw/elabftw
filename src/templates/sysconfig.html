@@ -4,7 +4,7 @@
 
 {% include('create-idp-modal.html') %}
 
-<!-- Modal for team creation -->
+{# Modal for team creation #}
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
@@ -25,12 +25,12 @@
     </div>
   </div>
 </div>
-<!-- display current and latest version -->
+{# display current and latest version #}
 <p>{{ 'Installed version:'|trans }} <span id='currentVersion'>{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</span>
 <br>
 {{ 'Latest stable version:'|trans }} <span id='latestVersion'></span>
 
-<!-- show error if the email is not configured -->
+{# show error if the email is not configured #}
 {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
     {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
@@ -52,12 +52,12 @@
   <li data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</li>
 </ul>
 
-<!-- loading spinner -->
+{# loading spinner #}
 <div class='d-flex justify-content-center' id='loading-spinner'>
   <div class='lds-dual-ring'></div>
 </div>
 
-<!-- TAB 1 SERVER -->
+{# TAB 1 SERVER #}
 <div data-tabcontent='1' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
   <div class='pl-3 mb-5'>
@@ -187,13 +187,13 @@
   </div>
 </div>
 
-<!-- TAB 2 TEAMS -->
+{# TAB 2 TEAMS #}
 <div data-tabcontent='2' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }}</p>
-      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createTeamModal'>{{ 'Create a team'|trans }}</button>
       </div>
@@ -247,12 +247,12 @@
   </div>
 </div>
 
-<!-- TAB 3 USERS -->
+{# TAB 3 USERS #}
 <div data-tabcontent='3' hidden>
   {% include 'editusers.html' %}
 </div>
 
-<!-- TAB 4 - Communication -->
+{# TAB 4 - Communication #}
 <div data-tabcontent='4' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Announcement'|trans }}</h3>
   <div class='pl-3 mb-5'>
@@ -282,7 +282,7 @@
     </div>
   </div>
 
-  <!-- MASS EMAIL -->
+  {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
   <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>
     <label>{{ 'Send to'|trans }}</label>
@@ -309,7 +309,7 @@
   </div>
 </div>
 
-<!-- TAB 5 EMAIL -->
+{# TAB 5 EMAIL #}
 <div data-tabcontent='5' hidden>
   <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'E-mail Settings'|trans }}</h3>
@@ -358,7 +358,7 @@
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 'smtp_verify_cert'} %}
   </div>
 
-  <!-- TEST EMAIL -->
+  {# TEST EMAIL #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
   <div class='pl-3'>
     <div class='input-group'>
@@ -370,7 +370,7 @@
   </div>
 </div>
 
-<!-- TAB 6 SECURITY -->
+{# TAB 6 SECURITY #}
 <div data-tabcontent='6' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h3>
   <div class='pl-3 mb-5'>
@@ -436,7 +436,7 @@
   </div>
 </div>
 
-<!-- TAB 7 POLICIES -->
+{# TAB 7 POLICIES #}
 <div data-tabcontent='7' hidden>
 
   {% macro policy(title, slug, configArr) %}
@@ -467,7 +467,7 @@
 
 </div>
 
-<!-- TAB 8 UPLOADS -->
+{# TAB 8 UPLOADS #}
 <div data-tabcontent='8' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Uploaded files configuration'|trans }}</h3>
 
@@ -511,7 +511,7 @@
   </div>
 </div>
 
-<!-- TAB 9 TIMESTAMP -->
+{# TAB 9 TIMESTAMP #}
 <div data-tabcontent='9' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Timestamping Configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
@@ -551,12 +551,12 @@
 </div>
 
 
-<!-- TAB 10 SAML -->
+{# TAB 10 SAML #}
 <div data-tabcontent='10' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
     <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
-    <!-- VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports -->
+    {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
     </div>
@@ -681,7 +681,7 @@
   <div class='pl-3 mb-5'>
     <div class='mb-3 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
-      <!-- CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports -->
+      {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createIdpModal'>{{ 'Add new IDP'|trans }}</button>
       </div>
@@ -806,7 +806,7 @@
 
 </div>
 
-<!-- TAB 11 LDAP -->
+{# TAB 11 LDAP #}
 <div data-tabcontent='11' id='ldapSettings' hidden>
   <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
@@ -919,7 +919,7 @@
   </div>
 </div>
 
-<!-- TAB 12 EXTERNAL AUTH -->
+{# TAB 12 EXTERNAL AUTH #}
 <div data-tabcontent='12' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
   <div class='pl-3'>

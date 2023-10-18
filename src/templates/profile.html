@@ -2,13 +2,13 @@
 
 {% block body %}
 <hr>
-<!-- PROFILE PAGE -->
+{# PROFILE PAGE #}
 <h4>{{ App.Users.userData.fullname|raw }}</h4>
 <p class='smallgray'>{{ App.Users.userData.email }}</p>
 
 <div class='d-flex mb-4'>
 
-  <!-- TEAMS -->
+  {# TEAMS #}
   <div class='col-md-6 mr-2 box bg-white'>
     <div class='mb-4'>
       <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
@@ -19,7 +19,7 @@
     {% endfor %}
   </div>
 
-  <!-- GROUPS -->
+  {# GROUPS #}
   <div class='col-md-6 box bg-white'>
     <div class='mb-4'>
       <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<!-- STATUS STAT -->
+{# STATUS STAT #}
 <div class='mb-4 box'>
   {% if count == 0 %}
     {{ 'No statistics available yet.'|trans }}
@@ -51,7 +51,7 @@
           {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
     </div>
 
-    <!-- TODO show register date back -->
+    {# TODO show register date back #}
     <div class='d-flex'>
       <div class='col-md-6 mr-2'>
         <div class='pie-chart-container'>
@@ -75,7 +75,7 @@
 
   <hr class='mt-5'>
 
-  <!-- EXPORT EXPERIMENTS -->
+  {# EXPORT EXPERIMENTS #}
   <h4>{{ 'Export all your experiments'|trans }}</h4>
   <p class='smallgray mb-4'>{{ 'Select an export format'|trans }}</p>
 

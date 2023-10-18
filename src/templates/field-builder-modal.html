@@ -1,4 +1,4 @@
-<!-- Modal for field builder -->
+{# Modal for field builder #}
 <div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
@@ -51,20 +51,20 @@
               <option value='url'>URL</option>
             </select>
 
-            <!-- NAME -->
+            {# NAME #}
             <label for='newFieldKeyInput' class='required-label'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
             <input type='text' autocomplete='off' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
 
-            <!-- DESCRIPTION -->
+            {# DESCRIPTION #}
             <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
             <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
-            <!-- TEXT, URL, NUMBER, DATE -->
+            {# TEXT, URL, NUMBER, DATE #}
             <div id='newFieldContentDiv_classic'>
               <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
               <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
             </div>
 
-            <!-- SELECT, RADIO -->
+            {# SELECT, RADIO #}
             <div id='newFieldContentDiv_selectradio' hidden>
               <label>{{ 'Choices'|trans }}</label>
               <div id='choicesInputDiv'>
@@ -72,7 +72,7 @@
                 <input type='text' class='form-control mb-1' autocomplete='off'>
               </div>
               <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
-              <!-- this is only shown for select type -->
+              {# this is only shown for select type #}
               <div id='newFieldContentDiv_select' hidden>
                 <hr>
                 <div class='custom-control custom-checkbox'>
@@ -82,7 +82,7 @@
               </div>
             </div>
 
-            <!-- UNITS for NUMBER -->
+            {# UNITS for NUMBER #}
             <div id='newFieldContentDiv_number' hidden>
               <label>{{ 'Available units'|trans }}</label>
               <div id='unitChoicesInputDiv'>
@@ -92,7 +92,7 @@
               <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
             </div>
 
-            <!-- CHECKBOX -->
+            {# CHECKBOX #}
             <div id='newFieldContentDiv_checkbox' hidden>
               <label for='newFieldCheckboxDefaultSelect'>{{ 'Default value'|trans }}</label>
               <select autocomplete='off' id='newFieldCheckboxDefaultSelect' class='form-control'>
@@ -142,7 +142,7 @@
     </form>
   </div>
 </div>
-<!-- Modal for field loader -->
+{# Modal for field loader #}
 <div class='modal fade' id='fieldLoaderModal' tabindex='-1' role='dialog' aria-labelledby='fieldLoaderLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>

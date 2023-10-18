@@ -3,7 +3,7 @@
   <div class='d-flex mb-2 align-items-center'>
     <label for='category_select' class='col-form-label mr-3 edit-mode-label'>{{ 'Category'|trans }}</label>
     <select id='category_select' data-target='category' class='form-control col-md-2 catstatSelect'>
-      <!-- TODO add a box with color -->
+      {# TODO add a box with color #}
       <option value='0'
         {{ Entity.entityData.category is null ? ' selected' }}>{{ 'Not set'|trans }}
       </option>
@@ -25,7 +25,7 @@
     {% trans %}Status{% plural 1 %}Status{% endtrans %}
   </label>
   <select id='status_select' data-target='status' class='form-control col-md-2 catstatSelect'>
-    <!-- TODO add a box with color -->
+    {# TODO add a box with color #}
       <option value='0'
               {{ Entity.entityData.status is null ? ' selected' }}>{{ 'Not set'|trans }}</option>
     {% for status in statusArr %}

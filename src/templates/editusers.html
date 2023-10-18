@@ -2,7 +2,7 @@
 <div class='pl-3'>
   <div class='form-group'>
     <form method='get' id ='userSearchForm'>
-      <!-- stay on correct tab -->
+      {# stay on correct tab #}
       <input type='hidden' value='3' name='tab' />
 
       <div class='input-group mt-3'>
@@ -245,13 +245,13 @@
 {% endif %}
 
 {% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
-<!-- CREATE USER ACCOUNT -->
+{# CREATE USER ACCOUNT #}
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
     <div class='row mb-2'>
-      <!-- TEAM -->
+      {# TEAM #}
       <div class='col-md-6'>
         <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
         <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
@@ -261,7 +261,7 @@
         </select>
       </div>
 
-      <!-- GROUP -->
+      {# GROUP #}
       <div class='col-md-6'>
         <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
@@ -274,13 +274,13 @@
       </div>
     </div>
     <div class='row mb-2'>
-      <!-- FIRSTNAME -->
+      {# FIRSTNAME #}
       <div class='col-md-6'>
         <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
         <input name='firstname' class='form-control' type='text' id='firstname' required />
       </div>
 
-      <!-- LASTNAME -->
+      {# LASTNAME #}
       <div class='col-md-6'>
         <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
         <input name='lastname' class='form-control' type='text' id='lastname' required />
@@ -288,14 +288,14 @@
     </div>
 
     <div class='row mb-2'>
-      <!-- EMAIL -->
+      {# EMAIL #}
       <div class='col-md-12'>
         <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
         <input name='email' class='form-control' type='email' id='email' required />
       </div>
     </div>
 
-    <!-- SUBMIT -->
+    {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
       <button data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>

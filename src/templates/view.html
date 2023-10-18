@@ -129,9 +129,9 @@
   <hr>
 {% endif %}
 
-{% include 'uploads.html' %}
-
 {% include 'steps-links-view.html' %}
+
+{% include 'uploads.html' %}
 
 <div id='commentsDiv'>
   {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}

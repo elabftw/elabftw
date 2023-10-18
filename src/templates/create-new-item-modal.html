@@ -12,6 +12,11 @@
         {% for category in categoryArr %}
           <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}'>{{ category.title }}</a>
         {% endfor %}
+        {# show add button to admin #}
+        {% if App.Users.isAdmin %}
+        <hr>
+          <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#resourcesCategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+        {% endif %}
       </div>
     </div>
   </div>

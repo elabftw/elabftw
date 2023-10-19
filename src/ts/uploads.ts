@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Update the query parameters in the URL
       url.search = queryParams.toString();
-      url.hash = 'filesDiv';
+      url.hash = 'filesdiv';
       const modifiedUrl = url.toString();
       window.location.replace(modifiedUrl);
 

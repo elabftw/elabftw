@@ -488,11 +488,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `${entityC.getPage()}.php?mode=edit&id=${location[location.length -1]}`;
       });
 
-    } else if (el.matches('[data-action="navigate-twitter"]')) {
-      event.preventDefault();
-      el.querySelector('i').classList.add('moving-bird');
-      setTimeout(() => window.location.assign('https://twitter.com/elabftw'), 666);
-
     } else if (el.matches('[data-action="report-bug"]')) {
       event.preventDefault();
       el.querySelector('i').classList.add('moving-bug');

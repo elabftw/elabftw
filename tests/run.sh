@@ -41,7 +41,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f 
         export DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain COMPOSE_DOCKER_CLI_BUILD=1
         docker build -q -t elabtmp -f tests/elabtmp.Dockerfile .
     fi
-    docker-compose -f tests/docker-compose.yml up -d --quiet-pull
+    docker compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
     while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo

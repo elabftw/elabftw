@@ -260,10 +260,10 @@
     <div class='input-group'>
       <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   </div>
@@ -274,10 +274,10 @@
     <div class='input-group'>
       <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   </div>
@@ -304,7 +304,7 @@
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-12' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button type='button' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 </div>
@@ -364,7 +364,7 @@
     <div class='input-group'>
       <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' />
       <div class='input-group-append'>
-        <button class='btn btn-primary' data-action='send-test-email' type='button'>{{ 'Send'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>
     </div>
   </div>
@@ -457,8 +457,8 @@
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   {% endmacro %}

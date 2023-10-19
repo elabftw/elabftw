@@ -47,8 +47,12 @@ class ExportResources extends Command
         $categoryId = (int) $input->getArgument('category_id');
         $userid = (int) $input->getArgument('userid');
         $teamid = (int) (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
-        $outputFilename = sprintf('export-%s-category_id-%d.eln', date('Y-m-d_H-i-s'), $categoryId);
-        $absolutePath = $this->Fs->getPath() . '/' . $outputFilename;
+        $absolutePath = sprintf(
+            '%s/export-%s-category_id-%d.eln',
+            $this->Fs->getPath(),
+            date('Y-m-d_H-i-s'),
+            $categoryId,
+        );
         if ($this->Fs instanceof Memory) {
             $absolutePath = $this->Fs->getPath();
         }
@@ -64,11 +68,13 @@ class ExportResources extends Command
 
         fclose($fileStream);
 
-        if (!$this->Fs instanceof Memory) {
-            $output->writeln(sprintf('Items of category with ID %d successfully exported as ELN archive.', $categoryId));
-            $output->writeln('Copy the generated archive from the container to the current directory with:');
-            $output->writeln(sprintf('docker cp elabftw:%s/%s .', $this->Fs->getPath(), $outputFilename));
+        if ($this->Fs instanceof Memory) {
+            return Command::SUCCESS;
         }
+
+        $output->writeln(sprintf('Items of category with ID %d successfully exported as ELN archive.', $categoryId));
+        $output->writeln('Copy the generated archive from the container to the current directory with:');
+        $output->writeln(sprintf('docker cp elabftw:%s .', $absolutePath));
 
         return Command::SUCCESS;
     }

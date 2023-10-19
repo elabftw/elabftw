@@ -14,6 +14,7 @@ use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Storage\Memory;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -47,7 +48,11 @@ class ExportResources extends Command
         $userid = (int) $input->getArgument('userid');
         $teamid = (int) (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
         $outputFilename = sprintf('export-%s-category_id-%d.eln', date('Y-m-d_H-i-s'), $categoryId);
-        $fileStream = fopen($this->Fs->getPath() . '/' . $outputFilename, 'wb');
+        $absolutePath = $this->Fs->getPath() . '/' . $outputFilename;
+        if ($this->Fs instanceof Memory) {
+            $absolutePath = $this->Fs->getPath();
+        }
+        $fileStream = fopen($absolutePath, 'wb');
         if ($fileStream === false) {
             throw new RuntimeException('Could not open output stream!');
         }
@@ -59,9 +64,11 @@ class ExportResources extends Command
 
         fclose($fileStream);
 
-        $output->writeln(sprintf('Items of category with ID %d successfully exported as ELN archive.', $categoryId));
-        $output->writeln('Copy the generated archive from the container to the current directory with:');
-        $output->writeln(sprintf('docker cp elabftw:%s/%s .', $this->Fs->getPath(), $outputFilename));
+        if (!$this->Fs instanceof Memory) {
+            $output->writeln(sprintf('Items of category with ID %d successfully exported as ELN archive.', $categoryId));
+            $output->writeln('Copy the generated archive from the container to the current directory with:');
+            $output->writeln(sprintf('docker cp elabftw:%s/%s .', $this->Fs->getPath(), $outputFilename));
+        }
 
         return Command::SUCCESS;
     }

@@ -19,7 +19,8 @@ class Memory extends AbstractStorage
 {
     public function getPath(): string
     {
-        return '';
+        // compare to https://github.com/thephpleague/flysystem/issues/471#issuecomment-106231642
+        return 'php://memory';
     }
 
     protected function getAdapter(): FilesystemAdapter

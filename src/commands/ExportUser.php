@@ -64,10 +64,6 @@ class ExportUser extends Command
 
         fclose($fileStream);
 
-        if ($this->Fs instanceof Memory) {
-            return Command::SUCCESS;
-        }
-
         $output->writeln(sprintf('Experiments of user with ID %d successfully exported as ELN archive.', $userid));
         $output->writeln('Copy the generated archive from the container to the current directory with:');
         $output->writeln(sprintf('docker cp elabftw:%s .', $absolutePath));

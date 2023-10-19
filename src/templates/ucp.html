@@ -340,19 +340,19 @@
   <div class='pl-3 mt-2 mb-5' id='ucp-account-form'>
     <div class='d-flex justify-content-between'>
       <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
-      <input class='form-control col-md-3' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
-      <input class='form-control col-md-3' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='orcid' class='col-form-label'>ORCID</label>
-      <input class='form-control col-md-3' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
+      <input class='form-control col-md-3' type='text' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
     </div>
     <hr>
   </div>

@@ -60,6 +60,11 @@ class Experiments extends AbstractConcreteEntity
         $canread = BasePermissions::MyTeams->toJson();
         $canwrite = BasePermissions::User->toJson();
         $metadata = null;
+        $contentType = AbstractEntity::CONTENT_HTML;
+        if ($this->Users->userData['use_markdown']) {
+            $contentType = AbstractEntity::CONTENT_MD;
+        }
+
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
@@ -73,6 +78,7 @@ class Experiments extends AbstractConcreteEntity
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
             $metadata = $templateArr['metadata'];
+            $contentType = (int) $templateArr['content_type'];
         }
 
         if ($template === 0) {
@@ -92,11 +98,6 @@ class Experiments extends AbstractConcreteEntity
             if ($this->Users->userData['default_write'] !== null) {
                 $canwrite = $this->Users->userData['default_write'];
             }
-        }
-
-        $contentType = AbstractEntity::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown']) {
-            $contentType = AbstractEntity::CONTENT_MD;
         }
 
         // enforce the permissions if the admin has set them

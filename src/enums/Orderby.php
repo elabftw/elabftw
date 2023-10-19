@@ -17,6 +17,7 @@ enum Orderby: string
     case Id = 'id';
     case Lastchange = 'lastchange';
     case Rating = 'rating';
+    case Status = 'status';
     case Title = 'title';
     case User = 'user';
 
@@ -29,6 +30,7 @@ enum Orderby: string
             Orderby::Id => 'entity.id',
             Orderby::Lastchange => 'entity.modified_at',
             Orderby::Rating => 'entity.rating',
+            Orderby::Status => 'statust.title',
             Orderby::Title => 'entity.title',
             Orderby::User => 'CONCAT(users.firstname, " ", users.lastname)',
         };

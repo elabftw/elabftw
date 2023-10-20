@@ -782,6 +782,11 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $firstlevel;
 }
 
+.hl-hover-gray:focus-visible {
+    background-color: $firstlevel;
+    outline: none;
+}
+
 /* COMMENTS */
 .comment-header {
     background-color: $firstlevel;

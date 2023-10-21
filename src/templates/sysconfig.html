@@ -648,7 +648,7 @@
     {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email'|trans, 'slug': 'saml_fallback_orgid'} %}
     {% include 'binary-setting.html' with {'label': 'If user is matched with internal id, update the email sent by IDP?'|trans, 'slug': 'saml_sync_email_idp'} %}
     {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP'|trans, 'slug': 'saml_sync_teams'} %}
-    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '1'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='saml_team_default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -879,7 +879,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '2'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -985,7 +985,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '3'} %}
   </div>
 </div>
 

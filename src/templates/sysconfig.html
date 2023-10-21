@@ -855,7 +855,7 @@
           {{ 'A password is already set.'|trans }}
           {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>", "</span>")|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
+          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='ldap_password' />
         </p>
       {% endif %}
     </div>

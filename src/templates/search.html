@@ -320,7 +320,7 @@
     <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
     <div class='input-group'>
       <div class='input-group-prepend'>
-        <select id='dateOperator' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
+        <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
           <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
           <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
           <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>

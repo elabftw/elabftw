@@ -1,5 +1,5 @@
 {
-  "@context": "https://raw.githubusercontent.com/mbjones/codemeta/master/codemeta.jsonld",
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
   "@type": "Code",
   "author": [
     {
@@ -7,31 +7,36 @@
       "@type": "Person",
       "email": "nico-git@deltablot.email",
       "name": "Nicolas CARPi",
-      "affiliation": "Institut Curie UMR144/CNRS, Paris, France"
+      "affiliation": "Deltablot, Paris, France"
     },
     {
       "@id": "http://orcid.org/0000-0001-7760-2753",
       "@type": "Person",
-      "email": "alexander.minges@hhu.de",
       "name": "Alexander Minges",
       "affiliation": "Institute of Biochemical Plant Physiology, Düsseldorf, Germany"
     },
     {
       "@id": "http://orcid.org/0000-0002-2848-177X",
       "@type": "Person",
-      "email": "matthieu.piel@curie.fr",
       "name": "Matthieu Piel",
       "affiliation": "Institut Curie UMR144/CNRS, Paris, France"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-3808-2481",
+      "@type": "Person",
+      "name": "Marcel Bolten"
     }
   ],
-  "identifier": "",
   "codeRepository": "https://github.com/elabftw/elabftw",
-  "datePublished": "2016-12-15",
-  "dateModified": "2016-12-15",
-  "dateCreated": "2016-12-15",
+  "datePublished": "2012-03-03",
+  "dateCreated": "2012-01-01",
   "description": "A free and open source electronic laboratory notebook for research labs.",
-  "keywords": "eln, notebook, research, free, php/mysql, timestamp",
-  "license": "AGPLv3",
-  "title": "eLabFTW",
-  "version": "1.4.0"
+  "keywords": "eln, notebook, laboratory, lims, research, science, free, opensource, timestamp, legal proof",
+  "license": "https://github.com/elabftw/elabftw/blob/master/LICENSE",
+  "name": "eLabFTW, Deltablot",
+  "contIntegration": "https://circleci.com/gh/elabftw/elabftw/tree/master",
+  "developmentStatus": "Active",
+  "issueTracker": "https://github.com/elabftw/elabftw/issues",
+  "referencePublication": "https://joss.theoj.org/papers/10.21105/joss.00146",
+  "readme": "https://github.com/elabftw/elabftw/#readme"
 }

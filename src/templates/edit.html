@@ -48,7 +48,7 @@
     <div class='ml-auto rating' id='editRatingDiv'>
       <span class='cancel-button' data-trigger='click' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
       {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}'></label>
+        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
       {% endfor %}
     </div>
   </div>

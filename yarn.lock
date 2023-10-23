@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"3dmol@2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-2.0.3.tgz#d513ceddaeea5e586550ef39fa50ba8a55810eff"
-  integrity sha512-1O7AIUN65uuE8RF8ZKC2sD2pLo7SZbsIMNnA3EqeRtK1+xkmnGoybgnOLwuNMmM5EN97EXs/WgPpNsXGSautFw==
+"3dmol@^2.0.5":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/3dmol/-/3dmol-2.0.6.tgz#ad7810e9190871ef65e8da8ded1d5c2a0d78fa4e"
+  integrity sha512-KpfC7mR8fPDVG71Aarc5a7gOkARiW3xE1pJqh4DTmgRQRGT0yJxK1YxWPZOJ6B7IfPA2l5pbXbUo5gbl2TLfqg==
   dependencies:
     iobuffer "^5.3.1"
-    netcdfjs "^2.0.2"
+    netcdfjs "^3.0.0"
     pako "^2.1.0"
     upng-js "^2.1.0"
 
@@ -2261,7 +2261,7 @@ interpret@^3.1.1:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-3.1.1.tgz#5be0ceed67ca79c6c4bc5cf0d7ee843dcea110c4"
   integrity sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==
 
-iobuffer@^5.2.1, iobuffer@^5.3.1:
+iobuffer@^5.3.1, iobuffer@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/iobuffer/-/iobuffer-5.3.2.tgz#76d3fb907c655ad6fb7a73964bfca8b4e04f52fa"
   integrity sha512-kO3CjNfLZ9t+tHxAMd+Xk4v3D/31E91rMs1dHrm7ikEQrlZ8mLDbQ4z3tZfDM48zOkReas2jx8MWSAmN9+c8Fw==
@@ -2875,12 +2875,12 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-netcdfjs@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/netcdfjs/-/netcdfjs-2.0.2.tgz#d008b568e4b0046b28b0e8b17608c25c2248ac19"
-  integrity sha512-Uyz+3rqdF3D4WhnQY3lmG/FBY53OsDfloYnjBhoG+jZZs25RXWIOVU8d+V852Kv0xgtt1MzaSdeYmUS9enJ+ow==
+netcdfjs@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/netcdfjs/-/netcdfjs-3.0.0.tgz#de14b6ea2135fe141b254e0d1600872f625f55ca"
+  integrity sha512-LOvT8KkC308qtpUkcBPiCMBtii7ZQCN6LxcVheWgyUeZ6DQWcpSRFV9dcVXLj/2eHZ/bre9tV5HTH4Sf93vrFw==
   dependencies:
-    iobuffer "^5.2.1"
+    iobuffer "^5.3.2"
 
 node-releases@^2.0.13:
   version "2.0.13"

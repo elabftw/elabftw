@@ -448,7 +448,7 @@ button:disabled {
 
 /* required labels/input for extra fields */
 #metadataDiv,
-#newFieldForm {
+.new-field-form {
     /* any invalid field will get this red border */
     :invalid {
         border: 1px solid $lightred;

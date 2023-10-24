@@ -65,11 +65,7 @@ module.exports = (env) => {
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
         'prismjs/components/prism-sql.js',
-      ],
-      jslibs: [
         './src/js/vendor/keymaster.js',
-        '@teselagen/ove',
-        '@teselagen/ove/style.css',
       ],
     },
     // uncomment this to find where the error is coming from

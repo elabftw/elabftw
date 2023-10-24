@@ -8,7 +8,7 @@
   <li data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</li>
 </ul>
 
-<!-- loading spinner -->
+{# loading spinner #}
 <div class='d-flex justify-content-center' id='loading-spinner'>
   <div class='lds-dual-ring'></div>
 </div>
@@ -25,7 +25,7 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
         <h3 id='eventTitle' class='editable hl-hover'></h3>
-        <!-- START AND END TIMES -->
+        {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
           <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' />
@@ -33,7 +33,7 @@
           <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' />
         </div>
 
-        <!-- BIND EXPERIMENT -->
+        {# BIND EXPERIMENT #}
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
           <div id='eventBoundExp'></div>
@@ -48,7 +48,7 @@
                 </div>
             </div>
         </div>
-        <!-- BIND ITEM -->
+        {# BIND ITEM #}
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind a resource'|trans }}</h5>
           <div id='eventBoundDb'></div>
@@ -96,7 +96,7 @@
   </div>
 </div>
 
-<!-- TAB 1 SCHEDULER -->
+{# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
   {% if itemsArr|length == 0 %}
     {{ 'No bookable items.'|trans|msg('warning', false) }}
@@ -104,7 +104,7 @@
   <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
   <div class='row mb-3'>
     <div class='col-md-3'>
-      <!-- CATEGORY -->
+      {# CATEGORY #}
       <form>
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
@@ -117,7 +117,7 @@
     </div>
 
     <div class='col-md-3'>
-      <!-- ITEM LIST -->
+      {# ITEM LIST #}
       <form>
         <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
@@ -145,7 +145,7 @@
   <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
-<!-- TAB 2 INFO -->
+{# TAB 2 INFO #}
 <div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
   {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
@@ -162,7 +162,7 @@
       </tr>
     </thead>
     <tbody>
-      <!-- archived users are hidden on this page -->
+      {# archived users are hidden on this page #}
       {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
       <tr>
         <td>
@@ -183,7 +183,7 @@
   </table>
 </div>
 
-<!-- TAB 3 TEMPLATE -->
+{# TAB 3 TEMPLATE #}
 <div data-tabcontent='3' hidden>
   <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
   {% if App.Request.query.has('templateid') %}
@@ -193,9 +193,9 @@
   {% endif %}
 </div>
 
-        <!--p>{{ 'No templates from other members of the team to display!'|trans }}</p-->
+        {# <p>{{ 'No templates from other members of the team to display!'|trans }}</p> #}
 
-<!-- TAB 4 EMAIL -->
+{# TAB 4 EMAIL #}
 <div data-tabcontent='4' hidden>
   <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-envelope'></i> {{ 'Send an email to users'|trans }}</h3>
   <form class='pl-3' method='post' action='app/controllers/TeamController.php'>

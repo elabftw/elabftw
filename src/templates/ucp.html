@@ -17,14 +17,14 @@
   <li data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</li>
 </ul>
 
-<!-- loading spinner -->
+{# loading spinner #}
 <div class='d-flex justify-content-center' id='loading-spinner'>
   <div class='lds-dual-ring'></div>
 </div>
 
-<!-- TAB 1 - USER PREFERENCES -->
+{# TAB 1 - USER PREFERENCES #}
 <div data-tabcontent='1' hidden>
-  <!-- LANGUAGE -->
+  {# LANGUAGE #}
   <h2 class='p-2 pl-3 section-title'>{{ 'Preferences'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
@@ -40,7 +40,7 @@
     <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
   </div>
 
-  <!-- DISPLAY -->
+  {# DISPLAY #}
   <h2 class='p-2 pl-3 section-title'>{{ 'Display'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
 
@@ -150,7 +150,7 @@
 
   </div>
 
-  <!-- PDF CONFIG -->
+  {# PDF CONFIG #}
   <h2 class='p-2 pl-3 section-title'>{{ 'PDF configuration'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
@@ -277,7 +277,7 @@
 
 </div>
 
-<!-- TAB 2 - USER INFORMATION -->
+{# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
   <form class='form-group' method='post' action='app/controllers/UcpController.php'>
     {{ App.Session.get('csrf')|csrf }}
@@ -362,7 +362,7 @@
   </div>
 </div>
 
-<!-- TAB 3 - USER TEMPLATES -->
+{# TAB 3 - USER TEMPLATES #}
 <div data-tabcontent='3' hidden>
   <h2 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h2>
 
@@ -373,11 +373,11 @@
   {% endif %}
 </div>
 
-<!-- TAB 4 - API KEYS -->
+{# TAB 4 - API KEYS #}
 <div data-tabcontent='4' hidden>
   <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
-  <div id='newKeyPlaceholder'></div><!-- the newly created key will be displayed here -->
+  <div id='newKeyPlaceholder'></div>{# the newly created key will be displayed here #}
   <div class='pl-3 mt-2 mb-5'>
 
     <div class='d-flex justify-content-between'>
@@ -426,7 +426,7 @@
   </table>
 </div>
 
-<!-- TAB 5 - NOTIFICATIONS SETTINGS -->
+{# TAB 5 - NOTIFICATIONS SETTINGS #}
 <div data-tabcontent='5' hidden>
   <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
@@ -454,6 +454,6 @@
   {% endfor %}
   </div>
 </div>
-<!-- END PAGE -->
+{# END PAGE #}
 
 {% endblock body %}

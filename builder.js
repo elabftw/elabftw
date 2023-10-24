@@ -68,6 +68,8 @@ module.exports = (env) => {
       ],
       jslibs: [
         './src/js/vendor/keymaster.js',
+        '@teselagen/ove',
+        '@teselagen/ove/style.css',
       ],
     },
     // uncomment this to find where the error is coming from
@@ -98,10 +100,6 @@ module.exports = (env) => {
     ],
     resolve: {
       extensions: ['.ts', '.js'],
-      fallback: {
-        "stream": require.resolve("stream-browserify"),
-        "timers": require.resolve("timers-browserify"),
-      },
     },
     module: {
       rules:[

@@ -13,7 +13,6 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
-use Elabftw\Storage\Memory;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -43,15 +42,11 @@ class ExportUser extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userid = (int) $input->getArgument('userid');
-        $absolutePath = sprintf(
-            '%s/export-%s-userid-%d.eln',
-            $this->Fs->getPath(),
+        $absolutePath = $this->Fs->getPath(sprintf(
+            'export-%s-userid-%d.eln',
             date('Y-m-d_H-i-s'),
             $userid,
-        );
-        if ($this->Fs instanceof Memory) {
-            $absolutePath = $this->Fs->getPath();
-        }
+        ));
         $fileStream = fopen($absolutePath, 'wb');
         if ($fileStream === false) {
             throw new RuntimeException('Could not open output stream!');

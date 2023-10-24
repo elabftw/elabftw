@@ -14,7 +14,6 @@ use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Storage\Memory;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -47,15 +46,11 @@ class ExportResources extends Command
         $categoryId = (int) $input->getArgument('category_id');
         $userid = (int) $input->getArgument('userid');
         $teamid = (int) (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
-        $absolutePath = sprintf(
-            '%s/export-%s-category_id-%d.eln',
-            $this->Fs->getPath(),
+        $absolutePath = $this->Fs->getPath(sprintf(
+            'export-%s-category_id-%d.eln',
             date('Y-m-d_H-i-s'),
             $categoryId,
-        );
-        if ($this->Fs instanceof Memory) {
-            $absolutePath = $this->Fs->getPath();
-        }
+        ));
         $fileStream = fopen($absolutePath, 'wb');
         if ($fileStream === false) {
             throw new RuntimeException('Could not open output stream!');

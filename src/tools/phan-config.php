@@ -43,7 +43,6 @@ return array(
         'vendor/',
         'uploads/',
         'cache',
-        'node_modules',
     ),
 
     // A list of plugin files to execute.

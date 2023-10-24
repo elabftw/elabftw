@@ -14,7 +14,7 @@ config.php*
 *.min.js
 *.js.map
 *.bundle.js
-node_modules/*
+.pnp.*
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg
@@ -33,3 +33,4 @@ src/ts/langs/*.js
 tests/elabftw-user.env
 /todo
 /ideas
+.yarn

@@ -20,6 +20,7 @@ module.exports = (env) => {
   return {
     entry: {
       main: [
+        './src/scss/main.scss',
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
@@ -88,9 +89,6 @@ module.exports = (env) => {
         new TerserPlugin(),
       ],
     },
-    watchOptions: {
-        ignored: /node_modules/
-    },
     plugins: [
       new MiniCssExtractPlugin(
         {
@@ -107,8 +105,7 @@ module.exports = (env) => {
     },
     module: {
       rules:[
-        // ts loader
-        {
+        { // ts loader
           test: /\.ts$/,
           use: {
             loader: 'ts-loader',
@@ -118,12 +115,20 @@ module.exports = (env) => {
               }
           },
         },
-        {
-          test: /\.css$/i,
+        { // CSS LOADER
+          test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
             'css-loader',
           ],
+        },
+        { // SASS loader
+          test: /\.scss$/,
+          type: 'asset/resource',
+          generator: {
+            filename: 'elabftw.min.css',
+          },
+          use: ['sass-loader'],
         },
         {
           test: /.(jpg|jpeg|png|svg)$/,

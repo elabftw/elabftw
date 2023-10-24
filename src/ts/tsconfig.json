@@ -8,7 +8,7 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": ["es6", "dom"]
+    "lib": ["es2020", "dom"]
   },
   "include": [
     "."

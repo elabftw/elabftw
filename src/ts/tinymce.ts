@@ -8,6 +8,11 @@
 import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
+//import 'tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff';
+import 'tinymce/skins/ui/oxide/content.inline.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/skin.shadowdom.min.css';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';

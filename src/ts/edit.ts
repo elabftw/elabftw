@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
@@ -19,6 +18,7 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
+import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);

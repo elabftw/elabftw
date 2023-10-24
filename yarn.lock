@@ -139,10 +139,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/chemdoodle-web-mini@npm:^9.2.1":
-  version: 9.2.7
-  resolution: "@deltablot/chemdoodle-web-mini@npm:9.2.7"
-  checksum: 9bcb228e365622107739def2276de224e9bdc0fa857da74ceb26f2ec08db9f1d6fa9901e7586bda70a5cf5ce3a50da2334cc21372e9a434330119c253943b090
+"@deltablot/chemdoodle-web-mini@npm:^9.5.0":
+  version: 9.5.0
+  resolution: "@deltablot/chemdoodle-web-mini@npm:9.5.0"
+  checksum: 3a1551b337d2084a29a5795fdbda118a86c81791da3e5d3ffac06a48ee98902e4e5b7e356d8e392502310f0633a01eb9eae0d8e8414daac341388426f29c5e16
   languageName: node
   linkType: hard
 
@@ -2338,7 +2338,7 @@ __metadata:
   resolution: "elabftw@workspace:."
   dependencies:
     3dmol: "npm:^2.0.5"
-    "@deltablot/chemdoodle-web-mini": "npm:^9.2.1"
+    "@deltablot/chemdoodle-web-mini": "npm:^9.5.0"
     "@deltablot/malle": "npm:^2.3.0"
     "@deltablot/tg-oss-ove-umd": "npm:^0.3.2"
     "@fancyapps/fancybox": "npm:3.5.*"

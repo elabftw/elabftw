@@ -30,7 +30,7 @@ abstract class AbstractStorage implements StorageInterface
      * @param string $relativePath A relative path or filename. e.g. folder/file.txt or file.txt
      * @return string The absolute path of a resource
      */
-    public function getPath(?string $relativePath=''): string
+    public function getPath(string $relativePath=''): string
     {
         return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }

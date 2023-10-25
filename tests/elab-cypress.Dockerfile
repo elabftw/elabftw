@@ -13,6 +13,8 @@ USER node
 # use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
+RUN npm install typescript
+
 # copy everything because we can't bind mount
 COPY cypress.config.ts .
 COPY tests/cypress/ ./tests/cypress/

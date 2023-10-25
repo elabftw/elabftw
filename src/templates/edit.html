@@ -76,6 +76,9 @@
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
         {% else %}
         {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element -- suppress errors from tinymce] -->
+          {%- endif %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
       </div>
@@ -164,6 +167,9 @@
 <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
   {# chemdoodle #}
   <div>
+    {% if App.Config.configArr.debug -%}
+      <!-- [html-validate-disable-block deprecated, element-permitted-content -- suppress errors from sketcher] -->
+    {%- endif %}
     <canvas id='sketcher'></canvas>
   </div>
   <div class='mt-3'>

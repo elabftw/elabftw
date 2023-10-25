@@ -84,6 +84,10 @@
   </div>
 </div>
 {# end policies policy modal #}
+{# some 3rd party tools append content to the end but we don't want to see those errors #}
+{%- if App.Config.configArr.debug and mode == 'edit' -%}
+  <!-- [html-validate-disable input-missing-label, heading-level, no-dup-id -- suppress errors from 3rd party tools] -->
+{%- endif %}
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

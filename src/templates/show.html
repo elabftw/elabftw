@@ -132,6 +132,9 @@
             </select>
 
             {# SEARCH WITH TAG #}
+            {% if App.Config.configArr.debug -%}
+             <!-- [html-validate-disable-block element-permitted-content -- suppress error from select picker: div child of button] -->
+            {%- endif %}
             <select multiple name='tags[]' class='form-control mr-1 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
               {% for tag in tagsArrForSelect %}
                 <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>

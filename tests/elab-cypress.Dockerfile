@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for Cypress
-FROM cypress/included:13.3.2
+FROM cypress/included:13.3.3
 
 WORKDIR /home/node
 

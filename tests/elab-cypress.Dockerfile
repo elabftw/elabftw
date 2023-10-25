@@ -10,7 +10,8 @@ USER node
 # use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
-RUN npm install typescript
+# add html validation tools to cypress
+RUN npm install --global html-validate@^8 cypress-html-validate@^6
 
 # copy everything because we can't bind mount
 COPY cypress.config.ts .

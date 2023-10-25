@@ -29,11 +29,11 @@ describe('Experiments', () => {
     // create step
     cy.get('.stepinput').type('some step');
     cy.get('[data-action="create-step"').click();
-    cy.get('.step-static').contains('some step');
+    cy.get('.step-static').should('contain', 'some step');
 
     // complete step
     cy.get('.stepbox').click();
-    cy.get('.text-muted').contains('completed');
+    cy.get('.text-muted').should('contain', 'completed');
 
     // delete step
     cy.get('.stepDestroy').click();
@@ -81,13 +81,12 @@ describe('Experiments', () => {
     entityComment();
     entityDuplicate();
     entityDestroy();
-    cy.wait(100);
   });
 
   it('Create and edit an item', () => {
     cy.visit('/database.php');
     cy.contains('Create').click();
-    cy.get('#createModal').within(() => { cy.contains('Generated').click(); });
+    cy.get('#createModal').should('be.visible').should('contain', 'Generated').contains('Generated').click();
     entityEdit();
     cy.get('#category_select').select('Microscope').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

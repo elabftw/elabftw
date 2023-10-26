@@ -12,9 +12,9 @@
       <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
     </div>
   </div>
-  <div class='d-flex mb-2 align-items-center mathjax-ignore'>
+  <div class='d-none d-sm-block mb-2 align-items-center mathjax-ignore'>
     <label for='suggestedTags' class='col-form-label mr-3 edit-mode-label'>{{ 'Suggested tags'|trans }}</label>
-    <div class='mr-2'>
+    <div class='mr-2 d-flex flex-wrap'>
       {% set filteredTags = [] %}
       {% for tag in teamTagsArr %}
         {% set tagFound = false %}

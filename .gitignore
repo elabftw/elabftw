@@ -18,7 +18,6 @@ config.php*
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg
-web/assets/ove
 src/node/*.LICENSE.txt
 tests/_output/*
 tests/_support/_generated*
@@ -26,7 +25,6 @@ tests/cypress/screenshots
 tests/cypress/videos
 uploads
 /vendor/
-web/app/css/tinymce/fonts/*.woff
 .sass-cache
 src/ts/langs/*.js
 *.gz

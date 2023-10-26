@@ -8,36 +8,33 @@
 import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
-//import 'tinymce/skins/ui/oxide/fonts/tinymce-mobile.woff';
-import 'tinymce/skins/ui/oxide/content.inline.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/skin.shadowdom.min.css';
+import 'tinymce/models/dom';
 import 'tinymce/icons/default';
+import 'tinymce/themes/silver';
+import 'tinymce/skin/silver';
+// Note about tinymce css stuff: this page https://www.tiny.cloud/docs/tinymce/6/webpack-es6-npm/ just doesn't work as advertised
+// so it's easier to simply copy the css files in web/assets/skins instead.
+import 'tinymce/plugins/accordion';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
 import 'tinymce/plugins/codesample';
 import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/hr';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/imagetools';
 import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/pagebreak';
-import 'tinymce/plugins/paste';
 import 'tinymce/plugins/save';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/template';
 import 'tinymce/plugins/visualblocks';
 import 'tinymce/plugins/visualchars';
-import 'tinymce/themes/silver';
-import 'tinymce/themes/mobile';
 import '../js/tinymce-langs/ca_ES.js';
 import '../js/tinymce-langs/de_DE.js';
 import '../js/tinymce-langs/en_GB.js';
@@ -62,6 +59,7 @@ import { EntityType, Target } from './interfaces';
 import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
+
 
 const ApiC = new Api();
 // AUTOSAVE
@@ -124,7 +122,7 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'anchor autoresize table searchreplace code fullscreen insertdatetime paste charmap lists advlist save image imagetools link pagebreak mention codesample hr template visualblocks visualchars';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image link pagebreak codesample template mention visualblocks visualchars';
   if (page !== 'admin') {
     plugins += ' autosave';
   }
@@ -133,7 +131,10 @@ export function getTinymceBaseConfig(page: string): object {
   return {
     selector: '.mceditable',
     browser_spellcheck: true,
-    skin_url: 'app/css/tinymce',
+    // make it load the skin.min.css and content.min.css from there
+    skin_url: '/assets',
+    // remove the "Upgrade" button
+    promotion: false,
     autoresize_bottom_margin: 50,
     // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
     //resize: true,
@@ -183,7 +184,7 @@ export function getTinymceBaseConfig(page: string): object {
     height: '500',
     mentions: {
       // use # for autocompletion
-      delimiter: '#',
+      delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
         // grab experiments and items
@@ -205,9 +206,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      theme: 'mobile',
-      plugins: [ 'save', 'lists', 'link' ],
-      toolbar: [ 'undo', 'redo', 'bold', 'italic', 'underline', 'bullist', 'numlist', 'link' ],
+      plugins: [ 'save', 'lists', 'link', 'autolink' ],
     },
     // keyboard shortcut to insert today's date at cursor in editor
     setup: (editor: Editor): void => {
@@ -268,18 +267,18 @@ export function getTinymceBaseConfig(page: string): object {
         onSetup: api => {
           // button is enabled only if table is selected
           // button is active (highlighted) only if table is set sortable
-          api.setDisabled(true);
+          api.setEnabled(false);
 
           const callback = event => {
             const table = event.element.closest('table');
             if (!table) {
-              api.setDisabled(true);
+              api.setEnabled(false);
               api.setActive(false);
               return;
             }
 
             // table is selected, enable button
-            api.setDisabled(false);
+            api.setEnabled(true);
             if (table.dataset.tableSort === 'true') {
               // table is set sortable, highlight button
               api.setActive(true);

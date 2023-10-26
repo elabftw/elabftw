@@ -79,7 +79,7 @@ module.exports = (env) => {
     optimization: {
       splitChunks: {
         chunks: 'all',
-        name: 'vendor'
+        name: 'vendor',
       },
       minimize: true,
       minimizer: [

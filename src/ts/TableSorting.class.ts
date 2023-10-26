@@ -74,7 +74,7 @@ export default class TableSorting {
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button
       // need span because .fas has pointer-events:none
-      th.innerHTML = `<span class='d-flex justify-content-between align-items-center'><span>${th.innerHTML}</span><button class='btn btn-link p-0 ml-2' type='button' title='${i18next.t('sort-column')}' aria-label='${i18next.t('sort-by-column')} ${th.innerHTML}'><i class='fas fa-sort'></i></button></span>`;
+      th.innerHTML = `<span class='d-flex justify-content-between align-items-center'><span>${th.innerHTML}</span><button class='btn btn-link p-0 ml-2' type='button' title='${i18next.t('sort-by-column')} ${th.innerHTML}' aria-label='${i18next.t('sort-by-column')} ${th.innerHTML}'><i class='fas fa-sort'></i></button></span>`;
 
       th.firstChild.firstChild.nextSibling.addEventListener('click', (event => {
         const icon = (event.target as HTMLElement).firstChild as HTMLElement;

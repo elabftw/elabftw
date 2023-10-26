@@ -8,7 +8,6 @@
 /**
  * This file is a yarn plugin that hooks into the afterAllInstalled hook to execute. Its purpose is to extract two css files from the tinymce folder.
  * But because of PnP this is much more difficult to do than previously, when a simple "cp" was enough.
- * Currently I'm hardcoding the path because I need to move on to more interesting things, but ideally we use yarn tools to find the real path properly
  * doc: https://yarnpkg.com/advanced/pnpapi
  */
 module.exports = {
@@ -17,16 +16,27 @@ module.exports = {
     const { PosixFS } = require(`@yarnpkg/fslib`);
     const { ZipOpenFS } = require(`@yarnpkg/libzip`);
     const libzip = require(`@yarnpkg/libzip`).getLibzipSync();
+    const { structUtils, Cache } = require(`@yarnpkg/core`);
 
     return {
       default: {
         hooks: {
-          afterAllInstalled() {
+          async afterAllInstalled (project) {
             const zipOpenFs = new ZipOpenFS({ libzip });
             const crossFs = new PosixFS(zipOpenFs);
+            const cache = await Cache.find(project.configuration);
+
+            let tinymce = structUtils.makeIdent(null, 'tinymce');
+            project.storedPackages.forEach(pkg => {
+              if (pkg.identHash === tinymce.identHash) {
+                tinymce = pkg;
+              }
+            });
+            const checksum = project.storedChecksums.get(tinymce) ?? null;
+            const path = cache.getLocatorPath(tinymce, checksum);
 
             const extractFile = (filename) => {
-              const requestedFile = `/root/.yarn/berry/cache/tinymce-npm-6.7.2-d952b8dbd3-10c0.zip/node_modules/tinymce/skins/ui/oxide/${filename}`;
+              const requestedFile = `${path}/node_modules/tinymce/skins/ui/oxide/${filename}`;
               const fileContent = crossFs.readFileSync(requestedFile);
               const destinationPath = `web/assets/${filename}`;
               crossFs.writeFileSync(destinationPath, fileContent, `utf8`);

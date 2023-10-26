@@ -11,7 +11,6 @@ import { DateTime } from 'luxon';
 import 'tinymce/models/dom';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
-import 'tinymce/skin/silver';
 // Note about tinymce css stuff: this page https://www.tiny.cloud/docs/tinymce/6/webpack-es6-npm/ just doesn't work as advertised
 // so it's easier to simply copy the css files in web/assets/skins instead.
 import 'tinymce/plugins/accordion';

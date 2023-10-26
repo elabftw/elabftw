@@ -16,7 +16,7 @@
     <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
   {% endif %}
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
-  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials">
   <link rel="icon" href="/assets/images/favicon.ico" sizes="any"><!-- 32×32 -->
   <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png"><!-- 180×180 -->

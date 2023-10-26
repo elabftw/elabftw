@@ -24,16 +24,19 @@ module.exports = {
           async afterAllInstalled (project) {
             const zipOpenFs = new ZipOpenFS({ libzip });
             const crossFs = new PosixFS(zipOpenFs);
-            const cache = await Cache.find(project.configuration);
 
-            let tinymce = structUtils.makeIdent(null, 'tinymce');
-            project.storedPackages.forEach(pkg => {
-              if (pkg.identHash === tinymce.identHash) {
-                tinymce = pkg;
+            // get path to tinymce files in yarn cache
+            const cache = await Cache.find(project.configuration);
+            const tinymceIdent = structUtils.makeIdent(null, 'tinymce');
+            let tinymceLocator;
+            for (const pkg of project.storedPackages.values()) {
+              if (pkg.identHash === tinymceIdent.identHash) {
+                tinymceLocator = pkg;
+                break;
               }
-            });
-            const checksum = project.storedChecksums.get(tinymce) ?? null;
-            const path = cache.getLocatorPath(tinymce, checksum);
+            };
+            const checksum = project.storedChecksums.get(tinymceLocator) ?? null;
+            const path = cache.getLocatorPath(tinymceLocator, checksum);
 
             const extractFile = (filename) => {
               const requestedFile = `${path}/node_modules/tinymce/skins/ui/oxide/${filename}`;

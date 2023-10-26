@@ -67,12 +67,11 @@
     "sass-loader": "^13.3.2",
     "stylelint": "^15.10.1",
     "stylelint-config-sass-guidelines": "^10.0.0",
-    "webpack-bundle-analyzer": "^4.1.0"
+    "webpack-bundle-analyzer": "^4.9.1"
   },
   "scripts": {
-    "analyzejs": "webpack-bundle-analyzer stats.json web/app/js",
+    "analyzejs": "yarn run buildprofile && webpack-bundle-analyzer stats.json web/assets -m static -O",
     "api": "tests/run.sh api",
-    "apidoc": "apidoc -c apidoc/v1/apidoc.json -o apidoc/v1/html -i src/controllers",
     "apidocv2": "docker run --name swagger --rm -e SWAGGER_JSON=/c/openapi.yaml -v $(pwd)/apidoc/v2/:/c -p 8085:8080 -d swaggerapi/swagger-ui && echo 'APIv2 Doc: http://localhost:8085' && echo 'Run docker stop swagger to remove it.'",
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",
     "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",

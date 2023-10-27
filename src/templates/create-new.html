@@ -1,4 +1,4 @@
-<!-- RIGHT MENU: CREATE NEW BUTTON -->
+{# RIGHT MENU: CREATE NEW BUTTON #}
 {% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last) %}
 {% set entityType = entityPage == 'experiments.php' ? 'experiments' : 'items' %}
 {% if not App.Session.get('is_anon') %}

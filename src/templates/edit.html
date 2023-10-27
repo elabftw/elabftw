@@ -14,7 +14,7 @@
 {% embed 'view-edit.html' %}
   {% block createnew %}
     <div class='d-flex'>
-      <!-- TODO replace 'entry' with experiment|item -->
+      {# TODO replace 'entry' with experiment|item #}
       <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
@@ -26,7 +26,7 @@
   {% endblock %}
 {% endembed %}
 
-<!-- show message if it was recently modified -->
+{# show message if it was recently modified #}
 {% set lastchangeDiff = 'now'|date('U') - Entity.entityData.modified_at|date('U') %}
 {% if (lastchangeDiff < 600) and not Entity.entityData.lastchangeby is null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}
   {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
@@ -37,11 +37,11 @@
 
 <section id='main_section'>
 
-  <!-- DATE and RATING -->
+  {# DATE and RATING #}
   <div class='d-flex mb-2'>
     <div class='form-inline'>
       <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
-      <!-- the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale -->
+      {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
       <input id='date_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
     </div>
     {# RATING #}
@@ -53,10 +53,10 @@
     </div>
   </div>
 
-  <!-- TITLE -->
+  {# TITLE #}
   <div class='d-flex mb-2 justify-content-between align-items-center'>
     <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-    <!-- no data-trigger here because custom code in edit.ts -->
+    {# no data-trigger here because custom code in edit.ts #}
     <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|raw }}' required />
   </div>
 

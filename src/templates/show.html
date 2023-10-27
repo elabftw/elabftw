@@ -198,7 +198,7 @@
             {% endfor %}
           </select>
 
-          <!-- Change visibility -->
+          {# Change visibility #}
           <select data-action='update-visibility-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled>{{ 'Change visibility'|trans }}</option>
             {% for key, value in visibilityArr %}
@@ -206,7 +206,7 @@
             {% endfor %}
           </select>
 
-          <!-- Export -->
+          {# Export #}
           <select data-action='export-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled>{{ 'Export'|trans }}</option>
             <option value='eln'>{{ 'ELN Archive'|trans }}</option>
@@ -217,10 +217,10 @@
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
 
-          <!-- Add a tag -->
+          {# Add a tag #}
           <input type='text' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
 
-          <!-- Add a link -->
+          {# Add a link #}
           <div class='input-group mb-2 mr-2'>
             <input type='text' id='addLinkItemsInput' data-endpoint='items_links' class='form-control linkInputMultiple' placeholder='{{ 'Add a link'|trans }}' />
             <div class='input-group-append'>
@@ -233,7 +233,7 @@
             </div>
           </div>
 
-          <!-- Add an experiment link -->
+          {# Add an experiment link #}
           <div class='input-group mb-2 mr-2'>
             <input type='text' id='addLinkExpInput' data-endpoint='experiments_links' class='form-control linkInputMultiple' placeholder='{{ 'Link to an experiment'|trans }}' />
             <div class='input-group-append'>
@@ -256,7 +256,7 @@
         </div>
       </div>
 
-      <!-- PINNED ENTITIES -->
+      {# PINNED ENTITIES #}
       {% if pinnedArr and not searchPage %}
         <div id='pinned-entities' class='d-flex flex-column'>
           {% set isPinned = true %}
@@ -330,7 +330,7 @@
         </table>
       {% endif %}
 
-      <!-- PREVIOUS/NEXT PAGE buttons -->
+      {# PREVIOUS/NEXT PAGE buttons #}
       <div class='text-center page-buttons mt-2'>
         {% if DisplayParams.offset != 0 %}
           <button class='btn btn-neutral previousPage' data-action='previous-page'>{{ 'Previous page'|trans }}</button>

@@ -1,5 +1,5 @@
 {% if mode == 'edit' %}
-  <!-- replace upload form -->
+  {# replace upload form #}
   <div id='replaceUploadForm_{{ upload.id }}' class='mt-1' hidden>
     <form enctype='multipart/form-data' action='api/v2/{{ upload.type }}/{{ upload.item_id }}/uploads/{{ upload.id }}' method='POST' class='form-inline' data-action='replace-uploaded-file' data-long-name='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
       {{ App.Session.get('csrf')|csrf }}

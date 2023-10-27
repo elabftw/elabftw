@@ -5,7 +5,7 @@
 {% embed 'view-edit.html' %}
   {% block createnew %}
     <div class='d-flex'>
-      <!-- TODO replace 'entry' with experiment|item -->
+      {# TODO replace 'entry' with experiment|item #}
       <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Viewing an entry'|trans }}</h3></div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
@@ -68,7 +68,7 @@
 
   {% include('edit-permissions.html') %}
 
-  <!-- SHOW EVENTS -->
+  {# SHOW EVENTS #}
   {% if Entity.entityData.events_start %}<i class='far fa-calendar-alt'></i>
     {% for event in Entity.entityData.events_start|split('|') %}
     <a href='team.php?item={{ Entity.id }}&start={{ event|url_encode }}'>
@@ -77,7 +77,7 @@
     {% endfor %}
   {% endif %}
 
-  <!-- SHOW NEXT STEP -->
+  {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}
   {% if next_step|length > 0 %}
       {% set nextStepsArr = next_step|split('|') %}
@@ -87,7 +87,7 @@
       </p>
   {% endif %}
 
-  <!-- BODY (show only if not empty) -->
+  {# BODY (show only if not empty) #}
   {% set body = Entity.entityData.body %}
   {% if body != '' %}
     {% if Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD') %}
@@ -152,12 +152,12 @@
                 </a>
               {% endif %}
             </div>
-            <!-- the comment itself is only editable by the owner -->
+            {# the comment itself is only editable by the owner #}
             <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|raw }}</p>
           </div>
         {% endfor %}
 
-        <!-- CREATE COMMENT INPUT -->
+        {# CREATE COMMENT INPUT #}
         <div class='input-group my-1 rounded'>
           <textarea id='commentsCreateArea' class='form-control p-2 brr-none' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
           <div class='input-group-append'>

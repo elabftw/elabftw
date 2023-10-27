@@ -1,4 +1,4 @@
-<!-- Modal for ownership transfer -->
+{# Modal for ownership transfer #}
 <div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class='modal-body'>
-        <!-- SELECT USER -->
+        {# SELECT USER #}
         <label for='new_owner'>{{ 'New owner'|trans }}</label>
         <select id='new_owner' class='form-control'>
           {% for user in Entity.Users.readAllFromTeam %}

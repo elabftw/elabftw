@@ -1,4 +1,4 @@
-<!-- STEPS -->
+{# STEPS #}
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }}</h3>
@@ -25,7 +25,7 @@
 {% endif %}
 </div>
 
-<!-- EXPERIMENTS LINKS -->
+{# EXPERIMENTS LINKS #}
 {% if Entity.entityData.experiments_links %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
     Linked experiment
@@ -54,8 +54,8 @@
             </div>
           </div>
         </div>
-        <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-        <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+        {# container to hold the body of the entity if it is toggled with the +/- icon #}
+        {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
         <div hidden id='{{ randomId }}'>
           {# this div will hold the content #}
           <div></div>
@@ -66,7 +66,7 @@
   <hr>
 {% endif %}
 
-<!-- ITEMS LINKS -->
+{# ITEMS LINKS #}
 {% if Entity.entityData.items_links %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }}</h3>
   <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
@@ -91,8 +91,8 @@
             </div>
           </div>
         </div>
-        <!-- container to hold the body of the entity if it is toggled with the +/- icon -->
-        <!-- a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well -->
+        {# container to hold the body of the entity if it is toggled with the +/- icon #}
+        {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
         <div hidden id='{{ randomId }}'>
           {# this div will hold the content #}
           <div></div>
@@ -103,7 +103,7 @@
   <hr>
 {% endif %}
 
-<!-- RELATED ITEMS/EXPERIMENTS -->
+{# RELATED ITEMS/EXPERIMENTS #}
 {% if Entity.type == 'items' or Entity.type == 'experiments' %}
 
   {# RELATED EXPERIMENTS #}

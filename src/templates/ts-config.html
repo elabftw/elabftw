@@ -1,4 +1,4 @@
-<!-- SELECT TIMESTAMPING EXTERNAL SERVICE -->
+{# SELECT TIMESTAMPING EXTERNAL SERVICE #}
 <div class='d-flex justify-content-between'>
   <label for='ts_authority' class='col-form-label'>{{ 'Select timestamping authority (TSA)'|trans }}</label>
   <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='ts_authority' id='ts_authority' autocomplete='off'>
@@ -14,20 +14,20 @@
 
 <div id='ts_loginpass' {{ App.Config.configArr.ts_authority == 'dfn' or App.Config.configArr.ts_authority == 'digicert' or App.Config.configArr.ts_authority == 'sectigo' or App.Config.configArr.ts_authority == 'globalsign' ? 'hidden' : '' }}>
   <div class='d-flex justify-content-between'>
-    <!-- TIMESTAMP LOGIN -->
+    {# TIMESTAMP LOGIN #}
     <label for='ts_login' class='col-form-label'>{{ 'Login for external timestamping service'|trans }}</label>
     <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_login' type='text' value='{{ App.Config.configArr.ts_login }}' id='ts_login' autocomplete='off' />
   </div>
   <hr>
 
   <div class='d-flex justify-content-between'>
-    <!-- TIMESTAMP PASSWORD -->
+    {# TIMESTAMP PASSWORD #}
     <label for='ts_password' class='col-form-label'>{{ 'Password for external timestamping service'|trans }}</label>
     {% if App.Config.configArr.ts_password %}
       <p>A password is already set.
       <span class='link-like' data-action='destroy-ts-password'>Clear it</span> or change it below:</p>
     {% endif %}
-    <!-- note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome -->
+    {# note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome #}
     <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_password' data-reload='ts_loginpass' autocomplete='new-password' maxlength='200' type='password' id='ts_password' />
   </div>
   <hr>

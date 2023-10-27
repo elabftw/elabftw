@@ -539,6 +539,8 @@ components:
           type: string
         canwrite:
           type: string
+        metadata:
+          type: string
     link:
       type: object
       properties:
@@ -1758,13 +1760,13 @@ paths:
 
   # ITEMS_TYPES
   /items_types:
-    summary: Actions on items_types
+    summary: Actions on resources categories, aka items types
     post:
       tags: ['Items types']
-      summary: Create an item
+      summary: Create a resource category
       operationId: post-items_types
       requestBody:
-        description: Parameters for creating an item
+        description: Parameters for creating a resource category
         content:
           application/json:
             schema:
@@ -1784,59 +1786,64 @@ paths:
                 type: string
     get:
       tags: ['Items types']
-      summary: Read all items_types that are accessible.
+      summary: Read all resources categories that are accessible.
       operationId: read-items_types
       responses:
         '200':
-          description: A list of items_types.
+          description: A list of resources categories.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/item'
+                  $ref: '#/components/schemas/items_type'
   /items_types/{id}:
-    summary: Actions on an items type.
+    summary: Actions on a resource category.
     parameters:
       - name: id
         in: path
-        description: ID of the items type.
+        description: ID of the resource category.
         required: true
         schema:
           type: integer
     get:
       tags: ['Items types']
-      summary: Read an items type
+      summary: Read a resource category.
       operationId: get-items_type
       responses:
         '200':
-          description: An items type.
+          description: A resource category.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/items_type'
     patch:
       tags: ['Items types']
-      summary: Modify an item type
+      summary: Modify a resource category.
       operationId: patch-items_type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/items_type'
       responses:
         '200':
-          description: The patched items type.
+          description: The patched resource category.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/items_type'
     delete:
       tags: ['Items types']
-      summary: Delete an item type.
-      description: The item gets soft-deleted.
+      summary: Delete a resource category.
+      description: The resource category gets soft-deleted.
       operationId: delete-items_type
       requestBody:
         content:
           application/json: {}
       responses:
         '204':
-          description: The item type was deleted.
+          description: The resource category was marked as deleted.
 
   # EVENTS
   /events:

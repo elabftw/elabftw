@@ -45,8 +45,8 @@
   </p>
 </footer>
 
-</div><!-- end container -->
-</div><!-- end real-container -->
+</div>{# end container #}
+</div>{# end real-container #}
 
 <div id='user-prefs'
   data-lang='{{ App.getLang }}'
@@ -61,11 +61,11 @@
   ></div>
 
 {% if App.Session.has('is_auth') %}
-  <!-- this is here for the heartbeat -->
+  {# this is here for the heartbeat #}
   <div id='is-auth'></div>
 {% endif %}
 
-<!-- Modal for policies -->
+{# Modal for policies #}
 <div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
@@ -83,7 +83,7 @@
     </div>
   </div>
 </div>
-<!-- end policies policy modal -->
+{# end policies policy modal #}
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

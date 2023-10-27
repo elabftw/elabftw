@@ -81,6 +81,7 @@ class Scheduler implements RestInterface
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);
         $this->checkConstraints($start, $end);
+        $this->checkMaxSlots();
 
         // users won't be able to create an entry in the past
         $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ATOM, $start));
@@ -398,7 +399,6 @@ class Scheduler implements RestInterface
 
     private function checkConstraints(string $start, string $end): void
     {
-        $this->checkMaxSlots();
         $this->checkOverlap($start, $end);
         $this->checkSlotTime($start, $end);
     }

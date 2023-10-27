@@ -42,8 +42,12 @@ class ExportUser extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userid = (int) $input->getArgument('userid');
-        $outputFilename = sprintf('export-%s-userid-%d.eln', date('Y-m-d_H-i-s'), $userid);
-        $fileStream = fopen($this->Fs->getPath() . '/' . $outputFilename, 'wb');
+        $absolutePath = $this->Fs->getPath(sprintf(
+            'export-%s-userid-%d.eln',
+            date('Y-m-d_H-i-s'),
+            $userid,
+        ));
+        $fileStream = fopen($absolutePath, 'wb');
         if ($fileStream === false) {
             throw new RuntimeException('Could not open output stream!');
         }
@@ -57,7 +61,7 @@ class ExportUser extends Command
 
         $output->writeln(sprintf('Experiments of user with ID %d successfully exported as ELN archive.', $userid));
         $output->writeln('Copy the generated archive from the container to the current directory with:');
-        $output->writeln(sprintf('docker cp elabftw:%s/%s .', $this->Fs->getPath(), $outputFilename));
+        $output->writeln(sprintf('docker cp elabftw:%s .', $absolutePath));
 
         return Command::SUCCESS;
     }

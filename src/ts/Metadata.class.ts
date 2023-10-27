@@ -257,7 +257,7 @@ export class Metadata {
     if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
-    if (Object.prototype.hasOwnProperty.call(properties, 'readonly')) {
+    if (Object.prototype.hasOwnProperty.call(properties, 'readonly') && properties.readonly === true) {
       // readonly is not supported by select elements, but disabled is
       if (element instanceof HTMLSelectElement) {
         element.disabled = true;

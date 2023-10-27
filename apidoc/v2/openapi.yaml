@@ -1762,7 +1762,7 @@ paths:
   /items_types:
     summary: Actions on resources categories, aka items types
     post:
-      tags: ['Resources Categories (Items types)']
+      tags: ['Items types']
       summary: Create a resource category
       operationId: post-items_types
       requestBody:
@@ -1785,7 +1785,7 @@ paths:
               schema:
                 type: string
     get:
-      tags: ['Resources Categories (Items types)']
+      tags: ['Items types']
       summary: Read all resources categories that are accessible.
       operationId: read-items_types
       responses:
@@ -1796,7 +1796,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/item'
+                  $ref: '#/components/schemas/items_type'
   /items_types/{id}:
     summary: Actions on a resource category.
     parameters:
@@ -1807,7 +1807,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Resources Categories (Items types)']
+      tags: ['Items types']
       summary: Read a resource category.
       operationId: get-items_type
       responses:
@@ -1818,9 +1818,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/items_type'
     patch:
-      tags: ['Resources Categories (Items types)']
+      tags: ['Items types']
       summary: Modify a resource category.
       operationId: patch-items_type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/items_type'
       responses:
         '200':
           description: The patched resource category.
@@ -1829,7 +1834,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/items_type'
     delete:
-      tags: ['Resources Categories (Items types)']
+      tags: ['Items types']
       summary: Delete a resource category.
       description: The resource category gets soft-deleted.
       operationId: delete-items_type

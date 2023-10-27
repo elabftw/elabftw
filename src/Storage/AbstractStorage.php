@@ -25,9 +25,14 @@ abstract class AbstractStorage implements StorageInterface
         return new Filesystem($this->getAdapter());
     }
 
-    public function getPath(): string
+    /**
+     * Get the absolute path of a resource
+     * @param string $relativePath A relative path or filename. e.g. folder/file.txt or file.txt
+     * @return string The absolute path of a resource
+     */
+    public function getPath(string $relativePath=''): string
     {
-        return '/elabftw/' . static::FOLDER;
+        return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }
 
     abstract protected function getAdapter(): FilesystemAdapter;

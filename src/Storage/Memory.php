@@ -17,9 +17,11 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
  */
 class Memory extends AbstractStorage
 {
-    public function getPath(): string
+    public function getPath(string $relativePath=''): string
     {
-        return '';
+        // $path is not actually used here because php://memory does not provide a full file system
+        // compare to https://github.com/thephpleague/flysystem/issues/471#issuecomment-106231642
+        return 'php://memory';
     }
 
     protected function getAdapter(): FilesystemAdapter

@@ -12,6 +12,8 @@ declare global {
   }
 }
 
+import '@teselagen/ove';
+import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
 import { notif, reloadElement } from './misc';
 import { Action, Model } from './interfaces';

@@ -33,7 +33,7 @@ class FsTools
         $fs = $storage->getFs();
         $fs->createDirectory($folder);
         $fs->setVisibility($folder, Visibility::PRIVATE);
-        return sprintf('%s/%s', $storage->getPath(), $folder);
+        return $storage->getPath($folder);
     }
 
     /**

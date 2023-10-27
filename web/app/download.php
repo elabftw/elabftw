@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Config;
 use function error_reporting;
 use Exception;
 use function set_time_limit;
@@ -36,7 +37,8 @@ try {
     $storage = (int) $Request->query->get('storage');
     // backward compatibility: the download links in body won't have the storage param
     if ($storage === 0) {
-        $storage = 1;
+        // we fallback on the instance's configured storage
+        $storage = (int) Config::getConfig()->configArr['uploads_storage'];
     }
     $storageFs = Storage::from($storage)->getStorage()->getFs();
 

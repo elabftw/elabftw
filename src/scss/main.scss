@@ -8,8 +8,8 @@
 
 @import 'variables';
 /* import this first to be able to modify bootstrap theme */
-@import '../../node_modules/bootstrap/scss/functions';
-@import '../../node_modules/bootstrap/scss/variables';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
 /* override bootstrap theme */
 $theme-colors: (
     'primary': $elabblue,
@@ -20,16 +20,16 @@ $theme-colors: (
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootstrap-select/sass/bootstrap-select';
-@import '../../node_modules/prismjs/themes/prism';
-@import '../../node_modules/dropzone/dist/dropzone';
-@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
-@import '../../node_modules/jquery-ui/themes/base/core';
-@import '../../node_modules/jquery-ui/themes/base/autocomplete';
-@import '../../node_modules/jquery-ui/themes/base/menu';
-@import '../../node_modules/jquery-ui/themes/base/sortable';
-@import '../../node_modules/jquery-ui/themes/base/theme';
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-select/sass/bootstrap-select';
+@import 'prismjs/themes/prism';
+@import 'dropzone/dist/dropzone';
+@import '@fancyapps/fancybox/dist/jquery.fancybox';
+@import 'jquery-ui/themes/base/core';
+@import 'jquery-ui/themes/base/autocomplete';
+@import 'jquery-ui/themes/base/menu';
+@import 'jquery-ui/themes/base/sortable';
+@import 'jquery-ui/themes/base/theme';
 
 @import './fontawesome/fontawesome';
 @import './fontawesome/solid';

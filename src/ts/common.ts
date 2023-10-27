@@ -36,7 +36,6 @@ import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
 
 document.addEventListener('DOMContentLoaded', () => {
-
   // HEARTBEAT
   // this function is to check periodically that we are still authenticated
   // and show a message if we the session is not valid anymore but we are still on a page requiring auth

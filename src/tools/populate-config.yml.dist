@@ -29,6 +29,7 @@ config:
   ldap_username: cn=admin,dc=example,dc=org
   # increase this a bit
   login_tries: 10
+  s3_region: fr-par-42
 
 teams:
   - name: Alpha
@@ -79,6 +80,7 @@ users:
     create_experiments: true
     create_items: true
     create_templates: true
+    api_key: apiKey4Test_tata
 
   - team: Bravo
 

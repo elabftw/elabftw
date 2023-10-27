@@ -99,7 +99,7 @@ jobs:
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci
+          command: docker exec -it elabtmp yarn jslint-ci:all
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
@@ -107,11 +107,11 @@ jobs:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
       - run:
+          name: Run Twig linter
+          command: docker exec -it elabtmp yarn twigcs
+      - run:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
-      - run:
-          name: Install the database
-          command: docker exec -it elabtmp bin/init db:install -r
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -125,8 +125,8 @@ jobs:
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
       - run:
-          name: Run unit tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --coverage --coverage-xml --coverage-html
+          name: Run unit and apiv2 tests
+          command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
@@ -160,7 +160,17 @@ jobs:
             cypressExitCode=$?
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
             docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
+            # extract coverage reports
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar cypress-coverage.tar
+            mkdir cypress-coverage-html && tar -xf cypress-coverage.tar -C cypress-coverage-html
+            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress-coverage.clover.xml
             exit "$cypressExitCode"
+      - run :
+          name: Merge both coverage reports
+          command: |
+            docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
+            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-merged.clover.xml .
+            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-html-merged .
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html
@@ -168,10 +178,22 @@ jobs:
           path: coverage-html
           destination: coverage-html
       - codecov/upload:
-          file: coverage.xml
+          file: coverage-merged.clover.xml
       - store_artifacts:
           path: cypress
           destination: cypress
+      - store_artifacts:
+          path: cypress-coverage-html
+          destination: cypress-coverage-html
+      - store_artifacts:
+          path: cypress-coverage.clover.xml
+          destination: cypress-coverage.clover.xml
+      - store_artifacts:
+          path: coverage-html-merged
+          destination: coverage-html-merged
+      - store_artifacts:
+          path: coverage-merged.clover.xml
+          destination: coverage-merged.clover.xml
 workflows:
   version: 2
   build_and_test:

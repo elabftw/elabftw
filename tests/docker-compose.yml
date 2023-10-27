@@ -50,6 +50,7 @@ services:
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
+            - MAX_PHP_MEMORY=512M
         healthcheck:
             test: /etc/nginx/healthcheck.sh
             interval: 10s
@@ -57,6 +58,8 @@ services:
             retries: 3
         volumes:
             - ..:/elabftw
+        tmpfs:
+            - /elabftw/cache:uid=1000,gid=1000
         networks:
             - elabftw-net
         # make sure we wait for mysql to be available before starting

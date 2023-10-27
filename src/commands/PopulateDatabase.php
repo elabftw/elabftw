@@ -17,9 +17,11 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -95,19 +97,39 @@ class PopulateDatabase extends Command
         $this->dropAndInitDb();
 
         // adjust global config
-        $configArr = $yaml['config'] ?? array();
         $Config = Config::getConfig();
-        $Config->patch(Action::Update, $configArr);
+        $Config->patch(Action::Update, $yaml['config'] ?? array());
 
+        $output->writeln('Creating teams, users, experiments, and resources...');
         // create teams
         $Users = new Users();
         $Teams = new Teams($Users);
         $Teams->bypassReadPermission = true;
         $Teams->bypassWritePermission = true;
+        $Status = new ItemsStatus($Teams);
+        $Category = new ExperimentsCategories($Teams);
+        $faker = \Faker\Factory::create();
+
         foreach ($yaml['teams'] as $team) {
             $id = $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
+            $Teams->setId($id);
+
+            // create fake categories and status
+            $Category->postAction(Action::Create, array('name' => 'Projet X', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Tests', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Above Top Secret', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Production', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'R&D', 'color' => $faker->hexColor(), 'is_default' => 0));
+
+            $Status->postAction(Action::Create, array('name' => 'Maintenance mode', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Operational', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'In stock', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Need to reorder', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Destroyed', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Processed', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Waiting', 'color' => $faker->hexColor(), 'is_default' => 0));
+
             if (isset($team['visible'])) {
-                $Teams->setId($id);
                 $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
             }
         }
@@ -227,12 +249,12 @@ class PopulateDatabase extends Command
     private function dropAndInitDb(): void
     {
         $Db = Db::getConnection();
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
         $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
         $Db->q('USE ' . Config::fromEnv('DB_NAME'));
 
         // load structure
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
     }
 }

@@ -13,7 +13,7 @@
     {% endif %}
     <div class='d-flex flex-column'>
       {% for favtag in favTagsArr %}
-      <div data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : ''}}'>
+      <div data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
         {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
       </div>
       {% endfor %}

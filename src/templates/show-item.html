@@ -5,7 +5,7 @@
   {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
 {% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color|default('bdbdbd') }};'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -51,7 +51,10 @@
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category'><a style='color:#{{ item.color }}' href='?cat={{ item.category_id }}'>{{ item.category|raw }}</a></span>
+      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
+      {% if item.status is not null and item.category is not null %} 〉 {% endif %}
+      {# status #}
+      <span class='item-category' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'>{{ item.status_title|raw }}</span>
     </div>
     {# end first line #}
 
@@ -103,8 +106,8 @@
         {% endif %}
         <span class='item-date color-medium'>{{ item.date|date('Y-m-d') }}</span>
         {% if isPinned %}
-          <span title='{{ 'Toggle pin'|trans }}' data-id='{{ item.id }}' data-action='toggle-pin' id='toggle-pin-icon-div' class='hl-hover-gray p-1 rounded'>
-            <i id='toggle-pin-icon' class='fas fa-thumbtack fa-fw'></i>
+          <span title='{{ 'Toggle pin'|trans }}' data-id='{{ item.id }}' data-action='toggle-pin' class='hl-hover-gray p-1 rounded'>
+            <i class='fas fa-thumbtack fa-fw'></i>
           </span>
         {% endif %}
       </div>

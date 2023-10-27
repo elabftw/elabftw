@@ -17,6 +17,9 @@ ADD --chmod=755 https://github.com/vimeo/psalm/releases/download/$PSALM_VERSION/
 # Phan
 ADD --chmod=755 https://github.com/phan/phan/releases/download/$PHAN_VERSION/phan.phar /usr/bin/phan
 
+# phpcov
+ADD --chmod=755 https://phar.phpunit.de/phpcov.phar /usr/bin/phpcov
+
 # extend open_basedir
 # /usr/bin/psalm, //autoload.php, /root/.cache/ are for psalm
 # /usr/bin/phpstan, /proc/cpuinfo is for phpstan, https://github.com/phpstan/phpstan/issues/4427 https://github.com/phpstan/phpstan/issues/2965
@@ -24,3 +27,9 @@ RUN sed -i 's|^open_basedir*|&:/usr/bin/psalm://autoload\.php:/root/\.cache/:/us
 # Install xdebug for coverage
 RUN apk add --update php81-pecl-xdebug
 RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini
+
+# add routes used by c3.php (codecoverage) into nginx config
+RUN sed -i '/# REST API v1/i #c3 codecoverage routes\nlocation ~ ^/c3/report/(clear|serialized|html|clover)/?$ {\n    rewrite /c3/report/.*$ /login.php last;\n}\n' /etc/nginx/common.conf
+
+# add c3_wrapper.php as auto_prepend_file; See c3_wrapper.php for details
+RUN sed -i 's|^auto_prepend_file =|& /elabftw/tests/c3_wrapper.php|' /etc/php81/php.ini

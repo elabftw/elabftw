@@ -360,7 +360,7 @@ export function addAutocompleteToLinkInputs(): void {
           if (term in cache[object.selectElid]) {
             const res = [];
             cache[object.selectElid][term].forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
             return;
@@ -369,7 +369,7 @@ export function addAutocompleteToLinkInputs(): void {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.category}] ${entity.title.substring(0, 60)}`);
+              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
             });
             response(res);
           });
@@ -400,31 +400,14 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
-export async function updateCategory(entity: Entity, value: string): Promise<string> {
-  const resp = await (new Api()).patch(`${entity.type}/${entity.id}`, {'category': value});
-  const json = await resp.json();
-  // we need to change the category next to the title for db items
-  const title = document.getElementById('documentTitle');
-  // it's only there is view mode, and for database items
-  const url = new URL(document.location.href);
-  if (title && url.pathname.split('/').pop() === 'database.php') {
-    const categoryName = (title.firstElementChild as HTMLElement);
-    categoryName.innerText = json.category;
-    // also adjust to the new color
-    categoryName.style.color = `#${json.color}`;
-  }
-  return json.category;
+// update category or status, returns the color as string
+export async function updateCatStat(target: string, entity: Entity, value: string): Promise<string> {
+  const params = {};
+  params[target] = value;
+  const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
+  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
-export function showContentPlainText(el: HTMLElement): void {
-  document.getElementById('plainTextAreaLabel').textContent = el.dataset.name;
-  fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-    return response.text();
-  }).then(fileContent => {
-    (document.getElementById('plainTextArea') as HTMLTextAreaElement).value = fileContent;
-    $('#plainTextModal').modal();
-  });
-}
 // used in edit.ts to build search patterns from strings that contain special characters
 // taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
 export function escapeRegExp(string: string): string {

@@ -54,10 +54,10 @@ try {
 
     // only the bookable categories
     $bookableItemsArr = $Items->readBookable();
-    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category_id');
+    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allItemsTypes = $ItemsTypes->readAll();
     $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
-        return in_array($a['category_id'], $categoriesOfBookableItems, true);
+        return in_array($a['id'], $categoriesOfBookableItems, true);
     });
 
     $template = 'team.html';

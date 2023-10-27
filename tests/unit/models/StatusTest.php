@@ -10,15 +10,14 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
-    private Status $Status;
+    private ExperimentsStatus $Status;
 
     protected function setUp(): void
     {
-        $this->Status = new Status(new Teams(new Users(1, 1), 1), 1);
+        $this->Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), 1);
     }
 
     public function testCreate(): void
@@ -32,12 +31,17 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Status->readOne());
     }
 
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->Status->getPage());
+    }
+
     public function testUpdate(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
+        $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
-        $this->assertEquals('Updated', $status['category']);
+        $this->assertEquals('Updated', $status['title']);
         $this->assertEquals('121212', $status['color']);
         $this->assertEquals(0, $status['is_default']);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
@@ -47,9 +51,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $Status = new Status(new Teams(new Users(1, 1), 1), $id);
+        $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
-        $this->expectException(ImproperActionException::class);
-        $this->Status->destroy();
+        $this->assertTrue($this->Status->destroy());
     }
 }

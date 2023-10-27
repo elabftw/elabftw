@@ -89,21 +89,26 @@ class MakeEln extends MakeStreamZip
             $this->folder = $this->root . '/' . $currentDatasetFolder;
             $rootParts[] = array('@id' => './' . $currentDatasetFolder);
 
-            // LINKS
+            // LINKS (mentions)
+            // this array will be added to the "mentions" attribute of the main dataset
             $mentions = array();
             foreach ($e['items_links'] as $link) {
-                $mentions[] = array(
-                    '@id' => Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'],
+                $id = Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'];
+                $mentions[] = array('@id' => $id);
+                $dataEntities[] = array(
+                    '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
             foreach ($e['experiments_links'] as $link) {
-                $mentions[] = array(
-                    '@id' => Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'],
+                $id = Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'];
+                $mentions[] = array('@id' => $id);
+                $dataEntities[] = array(
+                    '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => $link['category'] . ' - ' . $link['title'],
+                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
@@ -128,11 +133,17 @@ class MakeEln extends MakeStreamZip
             // COMMENTS
             $comments = array();
             foreach ($e['comments'] as $comment) {
+                // the comment creation date will be used as part of the id
+                $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
+                $id = 'comment://' . urlencode($dateCreated);
+                // we add the reference to the comment in hasPart
+                $comments[] = array('@id' => $id);
+                // now we build a root node for the comment, with the same id as the one referenced in the main entity
                 $firstname = $comment['firstname'] ?? '';
                 $lastname = $comment['lastname'] ?? '';
-                $dateCreated = (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM);
-                $comments[] = array(
-                    '@id' => 'comment://' . urlencode($dateCreated),
+                $dataEntities[] = array(
+                    '@id' => $id,
+                    '@type' => 'Comment',
                     'dateCreated' => $dateCreated,
                     'text' => $comment['comment'],
                     'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),

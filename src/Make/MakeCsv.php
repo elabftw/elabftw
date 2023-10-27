@@ -36,7 +36,7 @@ class MakeCsv extends AbstractMakeCsv
      */
     protected function getHeader(): array
     {
-        return  array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
+        return array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
     }
 
     /**

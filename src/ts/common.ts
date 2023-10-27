@@ -176,25 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // AUTOCOMPLETE input with users
-  $(document).on('focus', '.autocompleteUsers', function() {
-    if (!$(this).data('autocomplete')) {
-      $(this).autocomplete({
-        // necessary or the autocomplete will get under the modal
-        appendTo: '#autocompleteUsersDiv' + $(this).data('identifier'),
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          ApiC.getJson(`${Model.User}/?q=${request.term}`).then(json => {
-            const res = [];
-            json.forEach(user => {
-              res.push(`${user.userid} - ${user.fullname} (${user.email})`);
-            });
-            response(res);
-          });
-        },
-      });
-    }
-  });
-
   /**
    * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
    */
@@ -259,11 +240,39 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#policiesModal').modal('toggle');
       });
 
+    } else if (el.matches('[data-action="add-query-filter"]')) {
+      const params = new URLSearchParams(document.location.search.substring(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.location.href = `?${params.toString()}`;
+
     // SCROLL TO TOP
     } else if (el.matches('[data-action="scroll-top"]')) {
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
+      });
+
+    // AUTOCOMPLETE
+    } else if (el.matches('[data-complete-target]')) {
+      // depending on the type of results, we will want different attributes and formatting
+      let transformer = entity => {
+        const cat = entity.category_title ? `${entity.category_title} - ` : '';
+        const stat = entity.status_title ? `${entity.status_title} - ` : '';
+        return `${entity.id} - ${cat}${stat}${entity.title}`;
+      };
+      // useid data attribute is used in admin panel to grab the userid from input
+      if (el.dataset.completeTarget === 'users') {
+        transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
+      }
+      // use autocomplete jquery-ui plugin
+      $(el).autocomplete({
+        // this option is necessary or the autocomplete box will get lost under the permissions modal
+        appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
+        source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
+            response(json.map(entry => transformer(entry)));
+          });
+        },
       });
 
     // TRANSFER OWNERSHIP
@@ -478,11 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const location = resp.headers.get('location').split('/');
         window.location.href = `${entityC.getPage()}.php?mode=edit&id=${location[location.length -1]}`;
       });
-
-    } else if (el.matches('[data-action="navigate-twitter"]')) {
-      event.preventDefault();
-      el.querySelector('i').classList.add('moving-bird');
-      setTimeout(() => window.location.assign('https://twitter.com/elabftw'), 666);
 
     } else if (el.matches('[data-action="report-bug"]')) {
       event.preventDefault();

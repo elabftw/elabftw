@@ -1,4 +1,4 @@
-{# only display the html for permissions. Required vars: "can" from canToHuman filter on a permissions json and identifier  #}
+{# only display the html for permissions. Required vars: "can" from canToHuman filter on a permissions json and identifier #}
 <div id='{{ identifier|default(rw) }}Div'>
   {{ can.base }}
   {% if can.teams %}

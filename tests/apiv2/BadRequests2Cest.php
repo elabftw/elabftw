@@ -12,7 +12,7 @@ use \Codeception\Util\HttpCode;
 class BadRequests2Cest
 {
     // Make a request with an invalid key
-    public function badTokenTest(ApiTester $I)
+    public function badTokenTest(Apiv2Tester $I)
     {
         $I->wantTo('Send a request with a wrong key');
         $I->haveHttpHeader('Authorization', 'wrong_key');
@@ -20,7 +20,7 @@ class BadRequests2Cest
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST); // 400
     }
 
-    public function badMethodTest(ApiTester $I)
+    public function badMethodTest(Apiv2Tester $I)
     {
         $I->wantTo('Send a request with an invalid HTTP method');
         $I->haveHttpHeader('Authorization', 'apiKey4Test');

@@ -11,14 +11,6 @@ namespace Elabftw\Commands;
 
 use Symfony\Component\Console\Application;
 use function dirname;
-use Elabftw\Storage\Cache;
-use Elabftw\Elabftw\FsTools;
-use Elabftw\Models\Config;
-use Symfony\Component\Mailer\Mailer;
-use Elabftw\Services\Email;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
-use Symfony\Component\Mailer\Transport;
 
 /**
  * This file is separated from bin/console because Config doesn't exist yet

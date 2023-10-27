@@ -1,15 +1,15 @@
 actor: Apiv2Tester
 coverage:
-  enabled: true
-  c3_url: 'https://elabtmp'
-  remote_context_options:
-    ssl:
-      verify_peer: false
-      verify_peer_name: false
-      allow_self_signed: true
+    enabled: true
+    c3_url: 'https://elabtmp'
+    remote_context_options:
+        ssl:
+            verify_peer: false
+            verify_peer_name: false
+            allow_self_signed: true
 modules:
-  enabled:
-        - \Helper\Api
+    enabled:
+        - \Helper\Apiv2
         - REST:
             url: https://elabtmp/api/v2/
             depends: PhpBrowser

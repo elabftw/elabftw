@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, collectForm } from './misc';
+import { getEntity, notif, reloadElement, collectForm, updateCatStat } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init();
+
+  // CATEGORY SELECT
+  $(document).on('change', '.catstatSelect', function() {
+    updateCatStat($(this).data('target'), entity, String($(this).val()));
+  });
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {

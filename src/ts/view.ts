@@ -6,9 +6,9 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { InputType, Malle } from '@deltablot/malle';
+import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
-import { getEntity, updateCategory, relativeMoment, reloadElement, showContentPlainText } from './misc';
+import { getEntity, updateCatStat, relativeMoment, reloadElement } from './misc';
 import { EntityType, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const about = document.getElementById('info').dataset;
 
   // only run in view mode
-  if (about.page !== 'view') {
+  if (about.page !== 'view' && about.page !== 'template-view') {
     return;
   }
 
@@ -33,11 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    // SHOW CONTENT OF PLAIN TEXT FILES
-    if (el.matches('[data-action="show-plain-text"]')) {
-      showContentPlainText(el);
     // CREATE COMMENT
-    } else if (el.matches('[data-action="create-comment"]')) {
+    if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
       ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
 
@@ -73,31 +70,65 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   });
 
-  // UPDATE MALLEABLE CATEGORY
-  let category;
-  // TODO make it so it calls only on trigger!
-  if (entity.type === EntityType.Experiment) {
-    category = ApiC.getJson(`${Model.Team}/${about.team}/status`).then(json => Array.from(json));
-  } else {
-    category = ApiC.getJson(`${EntityType.ItemType}`).then(json => Array.from(json));
+  // UPDATE MALLEABLE STATUS
+  interface Status extends SelectOptions {
+    id: number;
+    color: string;
+    title: string;
   }
-  const malleableCategory = new Malle({
+
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
+
+  let categoryEndpoint = `${EntityType.ItemType}`;
+  let statusEndpoint = `${Model.Team}/current/items_status`;
+  if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
+    categoryEndpoint = `${Model.Team}/current/experiments_categories`;
+    statusEndpoint = `${Model.Team}/current/experiments_status`;
+  }
+
+  const malleableStatus = new Malle({
     // use the after hook to change the background color of the new element
-    after: (original, _, value) => {
-      category.then(categoryArr => {
-        const cat = categoryArr.find(cat => cat.category === value);
-        original.style.setProperty('--bg', `#${cat.color}`);
-      });
+    after: (elem, _, value) => {
+      elem.style.setProperty('--bg', `#${value}`);
       return true;
     },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
-    fun: value => updateCategory(entity, value),
+    fun: (value, original) => updateCatStat(original.dataset.target, entity, value).then(color => {
+      original.style.setProperty('--bg', `#${color}`);
+      return color;
+    }),
     inputType: InputType.Select,
-    selectOptionsValueKey: 'category_id',
-    selectOptionsTextKey: 'category',
-    selectOptions: category.then(categoryArr => categoryArr),
+    selectOptionsValueKey: 'id',
+    selectOptionsTextKey: 'title',
+    selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
+      statusArr.unshift(notsetOpts);
+      return statusArr;
+    }),
+    listenOn: '.malleableStatus',
+    returnedValueIsTrustedHtml: true,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  });
+
+  // UPDATE MALLEABLE CATEGORY
+
+  const malleableCategory = new Malle({
+    // use the after hook to change the background color of the new element
+    after: (elem, _, value) => {
+      elem.style.setProperty('--bg', `#${value}`);
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => updateCatStat(original.dataset.target, entity, value),
+    inputType: InputType.Select,
+    selectOptionsValueKey: 'id',
+    selectOptionsTextKey: 'title',
+    selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: true,
     submit : i18next.t('save'),
@@ -107,16 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // listen on existing comments
   malleableComments.listen();
+  malleableStatus.listen();
   malleableCategory.listen();
 
   new MutationObserver(() => {
+    malleableStatus.listen();
     malleableCategory.listen();
-  }).observe(document.getElementById('main_section'), {childList: true});
-
-  // add an observer so new comments will get an event handler too
-  new MutationObserver(() => {
     malleableComments.listen();
     relativeMoment();
-  }).observe(document.getElementById('commentsDiv'), {childList: true});
-  // END COMMENTS
+  }).observe(document.getElementById('container'), {childList: true});
 });

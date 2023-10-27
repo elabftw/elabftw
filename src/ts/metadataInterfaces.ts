@@ -20,11 +20,15 @@ export enum ExtraFieldInputType {
   Date = 'date',
   DateTime = 'datetime-local',
   Email = 'email',
+  Experiments = 'experiments',
   Number = 'number',
   Radio = 'radio',
+  Items = 'items',
   Select = 'select',
   Text = 'text',
   Time = 'time',
+  Uploads = 'uploads',
+  Users = 'users',
   Url = 'url',
 }
 

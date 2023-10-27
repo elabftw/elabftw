@@ -1,5 +1,7 @@
-{# required vars: rw, can: coming from canread or canwrite with canToHuman filter #}
+{# required vars: rw: coming from canread or canwrite #}
 {# default icon/label are for canread #}
+{# twigcs use-var can #}
+{# see https://github.com/friendsoftwig/twigcs/issues/121 #}
 {% set icon = 'eye' %}
 {% set label = 'Visibility'|trans %}
 {% set modalTitle = 'Select who can see this entry'|trans %}
@@ -15,7 +17,7 @@
 
 
 {% include('permissions-edit-modal.html') %}
-<label  class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
+<label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
 {% if not Entity.isReadOnly %}
   <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>

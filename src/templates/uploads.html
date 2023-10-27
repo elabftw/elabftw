@@ -1,16 +1,15 @@
-<!-- Modal to display plain text content -->
+{# Modal to display plain text content #}
 <div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='plainTextModalLabel'>{{ 'File content'|trans }}</h5>
+        <h5 class='modal-title' id='plainTextModalLabel'></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        <label for='plainTextArea' id='plainTextAreaLabel'>Filename</label>
-        <textarea class='form-control' name='plainTextArea' id='plainTextArea' rows='10' readonly></textarea>
+      <div class='modal-body row'>
+        <div class='col' id='plainTextContentDiv'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -19,12 +18,11 @@
   </div>
 </div>
 
-<!-- UPLOADED FILES -->
+{# UPLOADED FILES #}
 <div id='filesdiv'>
-  <a name='filesDiv'></a>
   {% if Entity.entityData.uploads %}
     <div class='d-flex justify-content-between'>
-      <div><!-- necessary div for flex -->
+      <div>{# necessary div for flex #}
         <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' data-icon-target='uploadsDiv' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
           {% plural Entity.entityData.uploads|length %}
           Attached files
@@ -48,7 +46,7 @@
       {% for upload in Entity.entityData.uploads %}
         {% set ext = upload.real_name|getExt %}
 
-        <!-- COMPACT LAYOUT (0) -->
+        {# COMPACT LAYOUT (0) #}
         {% if App.Users.userData.uploads_layout == 0 %}
           <div class='col-md-3 col-sm-4 hl-hover-gray rounded'>
             {% include('upload-dropdown-menu.html') %}
@@ -61,7 +59,7 @@
             {% include('upload-replace-form.html') %}
           </div>
 
-        <!-- DEFAULT LAYOUT (1) -->
+        {# DEFAULT LAYOUT (1) #}
         {% else %}
           <div class='col-md-4 col-sm-6'>
             <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
@@ -70,7 +68,7 @@
               <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
               {% endif %}
 
-              <!-- IMAGES -->
+              {# IMAGES #}
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                 {# don't make the thumbnail clickable if it's a tif #}
                 {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
@@ -94,15 +92,15 @@
                   </div>
                 {% endif %}
 
-              <!-- MOLFILES -->
+              {# MOLFILES #}
               {% elseif ext == 'mol' %}
                 <div class='text-center'>
                   <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'></canvas>
                 </div>
 
-              <!-- MOLECULES -->
+              {# MOLECULES #}
               {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
-                <!--  build control dropdown to change the representation style -->
+                {# build control dropdown to change the representation style #}
                 <div style='padding-bottom: 5px' class='btn-group'>
                   <button type='button'
                     class='btn btn-secondary btn-xs dropdown-toggle'
@@ -120,10 +118,10 @@
                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{'Line'|trans }}</span>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{'Sphere'|trans }}</span>
+                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
                     </li>
                     <li class='dropdown-item'>
                       <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
@@ -131,15 +129,15 @@
                   </ul>
                 </div>
 
-                <!-- IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format -->
+                {# IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format #}
                 <div class='viewer_3Dmoljs'
                   data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
-                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick'}}"
+                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick' }}"
                   data-backgroundcolor='0xffffff'
                   id='3Dmol_{{ upload.id }}'>
                 </div>
 
-              <!-- DNA -->
+              {# DNA #}
               {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
                 <div class='viewer-ove'
                   data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
@@ -147,10 +145,10 @@
                   id='OVE_{{ upload.id }}'>
                 </div>
 
-              <!-- TEXT -->
-              {% elseif ext matches '/txt$/i' %}
+              {# TEXT #}
+              {% elseif ext matches '/(txt|md|json)$/i' %}
                 <span class='eye-overlay'
-                  data-action='show-plain-text'
+                  data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
                   data-storage='{{ upload.storage }}'
                   data-path='{{ upload.long_name }}'
                   data-name='{{ upload.real_name }}'>
@@ -160,11 +158,11 @@
               {% elseif ext matches '/(mp4|webm)$/i' %}
                 <div class='text-center'>
                   <video controls width='300' preload='metadata'>
-                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name}}' type='video/{{ ext }}'>
+                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' type='video/{{ ext }}'>
                   </video>
                 </div>
 
-              <!-- ANYTHING ELSE -->
+              {# ANYTHING ELSE #}
               {% else %}
                 <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
               {% endif %}
@@ -183,20 +181,8 @@
               <br>
               {% include('upload-comment.html') %}
 
-              <!-- SHOW TXT CONTENT -->
-              {% if ext matches '/txt$/i' %}
-                <div class='clickable'>
-                  <i class='fas fa-fw fa-eye mr-1'></i>
-                  <p data-action='show-plain-text'
-                     data-storage='{{ upload.storage }}'
-                     data-path='{{ upload.long_name }}'
-                     data-name='{{ upload.real_name }}'
-                     class='d-inline'>{{ 'Show content of file'|trans }}</p>
-                </div>
-              {% endif %}
-
               {% include('upload-more-info.html') %}
-              </div><!-- end div.caption -->
+              </div>{# end div.caption #}
               {% include('upload-replace-form.html') %}
             </div>
           </div>
@@ -205,4 +191,4 @@
     </div>
     <hr>
   {% endif %}
-</div><!-- #filesdiv -->
+</div>{# #filesdiv #}

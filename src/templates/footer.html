@@ -1,14 +1,14 @@
 <footer>
   <p class='footer-left'>
-    <a title='{{ 'Follow eLabFTW on Twitter!'|trans }}' data-action='navigate-twitter' style='color:#343434' href='#'>
-      <i title='Twitter' class='fab fa-twitter fa-lg'></i>
+    <a title='{{ 'Follow eLabFTW on X!'|trans }}' href='https://twitter.com/elabftw' style='color:#343434'>
+      <i title='X' class='fab fa-x-twitter fa-lg'></i>
     </a>
 
     <a title='{{ 'Code repository on GitHub'|trans }}' style='color:#343434' href='https://github.com/elabftw/elabftw'>
       <i title='GitHub' class='fab fa-github fa-lg'></i>
     </a>
 
-    <a title='{{ 'Join the discussion on Gitter'|trans }}'style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
+    <a title='{{ 'Join the discussion on Gitter'|trans }}' style='color:#343434' href='https://gitter.im/elabftw/elabftw'>
       <i title='Gitter' class='fas fa-comment-dots fa-lg'></i>
     </a>
 
@@ -45,8 +45,8 @@
   </p>
 </footer>
 
-</div><!-- end container -->
-</div><!-- end real-container -->
+</div>{# end container #}
+</div>{# end real-container #}
 
 <div id='user-prefs'
   data-lang='{{ App.getLang }}'
@@ -61,11 +61,11 @@
   ></div>
 
 {% if App.Session.has('is_auth') %}
-  <!-- this is here for the heartbeat -->
+  {# this is here for the heartbeat #}
   <div id='is-auth'></div>
 {% endif %}
 
-<!-- Modal for policies -->
+{# Modal for policies #}
 <div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
@@ -83,7 +83,7 @@
     </div>
   </div>
 </div>
-<!-- end policies policy modal -->
+{# end policies policy modal #}
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

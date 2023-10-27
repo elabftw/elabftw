@@ -111,7 +111,7 @@ class TwigFunctions
         }
         $decoded = json_decode($json, true, 42, JSON_THROW_ON_ERROR);
         if (isset($decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
-            return $decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value];
+            return (bool) $decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value];
         }
         return true;
     }

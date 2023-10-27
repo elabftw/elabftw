@@ -75,7 +75,7 @@ class DownloadController implements ControllerInterface
                 $fileStream = $this->fs->readStream($this->getFilePath());
             } catch (UnableToReadFile) {
                 // display a thumbnail if the real thumbnail cannot be found
-                $fileStream = fopen(dirname(__DIR__, 2) . '/web/app/img/fallback-thumb.png', 'rb');
+                $fileStream = fopen(dirname(__DIR__, 2) . '/web/assets/images/fallback-thumb.png', 'rb');
                 if ($fileStream === false) {
                     return;
                 }

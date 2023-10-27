@@ -1,4 +1,4 @@
-<!-- DROPDOWN MENU FOR UPLOAD -->
+{# DROPDOWN MENU FOR UPLOAD #}
 <div class='dropdown'>
   <a class='clickable float-right px-2' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
     <i class='fas fa-ellipsis-v'></i>
@@ -7,20 +7,20 @@
   <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
 
   {% if mode == 'edit' %}
-    <!-- INSERT IN TEXT in edit mode for images -->
+    {# INSERT IN TEXT in edit mode for images #}
     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
     <a class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
     {% endif %}
 
-    <!-- INSERT IN TEXT in edit mode for plain text -->
+    {# INSERT IN TEXT in edit mode for plain text #}
     {% if ext matches '/txt$/i' %}
       <a class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
         <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}</a>
     {% endif %}
   {% endif %}
 
-    <!-- Edit filename (available in view mode too) -->
+    {# Edit filename (available in view mode too) #}
     {% if not upload.immutable and not Entity.isReadOnly %}
       <a class='dropdown-item' data-action='rename-upload' data-id='{{ upload.id }}' data-type='{{ upload.type }}'
         data-itemid='{{ upload.item_id }}' data-msg='{{ 'Edit filename'|trans }}' title='{{ 'Edit filename'|trans }}'>
@@ -29,26 +29,26 @@
 
   {% if mode == 'edit' %}
 
-    <!-- Annotate image -->
+    {# Annotate image #}
     {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
     <a class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}</a>
     {% endif %}
 
-    <!-- LOAD IN JSON EDITOR -->
+    {# LOAD IN JSON EDITOR #}
     {% if ext matches '/(json)$/i' %}
       <a class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file'>
         <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
       </a>
     {% endif %}
 
-    <!-- Save mol file as png -->
+    {# Save mol file as png #}
     {% if ext matches '/(mol)$/i' %}
       <a class='dropdown-item clickable' data-action='save-mol-as-png' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name }}'>
       <i class='fas fa-fw fa-image mr-1'></i>{{ 'Save as image'|trans }}</a>
     {% endif %}
 
-    <!-- Upload a new version: only in edit mode because currently it'll look into the editor to change the image, but it might be convenient to also have it in view mode -->
+    {# Upload a new version: only in edit mode because currently it'll look into the editor to change the image, but it might be convenient to also have it in view mode #}
     {% if not upload.immutable %}
       <a class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}</a>
@@ -56,19 +56,19 @@
 
   {% endif %}
 
-    <!-- Show content of plain text -->
-    {% if ext matches '/txt$/i' %}
-      <a class='dropdown-item' data-action='show-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
+    {# Show content of plain text #}
+    {% if ext matches '/(txt|md|json)$/i' %}
+      <a class='dropdown-item' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
         <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}</a>
     {% endif %}
 
-    <!-- Load in NMRium -->
+    {# Load in NMRium #}
     {% if ext matches '/jdx$/i' %}
     <a class='dropdown-item' href='#' data-uploadid='{{ upload.id }}' data-action='open-in-nmrium'>
         <i class='fas fa-fw fa-square-poll-vertical mr-1'></i>{{ 'Open in NMRium'|trans }}</a>
     {% endif %}
 
-    <!-- More info -->
+    {# More info #}
     <a class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
       <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</a>
 

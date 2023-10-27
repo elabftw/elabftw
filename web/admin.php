@@ -14,8 +14,10 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
@@ -46,16 +48,20 @@ try {
 
     $ItemsTypes = new ItemsTypes($App->Users);
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
-    $Status = new Status($Teams);
+    $Status = new ExperimentsStatus($Teams);
+    $ItemsStatus = new ItemsStatus($Teams);
     $Tags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
     $itemsCategoryArr = $ItemsTypes->readAll();
+    $ExperimentsCategories = new ExperimentsCategories($Teams);
+    $experimentsCategoriesArr = $ExperimentsCategories->readAll();
     if ($Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
+    $itemsStatusArr = $ItemsStatus->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -112,6 +118,8 @@ try {
         'metadataGroups' => $metadataGroups,
         'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
         'statusArr' => $statusArr,
+        'experimentsCategoriesArr' => $experimentsCategoriesArr,
+        'itemsStatusArr' => $itemsStatusArr,
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,

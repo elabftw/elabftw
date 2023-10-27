@@ -11,13 +11,13 @@ use \Codeception\Util\HttpCode;
 
 class IdpCest
 {
-    public function _before(ApiTester $I)
+    public function _before(Apiv2Tester $I)
     {
         $I->haveHttpHeader('Authorization', 'apiKey4Test');
         $I->haveHttpHeader('Content-Type', 'application/json');
     }
 
-    public function getAllIdp(ApiTester $I)
+    public function getAllIdp(Apiv2Tester $I)
     {
         $I->wantTo('Get all idp');
         $I->sendGET('/idps');
@@ -25,7 +25,7 @@ class IdpCest
         $I->seeResponseIsJson();
     }
 
-    public function createIdp(ApiTester $I)
+    public function createIdp(Apiv2Tester $I)
     {
         $I->wantTo('Create an idp');
         $I->sendPOST('/idps', array(
@@ -45,7 +45,7 @@ class IdpCest
         $I->seeResponseCodeIs(HttpCode::CREATED);
     }
 
-    public function getIdp(ApiTester $I)
+    public function getIdp(Apiv2Tester $I)
     {
         $I->wantTo('Get an idp');
         $I->sendGET('/idps/1');
@@ -53,7 +53,7 @@ class IdpCest
         $I->seeResponseIsJson();
     }
 
-    public function updateIdp(ApiTester $I)
+    public function updateIdp(Apiv2Tester $I)
     {
         $I->wantTo('Update an idp');
         $I->sendPATCH('/idps/1', array(
@@ -63,7 +63,7 @@ class IdpCest
         $I->seeResponseIsJson();
     }
 
-    public function deletedIdp(ApiTester $I)
+    public function deletedIdp(Apiv2Tester $I)
     {
         $I->wantTo('Delete an idp');
         $I->sendDELETE('/idps/1');

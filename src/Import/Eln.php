@@ -17,7 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Status;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use function hash_file;
@@ -107,8 +107,15 @@ class Eln extends AbstractZip
         // LINKS
         if (isset($dataset['mentions']) && !empty($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
-            foreach ($dataset['mentions'] as $link) {
-                $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $link['@id'], $link['name']);
+            foreach($dataset['mentions'] as $mention) {
+                // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
+                $fullMention = $mention;
+                // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
+                if (count($mention) === 1) {
+                    // resolve the id to get the full node content
+                    $fullMention = $this->getNodeFromId($mention['@id']);
+                }
+                $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $fullMention['@id'], $fullMention['name']);
             }
             $linkHtml .= '</ul>';
             $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
@@ -117,13 +124,20 @@ class Eln extends AbstractZip
         // COMMENTS
         if (isset($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
-                $author = $this->getNodeFromId($comment['author']['@id']);
+                // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
+                $fullComment = $comment;
+                // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
+                if (count($comment) === 1) {
+                    // resolve the id to get the full node content
+                    $fullComment = $this->getNodeFromId($comment['@id']);
+                }
+                $author = $this->getNodeFromId($fullComment['author']['@id']);
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
                     $author['givenName'] ?? '',
-                    $author['familyName'] ?? 'Unknown',
-                    $comment['dateCreated'],
-                    $comment['text'],
+                    $author['familyName'] ?? $author['name'] ?? 'Unknown',
+                    $fullComment['dateCreated'],
+                    $fullComment['text'],
                 );
                 $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }
@@ -195,13 +209,13 @@ class Eln extends AbstractZip
                     // try and adjust the status for experiments
                     $sourceStatus = $json['category'];
                     // let's see if we can find a status like this in target instance
-                    $targetStatusArr = (new Status(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
+                    $targetStatusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
                     $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {
-                        return $status['category'] === $sourceStatus;
+                        return $status['title'] === $sourceStatus;
                     });
                     if (!empty($filteredStatus)) {
                         // use array_key_first because the filter will not reset the key numbering
-                        $this->Entity->patch(Action::Update, array('category' => (string) $filteredStatus[array_key_first($filteredStatus)]['category_id']));
+                        $this->Entity->patch(Action::Update, array('category' => (string) $filteredStatus[array_key_first($filteredStatus)]['id']));
                     }
                 }
             }

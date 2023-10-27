@@ -15,9 +15,11 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Status;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
@@ -47,14 +49,18 @@ class Populate
      */
     public function generate(Experiments | Items $Entity): void
     {
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
-            $Category = new Status(new Teams($Entity->Users, $Entity->Users->team));
+            $Category = new ExperimentsCategories($Teams);
+            $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
-            $tpl = (int) $Category->readAll()[0]['category_id'];
+            $Status = new ItemsStatus($Teams);
+            $tpl = (int) $Category->readAll()[0]['id'];
         }
         $categoryArr = $Category->readAll();
+        $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
@@ -65,6 +71,60 @@ class Populate
             BasePermissions::UserOnly->toJson(),
         );
 
+        $tagsArr = array(
+            'Project X',
+            'collaboration',
+            'SCP-2702',
+            'Western Blot',
+            'HeLa',
+            'Fly',
+            'Dark Arts',
+            'COVID-24',
+            'FLIM',
+            'FRET',
+            'Open Source',
+            'Software',
+            'Secret',
+            'Copper',
+            'nanotechnology',
+            'spectroscopy',
+            'hardness testing',
+            'cell culture',
+            'DNA sequencing',
+            'PCR',
+            'gene expression',
+            'protein purification',
+            'biological samples',
+            'data analysis',
+            'lab safety',
+            'genetics',
+            'molecular biology',
+            'cell biology',
+            'biotechnology',
+            'biochemistry',
+            'microbiology',
+            'ecology',
+            'bioinformatics',
+            'research methodology',
+            'lab techniques',
+            'experimental design',
+            'ethics in research',
+            'laboratory management',
+            'scientific collaboration',
+            'lab supplies',
+            'scientific discovery',
+            'data interpretation',
+            'hypothesis testing',
+            'cell culture techniques',
+            'genomic analysis',
+            'protein analysis',
+            'molecular cloning',
+            'biomolecular assays',
+            'statistical analysis',
+            'scientific literature',
+        );
+
+
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
             $Entity->setId($id);
@@ -72,7 +132,7 @@ class Populate
             $Tags = new Tags($Entity);
             $tagNb = $this->faker->numberBetween(0, 5);
             for ($j = 0; $j <= $tagNb; $j++) {
-                $Tags->postAction(Action::Create, array('tag' => $this->faker->word() . $this->faker->word()));
+                $Tags->postAction(Action::Create, array('tag' => $this->faker->randomElement($tagsArr)));
             }
             // random date in the past 5 years
             $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
@@ -89,9 +149,13 @@ class Populate
                 $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
             }
 
-            // change the category (status/item type)
+            // CATEGORY
             $category = $this->faker->randomElement($categoryArr);
-            $Entity->patch(Action::Update, array('category' => (string) $category['category_id']));
+            $Entity->patch(Action::Update, array('category' => (string) $category['id']));
+
+            // STATUS
+            $status = $this->faker->randomElement($statusArr);
+            $Entity->patch(Action::Update, array('status' => (string) $status['id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {

@@ -78,7 +78,8 @@ class EmailNotifications
 
     private function getNotificationsToSend(): array
     {
-        $sql='SELECT id, userid, category, body,CASE WHEN category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME) THEN 1 ELSE 0 END AS is_deadline_expired FROM notifications WHERE send_email = 1 AND email_sent = 0';
+        $sql='SELECT id, userid, category, body FROM notifications
+            WHERE send_email = 1 AND email_sent = 0 AND (category <> :deadline OR (category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)))';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $this->Db->execute($req);

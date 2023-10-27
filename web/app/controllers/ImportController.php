@@ -29,7 +29,7 @@ require_once dirname(__DIR__) . '/init.inc.php';
 set_time_limit(0);
 $Controller = new ImportController($App, $Request);
 // default response
-$Response = new RedirectResponse('../../database.php');
+$Response = new RedirectResponse('/database.php');
 
 try {
     $Response = $Controller->getResponse();

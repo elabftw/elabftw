@@ -39,7 +39,6 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 /**
  * For all your authentication/login needs
@@ -94,33 +93,6 @@ class LoginController implements ControllerInterface
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
-        ////////////////////
-        // TEAM SELECTION //
-        ////////////////////
-        // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->isInSeveralTeams) {
-            $this->App->Session->set('team_selection_required', true);
-            $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
-            // carry over the cookie
-            $this->App->Session->set('rememberme', $icanhazcookies);
-            return new RedirectResponse('/login.php');
-        }
-
-        // no team was found so user must select one
-        if ($AuthResponse->initTeamRequired) {
-            $this->App->Session->set('initial_team_selection_required', true);
-            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
-            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
-            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            return new RedirectResponse('/login.php');
-        }
-
-        // send a helpful message if account requires validation, needs to be after team selection
-        if ($AuthResponse->isValidated === false) {
-            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
-        }
-
         /////////////////
         // ENFORCE MFA //
         /////////////////
@@ -162,6 +134,34 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('enforce_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
+        }
+
+
+        ////////////////////
+        // TEAM SELECTION //
+        ////////////////////
+        // if the user is in several teams, we need to redirect to the team selection
+        if ($AuthResponse->isInSeveralTeams) {
+            $this->App->Session->set('team_selection_required', true);
+            $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            // carry over the cookie
+            $this->App->Session->set('rememberme', $icanhazcookies);
+            return new RedirectResponse('/login.php');
+        }
+
+        // no team was found so user must select one
+        if ($AuthResponse->initTeamRequired) {
+            $this->App->Session->set('initial_team_selection_required', true);
+            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
+            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
+            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            return new RedirectResponse('/login.php');
+        }
+
+        // send a helpful message if account requires validation, needs to be after team selection
+        if ($AuthResponse->isValidated === false) {
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 
         // All good now we can login the user
@@ -298,7 +298,7 @@ class LoginController implements ControllerInterface
             // will display the appropriate message to user
             $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
             $this->App->Session->remove('initial_team_selection_required');
-            $location = '../../login.php';
+            $location = '/login.php';
             echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
             exit;
         }
@@ -306,35 +306,30 @@ class LoginController implements ControllerInterface
 
     private function enableMFA(): string
     {
-        $flashBag = $this->App->Session->getBag('flashes');
-        $flashKey = 'ko';
-        $flashValue = _('Two Factor Authentication was not enabled!');
+        $flashBag = $this->App->Session->getFlashBag();
 
-        // Only save if user didn't click Cancel button
-        if ($this->App->Request->request->get('Submit') === 'submit') {
-            $userid = isset($this->App->Users->userData['userid'])
-                ? (int) $this->App->Users->userData['userid']
-                : $this->App->Session->get('auth_userid');
-            $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
-
-            // check the input code against the secret stored in session
-            if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
-                if ($flashBag instanceof FlashBag) {
-                    $flashBag->add($flashKey, _('The code you entered is not valid!'));
-                }
-                return '../../login.php';
-            }
-
-            // all good, save the secret in the database now that we now the user can authenticate against it
-            $MfaHelper->saveSecret();
-            $flashKey = 'ok';
-            $flashValue = _('Two Factor Authentication is now enabled!');
-            $this->App->Session->remove('enable_mfa');
+        if ($this->App->Request->request->get('Submit') === 'cancel') {
+            $this->App->Session->clear();
+            $flashBag->add('ko', _('Two Factor Authentication was not enabled!'));
+            return '/login.php';
         }
 
-        if ($flashBag instanceof FlashBag) {
-            $flashBag->add($flashKey, $flashValue);
+        $userid = isset($this->App->Users->userData['userid'])
+            ? (int) $this->App->Users->userData['userid']
+            : $this->App->Session->get('auth_userid');
+        $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
+
+        // check the input code against the secret stored in session
+        if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
+            $flashBag->add('ko', _('The code you entered is not valid!'));
+            return '/login.php';
         }
+
+        // all good, save the secret in the database now that we now the user can authenticate against it
+        $MfaHelper->saveSecret();
+        $this->App->Session->remove('enable_mfa');
+
+        $flashBag->add('ok', _('Two Factor Authentication is now enabled!'));
 
         $location = $this->App->Session->get('mfa_redirect_origin', '');
 

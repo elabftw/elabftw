@@ -33,7 +33,7 @@ use function time;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse('../../login.php');
+$Response = new RedirectResponse('/login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {

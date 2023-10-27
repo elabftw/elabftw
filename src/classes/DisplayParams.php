@@ -171,6 +171,11 @@ class DisplayParams
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
             $this->searchType = 'category';
         }
+        // STATUS FILTER
+        if (Check::id($this->Request->query->getInt('status')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
+            $this->searchType = 'status';
+        }
 
         // OWNER (USERID) FILTER
         if (Check::id($this->Request->query->getInt('owner')) !== false) {

@@ -82,11 +82,13 @@ class Csv extends AbstractImport
             $req->bindValue(':elabid', Tools::generateElabid());
             $req->bindParam(':metadata', $metadata);
             $this->Db->execute($req);
-            $itemId = $this->Db->lastInsertId();
+            $newItemId = $this->Db->lastInsertId();
+
+            $this->Entity->setId($newItemId);
 
             // insert tags from the tags column
             if (isset($row['tags'])) {
-                $this->insertTags($row['tags'], $itemId);
+                $this->insertTags($row['tags']);
             }
 
             $this->inserted++;
@@ -119,14 +121,13 @@ class Csv extends AbstractImport
         return $body;
     }
 
-    private function insertTags(string $tags, int $itemId): void
+    private function insertTags(string $tags): void
     {
         $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
-        $Entity = new Items($this->Users, $itemId);
         foreach ($tagsArr as $tag) {
             // maybe it's empty for this row
             if ($tag) {
-                $Entity->Tags->postAction(Action::Create, array('tag' => $tag));
+                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
             }
         }
     }

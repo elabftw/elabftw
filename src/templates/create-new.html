@@ -1,4 +1,4 @@
-<!-- RIGHT MENU: CREATE NEW BUTTON -->
+{# RIGHT MENU: CREATE NEW BUTTON #}
 {% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last) %}
 {% set entityType = entityPage == 'experiments.php' ? 'experiments' : 'items' %}
 {% if not App.Session.get('is_anon') %}
@@ -25,8 +25,8 @@
           </a>
         {% else %}
           {% for category in categoryArr %}
-            <div data-action='create-entity' data-type='items' data-tplid='{{ category.category_id }}' class='dropdown-item' style='color:#{{ category.color }}'>
-              {{ category.category }}
+            <div data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+              {{ category.title|raw }}
             </div>
           {% endfor %}
         {% endif %}

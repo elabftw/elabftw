@@ -35,10 +35,10 @@ try {
     if ($App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
-        $keyArr = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
+        $key = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         // replace the Users in App
-        $App->Users = new Users($keyArr['userid'], $keyArr['team']);
-        $canWrite = (bool) $keyArr['canWrite'];
+        $App->Users = new Users($key['userid'], $key['team']);
+        $canWrite = (bool) $key['can_write'];
     } else {
         if ($App->Session->get('is_auth') !== 1) {
             throw new UnauthorizedException();
@@ -48,6 +48,9 @@ try {
     if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
         $Controller = new Apiv2Controller($App->Users, $App->Request, $canWrite);
     } else {
+        if (!str_contains($App->Request->server->get('QUERY_STRING'), 'apiv1_is_dead')) {
+            throw new ImproperActionException('APIv1 is deprecated and will be removed in future versions. Use APIv2. To suppress this message, add the query string "apiv1_is_dead". e.g. /experiments/32?apiv1_is_dead');
+        }
         $Controller = new Apiv1Controller($App->Users, $App->Request, $canWrite);
     }
     $Controller->getResponse()->send();

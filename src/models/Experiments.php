@@ -50,13 +50,21 @@ class Experiments extends AbstractConcreteEntity
         $Templates = new Templates($this->Users);
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
+        $Status = new ExperimentsStatus($Teams);
 
         // defaults
         $title = _('Untitled');
+        $category = null;
+        $status = $Status->getDefault();
         $body = null;
         $canread = BasePermissions::MyTeams->toJson();
         $canwrite = BasePermissions::User->toJson();
         $metadata = null;
+        $contentType = AbstractEntity::CONTENT_HTML;
+        if ($this->Users->userData['use_markdown']) {
+            $contentType = AbstractEntity::CONTENT_MD;
+        }
+
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
@@ -64,10 +72,13 @@ class Experiments extends AbstractConcreteEntity
             $Templates->setId($template);
             $templateArr = $Templates->readOne();
             $title = $templateArr['title'];
+            $category = $templateArr['category'];
+            $status = $templateArr['status'];
             $body = $templateArr['body'];
             $canread = $templateArr['canread'];
             $canwrite = $templateArr['canwrite'];
             $metadata = $templateArr['metadata'];
+            $contentType = (int) $templateArr['content_type'];
         }
 
         if ($template === 0) {
@@ -89,22 +100,18 @@ class Experiments extends AbstractConcreteEntity
             }
         }
 
-        $contentType = AbstractEntity::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown']) {
-            $contentType = AbstractEntity::CONTENT_MD;
-        }
-
         // enforce the permissions if the admin has set them
         $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : $canread;
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
-        $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':category', $category, PDO::PARAM_INT);
+        $req->bindValue(':status', $status, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $canread, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
@@ -140,15 +147,19 @@ class Experiments extends AbstractConcreteEntity
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
+        $Teams = new Teams($this->Users);
+        $Status = new ExperimentsStatus($Teams);
+
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, elabid, canread, canwrite, userid, metadata, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, userid, metadata, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
-        $req->bindValue(':category', $this->getStatus(), PDO::PARAM_INT);
+        $req->bindValue(':category', $this->entityData['category']);
+        $req->bindValue(':status', $Status->getDefault(), PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
         $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
@@ -226,34 +237,5 @@ class Experiments extends AbstractConcreteEntity
         $Config->decrementTsBalance();
 
         return $this->readOne();
-    }
-
-    /**
-     * Select what will be the status for the experiment
-     *
-     * @return int The status ID
-     */
-    private function getStatus(): int
-    {
-        // what will be the status ?
-        // go pick what is the default status upon creating experiment
-        // there should be only one because upon making a status default,
-        // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $status = $req->fetchColumn();
-
-        // if there is no is_default status
-        // we take the first status that come
-        if (!$status) {
-            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $status = $req->fetchColumn();
-        }
-        return (int) $status;
     }
 }

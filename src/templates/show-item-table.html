@@ -12,14 +12,20 @@
   <td class='title'>
     {# edit icon #}
     {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
-      <span class='p-2 rounded hl-hover-gray'><a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'><i class='fas fa-pencil-alt clickable link-like'></i></a></span>
+      <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}'>
+        <span class='p-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span>
+      </a>
     {% endif %}
     {# lock icon #}
     {% if item.locked %}
-      <i class='fas fa-lock fa-sm' style='color:#29AEB9'></i>
+      <i class='fas fa-lock fa-fw' style='color:#29AEB9'></i>
+    {% endif %}
+    {# archived icon #}
+    {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
+      <i class='fas fa-box-archive fa-fw'></i>
     {% endif %}
     {# toggle body #}
-    <span class='p-2 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></span>
+    <span class='p-1 rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></span>
     <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
   </td>
 
@@ -39,7 +45,12 @@
     {% if item.timestamped %}
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
-    <span class='item-type category-button rounded p-1' style='--bg:#{{ item.color }}'>{{ item.category }}</span>
+    <span data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='category-button rounded p-1' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</span>
+  </td>
+
+  {# STATUS #}
+  <td class='item-next'>
+    <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='category-button rounded p-1' style='--bg:#{{ item.status_color }}'>{{ item.status_title|raw }}</span>
   </td>
 
   {# TAGS #}
@@ -48,7 +59,7 @@
     {% if itemtagsArr|length > 0 %}
       <span class='d-flex flex-wrap'>
         {% for tag in itemtagsArr %}
-          <a class='tag margin-1px' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+          <a class='tag margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
         {% endfor %}
       </span>
   {% endif %}
@@ -61,18 +72,17 @@
   </td>
 
   <td class='item-owner'>
-    {{"<a href='?owner=%s'>%s</a>"|format(item.userid, item.fullname)|raw }}
+    <span data-action='add-query-filter' data-key='owner' data-value='{{ item.userid }}'>{{ item.fullname|raw }}</span>
   </td>
 
 </tr>
 {# container to hold the body of the entity if it is toggled with the +/- icon #}
 {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
 <tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.color }}'>
-  <td colspan='100%'>
+  <td colspan='7'>
     <div style='overflow:auto;margin: 10px 0 0 20px'></div>
   </td>
 </tr>
 
 {# Perhaps not the most elegant solution, but helps keep the even/odd style of the table, which would be tricky in css #}
-<tr hidden></tr>
-</div>
+<tr hidden><td colspan='7'></td></tr>

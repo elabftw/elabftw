@@ -257,7 +257,7 @@ export class Metadata {
     if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
-    if (Object.prototype.hasOwnProperty.call(properties, 'readonly')) {
+    if (Object.prototype.hasOwnProperty.call(properties, 'readonly') && properties.readonly === true) {
       // readonly is not supported by select elements, but disabled is
       if (element instanceof HTMLSelectElement) {
         element.disabled = true;
@@ -325,6 +325,26 @@ export class Metadata {
       // input first, then append div
       inputGroupDiv.appendChild(element);
       inputGroupDiv.appendChild(appendDiv);
+      return inputGroupDiv;
+    }
+
+    // USERS/EXPERIMENTS/ITEMS input have a prepend to the input with a magnifying glass
+    if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items].includes(properties.type)) {
+      // set the target for autocomplete function
+      element.dataset.completeTarget = properties.type;
+      const inputGroupDiv = document.createElement('div');
+      inputGroupDiv.classList.add('input-group');
+      const prependDiv = document.createElement('div');
+      prependDiv.classList.add('input-group-prepend');
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-magnifying-glass');
+      const iconWrapper = document.createElement('span');
+      iconWrapper.classList.add('input-group-text');
+      iconWrapper.appendChild(icon);
+      prependDiv.appendChild(iconWrapper);
+      inputGroupDiv.appendChild(prependDiv);
+      inputGroupDiv.appendChild(element);
+
       return inputGroupDiv;
     }
 

@@ -3,7 +3,7 @@
   <h1 id='pageTitle'>{{ App.pageTitle }}</h1>
 {% endblock %}
 
-<!-- Modal for advanced search -->
+{# Modal for advanced search #}
 <div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
@@ -25,11 +25,11 @@
               <code><span class='token operator'>!</span></code>,
               <code><span class='token punctuation'>(</span></code>,
               <code><span class='token punctuation'>)</span></code>,
-              <code><sapn class='token string'>'</span></code> and
-              <code><sapn class='token string'>"</span></code>.<br>
-              <em><code><sapn class='token string'>termA</span></code></em> or
-              <em><code><sapn class='token string'>termB</span></code></em> or
-              <em><code><sapn class='token string'>456</span></code></em>
+              <code><span class='token string'>'</span></code> and
+              <code><span class='token string'>"</span></code>.<br>
+              <em><code><span class='token string'>termA</span></code></em> or
+              <em><code><span class='token string'>termB</span></code></em> or
+              <em><code><span class='token string'>456</span></code></em>
           </dd>
           <dt>Quoted term</dt>
           <dd>A sequence of characters including space (<code>&blank;</code>)
@@ -158,7 +158,7 @@
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>visibility</span></dt>
           <dd>Term or Quoted term<br>
-              <!--A group name (e.g., <span class='token string'>'Lab Heroes'</span>) or-->
+              {# A group name (e.g., <span class='token string'>'Lab Heroes'</span>) or #}
               <span class='token string'>public</span>,
               <span class='token string'>organization</span>,
               <span class='token string'>myteams</span>,
@@ -198,10 +198,10 @@
 </div>
 
 
-<!-- SEARCH PAGE BEGIN -->
+{# SEARCH PAGE BEGIN #}
 <hr>
 <form method='get' action='search.php'>
-<!-- MAIN TEXTAREA FOR EXTENDED QUERY -->
+{# MAIN TEXTAREA FOR EXTENDED QUERY #}
 <div class='row'>
   <div class='col-md-12 mb-2'>
     <h5><label for='extendedArea'>{{ 'Search query'|trans }}</label></h5>
@@ -210,6 +210,7 @@
       <input
         id='extendedArea'
         name='q'
+        type='text'
         class='form-control'
         placeholder="{{ 'Enter search query, e.g.: %s'|trans|format(getExtendedSearchExample()) }}"
         spellcheck='false'
@@ -217,35 +218,35 @@
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
-      Press <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd> or <kbd><kbd>⌘</kbd> + <kbd>enter</kbd></kbd> to submit search.
+      {{ 'Press %sctrl + enter%s or %s⌘ + enter%s to submit search.'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}
     </p>
   </div>
 </div>
 
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
-  <p>Allowed Fields (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>):</p>
+  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
     <div class='col-md-6'>
       <ul class='list-unstyled'>
-        <li class='mb-2'><kbd>attachment:</kbd> yes, no, Simple or Quoted term</li>
-        <li class='mb-2'><kbd>author:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>body:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>category:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>date:</kbd> see date format</li>
-        <li class='mb-2'><kbd>elabid:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>group:</kbd> Simple or Quoted term</li>
+        <li class='mb-2'><kbd>attachment:</kbd> {{ 'yes, no, simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>author:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
+        <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
 
     <div class='col-md-6'>
       <ul class='list-unstyled'>
-        <li class='mb-2'><kbd>locked:</kbd> yes or no</li>
-        <li class='mb-2'><kbd>rating:</kbd> 1, 2, 3, 4, 5, or unrated or 0</li>
-        <li class='mb-2'><kbd>status:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>timestamped:</kbd> yes or no</li>
-        <li class='mb-2'><kbd>title:</kbd> Simple or Quoted term</li>
-        <li class='mb-2'><kbd>visibility:</kbd> Simple or Quoted term</li>
+        <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
+        <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
+        <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>timestamped:</kbd> {{ 'yes or no'|trans }}</li>
+        <li class='mb-2'><kbd>title:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>visibility:</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
   </div>
@@ -255,43 +256,66 @@
 <hr>
 
 <div class='row mb-2'>
-  <!-- SEARCH IN-->
-  <div class='col-md-6'>
+  {# SEARCH IN #}
+  <div class='col-md-4'>
     <label for='searchin'>{{ 'Search in'|trans }}</label>
     <select name='type' id='searchin' class='form-control'>
       <option value='experiments'>{% trans %}Experiment {% plural 2 %}Experiments{% endtrans %}</option>
-      <option disabled>----------------</option>
-      <option value='database'{{ Request.query.get('type') == 'database' ? ' selected' }}>{{ 'Database'|trans }}</option>
-      {% for category in itemsTypesArr %}
-        <option value='{{ category.category_id }}'{{ Request.query.get('type') == category.category_id ? ' selected' }}>
-          {{ category.category }}
+      <option value='items'{{ Request.query.get('type') == 'items' ? ' selected' }}>{{ 'Resources'|trans }}</option>
+    </select>
+  </div>
+  {# EXPERIMENTS CATEGORIES #}
+  <div class='col-md-4' id='experimentsCategoriesDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
+    <label for='experimentsCategoriesSelect'>{{ 'And category is'|trans }}</label>
+    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+      <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
+      {% for category in experimentsCategoriesArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
         </option>
       {% endfor %}
     </select>
   </div>
-  <!-- END SEARCH IN -->
-  <!-- AUTHOR/OWNER HELPER -->
-  <div class='col-md-6'>
-    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
-    <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
-      <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
-      <optgroup label='{{ 'Users'|trans }}'>
-        {% for user in usersArr %}
-          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:'~user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
-        {% endfor %}
-      </optgroup>
-      <optgroup label='{{ 'Groups'|trans }}'>
-        {% for group in teamGroups %}
-          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:'~group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
-        {% endfor %}
-      </optgroup>
+  {# RESOURCES CATEGORIES (items types) #}
+  <div class='col-md-4' id='resourcesCategoriesDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
+    <label for='resourcesCategoriesSelect'>{{ 'And category is'|trans }}</label>
+    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+      <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
+      {% for category in itemsTypesArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
     </select>
   </div>
-  <!-- END AUTHOR/OWNER HELPER -->
+  {# EXPERIMENTS STATUS #}
+  <div class='col-md-4' id='experimentsStatusDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
+    <label for='experimentsStatusSelect'>{{ 'And status is'|trans }}</label>
+    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
+      <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+      {% for category in experimentsStatusArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  {# RESOURCES STATUS #}
+  <div class='col-md-4' id='resourcesStatusDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
+    <label for='resourcesStatusSelect'>{{ 'And status is'|trans }}</label>
+    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
+      <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
+      {% for category in itemsStatusArr %}
+        <option value='{{ category.title }}'>
+          {{ category.title|raw }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 </div>
 
 <div class='row mb-2'>
-  <!-- SEARCH DATE -->
+  {# SEARCH DATE #}
   <div class='col-md-6'>
     <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
     <div class='input-group'>
@@ -312,44 +336,34 @@
     <label class='d-inline' for='dateTo'>{{ 'Date to (optional)'|trans }}</label>
     <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
   </div>
-  <!-- END SEARCH DATE -->
+  {# END SEARCH DATE #}
 </div>
 
 <hr>
 
-<!-- NEW ROW -->
+{# NEW ROW #}
 <div class='row mb-2'>
-  <div class='col-md-6'>
-    <!-- STATUS ONLY FOR EXPERIMENTS -->
-    <div id='searchStatus'>
-      <label for='status'>{{ 'And status is'|trans }}</label>
-      <select id='status' name='status' data-filter='status' class='form-control filterHelper'>
-        <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
-        {% for status in statusArr %}
-          <option {{- Request.query.get('status') == status.category ? ' selected' }}>
-            {{ status.category }}
-          </option>
+  {# AUTHOR/OWNER HELPER #}
+  <div class='col-md-4'>
+    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+    <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
+      <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
+      <optgroup label='{{ 'Users'|trans }}'>
+        {% for user in usersArr %}
+          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
         {% endfor %}
-      </select>
-    </div>
-    <!-- END STATUS -->
-    <!-- CATEGORY ONLY FOR DATABASE -->
-    <div id='searchCategory' hidden>
-      <label for='category'>{{ 'And category is'|trans }}</label>
-      <select id='category' name='category' data-filter='category' class='form-control filterHelper'>
-        <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
-        {% for category in itemsTypesArr %}
-          <option {{- Request.query.get('category') == category.category ? ' selected' }}>
-            {{ category.category }}
-          </option>
+      </optgroup>
+      <optgroup label='{{ 'Groups'|trans }}'>
+        {% for group in teamGroups %}
+          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
         {% endfor %}
-      </select>
-    </div>
-    <!-- END CATEGORY -->
+      </optgroup>
+    </select>
   </div>
+  {# END AUTHOR/OWNER HELPER #}
 
-  <!-- VISIBILITY SEARCH -->
-  <div class='col-md-6'>
+  {# VISIBILITY SEARCH #}
+  <div class='col-md-4'>
     <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
     <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
@@ -358,12 +372,12 @@
       {% endfor %}
     </select>
   </div>
-  <!-- END VISIBILITY SEARCH -->
+  {# END VISIBILITY SEARCH #}
 </div>
 
-<!-- NEW ROW -->
+{# NEW ROW #}
 <div class='row mb-2'>
-  <!-- RATING -->
+  {# RATING #}
   <div class='col-md-6'>
     <label for='rating'>{{ 'And rating is'|trans }}</label>
     <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
@@ -374,40 +388,32 @@
       {% endfor %}
     </select>
   </div>
-  <!-- END RATING -->
-  <!-- LOCK -->
+  {# END RATING #}
+  {# LOCK #}
   <div class='col-md-3'>
     <label for='locked'>{{ 'Locked'|trans }}</label>
     <select id='locked' name='locked' class='form-control filterHelper' data-filter='locked'>
-      <option value='' data-action='clear'>{{ 'Select lock status'|trans}}</option>
+      <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
       <option value='yes' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
       <option value='no' {{- Request.query.get('locked') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
     </select>
   </div>
-  <!-- END LOCK -->
+  {# END LOCK #}
 
-  <!-- TIMESTAMPED -->
+  {# TIMESTAMPED #}
   <div class='col-md-3'>
     <label for='timestamped'>{{ 'Timestamped'|trans }}</label>
     <select id='timestamped' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
-      <option value='' data-action='clear'>{{ 'Select timestamp status'|trans}}</option>
+      <option value='' data-action='clear'>{{ 'Select timestamp status'|trans }}</option>
       <option value='yes' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
       <option value='no' {{- Request.query.get('timestamped') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
     </select>
   </div>
-  <!-- END LOCK -->
-</div>
-
-<div class='row'>
-  <div class='col'>
-    <small class='form-text text-muted'>
-      Tip: Add a field/value pair to the query at the cursor position by pressing <kbd>ctrl</kbd> or <kbd>⌘</kbd> while selecting.
-    </small>
-  </div>
+  {# END LOCK #}
 </div>
 
 <hr>
-<!-- METADATA SEARCH -->
+{# METADATA SEARCH #}
 <h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
 <div hidden data-save-hidden='metadataSearchDiv'>
   {# add as many extra fields as present in the query but at least one #}
@@ -431,7 +437,7 @@
   <div data-action='add-extra-fields-search-inputs'><i class='fas fa-plus-circle fa-2x'></i></div>
 </div>
 
-<!-- Search action buttons -->
+{# Search action buttons #}
 <div style='margin:30px;' class='text-center'>
   <button id='searchButton' class='btn btn-primary' value='Submit' type='submit'>
     {{ 'Launch search'|trans }}

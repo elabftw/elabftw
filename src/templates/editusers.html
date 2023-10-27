@@ -2,7 +2,7 @@
 <div class='pl-3'>
   <div class='form-group'>
     <form method='get' id ='userSearchForm'>
-      <!-- stay on correct tab -->
+      {# stay on correct tab #}
       <input type='hidden' value='3' name='tab' />
 
       <div class='input-group mt-3'>
@@ -42,7 +42,7 @@
 </div>
 
 {% if isSearching %}
-  <div id='editUsersBox'>
+  <div>
     <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
     <div class='pl-3'>
       {% if usersArr %}
@@ -124,14 +124,15 @@
               <th scope='col'>{{ 'Actions'|trans }}</th>
             </tr>
           </thead>
-          <tbody>
+          {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
+          <tbody id='editUsersBox'>
             {% for user in usersArr %}
               <tr {{ user.archived ? "class='bg-medium'" }}>
                 <td><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
                 <td style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
-                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge'}}'>{{ team.name }}</div>
+                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge' }}'>{{ team.name }}</div>
                     {% endfor %}
                   </div>
                 </td>
@@ -181,13 +182,13 @@
                       </div>
                     </div>
                   {% endif %}
+                  {# MORE OPTIONS MENU #}
                   <div class='dropdown'>
                     <div class='clickable p-2 hl-hover-gray text-center rounded' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
                       <i class='fas fa-ellipsis-v'></i>
                     </div>
-                    {# Archive user #}
                     <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
-                      {# Manage teams #}
+                      {# MANAGE TEAMS #}
                       {% if App.Users.userData.is_sysadmin and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
                         <div class='dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>
                           <i class='mr-1 fas fa-pencil fa-fw'></i>{{ 'Manage teams for user'|trans }}
@@ -207,6 +208,13 @@
                           </div>
                         {% endif %}
                       {% endif %}
+                      {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
+                      {% if user.mfa_secret and App.Users.userData.is_sysadmin %}
+                        <div class='dropdown-item' data-action='remove-user-2fa' data-userid='{{ user.userid }}'>
+                          <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
+                        </div>
+                      {% endif %}
+                      {# ARCHIVE USER #}
                       {% if user.archived %}
                         <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
@@ -237,13 +245,13 @@
 {% endif %}
 
 {% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
-<!-- CREATE USER ACCOUNT -->
+{# CREATE USER ACCOUNT #}
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <div class='form-group'>
     <div class='row mb-2'>
-      <!-- TEAM -->
+      {# TEAM #}
       <div class='col-md-6'>
         <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
         <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
@@ -253,7 +261,7 @@
         </select>
       </div>
 
-      <!-- GROUP -->
+      {# GROUP #}
       <div class='col-md-6'>
         <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
@@ -266,13 +274,13 @@
       </div>
     </div>
     <div class='row mb-2'>
-      <!-- FIRSTNAME -->
+      {# FIRSTNAME #}
       <div class='col-md-6'>
         <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
         <input name='firstname' class='form-control' type='text' id='firstname' required />
       </div>
 
-      <!-- LASTNAME -->
+      {# LASTNAME #}
       <div class='col-md-6'>
         <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
         <input name='lastname' class='form-control' type='text' id='lastname' required />
@@ -280,14 +288,14 @@
     </div>
 
     <div class='row mb-2'>
-      <!-- EMAIL -->
+      {# EMAIL #}
       <div class='col-md-12'>
         <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
         <input name='email' class='form-control' type='email' id='email' required />
       </div>
     </div>
 
-    <!-- SUBMIT -->
+    {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
       <button data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>

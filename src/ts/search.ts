@@ -29,19 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('searchin').addEventListener('change', event => {
     const value = (event.target as HTMLSelectElement).value;
+    let isExp = false;
     if (value === 'experiments') {
-      document.getElementById('searchStatus').toggleAttribute('hidden', false);
-      document.getElementById('searchCategory').toggleAttribute('hidden', true);
+      isExp = true;
     }
-    if (value === 'database') {
-      document.getElementById('searchStatus').toggleAttribute('hidden', true);
-      document.getElementById('searchCategory').toggleAttribute('hidden', false);
-    }
-    if (value !== 'database' && value !== 'experiments') {
-      document.getElementById('searchStatus').toggleAttribute('hidden', true);
-      document.getElementById('searchCategory').toggleAttribute('hidden', true);
-    }
+    document.getElementById('experimentsCategoriesDiv').toggleAttribute('hidden', !isExp);
+    document.getElementById('resourcesCategoriesDiv').toggleAttribute('hidden', isExp);
+    document.getElementById('experimentsStatusDiv').toggleAttribute('hidden', !isExp);
+    document.getElementById('resourcesStatusDiv').toggleAttribute('hidden', isExp);
   });
+
+  // always show the filters
+  const filtersDiv = document.getElementById('filtersDiv');
+  if (filtersDiv) {
+    filtersDiv.toggleAttribute('hidden', false);
+  }
 
   // Submit form with ctrl+enter from within textarea
   extendedArea.addEventListener('keydown', event => {

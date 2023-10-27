@@ -4,7 +4,7 @@
   {# TITLE #}
   {%- block title -%}
     {# this can be overridden by child templates #}
-    <h1 id='pageTitle' {%- if hideTitle -%}hidden{%endif%}>{{ App.pageTitle }}</h1>
+    <h1 id='pageTitle' {%- if hideTitle %} hidden {%- endif %}>{{ App.pageTitle }}</h1>
   {%- endblock -%}
 
 
@@ -31,14 +31,14 @@
   <div id='output'></div>
 {%- endif -%}
 
-<!-- BODY -->
+{# BODY #}
 {% block body %}{% endblock %}
 
-<!-- TODOLIST / FAVTAGS side panels (only for logged in users) -->
+{# TODOLIST / FAVTAGS side panels (only for logged in users) #}
 {% if App.Session.get('is_auth') and not App.Session.get('is_anon') %}
   {% include 'todolist-panel.html' %}
   {% include 'favtags-panel.html' %}
 {% endif %}
 
-<!-- FOOTER -->
+{# FOOTER #}
 {% include 'footer.html' %}

@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 // default location for redirect
-$location = '../../login.php';
+$location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {

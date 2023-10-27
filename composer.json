@@ -50,16 +50,17 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "^5.0",
+    "codeception/codeception": "^5.0.12",
     "pyrech/composer-changelogs": "^2.0.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
     "codeception/module-db": "^3.1.0",
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",
-    "codeception/c3": "^2.8",
-    "rector/rector": "^0.17.0",
-    "phpstan/phpstan": "^1.10"
+    "codeception/c3": "^2.9",
+    "rector/rector": "^0.18.0",
+    "phpstan/phpstan": "^1.10",
+    "friendsoftwig/twigcs": "^6.2"
   },
   "autoload": {
     "psr-4": {
@@ -129,7 +130,10 @@
       "Elabftw\\Traits\\": [
         "src/traits"
       ]
-    }
+    },
+    "classmap": [
+      "src/tools/eLabFtwRuleset.twigcs.php"
+    ]
   },
   "license": "AGPL-3.0-or-later",
   "config": {

@@ -3,7 +3,7 @@
 {% block body %}
 
 <section class='text-center'>
-  <img src='app/img/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+  <img src='/assets/images/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
   <h4 class='mt-4'>{{ 'Two Factor Authentication'|trans }}</h4>
   <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
     <input type='hidden' name='auth_type' value='mfa'>
@@ -32,9 +32,10 @@
       </div>
     {% endif %}
     <div class='col-md-4 mx-auto mt-4 form-group'>
+      <i class='fas fa-mobile-screen fa-2x'></i>
+      <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
       <label for='mfa_code'>{{ 'Authentication code'|trans }}</label>
       <input class='form-control mb-4 text-center' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfa_code_help_block' data-focus='1' />
-      <p id='mfa_code_help_block' class='form-text text-muted'>{{ 'Open the authenticator app on your device to get your authentication code and verify your identity.'|trans }}</p>
     </div>
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {% if App.Session.has('enable_mfa') %}

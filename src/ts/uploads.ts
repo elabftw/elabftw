@@ -13,6 +13,8 @@ import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from '.
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { marked } from 'marked';
+import Prism from 'prismjs';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
@@ -98,6 +100,33 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElement('filesdiv');
       });
 
+    // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
+    } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
+      // set the title for modal window
+      document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
+      // get the file content
+      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+        const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+        if (el.dataset.ext === 'md') {
+          response.text().then(content => plainTextContentDiv.innerHTML = marked(content));
+        } else if (el.dataset.ext === 'json') {
+          const preBlock = document.createElement('pre');
+          preBlock.classList.add('language-json');
+          const codeBlock = document.createElement('code');
+          codeBlock.classList.add('language-json');
+          preBlock.appendChild(codeBlock);
+          response.json().then(content => {
+            // use prismjs to display highlighted pretty-printed json content
+            codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
+            // make sure to blank any previous content before appending
+            plainTextContentDiv.innerHTML = '';
+            plainTextContentDiv.appendChild(preBlock);
+          });
+        } else { // TXT
+          response.text().then(content => plainTextContentDiv.innerText = content);
+        }
+      });
+
     // TOGGLE SHOW ARCHIVED
     } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
       const url = new URL(window.location.href);
@@ -112,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Update the query parameters in the URL
       url.search = queryParams.toString();
-      url.hash = 'filesDiv';
+      url.hash = 'filesdiv';
       const modifiedUrl = url.toString();
       window.location.replace(modifiedUrl);
 

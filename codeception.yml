@@ -2,18 +2,24 @@ coverage:
     enabled: true
     show_uncovered: true
     show_only_summary: true
-    whitelist:
-        include:
-            - src/Auth/*
-            - src/commands/*
-            - src/models/*
-            - src/classes/*
-            - src/Make/*
-            - src/Import/*
-            - src/services/*
-            - src/Storage/*
-            - src/traits/*
-            - src/controllers/*
+    include:
+        - src/Auth/*
+        - src/classes/*
+        - src/commands/*
+        - src/controllers/*
+        - src/enums/*
+        - src/exceptions/*
+        - src/factories/*
+        - src/Import/*
+        - src/Make/*
+        - src/models/*
+        - src/services/*
+        - src/Storage/*
+        - src/traits/*
+        - web/*
+    exclude:
+        - src/commands/PopulateDatabase.php
+        - src/commands/GenI18n4Js.php
 actor: Tester
 paths:
     tests: tests

@@ -77,7 +77,7 @@ jobs:
       #      fi
       - run:
           name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
+          command: docker exec -it elabtmp yarn install --silent --immutable
           #- run:
           #    name: Extract dependency cache from container
           #    command: |

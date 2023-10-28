@@ -48,7 +48,7 @@ if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f 
 fi
 if ($ci); then
     # install and initial tests
-    docker exec -it elabtmp yarn install --silent --non-interactive --frozen-lockfile
+    docker exec -it elabtmp yarn install --silent --immutable
     docker exec -it elabtmp yarn csslint
     docker exec -it elabtmp yarn jslint-ci:all
     docker exec -it elabtmp yarn buildall:dev

@@ -26,6 +26,7 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Traits\UploadTrait;
+use function hash_file;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
@@ -87,12 +88,9 @@ class Uploads implements RestInterface
         // we don't hash big files as this could take too much time/resources
         // same with thumbnails
         if ($filesize < self::BIG_FILE_THRESHOLD) {
-            // read the file
-            $fileContent = $sourceFs->read($tmpFilename);
             // get a hash sum
-            $hash = $this->getHash($fileContent);
+            $hash = hash_file($this->hashAlgorithm, $params->getFilePath());
             // get a thumbnail
-            // if the mimetype fails, do nothing
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 MakeThumbnailFactory::getMaker($sourceFs->mimeType($tmpFilename), $params->getFilePath(), $longName, $storageFs)->saveThumb();
@@ -385,14 +383,6 @@ class Uploads implements RestInterface
             return $this->update(new UploadParams('state', (string) State::Deleted->value));
         }
         return false;
-    }
-
-    /**
-     * Generate the hash based on selected algorithm
-     */
-    private function getHash(string $content): string
-    {
-        return hash($this->hashAlgorithm, $content);
     }
 
     /**

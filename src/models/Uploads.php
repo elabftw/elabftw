@@ -95,15 +95,7 @@ class Uploads implements RestInterface
             // if the mimetype fails, do nothing
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
-                $mime = $sourceFs->mimeType($tmpFilename);
-                $MakeThumbnail = MakeThumbnailFactory::getMaker($mime, $params->getFilePath(), $longName);
-                if (!$storageFs->fileExists($MakeThumbnail->getThumbFilename())) {
-                    $thumbnailContent = $MakeThumbnail->makeThumb();
-                    if ($thumbnailContent !== null) {
-                        // save thumbnail
-                        $storageFs->write($MakeThumbnail->getThumbFilename(), $thumbnailContent);
-                    }
-                }
+                MakeThumbnailFactory::getMaker($sourceFs->mimeType($tmpFilename), $params->getFilePath(), $longName, $storageFs)->saveThumb();
             } catch (UnableToRetrieveMetadata | ImagickException) {
                 // if mime type could not be read just ignore it and continue
                 // if imagick/imagemagick causes problems ignore it and upload file without thumbnail

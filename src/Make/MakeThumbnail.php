@@ -12,10 +12,10 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
-
 use function exif_read_data;
 use Imagick;
 use function in_array;
+use League\Flysystem\Filesystem;
 use function strtolower;
 
 /**
@@ -28,7 +28,7 @@ class MakeThumbnail implements MakeThumbnailInterface
     /** @var int WIDTH the width for the thumbnail */
     private const WIDTH = 100;
 
-    public function __construct(private string $mime, protected string $filePath, private string $longName)
+    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs)
     {
     }
 
@@ -37,10 +37,15 @@ class MakeThumbnail implements MakeThumbnailInterface
         return $this->longName . '_th.jpg';
     }
 
+    public function saveThumb(): void
+    {
+        $this->storageFs->write($this->getThumbFilename(), $this->getThumb());
+    }
+
     /**
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      */
-    public function makeThumb(): ?string
+    private function getThumb(): string
     {
         $image = new Imagick();
         $image->readImage($this->filePath);

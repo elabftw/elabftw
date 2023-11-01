@@ -14,8 +14,8 @@ namespace Elabftw\Make;
  */
 final class MakeNullThumbnail extends MakeThumbnail
 {
-    public function makeThumb(): ?string
+    public function saveThumb(): void
     {
-        return null;
+        return;
     }
 }

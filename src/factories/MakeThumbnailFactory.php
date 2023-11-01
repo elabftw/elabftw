@@ -13,6 +13,7 @@ use Elabftw\Interfaces\MakeThumbnailInterface;
 use Elabftw\Make\MakeNullThumbnail;
 use Elabftw\Make\MakeThumbnail;
 use Elabftw\Make\MakeThumbnailFromPdf;
+use League\Flysystem\Filesystem;
 
 /**
  * Get a thumbnail maker depending on the mime type
@@ -26,12 +27,12 @@ class MakeThumbnailFactory
      * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
      * image/x-ms-bmp
      */
-    public static function getMaker(string $mime, string $filePath, string $longName): MakeThumbnailInterface
+    public static function getMaker(string $mime, string $filePath, string $longName, Filesystem $storageFs): MakeThumbnailInterface
     {
         return match ($mime) {
-            'application/pdf' => new MakeThumbnailFromPdf($mime, $filePath, $longName),
-            'image/heic', 'image/png', 'image/jpeg', 'image/gif', 'image/tiff', 'image/x-eps', 'image/svg+xml','application/postscript' => new MakeThumbnail($mime, $filePath, $longName),
-            default => new MakeNullThumbnail($mime, $filePath, $longName),
+            'application/pdf' => new MakeThumbnailFromPdf($mime, $filePath, $longName, $storageFs),
+            'image/heic', 'image/png', 'image/jpeg', 'image/gif', 'image/tiff', 'image/x-eps', 'image/svg+xml','application/postscript' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
+            default => new MakeNullThumbnail($mime, $filePath, $longName, $storageFs),
         };
     }
 }

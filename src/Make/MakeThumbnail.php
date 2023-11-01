@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Tools;
 use function exif_read_data;
 use Imagick;
 use function in_array;
-
 use Mpdf\Mpdf;
 use function strtolower;
 

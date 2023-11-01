@@ -10,10 +10,13 @@
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Extensions;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use function exif_read_data;
 use Imagick;
 use function in_array;
+
+use Mpdf\Mpdf;
 use function strtolower;
 
 /**
@@ -62,9 +65,39 @@ final class MakeThumbnail
         if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {
             return null;
         }
-        // Don't try to process pdf produced by iTextSharp, as they will fail for some unknown reason
-        if ($this->mime === 'application/pdf' && str_contains($this->content, 'iTextSharp')) {
-            return null;
+        if ($this->mime === 'application/pdf') {
+            // Don't try to process pdf produced by iTextSharp, as they will fail for some unknown reason
+            if (str_contains($this->content, 'iTextSharp')) {
+                return null;
+            }
+            // we're going to use Mpdf to load only the first page, so we don't give all the pages to imagick
+            // build a mpdf object with just the tmp dir and wrappers settings
+            $mpdf = new Mpdf(array(
+                'tempDir' => FsTools::getCacheFolder('mpdf'),
+                // disallow getting external things
+                'whitelistStreamWrappers' => array(''),
+            ));
+
+            // we don't want to have to write to disk the content so use memory instead
+            $fileHandle = fopen('php://temp', 'r+');
+            if ($fileHandle === false) {
+                return null;
+            }
+            $res = fwrite($fileHandle, $this->content);
+            if ($res === false) {
+                return null;
+            }
+            rewind($fileHandle);
+            // Set the source file for mPDF
+            $mpdf->setSourceFile($fileHandle);
+
+            // Import the first page
+            $mpdf->AddPage();
+            $tplId = $mpdf->ImportPage(1);
+            $mpdf->UseTemplate($tplId);
+
+            // Output the first page as a new PDF string
+            $this->content = $mpdf->Output('', 'S');
         }
 
         return $this->useImagick();

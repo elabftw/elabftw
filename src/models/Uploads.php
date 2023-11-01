@@ -21,9 +21,9 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Make\MakeThumbnail;
 use Elabftw\Services\Check;
 use Elabftw\Traits\UploadTrait;
 use ImagickException;
@@ -96,12 +96,12 @@ class Uploads implements RestInterface
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 $mime = $sourceFs->mimeType($tmpFilename);
-                $MakeThumbnail = new MakeThumbnail($mime, $fileContent, $longName);
-                if (!$storageFs->fileExists($MakeThumbnail->thumbFilename)) {
+                $MakeThumbnail = MakeThumbnailFactory::getMaker($mime, $params->getFilePath(), $longName);
+                if (!$storageFs->fileExists($MakeThumbnail->getThumbFilename())) {
                     $thumbnailContent = $MakeThumbnail->makeThumb();
                     if ($thumbnailContent !== null) {
                         // save thumbnail
-                        $storageFs->write($MakeThumbnail->thumbFilename, $thumbnailContent);
+                        $storageFs->write($MakeThumbnail->getThumbFilename(), $thumbnailContent);
                     }
                 }
             } catch (UnableToRetrieveMetadata | ImagickException) {

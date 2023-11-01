@@ -10,12 +10,12 @@
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Extensions;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Interfaces\MakeThumbnailInterface;
+
 use function exif_read_data;
 use Imagick;
 use function in_array;
-use Mpdf\Mpdf;
 use function strtolower;
 
 /**
@@ -23,36 +23,18 @@ use function strtolower;
  * Note: this shouldn't be needed with psalm running inside the container!
  * @psalm-suppress UndefinedClass
  */
-final class MakeThumbnail
+class MakeThumbnail implements MakeThumbnailInterface
 {
     /** @var int WIDTH the width for the thumbnail */
     private const WIDTH = 100;
 
-    /**
-     * Do some sane white-listing. In theory, gmagick handles almost all image formats,
-     * but the processing of rarely used formats may be less tested/stable or may have security issues
-     * when adding new mime types take care of ambiguities:
-     * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
-     * image/x-ms-bmp
-     * @var array ALLOWED_MIMES
-     */
-    private const ALLOWED_MIMES = array(
-        'image/heic',
-        'image/png',
-        'image/jpeg',
-        'image/gif',
-        'image/tiff',
-        'image/x-eps',
-        'image/svg+xml',
-        'application/pdf',
-        'application/postscript',
-    );
-
-    public string $thumbFilename;
-
-    public function __construct(private string $mime, private string $content, private string $longName)
+    public function __construct(private string $mime, protected string $filePath, private string $longName)
     {
-        $this->thumbFilename = $this->longName . '_th.jpg';
+    }
+
+    public function getThumbFilename(): string
+    {
+        return $this->longName . '_th.jpg';
     }
 
     /**
@@ -60,59 +42,9 @@ final class MakeThumbnail
      */
     public function makeThumb(): ?string
     {
-        // verify mime type
-        if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {
-            return null;
-        }
-        if ($this->mime === 'application/pdf') {
-            // Don't try to process pdf produced by iTextSharp, as they will fail for some unknown reason
-            if (str_contains($this->content, 'iTextSharp')) {
-                return null;
-            }
-            // we're going to use Mpdf to load only the first page, so we don't give all the pages to imagick
-            // build a mpdf object with just the tmp dir and wrappers settings
-            $mpdf = new Mpdf(array(
-                'tempDir' => FsTools::getCacheFolder('mpdf'),
-                // disallow getting external things
-                'whitelistStreamWrappers' => array(''),
-            ));
-
-            // we don't want to have to write to disk the content so use memory instead
-            $fileHandle = fopen('php://temp', 'r+');
-            if ($fileHandle === false) {
-                return null;
-            }
-            $res = fwrite($fileHandle, $this->content);
-            if ($res === false) {
-                return null;
-            }
-            rewind($fileHandle);
-            // Set the source file for mPDF
-            try {
-                $mpdf->setSourceFile($fileHandle);
-            // if for some reason we run into an error here, continue with full pdf
-            } catch (\setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException) {
-                return $this->useImagick();
-            }
-
-
-            // Import the first page
-            $mpdf->AddPage();
-            $tplId = $mpdf->ImportPage(1);
-            $mpdf->UseTemplate($tplId);
-
-            // Output the first page as a new PDF string
-            $this->content = $mpdf->Output('', 'S');
-        }
-
-        return $this->useImagick();
-    }
-
-    private function useImagick(): string
-    {
         $image = new Imagick();
+        $image->readImage($this->filePath);
         $image->setBackgroundColor('white');
-        $image->readImageBlob($this->content);
         // fix pdf with black background and png
         if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png') {
             $image->setResolution(300, 300);
@@ -142,12 +74,7 @@ final class MakeThumbnail
         $ext = Tools::getExt($this->longName);
         if (in_array(strtolower($ext), Extensions::HAS_EXIF, true)
             && $this->mime === 'image/jpeg') {
-            // create a stream from the file content so exif_read_data can read it
-            $stream = fopen(sprintf('data://text/plain;base64,%s', base64_encode($this->content)), 'rb');
-            if ($stream === false) {
-                return 0;
-            }
-            $exifData = exif_read_data($stream);
+            $exifData = exif_read_data($this->filePath);
             if ($exifData !== false) {
                 return $this->readOrientationFromExif($exifData);
             }

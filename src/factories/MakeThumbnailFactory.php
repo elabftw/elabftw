@@ -12,7 +12,7 @@ namespace Elabftw\Factories;
 use Elabftw\Interfaces\MakeThumbnailInterface;
 use Elabftw\Make\MakeNullThumbnail;
 use Elabftw\Make\MakeThumbnail;
-use Elabftw\Make\MakeThumbnailFromPdf;
+use Elabftw\Make\MakeThumbnailFromFirstFrame;
 use League\Flysystem\Filesystem;
 
 /**
@@ -30,8 +30,15 @@ class MakeThumbnailFactory
     public static function getMaker(string $mime, string $filePath, string $longName, Filesystem $storageFs): MakeThumbnailInterface
     {
         return match ($mime) {
-            'application/pdf' => new MakeThumbnailFromPdf($mime, $filePath, $longName, $storageFs),
-            'image/heic', 'image/png', 'image/jpeg', 'image/gif', 'image/tiff', 'image/x-eps', 'image/svg+xml','application/postscript' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
+            'application/pdf',
+            'application/postscript',
+            'image/gif',
+            'image/heic',
+            'image/tiff',
+            'image/x-eps' => new MakeThumbnailFromFirstFrame($mime, $filePath, $longName, $storageFs),
+            'image/png',
+            'image/jpeg',
+            'image/svg+xml' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
             default => new MakeNullThumbnail($mime, $filePath, $longName, $storageFs),
         };
     }

@@ -12,14 +12,15 @@ namespace Elabftw\Make;
 use League\Flysystem\Filesystem;
 
 /**
- * Create a thumbnail from a PDF
+ * Create a thumbnail from an image format with potentially multiple frames/pages.
+ * e.g. PDF, eps, tiff, gif, heic, postscript
  */
-final class MakeThumbnailFromPdf extends MakeThumbnail
+final class MakeThumbnailFromFirstFrame extends MakeThumbnail
 {
     public function __construct(string $mime, string $filePath, string $longName, Filesystem $storageFs)
     {
         parent::__construct($mime, $filePath, $longName, $storageFs);
-        // Overwrite filePath: use [0] at the end of the file path to load only the first page of the pdf into imagick
+        // Overwrite filePath: use [0] at the end of the file path to load only the first page/frame of the file into imagick
         $this->filePath = $filePath . '[0]';
     }
 }

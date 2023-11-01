@@ -97,17 +97,12 @@ class MakeThumbnail implements MakeThumbnailInterface
         if (empty($exifData['Orientation'])) {
             return 0;
         }
-        switch ($exifData['Orientation']) {
-            case 1:
-                return 0;
-            case 3:
-                return 180;
-            case 6:
-                return 90;
-            case 8:
-                return -90;
-            default:
-                return 0;
-        }
+        return match ($exifData['Orientation']) {
+            1 => 0,
+            3 => 180,
+            6 => 90,
+            8 => -90,
+            default => 0,
+        };
     }
 }

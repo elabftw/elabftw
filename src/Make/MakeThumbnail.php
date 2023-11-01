@@ -88,7 +88,13 @@ final class MakeThumbnail
             }
             rewind($fileHandle);
             // Set the source file for mPDF
-            $mpdf->setSourceFile($fileHandle);
+            try {
+                $mpdf->setSourceFile($fileHandle);
+            // if for some reason we run into an error here, continue with full pdf
+            } catch (\setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException) {
+                return $this->useImagick();
+            }
+
 
             // Import the first page
             $mpdf->AddPage();

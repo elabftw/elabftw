@@ -32,14 +32,14 @@ class MakeThumbnail implements MakeThumbnailInterface
     {
     }
 
-    public function getThumbFilename(): string
-    {
-        return $this->longName . '_th.jpg';
-    }
-
     public function saveThumb(): void
     {
         $this->storageFs->write($this->getThumbFilename(), $this->getThumb());
+    }
+
+    private function getThumbFilename(): string
+    {
+        return $this->longName . '_th.jpg';
     }
 
     /**

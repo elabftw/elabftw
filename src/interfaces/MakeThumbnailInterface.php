@@ -12,6 +12,4 @@ namespace Elabftw\Interfaces;
 interface MakeThumbnailInterface
 {
     public function saveThumb(): void;
-
-    public function getThumbFilename(): string;
 }

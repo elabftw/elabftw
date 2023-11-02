@@ -33,7 +33,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/code-frame@npm:^7.0.0":
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.0, @babel/code-frame@npm:^7.16.0":
   version: 7.22.13
   resolution: "@babel/code-frame@npm:7.22.13"
   dependencies:
@@ -413,6 +413,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@html-validate/stylish@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "@html-validate/stylish@npm:4.2.0"
+  dependencies:
+    kleur: "npm:^4.0.0"
+  checksum: dd5ff56c81e21320a6a14fb7d071bcbe522dcc089e2e0db1bade4371ea3e391a37f87cf394403e71553a3e27b338c3535db28902a339f6e05f3677d6e9a8e3a2
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.13":
   version: 0.11.13
   resolution: "@humanwhocodes/config-array@npm:0.11.13"
@@ -628,6 +637,18 @@ __metadata:
   peerDependencies:
     react: "*"
   checksum: afdd5d4849c30d588c933e9d149b3507aa688d13c7486f4fe9bc43ea32367139bdb3252a20f7c036b432445854bf714c1b1ea24ed626fec6f978ba114bff6979
+  languageName: node
+  linkType: hard
+
+"@sidvind/better-ajv-errors@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "@sidvind/better-ajv-errors@npm:2.1.0"
+  dependencies:
+    "@babel/code-frame": "npm:^7.16.0"
+    chalk: "npm:^4.1.0"
+  peerDependencies:
+    ajv: 4.11.8 - 8
+  checksum: e1f166ba11821383b66f3f27334561ed1c6368f232dafd3fa0fdb57488e49a4929f7c8809d2fb6d2d571f57cea1110455f9e0665e0c270874c609de567451060
   languageName: node
   linkType: hard
 
@@ -3075,9 +3096,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^13.2.0":
-  version: 13.3.2
-  resolution: "cypress@npm:13.3.2"
+"cypress-html-validate@npm:^6.0.0":
+  version: 6.1.0
+  resolution: "cypress-html-validate@npm:6.1.0"
+  peerDependencies:
+    cypress: ^10 || ^11.0.1 || ^12 || ^13
+    html-validate: ^5 || ^6 || ^7 || ^8
+  checksum: 6653018c91a94c969471aa40db93a3c0b9f941a33b28920947dc423617cd138ae1200e039a08b26e56b8aeecf4a7f296e742a80078372ce63fff04dda925b530
+  languageName: node
+  linkType: hard
+
+"cypress@npm:^13.3.0":
+  version: 13.4.0
+  resolution: "cypress@npm:13.4.0"
   dependencies:
     "@cypress/request": "npm:^3.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3124,7 +3155,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: deb1dbe31586db60d67db13c2828264d7bbab2a574cba5a37c683bfd430221e4741be67d9a62ed9dd78fc534f0f3d13497dbb057188faef5e029edc7fa42456d
+  checksum: e5842bf4751b7b36560360333b0361d253e895a39aee65b0fb3bb6cc2d5cf39b964eb2e02778934da0fc5cd4ba46d336606250e25d17ab0c03f9ca771f1a6fed
   languageName: node
   linkType: hard
 
@@ -3225,6 +3256,13 @@ __metadata:
   version: 0.1.4
   resolution: "deep-is@npm:0.1.4"
   checksum: 7f0ee496e0dff14a573dc6127f14c95061b448b87b995fc96c017ce0a1e66af1675e73f1d6064407975bc4ea6ab679497a29fff7b5b9c4e99cb10797c1ad0b4c
+  languageName: node
+  linkType: hard
+
+"deepmerge@npm:4.3.1":
+  version: 4.3.1
+  resolution: "deepmerge@npm:4.3.1"
+  checksum: e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
   languageName: node
   linkType: hard
 
@@ -3459,16 +3497,19 @@ __metadata:
     "@yarnpkg/core": "npm:^4.0.0"
     "@yarnpkg/fslib": "npm:^3.0.0"
     "@yarnpkg/libzip": "npm:^3.0.0"
+    ajv: "npm:^6.12.6"
     bootstrap: "npm:^4.5.0"
     bootstrap-markdown-fa5: "npm:2.10.*"
     bootstrap-select: "npm:^1.13.18"
     css-loader: "npm:^6.0.0"
     css-minimizer-webpack-plugin: "npm:^5.0.0"
-    cypress: "npm:^13.2.0"
+    cypress: "npm:^13.3.0"
+    cypress-html-validate: "npm:^6.0.0"
     diff-match-patch: "npm:^1.0.5"
     dropzone: "npm:^5.8.0"
     eslint: "npm:^8.2.0"
     expose-loader: "npm:^4.0.0"
+    html-validate: "npm:^8.3.0"
     i18next: "npm:^23.4.1"
     jquery: "npm:^3.5.1"
     jquery-ui: "npm:^1.13.0"
@@ -4299,7 +4340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.2.2":
+"glob@npm:^10.0.0, glob@npm:^10.2.2":
   version: 10.3.10
   resolution: "glob@npm:10.3.10"
   dependencies:
@@ -4583,6 +4624,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-validate@npm:^8.3.0":
+  version: 8.7.0
+  resolution: "html-validate@npm:8.7.0"
+  dependencies:
+    "@babel/code-frame": "npm:^7.10.0"
+    "@html-validate/stylish": "npm:^4.1.0"
+    "@sidvind/better-ajv-errors": "npm:^2.0.0"
+    ajv: "npm:^8.0.0"
+    deepmerge: "npm:4.3.1"
+    glob: "npm:^10.0.0"
+    ignore: "npm:5.2.4"
+    kleur: "npm:^4.1.0"
+    minimist: "npm:^1.2.0"
+    prompts: "npm:^2.0.0"
+    semver: "npm:^7.0.0"
+  peerDependencies:
+    jest: ^27.1 || ^28.1.3 || ^29.0.3
+    jest-diff: ^27.1 || ^28.1.3 || ^29.0.3
+    jest-snapshot: ^27.1 || ^28.1.3 || ^29.0.3
+    vitest: ^0.34
+  peerDependenciesMeta:
+    jest:
+      optional: true
+    jest-diff:
+      optional: true
+    jest-snapshot:
+      optional: true
+    vitest:
+      optional: true
+  bin:
+    html-validate: bin/html-validate.js
+  checksum: 64a5a7f1daee15ccef6e79ca2c3e881208b7613ab8eabd3d6ceee67667159a3e873ee83798c6614f6220ee6c5be1de1d2a20229bb83bc7e449fcc74bc5e89621
+  languageName: node
+  linkType: hard
+
 "html2canvas@npm:^1.4.1":
   version: 1.4.1
   resolution: "html2canvas@npm:1.4.1"
@@ -4692,7 +4768,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.2.0, ignore@npm:^5.2.4":
+"ignore@npm:5.2.4, ignore@npm:^5.2.0, ignore@npm:^5.2.4":
   version: 5.2.4
   resolution: "ignore@npm:5.2.4"
   checksum: 7c7cd90edd9fea6e037f9b9da4b01bf0a86b198ce78345f9bbd983929d68ff14830be31111edc5d70c264921f4962404d75b7262b4d9cc3bc12381eccbd03096
@@ -5335,7 +5411,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kleur@npm:^4.0.3":
+"kleur@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "kleur@npm:3.0.3"
+  checksum: cd3a0b8878e7d6d3799e54340efe3591ca787d9f95f109f28129bdd2915e37807bf8918bb295ab86afb8c82196beec5a1adcaf29042ce3f2bd932b038fe3aa4b
+  languageName: node
+  linkType: hard
+
+"kleur@npm:^4.0.0, kleur@npm:^4.0.3, kleur@npm:^4.1.0":
   version: 4.1.5
   resolution: "kleur@npm:4.1.5"
   checksum: e9de6cb49657b6fa70ba2d1448fd3d691a5c4370d8f7bbf1c2f64c24d461270f2117e1b0afe8cb3114f13bbd8e51de158c2a224953960331904e636a5e4c0f2a
@@ -6384,7 +6467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.2.8":
+"minimist@npm:^1.2.0, minimist@npm:^1.2.8":
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
   checksum: 19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
@@ -7534,6 +7617,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prompts@npm:^2.0.0":
+  version: 2.4.2
+  resolution: "prompts@npm:2.4.2"
+  dependencies:
+    kleur: "npm:^3.0.3"
+    sisteransi: "npm:^1.0.5"
+  checksum: 16f1ac2977b19fe2cf53f8411cc98db7a3c8b115c479b2ca5c82b5527cd937aa405fa04f9a5960abeb9daef53191b53b4d13e35c1f5d50e8718c76917c5f1ea4
+  languageName: node
+  linkType: hard
+
 "prop-types@npm:15, prop-types@npm:^15.0.0, prop-types@npm:^15.5.10, prop-types@npm:^15.5.7, prop-types@npm:^15.6.1, prop-types@npm:^15.6.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
@@ -8422,7 +8515,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.1.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.3":
+"semver@npm:^7.0.0, semver@npm:^7.1.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.3":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -8562,6 +8655,13 @@ __metadata:
     mrmime: "npm:^1.0.0"
     totalist: "npm:^3.0.0"
   checksum: 333bd665ee5ac3805047ea47757e04e2b18ca562749b9a07f5bbbee6dabd99ff00011604689b1ada3d22e46a4198c61e05e2d1abd5454d94da483ce3a3813205
+  languageName: node
+  linkType: hard
+
+"sisteransi@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "sisteransi@npm:1.0.5"
+  checksum: 230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
   languageName: node
   linkType: hard
 

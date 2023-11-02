@@ -9,6 +9,7 @@
 
 namespace Elabftw\Enums;
 
+use function array_column;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -31,5 +32,10 @@ enum EntityType: string
             $this::Templates => new Templates($users, $entityId),
             $this::ItemsTypes => new ItemsTypes($users, $entityId),
         };
+    }
+
+    public static function getAllValues(): array
+    {
+        return array_column(self::cases(), 'value');
     }
 }

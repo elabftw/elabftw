@@ -81,7 +81,7 @@ class MakeEln extends MakeStreamZip
             $hasPart = array();
             try {
                 $this->Entity->setId((int) $id);
-            } catch (IllegalActionException $e) {
+            } catch (IllegalActionException) {
                 continue;
             }
             $e = $this->Entity->entityData;
@@ -98,7 +98,7 @@ class MakeEln extends MakeStreamZip
                 $dataEntities[] = array(
                     '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
+                    'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }
@@ -108,7 +108,7 @@ class MakeEln extends MakeStreamZip
                 $dataEntities[] = array(
                     '@id' => $id,
                     '@type' => 'Dataset',
-                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
+                    'name' => $link['mainattr_title'] . ' - ' . $link['title'],
                     'identifier' => $link['elabid'],
                 );
             }

@@ -124,16 +124,16 @@ class Templates extends AbstractTemplateEntity
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
             users.firstname, users.lastname, users.orcid,
-            experiments_templates.category,experiments_templates.status,
+            experiments_templates.category, experiments_templates.status,
             categoryt.title AS category_title, categoryt.color AS category_color, statust.title AS status_title, statust.color AS status_color,
             GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
             FROM experiments_templates
             LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+            LEFT JOIN tags2" . $this->type . ' ON (experiments_templates.id = tags2' . $this->type . '.' . $this->type . '_id)
+            LEFT JOIN tags ON (tags2' . $this->type . '.tags_id = tags.id)
             LEFT JOIN experiments_categories AS categoryt ON (experiments_templates.category = categoryt.id)
             LEFT JOIN experiments_status AS statust ON (experiments_templates.status = statust.id)
-            WHERE experiments_templates.id = :id";
+            WHERE experiments_templates.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -184,15 +184,15 @@ class Templates extends AbstractTemplateEntity
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.modified_at,
                 users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,
-                experiments_templates.category,experiments_templates.status,
+                experiments_templates.category, experiments_templates.status,
                 categoryt.title AS category_title, categoryt.color AS category_color, statust.title AS status_title, statust.color AS status_color,
                 GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
                 FROM experiments_templates
                 LEFT JOIN users ON (experiments_templates.userid = users.userid)
                 LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.teams_id = :team)
                 LEFT JOIN teams ON (teams.id = experiments_templates.team)
-                LEFT JOIN tags2entity ON (experiments_templates.id = tags2entity.item_id AND tags2entity.item_type = 'experiments_templates')
-                LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
+                LEFT JOIN tags2" . $this->type . ' ON (experiments_templates.id = tags2' . $this->type . '.' . $this->type . '_id)
+                LEFT JOIN tags ON (tags2' . $this->type . ".tags_id = tags.id)
                 LEFT JOIN experiments_categories AS categoryt ON (experiments_templates.category = categoryt.id)
                 LEFT JOIN experiments_status AS statust ON (experiments_templates.status = statust.id)
                 LEFT JOIN pin_experiments_templates2users ON (experiments_templates.id = pin_experiments_templates2users.entity_id AND pin_experiments_templates2users.users_id = :userid)

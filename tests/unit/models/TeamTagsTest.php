@@ -71,8 +71,8 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->TeamTags->setId($this->Tags->postAction(Action::Create, array('tag' => 'duplikated')));
         $this->TeamTags->patch(Action::UpdateTag, array('tag' => 'duplicated'));
         $beforeCnt = count($this->TeamTags->readAll());
-        $after = $this->TeamTags->patch(Action::Deduplicate, array());
-        $this->assertEquals($beforeCnt - 1, count($after));
+        $afterCnt = count($this->TeamTags->patch(Action::Deduplicate, array()));
+        $this->assertEquals($beforeCnt - 1, $afterCnt);
     }
 
     public function testUpdateTag(): void

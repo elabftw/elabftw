@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.283.17",
+            "version": "3.283.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b1a52f85e9eb3952d8f1909d5404849fc2f2af4e"
+                "reference": "0263a41920f77a521660fb128701d9c9c6312756"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b1a52f85e9eb3952d8f1909d5404849fc2f2af4e",
-                "reference": "b1a52f85e9eb3952d8f1909d5404849fc2f2af4e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0263a41920f77a521660fb128701d9c9c6312756",
+                "reference": "0263a41920f77a521660fb128701d9c9c6312756",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.17"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.18"
             },
-            "time": "2023-11-01T18:11:41+00:00"
+            "time": "2023-11-02T18:16:01+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -7566,12 +7566,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "30d053fc81832c9ed8882079e971560203e22d6d"
+                "reference": "2f42c940aab53728fa307ebd78c42494fcd663d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/30d053fc81832c9ed8882079e971560203e22d6d",
-                "reference": "30d053fc81832c9ed8882079e971560203e22d6d",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2f42c940aab53728fa307ebd78c42494fcd663d1",
+                "reference": "2f42c940aab53728fa307ebd78c42494fcd663d1",
                 "shasum": ""
             },
             "conflict": {
@@ -7734,6 +7734,7 @@
                 "fluidtypo3/vhs": "<5.1.1",
                 "fof/byobu": ">=0.3.0.0-beta2,<1.1.7",
                 "fof/upload": "<1.2.3",
+                "foodcoopshop/foodcoopshop": "<3.6.1",
                 "fooman/tcpdf": "<6.2.22",
                 "forkcms/forkcms": "<5.11.1",
                 "fossar/tcpdf-parser": "<6.2.22",
@@ -8243,7 +8244,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-01T23:04:07+00:00"
+            "time": "2023-11-02T21:04:20+00:00"
         },
         {
             "name": "sebastian/cli-parser",

@@ -1185,7 +1185,7 @@ input[type='color'] {
     border-top-right-radius: 0;
 }
 
-/* scroll to top of page button */
+/* SCROLL TO TOP OF PAGE BUTTON */
 .floating-middle-right {
     position: fixed;
     right: 0.8%;
@@ -1204,6 +1204,12 @@ input[type='color'] {
         color: $white;
     }
 }
+
+#scrollTopBtnAnchor {
+    bottom: 0;
+    position: absolute;
+}
+/* END BACK TO TOP BUTTON */
 
 .border-white {
     border: 1px solid $mainbackground;

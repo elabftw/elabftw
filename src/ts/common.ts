@@ -92,30 +92,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // called when viewport approaches the footer
   const intersectionCallback = (entries): void => {
-    // if we haven't scrolled much (not a long content or screen is big), do nothing
-    if (window.scrollY < 100) {
-      return;
-    }
     entries.forEach(entry => {
-      if (entry.isIntersecting && !document.getElementById('backToTopButton')) {
+      if (entry.isIntersecting && document.getElementById('backToTopButton')) {
+        // we're near the top of the screen, remove the button if it's here
+        document.getElementById('backToTopButton').remove();
+      } else if (!entry.isIntersecting && !document.getElementById('backToTopButton')){ // user scrolled the trigger out AND button is not here
         const addedBtn = document.getElementById('container').appendChild(btn);
         // here we use requestAnimationFrame or the browser won't see the change and the css transition won't be triggered
         requestAnimationFrame(() => {
           addedBtn.style.opacity = '100';
         });
-      } else {
-        // if we're not intersecting, remove the button if it's here
-        if (document.getElementById('backToTopButton')) {
-          document.getElementById('backToTopButton').remove();
-        }
       }
     });
   };
 
-  // rootMargin: allow bigger margin for footer
-  const observer = new IntersectionObserver(intersectionCallback, { rootMargin: '600px' });
-  // the footer is our trigger element
-  observer.observe(document.querySelector('footer'));
+  const observer = new IntersectionObserver(intersectionCallback);
+  observer.observe(document.getElementById('scrollTopBtnAnchor'));
   // END BACK TO TOP BUTTON
 
   listenTrigger();

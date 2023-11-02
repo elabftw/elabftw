@@ -1899,6 +1899,28 @@ paths:
               description: An URL to the booking slot that was created.
               schema:
                 type: string
+
+  # EVENT
+  /event/{id}:
+    summary: For scheduler booking.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the event to modify.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Events']
+      summary: Read a booking slot.
+      operationId: read-event
+      responses:
+        '200':
+          description: A particular event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event'
     patch:
       tags: ['Events']
       summary: |
@@ -1950,17 +1972,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/event'
-
-  # EVENT
-  /event/{id}:
-    summary: For scheduler booking.
-    parameters:
-      - name: id
-        in: path
-        description: ID of the event to modify.
-        required: true
-        schema:
-          type: integer
     delete:
       tags: ['Events']
       summary: Delete a booking slot.

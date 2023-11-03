@@ -5,7 +5,7 @@
   {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
 {% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color|default('bdbdbd') }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -41,7 +41,7 @@
   {# middle part: category, title, icons and tags #}
   <div>
     {# first line #}
-    <div>
+    <div class='my-1'>
       {# timestamp icon #}
       {% if item.timestamped %}
         <i style='color:#{{ item.color }}' class='far fa-calendar-check fa-fw'></i>
@@ -51,10 +51,14 @@
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
-      {% if item.status is not null and item.category is not null %} 〉 {% endif %}
+      {% if item.category %}
+      {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
+      <span class='item-category color-white rounded p-1 mr-2' style='background-color: #{{ item.category_color|default('bdbdbd') }}' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
+      {% endif %}
       {# status #}
-      <span class='item-category' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'>{{ item.status_title|raw }}</span>
+      {% if item.status %}
+      <span class='item-category bg-firstlevel rounded p-1' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'><i class='fas fa-circle fa-fw' style='color: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title|raw }}</span>
+      {% endif %}
     </div>
     {# end first line #}
 

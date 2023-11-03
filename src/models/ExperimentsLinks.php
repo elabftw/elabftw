@@ -21,14 +21,9 @@ class ExperimentsLinks extends AbstractLinks
         return 'experiments';
     }
 
-    protected function getCatStatTable(): string
+    protected function getCatTable(): string
     {
         return 'experiments_categories';
-    }
-
-    protected function getCatStatEntityColumn(): string
-    {
-        return 'category';
     }
 
     protected function getTable(): string

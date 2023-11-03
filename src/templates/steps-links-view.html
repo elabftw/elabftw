@@ -42,7 +42,7 @@
           </div>
           <div>
             {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
             <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
@@ -77,7 +77,7 @@
           </div>
           <div>
             {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
             <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
@@ -114,7 +114,7 @@
               <i class='fas fa-link fa-fw'></i>
             </div>
             <div>
-              <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+              <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
               <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
             {# toggle body #}

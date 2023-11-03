@@ -53,15 +53,15 @@ abstract class AbstractLinks implements RestInterface
         $sql = 'SELECT entity.id AS itemid,
             entity.title,
             entity.elabid,
-            attrt.title AS mainattr_title,
-            attrt.color AS mainattr_color,
+            categoryt.title AS category_title,
+            categoryt.color AS category_color,
             ' . ($this instanceof ItemsLinks ? 'entity.is_bookable,' : '') . '
             entity.state AS link_state
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
-            LEFT JOIN ' . $this->getCatStatTable() . ' AS attrt ON (entity.' . $this->getCatStatEntityColumn() . ' = attrt.id)
+            LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)
             WHERE ' . $this->getTable() . '.item_id = :id AND (entity.state = :state OR entity.state = :statearchived)
-            ORDER by attrt.title ASC, entity.date ASC, entity.title ASC';
+            ORDER by categoryt.title ASC, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -82,7 +82,7 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, category.title AS mainattr_title, category.color AS mainattr_color';
+        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color';
 
         if ($this instanceof ItemsLinks) {
             $sql .= ', entity.is_bookable';
@@ -90,7 +90,7 @@ abstract class AbstractLinks implements RestInterface
 
         $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)
-            LEFT JOIN ' . $this->getCatStatTable() . ' AS category ON (entity.category = category.id)';
+            LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)';
 
         // Only load entities from database for which the user has read permission.
         $sql .= sprintf(
@@ -128,7 +128,7 @@ abstract class AbstractLinks implements RestInterface
         $sql .= sprintf(') AND entity.state = %d ORDER by', State::Normal->value);
 
         if ($this instanceof ItemsLinks) {
-            $sql .= ' category.title ASC,';
+            $sql .= ' categoryt.title ASC,';
         }
 
         $sql .= ' entity.title ASC';
@@ -188,9 +188,7 @@ abstract class AbstractLinks implements RestInterface
 
     abstract protected function getTargetType(): string;
 
-    abstract protected function getCatStatTable(): string;
-
-    abstract protected function getCatStatEntityColumn(): string;
+    abstract protected function getCatTable(): string;
 
     abstract protected function getTable(): string;
 

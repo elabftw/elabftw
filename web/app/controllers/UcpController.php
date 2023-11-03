@@ -69,7 +69,7 @@ try {
             $Response->send();
             exit;
 
-            // Disable MFA if not enforced
+        // Disable MFA if not enforced
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
             && !Local::isMfaEnforced(

@@ -37,15 +37,13 @@
       {% for link in Entity.entityData.experiments_links %}
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
-          <div class='align-self-center mr-2'>
+          <div class='mr-2'>
             <i class='fas fa-link fa-fw'></i>
           </div>
           <div>
-            <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-            <div>
-              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-              <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
-            </div>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+            <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
           <div class='ml-auto align-self-center mr-3'>
@@ -74,15 +72,13 @@
       {% for link in Entity.entityData.items_links %}
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
-          <div class='align-self-center mr-2'>
+          <div class='mr-2'>
             <i class='fas fa-link fa-fw'></i>
           </div>
           <div>
-            <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-            <div>
-              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-              <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
-            </div>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+            <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+            <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
           <div class='ml-auto align-self-center mr-3'>
@@ -114,14 +110,12 @@
         {% for link in relatedExperimentsArr %}
           {% set randomId = random() %}
           <div class='d-flex mb-4' id='parent_{{ randomId }}'>
-            <div class='align-self-center mr-2'>
+            <div class='mr-2'>
               <i class='fas fa-link fa-fw'></i>
             </div>
             <div>
-              <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-              <div>
-                <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
-              </div>
+              <span class='item-category rounded p-1 color-white mr-1' style='background-color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>
+              <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
             {# toggle body #}
             <div class='ml-auto align-self-center mr-3'>

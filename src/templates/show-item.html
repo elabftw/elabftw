@@ -44,7 +44,7 @@
     <div class='my-1'>
       {# timestamp icon #}
       {% if item.timestamped %}
-        <i style='color:#{{ item.color }}' class='far fa-calendar-check fa-fw'></i>
+        <i style='color:#{{ item.category_color }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
       {# archived icon #}
       {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}

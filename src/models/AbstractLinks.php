@@ -82,18 +82,15 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title';
+        $sql = 'SELECT entity.id AS entityid, entity.title, category.title AS mainattr_title, category.color AS mainattr_color';
 
         if ($this instanceof ItemsLinks) {
-            $sql .= ', category.title as category, entity.is_bookable, category.color';
+            $sql .= ', entity.is_bookable';
         }
 
         $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links
-            LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)';
-
-        if ($this instanceof ItemsLinks) {
-            $sql .= ' LEFT JOIN ' . $this->getCatStatTable() . ' AS category ON (entity.category = category.id)';
-        }
+            LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)
+            LEFT JOIN ' . $this->getCatStatTable() . ' AS category ON (entity.category = category.id)';
 
         // Only load entities from database for which the user has read permission.
         $sql .= sprintf(

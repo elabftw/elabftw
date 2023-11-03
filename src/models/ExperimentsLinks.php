@@ -23,12 +23,12 @@ class ExperimentsLinks extends AbstractLinks
 
     protected function getCatStatTable(): string
     {
-        return 'experiments_status';
+        return 'experiments_categories';
     }
 
     protected function getCatStatEntityColumn(): string
     {
-        return 'status';
+        return 'category';
     }
 
     protected function getTable(): string

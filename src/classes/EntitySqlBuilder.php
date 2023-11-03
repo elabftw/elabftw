@@ -73,10 +73,7 @@ class EntitySqlBuilder
             users.firstname, users.lastname, users.orcid,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment,";
-
-        // add a "color" column that is status for experiments and category for items
-        $select .= ($this->entity instanceof Experiments) ? 'statust.color AS color, statust.title AS mainattr_title' : 'categoryt.color AS color, categoryt.title AS mainattr_title';
+            (commentst.recent_comment IS NOT NULL) AS has_comment";
 
         $tagsSelect = '';
         $tagsJoin = '';

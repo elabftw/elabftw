@@ -357,10 +357,17 @@ export function addAutocompleteToLinkInputs(): void {
       $(`#${object.inputElId}`).autocomplete({
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
+          const format = entity => {
+            let category = '';
+            if (entity.category_title) {
+              category = `${entity.category_title} - `;
+            }
+            return `${entity.id} - ${category}${entity.title.substring(0, 60)}`;
+          };
           if (term in cache[object.selectElid]) {
             const res = [];
             cache[object.selectElid][term].forEach(entity => {
-              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
+              res.push(format(entity));
             });
             response(res);
             return;
@@ -369,7 +376,7 @@ export function addAutocompleteToLinkInputs(): void {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
+              res.push(format(entity));
             });
             response(res);
           });

@@ -196,10 +196,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
       insert: function(selected): string {
         const format = entity => {
-          let category = '';
-          if (entity.category_title) {
-            category = `${entity.category_title} - `;
-          }
+          const category = entity.category_title ? `${entity.category_title} - `: '';
           return `<span><a href='${entity.page}.php?mode=view&id=${entity.id}'>${category}${selected.title}</a></span>`;
         };
         if (selected.type === 'items') {

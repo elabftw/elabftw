@@ -358,10 +358,7 @@ export function addAutocompleteToLinkInputs(): void {
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
           const format = entity => {
-            let category = '';
-            if (entity.category_title) {
-              category = `${entity.category_title} - `;
-            }
+            const category = entity.category_title ? `${entity.category_title} - `: '';
             return `${entity.id} - ${category}${entity.title.substring(0, 60)}`;
           };
           if (term in cache[object.selectElid]) {

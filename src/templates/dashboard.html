@@ -20,7 +20,7 @@
     </div>
     {% if experimentsCategoryArr %}
       <h5>{{ 'Browse by category'|trans }}</h5>
-      <div class='d-flex my-2'>
+      <div class='d-flex my-2 flex-wrap lh-150'>
         {% for category in experimentsCategoryArr %}
         <a href='experiments.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='category-button rounded p-1 mr-2'>{{ category.title|raw }}</a>
         {% endfor %}
@@ -40,7 +40,7 @@
       {% include 'create-new.html' with {'entityPage': 'database.php'} %}
     </div>
     <h5>{{ 'Browse by category'|trans }}</h5>
-    <div class='d-flex my-2'>
+    <div class='d-flex my-2 flex-wrap lh-150'>
       {% for category in categoryArr %}
       <a href='database.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='category-button rounded p-1 mr-2'>{{ category.title|raw }}</a>
       {% endfor %}

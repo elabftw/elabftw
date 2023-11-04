@@ -127,11 +127,7 @@ abstract class AbstractLinks implements RestInterface
 
         $sql .= sprintf(') AND entity.state = %d ORDER by', State::Normal->value);
 
-        if ($this instanceof ItemsLinks) {
-            $sql .= ' categoryt.title ASC,';
-        }
-
-        $sql .= ' entity.title ASC';
+        $sql .= ' categoryt.title ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

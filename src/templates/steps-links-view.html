@@ -131,10 +131,11 @@
       </div>
     </div>
 
+    <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
       <a href='experiments.php?mode=show&related={{ Entity.id }}'>{{ 'Show related experiments'|trans }}</a>
-    </div>
+    </div-->
     <hr>
   {% endif %}
 
@@ -150,10 +151,8 @@
               <i class='fas fa-link fa-fw'></i>
             </div>
             <div>
-              <div class='catstat-btn category-btn' style='--bg:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-              <div>
-                <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
-              </div>
+              <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
+              <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
             {# toggle body #}
             <div class='ml-auto align-self-center mr-3'>
@@ -169,10 +168,11 @@
       </div>
     </div>
 
+    <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
       <a href='database.php?mode=show&related={{ Entity.id }}'>{{ 'Show related items'|trans }}</a>
-    </div>
+    </div-->
     <hr>
   {% endif %}
 

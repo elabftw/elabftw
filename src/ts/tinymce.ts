@@ -35,6 +35,7 @@ import 'tinymce/plugins/template';
 import 'tinymce/plugins/visualblocks';
 import 'tinymce/plugins/visualchars';
 import '../js/tinymce-langs/ca_ES.js';
+import '../js/tinymce-langs/cs_CZ.js';
 import '../js/tinymce-langs/de_DE.js';
 import '../js/tinymce-langs/en_GB.js';
 import '../js/tinymce-langs/en_US.js';

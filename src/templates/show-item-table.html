@@ -50,7 +50,9 @@
 
   {# STATUS #}
   <td class='item-next'>
-    <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='catstat-btn status-btn'><i class='fas fa-circle fa-fw' style='--bg:#{{ item.status_color }}'></i> {{ item.status_title|raw }}</span>
+    {% if item.status %}
+      <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='catstat-btn status-btn'><i class='fas fa-circle fa-fw' style='--bg:#{{ item.status_color }}'></i> {{ item.status_title|raw }}</span>
+    {% endif %}
   </td>
 
   {# TAGS #}

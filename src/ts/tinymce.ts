@@ -195,13 +195,17 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
+        const format = entity => {
+          const category = entity.category_title ? `${entity.category_title} - `: '';
+          return `<span><a href='${entity.page}.php?mode=view&id=${entity.id}'>${category}${selected.title}</a></span>`;
+        };
         if (selected.type === 'items') {
           ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
         if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
           ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElement('linksExpDiv'));
         }
-        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.type === 'experiments' ? 'Experiment' : selected.mainattr_title} - ${selected.title}</a></span>`;
+        return format(selected);
       },
     },
     mobile: {

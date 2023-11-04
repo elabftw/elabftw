@@ -247,7 +247,11 @@ class AutoComplete {
     }
 
     render(item) {
-        return `<li><a href="javascript:;"><span>${item.category} - ${item[this.options.queryBy]}</span></a></li>`;
+        let category = '';
+        if (item.category_title) {
+          category = `${item.category_title} - `;
+        }
+        return `<li><a href="javascript:;"><span>${category}${item[this.options.queryBy]}</span></a></li>`;
     }
 
     autoCompleteClick(e) {

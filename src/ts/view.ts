@@ -87,9 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const malleableStatus = new Malle({
-    // use the after hook to change the background color of the new element
+    // use the after hook to add the colored circle before text
     after: (elem, _, value) => {
-      elem.style.setProperty('--bg', `#${value}`);
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-circle', 'mr-1');
+      icon.style.color = `#${value}`;
+      elem.insertBefore(icon, elem.firstChild);
       return true;
     },
     cancel : i18next.t('cancel'),

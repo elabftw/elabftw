@@ -45,12 +45,12 @@
     {% if item.timestamped %}
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
-    <span data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='category-button rounded p-1' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</span>
+    <span data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='catstat-btn category-btn' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</span>
   </td>
 
   {# STATUS #}
   <td class='item-next'>
-    <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='category-button rounded p-1' style='--bg:#{{ item.status_color }}'>{{ item.status_title|raw }}</span>
+    <span data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='catstat-btn status-btn'><i class='fas fa-circle fa-fw' style='--bg:#{{ item.status_color }}'></i> {{ item.status_title|raw }}</span>
   </td>
 
   {# TAGS #}
@@ -78,7 +78,7 @@
 </tr>
 {# container to hold the body of the entity if it is toggled with the +/- icon #}
 {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-<tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.color }}'>
+<tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.category_color }}'>
   <td colspan='7'>
     <div style='overflow:auto;margin: 10px 0 0 20px'></div>
   </td>

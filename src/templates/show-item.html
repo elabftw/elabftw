@@ -53,11 +53,11 @@
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-      <span class='item-category color-white rounded p-1 mr-2' style='background-color: #{{ item.category_color|default('bdbdbd') }}' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
+      <span class='catstat-btn category-btn mr-2' style='--bg: #{{ item.category_color|default('bdbdbd') }}' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
       {% endif %}
       {# status #}
       {% if item.status %}
-      <span class='item-category bg-firstlevel rounded p-1' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'><i class='fas fa-circle fa-fw' style='color: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title|raw }}</span>
+      <span class='catstat-btn status-btn bg-firstlevel' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title|raw }}</span>
       {% endif %}
     </div>
     {# end first line #}

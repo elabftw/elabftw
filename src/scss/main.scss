@@ -718,11 +718,6 @@ button:disabled {
     }
 }
 
-.item-category {
-    font-size: 72%;
-    text-transform: uppercase;
-}
-
 .item a p:hover {
     color: $elabblue;
 }
@@ -855,11 +850,36 @@ the form-control fails to do that so we do the border ourselves */
     text-transform: uppercase;
 }
 
-.category-button {
-    background-color: var(--bg);
-    font-size: 75%;
+/* Category and Status buttons */
+.catstat-btn {
+    font-size: 72%;
     font-weight: bold;
     text-transform: uppercase;
+    border-radius: .25rem;
+    padding: .25rem;
+
+    /* Only Category */
+    &.category-btn {
+        background-color: var(--bg);
+        color: $white;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+    }
+
+    /* Only Status */
+    &.status-btn {
+        background-color: $firstlevel;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+
+        i {
+            color: var(--bg);
+        }
+    }
 }
 
 .smallgray {

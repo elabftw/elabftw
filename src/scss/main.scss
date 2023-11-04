@@ -718,12 +718,6 @@ button:disabled {
     }
 }
 
-.item-category {
-    font-size: 80%;
-    text-transform: uppercase;
-    color: $medium;
-}
-
 .item a p:hover {
     color: $elabblue;
 }
@@ -845,6 +839,10 @@ the form-control fails to do that so we do the border ourselves */
     color: #856404 !important;
 }
 
+.lh-150 {
+    line-height: 150%;
+}
+
 .togglable-section-title {
     color: $medium;
     font-size: 100%;
@@ -852,12 +850,36 @@ the form-control fails to do that so we do the border ourselves */
     text-transform: uppercase;
 }
 
-.category-button {
-    background-color: var(--bg);
-    color: $white;
-    font-size: 75%;
+/* Category and Status buttons */
+.catstat-btn {
+    font-size: 72%;
     font-weight: bold;
     text-transform: uppercase;
+    border-radius: .25rem;
+    padding: .25rem;
+
+    /* Only Category */
+    &.category-btn {
+        background-color: var(--bg);
+        color: $white;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+    }
+
+    /* Only Status */
+    &.status-btn {
+        background-color: $firstlevel;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+
+        i {
+            color: var(--bg);
+        }
+    }
 }
 
 .smallgray {
@@ -910,6 +932,10 @@ the form-control fails to do that so we do the border ourselves */
 /* background for archived users */
 .bg-medium {
     background-color: $secondlevel;
+}
+
+.bg-firstlevel {
+    background-color: $firstlevel;
 }
 
 /* print only the main div */

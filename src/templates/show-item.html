@@ -5,7 +5,7 @@
   {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
 {% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.color|default('bdbdbd') }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -41,20 +41,24 @@
   {# middle part: category, title, icons and tags #}
   <div>
     {# first line #}
-    <div>
+    <div class='my-1'>
       {# timestamp icon #}
       {% if item.timestamped %}
-        <i style='color:#{{ item.color }}' class='far fa-calendar-check fa-fw'></i>
+        <i style='color:#{{ item.category_color }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
       {# archived icon #}
       {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# category #}
-      <span class='item-category' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
-      {% if item.status is not null and item.category is not null %} 〉 {% endif %}
+      {% if item.category %}
+      {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
+      <span class='catstat-btn category-btn mr-2' style='--bg: #{{ item.category_color|default('bdbdbd') }}' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</span>
+      {% endif %}
       {# status #}
-      <span class='item-category' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'>{{ item.status_title|raw }}</span>
+      {% if item.status %}
+      <span class='catstat-btn status-btn bg-firstlevel' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title|raw }}</span>
+      {% endif %}
     </div>
     {# end first line #}
 

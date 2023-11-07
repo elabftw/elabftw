@@ -25,7 +25,7 @@
               <code><span class='token operator'>!</span></code>,
               <code><span class='token punctuation'>(</span></code>,
               <code><span class='token punctuation'>)</span></code>,
-              <code><span class='token string'>:</span></code>,
+              <code><span class='token punctuation'>:</span></code>,
               <code><span class='token string'>'</span></code> and
               <code><span class='token string'>"</span></code>.<br>
               <em><code><span class='token string'>termA</span></code></em> or
@@ -121,7 +121,10 @@
           <dt><span class='token keyword'>elabid</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>extrafield</span></dt>
-          <dd>Different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span>.<br><span class='token string'>key</span> and <span class='token string'>value</span> can be a Term or Quoted term</dd>
+          <dd>Uses a different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span> (<span class='token keyword'>s</span><span class='token punctuation'>:</span> is optional and only affects <span class='token string'>value</span>).
+            <br><span class='token string'>key</span> and <span class='token string'>value</span> can be a Term or Quoted term
+            <br><span class='token string'>key</span> has to be an exact match and <code><span class='token important'>%</span></code> and <code><span class='token important'>_</span></code> do not function as wildcards.
+          </dd>
           <dt><span class='token keyword'>group</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>id</span></dt>
@@ -228,7 +231,7 @@
 
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
-  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
+  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'>{{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
     <div class='col-md-6'>
       <ul class='list-unstyled'>
@@ -238,12 +241,13 @@
         <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
         <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
         <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
-        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>extrafield:key:value</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
 
     <div class='col-md-6'>
       <ul class='list-unstyled'>
+        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
         <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
         <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
         <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>

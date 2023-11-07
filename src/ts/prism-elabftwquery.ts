@@ -26,7 +26,16 @@ import Prism from 'prismjs';
     inside: {
       'important': /[\\]?(?:_|%)/,
     },
-    pattern: /[^\n\r\f"'|!&() ]+/,
+    pattern: /[^\n\r\f"'|!&(): ]+/,
+  };
+  const simpleOrQuotedTerm = '(?:' + quotedTerm['pattern'].source + '|' + simpleTerm['pattern'].source + ')';
+  const strict = {
+    greedy: true,
+    inside: {
+      'punctuation': /:/,
+      'keyword': /s/,
+    },
+    pattern: /(?:s:)/,
   };
 
   Prism.languages.elabftwquery = {
@@ -37,7 +46,12 @@ import Prism from 'prismjs';
         'punctuation': /:/,
         'boolean': RegExp(bool, 'i'),
       },
-      pattern: RegExp('\\b(?:attachment|locked|timestamped)\\b:' + bool, 'i'),
+      pattern: RegExp(
+        '\\b(?:attachment|locked|timestamped)\\b'
+          + ':'
+          + bool,
+        'i'
+      ),
     },
     'field-date': {
       alias: 'keyword',
@@ -47,7 +61,37 @@ import Prism from 'prismjs';
         'punctuation': /[:.,/-]/,
         'number': /\d+/,
       },
-      pattern: RegExp('\\b(?:date|created_at|locked_at|timestamped_at)\\b:(?:' + date + '\\.\\.' + date + '|(?:[<>]=?|!?=)?' + date + ')', 'i'),
+      pattern: RegExp(
+        '\\b(?:date|created_at|locked_at|timestamped_at)\\b'
+          + ':'
+          +'(?:'
+            + date + '\\.\\.' + date
+            + '|'
+            + '(?:[<>]=?|!?=)?' + date
+          + ')',
+        'i'
+      ),
+    },
+    'field-extrafield': {
+      greedy: true,
+      inside: {
+        'keyword': /\b(?:extrafield)\b/i,
+        // 'operator': /[<>]=?|!?=/,
+        // 'number': /\d+/,
+        'strict': strict,
+        'punctuation': /:/,
+        'quoted-term': quotedTerm,
+        'simple-term': simpleTerm,
+      },
+      pattern: RegExp(
+        '\\bextrafield\\b'
+        + ':'
+        + strict.pattern.source + '?'
+        + simpleOrQuotedTerm
+        + ':'
+        + simpleOrQuotedTerm,
+        'i'
+      ),
     },
     'field-id': {
       alias: 'keyword',
@@ -69,22 +113,21 @@ import Prism from 'prismjs';
       pattern: /\brating\b:(?:[0-5]|\bunrated\b)/i,
     },
     'field': {
-      alias: 'keyword',
       greedy: true,
       inside: {
         'keyword': fieldKeywords,
-        'strict': {
-          pattern: /:s:/,
-          inside: {
-            'punctuation': /:/,
-            'keyword': /s/,
-          },
-        },
+        'strict': strict,
         'punctuation': /:/,
         'quoted-term': quotedTerm,
         'simple-term': simpleTerm,
       },
-      pattern: RegExp(fieldKeywords.source + ':(?:s:)?(?:' + quotedTerm['pattern'].source + '|' + simpleTerm['pattern'].source + ')', 'i'),
+      pattern: RegExp(
+        fieldKeywords.source
+          + ':'
+          + strict.pattern.source + '?'
+          + simpleOrQuotedTerm,
+        'i'
+      ),
     },
     'operator': {
       lookbehind: true,

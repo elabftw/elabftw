@@ -53,12 +53,8 @@ class EntitySqlBuilder
                 entity.state,
                 entity.canread,
                 entity.canwrite,
-                entity.modified_at,';
-            // don't include the metadata column unless we really need it
-            // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
-            if ($includeMetadata) {
-                $select .= 'entity.metadata,';
-            }
+                entity.modified_at,
+                entity.metadata,';
             // only include columns (created_at, locked_at, timestamped_at,) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $select .= implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns'))) . ',';

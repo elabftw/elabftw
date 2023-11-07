@@ -67,6 +67,7 @@ Fields
   / FieldRating
   / FieldAttachment
   / FieldId
+  / FieldMetadata
 
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i
@@ -166,6 +167,12 @@ FieldAttachment
     return new Field('attachment', $term, $strict);
   }
 
+FieldMetadata
+  = 'extrafield'i ':' strict:('s:' {return true;})? key:(List / LiteralInField) ':' value:(List / LiteralInField)
+  {
+    return new MetadataField($key, $value, $strict);
+  }
+
 List 'quoted term'
   = wordList:(List1 / List2)
   {
@@ -217,7 +224,7 @@ Literal 'term'
 
 String
   = chars:(
-    [^\n\r\f\\"'|&!() ]
+    [^\n\r\f\\"'|&!(): ]
     / Escape
   )+
   {

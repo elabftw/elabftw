@@ -26,7 +26,6 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
-use Elabftw\Services\Filter;
 use PDO;
 use function random_bytes;
 use function ucfirst;
@@ -58,23 +57,23 @@ class QueryBuilderVisitor implements Visitor
     {
         $pathParam = $this->getUniqueID();
         $valueParam = $this->getUniqueID();
-        $bindValues = array();
-        $jsonPath = sprintf(
-            '$.%s.%s',
-            MetadataEnum::ExtraFields->value,
-            // Note: the extraFieldKey gets double quoted so spaces are not an issue
-            json_encode(Filter::sanitize($metadataField->getKey()), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
-        );
         $query = sprintf(
             'JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(%s))) LIKE LOWER(%s)',
             $pathParam,
             $valueParam,
         );
         
+        $bindValues = array();
         // value path
         $bindValues[] = array(
             'param' => $pathParam,
-            'value' => $jsonPath . '.value',
+            'value' => sprintf(
+                '$.%s.%s.%s',
+                MetadataEnum::ExtraFields->value,
+                // Note: the extraFieldKey gets double quoted so spaces are not an issue
+                json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Value->value,
+            ),
             'type' => PDO::PARAM_STR,
         );
         // value

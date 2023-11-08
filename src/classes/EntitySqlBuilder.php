@@ -32,7 +32,7 @@ class EntitySqlBuilder
      * @param bool $fullSelect select all the columns of entity
      * @phan-suppress PhanPluginPrintfVariableFormatString
      */
-    public function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false, bool $includeMetadata = false): string
+    public function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
         if ($fullSelect) {
             // get all the columns of entity table, we add a literal string for the page that can be used by the mention tinymce plugin code
@@ -53,9 +53,8 @@ class EntitySqlBuilder
                 entity.state,
                 entity.canread,
                 entity.canwrite,
-                entity.modified_at,
-                entity.metadata,';
-            // only include columns (created_at, locked_at, timestamped_at,) if actually searching for it
+                entity.modified_at,';
+            // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $select .= implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns'))) . ',';
             }

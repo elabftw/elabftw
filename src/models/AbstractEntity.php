@@ -228,7 +228,7 @@ abstract class AbstractEntity implements RestInterface
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended);
 
         // first WHERE is the state, possibly including archived
         $stateSql = 'entity.state = :normal';
@@ -527,7 +527,7 @@ abstract class AbstractEntity implements RestInterface
             throw new IllegalActionException('No id was set!');
         }
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true, true);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 

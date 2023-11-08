@@ -57,8 +57,10 @@ class QueryBuilderVisitor implements Visitor
     {
         $pathParam = $this->getUniqueID();
         $valueParam = $this->getUniqueID();
+        $column = 'entity.metadata';
         $query = sprintf(
-            'JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(%s))) LIKE LOWER(%s)',
+            'JSON_UNQUOTE(JSON_EXTRACT(LOWER(%s), LOWER(%s))) LIKE LOWER(%s)',
+            $column,
             $pathParam,
             $valueParam,
         );
@@ -77,12 +79,14 @@ class QueryBuilderVisitor implements Visitor
                 MetadataEnum::Value->value,
             ),
             'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
         );
         // value
         $bindValues[] = array(
             'param' => $valueParam,
             'value' => $metadataField->getAffix() . $metadataField->getValue() . $metadataField->getAffix(),
             'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
         );
 
         return new WhereCollector($query, $bindValues);

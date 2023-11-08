@@ -122,8 +122,8 @@
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>extrafield</span></dt>
           <dd>Uses a different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span> (<span class='token keyword'>s</span><span class='token punctuation'>:</span> is optional and only affects <span class='token string'>value</span>).
-            <br><span class='token string'>key</span> and <span class='token string'>value</span> can be a Term or Quoted term
-            <br><span class='token string'>key</span> has to be an exact match and <code><span class='token important'>%</span></code> and <code><span class='token important'>_</span></code> do not function as wildcards.
+            <br><span class='token string'>key</span> (Name of field) and <span class='token string'>value</span> can be a Term or Quoted term
+            <br><span class='token string'>key</span> has to be an exact match, <code><span class='token important'>%</span></code> and <code><span class='token important'>_</span></code> do not function as wildcards in <span class='token string'>key</span> but in <span class='token string'>value</span>.
           </dd>
           <dt><span class='token keyword'>group</span></dt>
           <dd>Term or Quoted term</dd>
@@ -454,8 +454,8 @@
   </a>
 </div>
 
-<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
-  it avoids having to repeat the query params -->
+{# if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params #}
 <a href='#' id='anchor'></a>
 {% if App.Request.query.has('type') %}
   <h2>{{ 'Results'|trans }}</h2>

@@ -68,6 +68,8 @@ class QueryBuilderVisitor implements Visitor
         $bindValues[] = array(
             'param' => $pathParam,
             'value' => sprintf(
+                // TODO: Path '$.extra_fields**.value' could search in all extra fields without beeing limited to a specific field
+                // Maybe we can add a special key wildcard ,e.g. **, that activates this
                 '$.%s.%s.%s',
                 MetadataEnum::ExtraFields->value,
                 // Note: the extraFieldKey gets double quoted so spaces are not an issue

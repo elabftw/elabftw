@@ -9,13 +9,10 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\Request;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -137,17 +134,5 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         // update the field
         $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'test' => 'some text'));
         $this->assertEquals(sprintf($metadata, 'some text'), $res['metadata']);
-    }
-
-    public function testExtraFieldsSearch(): void
-    {
-        $request = Request::createFromGlobals();
-        $request->query->add(array(
-            'metakey' => array('test'),
-            'metavalue' => array('some text'),
-        ));
-        $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments);
-        $res = $this->Experiments->readShow($displayParams);
-        $this->assertEquals(1, $res[0]['id']);
     }
 }

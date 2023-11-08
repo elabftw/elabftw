@@ -181,4 +181,13 @@ class Entity2Cest
         $I->sendGET('/items/9001');
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }
+
+    public function extendedSearchTest(Apiv2Tester $I)
+    {
+        $I->wantTo('Use extended parameter to get experiments');
+        $I->sendGET('/experiments/?extended=extrafield:"Raw data URL":%');
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(array('title' => 'Testing the eLabFTW lab notebook'));
+    }
 }

@@ -420,28 +420,23 @@
 </div>
 
 <hr>
-{# METADATA SEARCH #}
-<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
-<div hidden data-save-hidden='metadataSearchDiv'>
-  {# add as many extra fields as present in the query but at least one #}
-  {% for metakey in (Request.query.all('metakey') ?: ['']) %}
-    {% set metavalue = Request.query.all('metavalue')[loop.index0] %}
-    <div class='row' {{- loop.first ? "id='metadataFirstInputs'" -}} >
-      <div class='col-md-4'>
-        {% set randomid = random() %}
-        <label for='metakey_{{ randomid }}'>{{ 'Name of field'|trans }}</label>
-        <input type='text' id='metakey_{{ randomid }}' class='form-control' name='metakey[]' value='{{ metakey != '' ? metakey }}' />
-      </div>
-      <div class='col-md-4'>
-        <label for='metavalue_{{ randomid }}'>{{ 'Value'|trans }}</label>
-        <input type='text' id='metavalue_{{ randomid }}' class='form-control' name='metavalue[]' value='{{ metavalue != '' ? metavalue }}' />
-        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-      </div>
-    </div>
-  {% endfor %}
 
-  {# button to add an extra field input #}
-  <div data-action='add-extra-fields-search-inputs'><i class='fas fa-plus-circle fa-2x'></i></div>
+{# NEW ROW #}
+<div class='row mb-2'>
+</div>
+
+{# METADATA SEARCH #}
+<h4 class='d-inline togglable-section-title mt-3 mb-2'>{{ 'Extra fields search'|trans }}</h4>
+<div class='row' id='metadataFirstInputs'>
+  <div class='col-md-4'>
+    <label for='metakey'>{{ 'Name of field'|trans }}</label>
+    <input type='text' id='metakey' class='form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
+  </div>
+  <div class='col-md-4'>
+    <label for='metavalue'>{{ 'Value'|trans }}</label>
+    <input type='text' id='metavalue' class='form-control filterHelper' data-filter='extrafield' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
+    <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
+  </div>
 </div>
 
 {# Search action buttons #}

@@ -50,6 +50,9 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $query .= ' timestamped: timestamped:true title:"very cool experiment" visibility:%owner';
         $query .= ' date:>2020.06,21 date:2020/06-21..20201231';
         $query .= ' group:"Group Name"';
+        $query .= ' extrafield:key:value';
+        $query .= ' extrafield:s:key:value';
+        $query .= ' extrafield:s:"key with space":"value with space"';
         $query .= ' attachment:"hello world"';
         $query .= ' timestamped_at:2022.12.01..2022-12-31';
         $query .= ' timestamped_at:2022/12/09';

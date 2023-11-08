@@ -50,7 +50,7 @@ import Prism from 'prismjs';
         '\\b(?:attachment|locked|timestamped)\\b'
           + ':'
           + bool,
-        'i'
+        'i',
       ),
     },
     'field-date': {
@@ -69,7 +69,7 @@ import Prism from 'prismjs';
             + '|'
             + '(?:[<>]=?|!?=)?' + date
           + ')',
-        'i'
+        'i',
       ),
     },
     'field-extrafield': {
@@ -90,7 +90,7 @@ import Prism from 'prismjs';
         + simpleOrQuotedTerm
         + ':'
         + simpleOrQuotedTerm,
-        'i'
+        'i',
       ),
     },
     'field-id': {
@@ -126,7 +126,7 @@ import Prism from 'prismjs';
           + ':'
           + strict.pattern.source + '?'
           + simpleOrQuotedTerm,
-        'i'
+        'i',
       ),
     },
     'operator': {

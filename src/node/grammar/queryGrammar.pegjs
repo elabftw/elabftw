@@ -72,7 +72,7 @@ Fields
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i
       / 'group'i / 'status'i / 'title'i / 'visibility'i
-    ) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
+    ) ':' strict:StrictOperator term:(List / LiteralInField)
   {
     return new Field(strtolower($field), $term, $strict);
   }
@@ -156,7 +156,7 @@ FieldRating
   }
 
 FieldAttachment
-  = 'attachment'i ':' strict:('s:' {return true;})? term:(
+  = 'attachment'i ':' strict:StrictOperator term:(
     bool:Boolean
       {
         return new SimpleValueWrapper($bool);
@@ -168,10 +168,13 @@ FieldAttachment
   }
 
 FieldMetadata
-  = 'extrafield'i ':' strict:('s:' {return true;})? key:(List / LiteralInField) ':' value:(List / LiteralInField)
+  = 'extrafield'i ':' strict:StrictOperator key:(List / LiteralInField) ':' value:(List / LiteralInField)
   {
     return new MetadataField($key, $value, $strict);
   }
+
+StrictOperator
+  = ('s:' {return true;})?
 
 List 'quoted term'
   = wordList:(List1 / List2)

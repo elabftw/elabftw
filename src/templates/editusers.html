@@ -33,6 +33,11 @@
         </div>
         <div class='input-group-append'>
           <div class='input-group-text'>
+            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+          </div>
+        </div>
+        <div class='input-group-append'>
+          <div class='input-group-text'>
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
           </div>
         </div>
@@ -197,14 +202,22 @@
                       {# on admin page, allow promoting someone to admin of the same team #}
                       {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
                         {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
+                        {# Promote to Admin #}
                         {% if currentTeam.usergroup == 4 %}
-                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
                           </div>
                         {% endif %}
+                        {# Demote from Admin #}
                         {% if currentTeam.usergroup == 2 %}
-                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
+                          </div>
+                        {% endif %}
+                        {# Add to team #}
+                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty %}
+                          <div class='dropdown-item' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                              <i class='fas fa-fw fa-user-plus mr-1'></i>{{ 'Add to team'|trans }}
                           </div>
                         {% endif %}
                       {% endif %}

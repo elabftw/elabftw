@@ -187,8 +187,12 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false, bool $onlyAdmins = false): array
-    {
+    public function readFromQuery(
+        string $query,
+        int $teamId = 0,
+        bool $includeArchived = false,
+        bool $onlyAdmins = false,
+    ): array {
         $teamFilterSql = '';
         if ($teamId > 0) {
             $teamFilterSql = ' AND users2teams.teams_id = :team';
@@ -303,9 +307,20 @@ class Users implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
+        $this->canWriteOrExplode($action);
         match ($action) {
-            Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Add => (
+                function () use ($params) {
+                    // need to be admin to "import" a user in a team
+                    $team = (int) $params['team'];
+                    $TeamsHelper = new TeamsHelper($team);
+                    $permissions = $TeamsHelper->getPermissions($this->requester->userData['userid']);
+                    if ($permissions['is_admin'] !== 1) {
+                        throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
+                    }
+                    (new Users2Teams())->create($this->userData['userid'], $team);
+                }
+            )(),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
@@ -554,12 +569,12 @@ class Users implements RestInterface
     /**
      * Check if requester can act on this User
      */
-    private function canWriteOrExplode(): void
+    private function canWriteOrExplode(?Action $action = null): void
     {
         if ($this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
-        if (!$this->requester->isAdminOf($this->userData['userid'])) {
+        if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

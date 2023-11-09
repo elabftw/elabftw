@@ -32,6 +32,17 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         new Users(1337);
     }
 
+    public function testPostAction(): void
+    {
+        $this->assertIsInt($this->Users->postAction(Action::Create, array(
+            'team' => 1,
+            'firstname' => 'test',
+            'lastname' => 'post',
+            'email' => 'test@example.com',
+            'orgid' => 'XYZ123',
+        )));
+    }
+
     public function testAllowUntrustedLogin(): void
     {
         $this->assertFalse($this->Users->allowUntrustedLogin());
@@ -107,6 +118,15 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(4, 2, new Users(4, 2));
         $this->expectException(ImproperActionException::class);
         $Users->patch(Action::Update, array('password' => 'short'));
+    }
+
+    public function testDisable2fa(): void
+    {
+        $Users = new Users(4, 2, new Users(4, 2));
+        $this->assertIsArray($Users->patch(Action::Disable2fa, array()));
+        $Users = new Users(2, 1, new Users(4, 2));
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Disable2fa, array());
     }
 
     public function testUpdatePasswordNoCurrentPasswordProvided(): void
@@ -198,7 +218,18 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllActiveFromTeam(): void
     {
-        $this->assertCount(7, $this->Users->readAllActiveFromTeam());
+        $this->assertCount(8, $this->Users->readAllActiveFromTeam());
+    }
+
+    public function testAddUserToTeam(): void
+    {
+        // add a user from team bravo into team alpha
+        $Users = new Users(6, 2, new Users(1, 1));
+        $this->assertIsArray($Users->patch(Action::Add, array('team' => 1)));
+        // try the reverse
+        $Users = new Users(1, 1, new Users(6, 2));
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Add, array('team' => 2));
     }
 
     public function testDestroy(): void

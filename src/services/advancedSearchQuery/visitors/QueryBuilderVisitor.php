@@ -70,12 +70,13 @@ class QueryBuilderVisitor implements Visitor
         $bindValues[] = array(
             'param' => $pathParam,
             'value' => sprintf(
-                // TODO: Path '$.extra_fields**.value' could search in all extra fields without being limited to a specific field
-                // Maybe we can add a special key wildcard ,e.g. **, that activates this
-                '$.%s.%s.%s',
+                '$.%s%s.%s',
                 MetadataEnum::ExtraFields->value,
-                // Note: the extraFieldKey gets double quoted so spaces are not an issue
-                json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                // JSON path '$.extra_fields**.value' can be used to search all keys
+                // Note: the extraFieldKey gets double quoted by json_encode() so spaces are not an issue
+                $metadataField->getKey() === '**'
+                    ? '**'
+                    : '.' . json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
                 MetadataEnum::Value->value,
             ),
             'type' => PDO::PARAM_STR,

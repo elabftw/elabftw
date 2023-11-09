@@ -250,8 +250,6 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            // build the having clause for metadata
-            $displayParams->getMetadataHavingSql(),
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
@@ -269,12 +267,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
         if ($displayParams->includeArchived) {
             $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
-        if ($displayParams->hasMetadataSearch) {
-            foreach (array_keys($displayParams->metadataKey) as $i) {
-                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
-                $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
-            }
         }
 
         $this->bindExtendedValues($req);

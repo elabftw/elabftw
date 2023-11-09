@@ -94,10 +94,6 @@
   <div class='pl-3 mt-2'>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'public_db',
-      'label': 'Anonymous visitors can see database items'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'do_force_canread',
       'label': 'Enforce read permissions?'|trans,
       'help': 'Select if you want to enforce read permissions on experiments'|trans} %}

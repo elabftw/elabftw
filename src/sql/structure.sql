@@ -718,7 +718,6 @@ CREATE TABLE `teams` (
   `link_href` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
-  `public_db` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` JSON NOT NULL,
   `force_canwrite` JSON NOT NULL,
   `do_force_canread` tinyint UNSIGNED NOT NULL DEFAULT 0,

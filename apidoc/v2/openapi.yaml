@@ -650,8 +650,6 @@ components:
           type: string
         orgid:
           type: string
-        public_db:
-          type: integer
         force_canread:
           type: string
         force_canwrite:

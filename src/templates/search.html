@@ -122,8 +122,9 @@
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>extrafield</span></dt>
           <dd>Uses a different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span> (<span class='token keyword'>s</span><span class='token punctuation'>:</span> is optional and only affects <span class='token string'>value</span>).
-            <br><span class='token string'>key</span> (Name of field) and <span class='token string'>value</span> can be a Term or Quoted term
-            <br><span class='token string'>key</span> has to be an exact match, <code><span class='token important'>%</span></code> and <code><span class='token important'>_</span></code> do not function as wildcards in <span class='token string'>key</span> but in <span class='token string'>value</span>.
+            <br><span class='token string'>key</span> (Name of field) and <span class='token string'>value</span> (search term) can be a Term or Quoted term.
+            <br><span class='token string'>key</span> has to be an exact match, hence there are no wildcards. However, two asterisks (<span class='token string'>**</span>) can be use to search absolutely all fields.
+            <br><span class='token string'>value</span> can use wildcards as described above.
           </dd>
           <dt><span class='token keyword'>group</span></dt>
           <dd>Term or Quoted term</dd>

@@ -313,8 +313,8 @@
         <div class='row mb-2'>
           {# EMAIL #}
           <div class='col-md-12'>
-            <label for='email' class='col-form-label'>{{ 'Search term'|trans }}</label>
-            <input class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
+            <label for='remote_dir_term' class='col-form-label'>{{ 'Search user'|trans }}</label>
+            <input id='remote_dir_term' class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
           </div>
         </div>
 

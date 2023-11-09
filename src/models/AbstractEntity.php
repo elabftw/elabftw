@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function array_column;
-use function array_keys;
 use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;

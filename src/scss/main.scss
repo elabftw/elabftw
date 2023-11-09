@@ -871,6 +871,7 @@ the form-control fails to do that so we do the border ourselves */
     /* Only Status */
     &.status-btn {
         background-color: $firstlevel;
+        color: $mediumstrong;
 
         &:hover {
             background-color: $secondlevel;

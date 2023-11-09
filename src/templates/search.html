@@ -352,8 +352,8 @@
 {# NEW ROW #}
 <div class='row mb-2'>
   {# AUTHOR/OWNER HELPER #}
-  <div class='col-md-4'>
-    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+  <div class='col-md-5'>
+    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label>
     <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
@@ -372,7 +372,7 @@
 
   {# VISIBILITY SEARCH #}
   <div class='col-md-4'>
-    <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+    <label for='visibility'>{{ 'And visibility is:'|trans }} </label>
     <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
       {% for value in visibilityArr %}

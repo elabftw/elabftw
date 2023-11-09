@@ -124,11 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let quotes = '';
     
     // TODO: fix single and double quotation marks behaviour: &#39; &#34; in db
-    if ([' ', '&', '|', '!', ':', '(', ')', "'"].some(value => filterValue.includes(value))) {
+    if ([' ', '&', '|', '!', ':', '(', ')', '\''].some(value => filterValue.includes(value))) {
       quotes = '"';
     }
     if (filterValue.includes('"')) {
-      quotes = "'";
+      quotes = '\'';
     }
     return quotes;
   }
@@ -145,12 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // look if the filter key already exists in the extendedArea
       // paste the regex on regex101.com to understand it
-      let valueRegex = `:(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:'((?:\\\\'|(?:(?!')).)+)')|([^\\s:'"()&|!]+))`;
+      let valueRegex = ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+)';
       if (elem.dataset.filter === 'extrafield') {
         // extrafield has key and value so we need the regex above twice
         valueRegex = `${valueRegex}${valueRegex}`;
       }
-      const regex = new RegExp(elem.dataset.filter + valueRegex + `\\s?`);
+      const regex = new RegExp(elem.dataset.filter + valueRegex + '\\s?');
       const found = curVal.match(regex);
       // default value is clearing everything
       let filter = '';

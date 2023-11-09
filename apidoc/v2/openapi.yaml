@@ -1009,30 +1009,6 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
-        - name: metakey[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Key search in metadata.
-          examples:
-            first:
-              summary: Look for a metadata key of "Magnification".
-              value: Magnification
-        - name: metavalue[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Value search in metadata.
-          examples:
-            first:
-              summary: Look for a value of "20X".
-              value: 20X
       responses:
         '200':
           description: A list of experiments
@@ -1257,30 +1233,6 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
-        - name: metakey[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Key search in metadata.
-          examples:
-            first:
-              summary: Look for a metadata key of "Magnification".
-              value: Magnification
-        - name: metavalue[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Value search in metadata.
-          examples:
-            first:
-              summary: Look for a value of "20X".
-              value: 20X
       # end duplicate from GET /experiments
       responses:
         '200':

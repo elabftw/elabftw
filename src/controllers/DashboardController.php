@@ -18,7 +18,9 @@ use Elabftw\Enums\Orderby;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
@@ -55,11 +57,15 @@ class DashboardController implements ControllerInterface
         $DisplayParamsItems->orderby = Orderby::Lastchange;
         $PermissionsHelper = new PermissionsHelper();
         $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
+        $ExperimentsStatus = new ExperimentsStatus(new Teams($this->App->Users));
+        $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'categoryArr' => $ItemsTypes->readAll(),
+            'itemsStatusArr' => $ItemsStatus->readAll(),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
             'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
+            'experimentsStatusArr' => $ExperimentsStatus->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'templatesArr' => $Templates->Pins->readAllSimple(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),

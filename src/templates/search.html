@@ -381,12 +381,9 @@
     </select>
   </div>
   {# END VISIBILITY SEARCH #}
-</div>
 
-{# NEW ROW #}
-<div class='row mb-2'>
   {# RATING #}
-  <div class='col-md-6'>
+  <div class='col-md-3'>
     <label for='rating'>{{ 'And rating is'|trans }}</label>
     <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
@@ -397,8 +394,28 @@
     </select>
   </div>
   {# END RATING #}
+</div>
+
+{# NEW ROW #}
+<div class='row mb-2'>
+  {# METADATA SEARCH #}
+  <div class='col-md-5'>
+    <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
+    <div class='input-group flex-nowrap'>
+      <div class='input-group-prepend flex-shrink-1 flex-grow-1'>
+        <input type='text' id='metakey' placeholder='{{ 'Name of field'|trans }}' class='brr-none form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' aria-label='{{ 'Name of field'|trans }}' />
+      </div>
+      <div class='input-group-text px-1 brl-none brr-none'>:</div>
+      <div class='input-group-append flex-shrink-1 flex-grow-1'>
+        <input type='text' id='metavalue' placeholder='{{ 'Value'|trans }}' class='brl-none form-control filterHelper' data-filter='extrafield' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' aria-label='{{ 'Value'|trans }}' />
+      </div>
+    </div>
+    <p class='mt-1'>{{ "Tip: you can use '**' in Name of field to search all fields and '%' as wildcard in value"|trans }}</p>
+  </div>
+  {# METADATA SEARCH END #}
+
   {# LOCK #}
-  <div class='col-md-3'>
+  <div class='col-md-4'>
     <label for='locked'>{{ 'Locked'|trans }}</label>
     <select id='locked' name='locked' class='form-control filterHelper' data-filter='locked'>
       <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
@@ -418,26 +435,6 @@
     </select>
   </div>
   {# END LOCK #}
-</div>
-
-<hr>
-
-{# NEW ROW #}
-<div class='row mb-2'>
-</div>
-
-{# METADATA SEARCH #}
-<h4 class='d-inline togglable-section-title mt-3 mb-2'>{{ 'Extra fields search'|trans }}</h4>
-<div class='row' id='metadataFirstInputs'>
-  <div class='col-md-4'>
-    <label for='metakey'>{{ 'Name of field'|trans }}</label>
-    <input type='text' id='metakey' class='form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' />
-  </div>
-  <div class='col-md-4'>
-    <label for='metavalue'>{{ 'Value'|trans }}</label>
-    <input type='text' id='metavalue' class='form-control filterHelper' data-filter='extrafield' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' />
-    <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-  </div>
 </div>
 
 {# Search action buttons #}

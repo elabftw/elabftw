@@ -89,7 +89,8 @@ import Prism from 'prismjs';
         + strict.pattern.source + '?'
         + simpleOrQuotedTerm
         + ':'
-        + simpleOrQuotedTerm,
+        // uncouple the quotedTerm backreferences so that mixed quotations can be used i.e. 'key':"value" and "key":'value'
+        + simpleOrQuotedTerm.replace(new RegExp('1', 'g'), '2'),
         'i',
       ),
     },

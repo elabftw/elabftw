@@ -52,33 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Main click event listener
-  document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-    // Add a new key/value inputs block on top of the + button in metadata search block
-    if (el.matches('[data-action="add-extra-fields-search-inputs"]')) {
-      // the first set of inputs is cloned
-      const row = (document.getElementById('metadataFirstInputs').cloneNode(true) as HTMLElement);
-      // remove id 'metadataFirstInputs'
-      row.removeAttribute('id');
-      // give new ids to the labels/inputs
-      row.querySelectorAll('label').forEach(l => {
-        const id = crypto.randomUUID();
-        l.setAttribute('for', id);
-        const input = l.nextElementSibling as HTMLInputElement;
-        input.setAttribute('id', id);
-        input.value = '';
-      });
-      // add inputs block
-      el.parentNode.insertBefore(row, el);
-    }
-  });
-
   function getOperator(): string {
     return (document.getElementById('dateOperator') as HTMLSelectElement).value;
   }
 
-  // a filter helper can be a select or an input (for date), so we need a function to get its value
+  // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     if (element instanceof HTMLSelectElement) {
       // clear action
@@ -119,8 +97,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return date + '..' + element.value;
       }
+      if (element.id === 'metakey') {
+        const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
+        if (metavalue === '' || element.value === '') {
+          return '';
+        }
+        const keyQuotes = getQuotes(element.value);
+        const valueQuotes = getQuotes(metavalue);
+        return keyQuotes + element.value + keyQuotes + ':' + valueQuotes + metavalue + valueQuotes;
+      }
+      if (element.id === 'metavalue') {
+        const metakey = (document.getElementById('metakey') as HTMLInputElement).value;
+        if (metakey === '' || element.value === '') {
+          return '';
+        }
+        const keyQuotes = getQuotes(metakey);
+        const valueQuotes = getQuotes(element.value);
+        return keyQuotes + metakey + keyQuotes + ':' + valueQuotes + element.value + valueQuotes;
+      }
     }
     return '😶';
+  }
+
+  function getQuotes(filterValue): string {
+    // don't add quotes unless we need them (space or some special chars exist)
+    let quotes = '';
+    
+    // TODO: fix single and double quotation marks behaviour: &#39; &#34; in db
+    if ([' ', '&', '|', '!', ':', '(', ')', "'"].some(value => filterValue.includes(value))) {
+      quotes = '"';
+    }
+    if (filterValue.includes('"')) {
+      quotes = "'";
+    }
+    return quotes;
   }
 
   // add a change event listener to all elements that helps constructing the query string
@@ -134,17 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
 
       // look if the filter key already exists in the extendedArea
-      // paste the regex on regex101.com to understand it, note that here \ need to be escaped
-      const regex = new RegExp(elem.dataset.filter + ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|[\\S]+)\\s?');
-      const found = curVal.match(regex);
-      // don't add quotes unless we need them (space exists)
-      let quotes = '';
-      let filterValue = getFilterValueFromElement(elem);
-      if (filterValue.includes(' ')) {
-        quotes = '"';
+      // paste the regex on regex101.com to understand it
+      let valueRegex = `:(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:'((?:\\\\'|(?:(?!')).)+)')|([^\\s:'"()&|!]+))`;
+      if (elem.dataset.filter === 'extrafield') {
+        // extrafield has key and value so we need the regex above twice
+        valueRegex = `${valueRegex}${valueRegex}`;
       }
+      const regex = new RegExp(elem.dataset.filter + valueRegex + `\\s?`);
+      const found = curVal.match(regex);
       // default value is clearing everything
       let filter = '';
+      let filterValue = getFilterValueFromElement(elem);
+      const quotes = getQuotes(filterValue);
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
         let filterName = elem.dataset.filter;
@@ -155,6 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         filter = `${filterName}:${quotes}${filterValue}${quotes}`;
+
+        if (filterName === 'extrafield') {
+          filter = `${filterName}:${filterValue}`;
+        }
       }
 
       // add additional filter at cursor position

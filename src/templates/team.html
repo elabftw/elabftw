@@ -38,30 +38,32 @@
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
           <div id='eventBoundExp'></div>
           <button data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
-            <div id='autocompleteAnchorDiv_binddivexp' class='input-group mb-3'>
-                <div class='input-group-prepend'>
-                    <span class='input-group-text'>{{ 'Search'|trans }}</span>
-                </div>
-                <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' />
-                <div class='input-group-append'>
-                  <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
-                </div>
+            <div class='input-group mb-3'>
+              <div class='input-group-prepend'>
+                <span class='input-group-text'>{{ 'Search'|trans }}</span>
+              </div>
+              <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' />
+              <div class='input-group-append'>
+                <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
+              </div>
             </div>
+            <div id='autocompleteAnchorDiv_binddivexp'></div>
         </div>
         {# BIND ITEM #}
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind a resource'|trans }}</h5>
           <div id='eventBoundDb'></div>
           <button data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
-            <div id='autocompleteAnchorDiv_binddivdb' class='input-group mb-3'>
-                <div class='input-group-prepend'>
-                    <span class='input-group-text'>{{ 'Search'|trans }}</span>
-                </div>
-                <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' />
-                <div class='input-group-append'>
-                  <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
-                </div>
+            <div class='input-group mb-3'>
+              <div class='input-group-prepend'>
+                <span class='input-group-text'>{{ 'Search'|trans }}</span>
+              </div>
+              <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' />
+              <div class='input-group-append'>
+                <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+              </div>
             </div>
+            <div id='autocompleteAnchorDiv_binddivdb'></div>
         </div>
 
         {# only show the cancel block if item is cancellable or user is admin #}

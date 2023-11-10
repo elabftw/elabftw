@@ -216,7 +216,7 @@
                           </div>
                         {% endif %}
                         {# Add to team #}
-                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty %}
+                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty and App.Config.configArr.admins_import_users %}
                           <div class='dropdown-item' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                               <i class='fas fa-fw fa-user-plus mr-1'></i>{{ 'Add to team'|trans }}
                           </div>

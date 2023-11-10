@@ -52,6 +52,7 @@
     <div class='pl-3'>
       {% if usersArr %}
         {% for user in usersArr %}
+          {% include('archive-user-modal.html') %}
           {# Modal for managing users to teams, generated for each user #}
           <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-label='{{ 'Manage teams for user'|trans }}' aria-hidden='true'>
             <div class='modal-dialog modal-xl' role='document'>
@@ -229,11 +230,11 @@
                       {% endif %}
                       {# ARCHIVE USER #}
                       {% if user.archived %}
-                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                        <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
                         </div>
                       {% else %}
-                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                      <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
                         </div>
                       {% endif %}
@@ -326,8 +327,8 @@
         <div class='row mb-2'>
           {# EMAIL #}
           <div class='col-md-12'>
-            <label for='email' class='col-form-label'>{{ 'Search term'|trans }}</label>
-            <input class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
+            <label for='remote_dir_term' class='col-form-label'>{{ 'Search user'|trans }}</label>
+            <input id='remote_dir_term' class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
           </div>
         </div>
 

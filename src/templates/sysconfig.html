@@ -891,7 +891,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='ldap-user-default' class='col-form-label'>If the user doesn't exist yet, what to do?</label>
+      <label for='ldap-user-default' class='col-form-label'>{{ "If the user doesn't exist yet, what to do?"|trans }}</label>
       <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='saml_user_default' name='saml_user_default' id='ldap-user-default'>
         <option {{ 1 == App.Config.configArr.saml_user_default ? 'selected' }} value='1'>{{ 'Create the user on the fly'|trans }}</option>
         <option {{ 0 == App.Config.configArr.saml_user_default ? 'selected' }} value='0'>{{ 'Throw error, allowing a sysadmin to create the user'|trans }}</option>

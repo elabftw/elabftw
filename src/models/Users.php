@@ -309,7 +309,7 @@ class Users implements RestInterface
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive((bool) $params['with_exp']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {

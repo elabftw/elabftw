@@ -61,14 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
-      // show alert
-      if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and archived and user will not be able to login anymore.')) {
-        ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive}).then(() => reloadElement('editUsersBox'));
+      let lockExp = false;
+      if (document.getElementById(`lockSwitch_${el.dataset.userid}`)) {
+        lockExp = (document.getElementById(`lockSwitch_${el.dataset.userid}`) as HTMLInputElement).checked;
       }
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElement('editUsersBox'));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
-      ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Validate}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
       const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;

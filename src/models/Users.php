@@ -311,7 +311,7 @@ class Users implements RestInterface
         match ($action) {
             Action::Add => (
                 function () use ($params) {
-                    // check instance config if admins are allowed to do that (if requestor is not sysadmin)
+                    // check instance config if admins are allowed to do that (if requester is not sysadmin)
                     $Config = Config::getConfig();
                     if ($this->requester->userData['is_sysadmin'] !== 1 && $Config->configArr['admins_import_users'] !== '1') {
                         throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');

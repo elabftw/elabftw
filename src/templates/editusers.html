@@ -31,11 +31,13 @@
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
           </div>
         </div>
-        <div class='input-group-append'>
-          <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+        {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+          <div class='input-group-append'>
+            <div class='input-group-text'>
+              <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+            </div>
           </div>
-        </div>
+        {% endif %}
         <div class='input-group-append'>
           <div class='input-group-text'>
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}

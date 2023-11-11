@@ -57,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('link-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
+    } else if (el.matches('[data-action="destroy-related-link"]')) {
+      if (confirm(i18next.t('link-delete-warning'))) {
+        ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`).then(() => reloadElements(['relatedItemsDiv', 'relatedExperimentsDiv']));
+      }
     }
   });
 

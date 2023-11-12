@@ -12,6 +12,8 @@
 const phpeggy = require('phpeggy');
 
 module.exports = {
+  input: './src/node/grammar/queryGrammar.pegjs',
+  output: './cache/advancedSearchQuery/Parser.php',
   cache: true,
   plugins: [phpeggy],
   phpeggy: {

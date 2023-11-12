@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // look if the filter key already exists in the extendedArea
       // paste the regex on regex101.com to understand it
-      let valueRegex = ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+)';
+      let valueRegex = ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
       if (elem.dataset.filter === 'extrafield') {
         // extrafield has key and value so we need the regex above twice
         valueRegex = `${valueRegex}${valueRegex}`;

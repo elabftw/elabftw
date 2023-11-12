@@ -86,7 +86,7 @@
     "buildcss": "yarn sass --quiet-deps --style compressed src/scss/pdf.scss:web/assets/pdf.min.css",
     "buildjs": "yarn build && yarn buildnode",
     "buildjs:prod": "yarn build:prod && yarn buildnode",
-    "buildparser": "yarn node ./src/node/grammar/generateParser.js",
+    "buildparser": "mkdir -p ./cache/advancedSearchQuery && yarn peggy --extra-options-file ./src/node/grammar/peggy-config.js",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",
     "clean": "rm -rvf web/assets/*.min.css* web/assets/*.bundle.js*",

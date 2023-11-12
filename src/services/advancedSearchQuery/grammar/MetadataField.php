@@ -32,7 +32,7 @@ class MetadataField implements Term, Visitable
 
     public function getKey(): string
     {
-        return $this->keyWrapper->getValue();
+        return $this->keyWrapper->getValue(true);
     }
 
     public function getAffix(): string

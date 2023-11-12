@@ -26,8 +26,11 @@ class SimpleValueWrapper implements Term, Visitable
         return $visitor->visitSimpleValueWrapper($this, $parameters);
     }
 
-    public function getValue(): string
+    public function getValue(bool $returnRaw = false): string
     {
+        if ($returnRaw === true) {
+            return $this->value;
+        }
         return htmlspecialchars($this->value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     }
 }

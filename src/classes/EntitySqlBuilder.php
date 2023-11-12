@@ -44,6 +44,7 @@ class EntitySqlBuilder
             // only get the columns interesting for show mode
             $select = 'SELECT DISTINCT entity.id,
                 entity.title,
+                entity.custom_id,
                 entity.date,
                 entity.category,
                 entity.status,

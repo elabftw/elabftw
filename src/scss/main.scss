@@ -1159,6 +1159,12 @@ input[type='color'] {
     }
 }
 
+.custom-id-badge {
+    color: $medium;
+    padding: 0.25rem;
+}
+
+
 /* give the togglePassword some borders like input */
 .input-border {
     border: 1px solid #ced4da;

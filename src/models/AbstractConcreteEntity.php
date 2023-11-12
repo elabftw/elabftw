@@ -47,4 +47,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         (new MakeBloxberg(new Client(), $this))->timestamp();
         return $this->readOne();
     }
+
+    abstract protected function getNextCustomId(int $category): ?int;
 }

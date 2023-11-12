@@ -1,21 +1,28 @@
-{# Modal for create new database #}
-<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
+{# Modal window for creating a new entity #}
+{# requires: entityType + {experiments,resources}CategoriesArr #}
+<div class='modal fade' id='createModal_{{ entityType }}' tabindex='-1' role='dialog' aria-labelledby='createModalLabel_{{ entityType }}' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel'>{{ 'Select resource category'|trans }}</h5>
+        <h5 class='modal-title' id='createModalLabel_{{ entityType }}'>{{ 'Select category'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body'>
-        {% for category in categoryArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}'>{{ category.title }}</a>
+        {% if entityType == 'experiments' %}
+          {% set createNewCategoryArr = experimentsCategoryArr %}
+        {% else %}
+          {% set createNewCategoryArr = categoryArr %}
+        {% endif %}
+        {% for category in createNewCategoryArr %}
+        <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>{{ category.title|raw }}</a>
         {% endfor %}
+        <a style='color:#bdbdbd; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid=''>{{ 'Not set'|trans }}</a>
         {# show add button to admin #}
         {% if App.Users.isAdmin %}
         <hr>
-          <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#resourcesCategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+        <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityType }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
         {% endif %}
       </div>
     </div>

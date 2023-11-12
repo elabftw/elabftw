@@ -114,6 +114,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'DisplayParams' => $DisplayParams,
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
+            'experimentsCategoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
             'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,

@@ -64,7 +64,12 @@
 
     {# second line: title #}
     <div class='d-flex justify-content-between title'>
-      <p><a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a></p>
+      <p>
+      {% if item.custom_id %}
+        <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+      {% endif %}
+        <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+      </p>
     </div>
     {# owner #}
     <div class='owner'>

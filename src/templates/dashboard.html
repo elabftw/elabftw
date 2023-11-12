@@ -16,7 +16,7 @@
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'experiments.php'} %}
+      {% include 'create-new.html' with {'entityPage': 'experiments.php', 'entityType': 'experiments'} %}
     </div>
     <hr>
     {% if experimentsCategoryArr %}
@@ -47,7 +47,7 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'database.php'} %}
+      {% include 'create-new.html' with {'entityPage': 'database.php', 'entityType': 'items'} %}
     </div>
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>

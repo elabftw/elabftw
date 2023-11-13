@@ -87,7 +87,7 @@ describe('Experiments', () => {
   it('Create and edit an item', () => {
     cy.visit('/database.php');
     cy.contains('Create').click();
-    cy.get('#createModal').within(() => { cy.contains('Generated').click(); });
+    cy.get('#createModal_items').within(() => { cy.contains('Generated').click(); });
     entityEdit();
     cy.get('#category_select').select('Microscope').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

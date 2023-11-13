@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return '😶';
   }
 
-  function getQuotes(filterValue): string {
+  function getQuotes(filterValue: string): string {
     // don't add quotes unless we need them (space or some special chars exist)
     let quotes = '';
     

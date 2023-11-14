@@ -24,7 +24,7 @@ import Prism from 'prismjs';
     alias: 'string',
     greedy: true,
     inside: {
-      'important': /[\\]?(?:_|%)/,
+      'important': /[\\]?[_%]/,
     },
     pattern: /[^\n\r\f"'|!&(): ]+/,
   };

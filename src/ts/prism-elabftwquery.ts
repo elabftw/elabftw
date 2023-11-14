@@ -18,7 +18,7 @@ import Prism from 'prismjs';
     inside: {
       'important': /[\\]?(?:_|%)/,
     },
-    pattern: /(["'])(?:(?!\1)[^\n\r\f])+\1/i,
+    pattern: /(["'])(?:\\['"]|(?!\1)[^\n\r\f])+\1/i,
   };
   const simpleTerm = {
     alias: 'string',

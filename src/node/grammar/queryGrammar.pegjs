@@ -188,6 +188,7 @@ List1
 ListString1
   = chars:(
     [^\n\r\f\\']
+    / "\\'" {return "'";}
     / Escape
   )+
   {
@@ -200,6 +201,7 @@ List2
 ListString2
   = chars:(
     [^\n\r\f\\"]
+    / '\\"' {return '"';}
     / Escape
   )+
   {

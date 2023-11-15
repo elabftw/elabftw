@@ -171,28 +171,53 @@ class EntitySqlBuilder
         }
         // for anon add an AND base = full (public)
         if ($this->entity->isAnon) {
-            $sql .= sprintf(" AND JSON_EXTRACT(entity.%s, '$.base') = %s ", $can, BasePermissions::Full->value);
+            $sql .= sprintf(
+                " AND entity.%s->'$.base' = %s ",
+                $can,
+                BasePermissions::Full->value
+            );
         }
         // add pub/org/team filter
-        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
-        if ($this->entity->Users->userData['show_public']) {
-            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
+        $sqlPublicOrg = sprintf(
+            '(entity.%1$s->"$.base" = %2$d OR entity.%1$s->"$.base" = %3$d)',
+            $can,
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value
+        );
+        if (!$this->entity->Users->userData['show_public']) {
+            $sqlPublicOrg = sprintf(
+                '(%s AND entity.userid = users2teams.users_id)',
+                $sqlPublicOrg
+            );
         }
-        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.%s, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.%s, '$.base') = %d ", $sqlPublicOrg, $can, BasePermissions::MyTeams->value, $teamFilter, $can, BasePermissions::User->value);
-        // admin will see the experiments with visibility user for user of their team
-        if ($this->entity->Users->isAdmin) {
-            $sql .= 'AND entity.userid = users2teams.users_id)';
-        } else {
-            $sql .= 'AND entity.userid = :userid)';
-        }
+        $sql .= sprintf(
+            ' AND (%1$s
+                   OR (entity.%2$s->"$.base" = %3$d AND users2teams.users_id = entity.userid %4$s)
+                   OR (entity.%2$s->"$.base" = %5$d AND entity.userid = %6$s)',
+            $sqlPublicOrg,
+            $can,
+            BasePermissions::MyTeams->value,
+            $teamFilter,
+            BasePermissions::User->value,
+            // admin will see the experiments with visibility user for user of their team
+            $this->entity->Users->isAdmin ? 'users2teams.users_id' : ':userid'
+        );
         // add entities in useronly visibility only if we own them
-        $sql .= sprintf(" OR (JSON_EXTRACT(entity.%s, '$.base') = %d AND entity.userid = :userid)", $can, BasePermissions::UserOnly->value);
+        $sql .= sprintf(
+            ' OR (entity.%s->"$.base" = %d AND entity.userid = :userid)',
+            $can,
+            BasePermissions::UserOnly->value
+        );
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teams'))", $team, $can);
+                $sql .= sprintf(
+                    ' OR (%d MEMBER OF (entity.%s->>"$.teams"))',
+                    $team,
+                    $can
+                );
             }
         }
         // look for teamgroups
@@ -201,11 +226,18 @@ class EntitySqlBuilder
         $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teamgroups'))", $teamgroup, $can);
+                $sql .= sprintf(
+                    ' OR (%d MEMBER OF (entity.%s->>"$.teamgroups"))',
+                    $teamgroup,
+                    $can
+                );
             }
         }
         // look for our userid in users part of the json
-        $sql .= sprintf(" OR (:userid MEMBER OF (entity.%s->>'$.users'))", $can);
+        $sql .= sprintf(
+            ' OR (:userid MEMBER OF (entity.%s->>"$.users"))',
+            $can
+        );
         $sql .= ')';
 
         return $sql;

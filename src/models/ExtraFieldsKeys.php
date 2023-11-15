@@ -68,7 +68,7 @@ class ExtraFieldsKeys implements RestInterface
         $sql = array();
         foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
             $sql[] = sprintf(
-                'SELECT JSON_UNQUOTE(`extra_fields_key`) as `extra_fields_key`, COUNT(`id`) as `frequency`
+                'SELECT JSON_UNQUOTE(`extra_fields_key`) AS `extra_fields_key`, COUNT(`id`) as `frequency`
                     FROM %s AS `entity`
                     LEFT JOIN `users` ON (
                         `entity`.`userid` = `users`.`userid`
@@ -83,7 +83,8 @@ class ExtraFieldsKeys implements RestInterface
                             `extra_fields_key` JSON path "$"
                         )
                     ) AS `extra_fields_keys_table`
-                    WHERE `extra_fields_key` LIKE :search_term
+                    # Need to CAST here to retain case-insensitive comparison
+                    WHERE CAST(`extra_fields_key` AS CHAR) LIKE :search_term
                     %s
                     GROUP BY `extra_fields_key`',
                 $entityType->value,

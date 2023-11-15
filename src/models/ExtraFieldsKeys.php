@@ -75,7 +75,7 @@ class ExtraFieldsKeys implements RestInterface
                     )
                     LEFT JOIN `users2teams` ON (
                         `users2teams`.`users_id` = `users`.`userid`
-                        AND `users2teams`.`teams_id` = %s
+                        AND `users2teams`.`teams_id` = %d
                     )
                     JOIN JSON_TABLE (
                         JSON_KEYS(`entity`.`metadata`, "$.extra_fields"),
@@ -94,7 +94,7 @@ class ExtraFieldsKeys implements RestInterface
         }
 
         $finalSql = sprintf(
-            'SELECT `extra_fields_key`, SUM(`frequency`) as `frequency`
+            'SELECT `extra_fields_key`, CAST(SUM(`frequency`) AS UNSIGNED) AS `frequency`
                 FROM (%s) AS `finalTable`
                 GROUP BY `extra_fields_key`
                 ORDER BY `frequency` DESC, `extra_fields_key` ASC

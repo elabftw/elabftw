@@ -7,16 +7,14 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
-import $ from 'jquery';
-import { Api } from './Apiv2.class';
-import { Model } from './interfaces';
+import { addAutocompleteToExtraFieldsKeyInputs } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
     return;
   }
 
-  const ApiC = new Api();
+  addAutocompleteToExtraFieldsKeyInputs();
 
   // scroll to anchor if there is a search
   const params = new URLSearchParams(document.location.search.slice(1));
@@ -199,18 +197,5 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       SearchSyntaxHighlighting.update(extendedArea.value);
     });
-  });
-
-  $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
-    appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.ExtraFieldsKeys}/?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(entry => {
-          res.push(entry.extra_fields_key);
-        });
-        response(res);
-      });
-    },
   });
 });

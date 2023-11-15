@@ -788,7 +788,13 @@ components:
                 type: integer
               is_owner:
                 type: integer
-
+    extra_fields_keys:
+      type: object
+      properties:
+        extra_fields_key:
+          type: string
+        frequency:
+          type: integer
 
 security:
   - token:
@@ -1801,7 +1807,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/event'
-
   /events/{id}:
     parameters:
       - name: id
@@ -1922,6 +1927,7 @@ paths:
       responses:
         '204':
           description: The event was deleted.
+
   # FAVTAGS
   /favtags:
     summary: Favorite tags for the logged-in user.
@@ -2449,7 +2455,6 @@ paths:
                   type: integer
                   description: Is it the default status for the team?
 
-
   # ONE ITEMS STATUS
   /teams/{id}/items_status/{subid}:
     parameters:
@@ -2709,6 +2714,8 @@ paths:
       responses:
         '204':
           description: The todoitem was removed.
+
+  # UNFINISHED STEPS
   /unfinished_steps:
     summary: Unfinished steps from the user or the team, in experiments or items.
     parameters:
@@ -2733,6 +2740,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
+
   # USERS
   /users:
     summary: Display information about users on the instance.
@@ -3223,7 +3231,6 @@ paths:
       responses:
         '204':
           description: The tags were deleted.
-
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -3706,3 +3713,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/revision'
+
+  # EXTRA FIELDS KEYS
+  /extra_fields_keys:
+    summary: Search for extra fields keys used by a team. Results are limited to 15 entries and entries are sorted by frequency.
+    parameters:
+      - name: q
+        in: query
+        description: |
+          Search for a term in the extra fields keys.
+        schema:
+          type: string
+          default: ''
+    get:
+      tags: ['Extra Fields Keys']
+      summary: Read extra fields keys.
+      operationId: extra-fields-keys
+      responses:
+        '200':
+          description: A list of extra fields keys and their frequency.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/extra_fields_keys'

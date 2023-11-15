@@ -403,13 +403,14 @@
     <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
     <div class='input-group flex-nowrap'>
       <div class='input-group-prepend flex-shrink-1 flex-grow-1'>
-        <input type='text' id='metakey' placeholder='{{ 'Name of field'|trans }}' class='brr-none form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' aria-label='{{ 'Name of field'|trans }}' />
+        <input type='text' id='metakey' data-autocomplete='extraFieldsKeys' placeholder='{{ 'Name of field'|trans }}' class='brr-none form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' aria-label='{{ 'Name of field'|trans }}' />
       </div>
       <div class='input-group-text px-1 brl-none brr-none'>:</div>
       <div class='input-group-append flex-shrink-1 flex-grow-1'>
         <input type='text' id='metavalue' placeholder='{{ 'Value'|trans }}' class='brl-none form-control filterHelper' data-filter='extrafield' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' aria-label='{{ 'Value'|trans }}' />
       </div>
     </div>
+    <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
     <p class='mt-1'>{{ "Tip: you can use '**' in Name of field to search all fields and '%' as wildcard in value"|trans }}</p>
   </div>
   {# METADATA SEARCH END #}

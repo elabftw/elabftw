@@ -24,6 +24,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Info;
@@ -221,49 +222,34 @@ class Apiv2Controller extends AbstractApiController
 
     private function getModel(): RestInterface
     {
-        switch ($this->endpoint) {
-            case 'apikeys':
-                return new ApiKeys($this->Users, $this->id);
-            case 'config':
-                return Config::getConfig();
-            case 'idps':
-                return new Idps($this->id);
-            case 'info':
-                return new Info();
-            case 'experiments':
-            case 'items':
-            case 'experiments_templates':
-            case 'items_types':
-                return EntityType::from($this->endpoint)->toInstance($this->Users, $this->id);
-                // for a single event, the id is the id of the event
-            case 'event':
-                return new Scheduler(new Items($this->Users), $this->id);
-                // otherwise it's the id of the item
-            case 'events':
-                $defaultStart = '2018-12-23T00:00:00+01:00';
-                $defaultEnd = '2119-12-23T00:00:00+01:00';
-                return new Scheduler(
-                    new Items($this->Users, $this->id),
-                    null,
-                    (string) $this->Request->query->get('start', $defaultStart),
-                    (string) $this->Request->query->get('end', $defaultEnd),
-                    $this->Request->query->getInt('cat'),
-                );
-            case 'favtags':
-                return new FavTags($this->Users, $this->id);
-            case 'team_tags':
-                return new TeamTags($this->Users, $this->id);
-            case 'teams':
-                return new Teams($this->Users, $this->id);
-            case 'todolist':
-                return new Todolist($this->Users->userData['userid'], $this->id);
-            case 'unfinished_steps':
-                return new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team');
-            case 'users':
-                return new Users($this->id, $this->Users->team, $this->Users);
-            default:
-                throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, team_tags, teams, todolist, unfinished_steps, users.');
-        }
+        return match ($this->endpoint) {
+            'apikeys' => new ApiKeys($this->Users, $this->id),
+            'config' => Config::getConfig(),
+            'idps' => new Idps($this->id),
+            'info' => new Info(),
+            'experiments',
+            'items',
+            'experiments_templates',
+            'items_types' => EntityType::from($this->endpoint)->toInstance($this->Users, $this->id),
+            // for a single event, the id is the id of the event
+            'event' => new Scheduler(new Items($this->Users), $this->id),
+            // otherwise it's the id of the item
+            'events' => new Scheduler(
+                new Items($this->Users, $this->id),
+                null,
+                (string) $this->Request->query->get('start', '2018-12-23T00:00:00+01:00'),
+                (string) $this->Request->query->get('end', '2119-12-23T00:00:00+01:00'),
+                $this->Request->query->getInt('cat'),
+            ),
+            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim((string) $this->Request->query->get('q', ''))),
+            'favtags' => new FavTags($this->Users, $this->id),
+            'team_tags' => new TeamTags($this->Users, $this->id),
+            'teams' => new Teams($this->Users, $this->id),
+            'todolist' => new Todolist($this->Users->userData['userid'], $this->id),
+            'unfinished_steps' => new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team'),
+            'users' => new Users($this->id, $this->Users->team, $this->Users),
+            default => throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, extra_fields_keys, team_tags, teams, todolist, unfinished_steps, users.'),
+        };
     }
 
     private function getSubModel(string $submodel): RestInterface

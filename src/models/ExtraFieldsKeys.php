@@ -1,0 +1,113 @@
+<?php declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Marcel Bolten <github@marcelbolten.de>
+ * @copyright 2023 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
+use Elabftw\Interfaces\RestInterface;
+use PDO;
+
+/**
+ * Get extra fields keys of items and experiments used for autocomplete on search page.
+ */
+class ExtraFieldsKeys implements RestInterface
+{
+    private Db $Db;
+
+    public function __construct(private Users $Users, private string $searchTerm)
+    {
+        $this->Db = Db::getConnection();
+    }
+
+    public function getPage(): string
+    {
+        return 'extra_fields_keys';
+    }
+
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return 0;
+    }
+
+    public function patch(Action $action, array $params): array
+    {
+        return $this->readAll();
+    }
+
+    public function readOne(): array
+    {
+        // not used
+        return array();
+    }
+
+    public function readAll(): array
+    {
+        return $this->getExtraFieldsKeys();
+    }
+
+    public function destroy(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Get all exta fields keys of a team from experiments and items
+     */
+    private function getExtraFieldsKeys(): array
+    {
+        $sql = array();
+        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+            $sql[] = sprintf(
+                'SELECT JSON_UNQUOTE(`extra_fields_key`) as `extra_fields_key`, COUNT(`id`) as `frequency`
+                    FROM %s AS `entity`
+                    LEFT JOIN `users` ON (
+                        `entity`.`userid` = `users`.`userid`
+                    )
+                    LEFT JOIN `users2teams` ON (
+                        `users2teams`.`users_id` = `users`.`userid`
+                        AND `users2teams`.`teams_id` = %s
+                    )
+                    JOIN JSON_TABLE (
+                        JSON_KEYS(`entity`.`metadata`, "$.extra_fields"),
+                        "$[*]" COLUMNS (
+                            `extra_fields_key` JSON path "$"
+                        )
+                    ) AS `extra_fields_keys_table`
+                    WHERE `extra_fields_key` LIKE :search_term
+                    %s
+                    GROUP BY `extra_fields_key`',
+                $entityType->value,
+                $this->Users->userData['team'],
+                (new EntitySqlBuilder($entityType->toInstance($this->Users)))->getCanFilter('canread'),
+            );
+        }
+
+        $finalSql = sprintf(
+            'SELECT `extra_fields_key`, SUM(`frequency`) as `frequency`
+                FROM (%s) AS `finalTable`
+                GROUP BY `extra_fields_key`
+                ORDER BY `frequency` DESC, `extra_fields_key` ASC
+                LIMIT %d',
+            implode(' UNION ', $sql),
+            $this->Users->userData['limit_nb']
+        );
+
+        $req = $this->Db->prepare($finalSql);
+        $req->bindValue(':search_term', '%' . $this->searchTerm . '%', PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+}

@@ -90,7 +90,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('Line 1, Column ', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('SyntaxError: Expected', $advancedSearchQuery->getException());
     }
 
     public function testComplexityLimit(): void

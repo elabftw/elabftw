@@ -107,7 +107,7 @@ DateBetween
   }
 
 DateSimple
-  = operator:$([<>] '='? / '!'? '=' )? date:Date
+  = operator:ComparisonOperators date:Date
   {
     return array(
       'type' => 'simple',
@@ -239,6 +239,9 @@ String
 Escape
   = $('\\' [%_]) // Escape MySQL wildcard characters
   / '\\' {return '\\\\';} // Search for literal slash by default
+
+ComparisonOperators
+  = $([<>] '='? / '!'? '=')?
 
 Digit
   = [0-9]

@@ -74,7 +74,7 @@ describe('Experiments', () => {
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
     cy.contains('Create').click();
-    cy.get('#createModal_experiments').within(() => { cy.contains('Not set').click(); });
+    cy.get('#createModal_experiments').within(() => { cy.contains('Default template').click(); });
     entityEdit();
     // change status
     cy.get('#status_select').select('Success').blur();

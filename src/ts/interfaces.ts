@@ -72,6 +72,7 @@ enum Action {
   UpdateTag = 'updatetag',
   UpdateMetadataField = 'updatemetadatafield',
   Unreference = 'unreference',
+  Validate = 'validate',
 }
 
 enum Model {

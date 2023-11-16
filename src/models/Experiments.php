@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -183,9 +182,6 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
-        if ($this->entityData['timestamped'] === 1) {
-            throw new IllegalActionException('User tried to delete an experiment that was timestamped.');
-        }
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         $Config = Config::getConfig();

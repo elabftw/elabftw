@@ -31,6 +31,13 @@
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
           </div>
         </div>
+        {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+          <div class='input-group-append'>
+            <div class='input-group-text'>
+              <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+            </div>
+          </div>
+        {% endif %}
         <div class='input-group-append'>
           <div class='input-group-text'>
             <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
@@ -47,6 +54,7 @@
     <div class='pl-3'>
       {% if usersArr %}
         {% for user in usersArr %}
+          {% include('archive-user-modal.html') %}
           {# Modal for managing users to teams, generated for each user #}
           <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-label='{{ 'Manage teams for user'|trans }}' aria-hidden='true'>
             <div class='modal-dialog modal-xl' role='document'>
@@ -197,14 +205,22 @@
                       {# on admin page, allow promoting someone to admin of the same team #}
                       {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
                         {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
+                        {# Promote to Admin #}
                         {% if currentTeam.usergroup == 4 %}
-                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
                           </div>
                         {% endif %}
+                        {# Demote from Admin #}
                         {% if currentTeam.usergroup == 2 %}
-                        <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
+                          </div>
+                        {% endif %}
+                        {# Add to team #}
+                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty and App.Config.configArr.admins_import_users %}
+                          <div class='dropdown-item' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                              <i class='fas fa-fw fa-user-plus mr-1'></i>{{ 'Add to team'|trans }}
                           </div>
                         {% endif %}
                       {% endif %}
@@ -216,11 +232,11 @@
                       {% endif %}
                       {# ARCHIVE USER #}
                       {% if user.archived %}
-                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                        <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
                         </div>
                       {% else %}
-                        <div class='dropdown-item' data-action='toggle-archive-user' data-userid='{{ user.userid }}'>
+                      <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
                         </div>
                       {% endif %}
@@ -313,8 +329,8 @@
         <div class='row mb-2'>
           {# EMAIL #}
           <div class='col-md-12'>
-            <label for='email' class='col-form-label'>{{ 'Search term'|trans }}</label>
-            <input class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
+            <label for='remote_dir_term' class='col-form-label'>{{ 'Search user'|trans }}</label>
+            <input id='remote_dir_term' class='form-control' placeholder='ada.lovelace@math.example.edu' type='text' name='remote_dir_query' value='{{ App.Request.query.get('remote_dir_query') }}' />
           </div>
         </div>
 

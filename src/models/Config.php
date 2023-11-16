@@ -136,6 +136,7 @@ final class Config implements RestInterface
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
             ('allow_useronly', 1),
+            ('admins_import_users', 0),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),
             ('min_days_revisions', 23),

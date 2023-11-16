@@ -871,6 +871,7 @@ the form-control fails to do that so we do the border ourselves */
     /* Only Status */
     &.status-btn {
         background-color: $firstlevel;
+        color: $mediumstrong;
 
         &:hover {
             background-color: $secondlevel;
@@ -1146,6 +1147,16 @@ input[type='color'] {
 .admin-badge {
     background-color: $lightblue;
     border: 1px solid $gold;
+    position: relative;
+
+    &::before {
+        color: $dangerred;
+        content: 'Admin';
+        left: 0;
+        font-size: 75%;
+        position: absolute;
+        top: -16px;
+    }
 }
 
 /* give the togglePassword some borders like input */

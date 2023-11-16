@@ -52,7 +52,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             'target' => 'team',
             'targetid' => 1,
         ));
-        $this->assertEquals(8, $targetCount);
+        $this->assertEquals(9, $targetCount);
         $this->assertIsArray($Notifications->readOne());
         $this->assertIsArray($Notifications->patch(Action::Update, array()));
         $this->assertIsString($Notifications->getPage());

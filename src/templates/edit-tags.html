@@ -12,7 +12,7 @@
   </div>
 </div>
 <div class='d-none d-sm-block mb-2 align-items-center mathjax-ignore'>
-  <label for='tags_div_suggestedtags_{{ Entity.id }}' class='col-form-label mr-3 edit-mode-label'>{{ 'Suggested tags'|trans }}</label>
+  <div class='col-form-label mr-3 edit-mode-label'>{{ 'Suggested tags'|trans }}</div>
   <div id='tags_div_suggestedtags_{{ Entity.id }}' class='mr-2 d-flex flex-wrap'>
     {% set filteredTags = [] %}
     {% for tag in teamTagsArr %}

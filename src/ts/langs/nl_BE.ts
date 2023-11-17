@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Geen titel",
     "entity-delete-warning": "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra velden",
     "filename": "Bestandsnaam",
     "generic-delete-warning": "Dit verwijderen?",

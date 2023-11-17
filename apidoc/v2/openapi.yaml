@@ -281,6 +281,8 @@ components:
           description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
+        custom_id:
+          type: integer
         date:
           type: string
         elabid:

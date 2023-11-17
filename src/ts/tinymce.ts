@@ -133,6 +133,7 @@ export function getTinymceBaseConfig(page: string): object {
     browser_spellcheck: true,
     // make it load the skin.min.css and content.min.css from there
     skin_url: '/assets',
+    content_css: '/assets/content.min.css',
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,

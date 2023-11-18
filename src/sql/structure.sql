@@ -869,7 +869,7 @@ CREATE TABLE `users` (
   `default_read` JSON NOT NULL,
   `default_write` JSON NOT NULL,
   `cjk_fonts` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `orderby` varchar(255) NOT NULL DEFAULT 'date',
+  `orderby` varchar(255) NOT NULL DEFAULT 'lastchange',
   `sort` varchar(255) NOT NULL DEFAULT 'desc',
   `use_markdown` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_sig` tinyint UNSIGNED NOT NULL DEFAULT 0,

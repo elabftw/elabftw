@@ -2934,7 +2934,7 @@ msgstr "depuis la base de données"
 
 #: src/templates/steps-links-view.html:107
 msgid "Related experiments"
-msgstr "Expériences liées"
+msgstr "Expériences connexes"
 
 #: src/templates/steps-links-view.html:145
 msgid "Show related experiments"
@@ -2942,7 +2942,7 @@ msgstr "Montrer les expériences liées"
 
 #: src/templates/steps-links-view.html:152
 msgid "Related items"
-msgstr "Items liés"
+msgstr "Items connexes"
 
 #: src/templates/steps-links-view.html:188
 msgid "Show related items"

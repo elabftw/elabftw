@@ -96,9 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return true;
     },
     // use the onEdit hook to set the correct selected option (because of the circle icon interference)
-    onEdit: async (original: HTMLElement, _: Event, input: HTMLSelectElement) => {
+    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
       // the options can be a promise, so we need to use await or its length will be 0 here
-      const opts = await input.options;
+      const opts = await (input as HTMLSelectElement).options;
       for (let i = 0; i < opts.length; i++) {
         if (opts.item(i).textContent === original.textContent.trim()) {
           opts.item(i).selected = true;

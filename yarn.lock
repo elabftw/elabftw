@@ -256,10 +256,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/malle@npm:^2.5.1":
-  version: 2.5.1
-  resolution: "@deltablot/malle@npm:2.5.1"
-  checksum: 6a369085bf5e23851dd07a4107ad88823c6ec63699835af36cbb716480e490af8de3a835c68bc6d8c58fd3b81b86cb3baeb922981b60aef5214ff0f17e5b9d0d
+"@deltablot/malle@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "@deltablot/malle@npm:2.5.2"
+  checksum: 124b2a652a85a97b82459949be0f33bfff0b59f00811f333788bf86eec8910364ba7afbdff2740cecf073965a59a4263c27a3861e7027c9980d17a9b0c1ed67d
   languageName: node
   linkType: hard
 
@@ -3453,7 +3453,7 @@ __metadata:
   dependencies:
     3dmol: "npm:^2.0.6"
     "@deltablot/chemdoodle-web-mini": "npm:^9.5.0"
-    "@deltablot/malle": "npm:^2.5.1"
+    "@deltablot/malle": "npm:^2.5.2"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.9"
     "@fullcalendar/core": "npm:^6.1.9"

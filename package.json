@@ -8,7 +8,7 @@
   "dependencies": {
     "3dmol": "^2.0.6",
     "@deltablot/chemdoodle-web-mini": "^9.5.0",
-    "@deltablot/malle": "^2.5.0",
+    "@deltablot/malle": "^2.5.1",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.9",
     "@fullcalendar/core": "^6.1.9",

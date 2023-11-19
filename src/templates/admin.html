@@ -273,7 +273,7 @@
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#resourcesCategoriesAnchor'><span class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>{{ itemType.title|raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#itemsCategoriesAnchor'><span class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>{{ itemType.title|raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>

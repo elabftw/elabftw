@@ -26,7 +26,7 @@
     </div>
     {% for teamGroup in teamGroupsArr %}
       <details>
-        <summary class='mb-3'>{{ teamGroup.name|raw }}</summary>
+        <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team|raw }}</span> {{ teamGroup.name|raw }}</summary>
         <ul>
       {% for user in teamGroup.users %}
         <li class='list-unstyled text-muted'>{{ user.fullname|raw }}</li>

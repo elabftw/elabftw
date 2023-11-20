@@ -8,6 +8,7 @@
  */
 declare global {
   interface Window {
+    /* eslint-disable-next-line */
     createVectorEditor: any;
   }
 }
@@ -21,6 +22,7 @@ import { Api } from './Apiv2.class';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(about: DOMStringMap): void {
+  /* eslint-disable-next-line */
   const editor: any = {};
   const ApiC = new Api();
   Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
@@ -76,6 +78,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
 
       const parsedSequence = parsedData[0].parsedSequence;
 
+      /* eslint-disable-next-line */
       const data: any = {};
       const convertToFeaturedDNASequence = function(openVESequence): void {
         data.sequenceData = {
@@ -151,6 +154,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           // e.clipboardData.getData('application/json')
         },
         // repurposed to save an image as new attachment of the current plasmid map
+        /* eslint-disable-next-line */
         onSave: function(opts = {} as any): void { // , sequenceDataToSave, editorState, onSuccessCallback could be used as parameter
           savePlasmidMapAsImage(opts);
         },

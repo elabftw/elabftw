@@ -59,6 +59,7 @@ export class MdEditor extends Editor implements EditorInterface {
     this.typeAsInt = 2;
   }
   init(): void {
+    /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
       onPreview: ed => {
         // ask mathjax to reparse the page

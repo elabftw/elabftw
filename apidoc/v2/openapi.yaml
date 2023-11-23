@@ -2806,7 +2806,7 @@ paths:
                      lastname:
                        type: string
                      orgid:
-                       type: integer
+                       type: string
                        nullable: true
                      email:
                        type: string

@@ -62,7 +62,7 @@
       <div class='input-group-prepend'>
         <button class='btn btn-secondary' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
       </div>
-      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' value='{{ Entity.entityData.custom_id }}' />
+      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
   </div>
 

@@ -31,11 +31,6 @@ $Response->prepare($Request);
 
 try {
     $Controller = new DatabaseController($App, new Items($App->Users));
-    // show nothing to anon if admin didn't set the DB as public
-    if ($App->Session->has('is_anon') && ($App->teamArr['public_db'] === 0)) {
-        throw new ImproperActionException(Tools::error(true));
-    }
-
     $Response = $Controller->getResponse();
 } catch (ImproperActionException $e) {
     // show message to user

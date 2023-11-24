@@ -12,6 +12,7 @@ namespace Elabftw\Enums;
 enum Language: string
 {
     case Catalan = 'ca_ES';
+    case Czech = 'cs_CZ';
     case German = 'de_DE';
     case EnglishGB = 'en_GB';
     case EnglishUS = 'en_US';
@@ -42,6 +43,7 @@ enum Language: string
     {
         return match ($value) {
             Language::Catalan => 'ca',
+            Language::Czech => 'cs',
             Language::German => 'de',
             Language::EnglishGB=> 'en-gb',
             Language::EnglishUS => 'en-us',
@@ -66,6 +68,7 @@ enum Language: string
     {
         return match ($value) {
             Language::Catalan => 'Spanish (Catalan)',
+            Language::Czech => 'Czech ',
             Language::German => 'German',
             Language::EnglishGB => 'English (UK/GB)',
             Language::EnglishUS => 'English (US)',

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp, notifError } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import { DateTime } from 'luxon';
@@ -186,6 +186,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
+
+    // GET NEXT CUSTOM ID
+    } else if (el.matches('[data-action="get-next-custom-id"]')) {
+      // fetch the category from the current value of select, as it might be different from the one on page load
+      const category = (document.getElementById('category_select') as HTMLSelectElement).value;
+      if (category === '0') {
+        notifError(new Error(i18next.t('error-no-category')));
+        return;
+      }
+      // make sure the current id is null or it will increment this one
+      EntityC.update(entity.id, Target.Customid, null);
+      // get the entity with highest custom_id and add one to it
+      ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`).then(json => {
+        const next_id = json[0].custom_id + 1;
+        (document.getElementById('custom_id_input') as HTMLInputElement).value = next_id;
+        EntityC.update(entity.id, Target.Customid, next_id);
+      });
 
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {

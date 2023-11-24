@@ -54,14 +54,17 @@ class Pins
     public function readAllSimple(): array
     {
         $sql = sprintf(
-            'SELECT %1$s.title, %1$s.id FROM pin_%1$s2users LEFT JOIN %1$s ON (entity_id = %1$s.id) WHERE users_id = :users_id',
+            'SELECT %1$s.id FROM pin_%1$s2users LEFT JOIN %1$s ON (entity_id = %1$s.id) WHERE users_id = :users_id',
             $this->Entity->type
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
 
         $this->Db->execute($req);
-        return $req->fetchAll();
+
+        $entity = clone $this->Entity;
+        $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
+        return $entity->readAll();
     }
 
     /**

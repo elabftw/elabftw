@@ -33,36 +33,10 @@ class EntityPruner implements CleanerInterface
      */
     public function cleanup(): int
     {
-        $sql = 'SELECT id FROM ' . $this->type->value . ' WHERE state = :state';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-
-        $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';
-        $req1 = $this->Db->prepare($sql);
-        $sql = 'DELETE FROM items_links WHERE link_id = :link_id';
-        $req2 = $this->Db->prepare($sql);
-        $sql = 'DELETE FROM pin_' . $this->type->value . '2users WHERE entity_id = :entity_id';
-        $req3 = $this->Db->prepare($sql);
-
-        $this->Db->execute($req);
-        foreach ($req->fetchAll() as $item) {
-            $req1->bindParam(':link_id', $item['id'], PDO::PARAM_INT);
-            $this->Db->execute($req1);
-            $req2->bindParam(':link_id', $item['id'], PDO::PARAM_INT);
-            $this->Db->execute($req2);
-            $req3->bindParam(':entity_id', $item['id'], PDO::PARAM_INT);
-            $this->Db->execute($req3);
-        }
-        $this->deleteFromDb();
-
-        return $req->rowCount();
-    }
-
-    private function deleteFromDb(): bool
-    {
         $sql = 'DELETE FROM ' . $this->type->value . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+        return $req->rowCount();
     }
 }

@@ -28,10 +28,10 @@ class AutoComplete {
     renderInput() {
       // for some reason the id attribute of the first span gets removed during insert, so we use a data attribute instead
         const rawHtml = `<span data-tiny-complete="1"><span id="autocomplete-delimiter">${this.options.delimiter}</span>
-            <span id="autocomplete-searchtext"><span class="dummy">\uFEFF</span></span></span>`;
+            <span data-tiny-complete-searchtext="1"><span class="dummy">\uFEFF</span></span></span>`;
         this.editor.execCommand('mceInsertContent', false, rawHtml);
         this.editor.focus();
-        this.editor.selection.select(this.editor.selection.dom.select('span#autocomplete-searchtext span')[0]);
+        this.editor.selection.select(this.editor.selection.dom.select('span[data-tiny-complete-searchtext="1"] span')[0]);
         this.editor.selection.collapse(0);
     }
 
@@ -146,7 +146,7 @@ class AutoComplete {
     }
 
     lookup() {
-        this.query = $.trim($(this.editor.getBody()).find('#autocomplete-searchtext').text()).replace('\ufeff', '');
+        this.query = this.editor.getBody().querySelector('[data-tiny-complete="1"]').textContent.replace('# ', '');
 
         if (this.$dropdown === undefined) {
             this.show();
@@ -247,7 +247,11 @@ class AutoComplete {
     }
 
     render(item) {
-        return `<li><a href="javascript:;"><span>${item.category} - ${item[this.options.queryBy]}</span></a></li>`;
+        let category = '';
+        if (item.category_title) {
+          category = `${item.category_title} - `;
+        }
+        return `<li><a href="javascript:;"><span>${category}${item[this.options.queryBy]}</span></a></li>`;
     }
 
     autoCompleteClick(e) {

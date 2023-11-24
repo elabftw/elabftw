@@ -299,6 +299,8 @@ export class Metadata {
       inputGroupDiv.appendChild(prependDiv);
       // now add the input
       inputGroupDiv.appendChild(element);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
       return inputGroupDiv;
     }
 
@@ -325,6 +327,8 @@ export class Metadata {
       // input first, then append div
       inputGroupDiv.appendChild(element);
       inputGroupDiv.appendChild(appendDiv);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
       return inputGroupDiv;
     }
 
@@ -344,6 +348,8 @@ export class Metadata {
       prependDiv.appendChild(iconWrapper);
       inputGroupDiv.appendChild(prependDiv);
       inputGroupDiv.appendChild(element);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
 
       return inputGroupDiv;
     }

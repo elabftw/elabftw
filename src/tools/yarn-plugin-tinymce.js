@@ -35,7 +35,7 @@ module.exports = {
                 break;
               }
             };
-            const checksum = project.storedChecksums.get(tinymceLocator) ?? null;
+            const checksum = project.storedChecksums.get(tinymceLocator.locatorHash) ?? null;
             const path = cache.getLocatorPath(tinymceLocator, checksum);
 
             const extractFile = (filename) => {

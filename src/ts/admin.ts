@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location') + '#resourcesCategoriesAnchor');
+        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location') + '#itemsCategoriesAnchor');
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {

@@ -39,9 +39,9 @@ class MpdfQrProvider implements IQRCodeProvider
     /**
      * Generate the png qr code
      */
-    public function getQRCodeImage(string $qrtext, int $size): string
+    public function getQRCodeImage(string $qrText, int $size): string
     {
-        $qrCode = new QrCode($qrtext);
+        $qrCode = new QrCode($qrText);
         $png = new Png();
         return $png->output($qrCode, $size, $this->background, $this->foreground, $this->compression);
     }

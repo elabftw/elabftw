@@ -6,7 +6,6 @@ describe('Experiments', () => {
 
   const entityEdit = () => {
     cy.url().should('include', 'mode=edit');
-
     // update date
     cy.get('#date_input').type('2021-05-01').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
@@ -79,6 +78,7 @@ describe('Experiments', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     entityEdit();
     // change status
     cy.get('#status_select').select('Success').blur();
@@ -92,7 +92,7 @@ describe('Experiments', () => {
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal').should('be.visible').should('contain', 'Generated').contains('Generated').click();
+    cy.get('#createModal_items').should('be.visible').should('contain', 'Generated').contains('Generated').click();
     entityEdit();
     cy.get('#category_select').select('Microscope').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

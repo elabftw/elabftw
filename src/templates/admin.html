@@ -94,10 +94,6 @@
   <div class='pl-3 mt-2'>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'public_db',
-      'label': 'Anonymous visitors can see database items'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'do_force_canread',
       'label': 'Enforce read permissions?'|trans,
       'help': 'Select if you want to enforce read permissions on experiments'|trans} %}
@@ -213,7 +209,7 @@
 {# TAB 4 CATEGORIES #}
 <div data-tabcontent='4' hidden>
   {# EXPERIMENTS CATEGORIES #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
+  <h3 id='experimentsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
   <div class='pl-3 mb-5' id='experiments_categoriesDiv'>
     <div class='mb-2 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
@@ -261,7 +257,7 @@
   </div>
 
   {# RESOURCES CATEGORIES #}
-  <h3 id='resourcesCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
+  <h3 id='itemsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
@@ -280,7 +276,7 @@
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#resourcesCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|raw }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title|raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|raw }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title|raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>

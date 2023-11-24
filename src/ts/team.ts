@@ -13,6 +13,7 @@ import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { Calendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';
+import csLocale from '@fullcalendar/core/locales/cs';
 import deLocale from '@fullcalendar/core/locales/de';
 import enLocale from '@fullcalendar/core/locales/en-gb';
 import esLocale from '@fullcalendar/core/locales/es';
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeSystem: 'bootstrap',
     // i18n
     // all available locales
-    locales: [ caLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
+    locales: [ caLocale, csLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
     locale: calendarEl.dataset.lang,
     initialView: 'timeGridWeek',

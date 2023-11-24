@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isPainting = true;
       addClick(e.clientX - rect.left, e.clientY - rect.top, false);
     }
-  });
+  }, {passive: false});
 
   doodleCanvas.addEventListener('mousemove', (e) => {
     e.preventDefault();
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
       addClick(e.clientX - rect.left, e.clientY - rect.top, true);
     }
-  });
+  }, {passive: false});
 
   doodleCanvas.addEventListener('mouseleave', (e) => {
     e.preventDefault();
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wasPainting = true;
       }
     }
-  });
+  }, {passive: false});
 
   doodleCanvas.addEventListener('mouseenter', (e) => {
     e.preventDefault();
@@ -139,13 +139,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
       addClick(e.clientX - rect.left, e.clientY - rect.top, false);
     }
-  });
+  }, {passive: false});
 
   doodleCanvas.addEventListener('mouseup', (e) => {
     e.preventDefault();
     isPainting = false;
     wasPainting = false;
-  });
+  }, {passive: false});
 
   /**
    * touch events
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isPainting = true;
       addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
     }
-  }, false);
+  }, {capture: false, passive: false});
 
   doodleCanvas.addEventListener('touchmove', (e) => {
     if (isPainting) {
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const touch = e.touches[0];
       addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
     }
-  }, false);
+  }, {capture: false, passive: false});
 
   doodleCanvas.addEventListener('touchend', (e) => {
     e.preventDefault();

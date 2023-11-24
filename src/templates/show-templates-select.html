@@ -44,7 +44,7 @@
                 <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></span>
               {{ template.title|raw }}</td>
           <td>
-            <span class='category-button rounded p-1' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>
+            <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>
           </td>
           <td>{{ template.modified_at }}</td>
           <td>{{ template.fullname|raw }}</td>

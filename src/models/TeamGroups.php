@@ -204,6 +204,7 @@ class TeamGroups implements RestInterface
     public function readGroupsWithUsersFromUser(): array
     {
         $sql = "SELECT team_groups_of_user.name,
+                teams.name AS team_name,
                 GROUP_CONCAT(users.userid ORDER BY users.userid) AS usersids,
                 GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.userid) AS fullnames
             FROM (
@@ -221,6 +222,7 @@ class TeamGroups implements RestInterface
                 users2team_groups.groupid = team_groups_of_user.id
             )
             LEFT JOIN users USING (userid)
+            LEFT JOIN teams ON (teams.id = team_groups_of_user.id)
             GROUP BY team_groups_of_user.id
             ORDER BY team_groups_of_user.name ASC";
 
@@ -232,6 +234,7 @@ class TeamGroups implements RestInterface
         while ($group = $req->fetch()) {
             $fullGroups[] = array(
                 'name' => $group['name'],
+                'team' => $group['team_name'],
                 'users' => array_map(
                     function (string $userid, ?string $fullname): array {
                         return array(

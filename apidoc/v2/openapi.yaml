@@ -272,9 +272,6 @@ components:
         category_title:
           type: string
           nullable: true
-        color:
-          type: string
-          nullable: true
         comments:
           type: array
           items:
@@ -284,6 +281,8 @@ components:
           description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
         created_at:
           type: string
+        custom_id:
+          type: integer
         date:
           type: string
         elabid:
@@ -318,10 +317,6 @@ components:
         locked_at:
           type: string
           nullable: true
-        mainattr_title:
-          type: string
-          nullable: true
-          description: The title of the status for experiments and category for resources.
         metadata:
           type: string
           nullable: true
@@ -550,13 +545,8 @@ components:
           type: string
         elabid:
           type: string
-        mainattr_title:
-          type: string
         is_bookable:
           type: integer
-        mainattr_color:
-          type: string
-          nullable: true
         link_state:
           type: integer
     notification:
@@ -662,8 +652,6 @@ components:
           type: string
         orgid:
           type: string
-        public_db:
-          type: integer
         force_canread:
           type: string
         force_canwrite:
@@ -2818,7 +2806,7 @@ paths:
                      lastname:
                        type: string
                      orgid:
-                       type: integer
+                       type: string
                        nullable: true
                      email:
                        type: string

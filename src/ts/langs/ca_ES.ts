@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra fields",
     "filename": "Nom de l'arxiu",
     "generic-delete-warning": "Eliminar això?",

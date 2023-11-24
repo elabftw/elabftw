@@ -35,6 +35,7 @@ import 'tinymce/plugins/template';
 import 'tinymce/plugins/visualblocks';
 import 'tinymce/plugins/visualchars';
 import '../js/tinymce-langs/ca_ES.js';
+import '../js/tinymce-langs/cs_CZ.js';
 import '../js/tinymce-langs/de_DE.js';
 import '../js/tinymce-langs/en_GB.js';
 import '../js/tinymce-langs/en_US.js';
@@ -132,6 +133,7 @@ export function getTinymceBaseConfig(page: string): object {
     browser_spellcheck: true,
     // make it load the skin.min.css and content.min.css from there
     skin_url: '/assets',
+    content_css: '/assets/content.min.css',
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,
@@ -170,6 +172,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
       {text: 'SQL', value: 'sql'},
+      {text: 'YAML', value: 'yaml'},
     ],
     codesample_global_prismjs: true,
     language: document.getElementById('user-prefs').dataset.lang,
@@ -195,13 +198,17 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
+        const format = entity => {
+          const category = entity.category_title ? `${entity.category_title} - `: '';
+          return `<span><a href='${entity.page}.php?mode=view&id=${entity.id}'>${category}${selected.title}</a></span>`;
+        };
         if (selected.type === 'items') {
           ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElement('linksDiv'));
         }
         if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
           ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElement('linksExpDiv'));
         }
-        return `<span><a href='${selected.page}.php?mode=view&id=${selected.id}'>${selected.type === 'experiments' ? 'Experiment' : selected.mainattr_title} - ${selected.title}</a></span>`;
+        return format(selected);
       },
     },
     mobile: {

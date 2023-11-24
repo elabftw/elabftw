@@ -53,6 +53,19 @@
     </div>
   </div>
 
+  {# ID + CUSTOM ID #}
+  <div class='d-flex mb-2 justify-content-between align-items-center'>
+    <label for='id_input' class='col-form-label mr-3 edit-mode-label'>{{ 'ID'|trans }}</label>
+    <input id='id_input' class='form-control' type='text' disabled value='{{ Entity.entityData.id }}' />
+    <label for='custom_id_input' class='col-form-label mx-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
+    <div class='input-group justify-content-end flex-nowrap'>
+      <div class='input-group-prepend'>
+        <button class='btn btn-secondary' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
+      </div>
+      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' value='{{ Entity.entityData.custom_id }}' />
+    </div>
+  </div>
+
   {# TITLE #}
   <div class='d-flex mb-2 justify-content-between align-items-center'>
     <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>

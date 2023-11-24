@@ -157,7 +157,7 @@ class DisplayParams
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
             $this->searchType = 'tags';
         }
-        // now get pref from the filter-order-sort menu
+        // now get ordering/sorting parameters from the query string
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
         $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
 

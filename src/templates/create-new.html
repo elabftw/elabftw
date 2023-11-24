@@ -36,10 +36,6 @@
         </div>
       </div>
     </div>
-    {% if entityType == 'experiments' %}
-      <button type='button' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-    {% else %}
-      <button type='button' data-action='toggle-modal' data-target='createModal' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-    {% endif %}
+    <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityType }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
   </div>
 {% endif %}

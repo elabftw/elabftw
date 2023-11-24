@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "generic-delete-warning": "Hapus ini?",

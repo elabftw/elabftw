@@ -46,7 +46,7 @@ class App
 
     public const INSTALLED_VERSION = '5.0.0-alpha';
 
-    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-490/';
+    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-500/';
 
     public Users $Users;
 

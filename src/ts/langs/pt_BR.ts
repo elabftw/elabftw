@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "No momento, você está editando os metadados anexados a este registro.",
     "entity-default-title": "Sem título",
     "entity-delete-warning": "Os items selecionados e todos os dados associados a eles serão permanentemente deletados. Não vai ter jeito de voltar atrás. Tem certeza?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Campos extra",
     "filename": "Nome do arquivo",
     "generic-delete-warning": "Deletar isso aqui?",

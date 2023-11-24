@@ -27,14 +27,14 @@ class UserArchiver
         $this->Db = Db::getConnection();
     }
 
-    public function toggleArchive(): array
+    public function toggleArchive(bool $lockExp = false): array
     {
-        $this->target->userData['archived'] === 0 ? $this->archive() : $this->unarchive();
+        $this->target->userData['archived'] === 0 ? $this->archive($lockExp) : $this->unarchive();
         $this->toggleArchiveSql();
         return $this->target->readOne();
     }
 
-    private function archive(): bool
+    private function archive(bool $lockExp = false): bool
     {
         if ($this->target->userData['validated'] === 0) {
             throw new ImproperActionException('You are trying to archive an unvalidated user. Maybe you want to delete the account?');
@@ -42,8 +42,8 @@ class UserArchiver
         if ($this->target->userData['is_sysadmin'] === 1) {
             throw new ImproperActionException('A sysadmin account cannot be archived.');
         }
-        // if we are archiving a user, also lock all experiments
-        return $this->lockAndArchiveExperiments();
+        // if we are archiving a user, also lock all experiments (if asked)
+        return $lockExp ? $this->lockAndArchiveExperiments() : true;
     }
 
     private function unarchive(): bool

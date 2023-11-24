@@ -125,6 +125,9 @@
                       <button type='button' data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
                         <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
                     </div>
+                    <i class='fas fa-link mr-1'></i>
+                    <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+                    {{ link.title|raw }}</a>
                     {# container to hold the body of the entity if it is toggled with the +/- icon #}
                     {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
                     <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
@@ -183,6 +186,9 @@
                     <button type='button' data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
                       <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
                   </div>
+                  <i class='fas fa-link mr-1'></i>
+                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='database.php?mode=view&id={{ link.itemid }}'>
+                  {{ link.title|raw }}</a>
                   {# container to hold the body of the entity if it is toggled with the +/- icon #}
                   {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
                   <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>

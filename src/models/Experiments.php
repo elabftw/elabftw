@@ -15,7 +15,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -103,10 +102,12 @@ class Experiments extends AbstractConcreteEntity
         // enforce the permissions if the admin has set them
         $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : $canread;
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
+        // figure out the custom id
+        $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
@@ -116,6 +117,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':canread', $canread, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
         $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -152,9 +154,11 @@ class Experiments extends AbstractConcreteEntity
 
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
+        // figure out the custom id
+        $customId = $this->getNextCustomId((int) $this->entityData['category']);
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, userid, metadata, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :content_type)';
+        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
+            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
@@ -164,6 +168,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -183,9 +188,6 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
-        if ($this->entityData['timestamped'] === 1) {
-            throw new IllegalActionException('User tried to delete an experiment that was timestamped.');
-        }
         $Teams = new Teams($this->Users);
         $teamConfigArr = $Teams->readOne();
         $Config = Config::getConfig();
@@ -204,6 +206,19 @@ class Experiments extends AbstractConcreteEntity
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
+    }
+
+    protected function getNextCustomId(int $category): ?int
+    {
+        $sql = 'SELECT custom_id FROM experiments WHERE custom_id IS NOT NULL AND category = :category ORDER BY custom_id DESC LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res === false || $res['custom_id'] === null) {
+            return null;
+        }
+        return ++$res['custom_id'];
     }
 
     private function getTimestampMaker(array $config): MakeTimestampInterface

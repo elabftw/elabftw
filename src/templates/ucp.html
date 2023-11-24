@@ -243,7 +243,7 @@
     <div class='d-flex justify-content-between'>
       <label for='use_isodate' class='col-form-label'>{{ 'Use ISO datetime in the text editor instead of localized one'|trans }}</label>
       <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_isodate' {{ App.Users.userData.cjk_use_isodate == 1 ? 'checked="checked"' }} id='use_isodate'>
+        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_isodate' {{ App.Users.userData.use_isodate == 1 ? 'checked="checked"' }} id='use_isodate'>
         <span class='slider'></span>
       </label>
     </div>

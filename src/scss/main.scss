@@ -401,6 +401,16 @@ button:disabled {
     }
 }
 
+/* color one row every other row */
+tr:nth-child(even) {
+    background-color: $white;
+}
+
+tr:nth-child(odd) {
+    background-color: $mainbackground;
+}
+
+
 /* TABLE SHOW MODE */
 .item-table {
     .title {

@@ -9,14 +9,14 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\AuditEvent\UserLogin;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -49,9 +49,7 @@ class LoginHelper
         if ($this->Session->has('auth_service')) {
             $this->updateAuthService();
         }
-        $Log = new Logger('elabftw');
-        $Log->pushHandler(new ErrorLogHandler());
-        $Log->info('User is logging in', array('userid' => $this->AuthResponse->userid));
+        AuditLogs::create(new UserLogin($this->AuthResponse->userid));
     }
 
     /**

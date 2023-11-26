@@ -10,12 +10,15 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\AuditEvent\PasswordResetRequested;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Services\Email;
@@ -89,9 +92,8 @@ try {
         ->text($textBody . $Email->footer);
         $Email->send($message);
 
-        // log the IP for the sysadmin to know who requested it
-        // it's also good to keep a trace of such requests
-        $App->Log->info('Password reset was requested', array('email' => $email));
+        // keep a trace of the request
+        AuditLogs::create(new PasswordResetRequested($email));
         // show the same message as if the email didn't exist in the db
         // this is done to prevent information disclosure
         throw new QuantumException(_('If the account exists, an email has been sent.'));
@@ -104,7 +106,6 @@ try {
         $Users = $ResetPasswordKey->validate($Request->request->getString('key'));
         // Replace new password in database
         $Users->resetPassword($Request->request->getString('password'));
-        $App->Log->info('Password was changed for this user', array('userid' => $Users->userData['userid']));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (QuantumException $e) {

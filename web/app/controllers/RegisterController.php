@@ -42,7 +42,7 @@ try {
     }
 
     // Create user
-    $userid = $App->Users->createOne(
+    $App->Users->createOne(
         (new UserParams('email', (string) $Request->request->get('email')))->getContent(),
         array($Request->request->get('team')),
         (new UserParams('firstname', (string) $Request->request->get('firstname')))->getContent(),

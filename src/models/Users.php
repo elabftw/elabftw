@@ -546,6 +546,7 @@ class Users implements RestInterface
             if ($this->requester->userData['is_sysadmin'] === 0) {
                 throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
             }
+            /** @psalm-suppress PossiblyNullArgument */
             AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 

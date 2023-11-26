@@ -15,6 +15,7 @@ class PasswordResetRequested extends AbstractAuditEvent
 {
     public function __construct(private string $email)
     {
+        parent::__construct();
     }
 
     public function getBody(): string

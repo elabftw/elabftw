@@ -23,6 +23,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -599,7 +600,16 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        // custom_id could be used twice unintentionally
+        try {
+            return $this->Db->execute($req);
+        } catch (DatabaseErrorException $e) {
+            $PdoException = $e->getPrevious();
+            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
+                throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
+            }
+            throw new DatabaseErrorException($e);
+        }
     }
 
     private function getFullnameFromUserid(int $userid): string

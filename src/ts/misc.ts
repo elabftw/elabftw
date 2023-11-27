@@ -53,6 +53,9 @@ export function listenTrigger(): void {
   document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
     el.addEventListener(el.dataset.trigger, event => {
       event.preventDefault();
+      if (el.dataset.target === 'custom_id') {
+        el.classList.remove('is-invalid');
+      }
       // for a checkbox element, look at the checked attribute, not the value
       let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.customAction === 'patch-user2team-is-owner') {
@@ -77,6 +80,10 @@ export function listenTrigger(): void {
             // make sure we listen to the new element too
             listenTrigger();
           });
+        }
+      }).catch(error => {
+        if (el.dataset.target === 'custom_id' && error.message === i18next.t('custom-id-in-use')) {
+          el.classList.add('is-invalid');
         }
       });
     });

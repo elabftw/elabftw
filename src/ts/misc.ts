@@ -7,7 +7,7 @@
  */
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol';
-import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
+import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -53,9 +53,7 @@ export function listenTrigger(): void {
   document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
     el.addEventListener(el.dataset.trigger, event => {
       event.preventDefault();
-      if (el.dataset.target === 'custom_id') {
-        el.classList.remove('is-invalid');
-      }
+      el.classList.remove('is-invalid');
       // for a checkbox element, look at the checked attribute, not the value
       let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.customAction === 'patch-user2team-is-owner') {
@@ -82,7 +80,7 @@ export function listenTrigger(): void {
           });
         }
       }).catch(error => {
-        if (el.dataset.target === 'custom_id' && error.message === i18next.t('custom-id-in-use')) {
+        if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
           el.classList.add('is-invalid');
         }
       });

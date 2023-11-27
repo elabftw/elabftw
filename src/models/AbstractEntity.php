@@ -608,7 +608,7 @@ abstract class AbstractEntity implements RestInterface
             if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
-            throw new DatabaseErrorException($e);
+            throw $e;
         }
     }
 

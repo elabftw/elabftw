@@ -3098,7 +3098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress-html-validate@npm:^6.0.0":
+"cypress-html-validate@npm:^6.1.0":
   version: 6.1.0
   resolution: "cypress-html-validate@npm:6.1.0"
   peerDependencies:
@@ -3108,9 +3108,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^13.5.1":
-  version: 13.5.1
-  resolution: "cypress@npm:13.5.1"
+"cypress@npm:^13.6.0":
+  version: 13.6.0
+  resolution: "cypress@npm:13.6.0"
   dependencies:
     "@cypress/request": "npm:^3.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3157,7 +3157,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 1fd0ca6c9e13be8ff7a4a3b83bf3ac0cc845b447881620071aff776de38fb1a1df9cfbebbf35e5d22fffda6d84f05d6c3d7ac75131bc1624720a96737e4aee2c
+  checksum: 03d6984e818bd55e73a8fdb36d652dee1e4482b115f64aa0c4df486a1d35a31e2cc053bb161ae1ba9409dc06cbd79d9db31034f6e29d4c6d87c5193abf5ca44e
   languageName: node
   linkType: hard
 
@@ -3511,13 +3511,13 @@ __metadata:
     bootstrap-select: "npm:^1.13.18"
     css-loader: "npm:^6.8.1"
     css-minimizer-webpack-plugin: "npm:^5.0.1"
-    cypress: "npm:^13.5.1"
-    cypress-html-validate: "npm:^6.0.0"
+    cypress: "npm:^13.6.0"
+    cypress-html-validate: "npm:^6.1.0"
     diff-match-patch: "npm:^1.0.5"
     dropzone: "npm:^5.9.3"
     eslint: "npm:^8.54.0"
     expose-loader: "npm:^4.1.0"
-    html-validate: "npm:^8.3.0"
+    html-validate: "npm:^8.7.3"
     i18next: "npm:^23.7.6"
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.13.2"
@@ -4639,9 +4639,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:^8.3.0":
-  version: 8.7.0
-  resolution: "html-validate@npm:8.7.0"
+"html-validate@npm:^8.7.3":
+  version: 8.7.3
+  resolution: "html-validate@npm:8.7.3"
   dependencies:
     "@babel/code-frame": "npm:^7.10.0"
     "@html-validate/stylish": "npm:^4.1.0"
@@ -4649,7 +4649,7 @@ __metadata:
     ajv: "npm:^8.0.0"
     deepmerge: "npm:4.3.1"
     glob: "npm:^10.0.0"
-    ignore: "npm:5.2.4"
+    ignore: "npm:5.3.0"
     kleur: "npm:^4.1.0"
     minimist: "npm:^1.2.0"
     prompts: "npm:^2.0.0"
@@ -4670,7 +4670,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.js
-  checksum: 64a5a7f1daee15ccef6e79ca2c3e881208b7613ab8eabd3d6ceee67667159a3e873ee83798c6614f6220ee6c5be1de1d2a20229bb83bc7e449fcc74bc5e89621
+  checksum: c63abfa689cfee6b14e03c2e81e3431399bd747071714d124fe982d2b57f15e8ec64b1805cc871eacab0560f1cdddc01432083f272bdbcfb6e3f349d895b9fc8
   languageName: node
   linkType: hard
 
@@ -4783,7 +4783,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:5.2.4, ignore@npm:^5.2.0, ignore@npm:^5.2.4":
+"ignore@npm:5.3.0":
+  version: 5.3.0
+  resolution: "ignore@npm:5.3.0"
+  checksum: dc06bea5c23aae65d0725a957a0638b57e235ae4568dda51ca142053ed2c352de7e3bc93a69b2b32ac31966a1952e9a93c5ef2e2ab7c6b06aef9808f6b55b571
+  languageName: node
+  linkType: hard
+
+"ignore@npm:^5.2.0, ignore@npm:^5.2.4":
   version: 5.2.4
   resolution: "ignore@npm:5.2.4"
   checksum: 7c7cd90edd9fea6e037f9b9da4b01bf0a86b198ce78345f9bbd983929d68ff14830be31111edc5d70c264921f4962404d75b7262b4d9cc3bc12381eccbd03096

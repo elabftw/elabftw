@@ -9,6 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\IsSysadminChanged;
+use Elabftw\AuditEvent\PasswordChanged;
+use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -178,6 +181,7 @@ class Users implements RestInterface
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
+        AuditLogs::create(new UserRegister($userid));
         return $userid;
     }
 
@@ -320,7 +324,7 @@ class Users implements RestInterface
                     $team = (int) $params['team'];
                     $TeamsHelper = new TeamsHelper($team);
                     $permissions = $TeamsHelper->getPermissions($this->requester->userData['userid']);
-                    if ($permissions['is_admin'] !== 1) {
+                    if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     (new Users2Teams())->create($this->userData['userid'], $team);
@@ -538,8 +542,12 @@ class Users implements RestInterface
             Filter::email($params->getContent());
         }
         // special case for is_sysadmin: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin' && $this->requester->userData['is_sysadmin'] === 0) {
-            throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+        if ($params->getTarget() === 'is_sysadmin') {
+            if ($this->requester->userData['is_sysadmin'] === 0) {
+                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+            }
+            /** @psalm-suppress PossiblyNullArgument */
+            AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
@@ -568,7 +576,10 @@ class Users implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        /** @psalm-suppress PossiblyNullArgument */
+        AuditLogs::create(new PasswordChanged($this->userid));
+        return $res;
     }
 
     /**

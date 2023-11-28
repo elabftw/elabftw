@@ -993,7 +993,8 @@ ALTER TABLE `api_keys`
 ALTER TABLE `experiments`
   ADD KEY `fk_experiments_users_userid` (`userid`),
   ADD KEY `idx_experiments_state` (`state`),
-  ADD KEY `fk_experiments_status_id` (`status`);
+  ADD KEY `fk_experiments_status_id` (`status`),
+  ADD UNIQUE `unique_experiments_custom_id` (`category`, `custom_id`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -1021,7 +1022,8 @@ ALTER TABLE `experiments_steps`
 ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`),
   ADD KEY `idx_experiments_templates_state` (`state`),
-  ADD KEY `fk_experiments_templates_users_userid` (`userid`);
+  ADD KEY `fk_experiments_templates_users_userid` (`userid`),
+  ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
 
 ALTER TABLE `experiments_templates_changelog`
   ADD KEY `fk_experiments_templates_changelog2experiments_templates_id` (`entity_id`),
@@ -1042,7 +1044,8 @@ ALTER TABLE `items`
   ADD KEY `fk_items_teams_id` (`team`),
   ADD KEY `idx_items_state` (`state`),
   ADD KEY `fk_items_items_types_id` (`category`),
-  ADD KEY `fk_items_users_userid` (`userid`);
+  ADD KEY `fk_items_users_userid` (`userid`),
+  ADD UNIQUE `unique_items_custom_id` (`category`, `custom_id`);
 
 ALTER TABLE `items_changelog`
   ADD KEY `fk_items_changelog2items_id` (`entity_id`),
@@ -1062,7 +1065,8 @@ ALTER TABLE `items_comments`
 --
 ALTER TABLE `items_types`
   ADD KEY `fk_items_types_teams_id` (`team`),
-  ADD KEY `idx_items_types_state` (`state`);
+  ADD KEY `idx_items_types_state` (`state`),
+  ADD UNIQUE `unique_items_types_custom_id` (`id`, `custom_id`);
 
 ALTER TABLE `items_types_changelog`
   ADD KEY `fk_items_types_changelog2items_types_id` (`entity_id`),

@@ -31,6 +31,7 @@ const t = {
     "today": "Heute",
     "undefined-group": "Unbestimmte Gruppe",
     "upload-file-comment": "Dateikommentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

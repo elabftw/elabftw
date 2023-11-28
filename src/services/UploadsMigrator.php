@@ -46,12 +46,25 @@ class UploadsMigrator
         return count($localFiles);
     }
 
+    public function fixBodies(): void
+    {
+        $this->fixBody('experiments');
+        $this->fixBody('items');
+    }
+
+    private function fixBody(string $table): bool
+    {
+        $sql = sprintf('UPDATE %s SET body = REPLACE(body, "storage=%d", "storage=%d")', $table, Storage::LOCAL->value, Storage::S3->value);
+        $req = $this->Db->prepare($sql);
+        return $this->Db->execute($req);
+    }
+
     /**
      * Get an array of uploads stored locally
      */
     private function findLocal(): array
     {
-        $sql = 'SELECT * FROM uploads WHERE storage = :storage';
+        $sql = 'SELECT long_name, id FROM uploads WHERE storage = :storage';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':storage', Storage::LOCAL->value);
         $this->Db->execute($req);

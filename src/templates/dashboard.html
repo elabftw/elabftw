@@ -52,7 +52,7 @@
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
-      {% for category in categoryArr %}
+      {% for category in itemsCategoryArr %}
       <a href='database.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='catstat-btn category-btn  mr-2'>{{ category.title|raw }}</a>
       {% endfor %}
     </div>

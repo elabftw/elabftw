@@ -24,7 +24,7 @@
             {{ 'Manage templates'|trans }}
           </a>
         {% else %}
-          {% for category in categoryArr %}
+          {% for category in itemsCategoryArr %}
             <div data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='dropdown-item' style='color:#{{ category.color }}'>
               {{ category.title|raw }}
             </div>

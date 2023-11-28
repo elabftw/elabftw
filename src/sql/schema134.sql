@@ -6,4 +6,4 @@ CREATE TABLE `audit_logs` (
     `category` INT UNSIGNED NOT NULL,
     `userid` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`));
-UPDATE config SET conf_value = 133 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 134 WHERE conf_name = 'schema';

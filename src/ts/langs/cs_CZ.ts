@@ -31,6 +31,7 @@ const t = {
     "today": "Dnes",
     "undefined-group": "Nedefinovaná skupina",
     "upload-file-comment": "Komentář k souboru",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

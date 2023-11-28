@@ -31,6 +31,7 @@ const t = {
     "today": "今天",
     "undefined-group": "默认分组",
     "upload-file-comment": "档案评论",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

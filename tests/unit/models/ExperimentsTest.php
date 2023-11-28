@@ -14,6 +14,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -149,5 +150,16 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments);
         $res = $this->Experiments->readShow($displayParams);
         $this->assertEquals(1, $res[0]['id']);
+    }
+
+    public function testReuseCustomId(): void
+    {
+        $newExperiment = $this->Experiments->create();
+        $this->Experiments->setId($newExperiment);
+        $this->Experiments->patch(Action::Update, array('category' => 3, 'custom_id' => 99));
+        $copy = $this->Experiments->postAction(Action::Duplicate, array());
+        $this->Experiments->setId($copy);
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->patch(Action::Update, array('custom_id' => 99));
     }
 }

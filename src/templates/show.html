@@ -83,8 +83,8 @@
       {% endif %}
 
       {# CATEGORY #}
-              <option value=''>{{ 'Filter category'|trans }}</option>
       <select name='cat' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter category'|trans }}'>
+        <option value=''>{{ 'Filter category'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
           {{ category.title|raw }}</option>
@@ -93,7 +93,7 @@
 
       {# STATUS #}
       <select name='status' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter status'|trans }}'>
-        <option value='' aria-label='{{ 'Reset this filter'|trans }}'>{{ 'Filter status'|trans }}</option>
+        <option value=''>{{ 'Filter status'|trans }}</option>
         {% for status in statusArr %}
           <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected' }}>
           {{ status.title|raw }}</option>
@@ -102,7 +102,7 @@
 
       {# OWNER filter #}
       <select name='owner' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter owner'|trans }}'>
-        <option value='' aria-label='{{ 'Reset this filter'|trans }}'>{{ 'Filter owner'|trans }}</option>
+        <option value=''>{{ 'Filter owner'|trans }}</option>
         {% for user in usersArr %}
           <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
           {{ user.fullname|raw }}</option>
@@ -112,7 +112,7 @@
       {% if not searchPage %}
         {# VISIBILITY filter #}
         <select name='extended' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter visibility'|trans }}'>
-          <option value='' aria-label='{{ 'Reset this filter'|trans }}'>{{ 'Filter visibility'|trans }}</option>
+          <option value=''>{{ 'Filter visibility'|trans }}</option>
           {% for vis in visibilityArr %}
           <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
             {{ vis|raw }}</option>
@@ -128,7 +128,7 @@
         {% set thelimit = App.Users.userData.limit_nb %}
       {% endif %}
       <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Results per page'|trans }}'>
-        <option value='' aria-label='{{ 'Reset this filter'|trans }}'>{{ 'Results per page'|trans }}</option>
+        <option value=''>{{ 'Results per page'|trans }}</option>
         {% for option in limitOptions(DisplayParams.limit) %}
           <option{{ option == thelimit ? ' selected' }} value='{{ option }}'>{{ option }}</option>
         {% endfor %}

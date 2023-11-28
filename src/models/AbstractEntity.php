@@ -634,10 +634,14 @@ abstract class AbstractEntity implements RestInterface
      */
     private function updateJsonField(string $key, string|array $value): bool
     {
+        $Changelog = new Changelog($this);
+        $valueAsString = $value;
+        if (is_array($value)) {
+            $valueAsString = implode(', ', $value);
+        }
+        $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 
-        $Changelog = new Changelog($this);
-        $Changelog->create(new ContentParams('metadata_' . $key, $value));
 
         // build jsonPath to field
         $field = sprintf(

@@ -1,4 +1,4 @@
--- schema 133
+-- schema 134
 CREATE TABLE `audit_logs` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

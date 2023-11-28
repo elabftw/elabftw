@@ -3506,7 +3506,6 @@ __metadata:
     "@yarnpkg/core": "npm:^4.0.2"
     "@yarnpkg/fslib": "npm:^3.0.1"
     "@yarnpkg/libzip": "npm:^3.0.0"
-    ajv: "npm:^6.12.6"
     bootstrap: "npm:^4.6.2"
     bootstrap-markdown-fa5: "npm:^2.10.2"
     bootstrap-select: "npm:^1.13.18"

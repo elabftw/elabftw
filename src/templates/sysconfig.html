@@ -50,6 +50,7 @@
   <li data-action='switch-tab' data-tabtarget='10'>SAML</li>
   <li data-action='switch-tab' data-tabtarget='11'>LDAP</li>
   <li data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</li>
+  <li data-action='switch-tab' data-tabtarget='13'>{{ 'Audit Logs'|trans }}</li>
 </ul>
 
 {# loading spinner #}
@@ -991,6 +992,31 @@
   </div>
 </div>
 
+<div data-tabcontent='13' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <p>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>
+    <table id='auditLogsTable' class='table' aria-label='audit logs table' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'Category'|trans }}</th>
+          <th scope='col'>{{ 'Created at'|trans }}</th>
+          <th scope='col'>{{ 'Content'|trans }}</th>
+          <th scope='col'>{{ 'Userid'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in auditLogsArr %}
+          <tr>
+            <td>{{ log.category }}</td>
+            <td><span class='relative-moment' title='{{ log.created_at }}'></span></td>
+            <td>{{ log.body }}</td>
+            <td>{% if log.userid != 0 %}<a class='p-1 rounded hl-hover-gray' href='?tab=3&q=&userid={{ log.userid }}'>{{ log.userid }}</a>{% else %}<span class='p-1'>−</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
 <div id='info' data-page='sysconfig'></div>
 {% endblock body %}

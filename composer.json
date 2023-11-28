@@ -64,6 +64,9 @@
   },
   "autoload": {
     "psr-4": {
+      "Elabftw\\AuditEvent\\": [
+        "src/AuditEvent"
+      ],
       "Elabftw\\Auth\\": [
         "src/Auth"
       ],

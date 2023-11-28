@@ -195,13 +195,22 @@ document.addEventListener('DOMContentLoaded', () => {
         notifError(new Error(i18next.t('error-no-category')));
         return;
       }
+      const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
+      inputEl.classList.remove('is-invalid');
+      // lock the button
+      const button = el as HTMLButtonElement;
+      button.disabled = true;
       // make sure the current id is null or it will increment this one
-      EntityC.update(entity.id, Target.Customid, null);
-      // get the entity with highest custom_id and add one to it
-      ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`).then(json => {
-        const next_id = json[0].custom_id + 1;
-        (document.getElementById('custom_id_input') as HTMLInputElement).value = next_id;
-        EntityC.update(entity.id, Target.Customid, next_id);
+      EntityC.update(entity.id, Target.Customid, null).then(() => {
+        // get the entity with highest custom_id
+        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`);
+      }).then(json => {
+        const nextId = json[0].custom_id + 1;
+        inputEl.value = nextId;
+        return EntityC.update(entity.id, Target.Customid, nextId);
+      }).finally(() => {
+        // unlock the button
+        button.disabled = false;
       });
 
     // CLICK the NOW button of a time or date extra field

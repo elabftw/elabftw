@@ -1,20 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * sysconfig.php
- *
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
@@ -68,6 +67,12 @@ try {
             $UsersHelper = new UsersHelper((int) $user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
         }
+        // further filter if userid is present
+        if ($App->Request->query->has('userid')) {
+            $usersArr = array_filter($usersArr, function ($u) use ($App) {
+                return $u['userid'] === $App->Request->query->getInt('userid');
+            });
+        }
     }
 
     // Remote directory search
@@ -113,10 +118,14 @@ try {
     );
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
-
+    $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
+    array_walk($auditLogsArr, function (&$event) {
+        $event['category'] = AuditCategory::from($event['category'])->name;
+    });
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
+        'auditLogsArr' => $auditLogsArr,
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,

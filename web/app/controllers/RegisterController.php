@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -56,9 +57,6 @@ try {
     }
     // store the email here so we can put it in the login field
     $App->Session->set('email', $Request->request->get('email'));
-
-    // log user creation
-    $App->Log->info('New user created from register page.');
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

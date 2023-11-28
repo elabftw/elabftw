@@ -31,6 +31,7 @@ const t = {
     "today": "Hari ini",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

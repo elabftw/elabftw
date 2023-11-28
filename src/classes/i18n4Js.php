@@ -60,6 +60,7 @@ class i18n4Js
             'today' => _('Today'),
             'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
+            'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
         );
     }
 

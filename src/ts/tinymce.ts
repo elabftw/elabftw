@@ -141,7 +141,7 @@ export function getTinymceBaseConfig(page: string): object {
     //resize: true,
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
-    toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
+    toolbar1: 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
     removed_menuitems: 'newdocument, image, anchor',
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended

@@ -142,10 +142,10 @@
     <div class='d-flex justify-content-between'>
       {# setting added for WCAG2.1 2.1.4 Character Key Shortcuts https://www.w3.org/TR/WCAG21/#character-key-shortcuts #}
       <label for='disable_shortcuts' class='col-form-label'>{{ 'Disable all shortcuts'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='disable_shortcuts' {{ App.Users.userData.disable_shortcuts == 1 ? 'checked="checked"' }} id='disable_shortcuts'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
 
   </div>
@@ -168,37 +168,37 @@
         <label for='cjk_fonts' class='col-form-label'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation'|trans }}</label>
         <p class='smallgray'>{{ 'WARNING: this will dramatically increase the file size unless you disable PDF/A'|trans }}</p>
       </div>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='cjk_fonts' {{ App.Users.userData.cjk_fonts == 1 ? 'checked="checked"' }} id='cjk_fonts'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='inc_files_pdf' class='col-form-label'>{{ 'Add attached files summary to the PDF'|trans }}</label>
-      <span class='switch ucp-align' title='{{ 'Add attached files summary to the PDF'|trans }}'>
+      <label class='switch ucp-align' title='{{ 'Add attached files summary to the PDF'|trans }}'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='inc_files_pdf' {{ App.Users.userData.inc_files_pdf == 1 ? 'checked="checked"' }} id='inc_files_pdf'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='append_pdfs' class='col-form-label'>{{ 'Append attached PDFs to exported PDF'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='append_pdfs' {{ App.Users.userData.append_pdfs == 1 ? 'checked="checked"' }} id='append_pdfs'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='pdf_sig' class='col-form-label'>{{ 'Enable french style signature block in PDF Export'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='pdf_sig' {{ App.Users.userData.pdf_sig == 1 ? 'checked="checked"' }} id='pdf_sig'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
   </div>
 
@@ -206,46 +206,46 @@
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='show_team' class='col-form-label'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team' {{ App.Users.userData.show_team == 1 ? 'checked="checked"' }} id='show_team'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='show_team_templates' class='col-form-label'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team_templates' {{ App.Users.userData.show_team_templates == 1 ? 'checked="checked"' }} id='show_team_templates'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='show_public' class='col-form-label'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_public' {{ App.Users.userData.show_public == 1 ? 'checked="checked"' }} id='show_public'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='use_markdown' class='col-form-label'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_markdown' {{ App.Users.userData.use_markdown == 1 ? 'checked="checked"' }} id='use_markdown'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='use_isodate' class='col-form-label'>{{ 'Use ISO datetime in the text editor instead of localized one'|trans }}</label>
-      <span class='switch ucp-align'>
+      <label class='switch ucp-align'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_isodate' {{ App.Users.userData.use_isodate == 1 ? 'checked="checked"' }} id='use_isodate'>
         <span class='slider'></span>
-      </span>
+      </label>
     </div>
     <hr>
 

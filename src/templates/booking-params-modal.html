@@ -11,7 +11,7 @@
       <div class='modal-body'>
         {# Is bookable? #}
         <div class='d-flex justify-content-between mb-2'>
-          <div class='d-inline mr-1' for='isBookableSwitch'><p>{{ 'Allow booking this resource'|trans }}</p></div>
+          <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow booking this resource'|trans }}'>
             <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
@@ -19,7 +19,7 @@
         </div>
         {# OVERLAP #}
         <div class='d-flex justify-content-between mb-2'>
-          <div class='d-inline mr-1' for='isOverlapableSwitch'><p>{{ 'Allow overlapping slots'|trans }}</p></div>
+          <label class='d-inline mr-1' for='isOverlapableSwitch'>{{ 'Allow overlapping slots'|trans }}</label>
           <label class='switch' title='{{ 'Allow overlapping slots'|trans }}'>
             <input type='checkbox' autocomplete='off' id='isOverlapableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_can_overlap' {{ Entity.entityData.book_can_overlap == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
@@ -41,7 +41,7 @@
 
         {# CAN CANCEL #}
         <div class='d-flex justify-content-between mb-2'>
-          <div class='d-inline mr-1' for='isCancellableSwitch'><p>{{ 'Allow cancelling a booking slot'|trans }}</p></div>
+          <label class='d-inline mr-1' for='isCancellableSwitch'>{{ 'Allow cancelling a booking slot'|trans }}</label>
           <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'>
             <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>

@@ -68,7 +68,7 @@
 
     {# Display main text switch #}
     <div class='d-inline-flex p-1'>
-      <div class='mr-1'>{{ 'Display main text'|trans }}</div>
+      <label class='mr-1' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
       <label class='switch'>
         <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
         <span class='slider'></span>

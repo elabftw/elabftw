@@ -21,8 +21,8 @@
         {% if not user.archived %}
           {# Lock and archive experiments? #}
           <div class='d-flex justify-content-between mb-2'>
-            <div class='d-inline mr-1'><p>{{ 'Lock and archive all experiments'|trans }}</p></div>
-            <label class='switch' for='lockSwitch_{{ user.userid }}' title='{{ 'Lock and archive all experiments'|trans }}'>
+            <label class='d-inline mr-1' for='lockSwitch_{{ user.userid }}'>{{ 'Lock and archive all experiments'|trans }}</label>
+            <label class='switch'>
               <input type='checkbox' autocomplete='off' id='lockSwitch_{{ user.userid }}'>
               <span class='slider'></span>
             </label>

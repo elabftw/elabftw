@@ -4,7 +4,7 @@
   {# DATE #}
   <td class='item-date'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='Select' style='width:15px;' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
     {{ item.date|date('Y-m-d') }}
   </td>
 

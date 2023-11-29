@@ -11,17 +11,17 @@
  * doc: https://yarnpkg.com/advanced/pnpapi
  */
 module.exports = {
-  name: `plugin-tinymce`,
-   factory: require => {
-    const { PosixFS } = require(`@yarnpkg/fslib`);
-    const { ZipOpenFS } = require(`@yarnpkg/libzip`);
-    const libzip = require(`@yarnpkg/libzip`).getLibzipSync();
-    const { structUtils, Cache } = require(`@yarnpkg/core`);
+  name: 'plugin-tinymce',
+  factory: require => {
+    const { PosixFS } = require('@yarnpkg/fslib');
+    const { ZipOpenFS } = require('@yarnpkg/libzip');
+    const libzip = require('@yarnpkg/libzip').getLibzipSync();
+    const { structUtils, Cache } = require('@yarnpkg/core');
 
     return {
       default: {
         hooks: {
-          async afterAllInstalled (project) {
+          async afterAllInstalled(project) {
             const zipOpenFs = new ZipOpenFS({ libzip });
             const crossFs = new PosixFS(zipOpenFs);
 
@@ -34,7 +34,7 @@ module.exports = {
                 tinymceLocator = pkg;
                 break;
               }
-            };
+            }
             const checksum = project.storedChecksums.get(tinymceLocator.locatorHash) ?? null;
             const path = cache.getLocatorPath(tinymceLocator, checksum);
 
@@ -42,14 +42,14 @@ module.exports = {
               const requestedFile = `${path}/node_modules/tinymce/skins/ui/oxide/${filename}`;
               const fileContent = crossFs.readFileSync(requestedFile);
               const destinationPath = `web/assets/${filename}`;
-              crossFs.writeFileSync(destinationPath, fileContent, `utf8`);
+              crossFs.writeFileSync(destinationPath, fileContent, 'utf8');
             };
 
             extractFile('skin.min.css');
             extractFile('content.min.css');
-          }
-        }
-      }
+          },
+        },
+      },
     };
-  }
+  },
 };

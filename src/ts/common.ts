@@ -168,26 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
-   * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
-   */
-  document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = el.querySelector('i');
-    let contentDiv: HTMLElement;
-    if (el.dataset.iconTarget) {
-      contentDiv = document.getElementById(el.dataset.iconTarget);
-    } else {
-      contentDiv = el.nextElementSibling as HTMLElement;
-    }
-    if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-caret-down');
-      iconEl.classList.add('fa-caret-right');
-    } else {
-      iconEl.classList.add('fa-caret-down');
-      iconEl.classList.remove('fa-caret-right');
-    }
-  });
-
-  /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
   * Use the "passive" option to avoid impact on performance.

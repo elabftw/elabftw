@@ -1359,7 +1359,7 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px $elabblue;
+    box-shadow: 0 0 8px $elabblue;
 }
 
 input:checked + .slider::before {

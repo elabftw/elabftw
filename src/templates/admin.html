@@ -19,13 +19,13 @@
 
 {# ADMIN PANEL MAIN MENU #}
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-  <li data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}

@@ -9,7 +9,7 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Syntax'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -422,7 +422,7 @@
   {# add as many extra fields as present in the query but at least one #}
   {% for metakey in (Request.query.all('metakey') ?: ['']) %}
     {% set metavalue = Request.query.all('metavalue')[loop.index0] %}
-    <div class='row' {{- loop.first ? "id='metadataFirstInputs'" -}} >
+    <div class='row' {{- loop.first ? " id='metadataFirstInputs'" }}>
       <div class='col-md-4'>
         {% set randomid = random() %}
         <label for='metakey_{{ randomid }}'>{{ 'Name of field'|trans }}</label>
@@ -450,11 +450,10 @@
   </a>
 </div>
 
-<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
-  it avoids having to repeat the query params -->
-<a href='#' id='anchor'></a>
+{# if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params #}
 {% if App.Request.query.has('type') %}
-  <h2>{{ 'Results'|trans }}</h2>
+  <h2 id='anchor'>{{ 'Results'|trans }}</h2>
 {% else %}
   </form>
 {% endif %}

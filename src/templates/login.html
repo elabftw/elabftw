@@ -8,7 +8,7 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='resetModalLabel'>{{ 'Reset your password'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -65,7 +65,7 @@
       {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
     {% else %}
       {{ 'Your account has been created and is now active. Try logging in again.'|trans|msg('ok') }}
-      <a href='login.php?rm_teaminit=1'><button class='btn btn-primary'>{{ 'Continue'|trans }}</button></a>
+      <a href='login.php?rm_teaminit=1' class='btn btn-primary'>{{ 'Continue'|trans }}</a>
     {% endif %}
 
   {% elseif App.Session.has('team_selection_required') %}

@@ -61,7 +61,7 @@
               <div class='modal-content'>
                 <div class='modal-header'>
                   <h5 class='modal-title'>{{ 'Manage teams for user'|trans }} - {{ user.fullname|raw }}</h5>
-                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                  <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
                     <span aria-hidden='true'>&times;</span>
                   </button>
                 </div>
@@ -167,7 +167,7 @@
                 </td>
                 <td>
                   <div class='d-flex justify-content-between'>
-                    <label class='switch ucp-align {{ App.Users.userData.is_sysadmin == 0 ? 'disabled' }}'>
+                    <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}'>
                       <input type='checkbox' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} data-trigger='change' data-model='users/{{ user.userid }}' data-target='is_sysadmin' {{ user.is_sysadmin ? 'checked="checked"' }}>
                       <span class='slider'></span>
                     </label>

@@ -320,7 +320,7 @@ export function adjustHiddenState(): void {
       el.setAttribute('hidden', 'hidden');
       caretIcon.classList.remove('fa-caret-down');
       if (targetElement !== 'filtersDiv') {
-      caretIcon.classList.add('fa-caret-right');
+        caretIcon.classList.add('fa-caret-right');
       }
       button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!

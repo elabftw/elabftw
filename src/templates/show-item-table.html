@@ -45,7 +45,9 @@
     {% if item.timestamped %}
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
-    <button type='button' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</button>
+    {% if item.category %}
+      <button type='button' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</button>
+    {% endif %}
   </td>
 
   {# STATUS #}

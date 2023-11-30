@@ -64,7 +64,7 @@
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
         {% for tag in Entity.Tags.readAll() %}
-        <a class='tag {{ tag.is_favorite ? 'favorite' }}' href='?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+        <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
         {% endfor %}
       </span>
     {% endif %}
@@ -76,7 +76,7 @@
   {% if Entity.entityData.events_start %}<i class='far fa-calendar-alt'></i>
     {% for event in Entity.entityData.events_start|split('|') %}
     <a href='team.php?item={{ Entity.id }}&start={{ event|url_encode }}'>
-      <button class='m-1 btn btn-neutral relative-moment' title='{{ event|date('Y-m-d H:i:s') }}'></button>
+      <button type='button' class='m-1 btn btn-neutral relative-moment' title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></button>
     </a>
     {% endfor %}
   {% endif %}
@@ -151,9 +151,9 @@
                 ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
               {% endif %}
               {% if comment.userid == Entity.Users.userData.userid %}
-                <a class='float-right' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}'>
-                    <i class='fas fa-trash-alt fa-lg'></i>
-                </a>
+                <button type='button' class='btn float-right lh-normal border-0 m-0 p-2 my-n2 hl-hover-gray' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
+                  <i class='fas fa-fw fa-trash-alt fa-lg'></i>
+                </button>
               {% endif %}
             </div>
             {# the comment itself is only editable by the owner #}

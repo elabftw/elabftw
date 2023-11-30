@@ -871,6 +871,10 @@ the form-control fails to do that so we do the border ourselves */
     line-height: 150%;
 }
 
+.lh-normal {
+    line-height: normal;
+}
+
 .togglable-section-title {
     color: $medium;
     font-size: 100%;

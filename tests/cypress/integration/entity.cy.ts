@@ -64,14 +64,14 @@ describe('Experiments', () => {
       cy.get('[data-action="duplicate-entity"]').click();
       cy.contains('Title').should('be.visible');
       // destroy the duplicated entity now
-      cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click();
+      entityDestroy();
       // go back to the original entity
       cy.visit(url);
     });
   };
 
   const entityDestroy = () => {
-    cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click();
+    cy.get('button[title="More options"]').click().get('button[data-action="destroy"]').click();
   };
 
   it('Create and edit an experiment', () => {

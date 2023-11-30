@@ -16,7 +16,7 @@ export default defineConfig({
           extends: [
             'html-validate:document',
             'html-validate:standard',
-            //'html-validate:a11y',
+            'html-validate:a11y',
           ],
           rules: {
             'heading-level': Severity.DISABLED, // should be WARN but does not work, TODO: fix violations
@@ -29,6 +29,9 @@ export default defineConfig({
         {
           exclude: [
             '#sketcher_search_dialog', // chemdoodle 2d-sketcher
+            '#bs-select-1', // bootstrap select does not use native select element
+            '#bs-select-2', // bootstrap select does not use native select element
+            '#scheduler', // scheduler on the team page has several violations
           ],
         },
       );

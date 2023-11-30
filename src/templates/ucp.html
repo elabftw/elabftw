@@ -250,27 +250,27 @@
     <hr>
 
     <div class='d-flex justify-content-between align-items-center'>
-      <span class='col-form-label d-inline-block'>{{ 'Default visibility for new experiments'|trans }}</span>
+      <span class='col-form-label d-inline-block' id='defaultCanreadSetting'>{{ 'Default visibility for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canread' %}
         {{ include('view-permissions-details.html', {identifier: 'canreaddefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
-        <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>
-          <i class='fas fa-fw fa-square-plus fa-2x'></i>
-        </div>
+        <button type='button' aria-labelledby='defaultCanreadSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
+          <i class='fas fa-square-plus fa-2x'></i>
+        </button>
       </div>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between align-items-center'>
-      <span class='col-form-label d-inline-block'>{{ 'Default write permission for new experiments'|trans }}</span>
+      <span class='col-form-label d-inline-block' id='defaultCanwriteSetting'>{{ 'Default write permission for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canwrite' %}
         {{ include('view-permissions-details.html', {identifier: 'canwritedefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
-        <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>
-          <i class='fas fa-fw fa-square-plus fa-2x'></i>
-        </div>
+        <button type='button' aria-labelledby='defaultCanwriteSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
+          <i class='fas fa-square-plus fa-2x'></i>
+        </button>
       </div>
     </div>
   </div>
@@ -358,7 +358,7 @@
   </div>
 
   <div class='mt-4 text-center'>
-    <button data-action='patch-account' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    <button type='button' data-action='patch-account' class='btn btn-primary'>{{ 'Save'|trans }}</button>
   </div>
 </div>
 
@@ -396,7 +396,7 @@
     <hr>
 
     <div class='mt-4 text-center'>
-      <button data-action='create-apikey' class='btn btn-primary'>{{ 'Generate an API Key'|trans }}</button>
+      <button type='button' data-action='create-apikey' class='btn btn-primary'>{{ 'Generate an API Key'|trans }}</button>
     </div>
 
   </div>
@@ -419,7 +419,7 @@
           <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td><span class='relative-moment' title='{{ key.created_at }}'></span></td>
           <td><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt'></i></a></td>
+          <td><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

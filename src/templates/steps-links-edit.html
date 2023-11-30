@@ -8,18 +8,14 @@
         {% for step in Entity.entityData.steps %}
           <div class='input-group mb-2' id='step_{{ step.id }}'>
             <div class='input-group-prepend'>
-              <div class='input-group-text'>
-                <a class='stepOrder draggable sortableHandle float-right'>
+              <button type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
                   <i class='fas fa-sort'></i>
-                </a>
-              </div>
+              </button>
             </div>
             <div class='input-group-prepend'>
-              <div class='input-group-text'>
-                <a class='stepDestroy clickable' data-stepid='{{ step.id }}'>
+              <button class='btn stepDestroy input-group-text' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button' data-stepid='{{ step.id }}'>
                   <i class='fas fa-trash-alt'></i>
-                </a>
-              </div>
+              </button>
             </div>
             <div class='input-group-prepend'>
               <div class='input-group-text'>
@@ -34,11 +30,13 @@
               </span>
               {% endif %}
               {% if mode != 'edit-template' %}
-                <span class='float-right mr-2' data-action='toggle-next'><i class='fas fa-caret-right mr-2 fa-fw'></i></span>
+                <button class='btn lh-normal border-0 p-2 float-right mr-2' data-action='toggle-next' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+                  <i class='fas fa-caret-right fa-fw'></i>
+                </button>
                 <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
                 {{ 'Completion time:'|trans }}
                 {% if step.finished %}
-                  <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable hl-hover'>{{ step.finished_time|format_datetime() }}</span>
+                  <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
                 {% else %}
                   {{ 'Not finished'|trans }}
                 {% endif %}
@@ -51,11 +49,15 @@
                   <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
                   {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
                   {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
-                    <span class='ml-2 hl-hover-gray p-1 rounded' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}'><i class='far fa-bell {{ step.deadline_notif ? 'active' }}' ></i></span>
+                      <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}' aria-label='{{ 'Toggle notifications'|trans }}'>
+                        <i class='far fa-bell {{- step.deadline_notif ? ' active' }}'></i>
+                      </button>
                   {% endif %}
-                  <span class='ml-2 hl-hover-gray p-1 rounded' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}'><i class='fas fa-trash-alt' ></i></span>
+                    <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
+                      <i class='fas fa-trash-alt'></i>
+                    </span>
                   {% else %}
-                  <button data-action='replace-with-next' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
+                    <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
                   <div hidden class='input-group'>
                     <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
                       <option disabled>{{ 'Set deadline in'|trans }}</option>
@@ -66,7 +68,7 @@
                       <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
                     </select>
                     <div class='input-group-append'>
-                      <button class='btn btn-primary' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                        <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
                     </div>
                   </div>
                   {% endif %}
@@ -110,23 +112,20 @@
                   <li class='list-group-item' id='parent_{{ randomId }}'>
                     <div class='d-flex align-items-center'>
                       <i class='fas fa-link mr-1'></i>
-                      <span class='item-category' style='color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>&#160;-&#160;<a href='experiments.php?mode=view&id={{ link.itemid }}' class='mr-auto'>
+                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='experiments.php?mode=view&id={{ link.itemid }}' class='mr-auto'>
                       {{ link.title|raw }}</a>
                       {# toggle body #}
-                      <button type='button' data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                  <button type='button' data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                         <i class='fas fa-fw fa-plus-square'></i></button>
                       {% if mode != 'edit-template' %}
-                        <button type='button' data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                    <button type='button' data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                           <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
-                        <button type='button' data-action='import-link-body' data-endpoint='experiments' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                    <button type='button' data-action='import-link-body' data-endpoint='experiments' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                           <i class='fas fa-fw fa-lg fa-file-import'></i></button>
                       {% endif %}
-                      <button type='button' data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                  <button type='button' data-action='destroy-link' data-endpoint='experiments_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                         <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
                     </div>
-                    <i class='fas fa-link mr-1'></i>
-                    <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='experiments.php?mode=view&id={{ link.itemid }}'>
-                    {{ link.title|raw }}</a>
                     {# container to hold the body of the entity if it is toggled with the +/- icon #}
                     {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
                     <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
@@ -170,23 +169,20 @@
                 <li class='list-group-item' id='parent_{{ randomId }}'>
                   <div class='d-flex align-items-center'>
                     <i class='fas fa-link mr-1'></i>
-                    <span class='item-category' style='color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span>&#160;-&#160;<a href='database.php?mode=view&id={{ link.itemid }}' class='mr-auto'>
+                <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='database.php?mode=view&id={{ link.itemid }}' class='mr-auto'>
                     {{ link.title|raw }}</a>
                     {# toggle body #}
-                    <button type='button' data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                <button type='button' data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                       <i class='fas fa-fw fa-plus-square'></i></button>
                     {% if mode != 'edit-template' %}
-                      <button type='button' data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                  <button type='button' data-action='import-links' data-target='{{ link.itemid }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                         <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
-                      <button type='button' data-action='import-link-body' data-endpoint='items' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                  <button type='button' data-action='import-link-body' data-endpoint='items' data-target='{{ link.itemid }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                         <i class='fas fa-fw fa-lg fa-file-import'></i></button>
                     {% endif %}
-                    <button type='button' data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn btn-link rounded p-2 hl-hover-gray'>
+                <button type='button' data-action='destroy-link' data-endpoint='items_links' data-target='{{ link.itemid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                       <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
                   </div>
-                  <i class='fas fa-link mr-1'></i>
-                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='database.php?mode=view&id={{ link.itemid }}'>
-                  {{ link.title|raw }}</a>
                   {# container to hold the body of the entity if it is toggled with the +/- icon #}
                   {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
                   <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>

@@ -77,7 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // BACK TO TOP BUTTON
-  const btn = document.createElement('div');
+  const btn = document.createElement('button');
+  btn.type = 'button';
   btn.dataset.action = 'scroll-top';
   // make it look like a button, and on the right side of the screen, not too close from the bottom
   btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
@@ -89,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
   // give it an id so we can remove it easily
   btn.setAttribute('id', 'backToTopButton');
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.title = 'Back to top';
 
   // called when viewport approaches the footer
   const intersectionCallback = (entries): void => {
@@ -372,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (targetEl.hasAttribute('hidden')) {
             iconEl.classList.remove('fa-caret-down');
             if (el.dataset.toggleTarget !== 'filtersDiv') {
-            iconEl.classList.add('fa-caret-right');
+              iconEl.classList.add('fa-caret-right');
             }
             el.setAttribute('aria-expanded', 'false');
           } else {

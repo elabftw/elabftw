@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('toolbarRightDiv'));
+      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('lockTemplateButton'));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());

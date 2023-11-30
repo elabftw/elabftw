@@ -516,9 +516,9 @@ export class Metadata {
             label.classList.add('py-2');
 
             // add a button to delete the field
-            const deleteBtn = document.createElement('div');
+            const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
-            deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
+            deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);

@@ -486,10 +486,14 @@ tr:nth-child(odd) {
 .vertical-separator {
     border-right: 1px solid $secondlevel;
     height: 1.8rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 
     /* separator disappears on small screens */
     @media (max-width: 550px) {
-        display: none;
+        border-right: 0;
+        margin-left: 0;
+        margin-right: 0.5rem;
     }
 }
 

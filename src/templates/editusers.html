@@ -116,7 +116,7 @@
           {# end modal #}
         {% endfor %}
 
-        <table id='usersTable' class='table' aria-label='users table' data-table-sort='true'>
+        <table id='usersTable' class='table' aria-label='{{ 'Users table'|trans }}' data-table-sort='true'>
           <thead>
             <tr>
               <th scope='col'>{{ 'User ID'|trans }}</th>
@@ -343,7 +343,7 @@
 
     {% if App.Request.query.has('remote_dir_query') %}
       <div class='mt-2'>
-        <table class='table' id='remoteDirectoryUsersTable' aria-label='Remote directory users list' data-table-sort='true'>
+        <table class='table' id='remoteDirectoryUsersTable' aria-label='{{ 'Remote directory users list'|trans }}' data-table-sort='true'>
           <thead>
             <tr>
               <th scope='col'>{{ 'Selection'|trans }}</th>

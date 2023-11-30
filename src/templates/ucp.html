@@ -102,18 +102,18 @@
     <table aria-describedby='keyboardShortcuts' class='table col-md-12'>
       <thead>
       <tr>
-        <th>{{ 'Action'|trans }}</th>
+        <th scope='col'>{{ 'Action'|trans }}</th>
         {# add mb-0 to labels so they align with the Action that has vertical-align: bottom from tables.scss, but label element has a mb from reboot.scss #}
-        <th><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_favorite'>{{ 'Favorite tags'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_todo'>{{ 'TODO list'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_search'>{{ 'Search'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_favorite'>{{ 'Favorite tags'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_todo'>{{ 'TODO list'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_search'>{{ 'Search'|trans }}</label></th>
       </tr>
       </thead>
       <tbody class='bgnd-transparent'>
       <tr>
-        <td>{{ 'Shortcut'|trans }}</td>
+        <th scope='row' class='align-middle' style='font-weight:500;'>{{ 'Shortcut'|trans }}</td>
         <td>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_create' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>

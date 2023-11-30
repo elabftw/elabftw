@@ -223,7 +223,7 @@
   </div>
 </div>
 
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
   <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
@@ -417,7 +417,7 @@
 
 <hr>
 {# METADATA SEARCH #}
-<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
+<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2' tabindex='0' role='button' aria-expanded='false'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
 <div hidden data-save-hidden='metadataSearchDiv'>
   {# add as many extra fields as present in the query but at least one #}
   {% for metakey in (Request.query.all('metakey') ?: ['']) %}

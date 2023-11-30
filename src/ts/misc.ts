@@ -312,17 +312,23 @@ export async function reloadElement(elementId: string): Promise<void> {
  */
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
-    const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
-    const caretIcon = el.previousElementSibling.querySelector('i');
+    const targetElement = (el as HTMLElement).dataset.saveHidden;
+    const localStorageKey = targetElement + '-isHidden';
+    const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
       caretIcon.classList.remove('fa-caret-down');
+      if (targetElement !== 'filtersDiv') {
       caretIcon.classList.add('fa-caret-right');
+      }
+      button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
       caretIcon.classList.remove('fa-caret-right');
       caretIcon.classList.add('fa-caret-down');
+      button.setAttribute('aria-expanded', 'true');
     }
   });
 }

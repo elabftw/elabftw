@@ -82,7 +82,7 @@
 
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>
-    <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
     <div>
       <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {% if editor == 'md' %}
@@ -107,7 +107,7 @@
 </section>
 
 {# EXTRA FIELDS #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
 <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
   {# this div is filled in JS by Metadata.class.ts edit() #}
   <div id='metadataDiv'></div>
@@ -134,7 +134,7 @@
 
 {# DOODLE #}
 {# id for the i is needed by the annotate-image action #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='doodleDiv'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='d-flex'>
     {# do not use w-100 here as it will break the canvas #}
@@ -176,7 +176,7 @@
 <hr>
 
 {# CHEM EDITOR #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='chemDiv'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
 <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
   {# chemdoodle #}
   <div>

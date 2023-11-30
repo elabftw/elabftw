@@ -1,8 +1,8 @@
 {# STEPS #}
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }}</h3>
-  <div class='row mt-2' data-save-hidden='stepsDivContent'>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }}</h3>
+  <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
     <div class='ml-3 mt-3 col-md-12'>
       {% for step in Entity.entityData.steps %}
         <div id='step_view_{{ step.id }}' class='mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
@@ -27,14 +27,14 @@
 
 {# EXPERIMENTS LINKS #}
 {% if Entity.entityData.experiments_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
     Linked experiment
     {% plural 2 %}
     Linked experiments
     {% endtrans %}</h3>
   <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
-    <div class='ml-3 mt-3 col-md-12'>
       {% for link in Entity.entityData.experiments_links %}
+      <div class='ml-3 mt-3 col-md-12'>
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
           <div class='mr-2'>
@@ -58,18 +58,18 @@
           {# this div will hold the content #}
           <div></div>
         </div>
-      {% endfor %}
     </div>
+    {% endfor %}
   </div>
   <hr>
 {% endif %}
 
 {# ITEMS LINKS #}
 {% if Entity.entityData.items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }}</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }}</h3>
   <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
-    <div class='ml-3 mt-3 col-md-12'>
       {% for link in Entity.entityData.items_links %}
+      <div class='ml-3 mt-3 col-md-12'>
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
           <div class='mr-2'>
@@ -93,8 +93,8 @@
           {# this div will hold the content #}
           <div></div>
         </div>
-      {% endfor %}
     </div>
+    {% endfor %}
   </div>
   <hr>
 {% endif %}
@@ -104,10 +104,10 @@
 
   {# RELATED EXPERIMENTS #}
   {% if relatedExperimentsArr %}
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
-    <div class='row mt-2' data-save-hidden='relatedExperimentsDiv'>
-      <div class='ml-3 mt-3 col-md-12' id='relatedExperimentsDiv'>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
+    <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
         {% for link in relatedExperimentsArr %}
+        <div class='ml-3 mt-3 col-md-12'>
           {% set randomId = random() %}
           <div class='d-flex mb-4' id='parent_{{ randomId }}'>
             <div class='align-self-center mr-2'>
@@ -135,8 +135,8 @@
           <div hidden id='{{ randomId }}'>
             <div></div>
           </div>
-        {% endfor %}
       </div>
+      {% endfor %}
     </div>
 
     <!-- TODO FIXME
@@ -149,10 +149,10 @@
 
   {# RELATED ITEMS #}
   {% if relatedItemsArr %}
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
     <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-      <div class='ml-3 mt-3 col-md-12' id='relatedItemsDiv'>
         {% for link in relatedItemsArr %}
+        <div class='ml-3 mt-3 col-md-12'>
           {% set randomId = random() %}
           <div class='d-flex mb-4' id='parent_{{ randomId }}'>
             <div class='align-self-center mr-2'>
@@ -178,8 +178,8 @@
           <div hidden id='{{ randomId }}'>
             <div></div>
           </div>
-        {% endfor %}
       </div>
+      {% endfor %}
     </div>
 
     <!-- TODO FIXME

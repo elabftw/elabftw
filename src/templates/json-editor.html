@@ -3,7 +3,7 @@
 
 <section id='json-editor'>
   {# id for icon is used when focusing after loading from file #}
-  <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
+  <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <hr>

@@ -75,6 +75,9 @@
         {# SEARCH BAR #}
         {# search in experiments everywhere, or in database on database page #}
         {% set actionPage = (scriptName == 'experiments.php' or scriptName == 'database.php') ? scriptName : 'experiments.php' %}
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
+        {%- endif %}
         <form class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
           {# the id is for making it easy to find the element when focusing it with the keyboard shortcut #}
           <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='{{ 'Search'|trans }}' size='20' value='{{ App.Request.query.get('q') }}' />

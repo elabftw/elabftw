@@ -347,7 +347,7 @@
   <div class='col-md-4'>
     <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block element-permitted-content -- suppress error from select picker: div child of button] -->
+      <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
     {%- endif %}
     <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>

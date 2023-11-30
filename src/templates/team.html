@@ -108,9 +108,12 @@
   <div class='row mb-3'>
     <div class='col-md-3'>
       {# CATEGORY #}
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+      {%- endif %}
       <form>
         {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block element-permitted-content -- suppress error from select picker: div child of button] -->
+          <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
         {%- endif %}
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
@@ -124,9 +127,12 @@
 
     <div class='col-md-3'>
       {# ITEM LIST #}
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+      {%- endif %}
       <form>
         {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block element-permitted-content -- suppress error from select picker: div child of button] -->
+          <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
         {%- endif %}
         <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>

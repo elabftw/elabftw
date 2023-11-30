@@ -41,7 +41,7 @@
         <div class='row'>
           <label for='team'>{{ 'Team'|trans }}</label>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content -- suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
           {%- endif %}
           <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>

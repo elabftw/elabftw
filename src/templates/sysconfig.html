@@ -454,7 +454,7 @@
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
       {% if configArr.debug -%}
-        <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element -- suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}

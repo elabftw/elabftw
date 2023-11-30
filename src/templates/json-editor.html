@@ -11,38 +11,38 @@
     <div class='d-flex align-items-center'>
       {# ADD FIELD #}
       <button title='{{ 'Add field'|trans }}' aria-label='{{ 'Add field'|trans }}' type='button' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='btn hl-hover-gray p-2 main-action-button lh-normal border-0'>
-          <i class='fas fa-plus fa-fw'></i>
+        <i class='fas fa-plus fa-fw'></i>
       </button>
 
       <div class='vertical-separator'></div>
 
       {# IMPORT FROM FILE #}
       <button title='{{ 'Import from file'|trans }}' aria-label='{{ 'Import from file'|trans }}' type='button' data-action='json-import-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-          <i class='fas fa-upload fa-fw'></i>
+        <i class='fas fa-upload fa-fw'></i>
       </button>
 
       {# SAVE TO FILE #}
       <button title='{{ 'Save as…'|trans }}' aria-label='{{ 'Save as…'|trans }}' type='button' data-action='json-saveas-file' class='btn hl-hover-gray p-2 lh-normal border-0'>
-          <i class='fas fa-download fa-fw'></i>
+        <i class='fas fa-download fa-fw'></i>
       </button>
 
       <div class='vertical-separator'></div>
 
       {# SAVE AS ATTACHMENT #}
       <button title='{{ 'Save as attachment'|trans }}' aria-label='{{ 'Save as attachment'|trans }}' type='button' data-action='json-save-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-          <i class='fas fa-paperclip fa-fw'></i>
+        <i class='fas fa-paperclip fa-fw'></i>
       </button>
 
       {# SAVE #}
       <button title='{{ 'Save'|trans }}' aria-label='{{ 'Save'|trans }}' type='button' data-action='json-save' class='btn hl-hover-gray p-2 lh-normal border-0 mr-2'>
-          <i class='fas fa-save fa-fw'></i>
+        <i class='fas fa-save fa-fw'></i>
       </button>
 
       <span hidden id='jsonUnsavedChangesWarningDiv'>{{ 'You have unsaved changes'|trans }}</span>
 
       {# CLEAR #}
       <button title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}' type='button' data-action='json-clear' class='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
-            <i class='fas fa-trash-alt fa-fw'></i>
+        <i class='fas fa-trash-alt fa-fw'></i>
       </button>
     </div>
 
@@ -65,7 +65,7 @@
     <button class='btn lh-normal border-0 px-0' type='button' data-action='toggle-next' aria-expanded='false' title='{{ 'Information'|trans }}' aria-label='{{ 'Information'|trans }}'><i class='fas fa-fw fa-info-circle'></i></button><span hidden><a target='_blank' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block no-deprecated-attr -- suppress errors from jsonEditor] -->
+      <!-- [html-validate-disable-block no-deprecated-attr, text-content: suppress errors from jsonEditor] -->
     {%- endif %}
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>

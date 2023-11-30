@@ -2,6 +2,9 @@
 <div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
+      {%- endif %}
       <form id ='newFieldForm' class='new-field-form'>
         <div class='modal-header'>
           <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>

@@ -109,7 +109,7 @@
           <label for='password'>{{ 'Password'|trans }}</label>
           {# add tabindex=-1 to the forget password so we can switch from login to password with tab #}
           {% if showLocal %}
-            <button class='btn float-right underlined lh-normal border-0 p-0 m-0 link-like' style='font-weight:500;' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</button>
+            <button type='button' class='btn float-right underlined lh-normal border-0 p-0 m-0 link-like' style='font-weight:500;' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</button>
           {% endif %}
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' autocomplete='current-password' required />

@@ -66,12 +66,15 @@
     </div>
   </div>
 
-  <div id='filtersDiv' hidden data-save-hidden='filtersDiv'>
-    <div class='d-flex'>
       {# LEFT MENU: FILTER/ORDER/SORT/LIMIT #}
-      <div class='{{ searchPage ? 'mt-2' }}'>
-        <form>
-          <div class='form-group form-inline'>
+  <div id='filtersDiv' hidden data-save-hidden='filtersDiv' class='{{ searchPage ? 'mt-2' : 'mt-1' }}'>
+    {# on search page we use its form everywhere else we need an independent form #}
+    {% if searchPage %}
+      <div
+    {% else %}
+      <form
+    {% endif %}
+       class='form-group form-inline mb-2'>
             {% if not searchPage %}
               <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
             {% endif %}
@@ -150,11 +153,17 @@
             </div>
 
       <button class='btn btn-primary mb-2' type='submit'>{{ 'Go'|trans }}</button>
+      {# on search page we use its form everywhere else we need an independent form #}
+      {% if searchPage %}
           </div>
+      {% else %}
         </form>
+      {% endif %}
       </div>
-    </div>
-  </div>
+{# close form of search page with correct nesting #}
+{% if searchPage %}
+  </form>
+{% endif %}
 
   {% set count = itemsArr|length %}
 

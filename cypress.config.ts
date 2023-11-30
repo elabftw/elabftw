@@ -32,8 +32,8 @@ export default defineConfig({
             '#bs-select-1', // bootstrap select does not use native select element
             '#bs-select-2', // bootstrap select does not use native select element
             '#scheduler', // scheduler on the team page has several violations
-            'h3[data-action="toggle-next"]', // these get the role='button'
-            'h4[data-action="toggle-next"]', // hence trigger prefer-native-element
+            'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
+            'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element
           ],
         },
       );

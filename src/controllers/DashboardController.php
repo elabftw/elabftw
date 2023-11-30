@@ -61,7 +61,7 @@ class DashboardController implements ControllerInterface
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
-            'categoryArr' => $ItemsTypes->readAll(),
+            'itemsCategoryArr' => $ItemsTypes->readAll(),
             'itemsStatusArr' => $ItemsStatus->readAll(),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
             'experimentsCategoryArr' => $ExperimentsCategory->readAll(),

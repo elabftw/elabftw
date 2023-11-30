@@ -132,12 +132,16 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         // set some metadata, spaces after colons and commas are important as this is how metadata gets return from MySQL
-        $metadata = '{"extra_fields": {"test": {"type": "text", "value": "%s"}}}';
+        $metadata = '{"extra_fields": {"test": {"type": "text", "value": "%s"}, "multiselect": {"type": "select", "value": ["val1", "val2", "val3"], "options": ["val1", "val2", "val3", "val4"], "allow_multi_values": true}}}';
         $res = $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
         $this->assertEquals($metadata, $res['metadata']);
         // update the field
         $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'test' => 'some text'));
         $this->assertEquals(sprintf($metadata, 'some text'), $res['metadata']);
+        // update the multi select so we go in the is_array branch for the changelog value
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'multiselect' => array('val1', 'val2')));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertEquals(array('val1', 'val2'), $decoded['extra_fields']['multiselect']['value']);
     }
 
     public function testExtraFieldsSearch(): void

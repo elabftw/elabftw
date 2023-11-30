@@ -56,7 +56,7 @@
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
-      {% for category in categoryArr -%}
+      {% for category in itemsCategoryArr -%}
         <a href='database.php?mode=show&cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title|raw }}</a>
       {%- endfor %}
     </div>

@@ -281,7 +281,6 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
-    element.addEventListener('blur', this, false);
 
     // add a prepend button for "Now" for date and time types
     if (['time', 'date', 'datetime-local'].includes(element.type)) {

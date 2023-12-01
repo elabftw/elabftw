@@ -43,7 +43,7 @@
     "prismjs": "^1.29.0",
     "sass": "^1.69.5",
     "terser-webpack-plugin": "^5.3.9",
-    "tinymce": "^6.7.3",
+    "tinymce": "^6.8.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",

@@ -635,7 +635,11 @@ abstract class AbstractEntity implements RestInterface
     private function updateJsonField(string $key, string|array $value): bool
     {
         $Changelog = new Changelog($this);
-        $valueAsString = $value;
+        // yes this is ugly but linters...
+        $valueAsString = '';
+        if (is_string($value)) {
+            $valueAsString = $value;
+        }
         if (is_array($value)) {
             $valueAsString = implode(', ', $value);
         }

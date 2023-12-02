@@ -889,10 +889,12 @@ the form-control fails to do that so we do the border ourselves */
 
 /* Category and Status buttons */
 .catstat-btn {
+    border: 0;
+    border-radius: .25rem;
     font-size: 72%;
     font-weight: bold;
+    line-height: normal;
     text-transform: uppercase;
-    border-radius: .25rem;
     padding: .25rem;
 
     /* Only Category */

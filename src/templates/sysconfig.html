@@ -542,14 +542,14 @@
 
     <div class='d-flex justify-content-between'>
       <label for='keeex_host' class='col-form-label'>{{ 'Keeex host'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='keeex_host' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_host' value='{{ App.Config.configArr.keeex_host }}' />
+      <input class='form-control col-md-3' type='text' id='keeex_host' placeholder='keeex' data-trigger='blur' data-model='config' data-target='keeex_host' value='{{ App.Config.configArr.keeex_host }}' />
     </div>
     <p class='smallgray'>{{ 'Address (hostname or IP) of the Keeex service.'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='keeex_port' class='col-form-label'>{{ 'Keeex port'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='keeex_port' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_port' value='{{ App.Config.configArr.keeex_port }}' />
+      <input class='form-control col-md-3' type='text' id='keeex_port' placeholder='8080' data-trigger='blur' data-model='config' data-target='keeex_port' value='{{ App.Config.configArr.keeex_port|default('8080') }}' />
     </div>
     <p class='smallgray'>{{ 'Default port is 8080.'|trans }}</p>
     <hr>
@@ -1023,6 +1023,7 @@
       </tbody>
     </table>
   </div>
+</div>
 
 <div id='info' data-page='sysconfig'></div>
 {% endblock body %}

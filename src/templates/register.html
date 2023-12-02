@@ -57,7 +57,8 @@
           <label for='email'>{{ 'Email'|trans }}</label>
           <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
           {% if App.Config.configArr.email_domain %}
-            <p class='smallgray'>
+            <button type='button' data-action='toggle-next' class='mt-1 btn btn-secondary btn-sm'>{{ 'Display allowed email domains'|trans }}</button>
+            <p class='smallgray' hidden>
               {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
             </p>
           {% endif %}

@@ -69,7 +69,7 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        $samlToken = $App->Request->cookies->getAlnum('saml_token');
+        $samlToken = $App->Request->cookies->getString('saml_token');
         $sessionIndex = null;
         $idpId = null;
         if (!empty($samlToken)) {

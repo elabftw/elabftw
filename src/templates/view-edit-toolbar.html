@@ -150,7 +150,7 @@
         {% endif %}
         {# TRANSFER OWNERSHIP #}
         {% if Entity.type == 'items' and (Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin) %}
-          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
+          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
         {% endif %}
         {% if mode == 'edit' %}
           {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}

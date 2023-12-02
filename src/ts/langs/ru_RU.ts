@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Введите имя файла",
     "save": "Сохранить",
     "saved": "Сохранено",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",
     "tag-delete-warning": "Удалить этот тег?",

@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Geben Sie den Namen der Datei ein",
     "save": "Speichern",
     "saved": "Gespeichert",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Diesen Schritt löschen?",
     "step-unfinish-warning": "Sind Sie sicher, dass Sie diesen Schritt rückgängig machen wollen?",
     "tag-delete-warning": "Tag löschen?",

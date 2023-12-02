@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Introduïu el nom del fitxer",
     "save": "Guardar",
     "saved": "Guardat",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",

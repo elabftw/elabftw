@@ -24,6 +24,7 @@ const t = {
     "request-filename": "파일 이름 입력",
     "save": "저장",
     "saved": "저장됨",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "단계를 삭제할까요?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "이 태그를 삭제할까요?",

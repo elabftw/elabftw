@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Masukkan nama file",
     "save": "Simpan",
     "saved": "Tersimpan",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
     "tag-delete-warning": "Hapus label ini?",

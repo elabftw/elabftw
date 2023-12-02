@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Voer de naam van het bestand in",
     "save": "Opslaan",
     "saved": "Opgeslagen",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
     "tag-delete-warning": "Dit label verwijderen?",

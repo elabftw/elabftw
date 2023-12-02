@@ -538,20 +538,20 @@
         <tbody>
           {% for tag in tagsArr %}
             <tr>
-              <td><span class='tag editable hl-hover' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</span></td>
-              <td>{{ tag.item_count }}</td>
+              <th scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</button></td>
+              <td class='align-middle'>{{ tag.item_count }}</td>
               <td>
-                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
               <td>
-                <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
               <td>
-                <a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a>
+                <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
               </td>
             </tr>
           {% endfor %}

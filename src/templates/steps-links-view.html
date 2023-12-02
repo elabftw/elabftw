@@ -37,15 +37,13 @@
       {% for link in Entity.entityData.experiments_links %}
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
-          <div class='align-self-center mr-2'>
+          <div class='mr-2'>
             <i class='fas fa-link fa-fw'></i>
           </div>
           <div>
-            <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-            <div>
-              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-              <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
-            </div>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+            <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
+            <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
           <div class='ml-auto align-self-center mr-3'>
@@ -74,15 +72,13 @@
       {% for link in Entity.entityData.items_links %}
         {% set randomId = random() %}
         <div class='d-flex mb-4' id='parent_{{ randomId }}'>
-          <div class='align-self-center mr-2'>
+          <div class='mr-2'>
             <i class='fas fa-link fa-fw'></i>
           </div>
           <div>
-            <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-            <div>
-              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-              <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
-            </div>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+            <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
+            <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark'>{{ link.title|raw }}</a>
           </div>
           {# toggle body #}
           <div class='ml-auto align-self-center mr-3'>
@@ -110,7 +106,7 @@
   {% if relatedExperimentsArr %}
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
     <div class='row mt-2' data-save-hidden='relatedExperimentsDiv'>
-      <div class='ml-3 mt-3 col-md-12'>
+      <div class='ml-3 mt-3 col-md-12' id='relatedExperimentsDiv'>
         {% for link in relatedExperimentsArr %}
           {% set randomId = random() %}
           <div class='d-flex mb-4' id='parent_{{ randomId }}'>
@@ -118,15 +114,21 @@
               <i class='fas fa-link fa-fw'></i>
             </div>
             <div>
-              <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-              <div>
-                <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
-              </div>
+              {% if link.category_title %}
+                <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title|raw }}</span>
+              {% endif %}
+              <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
             {# toggle body #}
             <div class='ml-auto align-self-center mr-3'>
-              <div data-type='experiments' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
-                <i class='fas fa-square-plus'></i>
+              <div>
+                {# delete link #}
+                <a data-action='destroy-related-link' data-endpoint='experiments_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='rounded p-2 hl-hover-gray'>
+                  <i class='fas fa-trash-alt'></i>
+                </a>
+                <span data-type='experiments' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                  <i class='fas fa-square-plus'></i>
+                </span>
               </div>
             </div>
           </div>
@@ -137,10 +139,11 @@
       </div>
     </div>
 
+    <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
       <a href='experiments.php?mode=show&related={{ Entity.id }}'>{{ 'Show related experiments'|trans }}</a>
-    </div>
+    </div-->
     <hr>
   {% endif %}
 
@@ -148,7 +151,7 @@
   {% if relatedItemsArr %}
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
     <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-      <div class='ml-3 mt-3 col-md-12'>
+      <div class='ml-3 mt-3 col-md-12' id='relatedItemsDiv'>
         {% for link in relatedItemsArr %}
           {% set randomId = random() %}
           <div class='d-flex mb-4' id='parent_{{ randomId }}'>
@@ -156,15 +159,19 @@
               <i class='fas fa-link fa-fw'></i>
             </div>
             <div>
-              <div class='item-category' style='color:#{{ link.color|raw }}'>{{ link.category|raw }}</div>
-              <div>
-                <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
-              </div>
+              <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
+              <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark'>{{ link.title|raw }}</a>
             </div>
             {# toggle body #}
             <div class='ml-auto align-self-center mr-3'>
-              <div data-type='items' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
-                <i class='fas fa-square-plus'></i>
+              <div>
+                {# delete link #}
+                <a data-action='destroy-related-link' data-endpoint='items_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='rounded p-2 hl-hover-gray'>
+                  <i class='fas fa-trash-alt'></i>
+                </a>
+                <span data-type='items' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' class='rounded p-2 hl-hover-gray'>
+                  <i class='fas fa-square-plus'></i>
+                </span>
               </div>
             </div>
           </div>
@@ -175,10 +182,11 @@
       </div>
     </div>
 
+    <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
       <a href='database.php?mode=show&related={{ Entity.id }}'>{{ 'Show related items'|trans }}</a>
-    </div>
+    </div-->
     <hr>
   {% endif %}
 

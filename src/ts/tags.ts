@@ -5,12 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import i18next from 'i18next';
-import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement } from './misc';
+import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -19,66 +18,97 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
 
   // CREATE TAG
-  $(document).on('keypress blur', '.createTagInput', function(e) {
-    if ($(this).val() === '') {
+  const createTag = (el: HTMLInputElement): void => {
+    if (!el.value) {
       return;
     }
-    if (e.key === 'Enter' || e.type === 'focusout') {
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {'tag': $(this).val()}).then(() => {
-        $(this).val('');
-        reloadElement('tags_div_' + entity.id).then(() => addAutocompleteToTagInputs());
-      });
-    }
-  });
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {tag: el.value}).then(() => {
+      // instead of reloading the full "tags div", reload only parts which contains tags
+      // so we don't need to reload the input (and need to re-apply listeners)
+      reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]);
+      el.value = '';
+    });
+  };
 
-  // CREATE TAG for several entities
-  $(document).on('keypress blur', '.createTagInputMultiple', function(e) {
-    if ($(this).val() === '') {
-      return;
-    }
-    if (e.key === 'Enter' || e.type === 'focusout') {
-      // get the ids of selected entities
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        const json = {
-          'msg': 'Nothing selected!',
-          'res': false,
-        };
-        notif(json);
-        return;
+  if (document.querySelector('.createTagInput')) {
+    document.querySelector('.createTagInput').addEventListener('blur', event => {
+      createTag(event.target as HTMLInputElement);
+    });
+
+    document.querySelector('.createTagInput').addEventListener('keyup', event => {
+      if ((event as KeyboardEvent).code === 'Enter') {
+        createTag(event.target as HTMLInputElement);
       }
+    });
+  }
+  // END CREATE TAG
 
-      // loop over it and add tags
-      const results = [];
-      checked.forEach(checkBox => {
-        const tag = (document.getElementById('createTagInputMultiple') as HTMLInputElement).value;
-        results.push(ApiC.post(`${entity.type}/${checkBox['id']}/${Model.Tag}`, {'tag': tag}));
-      });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
-
-      $(this).val('');
+  // CREATE TAG MULTIPLE
+  const createTagMultiple = (el: HTMLInputElement): void => {
+    if (!el.value) {
+      return;
     }
-  });
+    // get the ids of selected entities
+    const checked = getCheckedBoxes();
+    if (checked.length === 0) {
+      const json = {
+        'msg': 'Nothing selected!',
+        'res': false,
+      };
+      notif(json);
+      return;
+    }
+
+    // loop over it and add tags
+    const results = [];
+    checked.forEach(checkBox => {
+      results.push(ApiC.post(`${entity.type}/${checkBox['id']}/${Model.Tag}`, {tag: el.value}));
+    });
+
+    Promise.all(results).then(() => {
+      reloadEntitiesShow();
+      el.value = '';
+    });
+  };
+
+  if (document.querySelector('.createTagInputMultiple')) {
+    document.querySelector('.createTagInputMultiple').addEventListener('blur', event => {
+      createTagMultiple(event.target as HTMLInputElement);
+    });
+
+    document.querySelector('.createTagInputMultiple').addEventListener('keyup', event => {
+      if ((event as KeyboardEvent).code === 'Enter') {
+        createTagMultiple(event.target as HTMLInputElement);
+      }
+    });
+  }
+  // END CREATE TAG MULTIPLE
 
   // CREATE FAVORITE TAG
-  $(document).on('keypress blur', '.createFavTagInput', function(e) {
-    const FavTagC = new FavTag();
-    if ($(this).val() === '') {
+  const createTagFavorite = (el: HTMLInputElement): void => {
+    if (!el.value) {
       return;
     }
-    if (e.key === 'Enter' || e.type === 'focusout') {
-      FavTagC.create($(this).val() as string).then(() => {
-        reloadElement('favtagsPanel');
-        $(this).val('');
-      });
-    }
-  });
+    (new FavTag()).create(el.value).then(() => {
+      reloadElement('favtagsTagsDiv');
+      el.value = '';
+    });
+  };
+
+  if (document.querySelector('.createTagInputFavorite')) {
+    document.querySelector('.createTagInputFavorite').addEventListener('blur', event => {
+      createTagFavorite(event.target as HTMLInputElement);
+    });
+
+    document.querySelector('.createTagInputFavorite').addEventListener('keyup', event => {
+      if ((event as KeyboardEvent).code === 'Enter') {
+        createTagFavorite(event.target as HTMLInputElement);
+      }
+    });
+  }
+  // END CREATE FAVORITE TAG
 
   // AUTOCOMPLETE
-
   addAutocompleteToTagInputs();
   if (document.getElementById('favtagsPanel')) {
     new MutationObserver(() => addAutocompleteToTagInputs())
@@ -119,11 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
-        ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElement(`tags_div_${entity.id}`).then(() => addAutocompleteToTagInputs()));
+        ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]));
       }
     // ADD SUGGESTED TAGS
     } else if (el.matches('[data-action="add-suggested-tag"]')) {
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Add, 'tag': el.innerText}).then(() => reloadElement(`tags_div_${entity.id}`).then(() => addAutocompleteToTagInputs()));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Add, 'tag': el.innerText}).then(() => reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]));
     // DESTROY (from admin panel/tag manager)
     } else if (el.matches('[data-action="destroy-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
@@ -131,5 +161,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-
 });

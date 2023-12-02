@@ -16,13 +16,23 @@
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'experiments.php'} %}
+      {% include 'create-new.html' with {'entityPage': 'experiments.php', 'entityType': 'experiments'} %}
     </div>
+    <hr>
     {% if experimentsCategoryArr %}
       <h5>{{ 'Browse by category'|trans }}</h5>
-      <div class='d-flex my-2'>
+      <div class='d-flex my-2 flex-wrap lh-150'>
         {% for category in experimentsCategoryArr %}
-        <a href='experiments.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='category-button rounded p-1 mr-2'>{{ category.title|raw }}</a>
+        <a href='experiments.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='catstat-btn category-btn mr-2'>{{ category.title|raw }}</a>
+        {% endfor %}
+      </div>
+      <hr>
+    {% endif %}
+    {% if experimentsStatusArr %}
+      <h5>{{ 'Browse by status'|trans }}</h5>
+      <div class='d-flex my-2 flex-wrap lh-150'>
+        {% for status in experimentsStatusArr %}
+        <a href='experiments.php?mode=show&status={{ status.id }}'><span style='--bg: #{{ status.color }}' class='catstat-btn status-btn mr-2'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title|raw }}</a>
         {% endfor %}
       </div>
       <hr>
@@ -30,26 +40,36 @@
     <h5>{{ 'Last modified experiments'|trans }}</h5>
     <ul class='list-group mt-1'>
       {% for experiment in experimentsArr %}
-      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'><span style='--bg: #{{ experiment.color }}' class='category-button rounded p-1 mr-2'>{{ experiment.mainattr_title|raw }}</span>{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='experiments.php?mode=view&id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'>{% if experiment.category_title %}<span style='--bg: #{{ experiment.category_color }}' class='catstat-btn category-btn mr-2'>{{ experiment.category_title|raw }}</span>{% endif %}{{ experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'database.php'} %}
+      {% include 'create-new.html' with {'entityPage': 'database.php', 'entityType': 'items'} %}
     </div>
+    <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
-    <div class='d-flex my-2'>
-      {% for category in categoryArr %}
-      <a href='database.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='category-button rounded p-1 mr-2'>{{ category.title|raw }}</a>
+    <div class='d-flex my-2 flex-wrap lh-150'>
+      {% for category in itemsCategoryArr %}
+      <a href='database.php?mode=show&cat={{ category.id }}'><span style='--bg: #{{ category.color }}' class='catstat-btn category-btn  mr-2'>{{ category.title|raw }}</a>
       {% endfor %}
     </div>
     <hr>
+    {% if itemsStatusArr %}
+      <h5>{{ 'Browse by status'|trans }}</h5>
+      <div class='d-flex my-2 flex-wrap lh-150'>
+        {% for status in itemsStatusArr %}
+        <a href='database.php?mode=show&status={{ status.id }}'><span style='--bg: #{{ status.color }}' class='catstat-btn status-btn mr-2'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title|raw }}</a>
+        {% endfor %}
+      </div>
+      <hr>
+    {% endif %}
     <h5>{{ 'Last modified resources'|trans }}</h5>
     <ul class='list-group mt-1'>
       {% for item in itemsArr %}
-      <a href='database.php?mode=view&id={{ item.id }}' class='list-group-item hl-hover-gray breakable'><span style='--bg: #{{ item.color }}' class='category-button rounded p-1 mr-2'>{{ item.mainattr_title }}</span>{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
+      <a href='database.php?mode=view&id={{ item.id }}' class='list-group-item hl-hover-gray breakable'>{% if item.category_title %}<span style='--bg: #{{ item.category_color }}' class='catstat-btn category-btn mr-2'>{{ item.category_title }}</span>{% endif %}{{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </ul>
   </div>

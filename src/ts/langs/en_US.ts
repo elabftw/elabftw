@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Untitled",
     "entity-delete-warning": "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra fields",
     "filename": "Filename",
     "generic-delete-warning": "Delete this?",
@@ -30,6 +31,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "File comment",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

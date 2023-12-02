@@ -20,6 +20,7 @@ module.exports = (env) => {
   return {
     entry: {
       main: [
+        './src/scss/main.scss',
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
@@ -64,8 +65,7 @@ module.exports = (env) => {
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
         'prismjs/components/prism-sql.js',
-      ],
-      jslibs: [
+        'prismjs/components/prism-yaml.js',
         './src/js/vendor/keymaster.js',
       ],
     },
@@ -80,16 +80,13 @@ module.exports = (env) => {
     optimization: {
       splitChunks: {
         chunks: 'all',
-        name: 'vendor'
+        name: 'vendor',
       },
       minimize: true,
       minimizer: [
         new CssMinimizerPlugin(),
         new TerserPlugin(),
       ],
-    },
-    watchOptions: {
-        ignored: /node_modules/
     },
     plugins: [
       new MiniCssExtractPlugin(
@@ -100,15 +97,10 @@ module.exports = (env) => {
     ],
     resolve: {
       extensions: ['.ts', '.js'],
-      fallback: {
-        "stream": require.resolve("stream-browserify"),
-        "timers": require.resolve("timers-browserify"),
-      },
     },
     module: {
       rules:[
-        // ts loader
-        {
+        { // ts loader
           test: /\.ts$/,
           use: {
             loader: 'ts-loader',
@@ -118,12 +110,20 @@ module.exports = (env) => {
               }
           },
         },
-        {
-          test: /\.css$/i,
+        { // CSS LOADER
+          test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
             'css-loader',
           ],
+        },
+        { // SASS loader
+          test: /\.scss$/,
+          type: 'asset/resource',
+          generator: {
+            filename: 'elabftw.min.css',
+          },
+          use: ['sass-loader'],
         },
         {
           test: /.(jpg|jpeg|png|svg)$/,

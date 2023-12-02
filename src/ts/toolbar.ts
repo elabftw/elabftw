@@ -37,10 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
       let queryString = '';
+      let page = '';
       if (about.page.startsWith('template-')) {
         queryString = 'tab=3&template';
+        page = '/ucp.php';
       }
-      EntityC.duplicate(entity.id).then(resp => window.location.href = `?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
+
+      EntityC.duplicate(entity.id).then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
 
     // TOGGLE LOCK
     } else if (el.matches('[data-action="lock-entity"]')) {

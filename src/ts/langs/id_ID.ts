@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "generic-delete-warning": "Hapus ini?",
@@ -30,6 +31,7 @@ const t = {
     "today": "Hari ini",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

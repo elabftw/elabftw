@@ -9,6 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\IsSysadminChanged;
+use Elabftw\AuditEvent\PasswordChanged;
+use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -178,6 +181,7 @@ class Users implements RestInterface
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
+        AuditLogs::create(new UserRegister($userid));
         return $userid;
     }
 
@@ -187,8 +191,12 @@ class Users implements RestInterface
      * @param string $query the searched term
      * @param int $teamId limit search to a given team or search all teams if 0
      */
-    public function readFromQuery(string $query, int $teamId = 0, bool $includeArchived = false, bool $onlyAdmins = false): array
-    {
+    public function readFromQuery(
+        string $query,
+        int $teamId = 0,
+        bool $includeArchived = false,
+        bool $onlyAdmins = false,
+    ): array {
         $teamFilterSql = '';
         if ($teamId > 0) {
             $teamFilterSql = ' AND users2teams.teams_id = :team';
@@ -303,13 +311,29 @@ class Users implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
+        $this->canWriteOrExplode($action);
         match ($action) {
-            Action::Add => (new Users2Teams())->create($this->userData['userid'], (int) $params['team']),
+            Action::Add => (
+                function () use ($params) {
+                    // check instance config if admins are allowed to do that (if requester is not sysadmin)
+                    $Config = Config::getConfig();
+                    if ($this->requester->userData['is_sysadmin'] !== 1 && $Config->configArr['admins_import_users'] !== '1') {
+                        throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');
+                    }
+                    // need to be admin to "import" a user in a team
+                    $team = (int) $params['team'];
+                    $TeamsHelper = new TeamsHelper($team);
+                    $permissions = $TeamsHelper->getPermissions($this->requester->userData['userid']);
+                    if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
+                        throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
+                    }
+                    (new Users2Teams())->create($this->userData['userid'], $team);
+                }
+            )(),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive(),
+            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive((bool) $params['with_exp']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
@@ -518,8 +542,12 @@ class Users implements RestInterface
             Filter::email($params->getContent());
         }
         // special case for is_sysadmin: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin' && $this->requester->userData['is_sysadmin'] === 0) {
-            throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+        if ($params->getTarget() === 'is_sysadmin') {
+            if ($this->requester->userData['is_sysadmin'] === 0) {
+                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+            }
+            /** @psalm-suppress PossiblyNullArgument */
+            AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
@@ -548,18 +576,21 @@ class Users implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        /** @psalm-suppress PossiblyNullArgument */
+        AuditLogs::create(new PasswordChanged($this->userid));
+        return $res;
     }
 
     /**
      * Check if requester can act on this User
      */
-    private function canWriteOrExplode(): void
+    private function canWriteOrExplode(?Action $action = null): void
     {
         if ($this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
-        if (!$this->requester->isAdminOf($this->userData['userid'])) {
+        if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

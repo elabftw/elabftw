@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
 use Elabftw\Auth\Local;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
@@ -46,7 +47,6 @@ try {
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($Request->request->get('password')) && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
             $App->Users->patch(Action::UpdatePassword, $postData);
-            $App->Log->info('Password was changed for this user', array('userid' => $App->Users->userData['userid']));
         }
 
         // TWO FACTOR AUTHENTICATION
@@ -69,7 +69,7 @@ try {
             $Response->send();
             exit;
 
-            // Disable MFA if not enforced
+        // Disable MFA if not enforced
         } elseif (!$useMFA
             && $App->Users->userData['mfa_secret']
             && !Local::isMfaEnforced(

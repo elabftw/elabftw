@@ -5,16 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol';
-import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
+import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -53,6 +53,7 @@ export function listenTrigger(): void {
   document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
     el.addEventListener(el.dataset.trigger, event => {
       event.preventDefault();
+      el.classList.remove('is-invalid');
       // for a checkbox element, look at the checked attribute, not the value
       let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.customAction === 'patch-user2team-is-owner') {
@@ -77,6 +78,10 @@ export function listenTrigger(): void {
             // make sure we listen to the new element too
             listenTrigger();
           });
+        }
+      }).catch(error => {
+        if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+          el.classList.add('is-invalid');
         }
       });
     });
@@ -357,10 +362,14 @@ export function addAutocompleteToLinkInputs(): void {
       $(`#${object.inputElId}`).autocomplete({
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
+          const format = entity => {
+            const category = entity.category_title ? `${entity.category_title} - `: '';
+            return `${entity.id} - ${category}${entity.title.substring(0, 60)}`;
+          };
           if (term in cache[object.selectElid]) {
             const res = [];
             cache[object.selectElid][term].forEach(entity => {
-              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
+              res.push(format(entity));
             });
             response(res);
             return;
@@ -369,7 +378,7 @@ export function addAutocompleteToLinkInputs(): void {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
-              res.push(`${entity.id} - [${entity.mainattr_title}] ${entity.title.substring(0, 60)}`);
+              res.push(format(entity));
             });
             response(res);
           });

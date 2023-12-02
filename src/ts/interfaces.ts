@@ -72,6 +72,7 @@ enum Action {
   UpdateTag = 'updatetag',
   UpdateMetadataField = 'updatemetadatafield',
   Unreference = 'unreference',
+  Validate = 'validate',
 }
 
 enum Model {
@@ -110,6 +111,7 @@ enum Target {
   Body = 'body',
   Comment = 'comments',
   ContentType = 'content_type',
+  Customid = 'custom_id',
   Date = 'date',
   Deadline = 'deadline',
   DeadlineNotif = 'deadline_notif',

@@ -8,8 +8,8 @@
 
 @import 'variables';
 /* import this first to be able to modify bootstrap theme */
-@import '../../node_modules/bootstrap/scss/functions';
-@import '../../node_modules/bootstrap/scss/variables';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
 /* override bootstrap theme */
 $theme-colors: (
     'primary': $elabblue,
@@ -20,16 +20,16 @@ $theme-colors: (
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootstrap-select/sass/bootstrap-select';
-@import '../../node_modules/prismjs/themes/prism';
-@import '../../node_modules/dropzone/dist/dropzone';
-@import '../../node_modules/@fancyapps/fancybox/dist/jquery.fancybox';
-@import '../../node_modules/jquery-ui/themes/base/core';
-@import '../../node_modules/jquery-ui/themes/base/autocomplete';
-@import '../../node_modules/jquery-ui/themes/base/menu';
-@import '../../node_modules/jquery-ui/themes/base/sortable';
-@import '../../node_modules/jquery-ui/themes/base/theme';
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-select/sass/bootstrap-select';
+@import 'prismjs/themes/prism';
+@import 'dropzone/dist/dropzone';
+@import '@fancyapps/fancybox/dist/jquery.fancybox';
+@import 'jquery-ui/themes/base/core';
+@import 'jquery-ui/themes/base/autocomplete';
+@import 'jquery-ui/themes/base/menu';
+@import 'jquery-ui/themes/base/sortable';
+@import 'jquery-ui/themes/base/theme';
 
 @import './fontawesome/fontawesome';
 @import './fontawesome/solid';
@@ -401,6 +401,16 @@ button:disabled {
     }
 }
 
+/* color one row every other row */
+tr:nth-child(even) {
+    background-color: $white;
+}
+
+tr:nth-child(odd) {
+    background-color: $mainbackground;
+}
+
+
 /* TABLE SHOW MODE */
 .item-table {
     .title {
@@ -718,12 +728,6 @@ button:disabled {
     }
 }
 
-.item-category {
-    font-size: 80%;
-    text-transform: uppercase;
-    color: $medium;
-}
-
 .item a p:hover {
     color: $elabblue;
 }
@@ -845,6 +849,10 @@ the form-control fails to do that so we do the border ourselves */
     color: #856404 !important;
 }
 
+.lh-150 {
+    line-height: 150%;
+}
+
 .togglable-section-title {
     color: $medium;
     font-size: 100%;
@@ -852,12 +860,37 @@ the form-control fails to do that so we do the border ourselves */
     text-transform: uppercase;
 }
 
-.category-button {
-    background-color: var(--bg);
-    color: $white;
-    font-size: 75%;
+/* Category and Status buttons */
+.catstat-btn {
+    font-size: 72%;
     font-weight: bold;
     text-transform: uppercase;
+    border-radius: .25rem;
+    padding: .25rem;
+
+    /* Only Category */
+    &.category-btn {
+        background-color: var(--bg);
+        color: $white;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+    }
+
+    /* Only Status */
+    &.status-btn {
+        background-color: $firstlevel;
+        color: $mediumstrong;
+
+        &:hover {
+            background-color: $secondlevel;
+        }
+
+        i {
+            color: var(--bg);
+        }
+    }
 }
 
 .smallgray {
@@ -910,6 +943,10 @@ the form-control fails to do that so we do the border ourselves */
 /* background for archived users */
 .bg-medium {
     background-color: $secondlevel;
+}
+
+.bg-firstlevel {
+    background-color: $firstlevel;
 }
 
 /* print only the main div */
@@ -1120,7 +1157,23 @@ input[type='color'] {
 .admin-badge {
     background-color: $lightblue;
     border: 1px solid $gold;
+    position: relative;
+
+    &::before {
+        color: $dangerred;
+        content: 'Admin';
+        left: 0;
+        font-size: 75%;
+        position: absolute;
+        top: -16px;
+    }
 }
+
+.custom-id-badge {
+    color: $medium;
+    padding: 0.25rem;
+}
+
 
 /* give the togglePassword some borders like input */
 .input-border {
@@ -1185,7 +1238,7 @@ input[type='color'] {
     border-top-right-radius: 0;
 }
 
-/* scroll to top of page button */
+/* SCROLL TO TOP OF PAGE BUTTON */
 .floating-middle-right {
     position: fixed;
     right: 0.8%;
@@ -1204,6 +1257,12 @@ input[type='color'] {
         color: $white;
     }
 }
+
+#scrollTopBtnAnchor {
+    bottom: 0;
+    position: absolute;
+}
+/* END BACK TO TOP BUTTON */
 
 .border-white {
     border: 1px solid $mainbackground;

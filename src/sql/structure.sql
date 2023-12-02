@@ -41,6 +41,19 @@ CREATE TABLE `api_keys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
+-- Table structure for table `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `body` TEXT NOT NULL,
+  `category` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `authfail`
 --
 
@@ -88,6 +101,7 @@ CREATE TABLE `experiments` (
   `date` date NOT NULL,
   `body` mediumtext,
   `category` INT UNSIGNED NULL DEFAULT NULL,
+  `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `status` INT UNSIGNED NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `userid` int(10) UNSIGNED NOT NULL,
@@ -236,6 +250,7 @@ CREATE TABLE `experiments_templates` (
   `team` int(10) UNSIGNED DEFAULT NULL,
   `body` text,
   `category` INT UNSIGNED NULL DEFAULT NULL,
+  `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -382,6 +397,7 @@ CREATE TABLE `items` (
   `elabid` varchar(255) NOT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `category` INT UNSIGNED NULL DEFAULT NULL,
+  `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
@@ -485,6 +501,7 @@ CREATE TABLE `items_types` (
   `title` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `color` varchar(6) DEFAULT '29aeb9',
+  `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `body` text NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
@@ -718,7 +735,6 @@ CREATE TABLE `teams` (
   `link_href` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
-  `public_db` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `force_canread` JSON NOT NULL,
   `force_canwrite` JSON NOT NULL,
   `do_force_canread` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -866,7 +882,7 @@ CREATE TABLE `users` (
   `default_read` JSON NOT NULL,
   `default_write` JSON NOT NULL,
   `cjk_fonts` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `orderby` varchar(255) NOT NULL DEFAULT 'date',
+  `orderby` varchar(255) NOT NULL DEFAULT 'lastchange',
   `sort` varchar(255) NOT NULL DEFAULT 'desc',
   `use_markdown` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_sig` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -990,7 +1006,8 @@ ALTER TABLE `api_keys`
 ALTER TABLE `experiments`
   ADD KEY `fk_experiments_users_userid` (`userid`),
   ADD KEY `idx_experiments_state` (`state`),
-  ADD KEY `fk_experiments_status_id` (`status`);
+  ADD KEY `fk_experiments_status_id` (`status`),
+  ADD UNIQUE `unique_experiments_custom_id` (`category`, `custom_id`);
 
 --
 -- Indexes for table `experiments_comments`
@@ -1018,7 +1035,8 @@ ALTER TABLE `experiments_steps`
 ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_teams_id` (`team`),
   ADD KEY `idx_experiments_templates_state` (`state`),
-  ADD KEY `fk_experiments_templates_users_userid` (`userid`);
+  ADD KEY `fk_experiments_templates_users_userid` (`userid`),
+  ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
 
 ALTER TABLE `experiments_templates_changelog`
   ADD KEY `fk_experiments_templates_changelog2experiments_templates_id` (`entity_id`),
@@ -1039,7 +1057,8 @@ ALTER TABLE `items`
   ADD KEY `fk_items_teams_id` (`team`),
   ADD KEY `idx_items_state` (`state`),
   ADD KEY `fk_items_items_types_id` (`category`),
-  ADD KEY `fk_items_users_userid` (`userid`);
+  ADD KEY `fk_items_users_userid` (`userid`),
+  ADD UNIQUE `unique_items_custom_id` (`category`, `custom_id`);
 
 ALTER TABLE `items_changelog`
   ADD KEY `fk_items_changelog2items_id` (`entity_id`),
@@ -1059,7 +1078,8 @@ ALTER TABLE `items_comments`
 --
 ALTER TABLE `items_types`
   ADD KEY `fk_items_types_teams_id` (`team`),
-  ADD KEY `idx_items_types_state` (`state`);
+  ADD KEY `idx_items_types_state` (`state`),
+  ADD UNIQUE `unique_items_types_custom_id` (`id`, `custom_id`);
 
 ALTER TABLE `items_types_changelog`
   ADD KEY `fk_items_types_changelog2items_types_id` (`entity_id`),

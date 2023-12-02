@@ -62,11 +62,11 @@
     <div class='d-flex justify-content-between'>
       <label for='orderby' class='col-form-label'>{{ 'Order by'|trans }}</label>
       <select id='orderby' data-trigger='change' data-model='users/me' data-target='orderby' class='form-control col-md-3'>
+          <option value='lastchange' {{ App.Users.userData.orderby == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }} {{ '(default)'|trans }}</option>
           <option value='cat' {{ App.Users.userData.orderby == 'cat' ? ' selected' }}>{{ 'Category'|trans }}</option>
-          <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }} {{ '(default)'|trans }}</option>
+          <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
           <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
           <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{% trans %}Comment{% plural 1 %}Comments{% endtrans %}</option>
-          <option value='lastchange' {{ App.Users.userData.orderby == 'lastchange' ? ' selected' }}>{{ 'Last modified'|trans }}</option>
       </select>
     </div>
     <hr>
@@ -243,7 +243,7 @@
     <div class='d-flex justify-content-between'>
       <label for='use_isodate' class='col-form-label'>{{ 'Use ISO datetime in the text editor instead of localized one'|trans }}</label>
       <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_isodate' {{ App.Users.userData.cjk_use_isodate == 1 ? 'checked="checked"' }} id='use_isodate'>
+        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='use_isodate' {{ App.Users.userData.use_isodate == 1 ? 'checked="checked"' }} id='use_isodate'>
         <span class='slider'></span>
       </label>
     </div>

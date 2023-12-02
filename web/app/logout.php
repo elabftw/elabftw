@@ -9,8 +9,10 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use Exception;
@@ -25,12 +27,12 @@ require_once 'init.inc.php';
 
 $redirectUrl = '/login.php';
 
-// add log line when user logs out
-$App->Log->info('User is logging out', array('userid' => $App->Users->userData['userid'] ?? 0));
 
 $destroySession = function () use ($App): void {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();
+        // create an event in the audit log (only for authenticated users)
+        AuditLogs::create(new UserLogout($App->Users->userData['userid']));
     }
 
     // kill session
@@ -67,7 +69,7 @@ if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\
 // Try decoding saml information, if available
 if ($App->Request->cookies->has('saml_token')) {
     try {
-        $samlToken = $App->Request->cookies->getAlnum('saml_token');
+        $samlToken = $App->Request->cookies->getString('saml_token');
         $sessionIndex = null;
         $idpId = null;
         if (!empty($samlToken)) {

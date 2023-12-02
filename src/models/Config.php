@@ -136,6 +136,7 @@ final class Config implements RestInterface
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('deletable_xp', 1),
             ('allow_useronly', 1),
+            ('admins_import_users', 0),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),
             ('min_days_revisions', 23),
@@ -241,7 +242,7 @@ final class Config implements RestInterface
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
-                // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
+            // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
             }

@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "Sie bearbeiten gerade die Metadaten zu diesem Eintrag.",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Bist du sicher?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Zusätzliche Felder",
     "filename": "Dateiname",
     "generic-delete-warning": "Element löschen?",
@@ -30,6 +31,7 @@ const t = {
     "today": "Heute",
     "undefined-group": "Unbestimmte Gruppe",
     "upload-file-comment": "Dateikommentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

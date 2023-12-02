@@ -100,7 +100,7 @@ class ApiKeys implements RestInterface
             $apiKey = $exploded[1] ?? '';
             $idFilter = ' WHERE id = :id';
         }
-        $sql = 'SELECT hash, userid, can_write, team FROM api_keys' . $idFilter;
+        $sql = 'SELECT id, hash, userid, can_write, team FROM api_keys' . $idFilter;
         $req = $this->Db->prepare($sql);
         if ($idFilter) {
             $req->bindParam(':id', $this->keyId, PDO::PARAM_INT);
@@ -108,7 +108,7 @@ class ApiKeys implements RestInterface
         $this->Db->execute($req);
         foreach ($req->fetchAll() as $key) {
             if (password_verify($apiKey, $key['hash'])) {
-                $this->touch();
+                $this->touch($key['id']);
                 return $key;
             }
         }
@@ -130,11 +130,11 @@ class ApiKeys implements RestInterface
         return $this->insert(Filter::title($name), $canwrite, $hash);
     }
 
-    private function touch(): bool
+    private function touch(int $keyId): bool
     {
         $sql = 'UPDATE api_keys SET last_used_at = NOW() WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->keyId, PDO::PARAM_INT);
+        $req->bindParam(':id', $keyId, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

@@ -40,6 +40,8 @@ class MigrateUploads extends Command
         );
         $number = $migrator->migrate();
         $output->writeln(sprintf('Moved %d uploads', $number));
+        $output->writeln('Now fixing links in body...');
+        $migrator->fixBodies();
         return Command::SUCCESS;
     }
 }

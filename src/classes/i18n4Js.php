@@ -38,6 +38,7 @@ class i18n4Js
             'editing-metadata' =>_('You are currently editing the metadata attached to this entry.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
+            'error-no-category' => _('A category is required to fetch the next Custom ID'),
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
@@ -58,6 +59,7 @@ class i18n4Js
             'today' => _('Today'),
             'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
+            'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
         );
     }
 

@@ -1,21 +1,34 @@
-{# Modal for create new database #}
-<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' role='document'>
+{# Modal window for creating a new entity #}
+{# requires: entityType + {experiments,resources}CategoriesArr #}
+<div class='modal fade' id='createModal_{{ entityType }}' tabindex='-1' role='dialog' aria-labelledby='createModalLabel_{{ entityType }}' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel'>{{ 'Select resource category'|trans }}</h5>
+        <h5 class='modal-title' id='createModalLabel_{{ entityType }}'>{{ 'Select template'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body'>
-        {% for category in categoryArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}'>{{ category.title }}</a>
+        {% if entityType == 'experiments' %}
+          {% set createNewCategoryArr = templatesArr %}
+        {% else %}
+          {% set createNewCategoryArr = categoryArr %}
+        {% endif %}
+        {% for category in createNewCategoryArr %}
+          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>
+          {% if category.category %}
+            <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title|raw }}</span>
+          {% endif %}
+          {{ category.title|raw }}</a>
         {% endfor %}
-        {# show add button to admin #}
-        {% if App.Users.isAdmin %}
         <hr>
-          <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#resourcesCategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+        {# show add button to admin, for items #}
+        {% if entityType == 'items' and App.Users.isAdmin %}
+          <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityType }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+        {% else %}
+          <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
+          <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid=''>{{ 'No template'|trans }}</a>
         {% endif %}
       </div>
     </div>

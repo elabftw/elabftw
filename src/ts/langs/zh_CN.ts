@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "当前正在编辑附加到此项的元数据。",
     "entity-default-title": "未命名",
     "entity-delete-warning": "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "额外字段",
     "filename": "文件名",
     "generic-delete-warning": "删除？",
@@ -30,6 +31,7 @@ const t = {
     "today": "今天",
     "undefined-group": "默认分组",
     "upload-file-comment": "档案评论",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

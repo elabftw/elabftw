@@ -45,10 +45,10 @@ class TinyEditor extends Editor implements EditorInterface {
     return tinymce.activeEditor.getContent();
   }
   setContent(content: string): void {
-    tinymce.editors[0].insertContent(content);
+    tinymce.get(0).insertContent(content);
   }
   replaceContent(content: string): void {
-    tinymce.editors[0].setContent(content);
+    tinymce.get(0).setContent(content);
   }
 }
 
@@ -59,6 +59,7 @@ export class MdEditor extends Editor implements EditorInterface {
     this.typeAsInt = 2;
   }
   init(): void {
+    /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
       onPreview: ed => {
         // ask mathjax to reparse the page

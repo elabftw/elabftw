@@ -54,6 +54,8 @@
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='status-asc' href='#'>{{ 'Status (inverted)'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='id-desc' href='#'>{{ 'Highest ID'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='id-asc' href='#'>{{ 'Lowest ID'|trans }}</a>
+          <a class='dropdown-item {{ (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='customid-desc' href='#'>{{ 'Highest Custom ID'|trans }}</a>
+          <a class='dropdown-item {{ (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='customid-asc' href='#'>{{ 'Lowest Custom ID'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='comment-desc' href='#'>{{ 'Recently commented'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? 'active' }}' data-query='title-asc' href='#'>{{ 'Title (alphabetical)'|trans }}</a>
           <a class='dropdown-item {{ (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? 'active' }}' data-query='title-desc' href='#'>{{ 'Title (inverted)'|trans }}</a>
@@ -140,10 +142,9 @@
             {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
             {# ARCHIVED filter #}
             <div class='input-group mr-1'>
-              <div class='input-group-prepend'>
-                <div class='input-group-text'>
-                  <input type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1' aria-label='{{ 'Show archived'|trans }}'>{{ 'Show archived'|trans }}
-                </div>
+              <div class='input-group-text'>
+                <input id='filterArchived' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1' aria-label='{{ 'Show archived'|trans }}'>
+                <label for='filterArchived'>{{ 'Show archived'|trans }}</label>
               </div>
             </div>
 

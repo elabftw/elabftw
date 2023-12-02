@@ -58,8 +58,8 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testMassEmail(): void
     {
         $replyTo = new Address('sender@example.com', 'Sergent Garcia');
-        $this->assertEquals(17, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
-        $this->assertEquals(8, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
+        $this->assertEquals(18, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
+        $this->assertEquals(9, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::TeamGroup, 1, 'Important message', 'yep', $replyTo));
         $this->assertEquals(6, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));

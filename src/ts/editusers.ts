@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { collectForm, reloadElement } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
-import { Action } from './interfaces';
+import { Action, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
@@ -57,18 +57,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE ADMIN STATUS
     } else if (el.matches('[data-action="toggle-admin-user"]')) {
       const group = el.dataset.promote === '1' ? 2 : 4;
-      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElement('editUsersBox'));
+
+    // ADD TO TEAM
+    } else if (el.matches('[data-action="add-user-to-team"]')) {
+      ApiC.patch(`${Model.User}/${el.dataset.userid}`, {'action': Action.Add, 'team': el.dataset.team}).then(() => reloadElement('editUsersBox'));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
-      // show alert
-      if (confirm('Are you sure you want to archive/unarchive this user?\nAll experiments will be locked and archived and user will not be able to login anymore.')) {
-        ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive}).then(() => reloadElement('editUsersBox'));
+      let lockExp = false;
+      if (document.getElementById(`lockSwitch_${el.dataset.userid}`)) {
+        lockExp = (document.getElementById(`lockSwitch_${el.dataset.userid}`) as HTMLInputElement).checked;
       }
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElement('editUsersBox'));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
-      ApiC.patch(`users/${el.dataset.userid}`, {'action': 'validate'}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Validate}).then(() => reloadElement('unvalidatedUsersBox')).then(() => reloadElement('editUsersBox'));
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
       const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;

@@ -3,6 +3,7 @@ coverage:
     show_uncovered: true
     show_only_summary: true
     include:
+        - src/AuditEvent/*
         - src/Auth/*
         - src/classes/*
         - src/commands/*

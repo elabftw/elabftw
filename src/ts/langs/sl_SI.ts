@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmeti in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra fields",
     "filename": "Filename",
     "generic-delete-warning": "Želite izbrisati?",
@@ -30,6 +31,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Komentar datoteke",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

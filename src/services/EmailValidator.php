@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,10 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
@@ -55,7 +55,7 @@ class EmailValidator
     {
         if ($this->emailDomain !== null) {
             $splitEmail = explode('@', $this->email);
-            $splitDomains = explode(',', $this->emailDomain);
+            $splitDomains = array_map('trim', explode(',', $this->emailDomain));
             if (!in_array($splitEmail[1], $splitDomains, true)) {
                 throw new ImproperActionException(sprintf(_('This email domain is not allowed. Allowed domains: %s'), implode(', ', $splitDomains)));
             }

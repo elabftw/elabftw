@@ -128,7 +128,7 @@
                       </a>
                     </div>
                     <i class='fas fa-link mr-1'></i>
-                    <span class='item-category' style='color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span> - <a href='experiments.php?mode=view&id={{ link.itemid }}'>
+                    <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='experiments.php?mode=view&id={{ link.itemid }}'>
                     {{ link.title|raw }}</a>
                     {# container to hold the body of the entity if it is toggled with the +/- icon #}
                     {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
@@ -190,7 +190,7 @@
                     </a>
                   </div>
                   <i class='fas fa-link mr-1'></i>
-                  <span class='item-category' style='color:#{{ link.mainattr_color }}'>{{ link.mainattr_title|raw }}</span> - <a href='database.php?mode=view&id={{ link.itemid }}'>
+                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='database.php?mode=view&id={{ link.itemid }}'>
                   {{ link.title|raw }}</a>
                   {# container to hold the body of the entity if it is toggled with the +/- icon #}
                   {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}

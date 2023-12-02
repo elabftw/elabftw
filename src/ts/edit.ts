@@ -5,8 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let ChemDoodle: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp } from './misc';
+import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp, notifError } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import { DateTime } from 'luxon';
@@ -19,6 +18,7 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
+import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
@@ -187,6 +187,32 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
+    // GET NEXT CUSTOM ID
+    } else if (el.matches('[data-action="get-next-custom-id"]')) {
+      // fetch the category from the current value of select, as it might be different from the one on page load
+      const category = (document.getElementById('category_select') as HTMLSelectElement).value;
+      if (category === '0') {
+        notifError(new Error(i18next.t('error-no-category')));
+        return;
+      }
+      const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
+      inputEl.classList.remove('is-invalid');
+      // lock the button
+      const button = el as HTMLButtonElement;
+      button.disabled = true;
+      // make sure the current id is null or it will increment this one
+      EntityC.update(entity.id, Target.Customid, null).then(() => {
+        // get the entity with highest custom_id
+        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`);
+      }).then(json => {
+        const nextId = json[0].custom_id + 1;
+        inputEl.value = nextId;
+        return EntityC.update(entity.id, Target.Customid, nextId);
+      }).finally(() => {
+        // unlock the button
+        button.disabled = false;
+      });
+
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {
       const input = el.closest('.input-group').querySelector('input');
@@ -348,59 +374,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tinyConfig = getTinymceBaseConfig('edit');
 
-    const tinyConfigForEdit = {
-      images_upload_handler: (blobInfo, success): void => {
-        const dropZone = Dropzone.forElement('#elabftw-dropzone') as CustomDropzone;
-        // Edgecase for editing an image using tinymce ImageTools
-        // Check if it was selected. This is set by an event hook below
-        if (tinymceEditImage.selected === true) {
-          // Note: confirm will trigger the SelectionChange event hook below again
-          if (confirm(i18next.t('replace-edited-file'))) {
-            const formData = new FormData();
-            const newfilecontent = new File(
-              [blobInfo.blob()],
-              tinymceEditImage.filename,
-              { lastModified: new Date().getTime(), type: blobInfo.blob().type },
-            );
-            formData.set('file', newfilecontent);
-            // prevent the browser from redirecting us
-            formData.set('extraParam', 'noRedirect');
-            // because the upload id is set this will replace the file directly
-            fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
-              method: 'POST',
-              body: formData,
-            }).then(resp => {
-              const location = resp.headers.get('location').split('/');
-              const newId = location[location.length -1];
-              // fetch info about the newly created upload
-              ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
-                success(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
-                // save here because using the old real_name will not return anything from the db (status is archived now)
-                updateEntityBody();
-                reloadElement('filesdiv');
-              });
+    const imagesUploadHandler = (blobInfo): Promise<string> => new Promise((resolve, reject) => {
+      const dropZone = Dropzone.forElement('#elabftw-dropzone') as CustomDropzone;
+      // Edgecase for editing an image using tinymce ImageTools
+      // Check if it was selected. This is set by an event hook below
+      if (tinymceEditImage.selected === true) {
+        // Note: confirm will trigger the SelectionChange event hook below again
+        if (confirm(i18next.t('replace-edited-file'))) {
+          const formData = new FormData();
+          const newfilecontent = new File(
+            [blobInfo.blob()],
+            tinymceEditImage.filename,
+            { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+          );
+          formData.set('file', newfilecontent);
+          // prevent the browser from redirecting us
+          formData.set('extraParam', 'noRedirect');
+          // because the upload id is set this will replace the file directly
+          fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
+            method: 'POST',
+            body: formData,
+          }).then(resp => {
+            const location = resp.headers.get('location').split('/');
+            const newId = location[location.length -1];
+            // fetch info about the newly created upload
+            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
+              resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+              // save here because using the old real_name will not return anything from the db (status is archived now)
+              updateEntityBody();
+              reloadElement('filesdiv');
             });
-          } else {
-            // Revert changes if confirm is cancelled
-            // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
-            tinymce.activeEditor.undoManager.undo();
-          }
-        // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-        } else if (typeof blobInfo.blob().name === 'undefined') {
-          const filename = prompt('Enter filename with extension e.g. .jpeg');
-          if (typeof filename !== 'undefined' && filename !== null) {
-            const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
-            dropZone.addFile(file);
-            dropZone.tinyImageSuccess = success;
-          } else {
-            // Just disregard the edit if the name prompt is cancelled
-            tinymce.activeEditor.undoManager.undo();
-          }
+          });
         } else {
-          dropZone.addFile(blobInfo.blob());
-          dropZone.tinyImageSuccess = success;
+          // Revert changes if confirm is cancelled
+          // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
+          tinymce.activeEditor.undoManager.undo();
+          reject('Action cancelled');
         }
-      },
+      // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
+      } else if (typeof blobInfo.blob().name === 'undefined') {
+        const filename = prompt('Enter filename with extension e.g. .jpeg');
+        if (typeof filename !== 'undefined' && filename !== null) {
+          const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
+          dropZone.addFile(file);
+          dropZone.tinyImageSuccess = resolve;
+        } else {
+          // Just disregard the edit if the name prompt is cancelled
+          tinymce.activeEditor.undoManager.undo();
+          reject('Action cancelled');
+        }
+      } else {
+        dropZone.addFile(blobInfo.blob());
+        dropZone.tinyImageSuccess = resolve;
+      }
+    });
+
+    const tinyConfigForEdit = {
+      images_upload_handler: imagesUploadHandler,
       // use undocumented callback function to asynchronously get the templates
       // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
       templates: (callback): void => {

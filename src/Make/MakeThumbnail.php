@@ -11,9 +11,11 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Interfaces\MakeThumbnailInterface;
 use function exif_read_data;
 use Imagick;
 use function in_array;
+use League\Flysystem\Filesystem;
 use function strtolower;
 
 /**
@@ -21,60 +23,33 @@ use function strtolower;
  * Note: this shouldn't be needed with psalm running inside the container!
  * @psalm-suppress UndefinedClass
  */
-final class MakeThumbnail
+class MakeThumbnail implements MakeThumbnailInterface
 {
     /** @var int WIDTH the width for the thumbnail */
     private const WIDTH = 100;
 
-    /**
-     * Do some sane white-listing. In theory, gmagick handles almost all image formats,
-     * but the processing of rarely used formats may be less tested/stable or may have security issues
-     * when adding new mime types take care of ambiguities:
-     * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
-     * image/x-ms-bmp
-     * @var array ALLOWED_MIMES
-     */
-    private const ALLOWED_MIMES = array(
-        'image/heic',
-        'image/png',
-        'image/jpeg',
-        'image/gif',
-        'image/tiff',
-        'image/x-eps',
-        'image/svg+xml',
-        'application/pdf',
-        'application/postscript',
-    );
-
-    public string $thumbFilename;
-
-    public function __construct(private string $mime, private string $content, private string $longName)
+    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs)
     {
-        $this->thumbFilename = $this->longName . '_th.jpg';
+    }
+
+    public function saveThumb(): void
+    {
+        $this->storageFs->write($this->getThumbFilename(), $this->getThumb());
+    }
+
+    private function getThumbFilename(): string
+    {
+        return $this->longName . '_th.jpg';
     }
 
     /**
      * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      */
-    public function makeThumb(): ?string
-    {
-        // verify mime type
-        if (!in_array($this->mime, self::ALLOWED_MIMES, true)) {
-            return null;
-        }
-        // Don't try to process pdf produced by iTextSharp, as they will fail for some unknown reason
-        if ($this->mime === 'application/pdf' && str_contains($this->content, 'iTextSharp')) {
-            return null;
-        }
-
-        return $this->useImagick();
-    }
-
-    private function useImagick(): string
+    private function getThumb(): string
     {
         $image = new Imagick();
+        $image->readImage($this->filePath);
         $image->setBackgroundColor('white');
-        $image->readImageBlob($this->content);
         // fix pdf with black background and png
         if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png') {
             $image->setResolution(300, 300);
@@ -104,12 +79,7 @@ final class MakeThumbnail
         $ext = Tools::getExt($this->longName);
         if (in_array(strtolower($ext), Extensions::HAS_EXIF, true)
             && $this->mime === 'image/jpeg') {
-            // create a stream from the file content so exif_read_data can read it
-            $stream = fopen(sprintf('data://text/plain;base64,%s', base64_encode($this->content)), 'rb');
-            if ($stream === false) {
-                return 0;
-            }
-            $exifData = exif_read_data($stream);
+            $exifData = exif_read_data($this->filePath);
             if ($exifData !== false) {
                 return $this->readOrientationFromExif($exifData);
             }
@@ -127,17 +97,12 @@ final class MakeThumbnail
         if (empty($exifData['Orientation'])) {
             return 0;
         }
-        switch ($exifData['Orientation']) {
-            case 1:
-                return 0;
-            case 3:
-                return 180;
-            case 6:
-                return 90;
-            case 8:
-                return -90;
-            default:
-                return 0;
-        }
+        return match ($exifData['Orientation']) {
+            1 => 0,
+            3 => 180,
+            6 => 90,
+            8 => -90,
+            default => 0,
+        };
     }
 }

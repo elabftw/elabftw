@@ -45,7 +45,7 @@ class ImportUser extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userid = (int) $input->getArgument('userid');
-        $filePath = sprintf('%s/%s', $this->Fs->getPath(), $input->getArgument('file'));
+        $filePath = $this->Fs->getPath((string) $input->getArgument('file'));
         $uploadedFile = new UploadedFile($filePath, 'input.eln', null, null, true);
         $teamid = (int) (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
         $Eln = new Eln(new Users($userid, $teamid), sprintf('experiments:%d', $userid), BasePermissions::User->toJson(), BasePermissions::User->toJson(), $uploadedFile, Storage::CACHE->getStorage()->getFs());

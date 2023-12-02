@@ -203,8 +203,10 @@ class Eln extends AbstractZip
             if ($this->Entity instanceof AbstractConcreteEntity) {
                 // rating
                 $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
-                // adjust the date
-                $this->Entity->patch(Action::Update, array('date' => $json['date']));
+                // adjust the date - templates won't have a date
+                if ($json['date']) {
+                    $this->Entity->patch(Action::Update, array('date' => $json['date']));
+                }
                 if ($this->Entity instanceof Experiments) {
                     // try and adjust the status for experiments
                     $sourceStatus = $json['category'];

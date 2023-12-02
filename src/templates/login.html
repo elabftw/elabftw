@@ -101,16 +101,11 @@
       {# Login form , the id is for an acceptance test #}
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
         {{ App.Session.get('csrf')|csrf }}
-        <h1 class='mt-4'>{{ 'Login to your account'|trans }}</h1>
-        <br>
+        <h1 class='my-4 '>{{ 'Login to your account'|trans }}</h1>
         <div class='col-md-4 mx-auto text-left form-group'>
           <label for='email'>{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'Email'|trans : 'Login'|trans }}</label>
           <input class='form-control mb-4' id='email' name='email' type='{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'email' : 'text' }}' value='{{ App.Session.has('email') ? App.Session.get('email') }}' autocomplete='email' required />
           <label for='password'>{{ 'Password'|trans }}</label>
-          {# add tabindex=-1 to the forget password so we can switch from login to password with tab #}
-          {% if showLocal %}
-            <button type='button' class='btn float-right underlined lh-normal border-0 p-0 m-0 link-like' style='font-weight:500;' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</button>
-          {% endif %}
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' autocomplete='current-password' required />
             <div class='input-group-append'>
@@ -118,13 +113,19 @@
             </div>
           </div>
 
-          {# Remember me checkbox #}
-          {% if App.Config.configArr.remember_me_allowed %}
-            <div class='form-check mt-2'>
-              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
-              <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-            </div>
-          {% endif %}
+          <div class='d-flex align-itemc-center mt-2'>
+            {# Remember me checkbox #}
+            {% if App.Config.configArr.remember_me_allowed %}
+              <div class='form-check'>
+                <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
+                <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+              </div>
+            {% endif %}
+
+            {% if showLocal %}
+              <button type='button' class='btn underlined lh-normal border-0 p-0 m-0 ml-auto link-like' style='font-weight:500;' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</button>
+            {% endif %}
+          </div>
         </div>
 
         {% if App.Config.configArr.ldap_toggle %}
@@ -147,7 +148,7 @@
         <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
       {% if App.Config.configArr.local_register %}
-      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
+      <p class='mt-4'>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
       {% endif %}
 
     {% endif %}

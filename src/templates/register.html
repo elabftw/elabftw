@@ -53,7 +53,7 @@
         </div>
 
         {# EMAIL #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='email'>{{ 'Email'|trans }}</label>
           <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
           {% if App.Config.configArr.email_domain %}
@@ -64,7 +64,7 @@
         </div>
 
         {# PASSWORD #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='password'>{{ 'Password'|trans }}</label>
           <div class='input-group'>
             <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' autocomplete='new-password' required />
@@ -75,20 +75,20 @@
         </div>
 
         {# FIRSTNAME #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='firstname'>{{ 'Firstname'|trans }}</label>
           <input name='firstname' class='form-control' type='text' id='firstname' autocomplete='given-name' required />
         </div>
 
         {# LASTNAME #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='lastname'>{{ 'Lastname'|trans }}</label>
           <input name='lastname' class='form-control' type='text' id='lastname' autocomplete='family-name' required />
         </div>
 
         {# PRIVACY POLICY #}
         {% if App.Config.configArr.privacy_policy %}
-        <div class='row'>
+        <div class='row mt-2'>
           <div class='form-group form-check'>
             <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
             <label class='form-check-label' for='privacy-policy'>

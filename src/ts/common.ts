@@ -77,7 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // BACK TO TOP BUTTON
-  const btn = document.createElement('div');
+  const btn = document.createElement('button');
+  btn.type = 'button';
   btn.dataset.action = 'scroll-top';
   // make it look like a button, and on the right side of the screen, not too close from the bottom
   btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
@@ -89,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
   // give it an id so we can remove it easily
   btn.setAttribute('id', 'backToTopButton');
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.title = 'Back to top';
 
   // called when viewport approaches the footer
   const intersectionCallback = (entries): void => {
@@ -168,26 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
-   * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
-   */
-  document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = el.querySelector('i');
-    let contentDiv: HTMLElement;
-    if (el.dataset.iconTarget) {
-      contentDiv = document.getElementById(el.dataset.iconTarget);
-    } else {
-      contentDiv = el.nextElementSibling as HTMLElement;
-    }
-    if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-caret-down');
-      iconEl.classList.add('fa-caret-right');
-    } else {
-      iconEl.classList.add('fa-caret-down');
-      iconEl.classList.remove('fa-caret-right');
-    }
-  });
-
-  /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
   * Use the "passive" option to avoid impact on performance.
@@ -199,13 +182,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
+
+  /**
+   * make 'toggle next' elements accessible by keyboard
+   * redirect to click event
+   */
+  document.getElementById('container').addEventListener('keydown', event => {
+    const el = event.target as HTMLElement;
+    if (el.matches('[data-action="toggle-next"]')
+        && (event.key === ' ' || event.key === 'Enter' || event.key === 'Spacebar')) {
+      el.dispatchEvent(new Event('click', { bubbles: true, cancelable: false }));
+      event.preventDefault();
+    }
+  });
+
   /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
    * matches a known action then that action is triggered
    */
   document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
+    const el = event.target as HTMLElement;
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-policy"]')) {
       fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
@@ -359,16 +356,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
      * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
-     * If there is a data-toggle-next-n value, the "hidden" attribute of the nth next sibling element will be toggled.
-     * If there is a data-icon value, it is toggled > or V
      */
     } else if (el.matches('[data-action="toggle-next"]')) {
-      let targetEl: HTMLElement;
+      let targetEl = el.nextElementSibling as HTMLElement;
       if (el.dataset.toggleTarget) {
         targetEl = document.getElementById(el.dataset.toggleTarget);
-      } else {
-        const n = Array.from(el.parentNode.children).indexOf(el) + (parseInt(el.dataset.toggleNextN, 10) || 1);
-        targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
 
@@ -382,10 +374,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           if (targetEl.hasAttribute('hidden')) {
             iconEl.classList.remove('fa-caret-down');
-            iconEl.classList.add('fa-caret-right');
+            if (el.dataset.toggleTarget !== 'filtersDiv') {
+              iconEl.classList.add('fa-caret-right');
+            }
+            el.setAttribute('aria-expanded', 'false');
           } else {
             iconEl.classList.add('fa-caret-down');
             iconEl.classList.remove('fa-caret-right');
+            el.setAttribute('aria-expanded', 'true');
           }
         }
       }

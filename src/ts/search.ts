@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const filtersDiv = document.getElementById('filtersDiv');
   if (filtersDiv) {
     filtersDiv.toggleAttribute('hidden', false);
+    const button = document.querySelector('[data-toggle-target="filtersDiv"]');
+    button.firstElementChild.classList.add('fa-caret-down');
+    button.setAttribute('aria-expanded', 'true');
   }
 
   // Submit form with ctrl+enter from within textarea

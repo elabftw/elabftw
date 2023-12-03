@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Ingrese el nombre del archivo",
     "save": "Guardar",
     "saved": "Guardado",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "¿Eliminar este paso?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Eliminar esta etiqueta?",

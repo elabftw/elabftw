@@ -2,10 +2,13 @@
 <div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
-      <form id='newFieldForm'>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
+      {%- endif %}
+      <form id ='newFieldForm' class='new-field-form'>
         <div class='modal-header'>
           <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>
-          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
             <span aria-hidden='true'>&times;</span>
           </button>
         </div>
@@ -105,7 +108,7 @@
             {# Blank value on duplicate switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='blankValueOnDuplicateSwitch'><p>{{ 'Blank value on duplicate'|trans }}</p></div>
+                <label class='d-inline mr-1' for='blankValueOnDuplicateSwitch'>{{ 'Blank value on duplicate'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
                   <span class='slider'></span>
@@ -115,7 +118,7 @@
             {# required switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='requiredSwitch'><p>{{ 'Required'|trans }}</p></div>
+                <label class='d-inline mr-1' for='requiredSwitch'>{{ 'Required'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='requiredSwitch'>
                   <span class='slider'></span>
@@ -125,7 +128,7 @@
             {# readonly switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='readonlySwitch'><p>{{ 'Read-only'|trans }}</p></div>
+                <label class='d-inline mr-1' for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='readonlySwitch'>
                   <span class='slider'></span>
@@ -146,10 +149,10 @@
 <div class='modal fade' id='fieldLoaderModal' tabindex='-1' role='dialog' aria-labelledby='fieldLoaderLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
-      <form id='newFieldForm'>
+      <form class='new-field-form'>
         <div class='modal-header'>
           <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
-          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
             <span aria-hidden='true'>&times;</span>
           </button>
         </div>
@@ -158,7 +161,7 @@
           <div class='input-group'>
             <select class='form-control' id='loadMetadataSelect_items_types'>
               {% for itemType in itemsCategoryArr %}
-                <option value="{{ itemType.id }}">{{ itemType.title|raw }}</option>
+                <option value='{{ itemType.id }}'>{{ itemType.title|raw }}</option>
               {% endfor %}
             </select>
             <div class='input-group-append'>
@@ -170,7 +173,7 @@
             <div class='input-group'>
               <select class='form-control' id='loadMetadataSelect_experiments_templates'>
                 {% for template in templatesArr %}
-                  <option value="{{ template.id }}">{{ template.title }}</option>
+                  <option value='{{ template.id }}'>{{ template.title }}</option>
                 {% endfor %}
               </select>
               <div class='input-group-append'>
@@ -185,7 +188,7 @@
 
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button id='applyMetadataLoadBtn' type='button' class='btn btn-primary' disabled data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
+          <button id='applyMetadataLoadBtn' type='submit' class='btn btn-primary' disabled data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
         </div>
       </div>
     </form>

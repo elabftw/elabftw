@@ -2,10 +2,10 @@
 
 {% block body %}
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -19,12 +19,13 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='eventModalLabel'>{{ 'Edit event'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <h3 id='eventTitle' class='editable hl-hover'></h3>
+        {# "placeholder" will be replaced with real title by js #}
+        <h3 id='eventTitle' class='editable hl-hover'>placeholder</h3>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
@@ -107,7 +108,13 @@
   <div class='row mb-3'>
     <div class='col-md-3'>
       {# CATEGORY #}
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+      {%- endif %}
       <form>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+        {%- endif %}
         <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
           <option value=''>{{ 'Filter by type'|trans }}</option>
           {% for category in bookableItemsTypes %}
@@ -120,7 +127,13 @@
 
     <div class='col-md-3'>
       {# ITEM LIST #}
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+      {%- endif %}
       <form>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+        {%- endif %}
         <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
           <option value=''>{{ 'Select an equipment'|trans }}</option>
           {% for item in itemsArr %}
@@ -136,7 +149,7 @@
       <div class='col-md-3 ml-auto'>
         <div class='input-group justify-content-end flex-nowrap'>
           <div class='input-group-prepend'>
-            <button class='btn btn-secondary' data-action='remove-param-reload' data-target='item'>X</button>
+            <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
           </div>
           <a href='database.php?mode=view&id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title|raw }}</a>
         </div>
@@ -151,16 +164,16 @@
 <div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
   {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ teamsStats.totdb }}
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
   <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
     <thead>
       <tr>
-          <th>{{ 'Name'|trans }}</th>
-          <th>{{ 'Email'|trans }}</th>
-          <th>ORCID</th>
+          <th scope='col'>{{ 'Name'|trans }}</th>
+          <th scope='col'>{{ 'Email'|trans }}</th>
+          <th scope='col'>ORCID</th>
       </tr>
     </thead>
     <tbody>

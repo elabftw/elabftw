@@ -1,16 +1,16 @@
-describe('Sysconfig', () => {
+describe('admin page', () => {
   beforeEach(() => {
     cy.login();
     cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
-  it('Show sysconfig page', () => {
-    cy.visit('/sysconfig.php');
-    cy.get('h1#pageTitle').should('have.text', 'eLabFTW Configuration');
+  it('has valid html', () => {
+    cy.visit('/admin.php?');
+    cy.get('h1#pageTitle').should('have.text', 'Admin panel');
     cy.htmlvalidate();
 
-    for (let i = 1; i <= 12; i++) {
-      cy.visit(`/sysconfig.php?tab=${i}`);
+    for (let i = 1; i <= 7; i++) {
+      cy.visit(`/admin.php?tab=${i}`);
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
     }
 

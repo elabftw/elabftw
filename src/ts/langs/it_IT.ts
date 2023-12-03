@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Inserire il nome del file",
     "save": "Salva",
     "saved": "Salvato",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Cancellare questo passaggio?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Si vuol eliminare questo tag?",

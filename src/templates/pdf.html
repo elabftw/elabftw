@@ -14,7 +14,7 @@
       </div>
     {% endif %}
     <div class='footer-block footer'>
-      <p style="font-size:6pt;">PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook<br>
+      <p style='font-size:6pt;'>PDF generated with <a href='https://www.elabftw.net'>elabftw</a>, a free and open source lab notebook<br>
       File generated on {DATE d-m-Y} at {DATE H:i}</p>
       <p>{PAGENO} / {nb}</p>
     </div>
@@ -103,7 +103,7 @@
 
       {% if upload.base64_thumbnail %}
       {# Note: adding charset to the data string makes it fail #}
-        <br><img class='attached-image' src="data:image/jpeg;base64,{{ upload.base64_thumbnail }}" alt='{{ upload.comment }}' />
+        <br><img class='attached-image' src='data:image/jpeg;base64,{{ upload.base64_thumbnail }}' alt='{{ upload.comment }}' />
       {% endif %}
       </p>
     {% endfor %}

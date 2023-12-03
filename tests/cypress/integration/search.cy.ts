@@ -6,6 +6,7 @@ describe('Search page', () => {
 
   it('shows important elements', () => {
     cy.visit('/search.php');
+    cy.htmlvalidate();
     cy.get('h1#pageTitle').should('have.text', 'Advanced search');
     cy.get('input#extendedArea').should('exist');
     cy.get('select#searchin').should('exist');

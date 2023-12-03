@@ -24,6 +24,7 @@ const t = {
     "request-filename": "Zadajte názov súboru",
     "save": "Uložiť",
     "saved": "Uložené",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Odstrániť tento krok?",
     "step-unfinish-warning": "Naozaj chceš vrátiť krok späť ?",
     "tag-delete-warning": "Odstrániť túto značku?",

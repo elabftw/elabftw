@@ -45,7 +45,7 @@
     "terser-webpack-plugin": "^5.3.9",
     "tinymce": "^6.8.1",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.2.2",
+    "typescript": "5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
@@ -61,7 +61,9 @@
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
     "cypress": "^13.6.0",
+    "cypress-html-validate": "^6.1.0",
     "eslint": "^8.55.0",
+    "html-validate": "^8.7.3",
     "postcss": "^8.4.31",
     "postcss-scss": "^4.0.9",
     "sass-loader": "^13.3.2",

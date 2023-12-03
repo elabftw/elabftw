@@ -77,7 +77,7 @@
 
   {# EXPORT EXPERIMENTS #}
   <h4>{{ 'Export all your experiments'|trans }}</h4>
-  <p class='smallgray mb-4'>{{ 'Select an export format'|trans }}</p>
+  <label for='userExportFormat' class='smallgray mb-4'>{{ 'Select an export format'|trans }}</label>
 
   <div class='input-group mb-4'>
     <select class='form-control' id='userExportFormat' autocomplete='off'>
@@ -89,9 +89,9 @@
       <option value='json'>{{ 'Make JSON'|trans }}</option>
     </select>
     <div class='input-group-append'>
-      <span class='btn btn-light input-border' data-action='export-user' data-userid='{{ App.Users.userData.userid }}'>
+      <button type='button' class='btn btn-light input-border' data-action='export-user' data-userid='{{ App.Users.userData.userid }}' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
         <i class='fas fa-download'></i>
-      </span>
+      </button>
     </div>
   </div>
 </div>

@@ -10,11 +10,11 @@
 
 {% block body %}
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -102,18 +102,18 @@
     <table aria-describedby='keyboardShortcuts' class='table col-md-12'>
       <thead>
       <tr>
-        <th>{{ 'Action'|trans }}</th>
+        <th scope='col'>{{ 'Action'|trans }}</th>
         {# add mb-0 to labels so they align with the Action that has vertical-align: bottom from tables.scss, but label element has a mb from reboot.scss #}
-        <th><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_favorite'>{{ 'Favorite tags'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_todo'>{{ 'TODO list'|trans }}</label></th>
-        <th><label class='mb-0' for='sc_input_search'>{{ 'Search'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_favorite'>{{ 'Favorite tags'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_todo'>{{ 'TODO list'|trans }}</label></th>
+        <th scope='col'><label class='mb-0' for='sc_input_search'>{{ 'Search'|trans }}</label></th>
       </tr>
       </thead>
       <tbody class='bgnd-transparent'>
       <tr>
-        <td>{{ 'Shortcut'|trans }}</td>
+        <th scope='row' class='align-middle' style='font-weight:500;'>{{ 'Shortcut'|trans }}</td>
         <td>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_create' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>
@@ -249,28 +249,28 @@
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='default-read-select' class='col-form-label'>{{ 'Default visibility for new experiments'|trans }}</label>
+    <div class='d-flex justify-content-between align-items-center'>
+      <span class='col-form-label d-inline-block' id='defaultCanreadSetting'>{{ 'Default visibility for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canread' %}
         {{ include('view-permissions-details.html', {identifier: 'canreaddefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
-        <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>
-          <i class='fas fa-fw fa-square-plus fa-2x'></i>
-        </div>
+        <button type='button' aria-labelledby='defaultCanreadSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
+          <i class='fas fa-square-plus fa-2x'></i>
+        </button>
       </div>
     </div>
     <hr>
 
-    <div class='d-flex justify-content-between'>
-      <label for='default-write-select' class='col-form-label'>{{ 'Default write permission for new experiments'|trans }}</label>
+    <div class='d-flex justify-content-between align-items-center'>
+      <span class='col-form-label d-inline-block' id='defaultCanwriteSetting'>{{ 'Default write permission for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canwrite' %}
         {{ include('view-permissions-details.html', {identifier: 'canwritedefaultPermissions'}) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
-        <div data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions'>
-          <i class='fas fa-fw fa-square-plus fa-2x'></i>
-        </div>
+        <button type='button' aria-labelledby='defaultCanwriteSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
+          <i class='fas fa-square-plus fa-2x'></i>
+        </button>
       </div>
     </div>
   </div>
@@ -340,25 +340,25 @@
   <div class='pl-3 mt-2 mb-5' id='ucp-account-form'>
     <div class='d-flex justify-content-between'>
       <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
-      <input class='form-control col-md-3' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
-      <input class='form-control col-md-3' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='orcid' class='col-form-label'>ORCID</label>
-      <input class='form-control col-md-3' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
+      <input class='form-control col-md-3' type='text' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
     </div>
     <hr>
   </div>
 
   <div class='mt-4 text-center'>
-    <button data-action='patch-account' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    <button type='button' data-action='patch-account' class='btn btn-primary'>{{ 'Save'|trans }}</button>
   </div>
 </div>
 
@@ -396,7 +396,7 @@
     <hr>
 
     <div class='mt-4 text-center'>
-      <button data-action='create-apikey' class='btn btn-primary'>{{ 'Generate an API Key'|trans }}</button>
+      <button type='button' data-action='create-apikey' class='btn btn-primary'>{{ 'Generate an API Key'|trans }}</button>
     </div>
 
   </div>
@@ -419,7 +419,7 @@
           <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td><span class='relative-moment' title='{{ key.created_at }}'></span></td>
           <td><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td><a data-action='destroy-apikey' title='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt'></i></a></td>
+          <td><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

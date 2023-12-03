@@ -24,6 +24,7 @@ const t = {
     "request-filename": "输入文件名",
     "save": "保存",
     "saved": "已保存",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
     "tag-delete-warning": "删除这个标签？",

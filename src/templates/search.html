@@ -9,7 +9,7 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Syntax'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -223,7 +223,7 @@
   </div>
 </div>
 
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
   <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
@@ -320,7 +320,7 @@
     <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
     <div class='input-group'>
       <div class='input-group-prepend'>
-        <select id='dateOperator' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
+        <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
           <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
           <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
           <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
@@ -346,6 +346,9 @@
   {# AUTHOR/OWNER HELPER #}
   <div class='col-md-4'>
     <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+    {% if App.Config.configArr.debug -%}
+      <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+    {%- endif %}
     <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
@@ -414,12 +417,12 @@
 
 <hr>
 {# METADATA SEARCH #}
-<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
+<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2' tabindex='0' role='button' aria-expanded='false'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
 <div hidden data-save-hidden='metadataSearchDiv'>
   {# add as many extra fields as present in the query but at least one #}
   {% for metakey in (Request.query.all('metakey') ?: ['']) %}
     {% set metavalue = Request.query.all('metavalue')[loop.index0] %}
-    <div class='row' {{- loop.first ? "id='metadataFirstInputs'" -}} >
+    <div class='row' {{- loop.first ? " id='metadataFirstInputs'" }}>
       <div class='col-md-4'>
         {% set randomid = random() %}
         <label for='metakey_{{ randomid }}'>{{ 'Name of field'|trans }}</label>
@@ -447,11 +450,10 @@
   </a>
 </div>
 
-<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
-  it avoids having to repeat the query params -->
-<a href='#' id='anchor'></a>
+{# if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params #}
 {% if App.Request.query.has('type') %}
-  <h2>{{ 'Results'|trans }}</h2>
+  <h2 id='anchor'>{{ 'Results'|trans }}</h2>
 {% else %}
   </form>
 {% endif %}

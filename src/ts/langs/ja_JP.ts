@@ -24,6 +24,7 @@ const t = {
     "request-filename": "ファイルの名前を入力してください",
     "save": "保存",
     "saved": "保存済み",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "このタグを削除しますか？",

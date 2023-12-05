@@ -65,6 +65,7 @@ module.exports = (env) => {
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
         'prismjs/components/prism-sql.js',
+        'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
         './src/js/vendor/keymaster.js',

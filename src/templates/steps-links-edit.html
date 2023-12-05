@@ -22,18 +22,18 @@
                 <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ mode == 'edit-template' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
               </div>
             </div>
-            <div class='pl-2 step-static form-control-plaintext'>
-              <span class='step editable hl-hover {{ step.finished ? 'finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
+            <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
+              <span class='step editable hl-hover align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
               {% if step.finished %}
-              <span class='mr-2 text-muted'>
+              <span class='mx-2 text-muted align-self-center'>
                 {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
               </span>
               {% endif %}
               {% if mode != 'edit-template' %}
-                <button class='btn lh-normal border-0 p-2 float-right mr-2' data-action='toggle-next' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+                <button class='btn lh-normal border-0 p-2 ml-auto mr-2' data-action='toggle-next' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
                 </button>
-                <div hidden data-save-hidden='extendedStep_{{ step.id }}'>
+                <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
                 {{ 'Completion time:'|trans }}
                 {% if step.finished %}
                   <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>

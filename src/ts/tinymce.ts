@@ -172,6 +172,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
       {text: 'SQL', value: 'sql'},
+      {text: 'VHDL', value: 'vhdl'},
       {text: 'YAML', value: 'yaml'},
     ],
     codesample_global_prismjs: true,

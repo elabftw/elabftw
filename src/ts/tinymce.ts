@@ -133,6 +133,7 @@ export function getTinymceBaseConfig(page: string): object {
     browser_spellcheck: true,
     // make it load the skin.min.css and content.min.css from there
     skin_url: '/assets',
+    content_css: '/assets/content.min.css',
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,
@@ -140,7 +141,7 @@ export function getTinymceBaseConfig(page: string): object {
     //resize: true,
     plugins: plugins,
     pagebreak_separator: '<div class="page-break"></div>',
-    toolbar1: 'undo redo | styleselect fontsizeselect bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
+    toolbar1: 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
     removed_menuitems: 'newdocument, image, anchor',
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended
@@ -171,6 +172,9 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
       {text: 'SQL', value: 'sql'},
+      {text: 'Tcl', value: 'tcl'},
+      {text: 'VHDL', value: 'vhdl'},
+      {text: 'YAML', value: 'yaml'},
     ],
     codesample_global_prismjs: true,
     language: document.getElementById('user-prefs').dataset.lang,

@@ -59,6 +59,7 @@ $Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new PruneExperiments());
 $Application->add(new PruneItems());
+$Application->add(new CheckUploads());
 $Application->add(new MigrateUploads());
 $Application->add(new ExperimentsTimestamp());
 

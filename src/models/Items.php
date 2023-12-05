@@ -46,9 +46,11 @@ class Items extends AbstractConcreteEntity
     {
         $ItemsTypes = new ItemsTypes($this->Users, $template);
         $itemTemplate = $ItemsTypes->readOne();
+        // figure out the custom id
+        $customId = $this->getNextCustomId($template);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata)
-            VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id)
+            VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
@@ -59,6 +61,7 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
         $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
+        $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
@@ -101,9 +104,11 @@ class Items extends AbstractConcreteEntity
 
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
+        // figure out the custom id
+        $customId = $this->getNextCustomId((int) $this->entityData['category']);
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, canbook, category, elabid, metadata, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :canbook, :category, :elabid, :metadata, :content_type)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, canbook, category, elabid, metadata, custom_id, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :canbook, :category, :elabid, :metadata, :custom_id, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->execute(array(
             'team' => $this->Users->userData['team'],
@@ -116,6 +121,7 @@ class Items extends AbstractConcreteEntity
             'canbook' => $this->entityData['canbook'],
             'category' => $this->entityData['category'],
             'metadata' => $metadata,
+            'custom_id' => $customId,
             'content_type' => $this->entityData['content_type'],
         ));
         $newId = $this->Db->lastInsertId();
@@ -154,5 +160,19 @@ class Items extends AbstractConcreteEntity
 
         // delete from pinned
         return $this->Pins->cleanup();
+    }
+
+    protected function getNextCustomId(int $category): ?int
+    {
+        $sql = 'SELECT custom_id FROM items WHERE custom_id IS NOT NULL AND team = :team AND category = :category ORDER BY custom_id DESC LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res === false || $res['custom_id'] === null) {
+            return null;
+        }
+        return ++$res['custom_id'];
     }
 }

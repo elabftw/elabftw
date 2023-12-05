@@ -29,11 +29,13 @@ describe('Experiments', () => {
     // create step
     cy.get('.stepinput').type('some step');
     cy.get('[data-action="create-step"').click();
-    cy.get('.step-static').contains('some step');
+    cy.get('.step-static').should('contain', 'some step');
 
     // complete step
     cy.get('.stepbox').click();
-    cy.get('.text-muted').contains('completed');
+    cy.get('.text-muted').should('contain', 'completed');
+
+    cy.htmlvalidate();
 
     // delete step
     cy.get('.stepDestroy').click();
@@ -48,6 +50,7 @@ describe('Experiments', () => {
     cy.contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
     cy.contains('Toto Le sysadmin commented').should('not.exist');
+    cy.htmlvalidate();
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();
   };
@@ -61,19 +64,21 @@ describe('Experiments', () => {
       cy.get('[data-action="duplicate-entity"]').click();
       cy.contains('Title').should('be.visible');
       // destroy the duplicated entity now
-      cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click();
+      entityDestroy();
       // go back to the original entity
       cy.visit(url);
     });
   };
 
   const entityDestroy = () => {
-    cy.get('div[title="More options"]').click().get('a[data-action="destroy"]').click();
+    cy.get('button[title="More options"]').click().get('button[data-action="destroy"]').click();
   };
 
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
+    cy.htmlvalidate();
     cy.contains('Create').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     entityEdit();
     // change status
     cy.get('#status_select').select('Success').blur();
@@ -81,13 +86,13 @@ describe('Experiments', () => {
     entityComment();
     entityDuplicate();
     entityDestroy();
-    cy.wait(100);
   });
 
   it('Create and edit an item', () => {
     cy.visit('/database.php');
+    cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal').within(() => { cy.contains('Generated').click(); });
+    cy.get('#createModal_items').should('be.visible').should('contain', 'Generated').contains('Generated').click();
     entityEdit();
     cy.get('#category_select').select('Microscope').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

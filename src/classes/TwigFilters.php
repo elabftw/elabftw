@@ -97,7 +97,7 @@ class TwigFilters
 
                 // multi select will be an array
                 if (is_array($value)) {
-                    $value = implode(', ', $value);
+                    $value = '<p>' . implode('</p><p>', $value) . '</p>';
                 }
 
                 $unit = '';

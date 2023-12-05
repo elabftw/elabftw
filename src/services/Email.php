@@ -92,7 +92,7 @@ class Email
         $message = (new Memail())
         ->subject($subject)
         ->from($from)
-        ->to($from)
+        ->to($replyTo)
         // Set recipients in BCC to protect email addresses
         ->bcc(...$emails)
         ->replyTo($replyTo)

@@ -24,7 +24,7 @@
 {# METADATA view #}
 {% if Entity.entityData.metadata and Entity.entityData.metadata != '{}' %}
   <hr>
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
   <div class='mt-2' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
     {{ Entity.entityData.metadata|formatMetadata }}
   </div>

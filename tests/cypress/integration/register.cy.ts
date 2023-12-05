@@ -5,6 +5,7 @@ describe('Register new user', () => {
 
   it('fills form and submits', () => {
     cy.visit('/register.php');
+    cy.htmlvalidate();
     cy.get('div.dropdown.bootstrap-select.form-control').click().get('div.dropdown-menu.show').contains('Alpha').click();
     cy.get('#email').type('newCypressUser@yopmail.com').blur();
     cy.get('#password').type('cypress1').blur();

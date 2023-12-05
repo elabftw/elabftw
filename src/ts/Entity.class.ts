@@ -19,7 +19,7 @@ export default class Entity {
 
   // content can be a template id (for experiments), an itemtype id (for items) or a template title
   create(content: string, tags: Array<string>): Promise<Response> {
-    const params = {'category_id': content, 'tags': tags};
+    const params = {'category_id': parseInt(content, 10), 'tags': tags};
     return this.api.post(`${this.model}`, params);
   }
 

@@ -10,7 +10,7 @@
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='createTeamModalLabel'>{{ 'Create team'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -38,18 +38,19 @@
 <div id='versionNotifZone'></div>
 
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Server'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Teams'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Communication'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{{ 'Email'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='6'>{{ 'Security'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Policies'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='8'>{{ 'Uploads'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='10'>SAML</li>
-  <li data-action='switch-tab' data-tabtarget='11'>LDAP</li>
-  <li data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Server'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Teams'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Communication'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Security'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Policies'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Uploads'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='10'>SAML</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='11'>LDAP</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'Audit Logs'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -62,7 +63,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
-      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} - {{ 'Members'|trans }}: {{ info.active_users_count }} − {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) − {{ 'Items'|trans }}: {{ info.items_count }}</div>
+      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Items'|trans }}: {{ info.items_count }}</div>
       <div><a href='make.php?format=report' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
     </div>
   </div>
@@ -216,13 +217,13 @@
           {% set count = Teams.getStats(team.id) %}
           <tr>
             <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
-              <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} −
+              <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
               {% trans %}
               Experiment
               {% plural count.totxp %}
               Experiments
               {% endtrans %}
-              : {{ count.totxp }} ({{ count.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ count.totdb }}<p>
+              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ count.totdb }}<p>
 
             </td>
             <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</td>
@@ -262,10 +263,10 @@
     <div class='input-group'>
       <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='announcementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='announcementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   </div>
@@ -276,10 +277,10 @@
     <div class='input-group'>
       <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='loginAnnouncementInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>
       <div class='input-group-append'>
-        <button data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='loginAnnouncementInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   </div>
@@ -306,7 +307,7 @@
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
     <textarea class='form-control col-md-12' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button type='button' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </div>
 </div>
@@ -366,7 +367,7 @@
     <div class='input-group'>
       <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' />
       <div class='input-group-append'>
-        <button class='btn btn-primary' data-action='send-test-email' type='button'>{{ 'Send'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>
     </div>
   </div>
@@ -452,12 +453,15 @@
       {% if not configArr[slug] %}
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
+      {% if configArr.debug -%}
+        <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+      {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
       </div>
     </div>
   {% endmacro %}
@@ -493,13 +497,13 @@
 
     <div class='d-flex justify-content-between'>
       <label for='s3_region' class='col-form-label'>S3 region</label>
-      <input class='form-control col-md-3' type='text' id='s3_region' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_region' value='{{ App.Config.configArr.s3_region }}' />
+      <input class='form-control col-md-3' type='text' id='s3_region' placeholder='fr-par' data-trigger='blur' data-model='config' data-target='s3_region' value='{{ App.Config.configArr.s3_region }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='s3_endpoint' class='col-form-label'>S3 endpoint</label>
-      <input class='form-control col-md-3' type='url' id='s3_endpoint' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
+      <input class='form-control col-md-3' type='url' id='s3_endpoint' placeholder='https://s3.example.org' data-trigger='blur' data-model='config' data-target='s3_endpoint' value='{{ App.Config.configArr.s3_endpoint }}' />
     </div>
     <hr>
 
@@ -538,14 +542,14 @@
 
     <div class='d-flex justify-content-between'>
       <label for='keeex_host' class='col-form-label'>{{ 'Keeex host'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='keeex_host' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_host' value='{{ App.Config.configArr.keeex_host }}' />
+      <input class='form-control col-md-3' type='text' id='keeex_host' placeholder='keeex' data-trigger='blur' data-model='config' data-target='keeex_host' value='{{ App.Config.configArr.keeex_host }}' />
     </div>
     <p class='smallgray'>{{ 'Address (hostname or IP) of the Keeex service.'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='keeex_port' class='col-form-label'>{{ 'Keeex port'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='keeex_port' placeholder='' data-trigger='blur' data-model='config' data-target='keeex_port' value='{{ App.Config.configArr.keeex_port }}' />
+      <input class='form-control col-md-3' type='text' id='keeex_port' placeholder='8080' data-trigger='blur' data-model='config' data-target='keeex_port' value='{{ App.Config.configArr.keeex_port|default('8080') }}' />
     </div>
     <p class='smallgray'>{{ 'Default port is 8080.'|trans }}</p>
     <hr>
@@ -578,7 +582,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='saml_baseurl' class='col-form-label'>{{ 'Base URL'|trans }}</label>
-      <input class='form-control col-md-3' type='url' id='saml_base_url' data-trigger='blur' data-model='config' data-target='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
+      <input class='form-control col-md-3' type='url' id='saml_baseurl' data-trigger='blur' data-model='config' data-target='saml_baseurl' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_baseurl }}' />
     </div>
     <hr>
 
@@ -647,7 +651,7 @@
     {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email'|trans, 'slug': 'saml_fallback_orgid'} %}
     {% include 'binary-setting.html' with {'label': 'If user is matched with internal id, update the email sent by IDP?'|trans, 'slug': 'saml_sync_email_idp'} %}
     {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by IDP'|trans, 'slug': 'saml_sync_teams'} %}
-    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by IDP if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '1'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='saml_team_default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -691,7 +695,7 @@
     <div id='idpsDiv'>
       {% for idp in idpsArr %}
         <div class='my-2'>
-          <h4 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ idp.name|upper }} ({{ idp.entityid }})
+          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ idp.name|upper }} ({{ idp.entityid }})
 
             <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                 <i class='fas fa-trash-alt'></i>
@@ -854,7 +858,7 @@
           {{ 'A password is already set.'|trans }}
           {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>", "</span>")|raw }}
           <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='hidden_ldap_password' />
+          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='ldap_password' />
         </p>
       {% endif %}
     </div>
@@ -878,7 +882,7 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '2'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>
@@ -984,10 +988,42 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '3'} %}
   </div>
 </div>
 
+<div data-tabcontent='13' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <p id='auditLogsTableLabel'>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>
+    <table id='auditLogsTable' class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'Category'|trans }}</th>
+          <th scope='col'>{{ 'Created at'|trans }}</th>
+          <th scope='col'>{{ 'Content'|trans }}</th>
+          <th scope='col'>{{ 'Userid'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in auditLogsArr %}
+          <tr>
+            <td>{{ log.category }}</td>
+            <td><span class='relative-moment' title='{{ log.created_at }}'></span></td>
+            <td>{{ log.body }}</td>
+            <td>
+              {%- if log.userid != 0 -%}
+                <a class='p-1 rounded hl-hover-gray' href='?tab=3&q=&userid={{ log.userid }}'>{{ log.userid }}</a>
+              {%- else -%}
+                <span class='p-1'>&ndash;</span>
+              {%- endif -%}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <div id='info' data-page='sysconfig'></div>
 {% endblock body %}

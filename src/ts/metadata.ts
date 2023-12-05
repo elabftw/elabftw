@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Email:
     case ExtraFieldInputType.Url:
     case ExtraFieldInputType.Time:
+    case ExtraFieldInputType.Experiments:
+    case ExtraFieldInputType.Items:
+    case ExtraFieldInputType.Users:
       valueInput.setAttribute('type', fieldType);
       toggleContentDiv('classic');
       break;

@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra fields",
     "filename": "파일 이름",
     "generic-delete-warning": "삭제할까요?",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "파일 이름 입력",
     "save": "저장",
     "saved": "저장됨",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "단계를 삭제할까요?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "이 태그를 삭제할까요?",
@@ -30,6 +32,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "파일 코멘트",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

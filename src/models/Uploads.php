@@ -40,6 +40,8 @@ class Uploads implements RestInterface
 {
     use UploadTrait;
 
+    public const HASH_ALGORITHM = 'sha256';
+
     /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
     private const BIG_FILE_THRESHOLD = 50000000;
 
@@ -48,8 +50,6 @@ class Uploads implements RestInterface
     public bool $includeArchived = false;
 
     protected Db $Db;
-
-    private string $hashAlgorithm = 'sha256';
 
     public function __construct(public AbstractEntity $Entity, public ?int $id = null)
     {
@@ -89,7 +89,7 @@ class Uploads implements RestInterface
         // same with thumbnails
         if ($filesize < self::BIG_FILE_THRESHOLD) {
             // get a hash sum
-            $hash = hash_file($this->hashAlgorithm, $params->getFilePath());
+            $hash = hash_file(self::HASH_ALGORITHM, $params->getFilePath());
             // get a thumbnail
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
@@ -147,7 +147,7 @@ class Uploads implements RestInterface
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
-        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+        $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $req->bindValue(':immutable', $params->getImmutable(), PDO::PARAM_INT);

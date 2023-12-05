@@ -4,7 +4,9 @@
     <div class='input-group'>
       <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
       <div class='input-group-append'>
-        <button data-action='clear-favtags-search' class='btn btn-outline-secondary'><i class='fas fa-times fa-fw'></i></button>
+        <button data-action='clear-favtags-search' class='btn btn-outline-secondary' type='button' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'>
+          <i class='fas fa-times fa-fw'></i>
+        </button>
       </div>
     </div>
     <hr>
@@ -24,7 +26,7 @@
       <input id='createFavTagInput' data-autocomplete='tags' type='text' class='form-control form-inline createTagInputFavorite' aria-label='{{ 'Add a tag as favorite'|trans }}' placeholder='{{ 'Add a tag as favorite'|trans }}'>
       <div class='input-group-append'>
         <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
-          <i class='fas fa-plus fa-fw' title='{{ 'Add'|trans }}'></i>
+          <i class='fas fa-plus fa-fw'></i>
         </button>
       </div>
     </div>

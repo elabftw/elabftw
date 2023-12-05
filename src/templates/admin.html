@@ -9,7 +9,7 @@
     <ul>
     {% for user in unvalidatedUsersArr %}
       <li>
-        {{ user.fullname|raw }} ({{ user.email }}) <button class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
+        {{ user.fullname|raw }} ({{ user.email }}) <button type='button' class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button type='button' class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
       </li>
     {% endfor %}
     </ul>
@@ -19,13 +19,13 @@
 
 {# ADMIN PANEL MAIN MENU #}
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</li>
-  <li data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -129,21 +129,24 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Common templates'|trans }}</h3>
 
   <div class='pl-3 mt-2'>
-    <label for="common_template">{{ 'Common Experiment Template'|trans }}</label>
-    <textarea style='height:400px' class='mceditable' name="common_template" id='common_template'>
-        {{ App.teamArr.common_template|raw }}
+    <label for='common_template'>{{ 'Common Experiment Template'|trans }}</label>
+    {% if App.Config.configArr.debug -%}
+      <!-- [html-validate-disable-block no-deprecated-attr, prefer-native-element, text-content: suppress errors from tinymce] -->
+    {%- endif %}
+    <textarea style='height:400px' class='mceditable' name='common_template' id='common_template'>
+      {{ App.teamArr.common_template|raw }}
     </textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button type='button' data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
     <hr>
 
-    <label for="common_template_md">{{ 'Common Experiment Template'|trans }} (Markdown)</label>
-    <textarea style='height:400px' class='markdown-textarea form-control mt-2' name="common_template_md" id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
+    <label for='common_template_md'>{{ 'Common Experiment Template'|trans }} (Markdown)</label>
+    <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
-      <button data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button type='button' data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
 
   </div>
@@ -171,9 +174,9 @@
     <div class='pl-3'>
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
-          <a class='clickable teamGroupDelete float-right' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+          <button class='btn teamGroupDelete float-right border-0 lh-normal m-0 p-0' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
-          </a>
+          </button>
           <h5><i class='fas fa-users'></i> <span data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name|raw }}</span></h5>
           <hr>
           <div class='d-flex flex-wrap'>
@@ -206,7 +209,7 @@
 {# TAB 4 CATEGORIES #}
 <div data-tabcontent='4' hidden>
   {# EXPERIMENTS CATEGORIES #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
+  <h3 id='experimentsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
   <div class='pl-3 mb-5' id='experiments_categoriesDiv'>
     <div class='mb-2 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
@@ -241,11 +244,11 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ cat.id }}' class='btn btn-primary' data-target='expcat' data-action='update-status'>{{ 'Save'|trans }}</button>
+              <button type='button' data-id='{{ cat.id }}' class='btn btn-primary' data-target='expcat' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ cat.id }}' data-target='experiments_categories' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button type='button' data-id='{{ cat.id }}' data-target='experiments_categories' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>
@@ -254,7 +257,7 @@
   </div>
 
   {# RESOURCES CATEGORIES #}
-  <h3 id='resourcesCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
+  <h3 id='itemsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
@@ -268,12 +271,12 @@
 
   {% if App.Request.query.has('templateid') %}
     <a href='?tab=4' class='btn hl-hover-gray'>
-      <i class='fas fa-chevron-left mr-1'></i>{{ 'Back to listing'|trans }}
+      <i class='fas fa-chevron-left mr-1 fa-fw'></i>{{ 'Back to listing'|trans }}
     </a>
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#resourcesCategoriesAnchor'><span class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>{{ itemType.title|raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|raw }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title|raw }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
@@ -282,7 +285,7 @@
     {# templateData will be loaded with content from an item type if templateid is present is url #}
     {% if Entity.entityData %}
       <div class='float-right'>
-        <button class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
+        <button type='button' class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
       </div>
       <ul class='list-inline'>
         <li class='list-inline-item'>
@@ -302,7 +305,7 @@
       <div>
         <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
         <div class='text-center mt-3'>
-          <button class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
         </div>
       </div>
 
@@ -357,11 +360,11 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' class='btn btn-primary' data-target='experiments' data-action='update-status'>{{ 'Save'|trans }}</button>
+              <button type='button' data-id='{{ status.id }}' class='btn btn-primary' data-target='experiments' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' data-target='experiments_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button type='button' data-id='{{ status.id }}' data-target='experiments_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>
@@ -404,11 +407,11 @@
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' class='btn btn-primary' data-target='items' data-action='update-status'>{{ 'Save'|trans }}</button>
+              <button type='button' data-id='{{ status.id }}' class='btn btn-primary' data-target='items' data-action='update-status'>{{ 'Save'|trans }}</button>
             </li>
 
             <li class='list-inline-item'>
-              <button data-id='{{ status.id }}' data-target='items_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button type='button' data-id='{{ status.id }}' data-target='items_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
             </li>
           </ul>
         </li>
@@ -447,7 +450,7 @@
     <hr>
 
     <div class='my-2 text-center'>
-      <button data-action='export-category' class='btn btn-primary'>{{ 'Export'|trans }}</button>
+      <button type='button' data-action='export-category' class='btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
   </div>
 
@@ -478,7 +481,7 @@
     <hr>
 
     <div class='mt-2 text-center'>
-      <button data-action='export-user' class='btn btn-primary'>{{ 'Export'|trans }}</button>
+      <button type='button' data-action='export-user' class='btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
 
   </div>
@@ -499,7 +502,7 @@
     <hr>
 
     <div class='mt-2 text-center'>
-      <button data-action='export-scheduler' class='btn btn-primary'>{{ 'Export'|trans }}</button>
+      <button type='button' data-action='export-scheduler' class='btn btn-primary'>{{ 'Export'|trans }}</button>
     </div>
   </div>
 </div>
@@ -520,9 +523,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Manage tags of the team'|trans }}</h3>
   <div class='pl-3'>
 
-    <button class='btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
+    <button type='button' class='btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
-      <table class='table' aria-label='Tags of the team' data-table-sort='true'>
+      <table class='table' aria-label='{{ 'Tags of the team'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
             <th scope='col'>{{ 'Tag'|trans }}</th>
@@ -535,20 +538,20 @@
         <tbody>
           {% for tag in tagsArr %}
             <tr>
-              <td><span class='tag editable hl-hover' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</span></td>
-              <td>{{ tag.item_count }}</td>
+              <th scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</button></td>
+              <td class='align-middle'>{{ tag.item_count }}</td>
               <td>
-                <a title='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
               <td>
-                <a title='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}'>
+                <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
               <td>
-                <a class='mr-1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></a>
+                <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
               </td>
             </tr>
           {% endfor %}

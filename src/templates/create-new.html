@@ -7,14 +7,14 @@
       <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
         <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
       </button>
-      <div class='dropdown-menu' aria-label='{{ 'Create new'|trans }}'>
+      <div class='dropdown-menu'>
         {% if entityPage == 'experiments.php' %}
           {% if templatesArr|length > 0 %}
             <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
             {% for tpl in templatesArr %}
-              <a href='#' data-action='create-entity' data-type='experiments' data-tplid='{{ tpl.id }}' class='dropdown-item wrap'>
+              <button type='button' data-action='create-entity' data-type='experiments' data-tplid='{{ tpl.id }}' class='btn btn-dropdown-item dropdown-item wrap'>
                 {{ tpl.title|raw }}
-              </a>
+              </button>
             {% endfor %}
           {% else %}
             <h6 class='dropdown-header'>{{ 'No pinned templates found'|trans }}</h6>
@@ -24,22 +24,18 @@
             {{ 'Manage templates'|trans }}
           </a>
         {% else %}
-          {% for category in categoryArr %}
-            <div data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='dropdown-item' style='color:#{{ category.color }}'>
+          {% for category in itemsCategoryArr %}
+            <button type='button' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='btn btn-dropdown-item dropdown-item' style='color:#{{ category.color }}'>
               {{ category.title|raw }}
-            </div>
+            </button>
           {% endfor %}
         {% endif %}
         <div class='dropdown-divider'></div>
-        <div class='dropdown-item' data-action='toggle-modal' data-target='importModal'>
+        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='importModal'>
           <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
-        </div>
+        </button>
       </div>
     </div>
-    {% if entityType == 'experiments' %}
-      <button type='button' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-    {% else %}
-      <button type='button' data-action='toggle-modal' data-target='createModal' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-    {% endif %}
+    <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityType }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
   </div>
 {% endif %}

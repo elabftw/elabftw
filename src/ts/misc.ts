@@ -7,7 +7,7 @@
  */
 import 'jquery-ui/ui/widgets/sortable';
 import * as $3Dmol from '3dmol';
-import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model } from './interfaces';
+import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -53,6 +53,7 @@ export function listenTrigger(): void {
   document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
     el.addEventListener(el.dataset.trigger, event => {
       event.preventDefault();
+      el.classList.remove('is-invalid');
       // for a checkbox element, look at the checked attribute, not the value
       let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
       if (el.dataset.customAction === 'patch-user2team-is-owner') {
@@ -77,6 +78,10 @@ export function listenTrigger(): void {
             // make sure we listen to the new element too
             listenTrigger();
           });
+        }
+      }).catch(error => {
+        if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+          el.classList.add('is-invalid');
         }
       });
     });
@@ -307,17 +312,23 @@ export async function reloadElement(elementId: string): Promise<void> {
  */
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
-    const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
-    const caretIcon = el.previousElementSibling.querySelector('i');
+    const targetElement = (el as HTMLElement).dataset.saveHidden;
+    const localStorageKey = targetElement + '-isHidden';
+    const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
       caretIcon.classList.remove('fa-caret-down');
-      caretIcon.classList.add('fa-caret-right');
+      if (targetElement !== 'filtersDiv') {
+        caretIcon.classList.add('fa-caret-right');
+      }
+      button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
       caretIcon.classList.remove('fa-caret-right');
       caretIcon.classList.add('fa-caret-down');
+      button.setAttribute('aria-expanded', 'true');
     }
   });
 }

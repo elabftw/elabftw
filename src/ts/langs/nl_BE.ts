@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Geen titel",
     "entity-delete-warning": "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra velden",
     "filename": "Bestandsnaam",
     "generic-delete-warning": "Dit verwijderen?",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "Voer de naam van het bestand in",
     "save": "Opslaan",
     "saved": "Opgeslagen",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
     "tag-delete-warning": "Dit label verwijderen?",
@@ -30,6 +32,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Bestandscommentaar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

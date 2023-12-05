@@ -88,17 +88,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const malleableStatus = new Malle({
     // use the after hook to add the colored circle before text
-    after: (elem, _, value) => {
+    after: (elem: HTMLElement, _: Event, value: string) => {
       const icon = document.createElement('i');
       icon.classList.add('fas', 'fa-circle', 'mr-1');
       icon.style.color = `#${value}`;
       elem.insertBefore(icon, elem.firstChild);
       return true;
     },
+    // use the onEdit hook to set the correct selected option (because of the circle icon interference)
+    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
+      // the options can be a promise, so we need to use await or its length will be 0 here
+      const opts = await (input as HTMLSelectElement).options;
+      for (let i = 0; i < opts.length; i++) {
+        if (opts.item(i).textContent === original.textContent.trim()) {
+          opts.item(i).selected = true;
+          break;
+        }
+      }
+      return true;
+    },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
-    fun: (value, original) => updateCatStat(original.dataset.target, entity, value).then(color => {
+    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
       original.style.setProperty('--bg', `#${color}`);
       return color;
     }),
@@ -120,14 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const malleableCategory = new Malle({
     // use the after hook to change the background color of the new element
-    after: (elem, _, value) => {
+    after: (elem: HTMLElement, _: Event, value: string) => {
       elem.style.setProperty('--bg', `#${value}`);
       return true;
     },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
-    fun: (value, original) => updateCatStat(original.dataset.target, entity, value),
+    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',

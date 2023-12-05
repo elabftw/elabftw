@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Без имени",
     "entity-delete-warning": "Выбранные элементы и все связанные данные будут удалены без возможности восстановления. Это не может быть отменено. Ты уверен?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Дополнительные поля",
     "filename": "Имя файла",
     "generic-delete-warning": "Удалить?",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "Введите имя файла",
     "save": "Сохранить",
     "saved": "Сохранено",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",
     "tag-delete-warning": "Удалить этот тег?",
@@ -30,6 +32,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Файловый комментарий",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

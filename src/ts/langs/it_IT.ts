@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Campi addizionali",
     "filename": "Nome del file",
     "generic-delete-warning": "Cancellare questo?",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "Inserire il nome del file",
     "save": "Salva",
     "saved": "Salvato",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Cancellare questo passaggio?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "Si vuol eliminare questo tag?",
@@ -30,6 +32,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Commento sul file",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

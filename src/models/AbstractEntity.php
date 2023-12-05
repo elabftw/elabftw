@@ -22,6 +22,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -286,7 +287,7 @@ abstract class AbstractEntity implements RestInterface
             FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE tags2entity.item_type = :type AND ' . $sqlid;
+            WHERE tags2entity.item_type = :type AND ' . $sqlid . ' ORDER by tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -590,7 +591,16 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        // custom_id could be used twice unintentionally
+        try {
+            return $this->Db->execute($req);
+        } catch (DatabaseErrorException $e) {
+            $PdoException = $e->getPrevious();
+            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
+                throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
+            }
+            throw $e;
+        }
     }
 
     private function getFullnameFromUserid(int $userid): string
@@ -615,10 +625,11 @@ abstract class AbstractEntity implements RestInterface
      */
     private function updateJsonField(string $key, string|array $value): bool
     {
+        $Changelog = new Changelog($this);
+        $valueAsString = is_array($value) ? implode(', ', $value) : $value;
+        $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 
-        $Changelog = new Changelog($this);
-        $Changelog->create(new ContentParams('metadata_' . $key, $value));
 
         // build jsonPath to field
         $field = sprintf(

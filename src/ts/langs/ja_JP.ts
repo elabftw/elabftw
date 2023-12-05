@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Extra fields",
     "filename": "ファイル名",
     "generic-delete-warning": "これを削除しますか？",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "ファイルの名前を入力してください",
     "save": "保存",
     "saved": "保存済み",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
     "tag-delete-warning": "このタグを削除しますか？",
@@ -30,6 +32,7 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "ファイルコメント",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

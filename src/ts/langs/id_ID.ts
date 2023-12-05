@@ -10,6 +10,7 @@ const t = {
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
+    "error-no-category": "A category is required to fetch the next Custom ID",
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "generic-delete-warning": "Hapus ini?",
@@ -23,6 +24,7 @@ const t = {
     "request-filename": "Masukkan nama file",
     "save": "Simpan",
     "saved": "Tersimpan",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
     "tag-delete-warning": "Hapus label ini?",
@@ -30,6 +32,7 @@ const t = {
     "today": "Hari ini",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

@@ -5,7 +5,7 @@
       <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can edit.'|trans }}</p>
       <div>
         <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
-        <div class='vertical-separator d-inline mx-3'></div>
+        <div class='vertical-separator d-inline'></div>
         <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
         <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
       </div>
@@ -19,7 +19,8 @@
     </div>
   {% endif %}
 
-  <table id='tplTable' class='table' aria-describedby='TODO' data-table-sort='true'>
+  {# TODO: add aria-describedby #}
+  <table id='tplTable' class='table' data-table-sort='true'>
     <thead>
       <tr>
         <th scope='col'>{{ 'Team'|trans }}</th>
@@ -34,14 +35,13 @@
         <tr>
           <td>{{ template.team_name }}</td>
           <td>
-            <a href='?tab=3&mode=view&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-eye'></i></span></a>
+            <a href='?tab=3&mode=view&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'><i class='fas fa-eye fa-fw'></i></a>
             {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-              <a href='?tab=3&mode=edit&templateid={{ template.id }}'><span class='p-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></span></a>
+              <a href='?tab=3&mode=edit&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt fa-fw'></i></a>
             {% endif %}
               {# clickable toggle pin button #}
-              <span title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ template.id }}' class='{{ template.is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-1 rounded'>
-                <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i>
-              </span>
+              <button title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' type='button' data-action='toggle-pin' data-id='{{ template.id }}' class='btn lh-normal border-0 p-2 {{- template.is_pinned ? ' bgnd-gray' : ' hl-hover-gray' }}'>
+                <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></button>
               {{ template.title|raw }}</td>
           <td>
             <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>

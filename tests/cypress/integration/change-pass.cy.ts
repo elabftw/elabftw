@@ -6,6 +6,7 @@ describe('Change Password', () => {
 
   it('Change Password', () => {
     cy.visit('/change-pass.php');
+    cy.htmlvalidate();
     cy.contains('Bad parameters in url.').should('be.visible');
 
     // tampered key

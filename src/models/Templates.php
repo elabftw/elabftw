@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SortableTrait;
@@ -138,6 +139,9 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->entityData = $this->Db->fetch($req);
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
         $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();

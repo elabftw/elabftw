@@ -7,6 +7,7 @@
  */
 import i18next from 'i18next';
 import caES from './langs/ca_ES';
+import csCZ from './langs/cs_CZ';
 import deDE from './langs/de_DE';
 import enGB from './langs/en_GB';
 import esES from './langs/es_ES';
@@ -28,6 +29,7 @@ i18next.init({
   lng: 'en_GB',
   supportedLngs: [
     'ca_ES',
+    'cs_CZ',
     'de_DE',
     'en_GB',
     'es_ES',
@@ -48,6 +50,7 @@ i18next.init({
   fallbackLng: 'en_GB',
   resources: {
     ca_ES: caES,
+    cs_CZ: csCZ,
     de_DE: deDE,
     en_GB: enGB,
     es_ES: esES,

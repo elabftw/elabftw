@@ -3,8 +3,9 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='plainTextModalLabel'></h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        {# "placeholder" will be replaced with real file name by js upon data-action='toggle-modal' #}
+        <h5 class='modal-title' id='plainTextModalLabel'>placeholder</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -23,7 +24,8 @@
   {% if Entity.entityData.uploads %}
     <div class='d-flex justify-content-between'>
       <div>{# necessary div for flex #}
-        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' data-icon-target='uploadsDiv' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
+        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
+          <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
           {% plural Entity.entityData.uploads|length %}
           Attached files
           {% endtrans %}
@@ -31,18 +33,18 @@
       </div>
 
       {# id is used with data-toggle-target-extra #}
-      <div>
-        <span title='{{ 'Switch layout'|trans }}' id='uploadsViewToggler' class='hl-hover-gray rounded p-1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+      <div id='uploadsViewToggler'>
+        <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
           <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
           <i class='fas fa-fw fa-table-cells'></i>
-        </span>
-        <span title='{{ 'Show archived'|trans }}' class='hl-hover-gray rounded p-1 {{ App.Request.query.has('archived') ? 'bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
+        </button>
+        <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('archived') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
           <i class='fas fa-fw fa-box-archive'></i>
-        </span>
+        </button>
       </div>
     </div>
 
-    <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadedFilesDiv'>
+    <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadsDiv'>
       {% for upload in Entity.entityData.uploads %}
         {% set ext = upload.real_name|getExt %}
 

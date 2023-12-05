@@ -13,6 +13,7 @@ enum Orderby: string
 {
     case Category = 'cat';
     case Comment = 'comment';
+    case Customid = 'customid';
     case Date = 'date';
     case Id = 'id';
     case Lastchange = 'lastchange';
@@ -26,6 +27,7 @@ enum Orderby: string
         return match ($value) {
             Orderby::Category => 'categoryt.title',
             Orderby::Comment => 'commentst.recent_comment',
+            Orderby::Customid => 'entity.custom_id',
             Orderby::Date => 'date',
             Orderby::Id => 'entity.id',
             Orderby::Lastchange => 'entity.modified_at',

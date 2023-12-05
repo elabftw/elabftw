@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\StepParams;
 use Elabftw\Enums\Action;
@@ -128,6 +129,8 @@ class Steps implements RestInterface
             )(),
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('steps', $action->value));
         return $this->readOne();
     }
 
@@ -135,6 +138,8 @@ class Steps implements RestInterface
     {
         $this->Entity->canOrExplode('write');
         $this->Entity->touch();
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('steps', $action->value));
         return $this->create($reqBody['body'] ?? 'RTFM');
     }
 
@@ -142,6 +147,9 @@ class Steps implements RestInterface
     {
         $this->Entity->canOrExplode('write');
         $this->Entity->touch();
+        $Changelog = new Changelog($this->Entity);
+        /** @psalm-suppress PossiblyNullArgument */
+        $Changelog->create(new ContentParams('steps', sprintf('Removed step with id: %d', $this->id)));
 
         $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);

@@ -281,7 +281,6 @@ export class Metadata {
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
     // not the event in the function called
     element.addEventListener('change', this, false);
-    element.addEventListener('blur', this, false);
 
     // add a prepend button for "Now" for date and time types
     if (['time', 'date', 'datetime-local'].includes(element.type)) {
@@ -299,6 +298,8 @@ export class Metadata {
       inputGroupDiv.appendChild(prependDiv);
       // now add the input
       inputGroupDiv.appendChild(element);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
       return inputGroupDiv;
     }
 
@@ -325,6 +326,8 @@ export class Metadata {
       // input first, then append div
       inputGroupDiv.appendChild(element);
       inputGroupDiv.appendChild(appendDiv);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
       return inputGroupDiv;
     }
 
@@ -344,6 +347,8 @@ export class Metadata {
       prependDiv.appendChild(iconWrapper);
       inputGroupDiv.appendChild(prependDiv);
       inputGroupDiv.appendChild(element);
+      // add the unique id to the input group for the label
+      inputGroupDiv.id = uniqid;
 
       return inputGroupDiv;
     }
@@ -510,9 +515,9 @@ export class Metadata {
             label.classList.add('py-2');
 
             // add a button to delete the field
-            const deleteBtn = document.createElement('div');
+            const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
-            deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
+            deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);

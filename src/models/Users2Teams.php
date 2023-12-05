@@ -9,6 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\PermissionLevelChanged;
+use Elabftw\AuditEvent\TeamAddition;
+use Elabftw\AuditEvent\TeamRemoval;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
@@ -40,7 +43,9 @@ class Users2Teams
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $req->bindValue(':group', $group, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        AuditLogs::create(new TeamAddition($teamid, $group, $userid));
+        return $res;
     }
 
     public function patchUser2Team(Users $requester, array $params): int
@@ -69,6 +74,18 @@ class Users2Teams
     }
 
     /**
+     * Remove a user from teams
+     *
+     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
+     */
+    public function rmUserFromTeams(int $userid, array $teamIdArr): void
+    {
+        foreach ($teamIdArr as $teamId) {
+            $this->destroy($userid, (int) $teamId);
+        }
+    }
+
+    /**
      * Remove one user from a team
      */
     public function destroy(int $userid, int $teamid): bool
@@ -82,19 +99,9 @@ class Users2Teams
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Remove a user from teams
-     *
-     * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
-     */
-    public function rmUserFromTeams(int $userid, array $teamIdArr): void
-    {
-        foreach ($teamIdArr as $teamId) {
-            $this->destroy($userid, (int) $teamId);
-        }
+        $res = $this->Db->execute($req);
+        AuditLogs::create(new TeamRemoval($teamid, $userid));
+        return $res;
     }
 
     private function patchTeamGroup(Users $requester, int $userid, int $teamid, Usergroup $group): int
@@ -107,6 +114,8 @@ class Users2Teams
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 
         $this->Db->execute($req);
+        /** @psalm-suppress PossiblyNullArgument */
+        AuditLogs::create(new PermissionLevelChanged($requester->userid, $group, $userid, $teamid));
         return $group;
     }
 

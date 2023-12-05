@@ -65,62 +65,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
+    const handleDate = (date: string, dateTo: string): string => {
+      if (date === '') {
+        return '';
+      }
+      if (dateTo === '') {
+        return getOperator() + date;
+      }
+      return date + '..' + dateTo;
+    };
+    const handleMetadata = (metakey: string, metavalue: string): string => {
+      if (metakey === '' || metavalue === '') {
+        return '';
+      }
+      const keyQuotes = getQuotes(metakey);
+      const valueQuotes = getQuotes(metavalue);
+      return keyQuotes + metakey.replace('"', '\\"') + keyQuotes + ':' + valueQuotes + metavalue.replace('"', '\\"') + valueQuotes;
+    };
     if (element instanceof HTMLSelectElement) {
       // clear action
       if (element.options[element.selectedIndex].dataset.action === 'clear') {
         return '';
       }
       if (element.id === 'dateOperator') {
-        const date = (document.getElementById('date') as HTMLInputElement).value;
-        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-        if (date === '') {
-          return '';
-        }
-        if (dateTo === '') {
-          return getOperator() + date;
-        }
-        return date + '..' + dateTo;
+        return handleDate(
+          (document.getElementById('date') as HTMLInputElement).value,
+          (document.getElementById('dateTo') as HTMLInputElement).value,
+        );
       }
-      return `${element.options[element.selectedIndex].value}`;
+      // escape double quotes
+      return element.options[element.selectedIndex].value.replace('"','\\"');
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {
-        if (element.value === '') {
-          return '';
-        }
-        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-        if (dateTo === '') {
-          return getOperator() + element.value;
-        }
-        return element.value + '..' + dateTo;
+        return handleDate(
+          element.value,
+          (document.getElementById('dateTo') as HTMLInputElement).value,
+        );
       }
       if (element.id === 'dateTo') {
-        const date = (document.getElementById('date') as HTMLInputElement).value;
-        if (date === '') {
-          return '';
-        }
-        if (element.value === '') {
-          return getOperator() + date;
-        }
-        return date + '..' + element.value;
+        return handleDate(
+          (document.getElementById('date') as HTMLInputElement).value,
+          element.value,
+        );
       }
       if (element.id === 'metakey') {
-        const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
-        if (metavalue === '' || element.value === '') {
-          return '';
-        }
-        const keyQuotes = getQuotes(element.value);
-        const valueQuotes = getQuotes(metavalue);
-        return keyQuotes + element.value + keyQuotes + ':' + valueQuotes + metavalue + valueQuotes;
+        return handleMetadata(
+          element.value,
+          (document.getElementById('metavalue') as HTMLInputElement).value,
+        );
       }
       if (element.id === 'metavalue') {
-        const metakey = (document.getElementById('metakey') as HTMLInputElement).value;
-        if (metakey === '' || element.value === '') {
-          return '';
-        }
-        const keyQuotes = getQuotes(metakey);
-        const valueQuotes = getQuotes(element.value);
-        return keyQuotes + metakey + keyQuotes + ':' + valueQuotes + element.value + valueQuotes;
+        return handleMetadata(
+          (document.getElementById('metakey') as HTMLInputElement).value,
+          element.value,
+        );
       }
     }
     return '😶';
@@ -131,11 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let quotes = '';
     
     // TODO: fix single and double quotation marks behaviour: &#39; &#34; in db
-    if ([' ', '&', '|', '!', ':', '(', ')', '\''].some(value => filterValue.includes(value))) {
+    if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
       quotes = '"';
-    }
-    if (filterValue.includes('"')) {
-      quotes = '\'';
     }
     return quotes;
   }
@@ -149,30 +145,40 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasInput = curVal.length != 0;
       const hasSpace = curVal.endsWith(' ');
       const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+      let filterName = elem.dataset.filter;
 
-      // look if the filter key already exists in the extendedArea
+      // look if the filter key already exists in the search input
       // paste the regex on regex101.com to understand it
-      let valueRegex = ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
-      if (elem.dataset.filter === 'extrafield') {
-        // extrafield has key and value so we need the regex above twice
-        valueRegex = `${valueRegex}${valueRegex}`;
+      const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+      const operatorRegex = '(?:[<>]=?|!?=)?';
+      let valueRegex = baseRegex;
+
+      if (filterName === 'date') {
+        // date can use operator
+        valueRegex = operatorRegex + baseRegex;
       }
-      const regex = new RegExp(elem.dataset.filter + valueRegex + '\\s?');
+      if (filterName === 'extrafield') {
+        // extrafield has key and value so we need the regex above twice
+        valueRegex = baseRegex + ':' + baseRegex;
+      }
+      const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
       const found = curVal.match(regex);
       // default value is clearing everything
       let filter = '';
       let filterValue = getFilterValueFromElement(elem);
-      const quotes = getQuotes(filterValue);
+      let quotes = getQuotes(filterValue);
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
-        let filterName = elem.dataset.filter;
+        if (filterName === 'date') {
+          quotes = '';
+        }
 
         if (filterName === '(?:author|group)') {
           filterName = filterValue.split(':')[0];
           filterValue = filterValue.substring(filterName.length + 1);
         }
 
-        filter = `${filterName}:${quotes}${filterValue}${quotes}`;
+        filter = filterName + ':' + quotes + filterValue + quotes;
 
         if (filterName === 'extrafield') {
           filter = `${filterName}:${filterValue}`;

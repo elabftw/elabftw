@@ -37,6 +37,7 @@ import Prism from 'prismjs';
     },
     pattern: /(?:s:)/,
   };
+  const comparisonOperators = /(?:[<>]=?|!?=)/;
 
   Prism.languages.elabftwquery = {
     'field-bool': {
@@ -57,7 +58,7 @@ import Prism from 'prismjs';
       alias: 'keyword',
       greedy: true,
       inside: {
-        'operator': /\.\.|[<>]=?|!?=/,
+        'operator': RegExp('\\.\\.|' + comparisonOperators.source),
         'punctuation': /[:.,/-]/,
         'number': /\d+/,
       },
@@ -67,7 +68,7 @@ import Prism from 'prismjs';
           +'(?:'
             + date + '\\.\\.' + date
             + '|'
-            + '(?:[<>]=?|!?=)?' + date
+            + comparisonOperators.source + '?' + date
           + ')',
         'i',
       ),
@@ -76,7 +77,6 @@ import Prism from 'prismjs';
       greedy: true,
       inside: {
         'keyword': /\b(?:extrafield)\b/i,
-        // 'operator': /[<>]=?|!?=/,
         // 'number': /\d+/,
         'strict': strict,
         'punctuation': /:/,

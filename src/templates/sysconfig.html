@@ -232,6 +232,7 @@
               <label class='switch ucp-align'>
                 <input type='checkbox' data-trigger='change' data-model='teams/{{ team.id }}' data-target='visible' {{ team.visible == 1 ? 'checked="checked"' }}>
                 <span class='slider'></span>
+                <span class='sr-only'>{{ team.name }} - {{ 'Visible'|trans }}</span>
               </label>
             </td>
             <td>
@@ -259,7 +260,7 @@
 <div data-tabcontent='4' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Announcement'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <p>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
+    <label for='announcementInput' class='mb-3'>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</label>
     <div class='input-group'>
       <input class='form-control' type='text' id='announcementInput' name='announcement' value='{{ App.Config.configArr.announcement }}' />
       <div class='input-group-append'>
@@ -273,7 +274,7 @@
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Login page announcement'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <p>{{ 'The following text will be displayed only on the login page.'|trans }}</p>
+    <label for='loginAnnouncementInput' class='mb-3'>{{ 'The following text will be displayed only on the login page.'|trans }}</label>
     <div class='input-group'>
       <input class='form-control' type='text' id='loginAnnouncementInput' name='login_announcement' value='{{ App.Config.configArr.login_announcement }}' />
       <div class='input-group-append'>
@@ -365,7 +366,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
   <div class='pl-3'>
     <div class='input-group'>
-      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' />
+      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' aria-label='{{ 'Email address'|trans }}'>
       <div class='input-group-append'>
         <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>
@@ -619,7 +620,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' />
+        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format'/>
       </div>
       <textarea class='form-control col-md-3' id='x509' data-trigger='blur' data-model='config' data-target='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
     </div>
@@ -628,7 +629,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='saml_privatekey' class='col-form-label'>x509 Certificate private key</label>
-        <input type='file' data-action='load-file-on-change' data-target='saml_privatekey' class='form-control' />
+        <input type='file' data-action='load-file-on-change' data-target='saml_privatekey' class='form-control' aria-label='File upload: x509 Certificate private key' />
       </div>
       <textarea class='form-control col-md-3' id='saml_privatekey' data-trigger='blur' data-model='config' data-target='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
     </div>
@@ -637,7 +638,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509_new' class='col-form-label'>Rollover x509 Certificate in PEM format (only published in metadata, not used)</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509_new' class='form-control' />
+        <input type='file' data-action='load-file-on-change' data-target='x509_new' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
       </div>
       <textarea class='form-control col-md-3' id='x509_new' data-trigger='blur' data-model='config' data-target='saml_x509_new'>{{ App.Config.configArr.saml_x509_new }}</textarea>
     </div>

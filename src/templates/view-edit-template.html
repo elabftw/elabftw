@@ -152,5 +152,7 @@
   {% endif %}
 
 </div>
-
-<div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+{# in view mode templates-view.html gets included which has its own <div id='info'> #}
+{% if mode != 'view' %}
+  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+{% endif %}

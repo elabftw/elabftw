@@ -9,9 +9,10 @@ describe('Sysconfig', () => {
     cy.get('h1#pageTitle').should('have.text', 'eLabFTW Configuration');
     cy.htmlvalidate();
 
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 13; i++) {
       cy.visit(`/sysconfig.php?tab=${i}`);
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
+      cy.get(`div[data-tabcontent="${i}"]`).htmlvalidate();
     }
 
     // Search user

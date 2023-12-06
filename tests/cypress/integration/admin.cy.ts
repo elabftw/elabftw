@@ -12,10 +12,11 @@ describe('admin page', () => {
     for (let i = 1; i <= 7; i++) {
       cy.visit(`/admin.php?tab=${i}`);
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
+      cy.get(`div[data-tabcontent="${i}"]`).htmlvalidate();
     }
 
     // Search user
-    cy.visit('/sysconfig.php?tab=3&q=toto');
+    cy.visit('/admin.php?tab=3&q=toto');
     cy.get('#editUsersBox').should('contain', 'Le sysadmin');
   });
 });

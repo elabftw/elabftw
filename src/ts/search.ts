@@ -65,6 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
+    const escapeDoubleQuotes = (string: string): string => {
+      // escape double quotes if not already escaped
+      return string.replace(/(?<!\\)"/g, '\\"');
+    };
     const handleDate = (date: string, dateTo: string): string => {
       if (date === '') {
         return '';
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const keyQuotes = getQuotes(metakey);
       const valueQuotes = getQuotes(metavalue);
-      return keyQuotes + metakey.replace('"', '\\"') + keyQuotes + ':' + valueQuotes + metavalue.replace('"', '\\"') + valueQuotes;
+      return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
     };
     if (element instanceof HTMLSelectElement) {
       // clear action
@@ -93,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           (document.getElementById('dateTo') as HTMLInputElement).value,
         );
       }
-      // escape double quotes
-      return element.options[element.selectedIndex].value.replace('"','\\"');
+      return escapeDoubleQuotes(element.options[element.selectedIndex].value);
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {

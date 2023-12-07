@@ -24,9 +24,10 @@ class ExtraFieldsKeys implements RestInterface
 {
     private Db $Db;
 
-    public function __construct(private Users $Users, private string $searchTerm)
+    public function __construct(private Users $Users, private string $searchTerm, private int $limit=0)
     {
         $this->Db = Db::getConnection();
+        $this->limit = $this->limit < -1 || $this->limit === 0 ? $this->Users->userData['limit_nb'] : $this->limit;
     }
 
     public function getPage(): string
@@ -98,14 +99,17 @@ class ExtraFieldsKeys implements RestInterface
                 FROM (%s) AS `finalTable`
                 GROUP BY `extra_fields_key`
                 ORDER BY `frequency` DESC, `extra_fields_key` ASC
-                LIMIT %d',
+                %s',
             implode(' UNION ', $sql),
-            $this->Users->userData['limit_nb']
+            $this->limit > 0 ? 'LIMIT :limit' : '',
         );
 
         $req = $this->Db->prepare($finalSql);
         $req->bindValue(':search_term', '%' . $this->searchTerm . '%', PDO::PARAM_STR);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        if ($this->limit > 0) {
+            $req->bindParam(':limit', $this->limit, PDO::PARAM_INT);
+        }
 
         $this->Db->execute($req);
 

@@ -20,6 +20,11 @@ class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testReadKeys(): void
     {
+        // default user limit
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, ''))->readAll());
+        // no limit
+        $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1))->readAll());
+        // custom limit
+        $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', 100))->readAll());
     }
 }

@@ -59,26 +59,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function getOperator(): string {
-    return (document.getElementById('dateOperator') as HTMLSelectElement).value;
-  }
-
   // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
     const escapeDoubleQuotes = (string: string): string => {
       // escape double quotes if not already escaped
       return string.replace(/(?<!\\)"/g, '\\"');
     };
-    const handleDate = (date: string, dateTo: string): string => {
+    const handleDate = (): string => {
+      const date = (document.getElementById('date') as HTMLInputElement).value;
+      const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+      const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
+      const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
       if (date === '') {
         return '';
       }
       if (dateTo === '') {
-        return getOperator() + date;
+        return dateOperator + date;
       }
       return date + '..' + dateTo;
     };
-    const handleMetadata = (metakey: string, metavalue: string): string => {
+    const handleMetadata = (): string => {
+      const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
+      const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
+      const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
       if (metakey === '' || metavalue === '') {
         return '';
       }
@@ -92,47 +95,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return '';
       }
       if (element.id === 'dateOperator') {
-        return handleDate(
-          (document.getElementById('date') as HTMLInputElement).value,
-          (document.getElementById('dateTo') as HTMLInputElement).value,
-        );
+        return handleDate();
+      }
+      if (element.id === 'metakey') {
+        return handleMetadata();
       }
       return escapeDoubleQuotes(element.options[element.selectedIndex].value);
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {
-        return handleDate(
-          element.value,
-          (document.getElementById('dateTo') as HTMLInputElement).value,
-        );
+        return handleDate();
       }
       if (element.id === 'dateTo') {
-        return handleDate(
-          (document.getElementById('date') as HTMLInputElement).value,
-          element.value,
-        );
-      }
-      if (element.id === 'metakey') {
-        return handleMetadata(
-          element.value,
-          (document.getElementById('metavalue') as HTMLInputElement).value,
-        );
+        return handleDate();
       }
       if (element.id === 'metavalue') {
-        return handleMetadata(
-          (document.getElementById('metakey') as HTMLInputElement).value,
-          element.value,
-        );
+        return handleMetadata();
       }
     }
     return '😶';
   }
 
+  // don't add quotes unless we need them (space or some special chars exist)
   function getQuotes(filterValue: string): string {
-    // don't add quotes unless we need them (space or some special chars exist)
     let quotes = '';
-    
-    // TODO: fix single and double quotation marks behaviour: &#39; &#34; in db
     if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
       quotes = '"';
     }

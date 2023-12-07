@@ -3716,7 +3716,7 @@ paths:
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
-    summary: Search for extra fields keys used by a team. Results are limited to 15 entries and entries are sorted by frequency.
+    summary: Search for extra fields keys used by a team. Results are sorted by frequency.
     parameters:
       - name: q
         in: query
@@ -3725,6 +3725,13 @@ paths:
         schema:
           type: string
           default: ''
+      - name: limit
+        in: query
+        description: |
+          Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
+        schema:
+          type: int
+          default: 0
     get:
       tags: ['Extra Fields Keys']
       summary: Read extra fields keys.

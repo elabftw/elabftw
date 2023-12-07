@@ -405,16 +405,39 @@
   <div class='col-md-5'>
     <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
     <div class='input-group flex-nowrap'>
-      <div class='input-group-prepend flex-shrink-1 flex-grow-1'>
-        <input type='text' id='metakey' data-autocomplete='extraFieldsKeys' placeholder='{{ 'Name of field'|trans }}' class='brr-none form-control filterHelper' data-filter='extrafield' name='metakey' value='{{ Request.query.get('metakey') != '' ? Request.query.get('metakey') }}' aria-label='{{ 'Name of field'|trans }}' />
-      </div>
-      <div class='input-group-text px-1 brl-none brr-none'>:</div>
-      <div class='input-group-append flex-shrink-1 flex-grow-1'>
-        <input type='text' id='metavalue' placeholder='{{ 'Value'|trans }}' class='brl-none form-control filterHelper' data-filter='extrafield' name='metavalue' value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}' aria-label='{{ 'Value'|trans }}' />
-      </div>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+      {%- endif %}
+      <select
+        aria-label='{{ 'Name of field'|trans }}'
+        class='form-control filterHelper selectpicker'
+        data-filter='extrafield'
+        data-live-search='true'
+        data-style=''
+        data-style-base='form-control filterHelper'
+        id='metakey'
+        name='metakey'
+        title='{{ 'Name of field'|trans }}'
+      >
+        <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
+        {% for metakey in metakeyArrForSelect %}
+          <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
+        {% endfor %}
+      </select>
+      <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
+      <input
+        aria-label='{{ 'Value'|trans }}'
+        class='form-control filterHelper'
+        data-filter='extrafield'
+        id='metavalue'
+        name='metavalue'
+        placeholder='{{ 'Value'|trans }}'
+        type='text'
+        value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
+      />
     </div>
     <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
-    <p class='mt-1'>{{ "Tip: you can use '**' in Name of field to search all fields and '%' as wildcard in value"|trans }}</p>
+    <p class='mt-1 text-muted'>{{ "Tip: you can use '%' as wildcard in value"|trans }}</p>
   </div>
   {# METADATA SEARCH END #}
 

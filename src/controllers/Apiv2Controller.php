@@ -241,7 +241,7 @@ class Apiv2Controller extends AbstractApiController
                 (string) $this->Request->query->get('end', '2119-12-23T00:00:00+01:00'),
                 $this->Request->query->getInt('cat'),
             ),
-            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim((string) $this->Request->query->get('q', ''))),
+            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim((string) $this->Request->query->get('q', '')), $this->Request->query->getInt('limit')),
             'favtags' => new FavTags($this->Users, $this->id),
             'team_tags' => new TeamTags($this->Users, $this->id),
             'teams' => new Teams($this->Users, $this->id),

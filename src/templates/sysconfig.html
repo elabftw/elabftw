@@ -216,7 +216,7 @@
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
-            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
+            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name|raw }}</span>
               <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
               {% trans %}
               Experiment

@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Filter;
@@ -150,30 +151,6 @@ class Templates extends AbstractTemplateEntity
     }
 
     /**
-     * Filter the readable templates to only get the ones where we can write to
-     * Use this to display templates in UCP
-     */
-    public function getWriteableTemplatesList(): array
-    {
-        $TeamGroups = new TeamGroups($this->Users);
-        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
-
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-
-        return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser, $teamsOfUser) {
-            $canwrite = json_decode($t['canwrite'], true, 3, JSON_THROW_ON_ERROR);
-            return $canwrite['base'] === BasePermissions::Full->value || $canwrite['base'] === BasePermissions::Organization->value ||
-                ($canwrite['base'] === BasePermissions::MyTeams->value && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
-                ($canwrite['base'] === BasePermissions::User->value && $t['userid'] === $this->Users->userData['userid']) ||
-                ($canwrite['base'] === BasePermissions::UserOnly->value && $t['userid'] === $this->Users->userData['userid']) ||
-                (!empty(array_intersect($canwrite['users'], array($this->Users->userData['userid'])))) ||
-                (!empty(array_intersect($canwrite['teams'], $teamsOfUser))) ||
-                (!empty(array_intersect($canwrite['teamgroups'], $teamgroupsOfUser)));
-        });
-    }
-
-    /**
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
@@ -221,6 +198,13 @@ class Templates extends AbstractTemplateEntity
         // look for our userid in users part of the json
         $sql .= ' OR (:userid MEMBER OF (experiments_templates.canread->>"$.users"))';
         $sql .= ')';
+
+        if ($this->Users->userData['scope'] === Scope::User->value) {
+            $sql .= ' AND experiments_templates.userid = :userid';
+        }
+        if ($this->Users->userData['scope'] === Scope::Team->value) {
+            $sql .= ' AND experiments_templates.team = :team';
+        }
 
         $sql .= $this->filterSql;
 

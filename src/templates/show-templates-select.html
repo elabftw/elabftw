@@ -2,20 +2,14 @@
   {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
     {# CREATE NEW AND IMPORT BUTTONS (ucp page) #}
     <div class='mb-4 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can edit.'|trans }}</p>
+      {# could use tplTable,scopeBtn but reload full page because of data-sort that needs to be reloaded #}
+      {% include 'scope-button.html' with {'reload': 'page'} %}
       <div>
         <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
         <div class='vertical-separator d-inline'></div>
         <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
         <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
       </div>
-    </div>
-  {% endif %}
-
-  {% if App.Request.getScriptName|split('/')|last == 'team.php' %}
-    {# TEAM page #}
-    <div class='mb-4 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page lists all the experiments templates that you can view.'|trans }}</p>
     </div>
   {% endif %}
 
@@ -26,17 +20,18 @@
         <th scope='col'>{{ 'Team'|trans }}</th>
         <th scope='col'>{{ 'Title'|trans }}</th>
         <th scope='col'>{{ 'Category'|trans }}</th>
-        <th scope='col'>{{ 'Last modification date'|trans }}</th>
         <th scope='col'>{{ 'Owner'|trans }}</th>
+        <th scope='col'>{{ 'Last modification date'|trans }}</th>
       </tr>
     </thead>
     <tbody>
       {% for template in templatesArr %}
         <tr>
-          <td>{{ template.team_name }}</td>
+          <td><div class='user-badge text-center px-2 py-1 rounded mt-1'>{{ template.team_name }}</div></td>
           <td>
             <a href='?tab=3&mode=view&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'><i class='fas fa-eye fa-fw'></i></a>
-            {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
+            {# we only show the edit button for templates that we own, because here we don't really have information if it's readonly or not #}
+            {% if App.Users.userid == template.userid %}
               <a href='?tab=3&mode=edit&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt fa-fw'></i></a>
             {% endif %}
               {# clickable toggle pin button #}
@@ -46,8 +41,8 @@
           <td>
             <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>
           </td>
+          <td><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname|raw }}</span></td>
           <td>{{ template.modified_at }}</td>
-          <td>{{ template.fullname|raw }}</td>
         </tr>
       {% endfor %}
     </tbody>

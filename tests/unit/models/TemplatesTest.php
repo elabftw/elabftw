@@ -31,11 +31,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Templates->readOne());
     }
 
-    public function testGetWriteableTemplatesList(): void
-    {
-        $this->assertIsArray($this->Templates->getWriteableTemplatesList());
-    }
-
     public function testDuplicate(): void
     {
         $this->Templates->setId(1);

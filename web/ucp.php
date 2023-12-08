@@ -46,7 +46,6 @@ try {
     $TeamTags = new TeamTags($App->Users);
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->getWriteableTemplatesList();
     $Category = new ExperimentsCategories($Teams);
     $Status = new ExperimentsStatus($Teams);
     $entityData = array();
@@ -59,6 +58,10 @@ try {
         $metadataGroups = $Metadata->getGroups();
         $Changelog = new Changelog($Templates);
         $changelogData = $Changelog->readAll();
+    }
+
+    if ($App->Request->query->get('mode') === 'edit') {
+        $Templates->canOrExplode('write');
     }
 
     // TEAM GROUPS
@@ -119,7 +122,7 @@ try {
         'notificationsSettings' => $notificationsSettings,
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
-        'templatesArr' => $templatesArr,
+        'templatesArr' => $Templates->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),

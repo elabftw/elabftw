@@ -34,6 +34,8 @@
         <i class='fas fa-fw fa-table'></i>
       </button>
 
+      {% include 'scope-button.html' with {'reload': 'itemList,scopeBtn'} %}
+
       <button class='btn btn-secondary btn-sm mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
         <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
       </button>
@@ -42,7 +44,7 @@
       <div class='btn-group'>
         <button class='btn btn-secondary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-arrow-down-wide-short fa-fw mr-1 color-white'></i>{{ 'Sort'|trans }}</button>
         <div class='dropdown-menu dropdown-menu-right'>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='date-desc'>{{ 'Newest'|trans }}</a>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='date-desc'>{{ 'Newest'|trans }}</button>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='date-asc'>{{ 'Oldest'|trans }}</button>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='lastchange-asc'>{{ 'Least recently modified'|trans }}</button>

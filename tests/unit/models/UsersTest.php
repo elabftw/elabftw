@@ -82,7 +82,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'sc_favorite' => 'f',
             'sc_todo' => 't',
             'sc_search' => 's',
-            'show_team' => 'on',
+            'scope' => '2',
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_read' => BasePermissions::Organization->toJson(),

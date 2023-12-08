@@ -875,7 +875,6 @@ CREATE TABLE `users` (
   `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
-  `scope_bookable` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `uploads_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `validated` tinyint UNSIGNED NOT NULL DEFAULT 0,

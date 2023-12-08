@@ -2,8 +2,8 @@
   {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
     {# CREATE NEW AND IMPORT BUTTONS (ucp page) #}
     <div class='mb-4 d-flex justify-content-between'>
-      {# could use tplTable,scopeBtn but reload full page because of data-sort that needs to be reloaded #}
-      {% include 'scope-button.html' with {'reload': 'page'} %}
+      {# reload the tbody to avoid issue with data-sort arrows needing reload #}
+      {% include 'scope-button.html' with {'reload': 'tplTableBody,scopeBtn', 'target': 'scope_experiments_templates'} %}
       <div>
         <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
         <div class='vertical-separator d-inline'></div>
@@ -24,7 +24,7 @@
         <th scope='col'>{{ 'Last modification date'|trans }}</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='tplTableBody'>
       {% for template in templatesArr %}
         <tr>
           <td><div class='user-badge text-center px-2 py-1 rounded mt-1'>{{ template.team_name }}</div></td>

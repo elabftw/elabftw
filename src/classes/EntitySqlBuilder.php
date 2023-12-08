@@ -182,7 +182,7 @@ class EntitySqlBuilder
         }
         // add pub/org/team filter
         $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
-        if ($this->entity->Users->userData['scope'] === Scope::Everything->value) {
+        if ($this->entity->Users->userData['scope_' . $this->entity->type] === Scope::Everything->value) {
             $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
         }
         $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.%s, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.%s, '$.base') = %d ", $sqlPublicOrg, $can, BasePermissions::MyTeams->value, $teamFilter, $can, BasePermissions::User->value);

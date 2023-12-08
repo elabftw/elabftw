@@ -101,7 +101,7 @@
 
 {# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
-  {% include 'scope-button.html' with {'reload': 'page'} %}
+  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_bookable'} %}
 
   <div id='mainSchedulerContent'>
     {% if itemsArr|length == 0 %}

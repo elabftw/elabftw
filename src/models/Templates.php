@@ -199,10 +199,10 @@ class Templates extends AbstractTemplateEntity
         $sql .= ' OR (:userid MEMBER OF (experiments_templates.canread->>"$.users"))';
         $sql .= ')';
 
-        if ($this->Users->userData['scope'] === Scope::User->value) {
+        if ($this->Users->userData['scope_experiments_templates'] === Scope::User->value) {
             $sql .= ' AND experiments_templates.userid = :userid';
         }
-        if ($this->Users->userData['scope'] === Scope::Team->value) {
+        if ($this->Users->userData['scope_experiments_templates'] === Scope::Team->value) {
             $sql .= ' AND experiments_templates.team = :team';
         }
 

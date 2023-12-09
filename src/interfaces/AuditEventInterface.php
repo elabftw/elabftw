@@ -11,9 +11,11 @@ namespace Elabftw\Interfaces;
 
 interface AuditEventInterface
 {
-    public function getBody(): string;
+    public function getRequesterUserid(): int;
 
-    public function getUserid(): int;
+    public function getTargetUserid(): int;
+
+    public function getBody(): string;
 
     public function getCategory(): int;
 }

@@ -13,13 +13,13 @@ use Elabftw\Interfaces\AuditEventInterface;
 
 abstract class AbstractAuditEvent implements AuditEventInterface
 {
-    public function __construct(private int $userid = 0)
+    public function __construct(private int $requesterUserid = 0, private int $targetUserid = 0)
     {
     }
 
-    public function getUserid(): int
+    public function getTargetUserid(): int
     {
-        return $this->userid;
+        return $this->targetUserid;
     }
 
     abstract public function getBody(): string;

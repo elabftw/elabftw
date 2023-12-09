@@ -23,11 +23,12 @@ class AuditLogs
     public static function create(AuditEventInterface $event): int
     {
         $Db = Db::getConnection();
-        $sql = 'INSERT INTO audit_logs(body, category, userid) VALUES(:body, :category, :userid)';
+        $sql = 'INSERT INTO audit_logs(body, category, requester, target) VALUES(:body, :category, :requester, :target)';
         $req = $Db->prepare($sql);
         $req->bindValue(':body', $event->getBody());
         $req->bindValue(':category', $event->getCategory());
-        $req->bindValue(':userid', $event->getUserid());
+        $req->bindValue(':requester', $event->getRequesterUserid());
+        $req->bindValue(':target', $event->getTargetUserid());
         $Db->execute($req);
 
         return $Db->lastInsertId();

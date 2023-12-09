@@ -9,7 +9,9 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\EmailChanged;
 use Elabftw\AuditEvent\IsSysadminChanged;
+use Elabftw\AuditEvent\OrgidChanged;
 use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
@@ -539,6 +541,7 @@ class Users implements RestInterface
             if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
+            AuditLogs::create(new EmailChanged($this->requester->userid));
             Filter::email($params->getContent());
         }
         // special case for is_sysadmin: only a sysadmin can affect this column
@@ -550,11 +553,20 @@ class Users implements RestInterface
             AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 
+        // log uid change
+        if ($params->getTarget() === 'orgid') {
+            AuditLogs::create(new OrgidChanged($this->requester->userid));
+        }
+
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+            AuditLogs::create(new UserAttributeChanged($this->requester->userid));
+        }
+        return $res;
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool

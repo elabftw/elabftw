@@ -9,9 +9,11 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
 use PDO;
 
@@ -22,7 +24,7 @@ class UserArchiver
 {
     protected Db $Db;
 
-    public function __construct(private Users $target)
+    public function __construct(private Users $requester, private Users $target)
     {
         $this->Db = Db::getConnection();
     }
@@ -30,7 +32,15 @@ class UserArchiver
     public function toggleArchive(bool $lockExp = false): array
     {
         $this->target->userData['archived'] === 0 ? $this->archive($lockExp) : $this->unarchive();
-        $this->toggleArchiveSql();
+        if ($this->toggleArchiveSql()) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->target->userid ?? 0,
+                'archived',
+                (string) $this->target->userData['archived'],
+                $this->target->userData['archived'] === 0 ? '1' : '0',
+            ));
+        }
         return $this->target->readOne();
     }
 

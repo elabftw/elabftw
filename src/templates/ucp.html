@@ -204,32 +204,6 @@
 
   <h2 class='p-2 pl-3 section-title'>{{ 'Miscellaneous'|trans }}</h2>
   <div class='pl-3 mt-2'>
-    <div class='d-flex justify-content-between'>
-      <label for='show_team' class='col-form-label'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team' {{ App.Users.userData.show_team == 1 ? 'checked="checked"' }} id='show_team'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='show_team_templates' class='col-form-label'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team_templates' {{ App.Users.userData.show_team_templates == 1 ? 'checked="checked"' }} id='show_team_templates'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='show_public' class='col-form-label'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_public' {{ App.Users.userData.show_public == 1 ? 'checked="checked"' }} id='show_public'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='use_markdown' class='col-form-label'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>

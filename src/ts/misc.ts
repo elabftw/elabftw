@@ -74,10 +74,16 @@ export function listenTrigger(): void {
       params[el.dataset.target] = value;
       ApiC.patch(`${el.dataset.model}`, params).then(() => {
         if (el.dataset.reload) {
-          reloadElement(el.dataset.reload).then(() => {
-            // make sure we listen to the new element too
-            listenTrigger();
-          });
+          if (el.dataset.reload === 'page') {
+            location.reload();
+          } else {
+            el.dataset.reload.split(',').forEach(toreload => {
+              reloadElement(toreload).then(() => {
+                // make sure we listen to the new element too
+                listenTrigger();
+              });
+            });
+          }
         }
       }).catch(error => {
         if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {

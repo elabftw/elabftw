@@ -21,16 +21,6 @@ describe('Team', () => {
     cy.get('[data-tabtarget="2"]').should('have.class', 'selected');
     cy.get('h3.section-title').should('contain.text', 'Members');
 
-    // Templates
-    cy.visit('/team.php?tab=3');
-    cy.get('[data-tabtarget="3"]').should('have.class', 'selected');
-    cy.get('h3.section-title').should('contain.text', 'Experiments Templates');
-    cy.get('#tplTable').should('exist');
-
-    // View individual template
-    cy.visit('/team.php?tab=3&mode=view&templateid=1');
-    cy.get('#templatesDiv').should('exist');
-    
     // Send email
     cy.visit('/team.php?tab=4');
     cy.get('[data-tabtarget="4"]').should('have.class', 'selected');

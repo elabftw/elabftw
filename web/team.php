@@ -18,7 +18,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,19 +36,12 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $Items = new Items($App->Users);
     $Scheduler = new Scheduler($Items);
-    $Templates = new Templates($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
     $bookableItemData = array();
 
     if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
         $Scheduler->Items->setId($App->Request->query->getInt('item'));
         $bookableItemData = $Scheduler->Items->readOne();
-    }
-
-    $entityData = array();
-    if ($App->Request->query->has('templateid')) {
-        $Templates->setId($App->Request->query->getInt('templateid'));
-        $entityData = $Templates->readOne();
     }
 
     // only the bookable categories
@@ -63,14 +55,11 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'bookableItemData' => $bookableItemData,
-        'Entity' => $Templates,
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
-        'entityData' => $entityData,
-        'templatesArr' => $Templates->readAll(),
     );
 
     $Response->setContent($App->render($template, $renderArr));

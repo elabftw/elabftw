@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\Scope;
 use Elabftw\Models\Config;
 use function implode;
 use function is_array;
@@ -50,6 +51,11 @@ class TwigFilters
 
         // "status" role: see WCAG2.1 4.1.3
         return sprintf("<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
+    }
+
+    public static function toIcon(int $scope): string
+    {
+        return Scope::toIcon(Scope::from($scope));
     }
 
     /**

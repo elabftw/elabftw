@@ -51,6 +51,7 @@ trait TwigTrait
         $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
+        $toIconFilter = new TwigFilter('toIcon', '\Elabftw\Elabftw\TwigFilters::toIcon', $filterOptions);
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
@@ -93,6 +94,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);
+        $TwigEnvironment->addFilter($toIconFilter);
         $TwigEnvironment->addFilter($transFilter);
         $TwigEnvironment->addFilter($toDatetimeFilter);
         $TwigEnvironment->addFilter($extractJson);

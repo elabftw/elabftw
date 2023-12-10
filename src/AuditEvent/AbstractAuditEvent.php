@@ -22,6 +22,11 @@ abstract class AbstractAuditEvent implements AuditEventInterface
         return $this->targetUserid;
     }
 
+    public function getRequesterUserid(): int
+    {
+        return $this->requesterUserid;
+    }
+
     abstract public function getBody(): string;
 
     abstract public function getCategory(): int;

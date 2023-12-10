@@ -125,7 +125,7 @@ class ApiKeys implements RestInterface
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
 
         if ($res = $this->Db->execute($req)) {
-            AuditLogs::create(new ApiKeyDeleted($this->Users->userid));
+            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
         }
         return $res;
     }
@@ -161,7 +161,7 @@ class ApiKeys implements RestInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         if ($this->Db->execute($req)) {
-            AuditLogs::create(new ApiKeyCreated($this->Users->userid));
+            AuditLogs::create(new ApiKeyCreated($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
         }
 
         // we store the id of the key in the object to serve it as part of the key

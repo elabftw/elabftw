@@ -44,7 +44,8 @@ class Users2Teams
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $req->bindValue(':group', $group, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamAddition($teamid, $group, $userid));
+        // TODO bring info about requester here for completeness of log. Set to 0 for now.
+        AuditLogs::create(new TeamAddition($teamid, $group, 0, $userid));
         return $res;
     }
 
@@ -100,7 +101,7 @@ class Users2Teams
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamRemoval($teamid, $userid));
+        AuditLogs::create(new TeamRemoval($teamid, 0, $userid));
         return $res;
     }
 

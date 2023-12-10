@@ -14,11 +14,11 @@ use Elabftw\Enums\AuditCategory;
 class UserAttributeChanged extends AbstractAuditEvent
 {
     public function __construct(
-        private int $requesterUserid,
-        private string $target,
+        int $requesterUserid,
+        int $targetUserid,
+        private string $attribute,
         private string $old,
         private string $new,
-        int $targetUserid,
     ) {
         parent::__construct($requesterUserid, $targetUserid);
     }
@@ -27,8 +27,8 @@ class UserAttributeChanged extends AbstractAuditEvent
     {
         return sprintf(
             'User attribute %s was changed from %s to %s',
-            $this->target,
-            $this->old,
+            $this->attribute,
+            empty($this->old) ? 'nothing' : $this->old,
             $this->new,
         );
     }

@@ -13,13 +13,13 @@ use Elabftw\Enums\Usergroup;
 
 class TeamAddition extends AbstractUsers2TeamsModifiedEvent
 {
-    public function __construct(private int $teamid, private int $group, int $userid)
+    public function __construct(private int $teamid, private int $group, int $requester, int $userid)
     {
-        parent::__construct($userid);
+        parent::__construct($requester, $userid);
     }
 
     public function getBody(): string
     {
-        return sprintf('User was associated with team %d and permission level %d', $this->teamid, Usergroup::from($this->group)->toHuman());
+        return sprintf('User was associated with team %d and permission level %s', $this->teamid, Usergroup::from($this->group)->toHuman());
     }
 }

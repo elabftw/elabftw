@@ -227,6 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // modal plugin requires jquery
         $('#policiesModal').modal('toggle');
       });
+    } else if (el.matches('[data-reload-on-click]')) {
+      reloadElement(el.dataset.reloadOnClick).then(() => relativeMoment());
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));

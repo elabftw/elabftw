@@ -11,9 +11,9 @@ namespace Elabftw\AuditEvent;
 
 class TeamRemoval extends AbstractUsers2TeamsModifiedEvent
 {
-    public function __construct(private int $teamid, int $userid)
+    public function __construct(private int $teamid, int $requester, int $userid)
     {
-        parent::__construct($userid);
+        parent::__construct($requester, $userid);
     }
 
     public function getBody(): string

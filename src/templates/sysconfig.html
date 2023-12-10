@@ -133,7 +133,7 @@
       <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
       <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
         {% for team in teamsArr %}
-          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
+          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name|raw }}</option>
         {% endfor %}
       </select>
     </div>

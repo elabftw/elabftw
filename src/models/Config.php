@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
@@ -256,6 +257,7 @@ final class Config implements RestInterface
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);
+            AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
             $this->configArr[$name] = (string) $value;
         }
 

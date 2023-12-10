@@ -13,7 +13,7 @@ use Elabftw\Enums\Usergroup;
 
 class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
 {
-    public function __construct(private int $requesterUserid, private int $group, int $userid, private int $teamid)
+    public function __construct(int $requesterUserid, private int $group, int $userid, private int $teamid)
     {
         parent::__construct($requesterUserid, $userid);
     }

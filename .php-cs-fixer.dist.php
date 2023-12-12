@@ -9,7 +9,7 @@
  */
 
 $finder = PhpCsFixer\Finder::create()
-    ->name('/\.php|\.php.dist$/')
+    ->name('/\.php|console|init|\.php.dist$/')
     ->exclude('_output')
     ->exclude('_support')
     ->in(['bin', 'src', 'tests', 'web'])

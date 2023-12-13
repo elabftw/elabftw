@@ -13,7 +13,7 @@
         {% if entityType == 'experiments' %}
           {% set createNewCategoryArr = templatesArr %}
         {% else %}
-          {% set createNewCategoryArr = categoryArr %}
+          {% set createNewCategoryArr = categoryArr|default(itemsCategoryArr) %}
         {% endif %}
         {% for category in createNewCategoryArr %}
           <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>

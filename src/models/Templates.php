@@ -60,14 +60,16 @@ class Templates extends AbstractTemplateEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite)
-            VALUES(:team, :title, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target)
+            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':title', Filter::title($title));
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_target', $canread);
+        $req->bindParam(':canwrite_target', $canwrite);
         $req->execute();
         $id = $this->Db->lastInsertId();
 
@@ -85,8 +87,8 @@ class Templates extends AbstractTemplateEntity
     {
         $template = $this->readOne();
 
-        $sql = 'INSERT INTO experiments_templates(team, title, category, status, body, userid, canread, canwrite, metadata)
-            VALUES(:team, :title, :category, :status, :body, :userid, :canread, :canwrite, :metadata)';
+        $sql = 'INSERT INTO experiments_templates(team, title, category, status, body, userid, canread, canwrite, canread_target, canwrite_target, metadata)
+            VALUES(:team, :title, :category, :status, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $template['title']);
@@ -96,6 +98,8 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $template['canread']);
         $req->bindParam(':canwrite', $template['canwrite']);
+        $req->bindParam(':canread_target', $template['canread_target']);
+        $req->bindParam(':canwrite_target', $template['canwrite_target']);
         $req->bindParam(':metadata', $template['metadata']);
         $req->execute();
         $newId = $this->Db->lastInsertId();
@@ -123,6 +127,7 @@ class Templates extends AbstractTemplateEntity
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+            experiments_templates.canread_target, experiments_templates.canwrite_target,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
             users.firstname, users.lastname, users.orcid,
@@ -162,6 +167,7 @@ class Templates extends AbstractTemplateEntity
         $sql = sprintf("SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
+                experiments_templates.canread_target, experiments_templates.canwrite_target,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.modified_at,
                 users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,

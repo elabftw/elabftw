@@ -57,8 +57,8 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
+        $req->bindParam(':canread', $itemTemplate['canread_target'], PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $itemTemplate['canwrite_target'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);

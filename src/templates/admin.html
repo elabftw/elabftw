@@ -290,7 +290,25 @@
 
       </ul>
       {% include('catstat-edit.html') %}
+      {# PERMISSIONS #}
+      <hr>
+      <h5>{{ 'Permissions for the resource category'|trans }}</h5>
       {% include('edit-permissions.html') %}
+      {# TARGET PERMISSIONS #}
+      <h5>{{ 'Permissions for the derived resource'|trans }}</h5>
+      <div class='d-flex mb-2 align-items-center'>
+        {# CANREAD #}
+        {% set rw = 'canread_target' %}
+        {% set can = Entity.entityData.canread_target|canToHuman %}
+        {% include('view-permissions.html') %}
+      </div>
+      <div class='d-flex mb-2 align-items-center'>
+        {# CANWRITE #}
+        {% set rw = 'canwrite_target' %}
+        {% set can = Entity.entityData.canwrite_target|canToHuman %}
+        {% include('view-permissions.html') %}
+      </div>
+      <hr>
 
       <div>
         <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>

@@ -74,8 +74,8 @@ class Experiments extends AbstractConcreteEntity
             $category = $templateArr['category'];
             $status = $templateArr['status'];
             $body = $templateArr['body'];
-            $canread = $templateArr['canread'];
-            $canwrite = $templateArr['canwrite'];
+            $canread = $templateArr['canread_target'];
+            $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
             $contentType = (int) $templateArr['content_type'];
         }

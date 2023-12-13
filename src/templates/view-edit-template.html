@@ -118,7 +118,24 @@
     {# TAGS #}
     {% include('edit-tags.html') %}
     {# PERMISSIONS #}
+    <hr>
+    <h5>{{ 'Permissions for the template'|trans }}</h5>
     {% include('edit-permissions.html') %}
+    {# TARGET PERMISSIONS #}
+    <h5>{{ 'Permissions for the derived experiment'|trans }}</h5>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANREAD #}
+      {% set rw = 'canread_target' %}
+      {% set can = Entity.entityData.canread_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANWRITE #}
+      {% set rw = 'canwrite_target' %}
+      {% set can = Entity.entityData.canwrite_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <hr>
 
     {# MAIN CONTENT #}
     <div class='mt-4'>

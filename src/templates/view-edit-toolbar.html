@@ -9,7 +9,8 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <p>{{ 'Timestamping your experiment is like taking a snapshot of your experiment at this instant, and storing it on the side, in an immutable archive. This snapshot is validated (timestamped) by a trusted third party.'|trans }}</p>
+        <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
+        <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
         {% if App.Config.configArr.ts_authority == 'universign' or App.Config.configArr.ts_authority == 'custom' %}
           <p><i class='fas fa-exclamation-triangle'></i>
             {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
@@ -20,6 +21,30 @@
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='timestamp' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for blockchain timestamping #}
+<div class='modal fade' id='blocktimestampModal' tabindex='-1' role='dialog' aria-labelledby='blocktimestampModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='blocktimestampModalLabel'>{{ 'Timestamp Experiment'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+        {# this first paragraph is the same as above for trusted timestamping #}
+        <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
+        <p>{{ 'With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum.'|trans }}</p>
+      </div>
+      <div class='timestamp-error'></div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='bloxberg' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
   </div>
@@ -90,7 +115,7 @@
 
   {# BLOXBERG TIMESTAMP #}
   {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
-    <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='bloxberg' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-cubes fa-fw'></i>
     </button>
   {% endif %}
@@ -166,11 +191,9 @@
             <i class='fas fa-fw fa-box-archive fa-fw' title='{{ 'Archive/Unarchive'|trans }}'></i> {{ 'Archive/Unarchive'|trans }}
           </button>
         {% endif %}
-        {% if App.Config.configArr.deletable_xp == '1' %}
-          <div class='dropdown-divider'></div>
-          {# DELETE #}
-          <button type='button' class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
-        {% endif %}
+        <div class='dropdown-divider'></div>
+        {# DELETE #}
+        <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
       </div>
     </div>
   </div>

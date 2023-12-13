@@ -47,9 +47,9 @@ describe('Experiments', () => {
     cy.get('[title="View mode"]').click();
     cy.get('#commentsCreateArea').type('This is a very nice experiment');
     cy.get('[data-action="create-comment"]').click();
-    cy.contains('Toto Le sysadmin commented').should('be.visible');
+    cy.get('#comment').contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
-    cy.contains('Toto Le sysadmin commented').should('not.exist');
+    cy.get('#comment').contains('Toto Le sysadmin commented').should('not.exist');
     cy.htmlvalidate();
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();

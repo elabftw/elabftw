@@ -11,7 +11,7 @@
         </div>
         {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
           <div class='input-group-prepend'>
-            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter'>
+            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
               <option value=''>{{ 'All teams'|trans }}</option>
               {% for team in teamsArr %}
                 <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
@@ -28,19 +28,19 @@
         </div>
         <div class='input-group-append'>
           <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
+            <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}</label>
           </div>
         </div>
         {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
           <div class='input-group-append'>
             <div class='input-group-text'>
-              <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+              <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}</label>
             </div>
           </div>
         {% endif %}
         <div class='input-group-append'>
           <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
+            <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}</label>
           </div>
         </div>
       </div>

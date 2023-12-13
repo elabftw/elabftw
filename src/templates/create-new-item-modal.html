@@ -27,8 +27,10 @@
         {% if entityType == 'items' and App.Users.isAdmin %}
           <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityType }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
         {% else %}
-          <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
-          <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid=''>{{ 'No template'|trans }}</a>
+          {% if not App.teamArr.force_exp_tpl and entityType == 'experiments' %}
+            <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
+            <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid=''>{{ 'No template'|trans }}</a>
+          {% endif %}
         {% endif %}
       </div>
     </div>

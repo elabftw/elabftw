@@ -80,11 +80,12 @@ class Experiments extends AbstractConcreteEntity
             $contentType = (int) $templateArr['content_type'];
         }
 
+        // no template, make sure admin didn't disallow it
+        if (($template === 0 || $template === -1) && $teamConfigArr['force_exp_tpl'] === 1) {
+            throw new ImproperActionException(_('Experiments must use a template!'));
+        }
+        // load common template
         if ($template === 0) {
-            // no template, make sure admin didn't disallow it
-            if ($teamConfigArr['force_exp_tpl'] === 1) {
-                throw new ImproperActionException(_('Experiments must use a template!'));
-            }
             $commonTemplateKey = 'common_template';
             // use the markdown template if the user prefers markdown
             if ($this->Users->userData['use_markdown']) {

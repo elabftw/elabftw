@@ -7,17 +7,19 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
-use Symfony\Component\Console\Application;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use function dirname;
-use Elabftw\Storage\Cache;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
-use Symfony\Component\Mailer\Mailer;
 use Elabftw\Services\Email;
+use Elabftw\Storage\Cache;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -26,11 +28,19 @@ $Application = new Application();
 $Config = Config::getConfig();
 $Logger = new Logger('elabftw');
 $Logger->pushHandler(new ErrorLogHandler());
-$Email = new Email(
-    new Mailer(Transport::fromDsn($Config->getDsn())),
-    $Logger,
-    $Config->configArr['mail_from'],
-);
+try {
+    $Email = new Email(
+        new Mailer(Transport::fromDsn($Config->getDsn())),
+        $Logger,
+        $Config->configArr['mail_from'],
+    );
+} catch (WrongKeyOrModifiedCiphertextException $e) {
+    echo "ERROR:\n";
+    echo "It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\n";
+    echo "Error message:\n";
+    echo $e->getMessage() . "\n";
+    exit;
+}
 
 $Application->add(new InstallRedir());
 $Application->add(new GenSecretKey());

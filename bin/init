@@ -7,10 +7,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
-use Symfony\Component\Console\Application;
 use function dirname;
+use Symfony\Component\Console\Application;
 
 /**
  * This file is separated from bin/console because Config doesn't exist yet

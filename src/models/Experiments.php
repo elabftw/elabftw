@@ -188,13 +188,6 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        $Config = Config::getConfig();
-        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
-            || $Config->configArr['deletable_xp'] === '0') {
-            throw new ImproperActionException('You cannot delete experiments!');
-        }
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }

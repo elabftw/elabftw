@@ -728,8 +728,6 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `common_template` text,
   `common_template_md` text,
-  `deletable_xp` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `deletable_item` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `link_name` varchar(255) NOT NULL,

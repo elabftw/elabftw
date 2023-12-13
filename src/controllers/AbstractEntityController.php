@@ -115,7 +115,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
-            'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),
@@ -175,7 +174,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
-            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
@@ -236,7 +234,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
-            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             // Do we display the main body of a concrete entity? Default is true
@@ -280,24 +277,5 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('changelog.html', $renderArr));
         return $Response;
-    }
-
-    /**
-     * Can we delete experiments? This is used to disable the Delete button in menu.
-     */
-    private function getDeletableXp(): bool
-    {
-        // get the config option from team setting
-        $Teams = new Teams($this->App->Users);
-        $deletableXp = (bool) $Teams->readOne()['deletable_xp'];
-        // general config will override the team config only if it's more restrictive
-        if ($this->App->Config->configArr['deletable_xp'] === '0') {
-            $deletableXp = false;
-        }
-        // an admin is able to delete
-        if ($this->App->Users->isAdmin) {
-            $deletableXp = true;
-        }
-        return $deletableXp;
     }
 }

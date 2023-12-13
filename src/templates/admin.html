@@ -55,16 +55,6 @@
     <hr>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'deletable_xp',
-      'label': 'Users can delete experiments'|trans,
-      'help': 'An admin account will always be able to delete experiments.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'deletable_item',
-      'label': 'Users can delete items'|trans,
-      'help': 'An admin account will always be able to delete items.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'user_create_tag',
       'label': 'Users can create tags'|trans,
       'help': 'An admin account will always be able to create tags.'|trans} %}

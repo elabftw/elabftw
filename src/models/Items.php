@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -138,13 +137,6 @@ class Items extends AbstractConcreteEntity
 
     public function destroy(): bool
     {
-        // check if we can actually delete items (for non-admins)
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        if ($teamConfigArr['deletable_item'] === 0 && !$this->Users->isAdmin) {
-            throw new ImproperActionException(_('Users cannot delete items.'));
-        }
-
         parent::destroy();
 
         // delete links of this item in experiments with this item linked

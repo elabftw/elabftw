@@ -148,49 +148,47 @@
 {# Modal for field loader #}
 <div class='modal fade' id='fieldLoaderModal' tabindex='-1' role='dialog' aria-labelledby='fieldLoaderLabel' aria-hidden='true'>
   <div class='modal-dialog modal-lg' role='document'>
-    <div class='modal-content'>
-      <form class='new-field-form'>
-        <div class='modal-header'>
-          <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
-          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
-            <span aria-hidden='true'>&times;</span>
-          </button>
+    <div class='modal-content new-field-form'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
+        <div class='input-group'>
+          <select class='form-control' id='loadMetadataSelect_items_types'>
+            {% for itemType in itemsCategoryArr %}
+              <option value='{{ itemType.id }}'>{{ itemType.title|raw }}</option>
+            {% endfor %}
+          </select>
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-primary' data-target='items_types' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+          </div>
         </div>
-        <div class='modal-body'>
-          <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
+        {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
+          <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
           <div class='input-group'>
-            <select class='form-control' id='loadMetadataSelect_items_types'>
-              {% for itemType in itemsCategoryArr %}
-                <option value='{{ itemType.id }}'>{{ itemType.title|raw }}</option>
+            <select class='form-control' id='loadMetadataSelect_experiments_templates'>
+              {% for template in templatesArr %}
+                <option value='{{ template.id }}'>{{ template.title }}</option>
               {% endfor %}
             </select>
             <div class='input-group-append'>
-              <button type='button' class='btn btn-primary' data-target='items_types' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+              <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
             </div>
           </div>
-          {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
-            <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
-            <div class='input-group'>
-              <select class='form-control' id='loadMetadataSelect_experiments_templates'>
-                {% for template in templatesArr %}
-                  <option value='{{ template.id }}'>{{ template.title }}</option>
-                {% endfor %}
-              </select>
-              <div class='input-group-append'>
-                <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
-              </div>
-            </div>
-          {% endif %}
-          <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
-          <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
-          <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>
-        </div>
-
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button id='applyMetadataLoadBtn' type='button' class='btn btn-primary' disabled data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
-        </div>
+        {% endif %}
+        <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
+        <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
+        <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>
       </div>
-    </form>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button id='applyMetadataLoadBtn' type='button' class='btn btn-primary' disabled data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -21,4 +21,7 @@ enum AuditCategory: int
     case PasswordChanged = 30;
     case PasswordResetRequested = 31;
     case Users2TeamsModified = 40;
+    case ApiKeyCreated = 50;
+    case ApiKeyDeleted = 51;
+    case ConfigModified = 60;
 }

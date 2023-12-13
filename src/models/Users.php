@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\AuditEvent\IsSysadminChanged;
 use Elabftw\AuditEvent\PasswordChanged;
+use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
@@ -181,7 +181,7 @@ class Users implements RestInterface
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
-        AuditLogs::create(new UserRegister($userid));
+        AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $userid));
         return $userid;
     }
 
@@ -333,7 +333,7 @@ class Users implements RestInterface
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
             Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive((bool) $params['with_exp']),
+            Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) $params['with_exp']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
@@ -546,15 +546,30 @@ class Users implements RestInterface
             if ($this->requester->userData['is_sysadmin'] === 0) {
                 throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
             }
-            /** @psalm-suppress PossiblyNullArgument */
-            AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        $auditLoggableTargets = array(
+            'email',
+            'orgid',
+            'is_sysadmin',
+        );
+
+        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->userid ?? 0,
+                $params->getTarget(),
+                (string) $this->userData[$params->getTarget()],
+                $params->getContent(),
+            ));
+        }
+        return $res;
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool
@@ -577,8 +592,13 @@ class Users implements RestInterface
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PasswordChanged($this->userid));
+        AuditLogs::create(new PasswordChanged(
+            $this->requester->userid ?? 0,
+            $this->userid ?? 0,
+            'password',
+            'the old password',
+            'the new password',
+        ));
         return $res;
     }
 

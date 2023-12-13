@@ -11,19 +11,25 @@ namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 
-class IsSysadminChanged extends AbstractAuditEvent
+class UserAttributeChanged extends AbstractAuditEvent
 {
-    public function __construct(private int $requesterUserid, private int $content, int $userid)
-    {
-        parent::__construct($userid);
+    public function __construct(
+        int $requesterUserid,
+        int $targetUserid,
+        private string $attribute,
+        private string $old,
+        private string $new,
+    ) {
+        parent::__construct($requesterUserid, $targetUserid);
     }
 
     public function getBody(): string
     {
         return sprintf(
-            'User sysadmin rights was changed to %d by user with id %d',
-            $this->content,
-            $this->requesterUserid,
+            'User attribute %s was changed from %s to %s',
+            $this->attribute,
+            empty($this->old) ? 'nothing' : $this->old,
+            $this->new,
         );
     }
 

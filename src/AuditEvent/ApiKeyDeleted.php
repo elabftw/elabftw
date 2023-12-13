@@ -11,10 +11,15 @@ namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 
-class PasswordChanged extends UserAttributeChanged
+class ApiKeyDeleted extends AbstractAuditEvent
 {
+    public function getBody(): string
+    {
+        return 'An API key was deleted';
+    }
+
     public function getCategory(): int
     {
-        return AuditCategory::PasswordChanged->value;
+        return AuditCategory::ApiKeyDeleted->value;
     }
 }

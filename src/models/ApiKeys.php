@@ -10,6 +10,9 @@
 namespace Elabftw\Models;
 
 use function bin2hex;
+
+use Elabftw\AuditEvent\ApiKeyCreated;
+use Elabftw\AuditEvent\ApiKeyDeleted;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -121,7 +124,10 @@ class ApiKeys implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
 
-        return $this->Db->execute($req);
+        if ($res = $this->Db->execute($req)) {
+            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+        }
+        return $res;
     }
 
     public function create(string $name, int $canwrite): int
@@ -154,7 +160,9 @@ class ApiKeys implements RestInterface
         $req->bindParam(':can_write', $canwrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        if ($this->Db->execute($req)) {
+            AuditLogs::create(new ApiKeyCreated($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+        }
 
         // we store the id of the key in the object to serve it as part of the key
         $this->keyId = $this->Db->lastInsertId();

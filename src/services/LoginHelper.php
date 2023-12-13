@@ -49,7 +49,7 @@ class LoginHelper
         if ($this->Session->has('auth_service')) {
             $this->updateAuthService();
         }
-        AuditLogs::create(new UserLogin($this->AuthResponse->userid));
+        AuditLogs::create(new UserLogin($this->AuthResponse->userid, $this->AuthResponse->userid));
     }
 
     /**

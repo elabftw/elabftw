@@ -32,7 +32,7 @@ $destroySession = function () use ($App): void {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();
         // create an event in the audit log (only for authenticated users)
-        AuditLogs::create(new UserLogout($App->Users->userData['userid']));
+        AuditLogs::create(new UserLogout($App->Users->userData['userid'], $App->Users->userData['userid']));
     }
 
     // kill session

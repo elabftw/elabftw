@@ -74,17 +74,18 @@ class Experiments extends AbstractConcreteEntity
             $category = $templateArr['category'];
             $status = $templateArr['status'];
             $body = $templateArr['body'];
-            $canread = $templateArr['canread'];
-            $canwrite = $templateArr['canwrite'];
+            $canread = $templateArr['canread_target'];
+            $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
             $contentType = (int) $templateArr['content_type'];
         }
 
+        // no template, make sure admin didn't disallow it
+        if (($template === 0 || $template === -1) && $teamConfigArr['force_exp_tpl'] === 1) {
+            throw new ImproperActionException(_('Experiments must use a template!'));
+        }
+        // load common template
         if ($template === 0) {
-            // no template, make sure admin didn't disallow it
-            if ($teamConfigArr['force_exp_tpl'] === 1) {
-                throw new ImproperActionException(_('Experiments must use a template!'));
-            }
             $commonTemplateKey = 'common_template';
             // use the markdown template if the user prefers markdown
             if ($this->Users->userData['use_markdown']) {
@@ -188,13 +189,6 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        $Config = Config::getConfig();
-        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
-            || $Config->configArr['deletable_xp'] === '0') {
-            throw new ImproperActionException('You cannot delete experiments!');
-        }
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }

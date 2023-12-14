@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
           target = 'tb';
         }
         ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
-          reloadElement('showModeContent');
+          reloadEntitiesShow();
         });
       });
 

@@ -77,8 +77,6 @@ components:
           type: integer
         debug:
           type: string
-        deletable_xp:
-          type: string
         email_domain:
           type: string
         extauth_email:
@@ -636,10 +634,6 @@ components:
           type: string
         common_template_md:
           type: string
-        deletable_xp:
-          type: integer
-        deletable_item:
-          type: integer
         user_create_tag:
           type: integer
         force_exp_tpl:

@@ -262,9 +262,7 @@
           {% if Entity.type == 'experiments' %}
             <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
           {% endif %}
-          {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-            <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-          {% endif %}
+          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         </div>
       </div>
 

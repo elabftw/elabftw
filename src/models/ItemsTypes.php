@@ -44,12 +44,14 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         $defaultPermissions = BasePermissions::MyTeams->toJson();
         $title = Filter::title($title);
-        $sql = 'INSERT INTO items_types(title, team, canread, canwrite) VALUES(:content, :team, :canread, :canwrite)';
+        $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title, PDO::PARAM_STR);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions, PDO::PARAM_STR);
         $req->bindParam(':canwrite', $defaultPermissions, PDO::PARAM_STR);
+        $req->bindParam(':canread_target', $defaultPermissions, PDO::PARAM_STR);
+        $req->bindParam(':canwrite_target', $defaultPermissions, PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -65,7 +67,7 @@ class ItemsTypes extends AbstractTemplateEntity
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, title, color, body, ordering, canread, canwrite
+        $sql = 'SELECT id, title, color, body, ordering, canread, canwrite, canread_target, canwrite_target
             FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -77,7 +79,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, team, color, title, status, body, canread, canwrite, metadata, state
+        $sql = 'SELECT id, team, color, title, status, body, canread, canwrite, canread_target, canwrite_target, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

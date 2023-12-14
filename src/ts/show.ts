@@ -217,7 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
-        document.getElementById(id).classList.remove('d-none');
+        const el = document.getElementById(id);
+        const scroll = el.classList.contains('d-none');
+        el.classList.remove('d-none');
+        if (id === 'withSelected' && scroll && el.getBoundingClientRect().bottom > 0) {
+          window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
+        }
       });
       if ((el as HTMLInputElement).checked) {
         (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;

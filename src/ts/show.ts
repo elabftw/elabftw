@@ -240,7 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
         el.dataset.status = 'closed';
         el.innerText = el.dataset.expand;
       }
-      document.querySelectorAll('[data-action="toggle-body"]').forEach(toggler => (toggler as HTMLElement).click());
+      const status = el.dataset.status;
+      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLElement) => {
+        const isHidden = document.getElementById(toggleButton.dataset.randid).hidden;
+        if ((status === 'opened' && !isHidden)
+          || (status === 'closed' && isHidden)
+        ) {
+          return;
+        }
+        toggleButton.click();
+      });
 
     // SELECT ALL CHECKBOXES
     } else if (el.matches('[data-action="select-all-entities"]')) {

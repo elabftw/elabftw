@@ -217,7 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
-        document.getElementById(id).classList.remove('d-none');
+        const el = document.getElementById(id);
+        const scroll = el.classList.contains('d-none');
+        el.classList.remove('d-none');
+        if (id === 'withSelected' && scroll && el.getBoundingClientRect().bottom > 0) {
+          window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
+        }
       });
       if ((el as HTMLInputElement).checked) {
         (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
@@ -235,7 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
         el.dataset.status = 'closed';
         el.innerText = el.dataset.expand;
       }
-      document.querySelectorAll('[data-action="toggle-body"]').forEach(toggler => (toggler as HTMLElement).click());
+      const status = el.dataset.status;
+      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLElement) => {
+        const isHidden = document.getElementById(toggleButton.dataset.randid).hidden;
+        if ((status === 'opened' && !isHidden)
+          || (status === 'closed' && isHidden)
+        ) {
+          return;
+        }
+        toggleButton.click();
+      });
 
     // SELECT ALL CHECKBOXES
     } else if (el.matches('[data-action="select-all-entities"]')) {

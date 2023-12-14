@@ -10,6 +10,7 @@ describe('admin page', () => {
     // wait for page and tinymce to load before htmlvalidate
     cy.get('#loading-spinner').should('not.exist');
     cy.get('#common_template_ifr').should('exist').scrollIntoView({duration: 500}).should('be.visible');
+    cy.get('div.tox-menubar').contains('File').should('exist');
     cy.htmlvalidate();
 
     for (let i = 1; i <= 7; i++) {

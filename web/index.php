@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 
 try {
+    // Note: this code should be in logincontroller!
+
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
         $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
@@ -71,6 +73,10 @@ try {
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $App->Session->set('auth_userid', $AuthResponse->userid);
             $location = '/login.php';
+
+        } elseif ($AuthResponse->isValidated === false) {
+            // send a helpful message if account requires validation, needs to be after team selection
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login($rememberMe);

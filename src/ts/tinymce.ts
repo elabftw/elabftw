@@ -140,6 +140,7 @@ export function getTinymceBaseConfig(page: string): object {
     // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
     //resize: true,
     plugins: plugins,
+    pagebreak_split_block: true,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
     removed_menuitems: 'newdocument, image, anchor',

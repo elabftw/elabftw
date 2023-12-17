@@ -173,7 +173,7 @@
                     </label>
                   </div>
                 </td>
-                <td>{% if user.mfa_secret %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                <td>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
                 <td>
                   {% if App.Users.userData.is_sysadmin == '1' %}
                     <button class='btn p-2 hl-hover-gray text-center mr-1' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>

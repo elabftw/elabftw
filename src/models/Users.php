@@ -224,7 +224,7 @@ class Users implements RestInterface
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret,
+            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
@@ -264,7 +264,12 @@ class Users implements RestInterface
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
-        return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
+        return $this->readFromQuery(
+            $Request->query->getAlnum('q'),
+            0,
+            $Request->query->getBoolean('includeArchived'),
+            $Request->query->getBoolean('onlyAdmins'),
+        );
     }
 
     /**
@@ -499,18 +504,6 @@ class Users implements RestInterface
             return $this->readOne();
         }
         throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');
-    }
-
-    /**
-     * Remove sensitives values from readFromQuery()
-     */
-    private function readFromQuerySafe(string $query, int $team): array
-    {
-        $users = $this->readFromQuery($query, $team);
-        foreach ($users as &$user) {
-            unset($user['mfa_secret']);
-        }
-        return $users;
     }
 
     private function canReadOrExplode(): void

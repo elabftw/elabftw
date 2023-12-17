@@ -71,8 +71,10 @@
             <div id='newFieldContentDiv_selectradio' hidden>
               <label>{{ 'Choices'|trans }}</label>
               <div id='choicesInputDiv'>
-                <input type='text' class='form-control mb-1' autocomplete='off'>
-                <input type='text' class='form-control mb-1' autocomplete='off'>
+                {# show two inputs at first #}
+                {% for i in 1..2 %}
+                  <input type='text' class='form-control mb-1' autocomplete='off'>
+                {% endfor %}
               </div>
               <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
               {# this is only shown for select type #}

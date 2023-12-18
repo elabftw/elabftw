@@ -31,6 +31,8 @@ class TimestampUtils
     use ProcessTrait;
     use UploadTrait;
 
+    private const TIMEOUT_SECONDS = 30;
+
     private array $trash = array();
 
     private FilesystemOperator $cacheFs;
@@ -127,8 +129,7 @@ class TimestampUtils
             // add proxy if there is one
             'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
             // add a timeout, because if you need proxy, but don't have it, it will mess up things
-            // in seconds
-            'timeout' => 5,
+            'timeout' => self::TIMEOUT_SECONDS,
             'body' => file_get_contents($requestFilePath),
         );
 

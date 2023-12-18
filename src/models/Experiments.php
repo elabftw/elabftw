@@ -80,9 +80,19 @@ class Experiments extends AbstractConcreteEntity
             $contentType = (int) $templateArr['content_type'];
         }
 
-        // no template, make sure admin didn't disallow it
-        if (($template === 0 || $template === -1) && $teamConfigArr['force_exp_tpl'] === 1) {
-            throw new ImproperActionException(_('Experiments must use a template!'));
+        // we don't use a proper template (use of common tpl or blank)
+        if ($template === 0 || $template === -1) {
+            // if admin forced template use, throw error
+            if ($teamConfigArr['force_exp_tpl'] === 1) {
+                throw new ImproperActionException(_('Experiments must use a template!'));
+            }
+            // use user settings for permissions
+            if ($this->Users->userData['default_read'] !== null) {
+                $canread = $this->Users->userData['default_read'];
+            }
+            if ($this->Users->userData['default_write'] !== null) {
+                $canwrite = $this->Users->userData['default_write'];
+            }
         }
         // load common template
         if ($template === 0) {
@@ -92,12 +102,6 @@ class Experiments extends AbstractConcreteEntity
                 $commonTemplateKey .= '_md';
             }
             $body = $teamConfigArr[$commonTemplateKey];
-            if ($this->Users->userData['default_read'] !== null) {
-                $canread = $this->Users->userData['default_read'];
-            }
-            if ($this->Users->userData['default_write'] !== null) {
-                $canwrite = $this->Users->userData['default_write'];
-            }
         }
 
         // enforce the permissions if the admin has set them

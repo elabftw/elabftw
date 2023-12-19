@@ -233,6 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);
+      // make sure to set the offset to 0, see #4826
+      params.set('offset', '0');
       window.location.href = `?${params.toString()}`;
 
     // SCROLL TO TOP

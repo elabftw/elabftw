@@ -81,7 +81,7 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color';
+        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color, entity.state AS link_state';
 
         if ($this instanceof ItemsLinks) {
             $sql .= ', entity.is_bookable';
@@ -91,7 +91,7 @@ abstract class AbstractLinks implements RestInterface
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)
             LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)';
 
-        $sql .= sprintf('WHERE entity_links.link_id = :id AND entity.state = %d ORDER by', State::Normal->value);
+        $sql .= sprintf('WHERE entity_links.link_id = :id AND (entity.state = %d OR entity.state = %d) ORDER by', State::Normal->value, State::Archived->value);
 
         $sql .= ' categoryt.title ASC, entity.title ASC';
 

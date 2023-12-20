@@ -99,6 +99,7 @@
           {% set randomId = random() %}
           <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
               <i class='fas fa-link fa-fw mr-2'></i>
+              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
               {% if link.category_title %}
                 <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title|raw }}</span>
               {% endif %}
@@ -136,6 +137,7 @@
           {% set randomId = random() %}
           <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
             <i class='fas fa-link fa-fw mr-2'></i>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
             <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
             <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
             {# delete link #}

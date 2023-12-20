@@ -48,49 +48,56 @@ export function relativeMoment(): void {
 // Add a listener for all elements triggered by an event
 // and POST an update request
 // select will be on change, text inputs on blur
-export function listenTrigger(): void {
+function triggerHandler(event: Event, el: HTMLInputElement): void {
   const ApiC = new Api();
-  document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
-    el.addEventListener(el.dataset.trigger, event => {
-      event.preventDefault();
-      el.classList.remove('is-invalid');
-      // for a checkbox element, look at the checked attribute, not the value
-      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-      if (el.dataset.customAction === 'patch-user2team-is-owner') {
-        // currently only for modifying is_owner of a user in a given team
-        const team = parseInt(el.dataset.team, 10);
-        const userid = parseInt(el.dataset.userid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
-        return;
-      }
+  event.preventDefault();
+  el.classList.remove('is-invalid');
+  // for a checkbox element, look at the checked attribute, not the value
+  let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+  if (el.dataset.customAction === 'patch-user2team-is-owner') {
+    // currently only for modifying is_owner of a user in a given team
+    const team = parseInt(el.dataset.team, 10);
+    const userid = parseInt(el.dataset.userid, 10);
+    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
+    return;
+  }
 
-      if (el.dataset.transform === 'permissionsToJson') {
-        value = permissionsToJson(parseInt(value, 10), []);
-      }
-      if (el.dataset.value) {
-        value = el.dataset.value;
-      }
-      const params = {};
-      params[el.dataset.target] = value;
-      ApiC.patch(`${el.dataset.model}`, params).then(() => {
-        if (el.dataset.reload) {
-          if (el.dataset.reload === 'page') {
-            location.reload();
+  if (el.dataset.transform === 'permissionsToJson') {
+    value = permissionsToJson(parseInt(value, 10), []);
+  }
+  if (el.dataset.value) {
+    value = el.dataset.value;
+  }
+  const params = {};
+  params[el.dataset.target] = value;
+  ApiC.patch(`${el.dataset.model}`, params).then(() => {
+    // data-reload can be "page" to reload the page, "reloadEntitiesShow" to reload properly entities in show mode,
+    // or a comma separated list of ids of elements to reload
+    if (el.dataset.reload) {
+      if (el.dataset.reload === 'page') {
+        location.reload();
+      } else {
+        el.dataset.reload.split(',').forEach(toreload => {
+          if (toreload === 'reloadEntitiesShow') {
+            reloadEntitiesShow();
           } else {
-            el.dataset.reload.split(',').forEach(toreload => {
-              reloadElement(toreload).then(() => {
-                // make sure we listen to the new element too
-                listenTrigger();
-              });
-            });
+            reloadElement(toreload);
           }
-        }
-      }).catch(error => {
-        if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
-          el.classList.add('is-invalid');
-        }
-      });
-    });
+        });
+      }
+    }
+  }).catch(error => {
+    if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+      el.classList.add('is-invalid');
+    }
+  });
+}
+
+export function listenTrigger(): void {
+  document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
+    // remove event first to avoid stacking them
+    el.removeEventListener(el.dataset.trigger, event => { triggerHandler(event, el); });
+    el.addEventListener(el.dataset.trigger, event => { triggerHandler(event, el); });
   });
 }
 
@@ -288,6 +295,8 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToLinkInputs();
   // tags too
   addAutocompleteToTagInputs();
+  // listen to data-trigger elements
+  listenTrigger();
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {

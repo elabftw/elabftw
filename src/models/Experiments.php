@@ -236,10 +236,10 @@ class Experiments extends AbstractConcreteEntity
     {
         $Config = Config::getConfig();
         $Maker = $this->getTimestampMaker($Config->configArr);
-        $pdfBlob = $Maker->generatePdf();
+        $data = $Maker->generateData();
         $TimestampUtils = new TimestampUtils(
             new Client(),
-            $pdfBlob,
+            $data,
             $Maker->getTimestampParameters(),
             new TimestampResponse(),
         );

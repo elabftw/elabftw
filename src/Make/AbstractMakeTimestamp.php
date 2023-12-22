@@ -12,6 +12,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
@@ -41,11 +42,12 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         return date('YmdHis') . '-timestamped.zip';
     }
 
-    public function saveTimestamp(string $pdfPath, TimestampResponseInterface $tsResponse): int
+    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse): int
     {
-        // 20220210171842-timestamp.pdf
+        // e.g. 20220210171842-timestamp.zip
         $zipName = $this->getFileName();
-        $pdfName = str_replace('zip', 'pdf', $zipName);
+        // e.g. 20220210171842-timestamp.(json|pdf)
+        $dataName = str_replace('zip', $this->getDataType()->value, $zipName);
         $tokenName = str_replace('zip', 'asn1', $zipName);
 
         // update timestamp on the experiment
@@ -55,7 +57,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
-        $ZipArchive->addFile($pdfPath, $pdfName);
+        $ZipArchive->addFile($dataPath, $dataName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
         return $this->Entity->Uploads->create(new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
@@ -68,10 +70,46 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
      */
     abstract public function getTimestampParameters(): array;
 
+    public function generateData(): string
+    {
+        if ($this->getDataType() === ExportFormat::Json) {
+            return $this->generateJson();
+        }
+        return $this->generatePdf();
+    }
+
+    protected function getDataType(): ExportFormat
+    {
+        // if we do keeex we want to timestamp a pdf so we can keeex it
+        // there might be other options impacting this condition later
+        if ($this->configArr['keeex_enabled'] === '1') {
+            return ExportFormat::Pdf;
+        }
+        return ExportFormat::Json;
+    }
+
     /**
-     * Generate the pdf to timestamp
+     * Convert the time found in the response file to the correct format for sql insertion
      */
-    public function generatePdf(): string
+    protected function formatResponseTime(string $timestamp): string
+    {
+        $time = strtotime($timestamp);
+        if ($time === false) {
+            throw new ImproperActionException('Could not get response time!');
+        }
+        return date('Y-m-d H:i:s', $time);
+    }
+
+    private function generateJson(): string
+    {
+        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
+        return $MakeJson->getFileContent();
+    }
+
+    /**
+     * Generate a pdf to timestamp
+     */
+    private function generatePdf(): string
     {
         $userData = $this->Entity->Users->userData;
         $MpdfProvider = new MpdfProvider(
@@ -86,18 +124,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             return $Keeex->fromString($MakePdf->getFileContent());
         }
         return $MakePdf->getFileContent();
-    }
-
-    /**
-     * Convert the time found in the response file to the correct format for sql insertion
-     */
-    protected function formatResponseTime(string $timestamp): string
-    {
-        $time = strtotime($timestamp);
-        if ($time === false) {
-            throw new ImproperActionException('Could not get response time!');
-        }
-        return date('Y-m-d H:i:s', $time);
     }
 
     /**

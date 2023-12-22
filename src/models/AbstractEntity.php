@@ -352,6 +352,14 @@ abstract class AbstractEntity implements RestInterface
         return $this->readOne();
     }
 
+    public function readOneFull(): array
+    {
+        $base = $this->readOne();
+        $base['revisions'] = (new Revisions($this))->readAll();
+        $base['changelog'] = (new Changelog($this))->readAll();
+        return $base;
+    }
+
     /**
      * Check if we have the permission to read/write or throw an exception
      *

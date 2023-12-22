@@ -66,7 +66,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     public function testDfnTimestamp(): void
     {
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity());
-        $Maker->generatePdf();
+        $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
@@ -77,7 +77,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     public function testDigicertTimestamp(): void
     {
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity());
-        $Maker->generatePdf();
+        $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
@@ -93,7 +93,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))),
         );
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
-        $Maker->generatePdf();
+        $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
         $tsResponse = new TimestampResponse();
@@ -135,7 +135,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         // create a fake encrypted password
         $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity());
-        $Maker->generatePdf();
+        $Maker->generateData();
         // create a custom response object with fixture token
         $tsResponseMock = $this->createMock(TimestampResponse::class);
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');

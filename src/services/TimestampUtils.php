@@ -47,10 +47,10 @@ class TimestampUtils
         private TimestampResponseInterface $tsResponse
     ) {
         // save the data inside a temporary file so openssl can act on it
-        $pdfPath = FsTools::getCacheFile() . '.pdf';
+        $dataPath = FsTools::getCacheFile();
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
-        $this->cacheFs->write(basename($pdfPath), $data);
-        $this->dataPath = $pdfPath;
+        $this->cacheFs->write(basename($dataPath), $data);
+        $this->dataPath = $dataPath;
         $this->trash[] = basename($this->dataPath);
     }
 

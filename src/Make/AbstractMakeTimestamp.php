@@ -31,7 +31,7 @@ use ZipArchive;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, Experiments $entity)
+    public function __construct(protected array $configArr, Experiments $entity, private ExportFormat $dataFormat)
     {
         parent::__construct($entity);
         $this->checkMonthlyLimit();
@@ -47,7 +47,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         // e.g. 20220210171842-timestamp.zip
         $zipName = $this->getFileName();
         // e.g. 20220210171842-timestamp.(json|pdf)
-        $dataName = str_replace('zip', $this->getDataType()->value, $zipName);
+        $dataName = str_replace('zip', $this->dataFormat->value, $zipName);
         $tokenName = str_replace('zip', 'asn1', $zipName);
 
         // update timestamp on the experiment
@@ -72,20 +72,10 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
 
     public function generateData(): string
     {
-        if ($this->getDataType() === ExportFormat::Json) {
+        if ($this->dataFormat === ExportFormat::Json) {
             return $this->generateJson();
         }
         return $this->generatePdf();
-    }
-
-    protected function getDataType(): ExportFormat
-    {
-        // if we do keeex we want to timestamp a pdf so we can keeex it
-        // there might be other options impacting this condition later
-        if ($this->configArr['keeex_enabled'] === '1') {
-            return ExportFormat::Pdf;
-        }
-        return ExportFormat::Json;
     }
 
     /**

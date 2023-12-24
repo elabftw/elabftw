@@ -32,6 +32,12 @@
           <span class='tag'>{{ tag }}</span>
         {% endfor %}<br>
       {% endif %}
+      {% if entityData.category_title %}
+      <strong>{{ 'Category'|trans }}:</strong> {{ entityData.category_title }}<br>
+      {% endif %}
+      {% if entityData.status_title %}
+      <strong>{{ 'Status'|trans }}:</strong> {{ entityData.status_title }}<br>
+      {% endif %}
       <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
     </p>
   </div>

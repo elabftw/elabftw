@@ -44,7 +44,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             try {
-                $all = $this->Entity->readOne();
+                $all = $this->getEntityData();
             } catch (IllegalActionException) {
                 continue;
             }
@@ -58,5 +58,10 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         $json = json_encode($res, JSON_THROW_ON_ERROR);
         $this->contentSize = mb_strlen($json);
         return $json;
+    }
+
+    protected function getEntityData(): array
+    {
+        return $this->Entity->readOne();
     }
 }

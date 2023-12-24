@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -219,15 +220,15 @@ class Experiments extends AbstractConcreteEntity
         return ++$res['custom_id'];
     }
 
-    private function getTimestampMaker(array $config): MakeTimestampInterface
+    private function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTimestampInterface
     {
         return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($config, $this),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this) : new MakeUniversignTimestamp($config, $this),
-            'digicert' => new MakeDigicertTimestamp($config, $this),
-            'sectigo' => new MakeSectigoTimestamp($config, $this),
-            'globalsign' => new MakeGlobalSignTimestamp($config, $this),
-            'custom' => new MakeCustomTimestamp($config, $this),
+            'dfn' => new MakeDfnTimestamp($config, $this, $dataFormat),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this, $dataFormat) : new MakeUniversignTimestamp($config, $this, $dataFormat),
+            'digicert' => new MakeDigicertTimestamp($config, $this, $dataFormat),
+            'sectigo' => new MakeSectigoTimestamp($config, $this, $dataFormat),
+            'globalsign' => new MakeGlobalSignTimestamp($config, $this, $dataFormat),
+            'custom' => new MakeCustomTimestamp($config, $this, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
     }
@@ -235,11 +236,17 @@ class Experiments extends AbstractConcreteEntity
     private function timestamp(): array
     {
         $Config = Config::getConfig();
-        $Maker = $this->getTimestampMaker($Config->configArr);
-        $pdfBlob = $Maker->generatePdf();
+        $dataFormat = ExportFormat::Json;
+        // if we do keeex we want to timestamp a pdf so we can keeex it
+        // there might be other options impacting this condition later
+        if ($Config->configArr['keeex_enabled'] === '1') {
+            $dataFormat = ExportFormat::Pdf;
+        }
+        $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
+        $data = $Maker->generateData();
         $TimestampUtils = new TimestampUtils(
             new Client(),
-            $pdfBlob,
+            $data,
             $Maker->getTimestampParameters(),
             new TimestampResponse(),
         );

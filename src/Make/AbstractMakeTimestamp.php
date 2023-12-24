@@ -12,6 +12,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
@@ -24,13 +25,12 @@ use PDO;
 use ZipArchive;
 
 /**
- * Timestamp an experiment with RFC 3161
- * Based on:
- * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
+ * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
+ * Originally based on: https://d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161/
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, Experiments $entity)
+    public function __construct(protected array $configArr, Experiments $entity, private ExportFormat $dataFormat)
     {
         parent::__construct($entity);
         $this->checkMonthlyLimit();
@@ -41,21 +41,24 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         return date('YmdHis') . '-timestamped.zip';
     }
 
-    public function saveTimestamp(string $pdfPath, TimestampResponseInterface $tsResponse): int
+    /**
+     * Create a zip archive with the timestamped data and the asn1 token
+     */
+    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse): int
     {
-        // 20220210171842-timestamp.pdf
+        // e.g. 20220210171842-timestamp.zip
         $zipName = $this->getFileName();
-        $pdfName = str_replace('zip', 'pdf', $zipName);
+        // e.g. 20220210171842-timestamp.(json|pdf)
+        $dataName = str_replace('zip', $this->dataFormat->value, $zipName);
         $tokenName = str_replace('zip', 'asn1', $zipName);
 
         // update timestamp on the experiment
         $this->updateTimestamp($this->formatResponseTime($tsResponse->getTimestampFromResponseFile()));
 
-        // create a zip archive with the timestamped pdf and the asn1 token
         $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
-        $ZipArchive->addFile($pdfPath, $pdfName);
+        $ZipArchive->addFile($dataPath, $dataName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
         return $this->Entity->Uploads->create(new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
@@ -69,9 +72,35 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     abstract public function getTimestampParameters(): array;
 
     /**
-     * Generate the pdf to timestamp
+     * Get the data that will be timestamped and saved in the timestamp archive
      */
-    public function generatePdf(): string
+    public function generateData(): string
+    {
+        return $this->dataFormat === ExportFormat::Json ? $this->generateJson() : $this->generatePdf();
+    }
+
+    /**
+     * Convert the time found in the response file to the correct format for sql insertion
+     */
+    protected function formatResponseTime(string $timestamp): string
+    {
+        $time = strtotime($timestamp);
+        if ($time === false) {
+            throw new ImproperActionException('Could not get response time!');
+        }
+        return date('Y-m-d H:i:s', $time);
+    }
+
+    private function generateJson(): string
+    {
+        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
+        return $MakeJson->getFileContent();
+    }
+
+    /**
+     * Generate a pdf to timestamp
+     */
+    private function generatePdf(): string
     {
         $userData = $this->Entity->Users->userData;
         $MpdfProvider = new MpdfProvider(
@@ -86,18 +115,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             return $Keeex->fromString($MakePdf->getFileContent());
         }
         return $MakePdf->getFileContent();
-    }
-
-    /**
-     * Convert the time found in the response file to the correct format for sql insertion
-     */
-    protected function formatResponseTime(string $timestamp): string
-    {
-        $time = strtotime($timestamp);
-        if ($time === false) {
-            throw new ImproperActionException('Could not get response time!');
-        }
-        return date('Y-m-d H:i:s', $time);
     }
 
     /**

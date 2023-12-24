@@ -25,9 +25,8 @@ use PDO;
 use ZipArchive;
 
 /**
- * Timestamp an experiment with RFC 3161
- * Based on:
- * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
+ * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
+ * Originally based on: https://d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161/
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
@@ -42,6 +41,9 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         return date('YmdHis') . '-timestamped.zip';
     }
 
+    /**
+     * Create a zip archive with the timestamped data and the asn1 token
+     */
     public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse): int
     {
         // e.g. 20220210171842-timestamp.zip
@@ -53,7 +55,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         // update timestamp on the experiment
         $this->updateTimestamp($this->formatResponseTime($tsResponse->getTimestampFromResponseFile()));
 
-        // create a zip archive with the timestamped pdf and the asn1 token
         $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
@@ -70,12 +71,12 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
      */
     abstract public function getTimestampParameters(): array;
 
+    /**
+     * Get the data that will be timestamped and saved in the timestamp archive
+     */
     public function generateData(): string
     {
-        if ($this->dataFormat === ExportFormat::Json) {
-            return $this->generateJson();
-        }
-        return $this->generatePdf();
+        return $this->dataFormat === ExportFormat::Json ? $this->generateJson() : $this->generatePdf();
     }
 
     /**

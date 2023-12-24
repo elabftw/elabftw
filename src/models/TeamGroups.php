@@ -104,6 +104,15 @@ class TeamGroups implements RestInterface
         return $req->fetchAll();
     }
 
+    public function readAllGlobal(): array
+    {
+        $sql = 'SELECT team_groups.id, team_groups.name
+            FROM team_groups ORDER BY team_groups.name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     /**
      * Get info about a team group
      */

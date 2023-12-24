@@ -114,7 +114,7 @@ try {
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
-        'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
+        'allTeamgroupsArr' => $TeamGroups->readAllGlobal(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $itemsStatusArr,

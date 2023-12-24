@@ -45,12 +45,15 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $teamGroupsFromUser = array();
 
+    protected array $allTeamgroupsArr = array();
+
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
+        $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
         $this->templatesArr = $Templates->Pins->readAllSimple();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
@@ -183,7 +186,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $Teams->readAll(),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
-            'myTeamgroupsArr' => $this->teamGroupsFromUser,
+            'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
@@ -248,7 +251,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
-            'myTeamgroupsArr' => $this->teamGroupsFromUser,
+            'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

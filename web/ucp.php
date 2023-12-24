@@ -118,7 +118,7 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
         'metadataGroups' => $metadataGroups,
-        'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
+        'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),

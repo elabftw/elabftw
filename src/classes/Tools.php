@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
-use function filter_var;
 use function implode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -124,12 +123,12 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $ext = filter_var(pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
-        if ($ext !== null && $ext !== '' && $ext !== false) {
-            return $ext;
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if ($ext === '') {
+            return 'unknown';
         }
 
-        return 'unknown';
+        return $ext;
     }
 
     /**

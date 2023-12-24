@@ -99,11 +99,11 @@ class DisplayParams
             '$.%s.%s',
             MetadataEnum::ExtraFields->value,
             // Note: the extraFieldKey gets double quoted so spaces are not an issue
-            json_encode(Filter::sanitize($extraFieldKey), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
         );
         $this->metadataKey[] = $jsonPath;
         $this->metadataValuePath[] = $jsonPath . '.value';
-        $this->metadataValue[] = Filter::sanitize($searchTerm);
+        $this->metadataValue[] = $searchTerm;
         $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
     }
 

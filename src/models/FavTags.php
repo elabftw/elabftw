@@ -75,12 +75,11 @@ class FavTags implements RestInterface
 
     private function create(TagParam $params): int
     {
-        $tag = $params->getContent();
         // get the tag id
         $sql = 'SELECT id FROM tags WHERE team = :team AND tag = :tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+        $req->bindParam(':tag', $params->getContent(), PDO::PARAM_STR);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
 

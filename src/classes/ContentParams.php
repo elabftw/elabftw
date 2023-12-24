@@ -30,11 +30,10 @@ class ContentParams implements ContentParamsInterface
     public function getContent(): mixed
     {
         // check for length
-        $c = Filter::sanitize($this->content);
-        if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {
+        if ($this->content === '') {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
-        return $c;
+        return $this->content;
     }
 
     public function getColumn(): string

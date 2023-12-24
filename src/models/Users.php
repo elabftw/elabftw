@@ -97,8 +97,8 @@ class Users implements RestInterface
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        $firstname = trim(Filter::sanitize($firstname));
-        $lastname = trim(Filter::sanitize($lastname));
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
 
         // Registration date is stored in epoch
         $registerDate = time();

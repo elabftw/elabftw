@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Filter;
 use function mb_strlen;
 use function str_replace;
 
@@ -36,7 +35,7 @@ class StepParams extends ContentParams
     private function getStep(): string
     {
         // remove any | as they are used in the group_concat
-        $c = str_replace('|', '', Filter::sanitize($this->content));
+        $c = str_replace('|', '', $this->content);
         // check for length
         if (mb_strlen($c) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));

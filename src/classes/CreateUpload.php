@@ -37,8 +37,8 @@ class CreateUpload implements CreateUploadParamsInterface
 
     public function getComment(): ?string
     {
-        if ($this->comment !== null) {
-            return nl2br(Filter::sanitize($this->comment));
+        if ($this->comment !== null && $this->comment !== '') {
+            return nl2br($this->comment);
         }
         return null;
     }

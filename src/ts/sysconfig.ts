@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, notifError, reloadElement, removeEmpty } from './misc';
+import { collectForm, notif, notifError, reloadElement, reloadElements, removeEmpty } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -114,8 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE TEAM
     } else if (el.matches('[data-action="create-team"]')) {
-      const name = (document.getElementById('newTeamName') as HTMLInputElement).value;
-      ApiC.post(Model.Team, {'name': name}).then(() => reloadElement('teamsDiv'));
+      const input = document.getElementById('newTeamName') as HTMLInputElement;
+      ApiC.post(Model.Team, {name: input.value}).then(() => {
+        input.value = '';
+        reloadElements(['teamsDiv', 'userSearchForm']);
+      });
     // UPDATE TEAM
     } else if (el.matches('[data-action="patch-team-sysadmin"]')) {
       const id = el.dataset.id;

@@ -12,7 +12,7 @@ import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import Dropzone from 'dropzone';
+import Dropzone from '@deltablot/dropzone';
 import type { DropzoneFile } from 'dropzone';
 import $ from 'jquery';
 import i18next from 'i18next';
@@ -22,6 +22,7 @@ import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.j
 
 class CustomDropzone extends Dropzone {
   tinyImageSuccess: null | undefined | ((url: string) => void);
+  addFile: (file: DropzoneFile) => void;
 }
 
 // the dropzone is created programmatically, disable autodiscover

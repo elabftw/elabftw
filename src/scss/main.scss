@@ -23,7 +23,7 @@ $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
-@import 'dropzone/dist/dropzone';
+@import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';
 @import 'jquery-ui/themes/base/core';
 @import 'jquery-ui/themes/base/autocomplete';
@@ -1117,6 +1117,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* make dropzone blue border on hover */
 .dropzone {
+    background-color: $white;
     border: 1px solid $white;
 
     &:hover {

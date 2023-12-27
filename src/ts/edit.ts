@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
   const dropZoneOptions = {
     // i18n message to user
-    dictDefaultMessage: i18next.t('dropzone-upload-area') + `<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
+    dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
     maxFilesize: maxsize,
     timeout: 900000,
     headers: {
@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // reload the #filesdiv once the file is uploaded
         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
           reloadElement('filesdiv').then(() => {
+            new Dropzone(dropZoneElement, dropZoneOptions);
             const dropZone = Dropzone.forElement(dropZoneElement) as CustomDropzone;
             // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
             if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {

@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`).then(() => reloadElement('filesdiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`).then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
       }
     }
   });

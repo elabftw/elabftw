@@ -1115,13 +1115,13 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* make dropzone blue border on hover */
+/* Dropzone is the file uploader */
 .dropzone {
     background-color: $white;
-    border: 1px solid $white;
+    border: 3px dashed $secondlevel;
 
     &:hover {
-        border: 1px solid $elabblue;
+        border: 3px dashed $medium;
     }
 }
 

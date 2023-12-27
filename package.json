@@ -8,6 +8,7 @@
   "dependencies": {
     "3dmol": "^2.0.6",
     "@deltablot/chemdoodle-web-mini": "^9.5.0",
+    "@deltablot/dropzone": "7.0.0-alpha2",
     "@deltablot/malle": "^2.5.2",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.10",
@@ -27,7 +28,6 @@
     "css-loader": "^6.8.1",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "diff-match-patch": "^1.0.5",
-    "dropzone": "^5.9.3",
     "expose-loader": "^4.1.0",
     "i18next": "^23.7.7",
     "jquery": "^3.7.1",

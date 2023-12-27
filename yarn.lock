@@ -256,6 +256,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@deltablot/dropzone@npm:7.0.0-alpha2":
+  version: 7.0.0-alpha2
+  resolution: "@deltablot/dropzone@npm:7.0.0-alpha2"
+  dependencies:
+    "@swc/helpers": "npm:^0.5.3"
+    just-extend: "npm:^5.0.0"
+  checksum: 7302edcc607a5082a23351f352ab04ed65f7928e3098d09b2f8666a5bc75cfb1f4609603426f5031d4c47c0a07a16e7d4e6c9f346c73054d2792b85f5f9b5c62
+  languageName: node
+  linkType: hard
+
 "@deltablot/malle@npm:^2.5.2":
   version: 2.5.2
   resolution: "@deltablot/malle@npm:2.5.2"
@@ -676,6 +686,15 @@ __metadata:
   version: 2.2.2
   resolution: "@sphinxxxx/color-conversion@npm:2.2.2"
   checksum: 847d6952aed358d54991b2f9a3c2f76d04d4c70cd014e9c1f86d8b37490768f3a56d077ba8f7ab3355b7616c4b1dcdacdba2e4705ade9b7c6220e4e950ab100f
+  languageName: node
+  linkType: hard
+
+"@swc/helpers@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "@swc/helpers@npm:0.5.3"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 7003b9dafad38e27a4474a3dcf78d2aee85ce4bb7ee171ecc2d5b533768fb4f8fc9dbd6a1c3a9df5f8001e61ff416b93681e0a7dcbdc0df109b3e09c50cd4615
   languageName: node
   linkType: hard
 
@@ -3355,13 +3374,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dropzone@npm:^5.9.3":
-  version: 5.9.3
-  resolution: "dropzone@npm:5.9.3"
-  checksum: e4a17c8760fdab95bcceb71cf8d4e3fdeae4907e2fa76dd5f3c6f487a4f43ad42bc79b2e25820f249eee0b8b96dcbc583a0a37e352fd0b319f2abff9b19519a8
-  languageName: node
-  linkType: hard
-
 "duplexer@npm:^0.1.2":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -3392,6 +3404,7 @@ __metadata:
   dependencies:
     3dmol: "npm:^2.0.6"
     "@deltablot/chemdoodle-web-mini": "npm:^9.5.0"
+    "@deltablot/dropzone": "npm:7.0.0-alpha2"
     "@deltablot/malle": "npm:^2.5.2"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.10"
@@ -3423,7 +3436,6 @@ __metadata:
     cypress: "npm:^13.6.0"
     cypress-html-validate: "npm:^6.1.0"
     diff-match-patch: "npm:^1.0.5"
-    dropzone: "npm:^5.9.3"
     eslint: "npm:^8.55.0"
     expose-loader: "npm:^4.1.0"
     html-validate: "npm:^8.7.3"
@@ -5280,6 +5292,13 @@ __metadata:
     readable-stream: "npm:~2.3.6"
     setimmediate: "npm:^1.0.5"
   checksum: 58e01ec9c4960383fb8b38dd5f67b83ccc1ec215bf74c8a5b32f42b6e5fb79fada5176842a11409c4051b5b94275044851814a31076bf49e1be218d3ef57c863
+  languageName: node
+  linkType: hard
+
+"just-extend@npm:^5.0.0":
+  version: 5.1.1
+  resolution: "just-extend@npm:5.1.1"
+  checksum: 3ff482415dd3a3e8425d5694f64341f70697721fc0467c00a9bcd5895aee4387d33ab4f94bf23c1e50c47f8b93aef3503c29e9f821bde1feb69a4d43da236767
   languageName: node
   linkType: hard
 

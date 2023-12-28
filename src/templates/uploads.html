@@ -57,10 +57,10 @@
 
     {# TABLE LAYOUT (0) #}
     {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
-      <table class='table' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
+      <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
-            <th scope='col'>{{ 'Filename'|trans }}</th>
+            <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
             <th scope='col'>{{ 'Comment'|trans }}</th>
             <th scope='col'>{{ 'Creation date'|trans }}</th>
             <th scope='col'>{{ 'Filesize'|trans }}</th>

@@ -97,9 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
-        reloadElement('filesdiv').then(() => (new Uploader()).init());
-      });
+      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => reloadElement('filesdiv'));
 
     // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
     } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
@@ -189,12 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Create an observer instance linked to the callback function(mutationList, observer)
-  // Start observing the target node for configured mutations
+  // Observe "#filesdiv" and reload javascript stuff everytime it changes
   new MutationObserver(() => {
     displayMolFiles();
     display3DMolecules(true);
     displayPlasmidViewer(about);
     malleableFilecomment.listen();
+    (new Uploader()).init();
   }).observe(document.getElementById('filesdiv'), {childList: true});
 });

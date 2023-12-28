@@ -71,12 +71,10 @@
           {% for upload in Entity.entityData.uploads %}
             <tr id='uploadDiv_{{ upload.id }}'>
               <td>
-                <details>
-                  <summary id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name|raw }}</summary>
-                  <div class='mt-2'>
-                    {% include 'upload-more-info.html' %}
-                  </div>
-                </details>
+                <span title='{{ 'More information'|trans }}' data-action='toggle-next' id='upload-filename_{{ upload.id }}' class='text-break hl-hover-gray p-1 rounded'>{{ upload.real_name|raw }}</span>
+                <div class='mt-2' hidden>
+                  {% include 'upload-more-info.html' %}
+                </div>
                 {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
                   <i class='fas fa-box-archive mr-1'></i>{{ 'Archived'|trans }}
                 {% endif %}
@@ -96,6 +94,11 @@
                 </a>
                 {% if not upload.immutable %}
                   {% if mode == 'edit' %}
+                    {# EDIT FILENAME #}
+                    <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='rename-upload' data-id='{{ upload.id }}'>
+                      <i class='fas fa-fw fa-pencil-alt'></i>
+                    </button>
+                    {# UPLOAD NEW VERSION #}
                     <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
                       <i class='fas fa-fw fa-sync-alt'></i>
                     </button>

@@ -15,6 +15,7 @@ import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
       ApiC.notifOnSaved = false;
       ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
-        reloadElement('filesdiv');
+        reloadElement('filesdiv').then(() => (new Uploader()).init());
       });
 
     // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON

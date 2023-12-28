@@ -84,7 +84,7 @@
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>
     <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-    <div>
+    <div data-save-hidden='mainTextDiv'>
       <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {% if editor == 'md' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>

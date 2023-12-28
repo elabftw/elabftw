@@ -145,7 +145,6 @@
           <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
         {% endfor %}
       </select>
-      {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
       {# ARCHIVED filter #}
       <div class='input-group mr-1 mb-2'>
         <div class='input-group-text'>
@@ -154,6 +153,7 @@
         </div>
       </div>
 
+      {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
       <button class='btn btn-primary mb-2' type='submit'>{{ 'Go'|trans }}</button>
       {# on search page we use its form everywhere else we need an independent form #}
       {% if searchPage %}

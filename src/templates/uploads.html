@@ -44,24 +44,73 @@
   </div>
 
   <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadsDiv'>
-    {% for upload in Entity.entityData.uploads %}
-      {% set ext = upload.real_name|getExt %}
-
-      {# COMPACT LAYOUT (0) #}
-      {% if App.Users.userData.uploads_layout == 0 %}
-        <div class='col-md-3 col-sm-4 rounded' id='uploadDiv_{{ upload.id }}'>
-          {% include('upload-dropdown-menu.html') %}
-          <div>
-            <i class='fas fa-fw fa-download mr-1'></i>
-            <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
-          </div>
-          {% include('upload-comment.html') %}
-          {% include('upload-more-info.html') %}
-          {% include('upload-replace-form.html') %}
-        </div>
+    {# TABLE LAYOUT (0) #}
+    {% if App.Users.userData.uploads_layout == 0 %}
+      <table class='table' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
+        <thead>
+          <tr>
+            <th scope='col'>{{ 'Filename'|trans }}</th>
+            <th scope='col'>{{ 'Comment'|trans }}</th>
+            <th scope='col'>{{ 'Creation date'|trans }}</th>
+            <th scope='col'>{{ 'Filesize'|trans }}</th>
+            <th scope='col'>{{ 'Actions'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for upload in Entity.entityData.uploads %}
+            <tr id='uploadDiv_{{ upload.id }}'>
+              <td>
+                <details>
+                  <summary id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name|raw }}</summary>
+                  <div class='mt-2'>
+                    {% include 'upload-more-info.html' %}
+                  </div>
+                </details>
+                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+                  <i class='fas fa-box-archive mr-1'></i>{{ 'Archived'|trans }}
+                {% endif %}
+              </td>
+              {# COMMENT #}
+              <td>{% include('upload-comment.html') %}</td>
+              {# CREATED AT #}
+              <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
+              {# FILESIZE #}
+              <td>{{ upload.filesize|formatBytes }}</td>
+              {# ACTIONS #}
+              <td>
+                <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>
+                  <button type='button' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                    <i class='fas fa-download fa-fw'></i>
+                  </button>
+                </a>
+                {% if not upload.immutable %}
+                  {% if mode == 'edit' %}
+                    <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
+                      <i class='fas fa-fw fa-sync-alt'></i>
+                    </button>
+                    {% include('upload-replace-form.html') %}
+                  {% endif %}
+                {% if not Entity.isReadOnly %}
+                  {# ARCHIVE #}
+                  <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn hover-warning p-1 mr-1' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+                    <i class='fas fa-box-archive'></i>
+                  </button>
+                  {# DESTROY #}
+                  <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'class='btn hover-danger p-1 mr-1' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                    <i class='fas fa-trash-alt'></i>
+                  </button>
+                {% endif %}
+              {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
       {# DEFAULT LAYOUT (1) #}
       {% else %}
+        {% for upload in Entity.entityData.uploads %}
+          {% set ext = upload.real_name|getExt %}
         <div class='col-md-4 col-sm-6' id='uploadDiv_{{ upload.id }}'>
           <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
             {% include('upload-dropdown-menu.html') %}
@@ -182,13 +231,15 @@
             <br>
             {% include('upload-comment.html') %}
 
-            {% include('upload-more-info.html') %}
+            <div id='moreInfo_{{ upload.id }}' class='d-none'>
+              {% include('upload-more-info.html') %}
+            </div>
             </div>{# end div.caption #}
             {% include('upload-replace-form.html') %}
           </div>
         </div>
-      {% endif %}
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
     {# add new file #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>

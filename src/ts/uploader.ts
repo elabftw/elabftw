@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElement } from './misc';
+import { relativeMoment, reloadElement } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
@@ -59,6 +59,7 @@ export class Uploader
   }
 
   init(): Dropzone {
+    relativeMoment();
     return new Dropzone(this.getElement(), this.getOptions());
   }
 }

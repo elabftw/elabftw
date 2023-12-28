@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const entity = getEntity();
-  const limit = parseInt(about.limit, 10);
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
@@ -56,14 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // get offset as number
-  function getOffset(): number {
+  // get query param value as number
+  function getParamNum(param: string): number {
     const params = new URLSearchParams(document.location.search);
-    let currentOffset = params.get('offset');
-    if (!currentOffset) {
-      currentOffset = '0';
+    let val = params.get(param);
+    if (!val) {
+      val = '0';
     }
-    return parseInt(currentOffset, 10);
+    return parseInt(val, 10);
   }
 
   /////////////////////////////////////////
@@ -137,17 +136,33 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const params = new URLSearchParams(document.location.search);
-    // previous page
-    if (el.matches('[data-action="previous-page"]')) {
-      params.set('offset', String(getOffset() - limit));
-      history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow();
+    // LOAD MORE
+    if (el.matches('[data-action="load-more"]')) {
+      // NOTE: in an ideal world, we can request the delta elements in json via api and inject them in page
+      // this would avoid having to re-query all items every time, especially after a few clicks where limit is a few hundreds, might bring strain on mysql servers
+      // so here the strategy is simply to increase the "limit" to show more stuff
 
-    // next page
-    } else if (el.matches('[data-action="next-page"]')) {
-      params.set('offset', String(getOffset() + limit));
+      // we want to know if the newly applied limit actually brought new items
+      // because if not, we disable the button
+      // so simply count them
+      const previousNumber = document.querySelectorAll('.item').length;
+      // this will be 0 if the button has not been clicked yet
+      const queryLimit = getParamNum('limit');
+      const usualLimit = parseInt(about.limit, 10);
+      let newLimit = queryLimit + usualLimit;
+      // handle edge case for first click
+      if (queryLimit < usualLimit) {
+        newLimit = usualLimit * 2;
+      }
+      params.set('limit', String(newLimit));
       history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow();
+      reloadEntitiesShow().then(() => {
+        // remove Load more button if no new entries appeared
+        const newNumber = document.querySelectorAll('.item').length;
+        if (previousNumber === newNumber) {
+          document.getElementById('loadMoreBtn').remove();
+        }
+      });
 
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {

@@ -342,12 +342,7 @@
 
       {# PREVIOUS/NEXT PAGE buttons #}
       <div class='text-center page-buttons mt-2'>
-        {% if DisplayParams.offset != 0 %}
-          <button class='btn btn-neutral previousPage' type='button' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
-        {% endif %}
-        {% if DisplayParams.limit < itemsArr|length %}
-          <button class='btn btn-primary nextPage' type='button' data-action='next-page'>{{ 'Next page'|trans }}</button>
-        {% endif %}
+        <button class='btn btn-primary ' type='button' id='loadMoreBtn' data-action='load-more'>{{ 'Load more'|trans }}</button>
       </div>
 
   {% endif %}

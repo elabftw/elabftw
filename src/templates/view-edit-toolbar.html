@@ -8,7 +8,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
         <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
         {% if App.Config.configArr.ts_authority == 'universign' or App.Config.configArr.ts_authority == 'custom' %}
@@ -36,7 +36,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# this first paragraph is the same as above for trusted timestamping #}
         <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
         <p>{{ 'With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum.'|trans }}</p>

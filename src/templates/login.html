@@ -12,7 +12,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
           {{ App.Session.get('csrf')|csrf }}
           <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />

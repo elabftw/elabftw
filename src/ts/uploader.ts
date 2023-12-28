@@ -39,8 +39,8 @@ export class Uploader
               if (typeof that.tinyImageSuccess !== 'undefined' && that.tinyImageSuccess !== null) {
                 // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
                 const uploadElements = Array.from(document.getElementById('uploadsDiv').children);
-                const lastUpload = uploadElements[uploadElements.length - 2];
-                const href = lastUpload.querySelector('[id^=upload-filename]').getAttribute('href');
+                // index 0 is the drop zone
+                const href = uploadElements[1].querySelector('[id^=upload-filename]').getAttribute('href');
                 // Slices out the url by finding the &name query param from the download link. This does not care about extensions or thumbnails.
                 const url = href.slice(0, href.indexOf('&name='));
                 // This gives TinyMCE the actual url of the uploaded image. TinyMce updates its editor to link to this rather than the temp location it sets up initially.

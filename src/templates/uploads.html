@@ -21,6 +21,7 @@
 
 {# UPLOADED FILES #}
 <div id='filesdiv'>
+  {% if (mode == 'view' and Entity.entityData.uploads) or mode == 'edit' %}
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
       <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
@@ -44,8 +45,18 @@
   </div>
 
   <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadsDiv'>
+    {# ADD NEW FILE #}
+    {% if mode == 'edit' %}
+      <div class='col-md-4 col-sm-6'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
+        {%- endif %}
+        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
+      </div>
+    {% endif %}
+
     {# TABLE LAYOUT (0) #}
-    {% if App.Users.userData.uploads_layout == 0 %}
+    {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
       <table class='table' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
@@ -240,15 +251,7 @@
         </div>
       {% endfor %}
     {% endif %}
-    {# add new file #}
-    {% if mode == 'edit' %}
-      <div class='col-md-4 col-sm-6'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
-        {%- endif %}
-        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
-      </div>
-    {% endif %}
   </div>
   <hr>
+  {% endif %}
 </div>{# #filesdiv #}

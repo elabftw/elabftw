@@ -195,7 +195,7 @@ class Uploads implements RestInterface
             return $this->readNormalAndArchived();
         }
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state';
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);

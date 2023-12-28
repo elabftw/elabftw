@@ -9,14 +9,14 @@
   {% if mode == 'edit' %}
     {# INSERT IN TEXT in edit mode for images #}
     {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name }}' data-uploadid='{{ upload.id }}'>
+      <button type='button' class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|escape('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|escape('html_attr') }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
       </button>
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for plain text #}
     {% if ext matches '/txt$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
+      <button type='button' class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|escape('html_attr') }}'>
         <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
       </button>
     {% endif %}
@@ -33,21 +33,21 @@
 
     {# Annotate image #}
     {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
-      <button type='button' class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}'>
+      <button type='button' class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|escape('html_attr') }}'>
         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}
       </button>
     {% endif %}
 
     {# LOAD IN JSON EDITOR #}
     {% if ext matches '/(json)$/i' %}
-      <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name }}' data-link='{{ upload.long_name }}' data-action='json-load-file'>
+      <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|escape('html_attr') }}' data-link='{{ upload.long_name|escape('html_attr') }}' data-action='json-load-file'>
         <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
       </button>
     {% endif %}
 
     {# Save mol file as png #}
     {% if ext matches '/(mol)$/i' %}
-      <button type='button' class='dropdown-item' data-action='save-mol-as-png' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name }}'>
+      <button type='button' class='dropdown-item' data-action='save-mol-as-png' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name|escape('html_attr') }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Save as image'|trans }}
       </button>
     {% endif %}
@@ -63,7 +63,7 @@
 
   {# Show content of plain text #}
   {% if ext matches '/(txt|md|json)$/i' %}
-    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name }}' data-name='{{ upload.real_name }}'>
+    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|escape('html_attr') }}' data-name='{{ upload.real_name|escape('html_attr') }}'>
       <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}
     </button>
   {% endif %}

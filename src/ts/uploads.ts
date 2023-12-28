@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('.real-container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
     // RENAME UPLOAD
     if (el.matches('[data-action="rename-upload"]')) {
@@ -104,27 +104,26 @@ document.addEventListener('DOMContentLoaded', () => {
       // set the title for modal window
       document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
       // get the file content
-      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-        const plainTextContentDiv = document.getElementById('plainTextContentDiv');
-        if (el.dataset.ext === 'md') {
-          response.text().then(content => plainTextContentDiv.innerHTML = marked(content));
-        } else if (el.dataset.ext === 'json') {
-          const preBlock = document.createElement('pre');
-          preBlock.classList.add('language-json');
-          const codeBlock = document.createElement('code');
-          codeBlock.classList.add('language-json');
-          preBlock.appendChild(codeBlock);
-          response.json().then(content => {
-            // use prismjs to display highlighted pretty-printed json content
-            codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
-            // make sure to blank any previous content before appending
-            plainTextContentDiv.innerHTML = '';
-            plainTextContentDiv.appendChild(preBlock);
-          });
-        } else { // TXT
-          response.text().then(content => plainTextContentDiv.innerText = content);
-        }
-      });
+      const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
+      const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+      if (el.dataset.ext === 'md') {
+        plainTextContentDiv.innerHTML = await marked(await response.text());
+      } else if (el.dataset.ext === 'json') {
+        const preBlock = document.createElement('pre');
+        preBlock.classList.add('language-json');
+        const codeBlock = document.createElement('code');
+        codeBlock.classList.add('language-json');
+        preBlock.appendChild(codeBlock);
+        response.json().then(content => {
+          // use prismjs to display highlighted pretty-printed json content
+          codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
+          // make sure to blank any previous content before appending
+          plainTextContentDiv.innerHTML = '';
+          plainTextContentDiv.appendChild(preBlock);
+        });
+      } else { // TXT
+        response.text().then(content => plainTextContentDiv.innerText = content);
+      }
 
     // TOGGLE SHOW ARCHIVED
     } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
@@ -187,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Observe "#filesdiv" and reload javascript stuff everytime it changes
+  // Observe "#filesdiv" and reload javascript stuff every time it changes
   new MutationObserver(() => {
     displayMolFiles();
     display3DMolecules(true);

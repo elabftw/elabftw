@@ -94,10 +94,10 @@ class Ldap implements AuthInterface
                     return $this->AuthResponse;
                 }
                 $teamFromLdap = array($teamId);
-            // it is found and it is a string
+                // it is found and it is a string
             } elseif (is_string($teamFromLdap)) {
                 $teamFromLdap = array($teamFromLdap);
-            // it is found and it is an array
+                // it is found and it is an array
             } elseif (is_array($teamFromLdap)) {
                 if (is_array($teamFromLdap[0])) {
                     // go one level deeper

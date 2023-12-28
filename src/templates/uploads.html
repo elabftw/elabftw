@@ -71,8 +71,11 @@
           {% for upload in Entity.entityData.uploads %}
             <tr id='uploadDiv_{{ upload.id }}'>
               <td>
-                <span title='{{ 'More information'|trans }}' data-action='toggle-next' id='upload-filename_{{ upload.id }}' class='text-break hl-hover-gray p-1 rounded'>{{ upload.real_name|raw }}</span>
-                <div class='mt-2' hidden>
+                <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+                  <i class='fas fa-caret-right fa-fw'></i>
+                </button>
+                <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name|raw }}</span>
+                <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
                   {% include 'upload-more-info.html' %}
                 </div>
                 {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
@@ -87,10 +90,8 @@
               <td>{{ upload.filesize|formatBytes }}</td>
               {# ACTIONS #}
               <td>
-                <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>
-                  <button type='button' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
-                    <i class='fas fa-download fa-fw'></i>
-                  </button>
+                <a href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                  <i class='fas fa-download fa-fw'></i>
                 </a>
                 {% if not upload.immutable %}
                   {% if mode == 'edit' %}

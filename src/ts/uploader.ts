@@ -49,8 +49,8 @@ export class Uploader
                 // This is to make sure that we do not end up adding a file to TinyMCE if a previous file was pasted and a consecutive file was uploaded using Dropzone.
                 // The 'undefined' check is not enough. That is just for before any file was pasted.
                 that.tinyImageSuccess = null;
-                that.init();
               }
+              that.init();
             });
           }
         });

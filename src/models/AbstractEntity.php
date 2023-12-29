@@ -551,6 +551,8 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;

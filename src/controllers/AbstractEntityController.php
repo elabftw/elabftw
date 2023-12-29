@@ -194,12 +194,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'visibilityArr' => $this->visibilityArr,
         );
 
-        // RELATED ITEMS AND EXPERIMENTS
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            $renderArr['relatedItemsArr'] = $this->Entity->ItemsLinks->readRelated();
-            $renderArr['relatedExperimentsArr'] = $this->Entity->ExperimentsLinks->readRelated();
-        }
-
         $Response = new Response();
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('view.html', $renderArr));

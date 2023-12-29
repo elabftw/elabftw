@@ -91,10 +91,10 @@
 {% if Entity.type == 'items' or Entity.type == 'experiments' %}
 
   {# RELATED EXPERIMENTS #}
-  {% if relatedExperimentsArr %}
+  {% if Entity.entityData.related_experiments_links %}
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
     <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
-      {% for link in relatedExperimentsArr %}
+      {% for link in Entity.entityData.related_experiments_links %}
         <div class='ml-3 mt-3 col-md-12'>
           {% set randomId = random() %}
           <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
@@ -129,10 +129,10 @@
   {% endif %}
 
   {# RELATED ITEMS #}
-  {% if relatedItemsArr %}
+  {% if Entity.entityData.related_items_links %}
     <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
     <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-      {% for link in relatedItemsArr %}
+      {% for link in Entity.entityData.related_items_links %}
         <div class='ml-3 mt-3 col-md-12'>
           {% set randomId = random() %}
           <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>

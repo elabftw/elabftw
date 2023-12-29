@@ -7,7 +7,7 @@
  */
 import { Model, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
-import { relativeMoment, makeSortableGreatAgain } from './misc';
+import { relativeMoment, makeSortableGreatAgain, escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
 
@@ -41,7 +41,7 @@ export default class Todolist extends SidePanel {
           <div>
             <span class='draggable sortableHandle'><i class='fas fa-grip-vertical fa-fw mr-1'></i></span>
             <input type='checkbox' class='mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' />
-            <span class='todoItem editable' data-todoitemid='${entry.id}'>${entry.body}</span></div>
+            <span class='todoItem editable' data-todoitemid='${entry.id}'>${escapeHTML(entry.body)}</span></div>
             <div class='relative-moment' title='${entry.creation_time}'></div>
           </div>
         </div>`;
@@ -67,11 +67,11 @@ export default class Todolist extends SidePanel {
     return this.api.getJson(`unfinished_steps?scope=${this.unfinishedStepsScope}`).then(json => {
       let html = '';
       for (const entity of json[type] as Array<UnfinishedEntities>) {
-        html += `<div class='side-panel-item'><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${entity.title}</a></p>`;
+        html += `<div class='side-panel-item'><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${escapeHTML(entity.title)}</a></p>`;
         for (const stepsData of Object.entries(entity.steps)) {
           const stepId = stepsData[1][0];
           const stepBody = stepsData[1][1];
-          html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${stepBody}</div>`;
+          html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${escapeHTML(stepBody)}</div>`;
         }
         html += '</div>';
       }

@@ -502,3 +502,10 @@ export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
     plusMinusIcon.classList.remove('fa-square-minus');
   }
 }
+
+// escape unsafeText via set textContent and get innerHTML
+export function escapeHTML(unsafeText: string): string {
+  const div = document.createElement('div');
+  div.textContent = unsafeText;
+  return div.innerHTML;
+}

@@ -103,7 +103,7 @@
     {% for upload in entityData.uploads %}
       <p class='pdf-ul'>{{ upload.real_name }}
       {# add a comment? don't add if it's the default text or if it's null #}
-      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
+      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment|nl2br }}){% endif %}
       {# add hash? don't add if we don't have it #}
       {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
 
@@ -125,7 +125,7 @@
       {% endtrans %}
     </h3>
     {% for comment in entityData.comments %}
-      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname }} wrote:<br>{{ comment.comment }}</p>
+      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname }} wrote:<br>{{ comment.comment|nl2br }}</p>
     {% endfor %}
   </section>
 {% endif %}

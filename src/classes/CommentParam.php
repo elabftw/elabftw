@@ -23,6 +23,6 @@ final class CommentParam implements ParamInterface
         if ($this->content === '') {
             throw new ImproperActionException('Invalid comment.');
         }
-        return nl2br($this->content);
+        return $this->content;
     }
 }

@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -203,6 +204,7 @@ class Experiments extends AbstractConcreteEntity
         $this->canOrExplode('write');
         return match ($action) {
             Action::Timestamp => $this->timestamp(),
+            Action::AutoTimestamp => $this->timestamp(State::Archived),
             default => parent::patch($action, $params),
         };
     }
@@ -233,7 +235,7 @@ class Experiments extends AbstractConcreteEntity
         };
     }
 
-    private function timestamp(): array
+    private function timestamp(State $state = State::Normal): array
     {
         $Config = Config::getConfig();
         $dataFormat = ExportFormat::Json;
@@ -251,7 +253,7 @@ class Experiments extends AbstractConcreteEntity
             new TimestampResponse(),
         );
         $tsResponse = $TimestampUtils->timestamp();
-        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
+        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse, $state);
 
         // decrement the balance
         $Config->decrementTsBalance();

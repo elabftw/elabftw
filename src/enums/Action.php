@@ -14,6 +14,7 @@ enum Action: string
     case AccessKey = 'accesskey';
     case Add = 'add';
     case Archive = 'archive';
+    case AutoTimestamp = 'autotimestamp';
     case Bloxberg = 'bloxberg';
     case Create = 'create';
     case CreateFromString = 'createfromstring';

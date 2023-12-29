@@ -13,6 +13,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\CreateImmutableUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
@@ -44,7 +45,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */
-    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse): int
+    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, State $state = State::Normal): int
     {
         // e.g. 20220210171842-timestamp.zip
         $zipName = $this->getFileName();
@@ -61,7 +62,10 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $ZipArchive->addFile($dataPath, $dataName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
-        return $this->Entity->Uploads->create(new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])));
+        return $this->Entity->Uploads->create(
+            new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])),
+            $state,
+        );
     }
 
     /**

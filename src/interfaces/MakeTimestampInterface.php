@@ -9,6 +9,8 @@
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\State;
+
 /**
  * Interface for timestamp makers
  */
@@ -18,7 +20,7 @@ interface MakeTimestampInterface
 
     public function getFileName(): string;
 
-    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse): int;
+    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, State $state): int;
 
     public function generateData(): string;
 }

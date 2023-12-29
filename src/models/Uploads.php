@@ -63,7 +63,7 @@ class Uploads implements RestInterface
      * Main method for normal file upload
      * @psalm-suppress UndefinedClass
      */
-    public function create(CreateUploadParamsInterface $params): int
+    public function create(CreateUploadParamsInterface $params, State $state = State::Normal): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -122,6 +122,7 @@ class Uploads implements RestInterface
             type,
             hash,
             hash_algorithm,
+            state,
             storage,
             filesize,
             immutable
@@ -134,6 +135,7 @@ class Uploads implements RestInterface
             :type,
             :hash,
             :hash_algorithm,
+            :state,
             :storage,
             :filesize,
             :immutable
@@ -148,6 +150,7 @@ class Uploads implements RestInterface
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
+        $req->bindValue(':state', $state->value, PDO::PARAM_INT);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $req->bindValue(':immutable', $params->getImmutable(), PDO::PARAM_INT);
@@ -298,7 +301,7 @@ class Uploads implements RestInterface
     private function readNormalAndArchived(): array
     {
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived)';
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived) ORDER BY uploads.created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':type', $this->Entity->type);

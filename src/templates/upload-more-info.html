@@ -4,5 +4,3 @@
 <p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash|default('Not calculated'|trans) }}</p><br>
 <i class='fas fa-user mr-1'></i>
 <p class='d-inline'>{{ 'Uploaded by %s'|trans|format(upload.fullname) }}</p><br>
-<i class='fas fa-calendar-alt mr-1'></i>
-<p class='d-inline'>{{ 'Created at %s'|trans|format(upload.created_at) }}</p>

@@ -30,26 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const ApiC = new Api();
 
-  // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', (event) => {
-    const el = (event.target as HTMLElement);
-    // CREATE COMMENT
-    if (el.matches('[data-action="create-comment"]')) {
-      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
-
-    // DESTROY COMMENT
-    } else if (el.matches('[data-action="destroy-comment"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => reloadElement('commentsDiv'));
-      }
-    }
-  });
-
-  if (about.isanon) {
-    return;
-  }
-
   // UPDATE MALLEABLE COMMENT
   const malleableComments = new Malle({
     cancel : i18next.t('cancel'),
@@ -69,6 +49,28 @@ document.addEventListener('DOMContentLoaded', () => {
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
+
+  // Add click listener and do action based on which element is clicked
+  document.querySelector('.real-container').addEventListener('click', (event) => {
+    const el = (event.target as HTMLElement);
+    // CREATE COMMENT
+    if (el.matches('[data-action="create-comment"]')) {
+      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content})
+        .then(() => reloadElement('commentsDiv'))
+        .then(() => malleableComments.listen());
+
+    // DESTROY COMMENT
+    } else if (el.matches('[data-action="destroy-comment"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => reloadElement('commentsDiv'));
+      }
+    }
+  });
+
+  if (about.isanon) {
+    return;
+  }
 
   // UPDATE MALLEABLE STATUS
   interface Status extends SelectOptions {

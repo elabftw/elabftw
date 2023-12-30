@@ -64,7 +64,7 @@
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
         {% for tag in Entity.Tags.readAll() %}
-        <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
+        <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
         {% endfor %}
       </span>
     {% endif %}

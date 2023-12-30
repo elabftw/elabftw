@@ -56,9 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE COMMENT
     if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content})
-        .then(() => reloadElement('commentsDiv'))
-        .then(() => malleableComments.listen());
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
 
     // DESTROY COMMENT
     } else if (el.matches('[data-action="destroy-comment"]')) {

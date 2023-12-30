@@ -1018,14 +1018,14 @@
             <td>{{ log.body }}</td>
             <td>
               {%- if log.requester_userid != 0 -%}
-                <a class='p-1 rounded hl-hover-gray' href='?tab=3&q=&userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
+                <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
               {%- else -%}
                 <span class='p-1'>&ndash;</span>
               {%- endif -%}
             </td>
             <td>
               {%- if log.target_userid != 0 -%}
-                <a class='p-1 rounded hl-hover-gray' href='?tab=3&q=&userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
+                <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
               {%- else -%}
                 <span class='p-1'>&ndash;</span>
               {%- endif -%}

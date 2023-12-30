@@ -6,9 +6,9 @@
 {{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
 
 {% if Entity.type == 'experiments_templates' %}
-  <a href='ucp.php?tab=3&templateid={{ Entity.id }}'
+  <a href='ucp.php?tab=3&amp;templateid={{ Entity.id }}'
 {% else %}
-  <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'
+  <a href='{{ Entity.page }}.php?mode=view&amp;id={{ Entity.id }}'
 {% endif %}
    class='btn hl-hover-gray'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}

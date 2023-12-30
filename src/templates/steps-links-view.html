@@ -40,7 +40,7 @@
           <i class='fas fa-link fa-fw mr-2'></i>
           {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
           <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
-          <a href='experiments.php?mode=view&id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
+          <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
           {# toggle body #}
           <button type='button' data-type='experiments' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
             <i class='fas fa-fw fa-square-plus'></i>
@@ -69,7 +69,7 @@
           <i class='fas fa-link fa-fw mr-2'></i>
           {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
           <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
-          <a href='database.php?mode=view&id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
+          <a href='database.php?mode=view&amp;id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
           {# toggle body #}
           <button type='button' data-type='items' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
             <i class='fas fa-fw fa-square-plus'></i>
@@ -103,7 +103,7 @@
               {% if link.category_title %}
                 <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title|raw }}</span>
               {% endif %}
-              <a href='experiments.php?mode=view&id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
+              <a href='experiments.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
             {# delete link #}
             <button data-action='destroy-related-link' type='button' data-endpoint='experiments_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
               <i class='fas fa-fw fa-trash-alt'></i>
@@ -123,7 +123,7 @@
     <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='experiments.php?mode=show&related={{ Entity.id }}'>{{ 'Show related experiments'|trans }}</a>
+      <a href='experiments.php?mode=show&amp;related={{ Entity.id }}'>{{ 'Show related experiments'|trans }}</a>
     </div-->
     <hr>
   {% endif %}
@@ -139,7 +139,7 @@
             <i class='fas fa-link fa-fw mr-2'></i>
             {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
             <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span>
-            <a href='database.php?mode=view&id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
+            <a href='database.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title|raw }}</a>
             {# delete link #}
             <button data-action='destroy-related-link' type='button' data-endpoint='items_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 ny-n2'>
               <i class='fas fa-trash-alt'></i>
@@ -159,7 +159,7 @@
     <!-- TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='database.php?mode=show&related={{ Entity.id }}'>{{ 'Show related items'|trans }}</a>
+      <a href='database.php?mode=show&amp;related={{ Entity.id }}'>{{ 'Show related items'|trans }}</a>
     </div-->
     <hr>
   {% endif %}

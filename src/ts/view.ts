@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   });
 
-// UPDATE MALLEABLE STATUS
+  // UPDATE MALLEABLE STATUS
   interface Status extends SelectOptions {
     id: number;
     color: string;

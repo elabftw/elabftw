@@ -44,6 +44,8 @@ require('mathjax-full/components/src/core/core.js');
 require('mathjax-full/components/src/adaptors/liteDOM/liteDOM.js');
 require('mathjax-full/components/src/input/tex-full/tex-full.js');
 require('mathjax-full/components/src/input/tex/extensions/all-packages/all-packages.js');
+// load all html entitiesm, compare to https://github.com/mathjax/MathJax-demos-node/issues/16
+require('mathjax-full/js/util/entities/all.js');
 require('mathjax-full/components/src/output/svg/svg.js');
 require('mathjax-full/components/src/output/svg/fonts/tex/tex.js');
 require('mathjax-full/components/src/startup/startup.js');

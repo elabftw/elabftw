@@ -132,11 +132,12 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Count the number of timestamped experiments during past month (sliding window)
+     * Count the number of timestamp archives created during past month (sliding window)
+     * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart
      */
     public function getTimestampLastMonth(): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
+        $sql = "SELECT COUNT(id) FROM uploads WHERE comment LIKE 'Timestamp archive%'= 1 AND created_at > (NOW() - INTERVAL 1 MONTH)";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();

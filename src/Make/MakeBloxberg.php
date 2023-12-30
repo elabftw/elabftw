@@ -10,21 +10,18 @@
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\CreateImmutableUpload;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\Config;
-use Elabftw\Services\MpdfProvider;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
 use function json_encode;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use ZipArchive;
 
 /**
@@ -58,12 +55,12 @@ class MakeBloxberg extends AbstractMake
 
     public function timestamp(): bool
     {
-        $pdf = $this->getPdf();
-        $pdfHash = hash('sha256', $pdf);
+        $data = $this->getData();
+        $dataHash = hash('sha256', $data);
 
         try {
             // first request sends the hash to the certify endpoint
-            $certifyResponse = json_decode($this->certify($pdfHash));
+            $certifyResponse = json_decode($this->certify($dataHash));
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
             $proofResponse = $this->client->post(self::PROOF_URL, array(
                 // add proxy if there is one
@@ -79,11 +76,11 @@ class MakeBloxberg extends AbstractMake
 
         // the binary response is a zip archive that contains the certificate in pdf format
         $zip = $proofResponse->getBody()->getContents();
-        // add the pdf to the zipfile and get the path to where it is stored in cache
-        $tmpFilePath = $this->addToZip($zip, $pdf);
+        // add the data to the zipfile and get the path to where it is stored in cache
+        $tmpFilePath = $this->addToZip($zip, $data);
         // save the zip file as an upload
         return (bool) $this->Entity->Uploads->create(
-            new CreateImmutableUpload(
+            new CreateImmutableArchivedUpload(
                 $this->getFileName(),
                 $tmpFilePath,
                 sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])
@@ -114,17 +111,10 @@ class MakeBloxberg extends AbstractMake
         return (string) $res->getBody();
     }
 
-    private function getPdf(): string
+    private function getData(): string
     {
-        $userData = $this->Entity->Users->userData;
-        $MpdfProvider = new MpdfProvider(
-            $userData['fullname'],
-            $userData['pdf_format'],
-            true, // PDF/A always for timestamp pdf
-        );
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        $MakePdf = new MakePdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
-        return $MakePdf->getFileContent();
+        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
+        return $MakeJson->getFileContent();
     }
 
     private function certify(string $hash): string
@@ -159,9 +149,9 @@ class MakeBloxberg extends AbstractMake
     }
 
     /**
-     * Add the timestamped pdf to existing zip archive
+     * Add the timestamped data to existing zip archive
      */
-    private function addToZip(string $zip, string $pdf): string
+    private function addToZip(string $zip, string $data): string
     {
         // write the zip to a temporary file
         $tmpFilePath = FsTools::getCacheFile();
@@ -173,7 +163,7 @@ class MakeBloxberg extends AbstractMake
         if ($res !== true) {
             throw new FilesystemErrorException('Error opening the zip archive!');
         }
-        $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
+        $ZipArchive->addFromString('timestamped-data.json', $data);
         $ZipArchive->close();
         // return the path where the zip is stored in temp folder
         return $tmpFilePath;

@@ -271,7 +271,7 @@
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
         <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -283,7 +283,7 @@
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
         <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -295,7 +295,7 @@
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
         <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -307,7 +307,7 @@
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
         <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -353,12 +353,12 @@
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
         {% for user in usersArr %}
-          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
+          <option value='author:{{ user.fullname }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
         {% endfor %}
       </optgroup>
       <optgroup label='{{ 'Groups'|trans }}'>
         {% for group in teamGroups %}
-          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
+          <option value='group:{{ group }}' {{- Request.query.get('owner') == 'group:' ~ group ? ' selected' }}>[{{ 'group'|trans }}] {{ group }}</option>
         {% endfor %}
       </optgroup>
     </select>

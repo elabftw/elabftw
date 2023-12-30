@@ -74,7 +74,7 @@
                 <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
                 </button>
-                <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name|raw }}</span>
+                <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
                 <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
                   {% include 'upload-more-info.html' %}
                 </div>

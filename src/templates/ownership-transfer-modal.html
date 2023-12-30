@@ -15,7 +15,7 @@
           {% for user in Entity.Users.readAllFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}
-            >{{ user.fullname|raw }}</option>
+            >{{ user.fullname }}</option>
           {% endfor %}
         </select>
       </div>

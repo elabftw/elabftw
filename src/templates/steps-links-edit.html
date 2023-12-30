@@ -23,7 +23,7 @@
               </div>
             </div>
             <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
-              <span class='step editable hl-hover align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body|raw }}</span>
+              <span class='step editable hl-hover align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
               {% if step.finished %}
               <span class='mx-2 text-muted align-self-center'>
                 {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
@@ -110,8 +110,8 @@
               <li class='list-group-item' id='parent_{{ randomId }}'>
                 <div class='d-flex align-items-center'>
                   <i class='fas fa-link mr-1'></i>
-                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
-                  {{ link.title|raw }}</a>
+                  <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span> <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
+                  {{ link.title }}</a>
                   {# toggle body #}
                   <button type='button' data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                     <i class='fas fa-fw fa-plus-square'></i></button>
@@ -167,8 +167,8 @@
             <li class='list-group-item' id='parent_{{ randomId }}'>
               <div class='d-flex align-items-center'>
                 <i class='fas fa-link mr-1'></i>
-                <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title|raw }}</span> <a href='database.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
-                {{ link.title|raw }}</a>
+                <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span> <a href='database.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
+                {{ link.title }}</a>
                 {# toggle body #}
                 <button type='button' data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
                   <i class='fas fa-fw fa-plus-square'></i></button>
@@ -198,7 +198,7 @@
         <select id='addLinkCatFilter' class='brr-none brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
           <option selected value=''>{{ 'Any category'|trans }}</option>
           {% for cat in itemsCategoryArr %}
-            <option value='{{ cat.id }}'>{{ cat.title|raw }}</option>
+            <option value='{{ cat.id }}'>{{ cat.title }}</option>
           {% endfor %}
         </select>
       </div>

@@ -125,7 +125,7 @@
       {% endtrans %}
     </h3>
     {% for comment in entityData.comments %}
-      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname|raw }} wrote:<br>{{ comment.comment|raw }}</p>
+      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname }} wrote:<br>{{ comment.comment }}</p>
     {% endfor %}
   </section>
 {% endif %}
@@ -165,7 +165,7 @@
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
         {# use of raw to make the link to revisions page work #}
-        <td>{{ change.content|raw }}</td>
+        <td>{{ change.target == 'body' ? change.content|raw : change.content }}</td>
       </tr>
       {% endfor %}
     </tbody>

@@ -9,7 +9,7 @@
       </option>
       {% for category in categoryArr %}
         <option value='{{ category.id }}'
-          {{ Entity.entityData.category == category.id ? ' selected' }}>{{ category.title|raw }}
+          {{ Entity.entityData.category == category.id ? ' selected' }}>{{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -30,7 +30,7 @@
               {{ Entity.entityData.status is null ? ' selected' }}>{{ 'Not set'|trans }}</option>
     {% for status in statusArr %}
       <option value='{{ status.id }}'
-              {{ Entity.entityData.status|default(0) == status.id ? ' selected' }}>{{ status.title|raw }}</option>
+              {{ Entity.entityData.status|default(0) == status.id ? ' selected' }}>{{ status.title }}</option>
     {% endfor %}
   </select>
 </div>

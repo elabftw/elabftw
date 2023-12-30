@@ -123,7 +123,7 @@
         {# User dropdown #}
         <div class='nav-item dropdown'>
           <button class='btn nav-link dropdown-toggle border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user fa-2x'></i></button>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')|raw) }}<br>{{ App.teamArr.name|raw }}</h6>
+          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.teamArr.name }}</h6>
             {% if App.Users.userData.teams|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}

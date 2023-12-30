@@ -15,6 +15,7 @@
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
+        {# use of raw to make the link to revisions page work #}
         <td>{{ change.target == 'body' ? change.content|raw : change.content }}</td>
       </tr>
       {% endfor %}

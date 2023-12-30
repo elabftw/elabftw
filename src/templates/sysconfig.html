@@ -131,7 +131,7 @@
       <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
       <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
         {% for team in teamsArr %}
-          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name|raw }}</option>
+          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -214,7 +214,7 @@
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
-            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name|raw }}</span>
+            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
               <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
               {% trans %}
               Experiment

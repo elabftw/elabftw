@@ -30,26 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const ApiC = new Api();
 
-  // UPDATE MALLEABLE COMMENT
-  const malleableComments = new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
-    inputClasses: ['form-control'],
-    fun: async (value, original) => {
-      const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
-      const json = await resp.json();
-      // we reload all so the edition date is also reloaded
-      reloadElement('commentsDiv');
-      return json.comment;
-    },
-    inputType: InputType.Textarea,
-    listenOn: '.comment.editable',
-    returnedValueIsTrustedHtml: true,
-    submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  });
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -70,7 +50,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // UPDATE MALLEABLE STATUS
+  // UPDATE MALLEABLE COMMENT
+  const malleableComments = new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: async (value, original) => {
+      const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
+      const json = await resp.json();
+      // we reload all so the edition date is also reloaded
+      reloadElement('commentsDiv');
+      return json.comment;
+    },
+    inputType: InputType.Textarea,
+    listenOn: '.comment.editable',
+    returnedValueIsTrustedHtml: true,
+    submit : i18next.t('save'),
+    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  });
+
+// UPDATE MALLEABLE STATUS
   interface Status extends SelectOptions {
     id: number;
     color: string;

@@ -76,11 +76,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'dfn.asn1');
+        $tsResponseMock = $this->createMock(TimestampResponse::class);
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');
+        $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'dfn.asn1');
+        $tsResponseMock->method('getDataPath')->willReturn($this->dataPath . 'example.txt');
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'dfn.pdf', $tsResponse, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
     }
 
     public function testDigicertTimestamp(): void
@@ -89,11 +91,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'digicert.asn1');
+        $tsResponseMock = $this->createMock(TimestampResponse::class);
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');
+        $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'digicert.asn1');
+        $tsResponseMock->method('getDataPath')->willReturn($this->dataPath . 'example.txt');
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'digicert.pdf', $tsResponse, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
     }
 
     public function testUniversignTimestamp(): void
@@ -107,11 +111,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'universign.asn1');
+        $tsResponseMock = $this->createMock(TimestampResponse::class);
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18.611 2021 GMT');
+        $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'universign.asn1');
+        $tsResponseMock->method('getDataPath')->willReturn($this->dataPath . 'example.txt');
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'universign.pdf', $tsResponse, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $zipPath, $this->comment)));
     }
 
     public function testGlobalSign(): void
@@ -154,7 +160,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');
         $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'universign.asn1');
         $this->expectException(ImproperActionException::class);
-        $Maker->saveTimestamp($this->dataPath . 'universign.pdf', $tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
+        $Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
     }
 
     private function getFreshTimestampableEntity(): Experiments

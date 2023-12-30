@@ -11,9 +11,9 @@ namespace Elabftw\Interfaces;
 
 interface TimestampResponseInterface
 {
+    public function getDataPath(): string;
+
     public function getTimestampFromResponseFile(): string;
 
     public function getTokenPath(): string;
-
-    public function setTokenPath(string $tokenPath): void;
 }

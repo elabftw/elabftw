@@ -262,7 +262,6 @@ class Experiments extends AbstractConcreteEntity
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
         $Maker->saveTimestamp(
-            $TimestampUtils->getDataPath(),
             $TimestampUtils->timestamp(),
             new CreateImmutableArchivedUpload($zipName, $zipPath, $comment),
         );

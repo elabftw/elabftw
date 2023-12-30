@@ -11,6 +11,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\TimestampResponseInterface;
@@ -21,7 +22,6 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use function is_readable;
 use League\Flysystem\FilesystemOperator;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Trusted Timestamping (RFC3161) utility class
@@ -37,21 +37,17 @@ class TimestampUtils
 
     private FilesystemOperator $cacheFs;
 
-    // the path to a file with data to be timestamped
-    private string $dataPath;
-
     public function __construct(
         private ClientInterface $client,
         string $data,
         private array $tsConfig,
-        private TimestampResponseInterface $tsResponse
+        private TimestampResponseInterface $tsResponse,
     ) {
         // save the data inside a temporary file so openssl can act on it
-        $dataPath = FsTools::getCacheFile();
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
-        $this->cacheFs->write(basename($dataPath), $data);
-        $this->dataPath = $dataPath;
-        $this->trash[] = basename($this->dataPath);
+        $this->tsResponse = new TimestampResponse();
+        $this->cacheFs->write(basename($this->tsResponse->getDataPath()), $data);
+        $this->trash[] = basename($this->tsResponse->getDataPath());
     }
 
     /**
@@ -64,11 +60,6 @@ class TimestampUtils
         }
     }
 
-    public function getDataPath(): string
-    {
-        return $this->dataPath;
-    }
-
     /**
      * Do the timestamp, verify it and return path to saved token on disk along with extracted timestamp
      */
@@ -76,17 +67,10 @@ class TimestampUtils
     {
         $requestFilePath = $this->createRequestfile();
         $response = $this->postData($requestFilePath);
-        $this->saveToken($response->getBody());
+        // save token to (temporary) file
+        $this->cacheFs->write(basename($this->tsResponse->getTokenPath()), $response->getBody()->getContents());
         $this->verify();
         return $this->tsResponse;
-    }
-
-    private function saveToken(StreamInterface $binaryToken): void
-    {
-        $filePath = FsTools::getCacheFile() . '.asn1';
-        $this->cacheFs->write(basename($filePath), $binaryToken->getContents());
-
-        $this->tsResponse->setTokenPath($filePath);
     }
 
     /**
@@ -101,7 +85,7 @@ class TimestampUtils
             'ts',
             '-query',
             '-data',
-            $this->dataPath,
+            $this->tsResponse->getDataPath(),
             '-cert',
             '-' . $this->tsConfig['ts_hash'],
             '-no_nonce',
@@ -161,7 +145,7 @@ class TimestampUtils
             // skip cert validity check
             '-no_check_time',
             '-data',
-            $this->dataPath,
+            $this->tsResponse->getDataPath(),
             '-in',
             $this->tsResponse->getTokenPath(),
             '-CAfile',

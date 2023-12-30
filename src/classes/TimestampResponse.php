@@ -20,7 +20,20 @@ class TimestampResponse implements TimestampResponseInterface
 {
     use ProcessTrait;
 
-    private string $tokenPath = '';
+    private string $dataPath;
+
+    private string $tokenPath;
+
+    public function __construct()
+    {
+        $this->dataPath = FsTools::getCacheFile();
+        $this->tokenPath = FsTools::getCacheFile();
+    }
+
+    public function getDataPath(): string
+    {
+        return $this->dataPath;
+    }
 
     public function getTimestampFromResponseFile(): string
     {
@@ -74,10 +87,5 @@ class TimestampResponse implements TimestampResponseInterface
     public function getTokenPath(): string
     {
         return $this->tokenPath;
-    }
-
-    public function setTokenPath(string $tokenPath): void
-    {
-        $this->tokenPath = $tokenPath;
     }
 }

@@ -18,7 +18,7 @@ interface MakeTimestampInterface
 
     public function getFileName(): string;
 
-    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int;
+    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int;
 
     public function generateData(): string;
 }

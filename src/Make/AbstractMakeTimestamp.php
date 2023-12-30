@@ -43,7 +43,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */
-    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int
+    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int
     {
         // e.g. 20220210171842-timestamp.zip
         $zipName = $create->getFileName();
@@ -56,7 +56,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
 
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($create->getFilePath(), ZipArchive::CREATE);
-        $ZipArchive->addFile($dataPath, $dataName);
+        $ZipArchive->addFile($tsResponse->getDataPath(), $dataName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
         return $this->Entity->Uploads->create($create);

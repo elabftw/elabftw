@@ -23,7 +23,7 @@ config:
   # the url of the dev install
   url: "https://elab.local:3148"
   # set the mail_from config
-  mailfrom: elabftw@example.com
+  mail_from: elabftw@example.com
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
   # this is the default password of osixia/openldap docker container

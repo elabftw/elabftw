@@ -63,7 +63,7 @@ class Uploads implements RestInterface
      * Main method for normal file upload
      * @psalm-suppress UndefinedClass
      */
-    public function create(CreateUploadParamsInterface $params, State $state = State::Normal): int
+    public function create(CreateUploadParamsInterface $params): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -150,7 +150,7 @@ class Uploads implements RestInterface
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
-        $req->bindValue(':state', $state->value, PDO::PARAM_INT);
+        $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $req->bindValue(':immutable', $params->getImmutable(), PDO::PARAM_INT);

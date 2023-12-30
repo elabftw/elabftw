@@ -10,11 +10,9 @@
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\CreateImmutableUpload;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Experiments;
@@ -45,10 +43,10 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */
-    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, State $state = State::Normal): int
+    public function saveTimestamp(string $dataPath, TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int
     {
         // e.g. 20220210171842-timestamp.zip
-        $zipName = $this->getFileName();
+        $zipName = $create->getFileName();
         // e.g. 20220210171842-timestamp.(json|pdf)
         $dataName = str_replace('zip', $this->dataFormat->value, $zipName);
         $tokenName = str_replace('zip', 'asn1', $zipName);
@@ -56,16 +54,12 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         // update timestamp on the experiment
         $this->updateTimestamp($this->formatResponseTime($tsResponse->getTimestampFromResponseFile()));
 
-        $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
-        $ZipArchive->open($zipPath, ZipArchive::CREATE);
+        $ZipArchive->open($create->getFilePath(), ZipArchive::CREATE);
         $ZipArchive->addFile($dataPath, $dataName);
         $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
         $ZipArchive->close();
-        return $this->Entity->Uploads->create(
-            new CreateImmutableUpload($zipName, $zipPath, sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])),
-            $state,
-        );
+        return $this->Entity->Uploads->create($create);
     }
 
     /**

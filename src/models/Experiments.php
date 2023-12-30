@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
@@ -204,7 +206,6 @@ class Experiments extends AbstractConcreteEntity
         $this->canOrExplode('write');
         return match ($action) {
             Action::Timestamp => $this->timestamp(),
-            Action::AutoTimestamp => $this->timestamp(State::Archived),
             default => parent::patch($action, $params),
         };
     }
@@ -235,7 +236,7 @@ class Experiments extends AbstractConcreteEntity
         };
     }
 
-    private function timestamp(State $state = State::Normal): array
+    private function timestamp(): array
     {
         $Config = Config::getConfig();
         $dataFormat = ExportFormat::Json;
@@ -253,7 +254,11 @@ class Experiments extends AbstractConcreteEntity
             new TimestampResponse(),
         );
         $tsResponse = $TimestampUtils->timestamp();
-        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse, $state);
+
+        $zipName = $Maker->getFileName();
+        $zipPath = FsTools::getCacheFile() . '.zip';
+        $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
+        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse, new CreateImmutableArchivedUpload($zipName, $zipPath, $comment));
 
         // decrement the balance
         $Config->decrementTsBalance();

@@ -74,7 +74,11 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
      */
     public function generateData(): string
     {
-        return $this->dataFormat === ExportFormat::Json ? $this->generateJson() : $this->generatePdf();
+        return match ($this->dataFormat) {
+            ExportFormat::Json => $this->generateJson(),
+            ExportFormat::Pdf, ExportFormat::PdfA => $this->generatePdf(),
+            default => throw new ImproperActionException('Incorrect data format for timestamp action'),
+        };
     }
 
     /**

@@ -15,7 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Interfaces\TimestampResponseInterface;
-use Elabftw\Models\Experiments;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
@@ -29,7 +29,7 @@ use ZipArchive;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, Experiments $entity, private ExportFormat $dataFormat)
+    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, private ExportFormat $dataFormat)
     {
         parent::__construct($entity);
         $this->checkMonthlyLimit();
@@ -126,11 +126,11 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
      */
     private function updateTimestamp(string $responseTime): bool
     {
-        $sql = 'UPDATE experiments SET
+        $sql = sprintf('UPDATE %s SET
             timestamped = 1,
             timestampedby = :userid,
             timestamped_at = :when
-            WHERE id = :id;';
+            WHERE id = :id', $this->Entity->type);
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);

@@ -454,7 +454,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTimestamperFullname(): string
     {
-        if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
+        if ($this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);

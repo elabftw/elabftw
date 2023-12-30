@@ -21,7 +21,7 @@
 
 <div id='isTimestampedByInfoDiv'>
 {% if Entity.entityData.timestamped %}
-  {{ 'Experiment was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw|msg('ok', false) }}
+  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw|msg('ok', false) }}
 {% endif %}
 </div>
 

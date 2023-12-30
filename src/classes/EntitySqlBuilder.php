@@ -55,7 +55,8 @@ class EntitySqlBuilder
                 entity.state,
                 entity.canread,
                 entity.canwrite,
-                entity.modified_at,';
+                entity.modified_at,
+                entity.timestamped,';
             // don't include the metadata column unless we really need it
             // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
             if ($includeMetadata) {
@@ -133,7 +134,6 @@ class EntitySqlBuilder
         $from = 'FROM %1$s AS entity';
 
         if ($this->entity instanceof Experiments) {
-            $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
             $select .= ', entity.is_bookable';

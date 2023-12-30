@@ -12,24 +12,20 @@ namespace Elabftw\Make;
 
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTimestampInterface;
-use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
-use ZipArchive;
 
 /**
- * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
- * Originally based on: https://d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161/
+ * Mother class for all timestamping actions (trusted or blockchain)
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, private ExportFormat $dataFormat)
+    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, protected ExportFormat $dataFormat)
     {
         parent::__construct($entity);
         $this->checkMonthlyLimit();
@@ -39,35 +35,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     {
         return date('YmdHis') . '-timestamped.zip';
     }
-
-    /**
-     * Create a zip archive with the timestamped data and the asn1 token
-     */
-    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int
-    {
-        // e.g. 20220210171842-timestamp.zip
-        $zipName = $create->getFileName();
-        // e.g. 20220210171842-timestamp.(json|pdf)
-        $dataName = str_replace('zip', $this->dataFormat->value, $zipName);
-        $tokenName = str_replace('zip', 'asn1', $zipName);
-
-        // update timestamp on the experiment
-        $this->updateTimestamp($this->formatResponseTime($tsResponse->getTimestampFromResponseFile()));
-
-        $ZipArchive = new ZipArchive();
-        $ZipArchive->open($create->getFilePath(), ZipArchive::CREATE);
-        $ZipArchive->addFile($tsResponse->getDataPath(), $dataName);
-        $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
-        $ZipArchive->close();
-        return $this->Entity->Uploads->create($create);
-    }
-
-    /**
-     * Return the needed parameters to request/verify a timestamp
-     *
-     * @return array<string,string>
-     */
-    abstract public function getTimestampParameters(): array;
 
     /**
      * Get the data that will be timestamped and saved in the timestamp archive
@@ -82,15 +49,24 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     }
 
     /**
-     * Convert the time found in the response file to the correct format for sql insertion
+     * Set the experiment as timestamped so we can easily display it
+     *
+     * @param string $responseTime the date of the timestamp
      */
-    protected function formatResponseTime(string $timestamp): string
+    protected function updateTimestamp(string $responseTime): bool
     {
-        $time = strtotime($timestamp);
-        if ($time === false) {
-            throw new ImproperActionException('Could not get response time!');
-        }
-        return date('Y-m-d H:i:s', $time);
+        $sql = sprintf('UPDATE %s SET
+            timestamped = 1,
+            timestampedby = :userid,
+            timestamped_at = :when
+            WHERE id = :id', $this->Entity->type);
+        $req = $this->Db->prepare($sql);
+        // the date recorded in the db will match the creation time of the timestamp token
+        $req->bindParam(':when', $responseTime);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
     private function generateJson(): string
@@ -117,27 +93,6 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             return $Keeex->fromString($MakePdf->getFileContent());
         }
         return $MakePdf->getFileContent();
-    }
-
-    /**
-     * Set the experiment as timestamped so we can easily display it
-     *
-     * @param string $responseTime the date of the timestamp
-     */
-    private function updateTimestamp(string $responseTime): bool
-    {
-        $sql = sprintf('UPDATE %s SET
-            timestamped = 1,
-            timestampedby = :userid,
-            timestamped_at = :when
-            WHERE id = :id', $this->Entity->type);
-        $req = $this->Db->prepare($sql);
-        // the date recorded in the db will match the creation time of the timestamp token
-        $req->bindParam(':when', $responseTime);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
     }
 
     private function checkMonthlyLimit(): void

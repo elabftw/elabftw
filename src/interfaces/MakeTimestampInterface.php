@@ -14,11 +14,7 @@ namespace Elabftw\Interfaces;
  */
 interface MakeTimestampInterface
 {
-    public function getTimestampParameters(): array;
-
     public function getFileName(): string;
-
-    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int;
 
     public function generateData(): string;
 }

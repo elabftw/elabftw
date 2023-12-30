@@ -19,7 +19,7 @@ use Elabftw\Models\Config;
  * RFC3161 timestamping with Universign service
  * https://www.universign.com/en/
  */
-class MakeUniversignTimestamp extends AbstractMakeTimestamp
+class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const TS_URL = 'https://ws.universign.eu/tsa';
 

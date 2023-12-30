@@ -9,13 +9,12 @@
 
 namespace Elabftw\Make;
 
-use DateTimeImmutable;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
-use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
@@ -28,7 +27,7 @@ use ZipArchive;
  * Send data to Bloxberg server
  * elabid is submitted as the 'author' attribute
  */
-class MakeBloxberg extends AbstractMake
+class MakeBloxberg extends AbstractMakeTimestamp
 {
     use UploadTrait;
 
@@ -46,16 +45,18 @@ class MakeBloxberg extends AbstractMake
 
     private string $apiKey;
 
-    public function __construct(private Client $client, AbstractConcreteEntity $entity)
+    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, private Client $client)
     {
-        parent::__construct($entity);
-        $this->Entity->canOrExplode('write');
+        parent::__construct($configArr, $entity, ExportFormat::Json);
+        if ($configArr['blox_enabled'] !== '1') {
+            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
+        }
         $this->apiKey = $this->getApiKey();
     }
 
-    public function timestamp(): bool
+    public function timestamp(): int
     {
-        $data = $this->getData();
+        $data = $this->generateData();
         $dataHash = hash('sha256', $data);
 
         try {
@@ -64,7 +65,7 @@ class MakeBloxberg extends AbstractMake
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
             $proofResponse = $this->client->post(self::PROOF_URL, array(
                 // add proxy if there is one
-                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+                'proxy' => $this->configArr['proxy'] ?? '',
                 'headers' => array(
                     'api_key' => $this->apiKey,
                 ),
@@ -78,8 +79,10 @@ class MakeBloxberg extends AbstractMake
         $zip = $proofResponse->getBody()->getContents();
         // add the data to the zipfile and get the path to where it is stored in cache
         $tmpFilePath = $this->addToZip($zip, $data);
+        // update timestamp on the entry
+        $this->updateTimestamp(date('Y-m-d H:i:s'));
         // save the zip file as an upload
-        return (bool) $this->Entity->Uploads->create(
+        return $this->Entity->Uploads->create(
             new CreateImmutableArchivedUpload(
                 $this->getFileName(),
                 $tmpFilePath,
@@ -88,18 +91,12 @@ class MakeBloxberg extends AbstractMake
         );
     }
 
-    public function getFileName(): string
-    {
-        $DateTime = new DateTimeImmutable();
-        return sprintf('bloxberg-proof_%s.zip', $DateTime->format('c'));
-    }
-
     private function getApiKey(): string
     {
         try {
             $res = $this->client->get(self::API_KEY_URL, array(
                 // add proxy if there is one
-                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+                'proxy' => $this->configArr['proxy'] ?? '',
                 'timeout' => 5,
             ));
         } catch (ConnectException) {
@@ -111,18 +108,11 @@ class MakeBloxberg extends AbstractMake
         return (string) $res->getBody();
     }
 
-    private function getData(): string
-    {
-        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
-        return $MakeJson->getFileContent();
-    }
-
     private function certify(string $hash): string
     {
         // in order to be GDPR compliant, it is possible to anonymize the author
         $author = $this->Entity->entityData['fullname'];
-        $Config = Config::getConfig();
-        if ($Config->configArr['blox_anon']) {
+        if ($this->configArr['blox_anon']) {
             $author = 'eLabFTW user';
         }
 
@@ -131,7 +121,7 @@ class MakeBloxberg extends AbstractMake
                 'api_key' => $this->apiKey,
             ),
             // add proxy if there is one
-            'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+            'proxy' => $this->configArr['proxy'] ?? '',
             'json' => array(
                 'publicKey' => self::PUB_KEY,
                 'crid' => array('0x' . $hash),

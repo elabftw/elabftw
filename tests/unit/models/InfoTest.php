@@ -48,6 +48,6 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     {
         $info = $this->Info->readOne();
         $this->assertTrue(is_array($info));
-        $this->assertEquals(3, $info['experiments_timestamped_count']);
+        $this->assertEquals(4, $info['experiments_timestamped_count']);
     }
 }

@@ -16,7 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
-use Elabftw\Interfaces\MakeTimestampInterface;
+use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -54,18 +54,14 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     protected function bloxberg(): array
     {
-        $Config = Config::getConfig();
-        $config = $Config->configArr;
-        if ($config['blox_enabled'] !== '1') {
-            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
-        }
-        (new MakeBloxberg(new Client(), $this))->timestamp();
+        $Maker = new MakeBloxberg(Config::getConfig()->configArr, $this, new Client());
+        $Maker->timestamp();
         return $this->readOne();
     }
 
     abstract protected function getNextCustomId(int $category): ?int;
 
-    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTimestampInterface
+    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
     {
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($config, $this, $dataFormat),

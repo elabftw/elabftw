@@ -64,7 +64,7 @@
       {% if item.custom_id %}
         <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+        <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title|raw }}</a>
       </p>
     </div>
     {# owner #}

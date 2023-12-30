@@ -156,7 +156,7 @@
             <div class='input-group-prepend'>
               <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
             </div>
-            <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
+            <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title|raw }}</a>
           </div>
         </div>
       {% endif %}

@@ -193,5 +193,5 @@ document.addEventListener('DOMContentLoaded', () => {
     displayPlasmidViewer(about);
     malleableFilecomment.listen();
     (new Uploader()).init();
-  }).observe(document.getElementById('filesdiv'), {childList: true});
+  }).observe(document.getElementById('filesdiv'), {childList: true, subtree: true});
 });

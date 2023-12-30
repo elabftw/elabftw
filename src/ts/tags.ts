@@ -95,12 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  if (document.getElementById('.createFavTagInput')) {
-    document.getElementById('.createFavTagInput').addEventListener('blur', event => {
+  if (document.getElementById('createFavTagInput')) {
+    document.getElementById('createFavTagInput').addEventListener('blur', event => {
       createTagFavorite(event.target as HTMLInputElement);
     });
 
-    document.getElementById('.createFavTagInput').addEventListener('keyup', event => {
+    document.getElementById('createFavTagInput').addEventListener('keyup', event => {
       if ((event as KeyboardEvent).code === 'Enter') {
         createTagFavorite(event.target as HTMLInputElement);
       }

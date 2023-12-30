@@ -239,26 +239,33 @@ class Experiments extends AbstractConcreteEntity
     private function timestamp(): array
     {
         $Config = Config::getConfig();
+
+        // the source data can be in any format, here it defaults to json but can be pdf too
         $dataFormat = ExportFormat::Json;
         // if we do keeex we want to timestamp a pdf so we can keeex it
         // there might be other options impacting this condition later
         if ($Config->configArr['keeex_enabled'] === '1') {
             $dataFormat = ExportFormat::Pdf;
         }
+
+        // select the timestamp service and do the timestamp request to TSA
         $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
-        $data = $Maker->generateData();
         $TimestampUtils = new TimestampUtils(
             new Client(),
-            $data,
+            $Maker->generateData(),
             $Maker->getTimestampParameters(),
             new TimestampResponse(),
         );
-        $tsResponse = $TimestampUtils->timestamp();
 
+        // save the token and data in a zip archive
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
-        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse, new CreateImmutableArchivedUpload($zipName, $zipPath, $comment));
+        $Maker->saveTimestamp(
+            $TimestampUtils->getDataPath(),
+            $TimestampUtils->timestamp(),
+            new CreateImmutableArchivedUpload($zipName, $zipPath, $comment),
+        );
 
         // decrement the balance
         $Config->decrementTsBalance();

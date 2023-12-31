@@ -14,7 +14,6 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Traits\ProcessTrait;
 use Elabftw\Traits\UploadTrait;
@@ -41,13 +40,13 @@ class TimestampUtils
         private ClientInterface $client,
         string $data,
         private array $tsConfig,
-        private TimestampResponseInterface $tsResponse,
+        private TimestampResponse $tsResponse,
     ) {
         // save the data inside a temporary file so openssl can act on it
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
         $this->tsResponse = new TimestampResponse();
-        $this->cacheFs->write(basename($this->tsResponse->getDataPath()), $data);
-        $this->trash[] = basename($this->tsResponse->getDataPath());
+        $this->cacheFs->write(basename($this->tsResponse->dataPath), $data);
+        $this->trash[] = basename($this->tsResponse->dataPath);
     }
 
     /**
@@ -63,12 +62,12 @@ class TimestampUtils
     /**
      * Do the timestamp, verify it and return path to saved token on disk along with extracted timestamp
      */
-    public function timestamp(): TimestampResponseInterface
+    public function timestamp(): TimestampResponse
     {
         $requestFilePath = $this->createRequestfile();
         $response = $this->postData($requestFilePath);
         // save token to (temporary) file
-        $this->cacheFs->write(basename($this->tsResponse->getTokenPath()), $response->getBody()->getContents());
+        $this->cacheFs->write(basename($this->tsResponse->tokenPath), $response->getBody()->getContents());
         $this->verify();
         return $this->tsResponse;
     }
@@ -85,7 +84,7 @@ class TimestampUtils
             'ts',
             '-query',
             '-data',
-            $this->tsResponse->getDataPath(),
+            $this->tsResponse->dataPath,
             '-cert',
             '-' . $this->tsConfig['ts_hash'],
             '-no_nonce',
@@ -145,9 +144,9 @@ class TimestampUtils
             // skip cert validity check
             '-no_check_time',
             '-data',
-            $this->tsResponse->getDataPath(),
+            $this->tsResponse->dataPath,
             '-in',
-            $this->tsResponse->getTokenPath(),
+            $this->tsResponse->tokenPath,
             '-CAfile',
             $this->tsConfig['ts_chain'],
             '-untrusted',

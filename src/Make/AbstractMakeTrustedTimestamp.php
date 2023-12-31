@@ -9,10 +9,10 @@
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
-use Elabftw\Interfaces\TimestampResponseInterface;
 use ZipArchive;
 
 /**
@@ -24,7 +24,7 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */
-    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int
+    public function saveTimestamp(TimestampResponse $tsResponse, CreateUploadParamsInterface $create): int
     {
         // e.g. 20220210171842-timestamp.zip
         $zipName = $create->getFileName();
@@ -37,8 +37,8 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
 
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($create->getFilePath(), ZipArchive::CREATE);
-        $ZipArchive->addFile($tsResponse->getDataPath(), $dataName);
-        $ZipArchive->addFile($tsResponse->getTokenPath(), $tokenName);
+        $ZipArchive->addFile($tsResponse->dataPath, $dataName);
+        $ZipArchive->addFile($tsResponse->tokenPath, $tokenName);
         $ZipArchive->close();
         return $this->Entity->Uploads->create($create);
     }

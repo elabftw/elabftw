@@ -10,29 +10,23 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\TimestampResponseInterface;
 use Elabftw\Traits\ProcessTrait;
 
 /**
  * Trusted Timestamping (RFC3161) response object
  */
-class TimestampResponse implements TimestampResponseInterface
+class TimestampResponse
 {
     use ProcessTrait;
 
-    private string $dataPath;
+    public readonly string $dataPath;
 
-    private string $tokenPath;
+    public readonly string $tokenPath;
 
     public function __construct()
     {
         $this->dataPath = FsTools::getCacheFile();
         $this->tokenPath = FsTools::getCacheFile();
-    }
-
-    public function getDataPath(): string
-    {
-        return $this->dataPath;
     }
 
     public function getTimestampFromResponseFile(): string
@@ -82,10 +76,5 @@ class TimestampResponse implements TimestampResponseInterface
             }
         }
         throw new ImproperActionException('Could not get response time!');
-    }
-
-    public function getTokenPath(): string
-    {
-        return $this->tokenPath;
     }
 }

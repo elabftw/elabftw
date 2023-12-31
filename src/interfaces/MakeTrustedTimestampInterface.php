@@ -9,6 +9,8 @@
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Elabftw\TimestampResponse;
+
 /**
  * Interface for trusted timestamp makers
  */
@@ -16,5 +18,5 @@ interface MakeTrustedTimestampInterface extends MakeTimestampInterface
 {
     public function getTimestampParameters(): array;
 
-    public function saveTimestamp(TimestampResponseInterface $tsResponse, CreateUploadParamsInterface $create): int;
+    public function saveTimestamp(TimestampResponse $tsResponse, CreateUploadParamsInterface $create): int;
 }

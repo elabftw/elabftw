@@ -9,7 +9,12 @@
 
 namespace Elabftw\Elabftw;
 
-class CreateImmutableUpload extends CreateUpload
+use Elabftw\Enums\State;
+
+/**
+ * Automatic timestamp archives from experiments:timestamp command are immutable and archived
+ */
+class CreateImmutableArchivedUpload extends CreateImmutableUpload
 {
-    protected int $immutable = 1;
+    protected State $state = State::Archived;
 }

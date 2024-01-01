@@ -3,7 +3,7 @@
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='timestampModalLabel'>{{ 'Timestamp Experiment'|trans }}</h5>
+        <h5 class='modal-title' id='timestampModalLabel'>{{ 'Timestamp Entry'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -31,7 +31,7 @@
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='blocktimestampModalLabel'>{{ 'Timestamp Experiment'|trans }}</h5>
+        <h5 class='modal-title' id='blocktimestampModalLabel'>{{ 'Timestamp Entry'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -106,9 +106,9 @@
   {% endif %}
 
 
-  {# TIMESTAMP EXPERIMENT #}
-  {% if Entity.type == 'experiments' and not App.Session.has('is_anon') and not Entity.isReadOnly %}
-    <button type='button' title='{{ 'Timestamp Experiment'|trans }}' aria-label='{{ 'Timestamp Experiment'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  {# TIMESTAMP #}
+  {% if not App.Session.has('is_anon') and not Entity.isReadOnly %}
+    <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-calendar-check fa-fw'></i>
     </button>
   {% endif %}

@@ -9,29 +9,25 @@
 
 namespace Elabftw\Make;
 
-use DateTimeImmutable;
-use Elabftw\Elabftw\CreateImmutableUpload;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
-use Elabftw\Models\Config;
-use Elabftw\Services\MpdfProvider;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use function json_decode;
 use function json_encode;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use ZipArchive;
 
 /**
  * Send data to Bloxberg server
  * elabid is submitted as the 'author' attribute
  */
-class MakeBloxberg extends AbstractMake
+class MakeBloxberg extends AbstractMakeTimestamp
 {
     use UploadTrait;
 
@@ -49,25 +45,27 @@ class MakeBloxberg extends AbstractMake
 
     private string $apiKey;
 
-    public function __construct(private Client $client, AbstractConcreteEntity $entity)
+    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, private Client $client)
     {
-        parent::__construct($entity);
-        $this->Entity->canOrExplode('write');
+        parent::__construct($configArr, $entity, ExportFormat::Json);
+        if ($configArr['blox_enabled'] !== '1') {
+            throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
+        }
         $this->apiKey = $this->getApiKey();
     }
 
-    public function timestamp(): bool
+    public function timestamp(): int
     {
-        $pdf = $this->getPdf();
-        $pdfHash = hash('sha256', $pdf);
+        $data = $this->generateData();
+        $dataHash = hash('sha256', $data);
 
         try {
             // first request sends the hash to the certify endpoint
-            $certifyResponse = json_decode($this->certify($pdfHash));
+            $certifyResponse = json_decode($this->certify($dataHash));
             // now we send the previous response to another endpoint to get the pdf back in a zip archive
             $proofResponse = $this->client->post(self::PROOF_URL, array(
                 // add proxy if there is one
-                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+                'proxy' => $this->configArr['proxy'] ?? '',
                 'headers' => array(
                     'api_key' => $this->apiKey,
                 ),
@@ -79,11 +77,13 @@ class MakeBloxberg extends AbstractMake
 
         // the binary response is a zip archive that contains the certificate in pdf format
         $zip = $proofResponse->getBody()->getContents();
-        // add the pdf to the zipfile and get the path to where it is stored in cache
-        $tmpFilePath = $this->addToZip($zip, $pdf);
+        // add the data to the zipfile and get the path to where it is stored in cache
+        $tmpFilePath = $this->addToZip($zip, $data);
+        // update timestamp on the entry
+        $this->updateTimestamp(date('Y-m-d H:i:s'));
         // save the zip file as an upload
-        return (bool) $this->Entity->Uploads->create(
-            new CreateImmutableUpload(
+        return $this->Entity->Uploads->create(
+            new CreateImmutableArchivedUpload(
                 $this->getFileName(),
                 $tmpFilePath,
                 sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])
@@ -91,18 +91,12 @@ class MakeBloxberg extends AbstractMake
         );
     }
 
-    public function getFileName(): string
-    {
-        $DateTime = new DateTimeImmutable();
-        return sprintf('bloxberg-proof_%s.zip', $DateTime->format('c'));
-    }
-
     private function getApiKey(): string
     {
         try {
             $res = $this->client->get(self::API_KEY_URL, array(
                 // add proxy if there is one
-                'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+                'proxy' => $this->configArr['proxy'] ?? '',
                 'timeout' => 5,
             ));
         } catch (ConnectException) {
@@ -114,25 +108,11 @@ class MakeBloxberg extends AbstractMake
         return (string) $res->getBody();
     }
 
-    private function getPdf(): string
-    {
-        $userData = $this->Entity->Users->userData;
-        $MpdfProvider = new MpdfProvider(
-            $userData['fullname'],
-            $userData['pdf_format'],
-            true, // PDF/A always for timestamp pdf
-        );
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        $MakePdf = new MakePdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
-        return $MakePdf->getFileContent();
-    }
-
     private function certify(string $hash): string
     {
         // in order to be GDPR compliant, it is possible to anonymize the author
         $author = $this->Entity->entityData['fullname'];
-        $Config = Config::getConfig();
-        if ($Config->configArr['blox_anon']) {
+        if ($this->configArr['blox_anon']) {
             $author = 'eLabFTW user';
         }
 
@@ -141,7 +121,7 @@ class MakeBloxberg extends AbstractMake
                 'api_key' => $this->apiKey,
             ),
             // add proxy if there is one
-            'proxy' => Config::getConfig()->configArr['proxy'] ?? '',
+            'proxy' => $this->configArr['proxy'] ?? '',
             'json' => array(
                 'publicKey' => self::PUB_KEY,
                 'crid' => array('0x' . $hash),
@@ -159,9 +139,9 @@ class MakeBloxberg extends AbstractMake
     }
 
     /**
-     * Add the timestamped pdf to existing zip archive
+     * Add the timestamped data to existing zip archive
      */
-    private function addToZip(string $zip, string $pdf): string
+    private function addToZip(string $zip, string $data): string
     {
         // write the zip to a temporary file
         $tmpFilePath = FsTools::getCacheFile();
@@ -173,7 +153,7 @@ class MakeBloxberg extends AbstractMake
         if ($res !== true) {
             throw new FilesystemErrorException('Error opening the zip archive!');
         }
-        $ZipArchive->addFromString('timestamped-data.pdf', $pdf);
+        $ZipArchive->addFromString('timestamped-data.json', $data);
         $ZipArchive->close();
         // return the path where the zip is stored in temp folder
         return $tmpFilePath;

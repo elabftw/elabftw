@@ -61,7 +61,7 @@ try {
             // don't disclose if the email exists in the db or not
         } catch (ResourceNotFoundException $e) {
             // make the response slow to emulate an email being sent if there was an account associated
-            sleep(random_int(1, 6));
+            sleep(random_int(1, 3));
             throw new QuantumException(_('If the account exists, an email has been sent.'));
         }
 

@@ -333,6 +333,14 @@ components:
         recent_comment:
           type: string
           nullable: true
+        related_experiments_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        related_items_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         sharelink:
           type: string
         state:
@@ -537,16 +545,18 @@ components:
     link:
       type: object
       properties:
-        itemid:
+        entityid:
           type: integer
         title:
-          type: string
-        elabid:
           type: string
         is_bookable:
           type: integer
         link_state:
           type: integer
+        category_color:
+          type: string
+        category_title:
+          type: string
     notification:
       type: object
       properties:

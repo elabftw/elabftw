@@ -71,7 +71,7 @@ class ExperimentsTimestamp extends Command
             }
             $Experiments->setId($exp['id']);
             // use AutoTimestamp action so the archive will be Archived and invisible to users
-            $Experiments->patch(Action::AutoTimestamp, array());
+            $Experiments->patch(Action::Timestamp, array());
         }
 
         return 0;

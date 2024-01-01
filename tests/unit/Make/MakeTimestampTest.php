@@ -11,6 +11,7 @@ namespace Elabftw\Make;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
@@ -23,6 +24,8 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     private array $configArr;
 
     private string $dataPath;
+
+    private string $comment = 'Timestamp archive by unit test';
 
     private ExportFormat $dataFormat = ExportFormat::Json;
 
@@ -71,10 +74,11 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity(), ExportFormat::Pdf);
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
-        // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'dfn.asn1');
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'dfn.pdf', $tsResponse));
+        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
+        $zipName = $Maker->getFileName();
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
     }
 
     public function testDigicertTimestamp(): void
@@ -82,10 +86,12 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $this->dataFormat);
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
-        // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'digicert.asn1');
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'digicert.pdf', $tsResponse));
+
+        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
+        $zipName = $Maker->getFileName();
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
     }
 
     public function testUniversignTimestamp(): void
@@ -98,10 +104,12 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity(), $this->dataFormat);
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
-        // create a custom response object with fixture token
-        $tsResponse = new TimestampResponse();
-        $tsResponse->setTokenPath($this->dataPath . 'universign.asn1');
-        $this->assertIsInt($Maker->saveTimestamp($this->dataPath . 'universign.pdf', $tsResponse));
+
+        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
+        $zipName = $Maker->getFileName();
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
     }
 
     public function testGlobalSign(): void
@@ -139,12 +147,11 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity(), $this->dataFormat);
         $Maker->generateData();
-        // create a custom response object with fixture token
-        $tsResponseMock = $this->createMock(TimestampResponse::class);
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('2000');
-        $tsResponseMock->method('getTokenPath')->willReturn($this->dataPath . 'universign.asn1');
+        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('yestermorrow');
         $this->expectException(ImproperActionException::class);
-        $Maker->saveTimestamp($this->dataPath . 'universign.pdf', $tsResponseMock);
+        $Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
     }
 
     private function getFreshTimestampableEntity(): Experiments

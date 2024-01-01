@@ -15,7 +15,7 @@ use function dirname;
  * RFC3161 timestamping with the free to use DFN timestamping service
  * https://www.pki.dfn.de/faqpki/faq-zeitstempel/
  */
-class MakeDfnTimestamp extends AbstractMakeTimestamp
+class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const TS_URL = 'http://zeitstempel.dfn.de';
 

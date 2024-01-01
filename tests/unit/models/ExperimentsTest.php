@@ -125,7 +125,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTimestampThisMonth(): void
     {
-        $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
+        $this->assertEquals(4, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void

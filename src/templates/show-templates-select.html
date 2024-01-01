@@ -29,10 +29,10 @@
         <tr>
           <td><div class='user-badge text-center px-2 py-1 rounded mt-1'>{{ template.team_name }}</div></td>
           <td>
-            <a href='?tab=3&mode=view&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'><i class='fas fa-eye fa-fw'></i></a>
+            <a href='?tab=3&amp;mode=view&amp;templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'><i class='fas fa-eye fa-fw'></i></a>
             {# we only show the edit button for templates that we own, because here we don't really have information if it's readonly or not #}
             {% if App.Users.userid == template.userid %}
-              <a href='?tab=3&mode=edit&templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt fa-fw'></i></a>
+              <a href='?tab=3&amp;mode=edit&amp;templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'><i class='fas fa-pencil-alt fa-fw'></i></a>
             {% endif %}
               {# clickable toggle pin button #}
               <button title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' type='button' data-action='toggle-pin' data-id='{{ template.id }}' class='btn lh-normal border-0 p-2 {{- template.is_pinned ? ' bgnd-gray' : ' hl-hover-gray' }}'>

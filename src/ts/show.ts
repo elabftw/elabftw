@@ -181,12 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-    // TOGGLE text input to add a new favorite tag
-    } else if (el.matches('[data-action="toggle-addfav"]')) {
-      const input = document.getElementById('createFavTagInput');
-      input.toggleAttribute('hidden');
-      input.focus();
-
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
       params.set('tags[]', el.dataset.tag);
@@ -214,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsTagsDiv'));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {

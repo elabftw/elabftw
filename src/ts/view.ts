@@ -161,5 +161,5 @@ document.addEventListener('DOMContentLoaded', () => {
     malleableCategory.listen();
     malleableComments.listen();
     relativeMoment();
-  }).observe(document.getElementById('container'), {childList: true});
+  }).observe(document.getElementById('container'), {childList: true, subtree: true});
 });

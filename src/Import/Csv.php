@@ -98,7 +98,7 @@ class Csv extends AbstractImport
     /**
      * Generate a body from a row. Add column name and content after that.
      *
-     * @param array<non-falsy-string, null|string> $row row from the csv
+     * @param array<string, null|string> $row row from the csv
      */
     private function getBodyFromRow(array $row): string
     {
@@ -111,11 +111,12 @@ class Csv extends AbstractImport
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
+            $contentEscaped = htmlspecialchars($content ??= '');
             // translate urls into links
             if (filter_var($content, FILTER_VALIDATE_URL)) {
-                $content = '<a href="' . $content . '">' . $content . '</a>';
+                $contentEscaped = sprintf('<a href="%1$s">%1$s</a>', $contentEscaped);
             }
-            $body .= '<p>' . (string) $subheader . ': ' . $content . '</p>';
+            $body .= sprintf('<p>%s:%s</p>', htmlspecialchars($subheader), $contentEscaped);
         }
 
         return $body;

@@ -29,12 +29,12 @@ try {
     set_time_limit(0);
 
     // Check for LONG_NAME
-    $longName = (string) $Request->query->get('f');
+    $longName = $App->Request->query->getString('f');
     if (strpos($longName, "\0") !== false) {
         throw new IllegalActionException('Missing parameter for download');
     }
 
-    $storage = (int) $Request->query->get('storage');
+    $storage = $App->Request->query->getInt('storage');
     // backward compatibility: the download links in body won't have the storage param
     if ($storage === 0) {
         // we fallback on the instance's configured storage

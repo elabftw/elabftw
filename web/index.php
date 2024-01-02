@@ -32,7 +32,7 @@ try {
 
         $IdpsHelper = new IdpsHelper($App->Config, new Idps());
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
-        $resp = new SamlResponse(new SamlSettings($tmpSettings), (string) $App->Request->request->get('SAMLResponse'));
+        $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
 
         $settings = $IdpsHelper->getSettingsByEntityId($entId);

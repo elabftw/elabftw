@@ -119,10 +119,10 @@ class MakeController implements ControllerInterface
 
     private function populateIdArr(): void
     {
-        $this->Entity = EntityType::from((string) $this->Request->query->get('type'))->toInstance($this->Users);
+        $this->Entity = EntityType::from($this->Request->query->getString('type'))->toInstance($this->Users);
         // generate the id array
         if ($this->Request->query->has('category')) {
-            $this->idArr = $this->Entity->getIdFromCategory((int) $this->Request->query->get('category'));
+            $this->idArr = $this->Entity->getIdFromCategory($this->Request->query->getInt('category'));
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
             if (!$this->Users->isAdminOf($this->Request->query->getInt('owner'))) {
@@ -130,13 +130,13 @@ class MakeController implements ControllerInterface
             }
             // being admin is good, but we also need to be in the same team as the requested user
             $Teams = new Teams($this->Users);
-            $targetUserid = (int) $this->Request->query->get('owner');
+            $targetUserid = $this->Request->query->getInt('owner');
             if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->Users->userData['team'])) {
                 throw new IllegalActionException('User tried to export another user but is not in same team.');
             }
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {
-            $this->idArr = explode(' ', (string) $this->Request->query->get('id'));
+            $this->idArr = explode(' ', $this->Request->query->getString('id'));
         }
         // generate audit log event if exporting more than $threshold entries
         $count = count($this->idArr);
@@ -202,8 +202,8 @@ class MakeController implements ControllerInterface
             new Scheduler(
                 new Items($this->Users),
                 null,
-                (string) $this->Request->query->get('start', $defaultStart),
-                (string) $this->Request->query->get('end', $defaultEnd),
+                $this->Request->query->getString('start', $defaultStart),
+                $this->Request->query->getString('end', $defaultEnd),
             ),
         ));
     }

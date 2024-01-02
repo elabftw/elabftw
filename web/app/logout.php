@@ -91,10 +91,10 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     $IdpsHelper = new IdpsHelper($App->Config, new Idps());
     $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
     if ($App->Request->query->has('SAMLRequest')) {
-        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLRequest'));
+        $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), $App->Request->query->getString('SAMLRequest'));
         $entId = SamlLogoutRequest::getIssuer($req->getXML());
     } else {// if ($App->Request->query->has('SAMLResponse'))
-        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), (string) $App->Request->query->get('SAMLResponse'));
+        $resp = new SamlLogoutResponse(new SamlSettings($tmpSettings), $App->Request->query->getString('SAMLResponse'));
         $entId = $resp->getIssuer();
     }
 

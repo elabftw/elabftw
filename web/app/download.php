@@ -45,8 +45,8 @@ try {
     $DownloadController = new DownloadController(
         $storageFs,
         $longName,
-        (string) $Request->query->get('name'),
-        $Request->query->has('forceDownload'),
+        $App->Request->query->getString('name'),
+        $App->Request->query->has('forceDownload'),
     );
     $Response = $DownloadController->getResponse();
     $Response->prepare($App->Request);

@@ -48,31 +48,37 @@ try {
     );
 
     // SEND TEST EMAIL
-    if ($Request->request->has('testemailSend')) {
-        $Email->testemailSend($Request->request->getString('email'));
+    if ($App->Request->request->has('testemailSend')) {
+        $Email->testemailSend($App->Request->request->getString('email'));
     }
 
     // SEND MASS EMAIL
-    if ($Request->request->has('massEmail')) {
+    if ($App->Request->request->has('massEmail')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
-        $Email->massEmail(EmailTarget::from($Request->request->getString('target')), null, $Request->request->getString('subject'), $Request->request->getString('body'), $replyTo);
+        $Email->massEmail(
+            EmailTarget::from($App->Request->request->getString('target')),
+            null,
+            $App->Request->request->getString('subject'),
+            $App->Request->request->getString('body'),
+            $replyTo
+        );
     }
 
     // DESTROY IDP
-    if ($Request->request->has('idpsDestroy')) {
-        $Idps = new Idps($Request->request->getInt('id'));
+    if ($App->Request->request->has('idpsDestroy')) {
+        $Idps = new Idps($App->Request->request->getInt('id'));
         $Idps->destroy();
     }
 
     // CLEAR NOLOGIN
-    if ($Request->request->has('clear-nologinusers')) {
+    if ($App->Request->request->has('clear-nologinusers')) {
         // this is so simple and only used here it doesn't have its own function
         $Db = Db::getConnection();
         $Db->q('UPDATE users SET allow_untrusted = 1');
     }
 
     // CLEAR LOCKOUT DEVICES
-    if ($Request->request->has('clear-lockoutdevices')) {
+    if ($App->Request->request->has('clear-lockoutdevices')) {
         // this is so simple and only used here it doesn't have its own function
         $Db = Db::getConnection();
         $Db->q('DELETE FROM lockout_devices');

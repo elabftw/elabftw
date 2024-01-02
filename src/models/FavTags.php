@@ -79,7 +79,7 @@ class FavTags implements RestInterface
         $sql = 'SELECT id FROM tags WHERE team = :team AND tag = :tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':tag', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
         $this->Db->execute($req);
         $tagId = (int) $req->fetchColumn();
 

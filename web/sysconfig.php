@@ -57,7 +57,7 @@ try {
     if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
-            (string) $App->Request->query->get('q', ''),
+            $App->Request->query->getString('q'),
             (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT),
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),

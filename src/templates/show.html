@@ -178,7 +178,7 @@
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
     <div class='row d-flex'>
-      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|escape('url') }}'>
         <button class='btn btn-primary' type='button'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
       </a>
     </div>

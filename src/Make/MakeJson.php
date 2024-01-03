@@ -9,11 +9,13 @@
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use function json_decode;
 use function json_encode;
+use function ksort;
 
 /**
  * Make a JSON export from one or several entities
@@ -45,6 +47,9 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             $this->Entity->setId((int) $id);
             try {
                 $all = $this->getEntityData();
+                // add eLabFTW version number
+                $all['eLabFTW version'] = App::INSTALLED_VERSION;
+                ksort($all);
             } catch (IllegalActionException) {
                 continue;
             }

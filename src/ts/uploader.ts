@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { relativeMoment, reloadElement } from './misc';
+import { reloadElement } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
@@ -59,7 +59,9 @@ export class Uploader
   }
 
   init(): Dropzone {
-    relativeMoment();
-    return new Dropzone(this.getElement(), this.getOptions());
+    // the dz-clickable class is present if Dropzone is active on this element
+    if (document.getElementById('elabftw-dropzone').classList.contains('dz-clickable') === false) {
+      return new Dropzone(this.getElement(), this.getOptions());
+    }
   }
 }

@@ -33,7 +33,7 @@ class Changelog
         }
         // we don't store the full body, let the revisions system handle that
         $content = $params->getContent();
-        if ($params->getTarget() === 'body') {
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
             // skip creation if the new body is the same as old body
             if ($this->entity->entityData['body'] === (string) $content) {
                 return false;

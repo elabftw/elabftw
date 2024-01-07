@@ -10,6 +10,8 @@
 namespace Elabftw\Import;
 
 use function basename;
+
+use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
@@ -92,15 +94,28 @@ class Eln extends AbstractZip
                 $createTarget = -1;
             }
             $this->Entity->setId($this->Entity->create($createTarget, array()));
+            // set the date if we can
+            $date = date('Y-m-d');
+            if (isset($dataset['dateCreated'])) {
+                $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
+                $date = $dateCreated->format('Y-m-d');
+            }
+            $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
             $this->Entity->setId($this->Entity->create($title));
         }
         $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
 
-        // TAGS
+        // TAGS: should normally be a comma separated string, but we allow array for BC
         if (isset($dataset['keywords'])) {
-            foreach ($dataset['keywords'] as $tag) {
-                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
+            $tags = $dataset['keywords'];
+            if (is_string($dataset['keywords'])) {
+                $tags = explode(',', $dataset['keywords']);
+            }
+            foreach ($tags as $tag) {
+                if (!empty($tag)) {
+                    $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
+                }
             }
         }
 

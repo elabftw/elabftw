@@ -31,8 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   displayMolFiles();
-  ///display3DMolecules();
-  //$3Dmol.autoload();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();
@@ -204,10 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Observe "#filesdiv" and reload javascript stuff every time it changes
   new MutationObserver(() => {
     displayMolFiles();
-    //display3DMolecules();
     displayPlasmidViewer(about);
     malleableFilecomment.listen();
-    //$3Dmol.autoload();
     (new Uploader()).init();
     relativeMoment();
   }).observe(document.getElementById('filesdiv'), {childList: true, subtree: true});

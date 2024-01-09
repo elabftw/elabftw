@@ -758,7 +758,7 @@
             <div class='d-flex justify-content-between'>
               <div>
                 <label for='x509_{{ idp.id }}' class='col-form-label'>x509cert</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control' />
+                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control'  aria-label='File upload: x509 Certificate in PEM format' />
               </div>
               <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
             </div>
@@ -767,7 +767,7 @@
             <div class='d-flex justify-content-between'>
               <div>
                 <label for='x509_new_{{ idp.id }}' class='col-form-label'>x509cert (additional for rollover)</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' />
+                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
               </div>
               <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
             </div>

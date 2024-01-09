@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': el.dataset.name + '.png',
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadUploads);
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadUploads());
 
     // CHANGE 3DMOL FILES VISUALIZATION STYLE
     } else if (el.matches('[data-action="set-3dmol-style"]')) {

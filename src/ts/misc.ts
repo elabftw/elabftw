@@ -213,8 +213,8 @@ export function displayMolFiles(): void {
 
 // this exists here because in the Observer of uploads.ts for filesdiv it makes the browser crash
 // FIXME
-export function reloadUploads(): void {
-  reloadElement('filesdiv').then(() => $3Dmol.autoload());
+export async function reloadUploads(): Promise<void> {
+  return reloadElement('filesdiv').then(() => $3Dmol.autoload());
 }
 
 // insert a get param in the url and reload the page

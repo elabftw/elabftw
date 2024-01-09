@@ -41,7 +41,7 @@
 <div id='container' class='container-fluid'>
 
 {# begin main menu #}
-<nav class='navbar navbar-expand-lg navbar-dark'>
+<nav aria-label='{{ 'Main menu'|trans }}' class='navbar navbar-expand-lg navbar-dark'>
     {% if App.Session.has('is_auth') %}
     {# hamburger menu #}
     <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#main-nav' aria-controls='main-nav' aria-expanded='false' aria-label='{{ 'Toggle navigation'|trans }}'>
@@ -78,7 +78,7 @@
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
         {%- endif %}
-        <form class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
+        <form aria-label='{{ 'Search'|trans }}' class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
           {# the id is for making it easy to find the element when focusing it with the keyboard shortcut #}
           <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='{{ 'Search'|trans }}' size='20' value='{{ App.Request.query.get('q') }}' />
         </form>
@@ -173,7 +173,7 @@
 </noscript>
 
 {# Modal for help #}
-<div class='modal fade' id='helpModal' tabindex='-1' role='dialog' aria-labelledby='helpModalLabel' aria-hidden='true'>
+<div class='modal fade' id='helpModal' tabindex='-1' role='dialog' aria-labelledby='helpModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>

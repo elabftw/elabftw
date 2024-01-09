@@ -10,7 +10,7 @@ import { Action as MalleAction, Malle } from '@deltablot/malle';
 import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, getEntity, reloadElement, relativeMoment, reloadUploads } from './misc';
+import { displayMolFiles, getEntity, relativeMoment, reloadUploads } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   displayMolFiles();
   ///display3DMolecules();
-    //$3Dmol.autoload();
+  //$3Dmol.autoload();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();

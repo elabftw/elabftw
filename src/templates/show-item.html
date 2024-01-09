@@ -5,7 +5,7 @@
   {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
 {% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>

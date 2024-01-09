@@ -55,7 +55,7 @@
         <div class='d-flex justify-content-between'>
           <div>
             <label for='x509_idp' class='col-form-label'>x509 Certificate</label>
-            <input type='file' data-action='load-file-on-change' data-target='x509_idp' class='form-control' />
+            <input type='file' data-action='load-file-on-change' data-target='x509_idp' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
           </div>
             <textarea class='form-control col-md-4' id='x509_idp' placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...' name='x509' required></textarea>
         </div>
@@ -64,7 +64,7 @@
         <div class='d-flex justify-content-between'>
           <div>
             <label for='x509_new_idp' class='col-form-label'>x509 Certificate (additional for rollover)</label>
-            <input type='file' data-action='load-file-on-change' data-target='x509_new_idp' class='form-control' />
+            <input type='file' data-action='load-file-on-change' data-target='x509_new_idp' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
           </div>
           <textarea class='form-control col-md-4' id='x509_new_idp' name='x509_new' required></textarea>
         </div>

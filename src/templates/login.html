@@ -3,7 +3,7 @@
 {% block body %}
 
 {# Modal for reset password #}
-<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
+<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel'>
   <div class='modal-dialog modal-dialog-centered' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -13,7 +13,7 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php' aria-label='{{ 'Reset password'|trans }}'>
           {{ App.Session.get('csrf')|csrf }}
           <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
           <div class='text-center'>
@@ -88,7 +88,7 @@
   {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
     <!-- user is already authed with external auth, so just present a continue button
       we don't autologin anymore -->
-      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off' aria-label='{{ 'Continue'|trans }}'>
         {{ App.Session.get('csrf')|csrf }}
         <input type='hidden' name='auth_type' value='external'>
         <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>

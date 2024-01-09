@@ -453,7 +453,7 @@
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
       {% if configArr.debug -%}
-        <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
@@ -618,7 +618,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format'/>
+        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
       </div>
       <textarea class='form-control col-md-3' id='x509' data-trigger='blur' data-model='config' data-target='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
     </div>

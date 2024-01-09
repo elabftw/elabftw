@@ -22,7 +22,7 @@
               <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
               <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid=''>{{ 'Blank experiment'|trans }}</a>
             {% endif %}
-        <a style='border: 1px #ccc solid;' class='btn btn-light ml-auto mt-1' title='{{ 'Manage templates'|trans }}' href='/ucp.php?tab=3'><i class='fas fa-cog'></i></a>
+            <a style='border: 1px #ccc solid;' class='btn btn-light ml-auto mt-1' title='{{ 'Manage templates'|trans }}' aria-label='{{ 'Manage templates'|trans }}' href='/ucp.php?tab=3'><i class='fas fa-cog'></i></a>
           </div>
           <hr>
         {% endif %}

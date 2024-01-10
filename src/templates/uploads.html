@@ -51,7 +51,7 @@
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
+        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 

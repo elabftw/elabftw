@@ -60,7 +60,7 @@ export class Uploader
 
   init(): Dropzone {
     // the dz-clickable class is present if Dropzone is active on this element
-    if (document.getElementById('elabftw-dropzone').classList.contains('dz-clickable') === false) {
+    if (document.getElementById('elabftw-dropzone') && document.getElementById('elabftw-dropzone').classList.contains('dz-clickable') === false) {
       return new Dropzone(this.getElement(), this.getOptions());
     }
   }

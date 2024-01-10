@@ -1,5 +1,5 @@
 {# Modal to display plain text content #}
-<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
+<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -51,7 +51,7 @@
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
+        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 
@@ -177,19 +177,19 @@
                 <ul class='dropdown-menu clickable'>
                   {% set moldivId = '3Dmol_' ~ upload.id %}
                   <li class='dropdown-item'>
-                    <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
                   </li>
                   <li class='dropdown-item'>
-                    <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
                   </li>
                   <li class='dropdown-item'>
-                    <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
                   </li>
                   <li class='dropdown-item'>
-                    <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
                   </li>
                   <li class='dropdown-item'>
-                    <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
                   </li>
                 </ul>
               </div>

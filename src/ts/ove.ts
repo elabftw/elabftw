@@ -16,7 +16,7 @@ declare global {
 import '@teselagen/ove';
 import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
-import { notif, reloadElement } from './misc';
+import { notif, reloadUploads } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -49,7 +49,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           'real_name': realName + '.png',
           'content': reader.result,
         };
-        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadUploads());
       };
     }
 
@@ -136,7 +136,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          reloadElement('filesdiv');
+          reloadUploads();
         },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format

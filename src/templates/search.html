@@ -4,7 +4,7 @@
 {% endblock %}
 
 {# Modal for advanced search #}
-<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
+<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -200,7 +200,7 @@
 
 {# SEARCH PAGE BEGIN #}
 <hr>
-<form method='get' action='search.php'>
+<form method='get' action='search.php' aria-label='Main search form'>
 {# MAIN TEXTAREA FOR EXTENDED QUERY #}
 <div class='row'>
   <div class='col-md-12 mb-2'>

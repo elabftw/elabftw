@@ -259,8 +259,7 @@ abstract class AbstractEntity implements RestInterface
             $displayParams->sort->value,
             ', entity.id',
             $displayParams->sort->value,
-            // add one so we can display Next page if there are more things to display
-            sprintf('LIMIT %d', $displayParams->limit + 1),
+            sprintf('LIMIT %d', $displayParams->limit),
             sprintf('OFFSET %d', $displayParams->offset),
         );
 

@@ -121,7 +121,7 @@
   <div class='pl-3 mt-2'>
     <label for='common_template'>{{ 'Common Experiment Template'|trans }}</label>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element : suppress errors from tinymce] -->
+      <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, text-content: suppress errors from tinymce] -->
     {%- endif %}
     <textarea style='height:400px' class='mceditable' name='common_template' id='common_template'>
       {{ App.teamArr.common_template|raw }}

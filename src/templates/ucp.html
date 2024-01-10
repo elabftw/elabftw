@@ -253,7 +253,7 @@
 
 {# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
-  <form class='form-group' method='post' action='app/controllers/UcpController.php'>
+  <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
     {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}

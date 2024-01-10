@@ -177,7 +177,9 @@ class MakeEln extends MakeStreamZip
             // TAGS
             $keywords = array();
             if ($this->Entity->entityData['tags']) {
-                $keywords = explode('|', (string) $this->Entity->entityData['tags']);
+                // the keywords value is a comma separated list
+                // let's hope no one has a comma in their tags...
+                $keywords = implode(',', explode('|', (string) $this->Entity->entityData['tags']));
             }
 
             // MAIN ENTRY
@@ -202,7 +204,7 @@ class MakeEln extends MakeStreamZip
         // add the description of root with hasPart property
         $dataEntities[] = array(
             '@id' => './',
-            '@type' => array('Dataset'),
+            '@type' => 'Dataset',
             'hasPart' => $rootParts,
         );
 

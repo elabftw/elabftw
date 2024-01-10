@@ -5,12 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement } from './misc';
+import { getEntity, reloadElement, reloadUploads } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
 import { Action } from './interfaces';
-import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -78,8 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // prevent double click
       (event.target as HTMLButtonElement).disabled = true;
       EntityC.timestamp(entity.id).then(() => {
-        $('#timestampModal').modal('toggle');
-        reloadElement('filesdiv');
         reloadElement('isTimestampedByInfoDiv');
       });
 
@@ -102,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('container').append(overlay);
       ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
-        .then(() => reloadElement('filesdiv'))
+        .then(() => reloadUploads())
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
     // ARCHIVE ENTITY

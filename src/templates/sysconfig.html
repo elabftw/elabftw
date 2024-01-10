@@ -5,7 +5,7 @@
 {% include('create-idp-modal.html') %}
 
 {# Modal for team creation #}
-<div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel' aria-hidden='true'>
+<div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -453,7 +453,7 @@
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
       {% if configArr.debug -%}
-        <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
@@ -618,7 +618,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format'/>
+        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
       </div>
       <textarea class='form-control col-md-3' id='x509' data-trigger='blur' data-model='config' data-target='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
     </div>
@@ -758,7 +758,7 @@
             <div class='d-flex justify-content-between'>
               <div>
                 <label for='x509_{{ idp.id }}' class='col-form-label'>x509cert</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control' />
+                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control'  aria-label='File upload: x509 Certificate in PEM format' />
               </div>
               <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
             </div>
@@ -767,7 +767,7 @@
             <div class='d-flex justify-content-between'>
               <div>
                 <label for='x509_new_{{ idp.id }}' class='col-form-label'>x509cert (additional for rollover)</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' />
+                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
               </div>
               <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
             </div>

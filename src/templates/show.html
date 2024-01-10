@@ -76,7 +76,7 @@
     {% else %}
       <form
     {% endif %}
-       class='form-group form-inline mb-2'>
+      class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
       {% if not searchPage %}
         <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
       {% endif %}

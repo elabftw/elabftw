@@ -211,23 +211,10 @@ export function displayMolFiles(): void {
   });
 }
 
-// DISPLAY 3D MOL FILES
-export function display3DMolecules(autoload = false): void {
-  if (autoload) {
-    $3Dmol.autoload();
-  }
-  // Top left menu to change the style of the displayed molecule
-  $('.dropdown-item').on('click', '.3dmol-style', function() {
-    const targetStyle = $(this).data('style');
-    let options = {};
-    const style = {};
-    if (targetStyle === 'cartoon') {
-      options = { color: 'spectrum' };
-    }
-    style[targetStyle] = options;
-
-    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
-  });
+// this exists here because in the Observer of uploads.ts for filesdiv it makes the browser crash
+// FIXME
+export async function reloadUploads(): Promise<void> {
+  return reloadElement('filesdiv').then(() => $3Dmol.autoload());
 }
 
 // insert a get param in the url and reload the page

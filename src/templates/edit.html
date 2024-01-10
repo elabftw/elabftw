@@ -35,7 +35,7 @@
 
 {% include('view-edit-toolbar.html') %}
 
-<section id='main_section'>
+<section id='main_section' aria-label='main section'>
 
   {# DATE and RATING #}
   <div class='d-flex mb-2'>
@@ -91,7 +91,7 @@
         {% else %}
         {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
           {%- endif %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
@@ -178,7 +178,7 @@
   {# chemdoodle #}
   <div>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h37, wcag/h67, text-content, no-implicit-button-type, no-redundant-role: suppress errors from sketcher] -->
+      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h67, no-implicit-button-type, no-redundant-role: suppress errors from sketcher] -->
     {%- endif %}
     <canvas id='sketcher'></canvas>
   </div>

@@ -1,5 +1,5 @@
 {# Modal for timestamping #}
-<div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel' aria-hidden='true'>
+<div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -20,14 +20,14 @@
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='timestamp' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        <button type='button' data-action='timestamp' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
   </div>
 </div>
 
 {# Modal for blockchain timestamping #}
-<div class='modal fade' id='blocktimestampModal' tabindex='-1' role='dialog' aria-labelledby='blocktimestampModalLabel' aria-hidden='true'>
+<div class='modal fade' id='blocktimestampModal' tabindex='-1' role='dialog' aria-labelledby='blocktimestampModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>

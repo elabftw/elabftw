@@ -7,9 +7,10 @@
  */
 import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
+import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
+import { displayMolFiles, getEntity, relativeMoment, reloadUploads } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -30,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   displayMolFiles();
-  display3DMolecules();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => reloadElement('filesdiv'));
+      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => reloadUploads());
 
     // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
     } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
@@ -167,12 +167,25 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': el.dataset.name + '.png',
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadUploads());
+
+    // CHANGE 3DMOL FILES VISUALIZATION STYLE
+    } else if (el.matches('[data-action="set-3dmol-style"]')) {
+      const targetStyle = el.dataset.style;
+      let options = {};
+      const style = {};
+      if (targetStyle === 'cartoon') {
+        options = { color: 'spectrum' };
+      }
+      style[targetStyle] = options;
+
+      $3Dmol.viewers[el.dataset.divid].setStyle(style).render();
 
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
-      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive}).then(() => reloadElement('filesdiv'));
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
+        .then(() => reloadUploads());
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
@@ -189,9 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Observe "#filesdiv" and reload javascript stuff every time it changes
   new MutationObserver(() => {
     displayMolFiles();
-    display3DMolecules(true);
     displayPlasmidViewer(about);
     malleableFilecomment.listen();
     (new Uploader()).init();
+    relativeMoment();
   }).observe(document.getElementById('filesdiv'), {childList: true, subtree: true});
 });

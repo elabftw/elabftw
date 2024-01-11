@@ -213,7 +213,7 @@
                         {% endif %}
                         {# Demote from Admin #}
                         {% if currentTeam.usergroup == 2 %}
-                          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-admin-user' data-promote='0' data-userid='{{ user.userid }}'>
+                          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
                           </button>
                         {% endif %}

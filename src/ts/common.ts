@@ -357,6 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
 
+    } else if (el.matches('[data-action="select-lang"]')) {
+      const select = (document.getElementById('langSelect') as HTMLSelectElement);
+      fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
+
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
      * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.

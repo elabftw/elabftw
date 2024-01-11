@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EnforceMfa;
-use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
@@ -131,7 +130,6 @@ try {
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
-        'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,

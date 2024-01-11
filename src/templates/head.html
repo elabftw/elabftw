@@ -147,7 +147,13 @@
           </div>
         </div>
      </div>
-    {% endif %}
+  {% else %} {# not auth #}
+    <div class='nav-item ml-auto'>
+      <a href='#' class='color-white hl-hover-gray p-2 rounded' data-action='toggle-modal' data-target='selectLanguageModal'>
+        <i title='Select language' class='fas fa-language fa-lg color-white mr-2'></i>{{ 'Select language'|trans }}
+      </a>
+    </div>
+  {% endif %}
 </nav>
 
 {# SHOW FAVTAGS PANEL #}

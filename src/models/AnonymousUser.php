@@ -26,10 +26,12 @@ final class AnonymousUser extends Users
         $this->userData['team'] = $this->team;
         $this->userData['limit_nb'] = 15;
         $this->userData['display_mode'] = 'it';
-        $this->userData['orderby'] = 'date';
+        $this->userData['orderby'] = 'lastchange';
         $this->userData['sort'] = 'desc';
         $this->userData['disable_shortcuts'] = 1;
-        $this->userData['scope'] = 2;
+        $this->userData['scope_experiments'] = 2;
+        $this->userData['scope_items'] = 2;
+        $this->userData['scope_experiments_templates'] = 2;
         $this->userData['fullname'] = 'Anon Ymous';
         $this->userData['is_sysadmin'] = 0;
         $this->userData['lang'] = $this->lang;

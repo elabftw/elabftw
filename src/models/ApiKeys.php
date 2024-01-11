@@ -160,12 +160,13 @@ class ApiKeys implements RestInterface
         $req->bindParam(':can_write', $canwrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        if ($this->Db->execute($req)) {
+        $res = $this->Db->execute($req);
+        // we store the id of the key in the object to serve it as part of the key
+        // must be executed before AuditLog request!
+        $this->keyId = $this->Db->lastInsertId();
+        if ($res) {
             AuditLogs::create(new ApiKeyCreated($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
         }
-
-        // we store the id of the key in the object to serve it as part of the key
-        $this->keyId = $this->Db->lastInsertId();
         return $this->keyId;
     }
 }

@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -25,7 +26,6 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
-use function json_decode;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -39,50 +39,46 @@ $Response->setData(array(
     'msg' => _('Saved'),
 ));
 
-$reqBody = json_decode((string) $App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
 try {
-    switch ($reqBody['table']) {
-        case 'experiments_categories':
+    $OrderingParams = new OrderingParams((string) $App->Request->getContent());
+    switch ($OrderingParams->table) {
+        case Orderable::ExperimentsCategories:
             $Entity = new ExperimentsCategories(new Teams($App->Users));
             break;
-        case 'items_types':
-            if (!$App->Users->isAdmin) {
-                throw new IllegalActionException('Non admin user tried to access admin controller.');
-            }
+        case Orderable::ItemsTypes:
             $Entity = new ItemsTypes($App->Users);
             break;
-        case 'experiments_status':
+        case Orderable::ExperimentsStatus:
             $Entity = new ExperimentsStatus(new Teams($App->Users));
             break;
-        case 'items_status':
+        case Orderable::ItemsStatus:
             $Entity = new ItemsStatus(new Teams($App->Users));
             break;
-        case 'experiments_steps':
+        case Orderable::ExperimentsSteps:
             $model = new Experiments($App->Users);
             $Entity = $model->Steps;
             break;
-        case 'items_steps':
+        case Orderable::ItemsSteps:
             $model = new Items($App->Users);
             $Entity = $model->Steps;
             break;
-        case 'todolist':
+        case Orderable::Todolist:
             $Entity = new Todolist((int) $App->Users->userData['userid']);
             break;
-        case 'experiments_templates':
+        case Orderable::ExperimentsTemplates:
             $Entity = new Templates($App->Users);
             break;
-        case 'experiments_templates_steps':
+        case Orderable::ExperimentsTemplatesSteps:
             $model = new Templates($App->Users);
             $Entity = $model->Steps;
             break;
-        case 'items_types_steps':
+        case Orderable::ItemsTypesSteps:
             $model = new ItemsTypes($App->Users);
             $Entity = $model->Steps;
             break;
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');
     }
-    $OrderingParams = new OrderingParams($reqBody['table'], $reqBody['ordering']);
     $Entity->updateOrdering($OrderingParams);
 } catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(

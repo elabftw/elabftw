@@ -43,8 +43,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->Todolist->postAction(Action::Create, array('content' => 'item 2'));
         $this->Todolist->postAction(Action::Create, array('content' => 'item 3'));
         $this->Todolist->postAction(Action::Create, array('content' => 'item 4'));
-        $ordering = array('todoItem_3', 'todoItem_2', 'todoItem_4', 'todoItem_1');
-        $OrderingParams = new OrderingParams('todolist', $ordering);
+        $OrderingParams = new OrderingParams('{"table": "todolist", "ordering": ["todoItem_3", "todoItem_2", "todoItem_4", "todoItem_1"]}');
         $this->Todolist->updateOrdering($OrderingParams);
         $all = $this->Todolist->readAll();
         $this->assertEquals('item 3', $all[0]['body']);

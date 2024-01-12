@@ -136,7 +136,7 @@ class App
     }
 
     /**
-     * Generate HTML from a twig template. The App object is injected into every template.
+     * Generate HTML from a twig template. The App object is injected into every template as well as langsArr from the footer
      *
      * @param string $template template located in app/tpl/
      * @param array<string, mixed> $variables the variables injected in the template
@@ -145,7 +145,15 @@ class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig((bool) $this->Config->configArr['debug'])->render($template, array_merge(array('App' => $this), $variables));
+            return $this->getTwig(
+                (bool) $this->Config->configArr['debug']
+            )->render(
+                $template,
+                array_merge(
+                    array('App' => $this, 'langsArr' => Language::getAllHuman()),
+                    $variables,
+                )
+            );
         } catch (RuntimeException $e) {
             echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
             echo '<h2>Error message: ' . $e->getMessage() . '</h2>';
@@ -161,6 +169,10 @@ class App
         // if we have an authenticated user, use their lang setting
         if ($this->Users instanceof AuthenticatedUser) {
             return $this->Users->userData['lang'];
+        }
+        // we can also set it in Session (even when anon)
+        if ($this->Session->has('lang')) {
+            return $this->Session->get('lang');
         }
         // default lang is the server configured one
         return $this->Config->configArr['lang'];

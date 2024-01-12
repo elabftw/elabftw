@@ -10,12 +10,19 @@
 namespace Elabftw\Elabftw;
 
 use function dirname;
+
+use Elabftw\Enums\Language;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 
 // this is here so privacy policy can be called from ajax without being auth
 $Response = new JsonResponse();
+// also deal with setting lang in session with a GET ?lang=fr_FR
+if ($App->Request->query->has('lang')) {
+    $lang = Language::tryFrom($App->Request->query->getString('lang')) ?? Language::EnglishGB;
+    $App->Session->set('lang', $lang->value);
+}
 $Response->setData(array(
     'privacy' => $App->Config->configArr['privacy_policy'],
     'tos' => $App->Config->configArr['terms_of_service'],

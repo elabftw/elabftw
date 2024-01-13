@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
-        $('#fieldLoaderModal').modal('hide');
       });
     }
   });
@@ -211,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
           // clear all fields
           form.reset();
-          $('#fieldBuilderModal').modal('hide');
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

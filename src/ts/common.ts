@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Your session expired!');
           window.location.replace('login.php');
         }
-      });
+      }).catch(error => alert(error));
     }, heartRate);
   }
 

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
@@ -430,11 +430,16 @@ export class Metadata {
     // collect all extra fields, normalize position and group_id, add an element property
     const elements = [];
     for (const [name, properties] of Object.entries(json.extra_fields)) {
+      // 0 is a valid position, so don't do something with "|| 9999"
+      let position = parseInt(String(properties.position), 10);
+      if (typeof position !== 'number') {
+        position = 999;
+      }
       elements.push({
         name: name,
         description: properties.description,
         element: this.generateElement(mode, name, properties),
-        position: parseInt(String(properties.position), 10) || 99999,
+        position: position,
         group_id: properties.group_id || -1,
       });
     }
@@ -496,7 +501,9 @@ export class Metadata {
           }
 
           const wrapperUl = document.createElement('ul');
-          wrapperUl.classList.add('list-group', 'mt-2');
+          wrapperUl.classList.add('list-group', 'mt-2', 'sortable');
+          wrapperUl.dataset.axis = 'y';
+          wrapperUl.dataset.table = 'extra_fields';
           wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
 
           for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
@@ -514,6 +521,20 @@ export class Metadata {
             }
             label.classList.add('py-2');
 
+            // div to hold the drag and delete buttons
+            const handleDeleteDiv = document.createElement('div');
+
+            // add a button to set the position of the field
+            const handle = document.createElement('div');
+            handle.dataset.action = 'metadata-reposition-field';
+            handle.classList.add('btn', 'p-0', 'mr-3', 'border-0', 'lh-normal');
+            const handleIconSpan = document.createElement('span');
+            handleIconSpan.classList.add('draggable', 'sortableHandle');
+            const handleIcon = document.createElement('i');
+            handleIcon.classList.add('fas', 'fa-grip-vertical');
+            handleIconSpan.appendChild(handleIcon);
+            handle.appendChild(handleIconSpan);
+
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
@@ -522,8 +543,11 @@ export class Metadata {
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
+            handleDeleteDiv.appendChild(handle);
+            handleDeleteDiv.appendChild(deleteBtn);
+
             labelDiv.append(label);
-            labelDiv.append(deleteBtn);
+            labelDiv.append(handleDeleteDiv);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {
@@ -540,6 +564,10 @@ export class Metadata {
               listItem.append(element.element);
             }
 
+            // this is useful for Sortable (re-ordering the elements): it needs to have an id
+            // and we use the label to get the name of the field
+            listItem.id = label.innerText;
+
             wrapperUl.append(listItem);
           }
           groupWrapperDiv.append(groupHeader);
@@ -549,6 +577,6 @@ export class Metadata {
       });
 
       this.metadataDiv.append(wrapperDiv);
-    });
+    }).then(() => makeSortableGreatAgain());
   }
 }

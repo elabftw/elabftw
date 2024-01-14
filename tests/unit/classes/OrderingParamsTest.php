@@ -9,13 +9,14 @@
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Enums\Orderable;
 
 class OrderingParamsTest extends \PHPUnit\Framework\TestCase
 {
     public function testIncorrectJson(): void
     {
-        $this->expectException(ImproperActionException::class);
-        new OrderingParams('{a');
+        $OrderingParams = new OrderingParams(array('ordering' => array('test_1', 'test_2', 'test_3'), 'table' => 'items_types_steps'));
+        $this->assertInstanceOf(Orderable::class, $OrderingParams->table);
+        $this->assertIsArray($OrderingParams->ordering);
     }
 }

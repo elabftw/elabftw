@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -33,6 +34,7 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
+
 use function explode;
 use function implode;
 use function is_bool;
@@ -570,6 +572,26 @@ abstract class AbstractEntity implements RestInterface
         }
         ksort($this->entityData);
         return $this->entityData;
+    }
+
+    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): void
+    {
+        $this->canOrExplode('write');
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach($params->ordering as $ordering => $name) {
+            // build jsonPath to field
+            $field = sprintf(
+                '$.%s.%s.%s',
+                MetadataEnum::ExtraFields->value,
+                json_encode($name, JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Position->value,
+            );
+            $req->bindParam(':field', $field);
+            $req->bindValue(':value', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
     }
 
     /**

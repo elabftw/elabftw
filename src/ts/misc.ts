@@ -238,7 +238,7 @@ export function makeSortableGreatAgain(): void {
     // do ajax request to update db with new order
     update: function() {
       // send the order as an array
-      const params = {'table': $(this).data('table'), 'ordering': $(this).sortable('toArray')};
+      const params = {table: $(this).data('table'), entity: getEntity(), ordering: $(this).sortable('toArray')};
       fetch('app/controllers/SortableAjaxController.php', {
         method: 'POST',
         headers: {

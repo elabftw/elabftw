@@ -24,4 +24,5 @@ enum Orderable: string
     case ExperimentsTemplates = 'experiments_templates';
     case ExperimentsTemplatesSteps = 'experiments_templates_steps';
     case ItemsTypesSteps = 'items_types_steps';
+    case ExtraFields = 'extra_fields';
 }

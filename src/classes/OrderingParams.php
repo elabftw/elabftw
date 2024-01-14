@@ -11,9 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\ImproperActionException;
-use function json_decode;
-
-use JsonException;
 
 /**
  * Parameters passed for ordering stuff
@@ -24,21 +21,16 @@ class OrderingParams
 
     public readonly array $ordering;
 
-    public function __construct(string $jsonRequestBody)
+    public function __construct(protected array $reqBody)
     {
-        try {
-            $reqBody = json_decode($jsonRequestBody, true, 5, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            throw new ImproperActionException('Error decoding JSON payload');
-        }
-        $this->table = Orderable::tryFrom($reqBody['table'] ?? '') ?? throw new ImproperActionException('Incorrect table');
-        $this->ordering = $this->cleanup($reqBody['ordering']);
+        $this->table = Orderable::tryFrom($this->reqBody['table'] ?? '') ?? throw new ImproperActionException('Incorrect table');
+        $this->ordering = $this->cleanup($this->reqBody['ordering']);
     }
 
     /**
      * Transform example_33 in 33
      */
-    private function cleanup(array $ordering): array
+    protected function cleanup(array $ordering): array
     {
         return array_map(function ($el) {
             return (int) explode('_', $el)[1];

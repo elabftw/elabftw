@@ -18,17 +18,24 @@ class AutoComplete {
 
       this.query = '';
       this.hasFocus = true;
+      // joiner should be an invisible character and functions as glue between delimiter and search text typed by user
+      // compare to https://stackoverflow.com/a/28405917 for potential characters
+      // e.g. \uFEF, \u2007, \u202F, \u2060, \u200B
+      // \uFEFF can not be used any longer as of tinymce version 5.10.9 - 2023-11-14 and 6.7.3 - 2023-11-15
+      this.joiner = '\u2060';
 
       this.renderInput();
 
       this.bindEvents();
-
     }
 
     renderInput() {
-      // for some reason the id attribute of the first span gets removed during insert, so we use a data attribute instead
-        const rawHtml = `<span data-tiny-complete="1"><span id="autocomplete-delimiter">${this.options.delimiter}</span>
-            <span data-tiny-complete-searchtext="1"><span class="dummy">\uFEFF</span></span></span>`;
+        // for some reason the id attribute of the first span gets removed during insert, so we use a data attribute instead
+        // don't add any additional characters that would be part of rawHtml.innerText unless it is reflected in the lookup methode
+        const rawHtml = '<span data-tiny-complete="1">'
+            + `<span id="autocomplete-delimiter">${this.options.delimiter}</span>`
+            + `<span data-tiny-complete-searchtext="1"><span class="dummy">${this.joiner}</span></span>`
+            + '</span>';
         this.editor.execCommand('mceInsertContent', false, rawHtml);
         this.editor.focus();
         this.editor.selection.select(this.editor.selection.dom.select('span[data-tiny-complete-searchtext="1"] span')[0]);
@@ -146,7 +153,8 @@ class AutoComplete {
     }
 
     lookup() {
-        this.query = this.editor.getBody().querySelector('[data-tiny-complete="1"]').textContent.replace('# ', '');
+        // the text to be replaced has to match exactly what would be the result of rawHtml.innerText of the renderInput methode
+        this.query = this.editor.getBody().querySelector('[data-tiny-complete="1"]').innerText.replace(`${this.options.delimiter}${this.joiner}`, '');
 
         if (this.$dropdown === undefined) {
             this.show();

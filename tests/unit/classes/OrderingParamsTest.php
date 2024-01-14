@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderable;
 
 class OrderingParamsTest extends \PHPUnit\Framework\TestCase
@@ -18,5 +19,16 @@ class OrderingParamsTest extends \PHPUnit\Framework\TestCase
         $OrderingParams = new OrderingParams(array('ordering' => array('test_1', 'test_2', 'test_3'), 'table' => 'items_types_steps'));
         $this->assertInstanceOf(Orderable::class, $OrderingParams->table);
         $this->assertIsArray($OrderingParams->ordering);
+    }
+
+    public function testExtraFields(): void
+    {
+        $OrderingParams = new ExtraFieldsOrderingParams(array(
+            'entity' => array('type' => EntityType::Experiments->value, 'id' => '123'),
+            'ordering' => array('test_1', 'test_2', 'test_3'),
+            'table' => 'extra_fields',
+        ));
+        $this->assertInstanceOf(EntityType::class, $OrderingParams->type);
+        $this->assertEquals(123, $OrderingParams->id);
     }
 }

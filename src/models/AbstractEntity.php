@@ -473,21 +473,6 @@ abstract class AbstractEntity implements RestInterface
         return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
-    /**
-     * Check if the current entity is pin of current user
-     */
-    public function isPinned(): bool
-    {
-        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-        return $req->rowCount() > 0;
-    }
-
     public function getIdFromCategory(int $category): array
     {
         $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
@@ -574,7 +559,7 @@ abstract class AbstractEntity implements RestInterface
         return $this->entityData;
     }
 
-    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): void
+    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
     {
         $this->canOrExplode('write');
         $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
@@ -592,6 +577,7 @@ abstract class AbstractEntity implements RestInterface
             $req->bindParam(':id', $this->id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+        return $this->readOne();
     }
 
     /**

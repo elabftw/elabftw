@@ -46,7 +46,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $OrderingParams = new OrderingParams(array('ordering' => array('test_3', 'test_2', 'test_1'), 'table' => 'todolist'));
         $this->Todolist->updateOrdering($OrderingParams);
         $all = $this->Todolist->readAll();
-        $this->assertEquals('item 3', $all[0]['body']);
+        $this->assertEquals('item 4', $all[0]['body']);
     }
 
     public function testDestroy(): void

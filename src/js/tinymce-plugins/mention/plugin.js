@@ -31,7 +31,7 @@ class AutoComplete {
 
     renderInput() {
         // for some reason the id attribute of the first span gets removed during insert, so we use a data attribute instead
-        // don't add any additional characters that would be part of rawHtml.innerText unless it is reflected in the lookup methode
+        // don't add any additional characters that would be part of rawHtml.innerText unless it is reflected in the lookup method
         const rawHtml = '<span data-tiny-complete="1">'
             + `<span id="autocomplete-delimiter">${this.options.delimiter}</span>`
             + `<span data-tiny-complete-searchtext="1"><span class="dummy">${this.joiner}</span></span>`
@@ -153,7 +153,7 @@ class AutoComplete {
     }
 
     lookup() {
-        // the text to be replaced has to match exactly what would be the result of rawHtml.innerText of the renderInput methode
+        // the text to be replaced has to match exactly what would be the result of rawHtml.innerText of the renderInput method
         this.query = this.editor.getBody().querySelector('[data-tiny-complete="1"]').innerText.replace(`${this.options.delimiter}${this.joiner}`, '');
 
         if (this.$dropdown === undefined) {

@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -33,6 +34,7 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
+
 use function explode;
 use function implode;
 use function is_bool;
@@ -471,21 +473,6 @@ abstract class AbstractEntity implements RestInterface
         return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
-    /**
-     * Check if the current entity is pin of current user
-     */
-    public function isPinned(): bool
-    {
-        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-        return $req->rowCount() > 0;
-    }
-
     public function getIdFromCategory(int $category): array
     {
         $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
@@ -570,6 +557,27 @@ abstract class AbstractEntity implements RestInterface
         }
         ksort($this->entityData);
         return $this->entityData;
+    }
+
+    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
+    {
+        $this->canOrExplode('write');
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach($params->ordering as $ordering => $name) {
+            // build jsonPath to field
+            $field = sprintf(
+                '$.%s.%s.%s',
+                MetadataEnum::ExtraFields->value,
+                json_encode($name, JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Position->value,
+            );
+            $req->bindParam(':field', $field);
+            $req->bindValue(':value', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+        return $this->readOne();
     }
 
     /**

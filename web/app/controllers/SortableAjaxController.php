@@ -26,6 +26,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Exception;
+use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -40,7 +41,25 @@ $Response->setData(array(
 ));
 
 try {
-    $OrderingParams = new OrderingParams((string) $App->Request->getContent());
+    // decode JSON payload
+    try {
+        $reqBody = json_decode((string) $App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
+    } catch (JsonException) {
+        throw new ImproperActionException('Error decoding JSON payload');
+    }
+
+    // extra fields position update
+    if ($reqBody['table'] === 'extra_fields') {
+        $OrderingParams = new ExtraFieldsOrderingParams($reqBody);
+        $Entity = $OrderingParams->type->toInstance($App->Users, $OrderingParams->id);
+        $Entity->updateExtraFieldsOrdering($OrderingParams);
+        $Response->send();
+        exit;
+    }
+
+    // rest of the tables
+    $OrderingParams = new OrderingParams($reqBody);
+
     switch ($OrderingParams->table) {
         case Orderable::ExperimentsCategories:
             $Entity = new ExperimentsCategories(new Teams($App->Users));

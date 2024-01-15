@@ -38,6 +38,7 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
 use function is_bool;
+use function json_decode;
 use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -554,6 +555,9 @@ abstract class AbstractEntity implements RestInterface
         // convert from markdown only if necessary
         if ($this->entityData['content_type'] === self::CONTENT_MD) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
         ksort($this->entityData);
         return $this->entityData;

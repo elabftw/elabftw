@@ -1013,6 +1013,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: owner
+          in: query
+          schema:
+            type: integer
+          description: |
+            Filter results by author (user id)
+          examples:
+            first:
+              summary: Only display results from user with id 2
+              value: 2
         - name: metakey[]
           in: query
           schema:
@@ -1261,6 +1271,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: owner
+          in: query
+          schema:
+            type: integer
+          description: |
+            Filter results by author (user id)
+          examples:
+            first:
+              summary: Only display results from user with id 2
+              value: 2
         - name: metakey[]
           in: query
           schema:

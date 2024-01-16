@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,7 +6,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
@@ -16,7 +15,6 @@ use PDO;
 
 /**
  * Share updateOrdering for all things that can be reordered
- *
  */
 trait SortableTrait
 {
@@ -27,12 +25,9 @@ trait SortableTrait
      */
     public function updateOrdering(OrderingParams $params): void
     {
-        foreach ($params->getOrdering() as $ordering => $id) {
-            $id = explode('_', $id);
-            $id = (int) $id[1];
-            // the table param is whitelisted here
-            $sql = 'UPDATE ' . $params->getTable() . ' SET ordering = :ordering WHERE id = :id';
-            $req = $this->Db->prepare($sql);
+        $sql = 'UPDATE ' . $params->table->value . ' SET ordering = :ordering WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach ($params->ordering as $ordering => $id) {
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $this->Db->execute($req);

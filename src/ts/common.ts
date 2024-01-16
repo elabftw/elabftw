@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Your session expired!');
           window.location.replace('login.php');
         }
-      });
+      }).catch(error => alert(error));
     }, heartRate);
   }
 
@@ -356,6 +356,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const entity = getEntity();
         ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
+
+    } else if (el.matches('[data-action="select-lang"]')) {
+      const select = (document.getElementById('langSelect') as HTMLSelectElement);
+      fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.

@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Local;
-use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -113,7 +112,6 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
-        'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),

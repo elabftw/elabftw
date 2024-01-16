@@ -11,6 +11,7 @@ import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
+import i18next from 'i18next';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,11 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DELETE EXTRA FIELD
     if (el.matches('[data-action="metadata-rm-field"]')) {
-      MetadataC.read().then(metadata => {
-        const name = el.parentElement.closest('div').querySelector('label').innerText;
-        delete metadata.extra_fields[name];
-        MetadataC.update(metadata as ValidMetadata);
-      });
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        MetadataC.read().then(metadata => {
+          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
+          delete metadata.extra_fields[name];
+          MetadataC.update(metadata as ValidMetadata);
+        });
+      }
     }
   });
 
@@ -121,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
-        $('#fieldLoaderModal').modal('hide');
       });
     }
   });
@@ -211,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
           // clear all fields
           form.reset();
-          $('#fieldBuilderModal').modal('hide');
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

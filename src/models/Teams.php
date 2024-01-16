@@ -290,9 +290,9 @@ class Teams implements RestInterface
         // create default item type
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
-        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
+        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         $defaultPermissions = BasePermissions::MyTeams->toJson();
         $extra = array(
             'color' => '#32a100',

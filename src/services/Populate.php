@@ -56,6 +56,7 @@ class Populate
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
+            $Category->bypassWritePermission = true;
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
         }

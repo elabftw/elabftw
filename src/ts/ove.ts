@@ -259,8 +259,6 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       return Promise.reject(response.status);
-    }).catch(error => {
-      console.error(error);
-    });
+    }).catch(error => console.error(error));
   });
 }

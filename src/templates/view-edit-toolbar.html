@@ -84,9 +84,11 @@
   {% if not App.Session.has('is_anon') %}
 
     {# DUPLICATE #}
-    <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-      <i class='fas fa-copy fa-fw'></i>
-    </button>
+    {% if not (Entity.entityData.locked) %}
+      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+        <i class='fas fa-copy fa-fw'></i>
+      </button>
+    {% endif %}
 
     {% if Entity.type == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
       <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&amp;item={{ Entity.id }}'>

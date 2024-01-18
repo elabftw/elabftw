@@ -11,9 +11,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\AuditCategory;
-use Monolog\Logger;
 use Elabftw\Interfaces\AuditEventInterface;
 use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use PDO;
 
 /**

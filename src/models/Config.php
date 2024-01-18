@@ -138,6 +138,7 @@ final class Config implements RestInterface
             ('saml_sync_teams', 0),
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
+            ('chat_url', 'https://gitter.im/elabftw/elabftw'),
             ('allow_useronly', 1),
             ('admins_import_users', 0),
             ('max_revisions', 10),

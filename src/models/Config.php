@@ -170,6 +170,7 @@ final class Config implements RestInterface
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
+            ('emit_audit_logs', '0'),
             ('admins_create_users_remote_dir', '0'),
             ('remote_dir_service', 'eairef'),
             ('remote_dir_config', NULL)";

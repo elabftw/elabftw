@@ -79,7 +79,7 @@ class Teams implements RestInterface
      */
     public function synchronize(int $userid, array $teams): void
     {
-        $Users2Teams = new Users2Teams();
+        $Users2Teams = new Users2Teams($this->Users);
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in

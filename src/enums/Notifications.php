@@ -21,4 +21,5 @@ enum Notifications: int
     case MathjaxFailed = 40;
     case PdfAppendmentFailed = 50;
     case PdfGenericError = 60;
+    case NewVersionInstalled = 70;
 }

@@ -138,6 +138,7 @@ final class Config implements RestInterface
             ('saml_sync_teams', 0),
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
+            ('chat_url', 'https://gitter.im/elabftw/elabftw'),
             ('allow_useronly', 1),
             ('admins_import_users', 0),
             ('max_revisions', 10),
@@ -170,6 +171,7 @@ final class Config implements RestInterface
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
+            ('emit_audit_logs', '0'),
             ('admins_create_users_remote_dir', '0'),
             ('remote_dir_service', 'eairef'),
             ('remote_dir_config', NULL)";

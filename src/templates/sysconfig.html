@@ -118,6 +118,12 @@
     </div>
     <hr>
 
+    <div class='d-flex justify-content-between'>
+      <label for='chat_url' class='col-form-label'>{{ 'URL where the Chat room menu entry from Help dropdown points'|trans }}</label>
+      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.chat_url }}' data-trigger='blur' data-model='config' data-target='chat_url' id='chat_url' />
+    </div>
+    <hr>
+
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
@@ -992,6 +998,11 @@
 </div>
 
 <div data-tabcontent='13' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'} %}
+  </div>
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <p id='auditLogsTableLabel'>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>

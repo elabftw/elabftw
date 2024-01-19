@@ -9,6 +9,7 @@
 
 namespace Elabftw\Controllers;
 
+use Elabftw\AuditEvent\Import;
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Storage;
@@ -18,6 +19,7 @@ use Elabftw\Import\Eln;
 use Elabftw\Import\Zip;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\ImportInterface;
+use Elabftw\Models\AuditLogs;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ImportController implements ControllerInterface
 {
+    private const AUDIT_THRESHOLD = 12;
+
     public function __construct(private App $app, private Request $request)
     {
     }
@@ -35,11 +39,15 @@ class ImportController implements ControllerInterface
     {
         $Importer = $this->getImporter();
         $Importer->import();
+        $inserted = $Importer->getInserted();
         $msg = sprintf(
             '%d %s',
-            $Importer->getInserted(),
-            ngettext('item imported successfully.', 'items imported successfully.', $Importer->getInserted()),
+            $inserted,
+            ngettext('item imported successfully.', 'items imported successfully.', $inserted),
         );
+        if ($inserted > self::AUDIT_THRESHOLD) {
+            AuditLogs::create(new Import($this->app->Users->userid ?? 0, $inserted));
+        }
         $this->app->Session->getFlashBag()->add('ok', $msg);
         if (str_starts_with((string) $this->request->request->get('target'), 'items')) {
             return new RedirectResponse('/database.php?order=lastchange');

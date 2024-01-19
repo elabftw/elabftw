@@ -90,7 +90,7 @@
               <td>{{ upload.filesize|formatBytes }}</td>
               {# ACTIONS #}
               <td>
-                <a href='app/download.php?f={{ upload.long_name }}&amp;name={{ upload.real_name }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                <a href='app/download.php?f={{ upload.long_name }}&amp;name={{ upload.real_name }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1' {{ loop.first ? 'id="last-uploaded-link"' }}>
                   <i class='fas fa-download fa-fw'></i>
                 </a>
                 {% if not upload.immutable %}

@@ -10,7 +10,7 @@ import { Action as MalleAction, Malle } from '@deltablot/malle';
 import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, getEntity, relativeMoment, reloadElement } from './misc';
+import { displayMolFiles, getEntity, relativeMoment, reloadElement, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -98,7 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => reloadElement('uploadsDiv'));
+      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+        .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 
     // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
     } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
@@ -168,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': el.dataset.name + '.png',
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
+        .then(() => reloadElement('uploadsDiv'));
 
     // CHANGE 3DMOL FILES VISUALIZATION STYLE
     } else if (el.matches('[data-action="set-3dmol-style"]')) {
@@ -192,7 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`).then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
+          .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
       }
     }
   });
@@ -200,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Observe "#uploadsDiv" if it is there and reload javascript stuff every time it changes
   const uploadsDiv = document.getElementById('uploadsDiv');
   if (uploadsDiv) {
     new MutationObserver(() => {

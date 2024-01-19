@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import * as $3Dmol from '3dmol';
 import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
@@ -209,12 +208,6 @@ export function displayMolFiles(): void {
       viewer.loadMolecule(mol);
     });
   });
-}
-
-// this exists here because in the Observer of uploads.ts for filesdiv it makes the browser crash
-// FIXME
-export async function reloadUploads(): Promise<void> {
-  return reloadElement('filesdiv').then(() => $3Dmol.autoload());
 }
 
 // insert a get param in the url and reload the page

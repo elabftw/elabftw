@@ -6,18 +6,13 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadUploads } from './misc';
+import { reloadElement } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
 {
-  targetElement = '#elabftw-dropzone';
   // holds the resolve function of tinymce image handler
   tinyImageSuccess: (value: string | PromiseLike<string>) => void;
-
-  getElement(): string {
-    return this.targetElement;
-  }
 
   getOptions() {
     const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
@@ -32,8 +27,8 @@ export class Uploader
         // once upload is finished
         this.on('complete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            // reload the #filesdiv
-            reloadUploads().then(() => {
+            // reload the #uploadsDiv
+            reloadElement('uploadsDiv').then(() => {
               // Now grab the url of the image to give it to tinymce if needed
               // first make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
               if (typeof that.tinyImageSuccess !== 'undefined' && that.tinyImageSuccess !== null) {
@@ -59,9 +54,13 @@ export class Uploader
   }
 
   init(): Dropzone {
-    // the dz-clickable class is present if Dropzone is active on this element
-    if (document.getElementById('elabftw-dropzone') && document.getElementById('elabftw-dropzone').classList.contains('dz-clickable') === false) {
-      return new Dropzone(this.getElement(), this.getOptions());
+    const dropzoneEl = document.getElementById('elabftw-dropzone');
+    if (dropzoneEl) {
+      // Dropzone can be initialized in edit.ts and uploads.ts but we should only init it once
+      if (Object.prototype.hasOwnProperty.call(dropzoneEl, 'dropzone')) {
+        return dropzoneEl.dropzone;
+      }
+      return new Dropzone(dropzoneEl, this.getOptions());
     }
   }
 }

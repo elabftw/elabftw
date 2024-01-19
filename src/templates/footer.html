@@ -34,7 +34,7 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
+    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink() }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
     Made with ♥ by <a href='https://www.deltablot.com'>Deltablot</a>
     {% if App.Config.configArr.debug %}
       <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}

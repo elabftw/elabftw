@@ -76,7 +76,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $realName = $file['real_name'];
             // if we have a file with the same name, it shouldn't overwrite the previous one
             if (in_array($realName, $realNamesSoFar, true)) {
-                $realName = (string) $i . '_' . $realName;
+                $realName = sprintf('%d_%s', $i, $realName);
             }
             $realNamesSoFar[] = $realName;
             // modify the real_name in place

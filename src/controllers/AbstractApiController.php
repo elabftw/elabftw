@@ -63,17 +63,17 @@ abstract class AbstractApiController implements ControllerInterface
          *   string(1) "4"
          *   }
          */
-        $req = explode('/', rtrim((string) $this->Request->query->get('req'), '/'));
+        $req = explode('/', rtrim($this->Request->query->getString('req'), '/'));
 
         // now parse the query string (part after ?)
         if ($this->Request->query->has('limit')) {
-            $this->limit = (int) $this->Request->query->get('limit');
+            $this->limit = $this->Request->query->getInt('limit');
         }
         if ($this->Request->query->has('offset')) {
-            $this->offset = (int) $this->Request->query->get('offset');
+            $this->offset = $this->Request->query->getInt('offset');
         }
         if ($this->Request->query->has('search')) {
-            $this->search = trim((string) $this->Request->query->get('search'));
+            $this->search = trim($this->Request->query->getString('search'));
         }
 
         // assign the endpoint (experiments, items, uploads, items_types, status)

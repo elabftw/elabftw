@@ -245,8 +245,8 @@ class Apiv2Controller extends AbstractApiController
                 return new Scheduler(
                     new Items($this->Users, $this->id),
                     null,
-                    (string) $this->Request->query->get('start', $defaultStart),
-                    (string) $this->Request->query->get('end', $defaultEnd),
+                    $this->Request->query->getString('start', $defaultStart),
+                    $this->Request->query->getString('end', $defaultEnd),
                     $this->Request->query->getInt('cat'),
                 );
             case 'favtags':

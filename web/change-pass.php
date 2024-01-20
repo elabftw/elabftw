@@ -30,16 +30,16 @@ $renderArr = array();
 
 try {
     // make sure this page is accessed with a key
-    if (!$Request->query->has('key')) {
+    if (!$App->Request->query->has('key')) {
         throw new IllegalActionException('Bad parameters in url.');
     }
 
     // validate the key to show error if the key is expired
     $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
-    $ResetPasswordKey->validate($Request->query->getAlnum('key'));
+    $ResetPasswordKey->validate($App->Request->query->getAlnum('key'));
 
     $template = 'change-pass.html';
-    $renderArr = array('key' => $Request->query->getAlnum('key'));
+    $renderArr = array('key' => $App->Request->query->getAlnum('key'));
 } catch (Exception $e) {
     $renderArr['error'] = $e->getMessage();
 } finally {

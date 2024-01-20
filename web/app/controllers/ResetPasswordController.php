@@ -47,8 +47,8 @@ try {
     );
 
     // PART 1: we receive the email from the login page/forgot password form
-    if ($Request->request->has('email')) {
-        $email = $Request->request->getString('email');
+    if ($App->Request->request->has('email')) {
+        $email = $App->Request->request->getString('email');
 
         // check email is valid. Input field is of type email so browsers should not let users send invalid email.
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -100,12 +100,12 @@ try {
     }
 
     // PART 2: update the password
-    if ($Request->request->has('password')) {
+    if ($App->Request->request->has('password')) {
         // verify the key received is valid
         // we get the Users object from the email encrypted in the key
-        $Users = $ResetPasswordKey->validate($Request->request->getString('key'));
+        $Users = $ResetPasswordKey->validate($App->Request->request->getString('key'));
         // Replace new password in database
-        $Users->resetPassword($Request->request->getString('password'));
+        $Users->resetPassword($App->Request->request->getString('password'));
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (QuantumException $e) {
@@ -120,7 +120,7 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {
-    $App->Log->warning('Reset password failed attempt', array(array('ip' => $Request->server->get('REMOTE_ADDR')), array('exception' => $e)));
+    $App->Log->warning('Reset password failed attempt', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('exception' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error());
 } finally {
     $Response->send();

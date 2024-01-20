@@ -76,7 +76,7 @@ class Filter
     /**
      * Simply sanitize email
      */
-    public static function sanitize_email(string $input): string
+    public static function sanitizeEmail(string $input): string
     {
         $output = filter_var($input, FILTER_SANITIZE_EMAIL);
         if ($output === false) {

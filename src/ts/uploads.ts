@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   displayMolFiles();
-  $3Dmol.autoload();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();

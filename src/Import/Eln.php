@@ -14,6 +14,7 @@ use function basename;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -62,6 +63,14 @@ class Eln extends AbstractZip
         }
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->graph = $json['@graph'];
+
+        // Do we need to update data: don't sanitize input, escape output
+        if ($this->graph[1]['@id'] === '#ro-crate_created'
+            && version_compare($this->graph[1]['instrument']['version'], '5.0.0-alpha4', '>=')
+        ) {
+            $this->switchToEscapeOutput = false;
+        }
+
         // find the node describing the crate
         foreach ($json['@graph'] as $node) {
             if ($node['@id'] === './') {
@@ -86,6 +95,9 @@ class Eln extends AbstractZip
     private function importRootDataset(array $dataset): void
     {
         $createTarget = $this->targetNumber;
+        if ($this->switchToEscapeOutput) {
+            $dataset['name'] = Tools::dontFilterInputEscapeOutput($dataset['name']);
+        }
         $title = $dataset['name'] ?? _('Untitled');
 
         if ($this->Entity instanceof AbstractConcreteEntity) {
@@ -114,6 +126,9 @@ class Eln extends AbstractZip
             }
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
+                    if ($this->switchToEscapeOutput) {
+                        $tag = Tools::dontFilterInputEscapeOutput($tag);
+                    }
                     $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
                 }
             }
@@ -129,6 +144,9 @@ class Eln extends AbstractZip
                 if (count($mention) === 1) {
                     // resolve the id to get the full node content
                     $fullMention = $this->getNodeFromId($mention['@id']);
+                }
+                if ($this->switchToEscapeOutput) {
+                    $fullMention['name'] = Tools::dontFilterInputEscapeOutput($fullMention['name']);
                 }
                 $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $fullMention['@id'], $fullMention['name']);
             }
@@ -147,6 +165,11 @@ class Eln extends AbstractZip
                     $fullComment = $this->getNodeFromId($comment['@id']);
                 }
                 $author = $this->getNodeFromId($fullComment['author']['@id']);
+                if ($this->switchToEscapeOutput) {
+                    $author['givenName'] = Tools::dontFilterInputEscapeOutput($author['givenName']);
+                    $author['familyName'] = Tools::dontFilterInputEscapeOutput($author['familyName']);
+                    $fullComment['text'] = Tools::dontFilterInputEscapeOutput($fullComment['text'], true);
+                }
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
                     $author['givenName'] ?? '',
@@ -202,6 +225,9 @@ class Eln extends AbstractZip
         if (!isset($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
             throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
+        if ($this->switchToEscapeOutput) {
+            $file['description'] = Tools::dontFilterInputEscapeOutput($file['description'], true);
+        }
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
         // the alternateName holds the previous long_name of the file
         if (isset($file['alternateName'])) {
@@ -228,6 +254,9 @@ class Eln extends AbstractZip
                     // let's see if we can find a status like this in target instance
                     $targetStatusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
                     $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {
+                        if ($this->switchToEscapeOutput) {
+                            $sourceStatus = Tools::dontFilterInputEscapeOutput($sourceStatus);
+                        }
                         return $status['title'] === $sourceStatus;
                     });
                     if (!empty($filteredStatus)) {
@@ -237,11 +266,19 @@ class Eln extends AbstractZip
                 }
             }
             if ($json['metadata'] !== null) {
-                $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
+                // ToDo: does $json['metadata'] need escape switch?
+                $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
+                if ($this->switchToEscapeOutput) {
+                    $metadata = Tools::dontFilterInputEscapeOutputMetadata($metadata);
+                }
+                $this->Entity->patch(Action::Update, array('metadata' => $metadata));
             }
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {
+                    if ($this->switchToEscapeOutput) {
+                        $step['body'] = Tools::dontFilterInputEscapeOutput($step['body']);
+                    }
                     $this->Entity->Steps->import($step);
                 }
             }
@@ -254,6 +291,9 @@ class Eln extends AbstractZip
         $html = sprintf('<p>%s<br>%s', $part['name'] ?? '', $part['dateCreated'] ?? '');
         $html .= '<ul>';
         foreach ($part['hasPart'] as $subpart) {
+            if ($this->switchToEscapeOutput) {
+                $subpart['description'] = Tools::dontFilterInputEscapeOutput($subpart['description'], true);
+            }
             $html .= '<li>' . basename($subpart['@id']) . ' ' . ($subpart['description'] ?? '') . '</li>';
         }
         $html .= '</ul>';

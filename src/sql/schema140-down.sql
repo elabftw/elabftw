@@ -22,7 +22,7 @@ BEGIN
     PREPARE stmt FROM @sql_text; /**/
     EXECUTE stmt; /**/
     DEALLOCATE PREPARE stmt; /**/
-    -- add back the line break elements to comment columns like nl2br() of PHP does
+    -- add back the line break elements to comment columns like PHP's nl2br() does
     IF column_name = 'comment' THEN
         SET @sql_text = concat('UPDATE ', table_name, ' SET ', column_name, ' = REGEXP_REPLACE(', column_name, ', "(\r\n|\n\r|\n|\r)", "<br />$1", 1, 0, "m");'); /**/
         PREPARE stmt FROM @sql_text; /**/

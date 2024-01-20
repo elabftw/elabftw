@@ -26,6 +26,10 @@ abstract class AbstractZip extends AbstractImport
     // the folder name where we extract the archive
     protected string $tmpDir;
 
+    // in version 5.0.0 we switched from filter input to escape output
+    // do we need to update old data upon import
+    protected bool $switchToEscapeOutput = true;
+
     protected array $allowedMimes = array(
         'application/zip',
         'application/force-download',

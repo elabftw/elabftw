@@ -27,19 +27,38 @@ BEGIN
         DEALLOCATE PREPARE stmt; /**/
     END IF; /**/
 END;
+DROP PROCEDURE IF EXISTS `update_column_metadata`;
+CREATE PROCEDURE `update_column_metadata`(IN `table_name` CHAR(255))
+MODIFIES SQL DATA
+BEGIN
+    -- replace &#39; and &#34; with \" and '
+    SET @sql_text = concat('UPDATE ', table_name, ' SET metadata = CONVERT(REPLACE(CONVERT(`metadata`, CHAR CHARACTER SET utf8mb4), "&#34;", ''\"''), JSON);'); /**/
+    PREPARE stmt FROM @sql_text; /**/
+    EXECUTE stmt; /**/
+    DEALLOCATE PREPARE stmt; /**/
+    SET @sql_text = concat('UPDATE ', table_name, ' SET metadata = CONVERT(REPLACE(CONVERT(`metadata`, CHAR CHARACTER SET utf8mb4), "&#39;", "''"), JSON);'); /**/
+    PREPARE stmt FROM @sql_text; /**/
+    EXECUTE stmt; /**/
+    DEALLOCATE PREPARE stmt; /**/
+END;
 CALL update_column('api_keys', 'name');
 CALL update_column('experiments', 'title');
+CALL update_column_metadata('experiments');
 CALL update_column('experiments_categories', 'title');
 CALL update_column('experiments_comments', 'comment');
 CALL update_column('experiments_status', 'title');
 CALL update_column('experiments_steps', 'body');
 CALL update_column('experiments_templates', 'title');
+CALL update_column_metadata('experiments_templates');
 CALL update_column('experiments_templates_steps', 'body');
+CALL update_column_metadata('experiments_revisions');
 CALL update_column('items', 'title');
+CALL update_column_metadata('items');
 CALL update_column('items_comments', 'comment');
 CALL update_column('items_status', 'title');
 CALL update_column('items_steps', 'body');
 CALL update_column('items_types', 'title');
+CALL update_column_metadata('items_types');
 CALL update_column('items_types_steps', 'body');
 CALL update_column('tags', 'tag');
 CALL update_column('teams', 'name');
@@ -51,4 +70,5 @@ CALL update_column('uploads', 'comment');
 CALL update_column('users', 'firstname');
 CALL update_column('users', 'lastname');
 DROP PROCEDURE IF EXISTS `update_column`;
+DROP PROCEDURE IF EXISTS `update_column_metadata`;
 UPDATE config SET conf_value = 140 WHERE conf_name = 'schema';

@@ -70,6 +70,6 @@ class Csrf
         if ($this->Request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
             return (string) $this->Request->headers->get('X-CSRF-Token');
         }
-        return (string) $this->Request->request->get('csrf');
+        return $this->Request->request->getString('csrf');
     }
 }

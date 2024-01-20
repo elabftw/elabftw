@@ -51,7 +51,7 @@ try {
     $changelogData = array();
     $metadataGroups = array();
     if ($App->Request->query->has('templateid')) {
-        $Templates->setId((int) $App->Request->query->get('templateid'));
+        $Templates->setId($App->Request->query->getInt('templateid'));
         $entityData = $Templates->readOne();
         $Metadata = new Metadata($Templates->entityData['metadata']);
         $metadataGroups = $Metadata->getGroups();

@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExpectedObjectPropAccessButGotNull
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 $template = 'error.html';
 $renderArr = array();
@@ -56,7 +56,7 @@ try {
     $itemsCategoryArr = $ItemsTypes->readAll();
     $ExperimentsCategories = new ExperimentsCategories($Teams);
     $experimentsCategoriesArr = $ExperimentsCategories->readAll();
-    if ($Request->query->has('templateid')) {
+    if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
@@ -71,7 +71,7 @@ try {
     // Users search
     $isSearching = false;
     $usersArr = array();
-    if ($Request->query->has('q')) {
+    if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             $App->Request->query->getString('q'),

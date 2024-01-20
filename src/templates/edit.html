@@ -178,7 +178,8 @@
   {# chemdoodle #}
   <div>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h67, no-implicit-button-type, no-redundant-role: suppress errors from sketcher] -->
+      {# set no-unused-disable and text-content and wcag/h37 because removing or leaving text-content and wcag/h37 brings up error #}
+      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h37, wcag/h67, text-content, no-implicit-button-type, no-redundant-role, no-unused-disable: suppress errors from sketcher] -->
     {%- endif %}
     <canvas id='sketcher'></canvas>
   </div>

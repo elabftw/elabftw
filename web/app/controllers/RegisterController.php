@@ -29,25 +29,26 @@ try {
     }
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
-    if (!empty($Request->request->get('bot'))) {
+    if (!empty($App->Request->request->get('bot'))) {
         throw new IllegalActionException('The bot field was filled on register page. Possible automated registration attempt.');
     }
 
-    if ((Check::id((int) $Request->request->get('team')) === false) ||
-        !$Request->request->get('firstname') ||
-        !$Request->request->get('lastname') ||
-        !$Request->request->get('email') ||
-        !filter_var($Request->request->get('email'), FILTER_VALIDATE_EMAIL)) {
+    if (Check::id($App->Request->request->getInt('team')) === false
+        || !$App->Request->request->getString('firstname')
+        || !$App->Request->request->getString('lastname')
+        || !$App->Request->request->getString('email')
+        || !filter_var($App->Request->request->get('email'), FILTER_VALIDATE_EMAIL)
+    ) {
         throw new ImproperActionException(_('A mandatory field is missing!'));
     }
 
     // Create user
     $App->Users->createOne(
-        (new UserParams('email', (string) $Request->request->get('email')))->getContent(),
-        array($Request->request->get('team')),
-        (new UserParams('firstname', (string) $Request->request->get('firstname')))->getContent(),
-        (new UserParams('lastname', (string) $Request->request->get('lastname')))->getContent(),
-        (new UserParams('password', (string) $Request->request->get('password')))->getContent(),
+        (new UserParams('email', $App->Request->request->getString('email')))->getContent(),
+        array($App->Request->request->getInt('team')),
+        (new UserParams('firstname', $App->Request->request->getString('firstname')))->getContent(),
+        (new UserParams('lastname', $App->Request->request->getString('lastname')))->getContent(),
+        (new UserParams('password', $App->Request->request->getString('password')))->getContent(),
     );
 
     if ($App->Users->needValidation) {
@@ -56,7 +57,7 @@ try {
         $App->Session->getFlashBag()->add('ok', _('Registration successful :)<br>Welcome to eLabFTW o/'));
     }
     // store the email here so we can put it in the login field
-    $App->Session->set('email', $Request->request->get('email'));
+    $App->Session->set('email', $App->Request->request->getString('email'));
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

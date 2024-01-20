@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
+use function sprintf;
 
 /**
  * Make sure the database is consistent with no leftover things
@@ -76,7 +77,7 @@ class DatabaseCleaner implements CleanerInterface
         $req->execute();
         $res = $req->fetchAll();
         if (!empty($res)) {
-            echo 'Found ' . (string) count($res) . ' rows to delete in ' . $table . "\n";
+            echo sprintf("Found %d rows to delete in %s\n", count($res), $table);
             $this->deleteFrom($table, $res);
         }
     }

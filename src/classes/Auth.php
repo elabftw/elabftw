@@ -79,7 +79,7 @@ class Auth implements AuthInterface
                 );
             case 'access_key':
                 // now we need to know in which team we autologin the user
-                $TeamFinder = new TeamFinder($this->Request->getScriptName(), (string) ($this->Request->query->get('access_key') ?? ''));
+                $TeamFinder = new TeamFinder($this->Request->getScriptName(), $this->Request->query->getString('access_key'));
                 $team = $TeamFinder->findTeam();
 
                 if ($team === 0) {

@@ -119,11 +119,11 @@ class DisplayParams
             $this->offset = $this->Request->query->getInt('offset');
         }
         if (!empty($this->Request->query->get('q'))) {
-            $this->query = trim((string) $this->Request->query->get('q'));
+            $this->query = trim($this->Request->query->getString('q'));
             $this->searchType = 'query';
         }
         if (!empty($this->Request->query->get('extended'))) {
-            $this->extendedQuery = trim((string) $this->Request->query->get('extended'));
+            $this->extendedQuery = trim($this->Request->query->getString('extended'));
             $this->searchType = 'extended';
         }
         // filter by user if we don't want to show the rest of the team, only for experiments

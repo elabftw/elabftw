@@ -441,6 +441,7 @@ export class Metadata {
         element: this.generateElement(mode, name, properties),
         position: position,
         group_id: properties.group_id || -1,
+        required: properties.required ? properties.required : false,
       });
     }
 
@@ -516,7 +517,7 @@ export class Metadata {
             const label = document.createElement('label');
             label.htmlFor = element.element.id;
             label.innerText = element.name as string;
-            if (element.element.required) {
+            if (element.required) {
               label.classList.add('required-label');
             }
             label.classList.add('py-2');

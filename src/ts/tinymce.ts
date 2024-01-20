@@ -164,6 +164,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'C', value: 'c'},
       {text: 'C++', value: 'cpp'},
       {text: 'CSS', value: 'css'},
+      {text: 'Diff', value: 'diff'},
       {text: 'Fortran', value: 'fortran'},
       {text: 'Go', value: 'go'},
       {text: 'Java', value: 'java'},

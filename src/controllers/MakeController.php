@@ -11,6 +11,7 @@ namespace Elabftw\Controllers;
 
 use function count;
 
+use Elabftw\AuditEvent\Export;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -29,6 +30,7 @@ use Elabftw\Make\MakeReport;
 use Elabftw\Make\MakeSchedulerReport;
 use Elabftw\Make\MakeStreamZip;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
@@ -48,6 +50,8 @@ use ZipStream\ZipStream;
  */
 class MakeController implements ControllerInterface
 {
+    private const AUDIT_THRESHOLD = 12;
+
     private AbstractEntity $Entity;
 
     // an array of id to process
@@ -133,6 +137,11 @@ class MakeController implements ControllerInterface
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {
             $this->idArr = explode(' ', (string) $this->Request->query->get('id'));
+        }
+        // generate audit log event if exporting more than $threshold entries
+        $count = count($this->idArr);
+        if ($count > self::AUDIT_THRESHOLD) {
+            AuditLogs::create(new Export($this->Users->userid ?? 0, count($this->idArr)));
         }
     }
 

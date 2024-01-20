@@ -107,13 +107,13 @@
         <div class='nav-item dropdown'>
           <button class='btn nav-link dropdown-toggle border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
-            <a class='dropdown-item' href='{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
+            <a class='dropdown-item' href='{{ App.getWhatsnewLink() }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' href='#' data-action='toggle-modal' data-target='helpModal'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net/api.html' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='{{ App.Config.configArr.support_url }}' target='_blank' rel='noopener'><i class='fas fa-bell-concierge fa-fw'></i> {{ 'Support'|trans }}</a>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/discussions/' target='_blank' rel='noopener'><i class='fas fa-comments fa-fw'></i> {{ 'Community forum'|trans }}</a>
-            <a class='dropdown-item' href='https://gitter.im/elabftw/elabftw' target='_blank' rel='noopener'><i class='fas fa-comment-dots fa-fw'></i> {{ 'Chat room'|trans }}</a>
+            <a class='dropdown-item' href='{{ App.Config.configArr.chat_url }}' target='_blank' rel='noopener'><i class='fas fa-comment-dots fa-fw'></i> {{ 'Chat room'|trans }}</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/issues/new/choose' target='_blank' rel='noopener'><i class='fas fa-bug fa-fw'></i> {{ 'Submit feedback'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net/contributing.html' target='_blank' rel='noopener'><i class='fas fa-handshake-angle fa-fw'></i> {{ 'Contribute to eLabFTW'|trans }}</a>

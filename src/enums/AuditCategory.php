@@ -24,4 +24,6 @@ enum AuditCategory: int
     case ApiKeyCreated = 50;
     case ApiKeyDeleted = 51;
     case ConfigModified = 60;
+    case Export = 70;
+    case Import = 80;
 }

@@ -899,6 +899,7 @@ CREATE TABLE `users` (
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
+  `last_seen_version` INT UNSIGNED NOT NULL DEFAULT 40900,
   `allow_untrusted` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_comment_created` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_comment_created_email` tinyint UNSIGNED NOT NULL DEFAULT 1,

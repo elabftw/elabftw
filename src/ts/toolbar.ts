@@ -74,8 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TIMESTAMP button in modal
     } else if (el.matches('[data-action="timestamp"]')) {
-      // prevent double click
-      (event.target as HTMLButtonElement).disabled = true;
       EntityC.timestamp(entity.id).then(() => {
         reloadElement('isTimestampedByInfoDiv');
       });

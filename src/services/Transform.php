@@ -9,6 +9,7 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -97,6 +98,14 @@ class Transform
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
                     _('A step deadline is approaching.'),
+                    $notif['created_at'],
+                ),
+            Notifications::NewVersionInstalled =>
+                sprintf(
+                    '<span data-action="ack-notif" data-id="%d" data-href="https://www.deltablot.com/posts/release-%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    App::INSTALLED_VERSION_INT,
+                    sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],
                 ),
             default => throw new ImproperActionException('Invalid notification type.'),

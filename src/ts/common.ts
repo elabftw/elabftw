@@ -548,34 +548,26 @@ document.addEventListener('DOMContentLoaded', () => {
         queryUrl += `/revisions/${el.dataset.revid}`;
       }
       ApiC.getJson(queryUrl).then(json => {
-        // do we display the body?
-        const metadata = JSON.parse(json.metadata || '{}');
-        if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
-          && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
-          && !metadata.elabftw.display_main_text
-        ) {
-          // add extra fields elements from metadata json
-          const entity = {type: el.dataset.type as EntityType, id: entityId};
-          const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-          MetadataC.metadataDiv = contentDiv;
-          MetadataC.display('view').then(() => {
-            // go over all the type: url elements and create a link dynamically
-            generateMetadataLink();
-          });
-        } else {
-          // add html content
-          contentDiv.innerHTML = json.body_html;
+        // add extra fields elements from metadata json
+        const entity = {type: el.dataset.type as EntityType, id: entityId};
+        const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+        MetadataC.metadataDiv = contentDiv;
+        MetadataC.display('view').then(() => {
+          // go over all the type: url elements and create a link dynamically
+          generateMetadataLink();
+        });
+        // add html content
+        contentDiv.innerHTML = json.body_html;
 
-          // adjust the width of the children
-          // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-          const width = document.getElementById('parent_' + randId).clientWidth - 30;
-          bodyDiv.style.width = String(width);
+        // adjust the width of the children
+        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+        const width = document.getElementById('parent_' + randId).clientWidth - 30;
+        bodyDiv.style.width = String(width);
 
-          // ask mathjax to reparse the page
-          MathJax.typeset();
+        // ask mathjax to reparse the page
+        MathJax.typeset();
 
-          TableSortingC.init();
-        }
+        TableSortingC.init();
 
         bodyDiv.toggleAttribute('hidden');
         bodyDiv.dataset.bodyLoaded = '1';

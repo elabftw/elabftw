@@ -170,7 +170,7 @@ class Users implements RestInterface
         // check if the team is empty before adding the user to the team
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
-        $Users2Teams = new Users2Teams();
+        $Users2Teams = new Users2Teams($this->requester);
         $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'), $group);
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
@@ -332,12 +332,12 @@ class Users implements RestInterface
                     if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    (new Users2Teams())->create($this->userData['userid'], $team);
+                    (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
-            Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
+            Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) $params['with_exp']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (

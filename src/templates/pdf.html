@@ -134,14 +134,14 @@
   <table class='noborder' role='presentation'>
     <tr>
       <td class='noborder'>
-        <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
+        <barcode code='{{ url|escape('html_attr') }}' type='QR' class='barcode' size='0.8' error='M' />
       </td>
       <td class='noborder'>
         <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
         {% if locked %}
           <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
         {% endif %}
-        <p class='elabid'>Link: <a href='{{ url|raw }}'>{{ url }}</a></p>
+        <p class='elabid'>Link: <a href='{{ url|escape('html_attr') }}'>{{ url }}</a></p>
       </td>
     </tr>
   </table>

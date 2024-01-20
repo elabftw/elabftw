@@ -266,7 +266,6 @@ class Eln extends AbstractZip
                 }
             }
             if ($json['metadata'] !== null) {
-                // ToDo: does $json['metadata'] need escape switch?
                 $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
                 if ($this->switchToEscapeOutput) {
                     $metadata = Tools::dontFilterInputEscapeOutputMetadata($metadata);

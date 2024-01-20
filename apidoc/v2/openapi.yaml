@@ -456,6 +456,8 @@ components:
           type: integer
         is_pinned:
           type: integer
+        sharelink:
+          type: string
         status:
           type: integer
           nullable: true

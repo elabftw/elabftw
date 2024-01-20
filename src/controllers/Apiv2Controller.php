@@ -146,10 +146,8 @@ class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Incorrect format value.');
             }
             // fit the request with what makecontroller expects
-            if ($this->Model instanceof AbstractConcreteEntity) {
-                $this->Request->query->set('type', $this->Model->type);
-                $this->Request->query->set('id', $this->id);
-            }
+            $this->Request->query->set('type', $this->Model->type);
+            $this->Request->query->set('id', $this->id);
         }
         if ($this->Request->getContent()) {
             try {

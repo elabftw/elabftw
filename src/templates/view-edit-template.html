@@ -34,10 +34,8 @@
     <i class='fas fa-copy fa-fw'></i>
   </button>
 
-  {# DOWNLOAD #}
-  <button type='button' title='{{ 'Download template'|trans }}' data-action='download-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-    <i class='fas fa-download fa-fw'></i>
-  </button>
+  {# DOWNLOAD / EXPORT MENU #}
+  {% include 'export-menu.html' %}
 
   {# IMPORT #}
   {% if App.Request.getScriptName|split('/')|last == 'team.php' -%}

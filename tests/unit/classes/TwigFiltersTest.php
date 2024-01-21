@@ -72,7 +72,7 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
             '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div>'
                 . '%1$sfirst one</h5><h6>first</h6></li>'
                 . '%1$ssecond one</h5><h6>second</h6></li>'
-                . '%1$sunchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" ></h6></li>'
+                . '%1$sunchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox"></h6></li>'
                 . '%1$surl current tab</h5><h6>'
                 . '<a href="https://example.com/foo/bar.php?fizz=buzz&amp;test=success&amp;test2=elabftw">https://example.com/foo/bar.php?fizz=buzz&amp;test=success&amp;test2=elabftw</a></h6></li>'
                 . '%1$surl default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li>'

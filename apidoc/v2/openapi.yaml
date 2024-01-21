@@ -765,6 +765,8 @@ components:
           type: string
         validated:
           type: integer
+        valid_until:
+          type: string
         archived:
           type: integer
         last_login:

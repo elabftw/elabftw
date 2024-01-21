@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
+use function htmlspecialchars;
 use function implode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -19,7 +20,6 @@ use function pathinfo;
 use function random_bytes;
 use function sha1;
 use function trim;
-use function htmlspecialchars;
 
 /**
  * Toolbelt full of useful functions

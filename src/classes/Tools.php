@@ -170,14 +170,14 @@ class Tools
             if (is_array($val)) {
                 $html .= sprintf(
                     '<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span><ul>%s</ul></li>',
-                    htmlentities($key),
+                    htmlspecialchars((string) $key, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
                     self::printArr($val),
                 );
             } else {
                 $html .= sprintf(
                     '<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>',
-                    htmlentities($key),
-                    htmlentities($val),
+                    htmlspecialchars((string) $key, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+                    htmlspecialchars((string) $val, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
                 );
             }
         }

@@ -74,7 +74,7 @@ class TwigFilters
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {
-            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", htmlspecialchars($group['name']));
+            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", htmlspecialchars((string) $group['name'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'));
             $final .= '<div>';
             foreach ($group['extra_fields'] as $field) {
                 $newTab = 'target="_blank" rel="noopener"';
@@ -82,7 +82,7 @@ class TwigFilters
                     $newTab = '';
                 }
                 $description = isset($field[MetadataEnum::Description->value])
-                    ? sprintf('<span class="smallgray">%s</span>', htmlspecialchars($field[MetadataEnum::Description->value]))
+                    ? sprintf('<span class="smallgray">%s</span>', htmlspecialchars((string) $field[MetadataEnum::Description->value], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'))
                     : '';
                 $value = $field[MetadataEnum::Value->value];
                 // checkbox is a special case
@@ -92,34 +92,34 @@ class TwigFilters
                 }
                 // url is another special case
                 elseif ($field[MetadataEnum::Type->value] === 'url') {
-                    $value = '<a href="' . htmlspecialchars($value) . '" ' . $newTab . '>' . htmlspecialchars($value) . '</a>';
+                    $value = '<a href="' . htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . '" ' . $newTab . '>' . htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . '</a>';
                 }
                 // exp/items is another special case
                 elseif (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
-                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, htmlspecialchars($value));
+                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'));
                 }
                 // multi select will be an array
                 elseif (is_array($value)) {
                     foreach($value as &$val) {
-                        $val = htmlspecialchars($val);
+                        $val = htmlspecialchars((string) $val, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
                     }
                     unset($val);
                     $value = '<p>' . implode('</p><p>', $value) . '</p>';
                 } else {
-                    $value = htmlspecialchars($value);
+                    $value = htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
                 }
 
                 $unit = '';
                 if (!empty($field['unit'])) {
                     // a space before the unit so if there are no units we don't have a trailing space
-                    $unit = ' ' . htmlspecialchars($field['unit']);
+                    $unit = ' ' . htmlspecialchars((string) $field['unit'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
                 }
 
                 $final .= sprintf(
                     '<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>',
-                    htmlspecialchars($field['name']),
+                    htmlspecialchars((string) $field['name'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
                     $description,
                     $value,
                     $unit,

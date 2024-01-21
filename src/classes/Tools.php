@@ -168,9 +168,17 @@ class Tools
         }
         foreach ($arr as $key => $val) {
             if (is_array($val)) {
-                $html .= sprintf('<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span> %s</li>', $key, self::printArr($val));
+                $html .= sprintf(
+                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span><ul>%s</ul></li>',
+                    htmlentities($key),
+                    self::printArr($val),
+                );
             } else {
-                $html .= sprintf('<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>', $key, $val);
+                $html .= sprintf(
+                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>',
+                    htmlentities($key),
+                    htmlentities($val),
+                );
             }
         }
         return sprintf('<ul>%s</ul>', $html);

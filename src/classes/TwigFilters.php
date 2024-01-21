@@ -74,7 +74,7 @@ class TwigFilters
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {
-            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", $group['name']);
+            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", htmlspecialchars($group['name']));
             $final .= '<div>';
             foreach ($group['extra_fields'] as $field) {
                 $newTab = 'target="_blank" rel="noopener"';
@@ -82,7 +82,7 @@ class TwigFilters
                     $newTab = '';
                 }
                 $description = isset($field[MetadataEnum::Description->value])
-                    ? sprintf('<span class="smallgray">%s</span>', $field[MetadataEnum::Description->value])
+                    ? sprintf('<span class="smallgray">%s</span>', htmlspecialchars($field[MetadataEnum::Description->value]))
                     : '';
                 $value = $field[MetadataEnum::Value->value];
                 // checkbox is a special case
@@ -91,28 +91,39 @@ class TwigFilters
                     $value = '<input class="d-block" disabled type="checkbox" ' . $checked . '>';
                 }
                 // url is another special case
-                if ($field[MetadataEnum::Type->value] === 'url') {
-                    $value = '<a href="' . $value . '" ' . $newTab . '>' . $value . '</a>';
+                elseif ($field[MetadataEnum::Type->value] === 'url') {
+                    $value = '<a href="' . htmlspecialchars($value) . '" ' . $newTab . '>' . htmlspecialchars($value) . '</a>';
                 }
                 // exp/items is another special case
-                if (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
+                elseif (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
-                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, $value);
+                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, htmlspecialchars($value));
                 }
-
                 // multi select will be an array
-                if (is_array($value)) {
+                elseif (is_array($value)) {
+                    foreach($value as &$val) {
+                        $val = htmlspecialchars($val);
+                    }
+                    unset($val);
                     $value = '<p>' . implode('</p><p>', $value) . '</p>';
+                } else {
+                    $value = htmlspecialchars($value);
                 }
 
                 $unit = '';
                 if (!empty($field['unit'])) {
                     // a space before the unit so if there are no units we don't have a trailing space
-                    $unit = ' ' . $field['unit'];
+                    $unit = ' ' . htmlspecialchars($field['unit']);
                 }
 
-                $final .= sprintf('<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>', $field['name'], $description, $value, $unit);
+                $final .= sprintf(
+                    '<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>',
+                    htmlspecialchars($field['name']),
+                    $description,
+                    $value,
+                    $unit,
+                );
             }
             $final .= '</div>';
         }

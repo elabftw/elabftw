@@ -28,7 +28,7 @@ final class TagParam implements ParamInterface
     {
         $tag = trim(str_replace(array('\\', '|'), array('', ' '), $this->content));
         // empty tags are disallowed
-        if ($tag === '') {
+        if (mb_strlen($tag) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
         return $tag;

@@ -19,6 +19,7 @@ use function pathinfo;
 use function random_bytes;
 use function sha1;
 use function trim;
+use function htmlspecialchars;
 
 /**
  * Toolbelt full of useful functions
@@ -170,14 +171,14 @@ class Tools
             if (is_array($val)) {
                 $html .= sprintf(
                     '<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span><ul>%s</ul></li>',
-                    htmlspecialchars((string) $key, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+                    self::eLabHtmlspecialchars($key),
                     self::printArr($val),
                 );
             } else {
                 $html .= sprintf(
                     '<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>',
-                    htmlspecialchars((string) $key, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
-                    htmlspecialchars((string) $val, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+                    self::eLabHtmlspecialchars($key),
+                    self::eLabHtmlspecialchars($val),
                 );
             }
         }
@@ -214,5 +215,10 @@ class Tools
             $replace,
             $subject,
         );
+    }
+
+    public static function eLabHtmlspecialchars(mixed $string): string
+    {
+        return htmlspecialchars((string) $string, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     }
 }

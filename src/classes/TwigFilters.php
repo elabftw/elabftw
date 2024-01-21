@@ -74,7 +74,7 @@ class TwigFilters
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {
-            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", htmlspecialchars((string) $group['name'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'));
+            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
             $final .= '<div>';
             foreach ($group['extra_fields'] as $field) {
                 $newTab = 'target="_blank" rel="noopener"';
@@ -82,7 +82,7 @@ class TwigFilters
                     $newTab = '';
                 }
                 $description = isset($field[MetadataEnum::Description->value])
-                    ? sprintf('<span class="smallgray">%s</span>', htmlspecialchars((string) $field[MetadataEnum::Description->value], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'))
+                    ? sprintf('<span class="smallgray">%s</span>', Tools::eLabHtmlspecialchars($field[MetadataEnum::Description->value]))
                     : '';
                 $value = $field[MetadataEnum::Value->value];
                 // checkbox is a special case
@@ -92,34 +92,34 @@ class TwigFilters
                 }
                 // url is another special case
                 elseif ($field[MetadataEnum::Type->value] === 'url') {
-                    $value = '<a href="' . htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . '" ' . $newTab . '>' . htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . '</a>';
+                    $value = '<a href="' . Tools::eLabHtmlspecialchars($value) . '</a>';
                 }
                 // exp/items is another special case
                 elseif (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
-                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'));
+                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, Tools::eLabHtmlspecialchars($value));
                 }
                 // multi select will be an array
                 elseif (is_array($value)) {
                     foreach($value as &$val) {
-                        $val = htmlspecialchars((string) $val, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                        $val = Tools::eLabHtmlspecialchars($val);
                     }
                     unset($val);
                     $value = '<p>' . implode('</p><p>', $value) . '</p>';
                 } else {
-                    $value = htmlspecialchars((string) $value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                    $value = Tools::eLabHtmlspecialchars($value);
                 }
 
                 $unit = '';
                 if (!empty($field['unit'])) {
                     // a space before the unit so if there are no units we don't have a trailing space
-                    $unit = ' ' . htmlspecialchars((string) $field['unit'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+                    $unit = ' ' . Tools::eLabHtmlspecialchars($field['unit']);
                 }
 
                 $final .= sprintf(
                     '<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>',
-                    htmlspecialchars((string) $field['name'], ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8'),
+                    Tools::eLabHtmlspecialchars($field['name']),
                     $description,
                     $value,
                     $unit,

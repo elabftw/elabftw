@@ -32,7 +32,7 @@ CREATE PROCEDURE `update_column_metadata`(IN `table_name` CHAR(255))
 MODIFIES SQL DATA
 BEGIN
     -- replace &#39; and &#34; with \" and '
-    SET @sql_text = concat('UPDATE ', table_name, ' SET metadata = CONVERT(REPLACE(CONVERT(`metadata`, CHAR CHARACTER SET utf8mb4), "&#34;", ''\"''), JSON);'); /**/
+    SET @sql_text = concat('UPDATE ', table_name, ' SET metadata = CONVERT(REPLACE(CONVERT(`metadata`, CHAR CHARACTER SET utf8mb4), "&#34;", ''\\\\"''), JSON);'); /**/
     PREPARE stmt FROM @sql_text; /**/
     EXECUTE stmt; /**/
     DEALLOCATE PREPARE stmt; /**/

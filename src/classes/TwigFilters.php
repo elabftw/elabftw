@@ -14,8 +14,8 @@ use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Models\Config;
-use function implode;
 use function is_array;
+use function sprintf;
 
 /**
  * Twig filters
@@ -77,7 +77,7 @@ class TwigFilters
             $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
             $final .= '<div>';
             foreach ($group['extra_fields'] as $field) {
-                $newTab = 'target="_blank" rel="noopener"';
+                $newTab = ' target="_blank" rel="noopener"';
                 if (($field['open_in_current_tab'] ?? false) === true) {
                     $newTab = '';
                 }
@@ -92,21 +92,31 @@ class TwigFilters
                 }
                 // url is another special case
                 elseif ($field[MetadataEnum::Type->value] === 'url') {
-                    $value = '<a href="' . Tools::eLabHtmlspecialchars($value) . '</a>';
+                    $value = sprintf(
+                        '<a href="%1$s"%2$s>%1$s</a>',
+                        Tools::eLabHtmlspecialchars($value),
+                        $newTab,
+                    );
                 }
                 // exp/items is another special case
                 elseif (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
-                    $value = sprintf("<a href='/%s.php?mode=view&amp;id=%d' %s>%s</a>", $page, $id, $newTab, Tools::eLabHtmlspecialchars($value));
+                    $value = sprintf(
+                        '<a href="/%s.php?mode=view&amp;id=%d"%s>%s</a>',
+                        $page,
+                        $id,
+                        $newTab,
+                        Tools::eLabHtmlspecialchars($value),
+                    );
                 }
-                // multi select will be an array
+                // multi select will be an array of options
                 elseif (is_array($value)) {
-                    foreach($value as &$val) {
-                        $val = Tools::eLabHtmlspecialchars($val);
+                    $html = '';
+                    foreach($value as $option) {
+                        $html .= sprintf('<p>%s</p>', Tools::eLabHtmlspecialchars($option));
                     }
-                    unset($val);
-                    $value = '<p>' . implode('</p><p>', $value) . '</p>';
+                    $value = $html;
                 } else {
                     $value = Tools::eLabHtmlspecialchars($value);
                 }

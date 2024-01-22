@@ -250,7 +250,12 @@ class Eln extends AbstractZip
                 }
                 if ($this->Entity instanceof Experiments) {
                     // try and adjust the status for experiments
+                    // 'category' changed in 4.9.0 https://github.com/elabftw/elabftw/commit/e3af965061788589bf168ef90c95ee85efaf046f
+                    // 'category' can be an id (>=4.9.0) or a title (< 4.9.0)
                     $sourceStatus = $json['category'];
+                    if (is_int($sourceStatus)) {
+                        $sourceStatus = $json['category_title'];
+                    }
                     // let's see if we can find a status like this in target instance
                     $targetStatusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
                     $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {

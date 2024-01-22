@@ -32,7 +32,7 @@
 
 {# show error if the email is not configured #}
 {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-    {{ 'Please finalize install: %slink to documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
+    {{ 'Email configuration is required. Consult the documentation (%slink%s) for help.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <div id='versionNotifZone'></div>
@@ -360,7 +360,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='mail_from' class='col-form-label'>{{ 'Sender address'|trans }}</label>
-      <input class='form-control col-md-3' type='text' value='{{ App.Config.configArr.mail_from }}' data-trigger='blur' data-model='config' data-target='mail_from' id='mail_from' />
+      <input class='form-control col-md-3' type='email' value='{{ App.Config.configArr.mail_from }}' data-trigger='blur' data-model='config' data-target='mail_from' id='mail_from' />
     </div>
     <hr>
 

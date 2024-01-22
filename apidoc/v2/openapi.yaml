@@ -456,6 +456,8 @@ components:
           type: integer
         is_pinned:
           type: integer
+        sharelink:
+          type: string
         status:
           type: integer
           nullable: true
@@ -763,6 +765,8 @@ components:
           type: string
         validated:
           type: integer
+        valid_until:
+          type: string
         archived:
           type: integer
         last_login:

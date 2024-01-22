@@ -369,20 +369,22 @@
         </table>
         <div class='col-md-12 text-center mt-2'>
           <div class='input-group'>
-          {# team selection dropdown, disabled on admin page #}
-          <div class='input-group-prepend'>
-            <select class='custom-select brr-none' id='remoteUserTeam' {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }}>
-              {% for team in teamsArr %}
-                <option value='{{ team.id }}' {{- App.Users.userData.team == team.id ? ' selected' }}>{{ team.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        <div class='input-group-prepend'>
-          <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' id='remoteUserIsAdmin'>{{ 'Admin'|trans }}
+            {# team selection dropdown, disabled on admin page #}
+            <div class='input-group-prepend'>
+              <select class='custom-select brr-none' id='remoteUserTeam' {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }}>
+                {% for team in teamsArr %}
+                  <option value='{{ team.id }}' {{- App.Users.userData.team == team.id ? ' selected' }}>{{ team.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class='input-group-prepend'>
+              <div class='input-group-text'>
+                <input type='checkbox' class='mr-1' id='remoteUserIsAdmin'>{{ 'Admin'|trans }}
+              </div>
+            </div>
+            <button type='button' data-action='create-user-from-remote' class='brl-none btn btn-primary'>{{ 'Add selected'|trans }}</button>
           </div>
         </div>
-          <button type='button' data-action='create-user-from-remote' class='brl-none btn btn-primary'>{{ 'Add selected'|trans }}</button>
       </div>
     {% endif %}
   </div>

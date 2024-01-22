@@ -20,21 +20,23 @@ use ZipArchive;
  */
 abstract class AbstractZip extends AbstractImport
 {
+    protected const SWITCH_TO_ESCAPE_OUTPUT_VERSION = '5.0.0-beta2';
+
     // path where we extract the archive content (subfolder of cache/elab)
     protected string $tmpPath;
 
     // the folder name where we extract the archive
     protected string $tmpDir;
 
-    // in version 5.0.0 we switched from filter input to escape output
-    // do we need to update old data upon import
-    protected bool $switchToEscapeOutput = true;
-
     protected array $allowedMimes = array(
         'application/zip',
         'application/force-download',
         'application/x-zip-compressed',
     );
+
+    // in version 5.0.0 we switched from filter input to escape output
+    // do we need to update old data upon import
+    protected bool $switchToEscapeOutput = false;
 
     public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
     {
@@ -54,5 +56,35 @@ abstract class AbstractZip extends AbstractImport
     public function __destruct()
     {
         $this->fs->deleteDirectory($this->tmpDir);
+    }
+
+    /**
+     * subject might needs to be transformed due to the switch from filter input to escape output strategy
+     */
+    protected function transformIfNecessary(
+        string $subject,
+        bool $isComment=false,
+        bool $isMetadata=false,
+    ): string {
+        // skip transformation
+        if (!$this->switchToEscapeOutput || $subject === '') {
+            return $subject;
+        }
+
+        $search = array('&#34;', '&#39;');
+        $replace = array('"', '\'');
+
+        if ($isMetadata) {
+            $replace = array('\\"', '\'');
+        } elseif ($isComment) {
+            $search[] = '<br />';
+            $replace[] = '';
+        }
+
+        return str_replace(
+            $search,
+            $replace,
+            $subject,
+        );
     }
 }

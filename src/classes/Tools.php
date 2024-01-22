@@ -185,38 +185,6 @@ class Tools
         return sprintf('<ul>%s</ul>', $html);
     }
 
-    public static function dontFilterInputEscapeOutput(?string $subject, bool $isCommment=false): ?string
-    {
-        if ($subject === null) {
-            return null;
-        }
-        $search = array('&#34;', '&#39;');
-        $replace = array('"', '\'');
-        if ($isCommment) {
-            $search[] = '<br />';
-            $replace[] = '';
-        }
-        return str_replace(
-            $search,
-            $replace,
-            $subject,
-        );
-    }
-
-    public static function dontFilterInputEscapeOutputMetadata(?string $subject): ?string
-    {
-        if ($subject === null) {
-            return null;
-        }
-        $search = array('&#34;', '&#39;');
-        $replace = array('\\"', '\'');
-        return str_replace(
-            $search,
-            $replace,
-            $subject,
-        );
-    }
-
     public static function eLabHtmlspecialchars(mixed $string): string
     {
         return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);

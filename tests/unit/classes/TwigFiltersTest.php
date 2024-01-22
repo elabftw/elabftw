@@ -65,11 +65,27 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
             "checked checkbox": {
               "type": "checkbox",
               "value": "on"
+            },
+            "experiments link": {
+              "type": "experiments",
+              "value": "1",
+              "group_id": 1
             }
+          },
+          "elabftw": {
+            "extra_fields_groups": [
+              {
+                "id": 1,
+                "name": "Some <&\'\"> group"
+              }
+            ]
           }
         }';
         $expected = sprintf(
-            '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div>'
+            '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Some &lt;&amp;&apos;&quot;&gt; group</h4><div>'
+                . '%1$sexperiments link</h5><h6><a href="/experiments.php?mode=view&amp;id=1" target="_blank" rel="noopener">1</a></h6></li>'
+                . '</div>'
+                . '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div>'
                 . '%1$sfirst one</h5><h6>first</h6></li>'
                 . '%1$ssecond one</h5><h6>second</h6></li>'
                 . '%1$sunchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox"></h6></li>'

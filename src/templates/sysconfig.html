@@ -231,7 +231,7 @@
               : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ count.totdb }}<p>
 
             </td>
-            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</td>
+            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
             <td>{{ team.created_at }}</td>
             <td>
               <label class='switch ucp-align'>

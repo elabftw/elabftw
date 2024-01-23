@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
       const json = await resp.json();
       // we reload all so the edition date is also reloaded
-      reloadElement('commentsDiv');
+      reloadElement('commentsDiv').then(() => {
+        malleableComments.listen();
+        relativeMoment();
+      });
       return json.comment;
     },
     inputType: InputType.Textarea,
@@ -155,11 +158,4 @@ document.addEventListener('DOMContentLoaded', () => {
   malleableComments.listen();
   malleableStatus.listen();
   malleableCategory.listen();
-
-  new MutationObserver(() => {
-    malleableStatus.listen();
-    malleableCategory.listen();
-    malleableComments.listen();
-    relativeMoment();
-  }).observe(document.getElementById('container'), {childList: true, subtree: true});
 });

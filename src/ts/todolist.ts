@@ -5,10 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Api } from './Apiv2.class';
 import Todolist from './Todolist.class';
-import { Malle } from '@deltablot/malle';
-import i18next from 'i18next';
 import { Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TodolistC = new Todolist();
-  const ApiC = new Api();
   TodolistC.unfinishedStepsScope = unfinishedStepsScope;
 
   // TOGGLE
@@ -73,27 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
       todoInput.value = '';
     });
   }
-
-  // UPDATE TODOITEM
-  const malleableTodoitem = new Malle({
-    // will only work if the editable class is present (class is removed on check)
-    before: original => {
-      return original.classList.contains('editable');
-    },
-    inputClasses: ['form-control'],
-    fun: async (value, original) => {
-      return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
-        .then(resp => resp.json()).then(json => json.body);
-    },
-    returnedValueIsTrustedHtml: true,
-    listenOn: '.todoItem',
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
-
-  // add an observer so new todo items will get an event handler too
-  new MutationObserver(() => {
-    malleableTodoitem.listen();
-  }).observe(document.getElementById('todoItems'), {childList: true});
 
   // save todo on enter
   document.getElementById('todo').addEventListener('keydown', (event: KeyboardEvent) => {

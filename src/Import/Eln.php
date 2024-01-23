@@ -63,14 +63,14 @@ class Eln extends AbstractZip
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->graph = $json['@graph'];
 
-        $root_node = array();
+        $root_node_has_part = array();
         foreach ($this->graph as $node) {
             // find the node describing the crate
             if ($node['@id'] === './') {
-                $root_node = $node['hasPart'];
+                $root_node_has_part = $node['hasPart'];
             }
             // find the #ro-crate_created node to get the eLab version used to create the .eln
-            // do we need to update data: don't sanitize input, escape output
+            // does data need an update: don't sanitize input, escape output
             if ($node['@id'] === '#ro-crate_created'
                 && version_compare($node['instrument']['version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '<')
             ) {
@@ -79,7 +79,7 @@ class Eln extends AbstractZip
         }
 
         // loop over each hasPart of the root node
-        foreach ($root_node as $part) {
+        foreach ($root_node_has_part as $part) {
             $this->importRootDataset($this->getNodeFromId($part['@id']));
         }
     }
@@ -118,10 +118,10 @@ class Eln extends AbstractZip
         $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
 
         // TAGS: should normally be a comma separated string, but we allow array for BC
-        if (isset($dataset['keywords'])) {
+        if (!empty($dataset['keywords'])) {
             $tags = $dataset['keywords'];
-            if (is_string($dataset['keywords'])) {
-                $tags = explode(',', $dataset['keywords']);
+            if (is_string($tags)) {
+                $tags = explode(',', $tags);
             }
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
@@ -134,20 +134,19 @@ class Eln extends AbstractZip
         }
 
         // LINKS
-        if (isset($dataset['mentions']) && !empty($dataset['mentions'])) {
+        if (!empty($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach($dataset['mentions'] as $mention) {
                 // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
-                $fullMention = $mention;
                 // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
                 if (count($mention) === 1) {
                     // resolve the id to get the full node content
-                    $fullMention = $this->getNodeFromId($mention['@id']);
+                    $mention = $this->getNodeFromId($mention['@id']);
                 }
                 $linkHtml .= sprintf(
                     "<li><a href='%s'>%s</a></li>",
-                    $fullMention['@id'],
-                    $this->transformIfNecessary($fullMention['name'] ?? ''),
+                    $mention['@id'],
+                    $this->transformIfNecessary($mention['name']),
                 );
             }
             $linkHtml .= '</ul>';
@@ -155,22 +154,21 @@ class Eln extends AbstractZip
         }
 
         // COMMENTS
-        if (isset($dataset['comment'])) {
+        if (!empty($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
                 // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
-                $fullComment = $comment;
                 // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
                 if (count($comment) === 1) {
                     // resolve the id to get the full node content
-                    $fullComment = $this->getNodeFromId($comment['@id']);
+                    $comment = $this->getNodeFromId($comment['@id']);
                 }
-                $author = $this->getNodeFromId($fullComment['author']['@id']);
+                $author = $this->getNodeFromId($comment['author']['@id']);
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
                     $this->transformIfNecessary($author['givenName'] ?? ''),
                     $this->transformIfNecessary($author['familyName'] ?? '') ?: $author['name'] ?? 'Unknown',
-                    $fullComment['dateCreated'],
-                    $this->transformIfNecessary($fullComment['text'] ?? '', true),
+                    $comment['dateCreated'],
+                    $this->transformIfNecessary($comment['text'] ?? '', true),
                 );
                 $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }
@@ -186,7 +184,7 @@ class Eln extends AbstractZip
 
     private function importPart(array $part): void
     {
-        if (!isset($part['@type'])) {
+        if (empty($part['@type'])) {
             return;
         }
 
@@ -217,7 +215,7 @@ class Eln extends AbstractZip
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         // checksum is mandatory for import
-        if (!isset($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
+        if (empty($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
             throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
@@ -226,7 +224,7 @@ class Eln extends AbstractZip
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
         ));
         // the alternateName holds the previous long_name of the file
-        if (isset($file['alternateName'])) {
+        if (!empty($file['alternateName'])) {
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
@@ -267,13 +265,13 @@ class Eln extends AbstractZip
                 $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
                 $this->Entity->patch(
                     Action::Update,
-                    array('metadata' => $this->transformIfNecessary($metadata, isMetadata: true) ?: null),
+                    array('metadata' => $this->transformIfNecessary($metadata, isMetadata: true)),
                 );
             }
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {
-                    if (isset($step['body'])) {
+                    if (!empty($step['body'])) {
                         $step['body'] = $this->transformIfNecessary($step['body']);
                     }
                     $this->Entity->Steps->import($step);

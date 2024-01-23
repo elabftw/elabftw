@@ -46,7 +46,6 @@ class Zip extends AbstractZip
         } catch (UnableToReadFile) {
             throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
         }
-
         $this->importAll(json_decode($content, true, 512, JSON_THROW_ON_ERROR));
     }
 
@@ -75,7 +74,7 @@ class Zip extends AbstractZip
         // make sure there is an elabid (might not exist for items before v4.0)
         $elabid = $item['elabid'] ?? Tools::generateElabid();
 
-        $item['title'] = $this->transformIfNecessary($item['title'] ?? '');
+        $item['title'] = $this->transformIfNecessary($item['title'] ?? _('Untitled'));
 
         $req = $this->Db->prepare($sql);
         if ($this->Entity instanceof Items) {
@@ -190,7 +189,7 @@ class Zip extends AbstractZip
                     $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
                         basename($filePath),
                         $filePath,
-                        $this->transformIfNecessary($file['comment'], true) ?: null,
+                        $this->transformIfNecessary($file['comment'] ?? '', true) ?: null,
                     ));
                     // read the newly created upload so we can get the long_name to replace the old in the body
                     $Uploads = new Uploads($this->Entity, $newUploadId);

@@ -109,7 +109,7 @@
 
       {% if upload.base64_thumbnail %}
       {# Note: adding charset to the data string makes it fail #}
-        <br><img class='attached-image' src='data:image/jpeg;base64,{{ upload.base64_thumbnail }}' alt='{{ upload.comment }}' />
+        <br><img class='attached-image' src='data:image/jpeg;base64,{{ upload.base64_thumbnail }}' alt='{{ upload.comment|e('html_attr') }}' />
       {% endif %}
       </p>
     {% endfor %}
@@ -165,8 +165,14 @@
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
-        {# use of raw to make the link to revisions page work #}
-        <td>{{ change.target == 'body' ? change.content|raw : change.content }}</td>
+          {# cannot use ternary here as it is an expression and filters are applied after evaluation #}
+          {%- if change.target == 'body' -%}
+            {# use of raw to make the link to revisions page work #}
+            {{ change.content|raw }}
+          {%- else -%}
+            {{ change.content }}
+          {%- endif -%}
+        </td>
       </tr>
       {% endfor %}
     </tbody>

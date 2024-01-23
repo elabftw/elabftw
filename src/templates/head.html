@@ -80,7 +80,7 @@
         {%- endif %}
         <form aria-label='{{ 'Quicksearch'|trans }}' class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
           {# the id is for making it easy to find the element when focusing it with the keyboard shortcut #}
-          <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='{{ 'Search'|trans }}' size='20' value='{{ App.Request.query.get('q') }}' />
+          <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='{{ 'Search'|trans }}' size='20' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' />
         </form>
 
         {# Notification bell #}
@@ -90,7 +90,7 @@
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}
               {% for notif in App.notifsArr %}
-                <div class='notification p-3' data-ack='{{ notif.is_ack }}'>{{ notif|notifWeb|raw }}</div>
+                <div class='notification p-3' data-ack='{{ notif.is_ack }}'>{{ notif|notifWeb }}</div>
               {% endfor %}
               <div class='dropdown-divider'></div>
               <a class='dropdown-item hover-danger' href='#' data-userid='{{ App.Users.userData.userid }}' data-action='destroy-notif'><i class='fas fa-trash-alt fa-fw' title='{{ 'Clear all'|trans }}'></i> {{ 'Clear all'|trans }}</a>

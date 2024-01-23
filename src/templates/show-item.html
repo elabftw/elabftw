@@ -45,11 +45,11 @@
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title }}</button>
+        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
       {% endif %}
       {# status #}
       {% if item.status %}
-        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
+        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
       {% endif %}
     </div>
     {# end first line #}

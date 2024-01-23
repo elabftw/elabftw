@@ -109,7 +109,7 @@
     {# TITLE #}
     <div class='d-flex mb-2 justify-content-between align-items-center'>
       <label for='title_input' maxlength='255' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title }}' required />
+      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
     </div>
     {# CATEGORY / STATUS #}
     {% include('catstat-edit.html') %}

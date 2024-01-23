@@ -21,12 +21,12 @@
 
 <div id='isTimestampedByInfoDiv'>
 {% if Entity.entityData.timestamped %}
-  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw|msg('ok', false) }}
+  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 </div>
 
 {% if Entity.entityData.locked %}
-  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw|msg('ok', false) }}
+  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 
 <section>

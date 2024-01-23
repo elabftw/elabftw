@@ -214,7 +214,7 @@
         class='form-control'
         placeholder="{{ 'Enter search query, e.g.: %s'|trans|format(getExtendedSearchExample()) }}"
         spellcheck='false'
-        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim }}' />
+        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
@@ -270,7 +270,7 @@
     <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
-        <option value='{{ category.title }}'>
+        <option value='{{ category.title|e('html_attr') }}'>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -282,7 +282,7 @@
     <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.title }}'>
+        <option value='{{ category.title|e('html_attr') }}'>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -294,7 +294,7 @@
     <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
-        <option value='{{ category.title }}'>
+        <option value='{{ category.title|e('html_attr') }}'>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -306,7 +306,7 @@
     <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
-        <option value='{{ category.title }}'>
+        <option value='{{ category.title|e('html_attr') }}'>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -353,7 +353,7 @@
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
         {% for user in usersArr %}
-          <option value='author:{{ user.fullname }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
+          <option value='author:{{ user.fullname|e('html_attr') }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
         {% endfor %}
       </optgroup>
       <optgroup label='{{ 'Groups'|trans }}'>

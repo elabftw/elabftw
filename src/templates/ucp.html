@@ -275,7 +275,7 @@
 
       <div class='d-flex justify-content-between'>
         <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
-        <input class='form-control col-md-3' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
+        <input class='form-control col-md-3' name='email' id='email' type='email' value='{{ App.Users.userData.email|e('html_attr') }}' />
       </div>
       <hr>
 
@@ -314,13 +314,13 @@
   <div class='pl-3 mt-2 mb-5' id='ucp-account-form'>
     <div class='d-flex justify-content-between'>
       <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname }}' />
+      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|e('html_attr') }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname }}' />
+      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|e('html_attr') }}' />
     </div>
     <hr>
 

@@ -19,7 +19,7 @@
             </select>
           </div>
         {% endif %}
-        <input type='text' class='form-control' value='{{ App.Request.query.get('q') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
+        <input type='text' class='form-control' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
         </div>

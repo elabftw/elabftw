@@ -371,7 +371,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
   <div class='pl-3'>
     <div class='input-group'>
-      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email }}' id='testemailEmail' aria-label='{{ 'Email address'|trans }}'>
+      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' id='testemailEmail' aria-label='{{ 'Email address'|trans }}'>
       <div class='input-group-append'>
         <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>

@@ -196,7 +196,7 @@
             </span>
           </a>
         </td>
-        <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
+        <td><a href='mailto:{{ user.email|e('html_attr') }}'>{{ user.email }}</a></td>
         <td>{{ user.orcid }}</td>
       </tr>
       {% endfor %}

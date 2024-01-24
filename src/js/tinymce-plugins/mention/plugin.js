@@ -161,7 +161,7 @@ class AutoComplete {
   }
 
   matcher(item) {
-    return ~item[this.options.queryBy].toLowerCase().indexOf(this.query.toLowerCase());
+    return this.query.toLowerCase().split(' ').every(word => item[this.options.queryBy].toLowerCase().includes(word));
   }
 
   sorter(items) {
@@ -185,8 +185,16 @@ class AutoComplete {
 
   highlighter(text) {
     if (this.query.length > 0) {
-      return text.replace(new RegExp('(' + this.query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1') + ')', 'ig'), function(match) {
-        return '<strong>' + match + '</strong>';
+      const re = new RegExp(this.query.split(' ').map(word => {
+        word.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+      }).join('|'), 'igd');
+      let result;
+      const positions = [];
+      while ((result = re.exec(text)) !== null) {
+        positions.push(result.indices[0]);
+      }
+      positions.reverse().forEach(([start, stop]) => {
+        text = text.substring(0, start) + '<strong>' + text.substring(start, stop) + '</strong>' + text.substring(stop);
       });
     }
     return text;

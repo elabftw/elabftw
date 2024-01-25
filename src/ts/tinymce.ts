@@ -199,6 +199,11 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
+        // need to use quotes around 'not', 'and', 'or' if individual words as they are used as operators
+        ['not', 'or', 'and'].forEach(word =>{
+          const re = new RegExp(`\\b${word}\\b`, 'g');
+          query = query.replace(re, `'${word}'`);
+        });
         // grab experiments and items
         const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&q=${query}`);
         const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&q=${query}`);

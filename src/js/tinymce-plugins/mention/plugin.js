@@ -1,5 +1,23 @@
 class AutoComplete {
+  editor;
+  options = {};
+  query = '';
+  hasFocus = true;
+  // joiner should be an invisible character and functions as glue between delimiter and search text typed by user
+  // compare to https://stackoverflow.com/a/28405917 for potential characters
+  // e.g. \uFEFF, \u2007, \u202F, \u2060, \u200B
+  // \uFEFF can not be used any longer as of tinymce version 5.10.9 - 2023-11-14 and 6.7.3 - 2023-11-15
+  joiner = '\u2060';
+  searchTimeout;
+  $dropdown;
 
+  // fields to hold eventCallbackfunctions
+  editorKeyUpProxy;
+  editorKeyDownProxy;
+  editorClickProxy;
+  bodyClickProxy;
+  editorScroll;
+  
   constructor(ed, options) {
     this.editor = ed;
 
@@ -12,35 +30,29 @@ class AutoComplete {
 
     this.matcher = this.options.matcher || this.matcher;
     this.renderDropdown = this.options.renderDropdown || this.renderDropdown;
-    this.$dropdown;
     this.render = this.options.render || this.render;
     this.insert = this.options.insert || this.insert;
     this.highlighter = this.options.highlighter || this.highlighter;
 
-    this.query = '';
-    this.hasFocus = true;
-    // joiner should be an invisible character and functions as glue between delimiter and search text typed by user
-    // compare to https://stackoverflow.com/a/28405917 for potential characters
-    // e.g. \uFEF, \u2007, \u202F, \u2060, \u200B
-    // \uFEFF can not be used any longer as of tinymce version 5.10.9 - 2023-11-14 and 6.7.3 - 2023-11-15
-    this.joiner = '\u2060';
-
     this.renderInput();
-
     this.bindEvents();
   }
 
   renderInput() {
     // for some reason the id attribute of the first span gets removed during insert, so we use a data attribute instead
     // don't add any additional characters that would be part of rawHtml.innerText unless it is reflected in the lookup method
-    const rawHtml = '<span data-tiny-complete="1">'
+    const rawHtml = '<span id="data-tiny-complete">'
         + `<span id="autocomplete-delimiter">${this.options.delimiter}</span>`
-        + `<span data-tiny-complete-searchtext="1"><span class="dummy">${this.joiner}</span></span>`
+        + `<span id="data-tiny-complete-searchtext"><span class="dummy">${this.joiner}</span></span>`
         + '</span>';
     this.editor.execCommand('mceInsertContent', false, rawHtml);
     this.editor.focus();
-    this.editor.selection.select(this.editor.selection.dom.select('span[data-tiny-complete-searchtext="1"] span')[0]);
+    this.editor.selection.select(this.editor.selection.dom.select('#data-tiny-complete-searchtext span')[0]);
     this.editor.selection.collapse(0);
+  }
+
+  rteScroll() {
+    this.cleanUp(true);
   }
 
   bindEvents() {
@@ -50,7 +62,7 @@ class AutoComplete {
 
     $('body').on('click', this.bodyClickProxy = this.rteLostFocus.bind(this));
 
-    $(this.editor.getWin()).on('scroll', this.rteScroll = (function() { this.cleanUp(true); }).bind(this));
+    $(this.editor.getWin()).on('scroll', this.editorScroll = this.rteScroll.bind(this));
   }
 
   unbindEvents() {
@@ -60,7 +72,7 @@ class AutoComplete {
 
     $('body').off('click', this.bodyClickProxy);
 
-    $(this.editor.getWin()).off('scroll', this.rteScroll);
+    $(this.editor.getWin()).off('scroll', this.editorScroll);
   }
 
   rteKeyUp(e) {
@@ -142,14 +154,14 @@ class AutoComplete {
 
   lookup() {
     // the text to be replaced has to match exactly what would be the result of rawHtml.innerText of the renderInput method
-    this.query = this.editor.getBody().querySelector('span[data-tiny-complete-searchtext="1"]').innerText.trim().replace(this.joiner, '');
+    this.query = this.editor.getBody().querySelector('#data-tiny-complete-searchtext').innerText.trim().replace(this.joiner, '');
 
     if (this.$dropdown === undefined) {
       this.show();
     }
 
     clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout((function() {
+    this.searchTimeout = setTimeout(() => {
       // Added delimiter parameter as last argument for backwards compatibility.
       const items = typeof this.options.source === 'function'
         ? this.options.source(this.query, this.process.bind(this), this.options.delimiter)
@@ -157,7 +169,7 @@ class AutoComplete {
       if (items) {
         this.process(items);
       }
-    }).bind(this), this.options.delay);
+    }, this.options.delay);
   }
 
   matcher(item) {
@@ -217,7 +229,7 @@ class AutoComplete {
 
     $('body').append(this.$dropdown);
 
-    this.$dropdown.on('click', (this.autoCompleteClick.bind(this)));
+    this.$dropdown.on('click', this.autoCompleteClick.bind(this));
   }
 
   process(data) {
@@ -287,7 +299,7 @@ class AutoComplete {
 
   select(item) {
     this.editor.focus();
-    const selection = this.editor.dom.select('span[data-tiny-complete="1"]')[0];
+    const selection = this.editor.dom.select('#data-tiny-complete')[0];
     this.editor.dom.remove(selection);
     this.editor.insertContent(this.insert(item));
   }
@@ -308,7 +320,7 @@ class AutoComplete {
 
     if (rollback) {
       const text = this.query;
-      const $selection = $(this.editor.dom.select('span[data-tiny-complete="1"]'));
+      const $selection = $(this.editor.dom.select('#data-tiny-complete'));
       const replacement = $('<p>' + this.options.delimiter + text + '</p>')[0].firstChild;
       const focus = $(this.editor.selection.getNode()).offset()?.top === ($selection.offset().top + (($selection.outerHeight() - $selection.height()) / 2));
 
@@ -323,7 +335,7 @@ class AutoComplete {
 
   offset() {
     const contentAreaPosition = $(this.editor.getContentAreaContainer()).offset();
-    const nodePosition = $(this.editor.dom.select('span[data-tiny-complete="1"]')).offset();
+    const nodePosition = $(this.editor.dom.select('#data-tiny-complete')).offset();
 
     return {
       top: contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() - $(this.editor.getDoc()).scrollTop() + 5,
@@ -332,7 +344,7 @@ class AutoComplete {
   }
 
   offsetInline() {
-    const nodePosition = $(this.editor.dom.select('span[data-tiny-complete="1"]')).offset();
+    const nodePosition = $(this.editor.dom.select('#data-tiny-complete')).offset();
 
     return {
       top: nodePosition.top + $(this.editor.selection.getNode()).innerHeight() + 5,
@@ -359,7 +371,7 @@ tinymce.PluginManager.add('mention', ed => {
     return character.trim().length ? false : true;
   };
 
-  ed.on('keypress', function(e) {
+  ed.on('keypress', e => {
     if (autoCompleteData.delimiter.includes(e.key) && prevCharIsSpace()) {
       if (autoComplete === undefined || (autoComplete.hasFocus !== undefined && !autoComplete.hasFocus)) {
         e.preventDefault();

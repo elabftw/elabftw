@@ -184,10 +184,16 @@ class AutoComplete {
   }
 
   highlighter(text) {
-    if (this.query.length > 0) {
-      const re = new RegExp(this.query.split(' ').map(word => {
-        word.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
-      }).join('|'), 'igd');
+    if (this.query.trim() && this.query.length > 0) {
+      const re = new RegExp(
+        this.query.split(' ')
+          // escape regex special chars
+          .map(word => word.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1'))
+          // remove empty strings
+          .filter(word => word)
+          .join('|'),
+        'igd',
+      );
       let result;
       const positions = [];
       while ((result = re.exec(text)) !== null) {
@@ -224,8 +230,8 @@ class AutoComplete {
 
     $.each(items, (i, item) => {
       const $element = $(this.render(item));
-
       $element.html($element.html().replace($element.text(), this.highlighter($element.text())));
+      $element.find('a').prepend(this.addCategory(item));
 
       $.each(items[i], (key, val) => {
         $element.attr('data-' + key, val);
@@ -246,10 +252,13 @@ class AutoComplete {
   }
 
   render(item) {
-    const category = item.category_title
-      ? `${item.category_title} - `
+    return `<li><a href="javascript:;"><span>${item[this.options.queryBy]}</span></a></li>`;
+  }
+
+  addCategory(item){
+    return item.category_title
+      ? `<span style='color:#${item.category_color}'>${item.category_title}</span> - `
       : '';
-    return `<li><a href="javascript:;"><span>${category}${item[this.options.queryBy]}</span></a></li>`;
   }
 
   autoCompleteClick(e) {

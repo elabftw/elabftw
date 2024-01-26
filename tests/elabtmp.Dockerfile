@@ -5,7 +5,7 @@ ARG BASE_IMAGE_VERSION=hypernext
 FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # Set versions of used tools
-ARG PSALM_VERSION=5.5.0
+ARG PSALM_VERSION=5.18.0
 ARG PHAN_VERSION=5.4.1
 
 # allow tmpfile, used by phpstan

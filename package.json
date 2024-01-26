@@ -113,7 +113,7 @@
     "rector": "./vendor/bin/rector process src --config src/tools/rector.php",
     "rector-dry": "./vendor/bin/rector process src --config src/tools/rector.php --dry-run",
     "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc --setting=graphs.enabled=true",
-    "static": "yarn psalm && yarn phpstan",
+    "static": "composer run-script psalm && composer run-script phpstan",
     "test": "tests/run.sh",
     "test:clean": "php vendor/bin/codecept clean",
     "twigcs": "php vendor/bin/twigcs",

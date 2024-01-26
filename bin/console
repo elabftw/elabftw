@@ -65,6 +65,7 @@ $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications($Email));
+$Application->add(new SendExpirationNotifications($Email));
 $Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new PruneExperiments());

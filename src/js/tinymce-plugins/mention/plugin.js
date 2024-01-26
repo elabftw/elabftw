@@ -199,6 +199,9 @@ class AutoComplete {
     if (this.query.trim() && this.query.length > 0) {
       const re = new RegExp(
         this.query.split(' ')
+          // need to sort words by length (desc) so that longer words will be highlighted
+          // even if there is a substring of it in the query e.g. elabftw vs lab
+          .sort((word1, word2) => word2.length - word1.length)
           // escape regex special chars
           .map(word => word.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1'))
           // remove empty strings

@@ -102,7 +102,6 @@
     "jslint-ci": "eslint --ext .ts --quiet src/ts",
     "jslint:cy": "eslint --ext .ts tests/cypress",
     "jslint-ci:cy": "eslint --ext .ts --quiet tests/cypress",
-    "phan": "phan --allow-polyfill-parser -k src/tools/phan-config.php",
     "phpcs": "./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v",
     "phpcs-dry": "./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",

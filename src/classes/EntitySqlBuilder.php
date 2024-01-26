@@ -31,7 +31,6 @@ class EntitySqlBuilder
      *
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
-     * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     public function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false, bool $includeMetadata = false): string
     {

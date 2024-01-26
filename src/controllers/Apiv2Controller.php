@@ -16,7 +16,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -146,8 +145,10 @@ class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Incorrect format value.');
             }
             // fit the request with what makecontroller expects
-            $this->Request->query->set('type', $this->Model->type);
-            $this->Request->query->set('id', $this->id);
+            if ($this->Model instanceof AbstractEntity) {
+                $this->Request->query->set('type', $this->Model->type);
+                $this->Request->query->set('id', $this->id);
+            }
         }
         if ($this->Request->getContent()) {
             try {

@@ -17,7 +17,7 @@ class AutoComplete {
   editorClickProxy;
   bodyClickProxy;
   editorScroll;
-  
+
   constructor(ed, options) {
     this.editor = ed;
 
@@ -126,7 +126,7 @@ class AutoComplete {
         this.highlightPreviousResult();
       }
       break;
-      
+
     case 40: //DOWN ARROW
       e.preventDefault();
       if (this.$dropdown !== undefined) {

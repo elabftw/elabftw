@@ -199,12 +199,12 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
-        // need to use quotes around 'not', 'and', 'or' if individual words as they are used as operators
+        // mask word operators 'not', 'and', 'or' of extended search query
         ['not', 'or', 'and'].forEach(word => {
           const re = new RegExp(`\\b${word}\\b`, 'g');
-          query = query.replace(re, `'${word}'`);
+          query = query.replace(re, ` '${word}' `);
         });
-        // search for literal characters don't use wildcards 
+        // escape extended search query wildcards
         ['_', '%'].forEach(wildcard => {
           query = query.replace(wildcard, `\\${wildcard}`);
         });

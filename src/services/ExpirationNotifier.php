@@ -17,6 +17,7 @@ use Symfony\Component\Mime\Address;
 
 /**
  * Warn users and their Admins about account expiration
+ * Note: this class structure isn't great, and full of nested foreach. While it is possible to do everything in one nice query (probably), it's difficult and error prone, so we adopt the pragmatic approach of doing ineficient code because this code runs from CLI once a week so we don't really care if it takes long
  */
 class ExpirationNotifier extends EmailNotifications
 {
@@ -66,6 +67,7 @@ class ExpirationNotifier extends EmailNotifications
                 $targetUser = new Users($adminid);
                 $this->setLang($targetUser->userData['lang']);
                 $emailBody = _('One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others.') . "\n";
+                // display a list of the users that will get archived
                 foreach($users as $user) {
                     $emailBody .= "\n− " . implode(', ', $user);
                 }

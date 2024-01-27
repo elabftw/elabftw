@@ -29,7 +29,7 @@ class SendExpirationNotifications extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Send notification emails for account close to end of validity')
+        $this->setDescription('Send notification emails to user accounts close to end of validity, and to their admins')
             ->setHelp('Look for all users where the valid_until attribute is close to expiration, and warn them and their Admins. This command runs weekly and will warn 4 weeks in advance.');
     }
 

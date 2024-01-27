@@ -19,6 +19,7 @@ use Symfony\Component\Console\Application;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
+$Application->add(new GenSecretKey());
 $Application->add(new Install());
 $Application->add(new PopulateDatabase());
 $Application->run();

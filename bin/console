@@ -43,7 +43,6 @@ try {
 }
 
 $Application->add(new InstallRedir());
-$Application->add(new GenSecretKey());
 $Application->add(new GenI18n4Js());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));

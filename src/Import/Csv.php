@@ -49,12 +49,12 @@ class Csv extends AbstractImport
         $rows = $csv->getRecords();
 
         // SQL for importing
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, canread, canwrite, canbook, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :canread, :canwrite, :canbook, :elabid, :metadata)';
+        $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT INTO experiments(title, date, body, userid, canread, canwrite, category, elabid, metadata)
-                VALUES(:title, CURDATE(), :body, :userid, :canread, :canwrite, :category, :elabid, :metadata)';
+            $sql = 'INSERT INTO experiments(title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
+                VALUES(:title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
         }
         $req = $this->Db->prepare($sql);
 
@@ -64,6 +64,8 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
+            $status = empty($row['status']) ? null : $row['status'];
+            $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
                 $metadata = $row['metadata'];
@@ -77,6 +79,8 @@ class Csv extends AbstractImport
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Users->userData['userid']);
             $req->bindParam(':category', $this->targetNumber);
+            $req->bindParam(':status', $status);
+            $req->bindParam(':custom_id', $customId);
             $req->bindParam(':canread', $this->canread);
             $req->bindParam(':canwrite', $this->canwrite);
             $req->bindValue(':elabid', Tools::generateElabid());

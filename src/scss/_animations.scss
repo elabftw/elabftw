@@ -9,7 +9,7 @@
 /* loading spinner */
 .lds-dual-ring::after {
     animation: lds-dual-ring 1.3s linear infinite;
-    border: 8px solid $elabblue;
+    border: 8px solid currentColor;
     border-color: $elabblue transparent $elabblue transparent;
     border-radius: 50%;
     content: ' ';

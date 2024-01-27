@@ -263,11 +263,11 @@ class AutoComplete {
   }
 
   renderDropdown() {
-    return '<ul class="rte-autocomplete dropdown-menu"><li class="loading"></li></ul>';
+    return '<ul class="rte-autocomplete dropdown-menu"><li class="lds-dual-ring"></li></ul>';
   }
 
   render(item) {
-    return `<li><a href="javascript:;"><span>${item[this.options.queryBy]}</span></a></li>`;
+    return `<li><a href="javascript:;" class='dropdown-item'><span>${item[this.options.queryBy]}</span></a></li>`;
   }
 
   addCategory(item){
@@ -287,15 +287,15 @@ class AutoComplete {
   }
 
   highlightPreviousResult() {
-    let currentIndex = this.$dropdown.find('li.active').index(),
-      index = (currentIndex === 0) ? this.$dropdown.find('li').length - 1 : --currentIndex;
+    let currentIndex = this.$dropdown.find('li.active').index();
+    const index = (currentIndex === 0) ? this.$dropdown.find('li').length - 1 : --currentIndex;
 
     this.$dropdown.find('li').removeClass('active').eq(index).addClass('active');
   }
 
   highlightNextResult() {
-    let currentIndex = this.$dropdown.find('li.active').index(),
-      index = (currentIndex === this.$dropdown.find('li').length - 1) ? 0 : ++currentIndex;
+    let currentIndex = this.$dropdown.find('li.active').index();
+    const index = (currentIndex === this.$dropdown.find('li').length - 1) ? 0 : ++currentIndex;
 
     this.$dropdown.find('li').removeClass('active').eq(index).addClass('active');
   }

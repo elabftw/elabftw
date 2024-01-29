@@ -84,7 +84,7 @@
                           </span>
                         </div>
                         <div class='d-flex justify-content-between'>
-                          <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'>{{ 'Is Owner'|trans }}</label>
+                          <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'><abbr title='{{ 'Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only.'|trans }}'>{{ 'Is Owner'|trans }}</label>
                           <label class='switch ucp-align'>
                             <input type='checkbox' autocomplete='off' data-trigger='change' data-custom-action='patch-user2team-is-owner' data-userid='{{ user.userid }}' data-team='{{ team.id }}' {{ currentTeam.is_owner ? 'checked="checked"' }} id='user_{{ user.id }}_isOwnerTeam_{{ team.id }}'>
                             <span class='slider'></span>

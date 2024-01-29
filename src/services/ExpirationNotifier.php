@@ -17,7 +17,7 @@ use Symfony\Component\Mime\Address;
 
 /**
  * Warn users and their Admins about account expiration
- * Note: this class structure isn't great, and full of nested foreach. While it is possible to do everything in one nice query (probably), it's difficult and error prone, so we adopt the pragmatic approach of doing ineficient code because this code runs from CLI once a week so we don't really care if it takes long
+ * Note: this class structure isn't great, and full of nested foreach. While it is possible to do everything in one nice query (probably), it's difficult and error prone, so we adopt the pragmatic approach of doing inefficient code because this code runs from CLI once a week so we don't really care if it takes long
  */
 class ExpirationNotifier extends EmailNotifications
 {
@@ -33,6 +33,7 @@ class ExpirationNotifier extends EmailNotifications
 
     protected function sendUsersEmails(): array
     {
+        // this will hold the results organized by teams
         $targets = array();
         $emailSubject = _('Account expiration warning');
         $userids = $this->getExpiringUserids();
@@ -44,6 +45,7 @@ class ExpirationNotifier extends EmailNotifications
             $this->emailService->sendEmail($to, self::BASE_SUBJECT . $emailSubject, $emailBody);
             $UsersHelper = new UsersHelper($userid);
             $teams = $UsersHelper->getTeamsIdFromUserid();
+            // add the user in each team for the admin message
             foreach ($teams as $team) {
                 $targets[$team][] = array(
                     'fullname' => $targetUser->userData['fullname'],
@@ -60,9 +62,11 @@ class ExpirationNotifier extends EmailNotifications
     {
         $emailSubject = _('Account expiration information');
         $cnt = 0;
+        // loop on each team
         foreach($targets as $team => $users) {
             $TeamsHelper = new TeamsHelper($team);
             $adminsids = $TeamsHelper->getAllAdminsUserid();
+            // and for each admin, send an email listing the users that are expiring
             foreach($adminsids as $adminid) {
                 $targetUser = new Users($adminid);
                 $this->setLang($targetUser->userData['lang']);
@@ -81,7 +85,7 @@ class ExpirationNotifier extends EmailNotifications
 
     protected function getExpiringUserids(): array
     {
-        $sql = 'SELECT users.userid FROM users WHERE users.archived = 0 AND users.valid_until < DATE_ADD(CURDATE(), INTERVAL - :notif_period DAY)';
+        $sql = 'SELECT users.userid FROM users WHERE users.archived = 0 AND users.valid_until BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :notif_period DAY)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':notif_period', self::NOTIF_PERIOD);
         $this->Db->execute($req);

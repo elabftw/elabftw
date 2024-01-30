@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // clear the filter input for favtags
     } else if (el.matches('[data-action="clear-favtags-search"]')) {
-      const searchInput = (document.querySelector('[data-action="favtags-search"]') as HTMLInputElement);
+      const searchInput = el.parentElement.parentElement.querySelector('input');
       searchInput.value = '';
       searchInput.focus();
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {

@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -43,7 +43,6 @@ try {
 }
 
 $Application->add(new InstallRedir());
-$Application->add(new GenSecretKey());
 $Application->add(new GenI18n4Js());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
@@ -65,6 +64,7 @@ $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications($Email));
+$Application->add(new SendExpirationNotifications($Email));
 $Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new PruneExperiments());

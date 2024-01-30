@@ -149,6 +149,8 @@ export function getTinymceBaseConfig(page: string): object {
     pagebreak_split_block: true,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: toolbar1,
+    // disable automatic h1 when using #
+    text_patterns: false,
     removed_menuitems: removedMenuItems,
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended
@@ -199,6 +201,19 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
+        // mask word operators 'not', 'and', 'or' of extended search query
+        ['not', 'or', 'and'].forEach(word => {
+          const re = new RegExp(`\\b${word}\\b`, 'g');
+          query = query.replace(re, ` '${word}' `);
+        });
+        // escape extended search query wildcards
+        ['_', '%'].forEach(wildcard => {
+          query = query.replace(wildcard, `\\${wildcard}`);
+        });
+        // mask special characters of extended search query by wildcard
+        ['!', '|', '&'].forEach(operator => {
+          query = query.replace(operator, '_');
+        });
         // grab experiments and items
         const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&q=${query}`);
         const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&q=${query}`);

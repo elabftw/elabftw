@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExpectedObjectPropAccessButGotNull
+$App->pageTitle = _('Admin panel');
 $Response = new Response();
 $Response->prepare($App->Request);
 

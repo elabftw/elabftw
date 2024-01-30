@@ -107,7 +107,7 @@
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
       {# body in view mode is text-dark for more lisibility see github issue #52 #}
       <div {{ not displayMainText ? 'hidden' }}>
-        <h3 data-action='toggle-next'class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+        <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
         <div id='body_view' class='pt-2 text-dark'>{{ body|raw }}</div>
         <hr>
       </div>

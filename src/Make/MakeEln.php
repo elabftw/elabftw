@@ -192,7 +192,7 @@ class MakeEln extends MakeStreamZip
             // MAIN ENTRY
             $firstname = $e['firstname'] ?? '';
             $lastname = $e['lastname'] ?? '';
-            $dataEntities[] = array(
+            $datasetNode = array(
                 '@id' => './' . $currentDatasetFolder,
                 '@type' => 'Dataset',
                 'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
@@ -207,6 +207,13 @@ class MakeEln extends MakeStreamZip
                 'hasPart' => $hasPart,
                 'mentions' => $mentions,
             );
+            if ($e['category_title'] !== null) {
+                $datasetNode['category'] = $e['category_title'];
+            }
+            if ($e['status_title'] !== null) {
+                $datasetNode['status'] = $e['status_title'];
+            }
+            $dataEntities[] = $datasetNode;
         }
         // add the description of root with hasPart property
         $dataEntities[] = array(

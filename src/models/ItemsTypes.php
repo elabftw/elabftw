@@ -101,6 +101,24 @@ class ItemsTypes extends AbstractTemplateEntity
     }
 
     /**
+     * Get an id of an existing one or create it and get its id
+     */
+    public function getIdempotentIdFromTitle(string $title): int
+    {
+        $sql = 'SELECT id
+            FROM items_types WHERE title = :title AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch(PDO::FETCH_COLUMN);
+        if (!is_int($res)) {
+            return $this->create($title);
+        }
+        return $res;
+    }
+
+    /**
      * Use our own function instead of SortableTrait to add the team param and permission check
      */
     public function updateOrdering(OrderingParams $params): void

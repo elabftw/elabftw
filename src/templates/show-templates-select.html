@@ -1,17 +1,23 @@
 <div class='pl-3 mt-3'>
-  {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-    {# CREATE NEW AND IMPORT BUTTONS (ucp page) #}
-    <div class='mb-4 d-flex justify-content-between'>
-      {# reload the tbody to avoid issue with data-sort arrows needing reload #}
-      {% include 'scope-button.html' with {'reload': 'tplTableBody,scopeBtn', 'target': 'scope_experiments_templates'} %}
-      <div>
-        <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
-        <div class='vertical-separator d-inline'></div>
-        <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
-        <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
-      </div>
+  {# CREATE NEW AND IMPORT BUTTONS (ucp page) #}
+  <div class='mb-4 d-flex justify-content-between'>
+    {# reload the tbody to avoid issue with data-sort arrows needing reload #}
+    {% include 'scope-button.html' with {'reload': 'tplTableBody,scopeBtn', 'target': 'scope_experiments_templates'} %}
+    <div>
+      <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
+      <div class='vertical-separator d-inline'></div>
+      <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
+      <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
     </div>
-  {% endif %}
+  </div>
+  <div class='input-group'>
+    <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' id='templatesFilterInput' class='form-control form-inline' />
+    <div class='input-group-append'>
+      <button data-action='clear-templates-search' class='btn btn-outline-secondary' type='button' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'>
+        <i class='fas fa-times fa-fw'></i>
+      </button>
+    </div>
+  </div>
 
   {# TODO: add aria-describedby #}
   <table id='tplTable' class='table' data-table-sort='true'>

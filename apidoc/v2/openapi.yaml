@@ -262,7 +262,7 @@ components:
           type: string
           description: JSON string for write permissions.
         category:
-          type: string
+          type: integer
           nullable: true
         category_color:
           type: string

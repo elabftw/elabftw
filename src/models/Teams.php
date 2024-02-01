@@ -250,7 +250,7 @@ class Teams implements RestInterface
 
     public function canWriteOrExplode(): void
     {
-        if ($this->bypassWritePermission || $this->Users->userData['is_sysadmin'] === 1) {
+        if ($this->bypassWritePermission || ($this->Users->userData['is_sysadmin'] ?? 0) === 1) {
             return;
         }
         if ($this->id === null) {
@@ -281,10 +281,11 @@ class Teams implements RestInterface
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
+        $this->setId($newId);
 
         $user = new Users();
         // create default status
-        $Status = new ExperimentsStatus(new self($user, $newId));
+        $Status = new ExperimentsStatus($this);
         $Status->createDefault();
 
         // create default item type

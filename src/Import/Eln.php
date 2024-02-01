@@ -19,7 +19,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use function hash_file;
@@ -136,6 +139,36 @@ class Eln extends AbstractZip
             $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
         }
 
+        // let's see if we can find a category like this in target instance
+        $Teams = new Teams($this->Users, $this->Users->userData['team']);
+        // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
+        $Teams->bypassWritePermission = true;
+
+        // CATEGORY
+        if (isset($dataset['category'])) {
+            // let's see if we can find a category like this in target instance
+            if ($this->Entity instanceof Experiments) {
+                $Category = new ExperimentsCategories($Teams);
+            } else { // items
+                $Category = new ItemsTypes($this->Users, $this->Users->userData['team']);
+                // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
+                $Category->bypassWritePermission = true;
+            }
+            $categoryId = $Category->getIdempotentIdFromTitle($dataset['category']);
+            $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+        }
+
+        // STATUS
+        if (isset($dataset['status'])) {
+            if ($this->Entity instanceof Experiments) {
+                $Status = new ExperimentsStatus($Teams);
+            } else { // items
+                $Status = new ItemsStatus($Teams);
+            }
+            $statusId = $Status->getIdempotentIdFromTitle($dataset['status']);
+            $this->Entity->patch(Action::Update, array('status' => (string) $statusId));
+        }
+
         // COMMENTS
         if (isset($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
@@ -216,24 +249,11 @@ class Eln extends AbstractZip
             $fs = FsTools::getFs(dirname($filepath));
             $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
             if ($this->Entity instanceof AbstractConcreteEntity) {
-                // rating
+                // RATING
                 $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
-                // adjust the date - templates won't have a date
+                // ADJUST THE DATE - TEMPLATES WON'T HAVE A DATE
                 if ($json['date']) {
                     $this->Entity->patch(Action::Update, array('date' => $json['date']));
-                }
-                if ($this->Entity instanceof Experiments) {
-                    // try and adjust the status for experiments
-                    $sourceStatus = $json['category'];
-                    // let's see if we can find a status like this in target instance
-                    $targetStatusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->userData['team'])))->readAll();
-                    $filteredStatus = array_filter($targetStatusArr, function ($status) use ($sourceStatus) {
-                        return $status['title'] === $sourceStatus;
-                    });
-                    if (!empty($filteredStatus)) {
-                        // use array_key_first because the filter will not reset the key numbering
-                        $this->Entity->patch(Action::Update, array('category' => (string) $filteredStatus[array_key_first($filteredStatus)]['id']));
-                    }
                 }
             }
             if ($json['metadata'] !== null) {

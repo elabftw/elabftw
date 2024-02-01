@@ -109,6 +109,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     private function create(string $title, string $color, int $isDefault = 0): int
     {
+        $this->Teams->canWriteOrExplode();
         $title = Filter::title($title);
         $color = Check::color($color);
         $isDefault = Filter::toBinary($isDefault);

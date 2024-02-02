@@ -13,7 +13,6 @@ use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use function json_decode;
 use function json_encode;
 use function ksort;
 

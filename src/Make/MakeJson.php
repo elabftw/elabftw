@@ -48,7 +48,8 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             try {
                 $all = $this->getEntityData();
                 // add eLabFTW version number
-                $all['eLabFTW version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
                 ksort($all);
             } catch (IllegalActionException) {
                 continue;

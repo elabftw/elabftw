@@ -36,7 +36,7 @@ abstract class AbstractZip extends AbstractImport
 
     // in version 5.0.0 we switched from filter input to escape output
     // do we need to update old data upon import
-    protected bool $switchToEscapeOutput = true;
+    protected bool $switchToEscapeOutput = false;
 
     public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
     {

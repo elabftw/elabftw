@@ -27,9 +27,9 @@ class MakeEln extends MakeStreamZip
     protected string $extension = '.eln';
 
     private array $authors = array();
-    
+
     private DateTimeImmutable $creationDateTime;
-    
+
     // name of the folder containing everything
     private string $root;
 
@@ -38,7 +38,7 @@ class MakeEln extends MakeStreamZip
         parent::__construct($Zip, $entity, $idArr);
         $this->creationDateTime = new DateTimeImmutable();
         $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
-        $this->jsonArr = array(
+        $this->dataArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
                 array(
@@ -222,7 +222,7 @@ class MakeEln extends MakeStreamZip
             'hasPart' => $rootParts,
         );
 
-        // add a creat action https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
+        // add a create action https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
         $createAction = array(
             array(
                 '@id' => '#ro-crate_created',
@@ -242,13 +242,12 @@ class MakeEln extends MakeStreamZip
                 ),
             ),
         );
-        
 
         // merge all, including authors
-        $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $createAction, $dataEntities, $this->authors);
+        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $createAction, $dataEntities, $this->authors);
 
         // add the metadata json file containing references to all the content of our crate
-        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
+        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
     }
 

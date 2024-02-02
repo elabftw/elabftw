@@ -160,9 +160,10 @@ class Zip extends AbstractZip
     {
         // do we need to update data: don't sanitize input, escape output
         // if the data/meta keys exist, it's a new zip, otherwise it's an old one that needs transformation
-        if (!array_key_exists('data', $json)) {
+        if (array_key_exists('data', $json)) {
+            $this->switchToEscapeOutput = false;
+        } else {
             $json['data'] = $json;
-            $this->switchToEscapeOutput = true;
         }
 
         foreach ($json['data'] as &$item) {

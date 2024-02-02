@@ -159,12 +159,13 @@ class Zip extends AbstractZip
     private function importAll(array $json): void
     {
         // do we need to update data: don't sanitize input, escape output
-        if (array_key_exists('eLabFTW version', $json)
-            && version_compare($json['eLabFTW version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '<')
-        ) {
+        // if the data/meta keys exist, it's a new zip, otherwise it's an old one that needs transformation
+        if (!array_key_exists('data', $json)) {
+            $json['data'] = $json;
             $this->switchToEscapeOutput = true;
         }
-        foreach ($json as &$item) {
+
+        foreach ($json['data'] as &$item) {
             $this->dbInsert($item);
 
             // upload the attached files

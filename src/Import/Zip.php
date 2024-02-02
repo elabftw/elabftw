@@ -160,9 +160,9 @@ class Zip extends AbstractZip
     {
         // do we need to update data: don't sanitize input, escape output
         if (array_key_exists('eLabFTW version', $json)
-            && version_compare($json['eLabFTW version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '<')
+            && version_compare($json['eLabFTW version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '>=')
         ) {
-            $this->switchToEscapeOutput = true;
+            $this->switchToEscapeOutput = false;
         }
         foreach ($json as &$item) {
             $this->dbInsert($item);

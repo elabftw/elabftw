@@ -13,7 +13,6 @@ use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use function json_decode;
 use function json_encode;
 use function ksort;
 
@@ -48,14 +47,17 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             try {
                 $all = $this->getEntityData();
                 // add eLabFTW version number
-                $all['eLabFTW version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
                 ksort($all);
             } catch (IllegalActionException) {
                 continue;
             }
-            // decode the metadata column because it's json
+            // move metadata_decode to metadata column because it's json
             if (isset($all['metadata'])) {
-                $all['metadata'] = json_decode($all['metadata']);
+                $all['metadata'] = $all['metadata_decoded'];
+                // no need to have it twice
+                unset($all['metadata_decoded']);
             }
             $res[] = $all;
         }

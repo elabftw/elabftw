@@ -75,9 +75,9 @@ class Eln extends AbstractZip
             // find the #ro-crate_created node to get the eLab version used to create the .eln
             // does data need an update: don't sanitize input, escape output
             if ($node['@id'] === '#ro-crate_created'
-                && version_compare($node['instrument']['version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '<')
+                && version_compare($node['instrument']['version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '>=')
             ) {
-                $this->switchToEscapeOutput = true;
+                $this->switchToEscapeOutput = false;
             }
         }
 

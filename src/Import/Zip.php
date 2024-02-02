@@ -164,7 +164,6 @@ class Zip extends AbstractZip
         ) {
             $this->switchToEscapeOutput = true;
         }
-    
         foreach ($json as &$item) {
             $this->dbInsert($item);
 

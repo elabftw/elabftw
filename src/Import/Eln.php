@@ -72,11 +72,11 @@ class Eln extends AbstractZip
             if ($node['@id'] === './') {
                 $root_node_has_part = $node['hasPart'];
             }
-            // find the #ro-crate_created node to get the eLab version used to create the .eln
-            // does data need an update: don't sanitize input, escape output
-            if ($node['@id'] === '#ro-crate_created'
-                && version_compare($node['instrument']['version'], self::SWITCH_TO_ESCAPE_OUTPUT_VERSION, '<')
-            ) {
+            // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
+            // only newer versions have the areaServed attribute
+            if ($node['@id'] === 'ro-crate-metadata.json' &&
+                $node['sdPublisher']['name'] === 'eLabFTW' &&
+                !array_key_exists('areaServed', $node['sdPublisher'])) {
                 $this->switchToEscapeOutput = true;
             }
         }

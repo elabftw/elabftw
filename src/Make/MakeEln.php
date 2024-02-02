@@ -49,6 +49,7 @@ class MakeEln extends MakeStreamZip
                     'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
                     'sdPublisher' => array(
                         '@type' => 'Organization',
+                        'areaServed' => 'Laniakea Supercluster',
                         'name' => 'eLabFTW',
                         'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
                         'slogan' => 'A free and open source electronic lab notebook.',

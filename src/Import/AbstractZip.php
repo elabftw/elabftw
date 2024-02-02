@@ -20,8 +20,6 @@ use ZipArchive;
  */
 abstract class AbstractZip extends AbstractImport
 {
-    protected const SWITCH_TO_ESCAPE_OUTPUT_VERSION = '5.0.0-beta2';
-
     // path where we extract the archive content (subfolder of cache/elab)
     protected string $tmpPath;
 
@@ -35,7 +33,7 @@ abstract class AbstractZip extends AbstractImport
     );
 
     // in version 5.0.0 we switched from filter input to escape output
-    // do we need to update old data upon import
+    // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
 
     public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)

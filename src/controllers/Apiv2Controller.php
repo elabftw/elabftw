@@ -236,8 +236,8 @@ class Apiv2Controller extends AbstractApiController
             'events' => new Scheduler(
                 new Items($this->Users, $this->id),
                 null,
-                (string) $this->Request->query->get('start', '2018-12-23T00:00:00+01:00'),
-                (string) $this->Request->query->get('end', '2119-12-23T00:00:00+01:00'),
+                $this->Request->query->getString('start', Scheduler::EVENT_START),
+                $this->Request->query->getString('end', Scheduler::EVENT_END),
                 $this->Request->query->getInt('cat'),
             ),
             'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim($this->Request->query->getString('q')), $this->Request->query->getInt('limit')),

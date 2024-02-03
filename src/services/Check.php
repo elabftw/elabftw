@@ -65,7 +65,7 @@ class Check
         if (ctype_xdigit($color) && $length === 6) {
             return $color;
         }
-        throw new ImproperActionException('Bad color');
+        throw new ImproperActionException('The color attribute is invalid.');
     }
 
     /**

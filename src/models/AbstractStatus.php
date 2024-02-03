@@ -50,7 +50,7 @@ abstract class AbstractStatus extends AbstractCategory
     {
         return $this->create(
             $reqBody['name'] ?? _('Untitled'),
-            $reqBody['color'] ?? '#' . self::DEFAULT_BLUE,
+            $reqBody['color'] ?? '#' . $this->getSomeColor(),
             $reqBody['default'] ?? 0,
         );
     }
@@ -105,6 +105,33 @@ abstract class AbstractStatus extends AbstractCategory
         // TODO fix FK constraints so it sets NULL instead of deleting entries
         // set state to deleted
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
+    }
+
+    /**
+     * Get a color that is a good for background
+     */
+    protected function getSomeColor(): string
+    {
+        $colors = array(
+            self::DEFAULT_BLUE,
+            self::DEFAULT_GRAY,
+            self::DEFAULT_GREEN,
+            self::DEFAULT_RED,
+            '0A0A0A',
+            '0B3D91',
+            '4A3F35',
+            '3D0C02',
+            '253529',
+            '3B3C36',
+            '483C32',
+            '0F4C81',
+            '4B0082',
+            '2F4F4F',
+            '321414',
+            '3C1414',
+        );
+        $randomKey = array_rand($colors, 1);
+        return $colors[$randomKey];
     }
 
     private function create(string $title, string $color, int $isDefault = 0): int

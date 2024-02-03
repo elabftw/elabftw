@@ -43,11 +43,11 @@
               {# clickable toggle pin button #}
               <button title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' type='button' data-action='toggle-pin' data-id='{{ template.id }}' class='btn lh-normal border-0 p-2 {{- template.is_pinned ? ' bgnd-gray' : ' hl-hover-gray' }}'>
                 <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></button>
-              {{ template.title|raw }}</td>
+              {{ template.title }}</td>
           <td>
-            <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title|raw }}</span>
+            <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title }}</span>
           </td>
-          <td><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname|raw }}</span></td>
+          <td><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname }}</span></td>
           <td>{{ template.modified_at }}</td>
         </tr>
       {% endfor %}

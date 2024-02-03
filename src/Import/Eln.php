@@ -65,14 +65,25 @@ class Eln extends AbstractZip
         }
         $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         $this->graph = $json['@graph'];
-        // find the node describing the crate
-        foreach ($json['@graph'] as $node) {
+
+        $root_node_has_part = array();
+        foreach ($this->graph as $node) {
+            // find the node describing the crate
             if ($node['@id'] === './') {
-                // loop over each hasPart of the root node
-                foreach ($node['hasPart'] as $part) {
-                    $this->importRootDataset($this->getNodeFromId($part['@id']));
-                }
+                $root_node_has_part = $node['hasPart'];
             }
+            // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
+            // only newer versions have the areaServed attribute
+            if ($node['@id'] === 'ro-crate-metadata.json' &&
+                $node['sdPublisher']['name'] === 'eLabFTW' &&
+                !array_key_exists('areaServed', $node['sdPublisher'])) {
+                $this->switchToEscapeOutput = true;
+            }
+        }
+
+        // loop over each hasPart of the root node
+        foreach ($root_node_has_part as $part) {
+            $this->importRootDataset($this->getNodeFromId($part['@id']));
         }
     }
 
@@ -89,7 +100,7 @@ class Eln extends AbstractZip
     private function importRootDataset(array $dataset): void
     {
         $createTarget = $this->targetNumber;
-        $title = $dataset['name'] ?? _('Untitled');
+        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
 
         if ($this->Entity instanceof AbstractConcreteEntity) {
             if ($this->Entity instanceof Experiments) {
@@ -110,30 +121,36 @@ class Eln extends AbstractZip
         $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
 
         // TAGS: should normally be a comma separated string, but we allow array for BC
-        if (isset($dataset['keywords'])) {
+        if (!empty($dataset['keywords'])) {
             $tags = $dataset['keywords'];
-            if (is_string($dataset['keywords'])) {
-                $tags = explode(',', $dataset['keywords']);
+            if (is_string($tags)) {
+                $tags = explode(',', $tags);
             }
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
-                    $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
+                    $this->Entity->Tags->postAction(
+                        Action::Create,
+                        array('tag' => $this->transformIfNecessary($tag)),
+                    );
                 }
             }
         }
 
         // LINKS
-        if (isset($dataset['mentions']) && !empty($dataset['mentions'])) {
+        if (!empty($dataset['mentions'])) {
             $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach($dataset['mentions'] as $mention) {
                 // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
-                $fullMention = $mention;
                 // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
                 if (count($mention) === 1) {
                     // resolve the id to get the full node content
-                    $fullMention = $this->getNodeFromId($mention['@id']);
+                    $mention = $this->getNodeFromId($mention['@id']);
                 }
-                $linkHtml .= sprintf("<li><a href='%s'>%s</a></li>", $fullMention['@id'], $fullMention['name']);
+                $linkHtml .= sprintf(
+                    "<li><a href='%s'>%s</a></li>",
+                    $mention['@id'],
+                    $this->transformIfNecessary($mention['name']),
+                );
             }
             $linkHtml .= '</ul>';
             $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
@@ -170,22 +187,21 @@ class Eln extends AbstractZip
         }
 
         // COMMENTS
-        if (isset($dataset['comment'])) {
+        if (!empty($dataset['comment'])) {
             foreach ($dataset['comment'] as $comment) {
                 // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
-                $fullComment = $comment;
                 // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
                 if (count($comment) === 1) {
                     // resolve the id to get the full node content
-                    $fullComment = $this->getNodeFromId($comment['@id']);
+                    $comment = $this->getNodeFromId($comment['@id']);
                 }
-                $author = $this->getNodeFromId($fullComment['author']['@id']);
+                $author = $this->getNodeFromId($comment['author']['@id']);
                 $content = sprintf(
                     "Imported comment from %s %s (%s)\n\n%s",
-                    $author['givenName'] ?? '',
-                    $author['familyName'] ?? $author['name'] ?? 'Unknown',
-                    $fullComment['dateCreated'],
-                    $fullComment['text'],
+                    $this->transformIfNecessary($author['givenName'] ?? ''),
+                    $this->transformIfNecessary($author['familyName'] ?? '') ?: $author['name'] ?? 'Unknown',
+                    $comment['dateCreated'],
+                    $this->transformIfNecessary($comment['text'] ?? '', true),
                 );
                 $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
             }
@@ -201,7 +217,7 @@ class Eln extends AbstractZip
 
     private function importPart(array $part): void
     {
-        if (!isset($part['@type'])) {
+        if (empty($part['@type'])) {
             return;
         }
 
@@ -232,12 +248,16 @@ class Eln extends AbstractZip
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         // checksum is mandatory for import
-        if (!isset($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
+        if (empty($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
             throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
         }
-        $newUploadId = $this->Entity->Uploads->create(new CreateUpload($file['name'] ?? basename($file['@id']), $filepath, $file['description'] ?? null));
+        $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
+            $file['name'] ?? basename($file['@id']),
+            $filepath,
+            $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
+        ));
         // the alternateName holds the previous long_name of the file
-        if (isset($file['alternateName'])) {
+        if (!empty($file['alternateName'])) {
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
@@ -257,11 +277,18 @@ class Eln extends AbstractZip
                 }
             }
             if ($json['metadata'] !== null) {
-                $this->Entity->patch(Action::Update, array('metadata' => json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512)));
+                $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
+                $this->Entity->patch(
+                    Action::Update,
+                    array('metadata' => $this->transformIfNecessary($metadata, isMetadata: true)),
+                );
             }
             // add steps
             if (!empty($json['steps'])) {
                 foreach ($json['steps'] as $step) {
+                    if (!empty($step['body'])) {
+                        $step['body'] = $this->transformIfNecessary($step['body']);
+                    }
                     $this->Entity->Steps->import($step);
                 }
             }
@@ -274,7 +301,11 @@ class Eln extends AbstractZip
         $html = sprintf('<p>%s<br>%s', $part['name'] ?? '', $part['dateCreated'] ?? '');
         $html .= '<ul>';
         foreach ($part['hasPart'] as $subpart) {
-            $html .= '<li>' . basename($subpart['@id']) . ' ' . ($subpart['description'] ?? '') . '</li>';
+            $html .= sprintf(
+                '<li>%s %s</li>',
+                basename($subpart['@id']),
+                $this->transformIfNecessary($subpart['description'] ?? ''),
+            );
         }
         $html .= '</ul>';
         return $html;

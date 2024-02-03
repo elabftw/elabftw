@@ -1,6 +1,6 @@
 {# TITLE #}
 <h1 id='documentTitle' class='mb-4 title text-dark'>
-  {{ Entity.entityData.title|raw }}
+  {{ Entity.entityData.title }}
 </h1>
 
 {% include('catstat-view.html') %}
@@ -9,7 +9,7 @@
 {% if entityData.tags|length > 0 %}
   <span class='tags'><i class='fas fa-tags'></i></span>
   {% for tag in Entity.Tags.readAll() %}
-    <span class='tag {{ tag.is_favorite ? 'favorite' }}'>{{ tag.tag|raw }}</span>
+    <span class='tag {{ tag.is_favorite ? 'favorite' }}'>{{ tag.tag }}</span>
   {% endfor %}
 {% endif %}
 

@@ -14,24 +14,22 @@ use Elabftw\Interfaces\ParamInterface;
 
 final class TagParam implements ParamInterface
 {
+    protected const MIN_CONTENT_SIZE = 1;
+
     public function __construct(private string $content)
     {
     }
 
     /**
-     * Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+     * Sanitize tag, we remove '\' because it messes up the javascript if you have this in the tags
      * also remove | because we use this as separator for tags in SQL
      */
     public function getContent(): string
     {
-        $tag = filter_var($this->content, FILTER_SANITIZE_STRING);
-        if ($tag === false) {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
-        }
-        $tag = trim(str_replace(array('\\', '|'), array('', ' '), (string) $tag));
+        $tag = trim(str_replace(array('\\', '|'), array('', ' '), $this->content));
         // empty tags are disallowed
-        if ($tag === '') {
-            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), 1));
+        if (mb_strlen($tag) < self::MIN_CONTENT_SIZE) {
+            throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
         return $tag;
     }

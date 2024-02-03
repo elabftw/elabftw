@@ -10,6 +10,7 @@
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
@@ -27,15 +28,17 @@ class MakeEln extends MakeStreamZip
 
     private array $authors = array();
 
+    private DateTimeImmutable $creationDateTime;
+
     // name of the folder containing everything
     private string $root;
 
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
         parent::__construct($Zip, $entity, $idArr);
-        $now = new DateTimeImmutable();
-        $this->root = $now->format('Y-m-d-His') . '-export';
-        $this->jsonArr = array(
+        $this->creationDateTime = new DateTimeImmutable();
+        $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
+        $this->dataArr = array(
             '@context' => 'https://w3id.org/ro/crate/1.1/context',
             '@graph' => array(
                 array(
@@ -43,9 +46,10 @@ class MakeEln extends MakeStreamZip
                     '@type' => 'CreativeWork',
                     'about' => array('@id' => './'),
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
-                    'dateCreated' => $now->format(DateTimeImmutable::ATOM),
+                    'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
                     'sdPublisher' => array(
                         '@type' => 'Organization',
+                        'areaServed' => 'Laniakea Supercluster',
                         'name' => 'eLabFTW',
                         'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
                         'slogan' => 'A free and open source electronic lab notebook.',
@@ -219,11 +223,32 @@ class MakeEln extends MakeStreamZip
             'hasPart' => $rootParts,
         );
 
+        // add a create action https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
+        $createAction = array(
+            array(
+                '@id' => '#ro-crate_created',
+                '@type' => 'CreateAction',
+                'object' => array('@id' => './'),
+                'name' => 'RO-Crate created',
+                'endTime' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
+                'instrument' => array(
+                    '@id' => 'https://www.elabftw.net',
+                    '@type' => 'SoftwareApplication',
+                    'name' => 'eLabFTW',
+                    'version' => App::INSTALLED_VERSION,
+                    'identifier' => 'https://www.elabftw.net',
+                ),
+                'actionStatus' =>  array(
+                    '@id' => 'http://schema.org/CompletedActionStatus',
+                ),
+            ),
+        );
+
         // merge all, including authors
-        $this->jsonArr['@graph'] = array_merge($this->jsonArr['@graph'], $dataEntities, $this->authors);
+        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $createAction, $dataEntities, $this->authors);
 
         // add the metadata json file containing references to all the content of our crate
-        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
+        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
     }
 

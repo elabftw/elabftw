@@ -78,7 +78,7 @@
     {% endif %}
       class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
       {% if not searchPage %}
-        <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+        <input type='hidden' name='q' value='{{ DisplayParams.query|e('html_attr') }}' />
       {% endif %}
       {% if DisplayParams.searchType == 'related' %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
@@ -89,7 +89,7 @@
         <option value=''>{{ 'Filter category'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-          {{ category.title|raw }}</option>
+          {{ category.title }}</option>
         {% endfor %}
       </select>
 
@@ -98,7 +98,7 @@
         <option value=''>{{ 'Filter status'|trans }}</option>
         {% for status in statusArr %}
           <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected' }}>
-          {{ status.title|raw }}</option>
+          {{ status.title }}</option>
         {% endfor %}
       </select>
 
@@ -107,7 +107,7 @@
         <option value=''>{{ 'Filter owner'|trans }}</option>
         {% for user in usersArr %}
           <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
-          {{ user.fullname|raw }}</option>
+          {{ user.fullname }}</option>
         {% endfor %}
       </select>
 
@@ -116,8 +116,8 @@
         <select name='extended' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter visibility'|trans }}'>
           <option value=''>{{ 'Filter visibility'|trans }}</option>
           {% for vis in visibilityArr %}
-          <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
-            {{ vis|raw }}</option>
+          <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+            {{ vis }}</option>
           {% endfor %}
         </select>
 
@@ -142,7 +142,7 @@
       {%- endif %}
       <select multiple name='tags[]' class='form-control mr-1 mb-2 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
         {% for tag in tagsArrForSelect %}
-          <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+          <option value='{{ tag.tag|e('html_attr') }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
         {% endfor %}
       </select>
       {# ARCHIVED filter #}
@@ -178,7 +178,7 @@
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
     <div class='row d-flex'>
-      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|trim|e('url') }}'>
         <button class='btn btn-primary' type='button'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
       </a>
     </div>
@@ -197,7 +197,7 @@
               {{ 'Change category'|trans }}
             </option>
             {% for category in categoryArr %}
-                <option value='{{ category.id }}'>{{ category.title|raw }}</option>
+                <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
           </select>
           {# CHANGE STATUS #}
@@ -206,7 +206,7 @@
               {{ 'Change status'|trans }}
             </option>
             {% for status in statusArr %}
-                <option value='{{ status.id }}'>{{ status.title|raw }}</option>
+                <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
 
@@ -239,7 +239,7 @@
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
                 {% for cat in itemsCategoryArr %}
-                  <option value='{{ cat.id }}'>{{ cat.title|raw }}</option>
+                  <option value='{{ cat.id }}'>{{ cat.title }}</option>
                 {% endfor %}
               </select>
             </div>

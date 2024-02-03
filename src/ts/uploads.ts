@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
       }
     },
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('upload-file-comment'),
   });
   malleableFilecomment.listen();

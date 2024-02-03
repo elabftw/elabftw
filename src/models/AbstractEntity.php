@@ -34,7 +34,6 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
-
 use function explode;
 use function implode;
 use function is_bool;
@@ -42,6 +41,7 @@ use function json_decode;
 use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
+use function ksort;
 use PDO;
 use PDOStatement;
 use function sprintf;
@@ -360,6 +360,7 @@ abstract class AbstractEntity implements RestInterface
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
         $base['changelog'] = (new Changelog($this))->readAll();
+        ksort($base);
         return $base;
     }
 

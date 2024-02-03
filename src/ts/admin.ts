@@ -54,13 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(resp => resp.json()).then(json => json.name);
     },
     listenOn: '.malleableTeamgroupName',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // add an observer so new comments will get an event handler too
+  // add an observer so new team groups will get an event handler
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});

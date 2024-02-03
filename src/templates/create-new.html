@@ -13,7 +13,7 @@
             <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
             {% for tpl in templatesArr %}
               <button type='button' data-action='create-entity' data-type='experiments' data-tplid='{{ tpl.id }}' class='btn btn-dropdown-item dropdown-item wrap'>
-                {{ tpl.title|raw }}
+                {{ tpl.title }}
               </button>
             {% endfor %}
           {% else %}
@@ -24,7 +24,7 @@
         {% else %}
           {% for category in itemsCategoryArr %}
             <button type='button' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='btn btn-dropdown-item dropdown-item' style='color:#{{ category.color }}'>
-              {{ category.title|raw }}
+              {{ category.title }}
             </button>
           {% endfor %}
         {% endif %}

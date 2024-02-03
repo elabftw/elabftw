@@ -21,12 +21,12 @@
 
 <div id='isTimestampedByInfoDiv'>
 {% if Entity.entityData.timestamped %}
-  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|raw|msg('ok', false) }}
+  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 </div>
 
 {% if Entity.entityData.locked %}
-  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|raw|msg('ok', false) }}
+  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 
 <section>
@@ -51,7 +51,7 @@
   {% if Entity.entityData.custom_id %}
     <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
   {% endif %}
-  <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title|raw }}</span>
+  <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
   </h1>
 
   {% include('catstat-view.html') %}
@@ -64,7 +64,7 @@
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
         {% for tag in Entity.Tags.readAll() %}
-        <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+        <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
         {% endfor %}
       </span>
     {% endif %}
@@ -88,7 +88,7 @@
       {% set nextStepsArr = next_step|split('|') %}
       {% set next = nextStepsArr|first %}
       <p>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='text-dark'>{{ next|raw }}</span>
+      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='text-dark'>{{ next }}</span>
       </p>
   {% endif %}
 
@@ -107,7 +107,7 @@
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
       {# body in view mode is text-dark for more lisibility see github issue #52 #}
       <div {{ not displayMainText ? 'hidden' }}>
-        <h3 data-action='toggle-next'class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+        <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
         <div id='body_view' class='pt-2 text-dark'>{{ body|raw }}</div>
         <hr>
       </div>
@@ -146,7 +146,7 @@
         {% for comment in Entity.entityData.comments %}
           <div class='box'>
             <div class='comment-header text-muted p-2'>
-              {{ comment.fullname|raw }} {{ 'commented'|trans }}
+              {{ comment.fullname }} {{ 'commented'|trans }}
               <span title='{{ comment.created_at }}' class='relative-moment'></span>
               {% if comment.created_at != comment.modified_at %}
                 ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
@@ -158,7 +158,7 @@
               {% endif %}
             </div>
             {# the comment itself is only editable by the owner #}
-            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|raw }}</p>
+            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|nl2br }}</p>
           </div>
         {% endfor %}
 

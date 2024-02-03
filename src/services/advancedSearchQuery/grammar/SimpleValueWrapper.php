@@ -28,6 +28,6 @@ class SimpleValueWrapper implements Term, Visitable
 
     public function getValue(): string
     {
-        return htmlspecialchars($this->value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+        return $this->value;
     }
 }

@@ -23,7 +23,7 @@
       <h5>{{ 'Browse by category'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for category in experimentsCategoryArr -%}
-          <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title|raw }}</a>
+          <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
         {%- endfor %}
       </div>
       <hr>
@@ -32,7 +32,7 @@
       <h5>{{ 'Browse by status'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for status in experimentsStatusArr -%}
-          <a href='experiments.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title|raw }}</a>
+          <a href='experiments.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
         {%- endfor %}
       </div>
       <hr>
@@ -42,9 +42,9 @@
       {% for experiment in experimentsArr %}
         <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'>
           {%- if experiment.category_title -%}
-            <span style='--bg: #{{ experiment.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ experiment.category_title|raw }}</span>
+            <span style='--bg: #{{ experiment.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ experiment.category_title }}</span>
           {%- endif -%}
-          {{- experiment.title|raw }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span>
+          {{- experiment.title }} <span title='{{ experiment.modified_at }}' class='relative-moment text-nowrap smallgray'></span>
         </a>
       {% endfor %}
     </div>
@@ -58,7 +58,7 @@
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
       {% for category in itemsCategoryArr -%}
-        <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title|raw }}</a>
+        <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>
     <hr>
@@ -66,7 +66,7 @@
       <h5>{{ 'Browse by status'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for status in itemsStatusArr -%}
-          <a href='database.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn lh-normal border-0 mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title|raw }}</a>
+          <a href='database.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn lh-normal border-0 mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
         {%- endfor %}
       </div>
       <hr>
@@ -78,7 +78,7 @@
           {% if item.category_title %}
             <span style='--bg: #{{ item.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ item.category_title }}</span>
           {% endif %}
-          {{ item.title|raw }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span>
+          {{ item.title }} <span title='{{ item.modified_at }}' class='relative-moment text-nowrap smallgray'></span>
         </a>
       {% endfor %}
     </div>
@@ -90,7 +90,7 @@
     </div>
     <div class='list-group mt-1'>
       {% for booking in bookingsArr %}
-        <a href='team.php?tab=1&amp;item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title|raw }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
+        <a href='team.php?tab=1&amp;item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </div>
   </div>

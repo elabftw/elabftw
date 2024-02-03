@@ -86,8 +86,8 @@
       <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
   {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
-    <!-- user is already authed with external auth, so just present a continue button
-      we don't autologin anymore -->
+    {# user is already authed with external auth, so just present a continue button
+      we don't autologin anymore #}
       <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off' aria-label='autologin form'>
         {{ App.Session.get('csrf')|csrf }}
         <input type='hidden' name='auth_type' value='external'>

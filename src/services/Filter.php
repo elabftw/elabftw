@@ -74,11 +74,11 @@ class Filter
     }
 
     /**
-     * Simply sanitize string
+     * Simply sanitize email
      */
-    public static function sanitize(string $input): string
+    public static function sanitizeEmail(string $input): string
     {
-        $output = filter_var($input, FILTER_SANITIZE_STRING);
+        $output = filter_var($input, FILTER_SANITIZE_EMAIL);
         if ($output === false) {
             return '';
         }
@@ -101,8 +101,8 @@ class Filter
      */
     public static function title(string $input): string
     {
-        $title = self::sanitize($input);
-        if (empty($title)) {
+        $title = trim($input);
+        if ($title === '') {
             return _('Untitled');
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP

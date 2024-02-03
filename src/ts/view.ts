@@ -59,12 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
       const json = await resp.json();
       // we reload all so the edition date is also reloaded
-      reloadElement('commentsDiv');
+      reloadElement('commentsDiv').then(() => {
+        malleableComments.listen();
+        relativeMoment();
+      });
       return json.comment;
     },
     inputType: InputType.Textarea,
     listenOn: '.comment.editable',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -122,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return statusArr;
     }),
     listenOn: '.malleableStatus',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -145,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectOptionsTextKey: 'title',
     selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
     listenOn: '.malleableCategory',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -155,11 +158,4 @@ document.addEventListener('DOMContentLoaded', () => {
   malleableComments.listen();
   malleableStatus.listen();
   malleableCategory.listen();
-
-  new MutationObserver(() => {
-    malleableStatus.listen();
-    malleableCategory.listen();
-    malleableComments.listen();
-    relativeMoment();
-  }).observe(document.getElementById('container'), {childList: true, subtree: true});
 });

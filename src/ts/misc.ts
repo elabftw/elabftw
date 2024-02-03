@@ -480,3 +480,16 @@ export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
     plusMinusIcon.classList.remove('fa-square-minus');
   }
 }
+
+// escape text similar to htmlspecialchars() of php
+// https://stackoverflow.com/a/4835406
+export function escapeHTML(text: string): string {
+  const escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&#34;',
+    '\'': '&#39;',
+  };
+  return text.replace(/[&<>'"]/g, char => escapeMap[char]);
+}

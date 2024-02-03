@@ -25,7 +25,6 @@ use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
-use function filter_var;
 
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,7 +74,7 @@ try {
     if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
-            filter_var($App->Request->query->getString('q'), FILTER_SANITIZE_STRING),
+            $App->Request->query->getString('q'),
             $App->Request->query->getBoolean('includeNotTeam') ? 0 : $App->Users->userData['team'],
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),

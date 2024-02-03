@@ -19,7 +19,7 @@
             </select>
           </div>
         {% endif %}
-        <input type='text' class='form-control' value='{{ App.Request.query.get('q') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
+        <input type='text' class='form-control' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
         </div>
@@ -60,7 +60,7 @@
             <div class='modal-dialog modal-xl' role='document'>
               <div class='modal-content'>
                 <div class='modal-header'>
-                  <h5 class='modal-title' id='manageTeamsForUser'>{{ 'Manage teams for user'|trans }} - {{ user.fullname|raw }}</h5>
+                  <h5 class='modal-title' id='manageTeamsForUser'>{{ 'Manage teams for user'|trans }} - {{ user.fullname }}</h5>
                   <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
                     <span aria-hidden='true'>&times;</span>
                   </button>
@@ -145,10 +145,10 @@
                   </div>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname }}</span>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname }}</span>
                 </td>
                 <td>
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>

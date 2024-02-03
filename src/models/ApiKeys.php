@@ -90,11 +90,12 @@ class ApiKeys implements RestInterface
     /**
      * Get a user from an API key
      * Note: at some point we should drop support for keys without id header
+     * Id header avoids looping over all the keys to find the correct one
      */
     public function readFromApiKey(string $apiKey): array
     {
         $idFilter = '';
-        // do we have userid information? old keys don't have it
+        // do we have key id information? old keys don't have it
         if (str_contains($apiKey, '-')) {
             // extract the keyId from the key
             $exploded = explode('-', $apiKey, 2);

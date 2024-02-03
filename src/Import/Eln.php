@@ -75,6 +75,7 @@ class Eln extends AbstractZip
             // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
             // only newer versions have the areaServed attribute
             if ($node['@id'] === 'ro-crate-metadata.json' &&
+                array_key_exists('sdPublisher', $node) &&
                 $node['sdPublisher']['name'] === 'eLabFTW' &&
                 !array_key_exists('areaServed', $node['sdPublisher'])) {
                 $this->switchToEscapeOutput = true;

@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
@@ -86,6 +87,7 @@ class Eln extends AbstractZip
         foreach ($root_node_has_part as $part) {
             $this->importRootDataset($this->getNodeFromId($part['@id']));
         }
+
     }
 
     private function getNodeFromId(string $id): array
@@ -229,6 +231,14 @@ class Eln extends AbstractZip
             }
         }
         $this->Entity->patch(Action::Update, array('bodyappend' => $html));
+
+        // also save the Dataset node as a .json file so we don't lose information with things not imported
+        $this->Entity->Uploads->postAction(Action::CreateFromString, array(
+            'file_type' => FileFromString::Json->value,
+            'real_name' => 'dataset-node-from-ro-crate.json',
+            'content' => json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
+        ));
+
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files

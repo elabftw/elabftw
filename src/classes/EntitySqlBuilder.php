@@ -320,6 +320,7 @@ class EntitySqlBuilder
                 AND %s)",
             $can,
             BasePermissions::MyTeams->value,
+            // items are restricted to the team linked
             $this->entity instanceof Items
                 ? 'users2teams.teams_id = entity.team'
                 : '1',

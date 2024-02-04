@@ -98,6 +98,9 @@ class Eln extends AbstractZip
         return array();
     }
 
+    /**
+     * This is the main Dataset `@type` node.
+     */
     private function importRootDataset(array $dataset): void
     {
         $createTarget = $this->targetNumber;
@@ -119,7 +122,8 @@ class Eln extends AbstractZip
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
             $this->Entity->setId($this->Entity->create($title));
         }
-        $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => $dataset['text'] ?? ''));
+        // here we use "text" or "description" attribute as main text
+        $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
 
         // TAGS: should normally be a comma separated string, but we allow array for BC
         if (!empty($dataset['keywords'])) {
@@ -208,12 +212,44 @@ class Eln extends AbstractZip
             }
         }
 
+        // now we import all the remaining attributes as text/links in the main text
+        // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected
+        $html = '';
+        foreach ($dataset as $attributeName => $value) {
+            switch($attributeName) {
+                case 'author':
+                case 'funder':
+                    $html .= $this->attrToHtml($value, _(ucfirst($attributeName)));
+                    break;
+                case 'citation':
+                case 'license':
+                    $html .= sprintf('<h1>%s</h1><ul><li><a href="%s">%s</a></li></ul>', _(ucfirst($attributeName)), $value['@id'], $value['@id']);
+                    break;
+                default:
+            }
+        }
+        $this->Entity->patch(Action::Update, array('bodyappend' => $html));
+
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
         // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff
         foreach ($dataset['hasPart'] as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+    }
+
+    private function attrToHtml(array $attr, string $title): string
+    {
+        $html = sprintf('<h1>%s</h1><ul>', $title);
+        foreach ($attr as $elem) {
+            if (is_string($elem)) {
+                $html .= sprintf('<li><a href="%s">%s</a></li>', $elem, $elem);
+                continue;
+            }
+            $node = $this->getNodeFromId($elem['@id']);
+            $html .= sprintf('<li><a href="%s">%s</a></li>', $node['@id'], $node['name']);
+        }
+        return $html . '</ul>';
     }
 
     private function importPart(array $part): void

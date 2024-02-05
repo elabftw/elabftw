@@ -179,6 +179,11 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
+    private function visitFieldCustom_id(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
+    {
+        return new InvalidFieldCollector();
+    }
+
     private function visitFieldElabid(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
         return new InvalidFieldCollector();

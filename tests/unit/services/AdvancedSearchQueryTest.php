@@ -14,6 +14,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use function implode;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,7 +42,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetWhereClause(): void
     {
-        $queryParts = array(
+        $query = implode(' ', array(
             ' TEST TEST1 AND TEST2 OR TEST3 NOT TEST4 & TEST5',
             '| TEST6 AND ! TEST7 (TEST8 or TEST9) "T E S T 1 0"',
             '\'T E S T 1 1\' "chinese 汉语 漢語 中文" "japanese 日本語 ひらがな 平仮名 カタカナ 片仮名"',
@@ -59,8 +60,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'locked_at:<20221209',
             'id:1',
             'custom_id:123',
-        );
-        $query = implode(' ', $queryParts);
+        ));
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
@@ -111,29 +111,33 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $visInput = 'noValidInput';
         $from = '20210101';
         $to = '20200101';
-        $query = 'visibility:' . $visInput;
-        $query .= ' date:' . $from . '..' . $to;
-        $query .= ' timestamped_at:' . $from . '..' . $to;
-        $query .= ' created_at:19700101';
-        $query .= ' locked_at:20221209..20380119';
-        $query .= ' group:"does not exist"';
-        $query .= ' category:"only works for items"';
+        $query = implode(' ', array(
+            "visibility:$visInput",
+            "date:$from..$to",
+            "timestamped_at:$from..$to",
+            'created_at:19700101',
+            'locked_at:20221209..20380119',
+            'group:"does not exist"',
+            'category:"only works for items"',
+        ));
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('visibility:' . $visInput . '. Valid values are ', $advancedSearchQuery->getException());
-        $this->assertStringContainsString('date:' . $from . '..' . $to . '. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
-        $this->assertStringContainsString('timestamped_at:' . $from . '..' . $to . '. Second date needs to be equal or greater than first date.', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith("visibility:$visInput. Valid values are ", $advancedSearchQuery->getException());
+        $this->assertStringContainsString("date:$from..$to. Second date needs to be equal or greater than first date.", $advancedSearchQuery->getException());
+        $this->assertStringContainsString("timestamped_at:$from..$to. Second date needs to be equal or greater than first date.", $advancedSearchQuery->getException());
         $this->assertStringContainsString('created_at: Date needs to be between 1970-01-02 and 2038-01-18.', $advancedSearchQuery->getException());
         $this->assertStringContainsString('locked_at: Date needs to be between 1970-01-02 and 2038-01-18.', $advancedSearchQuery->getException());
         $this->assertStringContainsString('group:', $advancedSearchQuery->getException());
 
-        $query = 'timestamped:true';
-        $query .= ' timestamped_at:20221209';
-        $query .= ' status:"Running"';
+        $query = implode(' ', array(
+            'timestamped:true',
+            'timestamped_at:20221209',
+            'status:"Running"',
+        ));
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'itmes',

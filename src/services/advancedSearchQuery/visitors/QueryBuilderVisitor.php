@@ -38,8 +38,6 @@ class QueryBuilderVisitor implements Visitor
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
-        // body is stored as html after htmlPurifier worked on it
-        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $param = $this->getUniqueID();
         $paramBody = $this->getUniqueID();
         $paramCustomId = $this->getUniqueID();
@@ -60,6 +58,8 @@ class QueryBuilderVisitor implements Visitor
             'value' => '%' . $simpleValueWrapper->getValue() . '%',
             'type' => PDO::PARAM_STR,
         );
+        // body is stored as html after htmlPurifier worked on it
+        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $bindValues[] = array(
             'param' => $paramBody,
             'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',

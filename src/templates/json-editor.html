@@ -1,7 +1,7 @@
 {# JSON EDITOR #}
 {% include('field-builder-modal.html') %}
 
-<section id='json-editor'>
+<section id='json-editor' aria-label='json editor'>
   {# id for icon is used when focusing after loading from file #}
   <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
@@ -65,7 +65,8 @@
     <button class='btn lh-normal border-0 px-0' type='button' data-action='toggle-next' aria-expanded='false' title='{{ 'Information'|trans }}' aria-label='{{ 'Information'|trans }}'><i class='fas fa-fw fa-info-circle'></i></button><span hidden><a target='_blank' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block no-deprecated-attr, text-content: suppress errors from jsonEditor] -->
+      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+      <!-- [html-validate-disable-block no-deprecated-attr, text-content, no-unused-disable: suppress errors from jsonEditor] -->
     {%- endif %}
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>

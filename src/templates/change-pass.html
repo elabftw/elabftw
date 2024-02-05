@@ -8,8 +8,8 @@
 
     <p class='smallgray'>{{ minPasswordLength() }} {{ 'characters minimum'|trans }}</p>
     {# output the key and userid as hidden fields #}
-    <input type='hidden' name='key' value='{{ key|e }}' />
-    <input type='hidden' name='userid' value='{{ userid|e }}' />
+    <input type='hidden' name='key' value='{{ key }}' />
+    <input type='hidden' name='userid' value='{{ userid }}' />
 
     {# min pass length minimum, no maximum #}
     {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}

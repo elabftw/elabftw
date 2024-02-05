@@ -66,7 +66,11 @@ class ExperimentsTimestamp extends Command
         $Experiments = new Experiments(new Users($userid));
         $Experiments->bypassWritePermission = true;
         foreach ($expArr as $exp) {
+            if ($output->isVerbose()) {
+                $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
+            }
             $Experiments->setId($exp['id']);
+            // use AutoTimestamp action so the archive will be Archived and invisible to users
             $Experiments->patch(Action::Timestamp, array());
         }
 

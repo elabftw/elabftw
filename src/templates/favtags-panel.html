@@ -1,4 +1,5 @@
 <div class='side-panel' id='favtagsPanel' hidden>
+  <button type='button' data-action='toggle-favtags' aria-label='{{ 'Close'|trans }}' title='{{ 'Close'|trans }}' class='btn float-right mr-2'><i class='fas fa-xmark fa-2x'></i></button>
   <div class='p-3'>
     <h3 class='mb-3'>{{ 'Favorite tags'|trans }}</h3>
     <div class='input-group'>
@@ -10,12 +11,12 @@
       </div>
     </div>
     <hr>
-    {% if favTagsArr|length == 0 %}
-      <p>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</p>
-    {% endif %}
     <div id='favtagsTagsDiv' class='d-flex flex-column'>
+      {% if favTagsArr|length == 0 %}
+        <p>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</p>
+      {% endif %}
       {% for favtag in favTagsArr %}
-      <div data-action='add-tag-filter' data-tag='{{ favtag.tag }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
+      <div data-action='add-tag-filter' data-tag='{{ favtag.tag|e('html_attr') }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
         {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
       </div>
       {% endfor %}
@@ -23,9 +24,10 @@
     <hr>
     {# ADD TAG AS FAVORITE INPUT #}
     <div class='input-group mt-2 mb-3'>
-      <input id='createFavTagInput' data-autocomplete='tags' type='text' class='form-control form-inline createTagInputFavorite' aria-label='{{ 'Add a tag as favorite'|trans }}' placeholder='{{ 'Add a tag as favorite'|trans }}'>
+      <input id='createFavTagInput' data-autocomplete='tags' type='text' class='form-control form-inline' aria-label='{{ 'Add a tag as favorite'|trans }}' placeholder='{{ 'Add a tag as favorite'|trans }}'>
       <div class='input-group-append'>
-        <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
+        {# this is a dummy button with no action, all work is done via event listeners on #createFavTagInput #}
+        <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' aria-label='{{ 'Add'|trans }}'>
           <i class='fas fa-plus fa-fw'></i>
         </button>
       </div>

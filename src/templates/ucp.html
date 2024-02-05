@@ -204,32 +204,6 @@
 
   <h2 class='p-2 pl-3 section-title'>{{ 'Miscellaneous'|trans }}</h2>
   <div class='pl-3 mt-2'>
-    <div class='d-flex justify-content-between'>
-      <label for='show_team' class='col-form-label'>{{ 'Show experiments from the team on the Experiments page'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team' {{ App.Users.userData.show_team == 1 ? 'checked="checked"' }} id='show_team'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='show_team_templates' class='col-form-label'>{{ 'Show templates from the team on the Templates page and in the menus'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_team_templates' {{ App.Users.userData.show_team_templates == 1 ? 'checked="checked"' }} id='show_team_templates'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='show_public' class='col-form-label'>{{ 'Show experiments/database items from outside the team'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_public' {{ App.Users.userData.show_public == 1 ? 'checked="checked"' }} id='show_public'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='use_markdown' class='col-form-label'>{{ 'Disable the rich text editor and write Markdown directly'|trans }}</label>
@@ -279,7 +253,7 @@
 
 {# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
-  <form class='form-group' method='post' action='app/controllers/UcpController.php'>
+  <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
     {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}
@@ -301,7 +275,7 @@
 
       <div class='d-flex justify-content-between'>
         <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
-        <input class='form-control col-md-3' name='email' id='email' type='email' value='{{ App.Users.userData.email }}' />
+        <input class='form-control col-md-3' name='email' id='email' type='email' value='{{ App.Users.userData.email|e('html_attr') }}' />
       </div>
       <hr>
 
@@ -340,13 +314,13 @@
   <div class='pl-3 mt-2 mb-5' id='ucp-account-form'>
     <div class='d-flex justify-content-between'>
       <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='firstname' name='firstname' value='{{ App.Users.userData.firstname|e('html_attr') }}' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
-      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|raw }}' />
+      <input class='form-control col-md-3' type='text' id='lastname' name='lastname' value='{{ App.Users.userData.lastname|e('html_attr') }}' />
     </div>
     <hr>
 

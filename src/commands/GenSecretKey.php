@@ -21,8 +21,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'tools:genkey')]
 class GenSecretKey extends Command
 {
-    protected static $defaultName = 'tools:genkey';
-
     protected function configure(): void
     {
         $this->setDescription('Generate the secret key for the application')

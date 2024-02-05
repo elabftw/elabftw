@@ -1,11 +1,7 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
-{% set owner = '' %}
-{% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
-  {% set owner = "%s <a href='?owner=%s'>%s</a>"|format('by'|trans, item.userid, item.fullname) %}
-{% endif %}
 
-<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};'>
+<section class='item pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -21,12 +17,12 @@
       {% else %}
         {# edit icon #}
         {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+          <a href='{{ Entity.page }}.php?mode=edit&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
             <i class='fas fa-pencil fa-fw'></i>
           </a>
         {% else %}
         {# eye icon #}
-          <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
+          <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
             <i class='fas fa-eye fa-fw'></i>
           </a>
         {% endif %}
@@ -40,7 +36,7 @@
     <div class='my-1'>
       {# timestamp icon #}
       {% if item.timestamped %}
-        <i style='color:#{{ item.category_color }}' class='far fa-calendar-check fa-fw'></i>
+        <i style='color:#{{ item.category_color|default('bdbdbd') }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
       {# archived icon #}
       {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
@@ -49,11 +45,11 @@
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}'>{{ item.category_title|raw }}</button>
+        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
       {% endif %}
       {# status #}
       {% if item.status %}
-        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title|raw }}</button>
+        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
       {% endif %}
     </div>
     {# end first line #}
@@ -64,12 +60,14 @@
       {% if item.custom_id %}
         <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+        <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
       </p>
     </div>
     {# owner #}
     <div class='owner'>
-      {{ owner|raw }}
+      {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
+        {{ 'by'|trans }} <a href='?owner={{ item.userid }}'>{{ item.fullname }}</a>
+      {% endif %}
     </div>
 
     {# end second line #}
@@ -78,7 +76,7 @@
       {% set stepsArr = item.next_step|split('|') %}
       {% set next = stepsArr|first %}
       <p class='item-next my-2'>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='item-next-step'>{{ next|raw }}</span>
+      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='item-next-step'>{{ next }}</span>
       </p>
     {% endif %}
 
@@ -87,7 +85,7 @@
       {% if itemtagsArr|length > 0 %}
         <span class='d-inline-flex flex-wrap'><i class='fas fa-tags mr-1 fa-fw'></i>
           {% for tag in itemtagsArr %}
-            <a class='tag mathjax-ignore margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+            <a class='tag mathjax-ignore margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
           {% endfor %}
         </span>
       {% endif %}

@@ -9,7 +9,7 @@
     <ul>
     {% for user in unvalidatedUsersArr %}
       <li>
-        {{ user.fullname|raw }} ({{ user.email }}) <button type='button' class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button type='button' class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
+        {{ user.fullname }} ({{ user.email }}) <button type='button' class='btn btn-primary' data-action='validate-user' data-userid='{{ user.userid }}'>{{ 'Validate'|trans }}</button> <button type='button' class='btn btn-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>{{ 'Delete'|trans }}</button>
       </li>
     {% endfor %}
     </ul>
@@ -55,16 +55,6 @@
     <hr>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'deletable_xp',
-      'label': 'Users can delete experiments'|trans,
-      'help': 'An admin account will always be able to delete experiments.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'deletable_item',
-      'label': 'Users can delete items'|trans,
-      'help': 'An admin account will always be able to delete items.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'user_create_tag',
       'label': 'Users can create tags'|trans,
       'help': 'An admin account will always be able to create tags.'|trans} %}
@@ -78,13 +68,13 @@
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
       <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='link_name' type='text' value='{{ App.teamArr.link_name }}' name='link_name' id='link_name' />
+      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='link_name' type='text' value='{{ App.teamArr.link_name|e('html_attr') }}' name='link_name' id='link_name' />
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
-      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/current' data-target='link_href' value='{{ App.teamArr.link_href }}' name='link_href' id='link_href' />
+      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/current' data-target='link_href' value='{{ App.teamArr.link_href|e('html_attr') }}' name='link_href' id='link_href' />
     </div>
     <hr>
 
@@ -132,9 +122,10 @@
     <label for='common_template'>{{ 'Common Experiment Template'|trans }}</label>
     <div>
       {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable-block no-deprecated-attr, prefer-native-element, element-permitted-content: suppress errors from tinymce] -->
+      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea class='mceditable' name='common_template' id='common_template'>
+      <textarea style='height:400px' class='mceditable' name='common_template' id='common_template'>
         {{ App.teamArr.common_template|raw }}
       </textarea>
     </div>
@@ -149,7 +140,9 @@
       {% if App.Config.configArr.debug -%}
         <!-- [html-validate-disable-block text-content: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
+      <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>
+        {{ App.teamArr.common_template_md|raw }}
+      </textarea>
     </div>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
@@ -184,11 +177,11 @@
           <button class='btn teamGroupDelete float-right border-0 lh-normal m-0 p-0' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </button>
-          <h5><i class='fas fa-users'></i> <span data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name|raw }}</span></h5>
+          <h5><i class='fas fa-users'></i> <span data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name }}</span></h5>
           <hr>
           <div class='d-flex flex-wrap'>
             {% for user in teamGroup.users %}
-            <div class='user-badge rounded px-2 py-1 mr-2 mt-2'>{{ user.fullname|raw }} <span title='{{ 'Delete'|trans }}' class='clickable rmUserFromGroup m-1' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'><i class='fas fa-xmark' style='color:#29AEB9' ></i></span></div>
+            <div class='user-badge rounded px-2 py-1 mr-2 mt-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='clickable rmUserFromGroup m-1' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'><i class='fas fa-xmark' style='color:#29AEB9' ></i></span></div>
             {% endfor %}
           </div>
           {# ADD USER #}
@@ -237,7 +230,7 @@
 
             <li class='list-inline-item'>
               <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
-              <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' value='{{ cat.title|raw }}' />
+              <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' value='{{ cat.title|e('html_attr') }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>
@@ -283,7 +276,7 @@
   {% else %}
       <ul class='list-group form-group sortable' data-axis='y' data-table='items_types'>
         {% for itemType in itemsCategoryArr %}
-        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|raw }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title|raw }}</li>
+        <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title }}</li>
         {% endfor %}
       </ul>
       <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
@@ -297,7 +290,7 @@
       <ul class='list-inline'>
         <li class='list-inline-item'>
           <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-          <input type='text' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.title|raw }}' />
+          <input type='text' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.title|e('html_attr') }}' />
         </li>
 
         <li class='list-inline-item col-1 align-top'>
@@ -307,7 +300,25 @@
 
       </ul>
       {% include('catstat-edit.html') %}
+      {# PERMISSIONS #}
+      <hr>
+      <h5>{{ 'Permissions for the resource category'|trans }}</h5>
       {% include('edit-permissions.html') %}
+      {# TARGET PERMISSIONS #}
+      <h5>{{ 'Permissions for the derived resource'|trans }}</h5>
+      <div class='d-flex mb-2 align-items-center'>
+        {# CANREAD #}
+        {% set rw = 'canread_target' %}
+        {% set can = Entity.entityData.canread_target|canToHuman %}
+        {% include('view-permissions.html') %}
+      </div>
+      <div class='d-flex mb-2 align-items-center'>
+        {# CANWRITE #}
+        {% set rw = 'canwrite_target' %}
+        {% set can = Entity.entityData.canwrite_target|canToHuman %}
+        {% include('view-permissions.html') %}
+      </div>
+      <hr>
 
       <div>
         <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
@@ -353,7 +364,7 @@
 
             <li class='list-inline-item'>
               <label for='statusName_{{ status.id }}'>{{ 'Name'|trans }}</label>
-              <input class='form-control' required type='text' id='statusName_{{ status.id }}' value='{{ status.title|raw }}' />
+              <input class='form-control' required type='text' id='statusName_{{ status.id }}' value='{{ status.title|e('html_attr') }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>
@@ -400,7 +411,7 @@
 
             <li class='list-inline-item'>
               <label for='itemsstatusName_{{ status.id }}'>{{ 'Name'|trans }}</label>
-              <input class='form-control' required type='text' id='itemsstatusName_{{ status.id }}' value='{{ status.title|raw }}' />
+              <input class='form-control' required type='text' id='itemsstatusName_{{ status.id }}' value='{{ status.title|e('html_attr') }}' />
             </li>
 
             <li class='list-inline-item col-1 align-top'>
@@ -545,15 +556,15 @@
         <tbody>
           {% for tag in tagsArr %}
             <tr>
-              <th scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag|raw }}</button></td>
+              <th scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
               <td class='align-middle'>{{ tag.item_count }}</td>
               <td>
-                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
+                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
               <td>
-                <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&tags[]={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
+                <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>

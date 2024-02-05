@@ -173,7 +173,7 @@ export default class JsonEditorHelper {
     };
     this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
       const location = resp.headers.get('location').split('/');
-      reloadElement('filesdiv');
+      reloadElement('uploadsDiv');
       this.currentUploadId = String(location[location.length - 1]);
     });
   }

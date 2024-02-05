@@ -44,9 +44,12 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '5.0.0-alpha3';
+    public const INSTALLED_VERSION = '5.0.0-beta2';
 
-    public const WHATSNEWLINK = 'https://www.deltablot.com/posts/release-500/';
+    // this version format is used to compare with last_seen_version of users
+    // major is untouched, and minor and patch are padded with one 0 each
+    // we should be pretty safe from ever reaching 100 as a minor or patch version!
+    public const INSTALLED_VERSION_INT = 50000;
 
     public Users $Users;
 
@@ -136,7 +139,7 @@ class App
     }
 
     /**
-     * Generate HTML from a twig template. The App object is injected into every template.
+     * Generate HTML from a twig template. The App object is injected into every template as well as langsArr from the footer
      *
      * @param string $template template located in app/tpl/
      * @param array<string, mixed> $variables the variables injected in the template
@@ -145,7 +148,15 @@ class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig((bool) $this->Config->configArr['debug'])->render($template, array_merge(array('App' => $this), $variables));
+            return $this->getTwig(
+                (bool) $this->Config->configArr['debug']
+            )->render(
+                $template,
+                array_merge(
+                    array('App' => $this, 'langsArr' => Language::getAllHuman()),
+                    $variables,
+                )
+            );
         } catch (RuntimeException $e) {
             echo '<h1>Error writing to twig cache directory. Check folder permissions.</h1>';
             echo '<h2>Error message: ' . $e->getMessage() . '</h2>';
@@ -162,6 +173,10 @@ class App
         if ($this->Users instanceof AuthenticatedUser) {
             return $this->Users->userData['lang'];
         }
+        // we can also set it in Session (even when anon)
+        if ($this->Session->has('lang')) {
+            return $this->Session->get('lang');
+        }
         // default lang is the server configured one
         return $this->Config->configArr['lang'];
     }
@@ -170,6 +185,11 @@ class App
     public function getJsLang(): string
     {
         return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::EnglishGB);
+    }
+
+    public static function getWhatsnewLink(): string
+    {
+        return sprintf('https://www.deltablot.com/posts/release-%d', self::INSTALLED_VERSION_INT);
     }
 
     /**

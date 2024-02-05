@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,8 +57,8 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $itemTemplate['canread'], PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $itemTemplate['canwrite'], PDO::PARAM_STR);
+        $req->bindParam(':canread', $itemTemplate['canread_target'], PDO::PARAM_STR);
+        $req->bindParam(':canwrite', $itemTemplate['canwrite_target'], PDO::PARAM_STR);
         $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -138,13 +137,6 @@ class Items extends AbstractConcreteEntity
 
     public function destroy(): bool
     {
-        // check if we can actually delete items (for non-admins)
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        if ($teamConfigArr['deletable_item'] === 0 && !$this->Users->isAdmin) {
-            throw new ImproperActionException(_('Users cannot delete items.'));
-        }
-
         parent::destroy();
 
         // delete links of this item in experiments with this item linked

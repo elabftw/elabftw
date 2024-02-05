@@ -1,5 +1,5 @@
 {% set randomId = random() %}
-<tr class='item' id='parent_{{ randomId }}'>
+<tr class='item' id='parent_{{ randomId }}' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# DATE #}
   <td class='item-date'>
@@ -12,7 +12,7 @@
   <td class='title'>
     {# edit icon #}
     {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
-      <a href='{{ Entity.page }}.php?mode=edit&id={{ item.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+      <a href='{{ Entity.page }}.php?mode=edit&amp;id={{ item.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
         <i class='fas fa-fw fa-pencil-alt'></i>
       </a>
     {% endif %}
@@ -26,7 +26,7 @@
     {% endif %}
     {# toggle body #}
     <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
-    <a href='{{ Entity.page }}.php?mode=view&id={{ item.id }}'>{{ item.title|raw }}</a>
+    <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
   </td>
 
   {# NEXT STEP #}
@@ -36,7 +36,7 @@
       {% set stepsArr = item.next_step|split('|') %}
       {% set next = stepsArr|first %}
     {% endif %}
-    <span class='item-next-step'>{{ next|raw }}</span>
+    <span class='item-next-step'>{{ next }}</span>
   </td>
 
   {# CATEGORY #}
@@ -46,14 +46,14 @@
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
     {% if item.category %}
-      <button type='button' data-action='add-query-filter' data-key='cat' data-value='{{ item.category }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title|raw }}</button>
+      <button type='button' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title }}</button>
     {% endif %}
   </td>
 
   {# STATUS #}
   <td class='item-next'>
     {% if item.status %}
-      <button type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status }}' class='btn catstat-btn status-btn lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg:#{{ item.status_color }}'></i> {{ item.status_title|raw }}</button>
+      <button type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' class='btn catstat-btn status-btn lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg:#{{ item.status_color }}'></i> {{ item.status_title }}</button>
     {% endif %}
   </td>
 
@@ -63,7 +63,7 @@
     {% if itemtagsArr|length > 0 %}
       <span class='d-flex flex-wrap'>
         {% for tag in itemtagsArr %}
-          <a class='tag margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag|raw }}</a>
+          <a class='tag margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
         {% endfor %}
       </span>
   {% endif %}
@@ -76,7 +76,7 @@
   </td>
 
   <td class='item-owner'>
-    <button type='button' class='btn lh-normal border-0' style='font-weight:500;' data-action='add-query-filter' data-key='owner' data-value='{{ item.userid }}'>{{ item.fullname|raw }}</button>
+    <button type='button' class='btn lh-normal border-0' style='font-weight:500;' data-action='add-query-filter' data-key='owner' data-value='{{ item.userid }}'>{{ item.fullname }}</button>
   </td>
 
 </tr>

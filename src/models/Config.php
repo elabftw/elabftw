@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
@@ -84,6 +85,9 @@ final class Config implements RestInterface
             ('ts_cert', NULL),
             ('ts_hash', 'sha256'),
             ('ts_limit', '0'),
+            ('keeex_enabled', '0'),
+            ('keeex_host', 'keeex'),
+            ('keeex_port', '8080'),
             ('saml_toggle', '0'),
             ('saml_debug', '0'),
             ('saml_strict', '1'),
@@ -134,9 +138,10 @@ final class Config implements RestInterface
             ('saml_sync_teams', 0),
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
-            ('deletable_xp', 1),
-            ('allow_useronly', 1),
-            ('admins_import_users', 0),
+            ('chat_url', 'https://gitter.im/elabftw/elabftw'),
+            ('allow_useronly', '1'),
+            ('admins_import_users', '0'),
+            ('admins_archive_users', '1'),
             ('max_revisions', 10),
             ('min_delta_revisions', 100),
             ('min_days_revisions', 23),
@@ -167,6 +172,7 @@ final class Config implements RestInterface
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
+            ('emit_audit_logs', '0'),
             ('admins_create_users_remote_dir', '0'),
             ('remote_dir_service', 'eairef'),
             ('remote_dir_config', NULL)";
@@ -242,7 +248,7 @@ final class Config implements RestInterface
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
-            // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
+                // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
             }
@@ -256,6 +262,7 @@ final class Config implements RestInterface
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $this->Db->execute($req);
+            AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
             $this->configArr[$name] = (string) $value;
         }
 

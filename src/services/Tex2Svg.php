@@ -12,7 +12,6 @@ namespace Elabftw\Services;
 use function dirname;
 use Elabftw\Elabftw\FsTools;
 use function file_put_contents;
-use function html_entity_decode;
 use Imagick;
 use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
@@ -48,22 +47,14 @@ class Tex2Svg
 
     public function getContent(): string
     {
-        // decode html entities, otherwise it crashes
-        // compare to https://github.com/mathjax/MathJax-demos-node/issues/16
-        $contentDecode = html_entity_decode($this->source, ENT_HTML5, 'UTF-8');
-
-        // fix issue with pdf stopping after '<<' see #3032
-        $contentDecode = str_replace('<<', '< <', $contentDecode);
-        // hey don't look at me like that, if it works, it works.
-
-        $this->contentWithMathJaxSVG = $this->runNodeApp($contentDecode);
+        $this->contentWithMathJaxSVG = $this->runNodeApp($this->source);
 
         // was there actually tex in the content?
         // if not we can skip the svg modifications and return the content
         // return the decoded content to avoid html entities issues in final pdf
         // see #2760
         if ($this->contentWithMathJaxSVG === '') {
-            return $contentDecode;
+            return $this->source;
         }
 
         $this->scaleSVGs();

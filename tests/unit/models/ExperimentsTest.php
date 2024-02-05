@@ -9,8 +9,10 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -122,7 +124,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTimestampThisMonth(): void
     {
-        $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
+        $this->assertEquals(4, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void
@@ -139,6 +141,20 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'multiselect' => array('val1', 'val2')));
         $decoded = json_decode($res['metadata'], true);
         $this->assertEquals(array('val1', 'val2'), $decoded['extra_fields']['multiselect']['value']);
+    }
+
+    public function testUpdateExtraFieldsOrdering(): void
+    {
+        $OrderingParams = new ExtraFieldsOrderingParams(array(
+            'entity' => array('type' => EntityType::Experiments->value, 'id' => '123'),
+            'ordering' => array('multiselect', 'test'),
+            'table' => 'extra_fields',
+        ));
+        $this->Experiments->setId(1);
+        $entityData = $this->Experiments->updateExtraFieldsOrdering($OrderingParams);
+        $decoded = json_decode($entityData['metadata'], true);
+        $this->assertEquals(0, $decoded['extra_fields']['multiselect']['position']);
+        $this->assertEquals(1, $decoded['extra_fields']['test']['position']);
     }
 
     public function testReuseCustomId(): void

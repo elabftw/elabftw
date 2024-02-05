@@ -9,11 +9,12 @@
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use function json_decode;
 use function json_encode;
+use function ksort;
 
 /**
  * Make a JSON export from one or several entities
@@ -44,13 +45,19 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
             try {
-                $all = $this->Entity->readOne();
+                $all = $this->getEntityData();
+                // add eLabFTW version number
+                $all['elabftw_version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
+                ksort($all);
             } catch (IllegalActionException) {
                 continue;
             }
-            // decode the metadata column because it's json
+            // move metadata_decode to metadata column because it's json
             if (isset($all['metadata'])) {
-                $all['metadata'] = json_decode($all['metadata']);
+                $all['metadata'] = $all['metadata_decoded'];
+                // no need to have it twice
+                unset($all['metadata_decoded']);
             }
             $res[] = $all;
         }
@@ -58,5 +65,10 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         $json = json_encode($res, JSON_THROW_ON_ERROR);
         $this->contentSize = mb_strlen($json);
         return $json;
+    }
+
+    protected function getEntityData(): array
+    {
+        return $this->Entity->readOne();
     }
 }

@@ -1,5 +1,5 @@
 {# Modal to display plain text content #}
-<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel' aria-hidden='true'>
+<div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -21,176 +21,247 @@
 
 {# UPLOADED FILES #}
 <div id='filesdiv'>
-  {% if Entity.entityData.uploads %}
-    <div class='d-flex justify-content-between'>
-      <div>{# necessary div for flex #}
-        <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
-          <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
-          {% plural Entity.entityData.uploads|length %}
-          Attached files
-          {% endtrans %}
-        </h3>
-      </div>
-
-      {# id is used with data-toggle-target-extra #}
-      <div id='uploadsViewToggler'>
-        <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
-          <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
-          <i class='fas fa-fw fa-table-cells'></i>
-        </button>
-        <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('archived') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
-          <i class='fas fa-fw fa-box-archive'></i>
-        </button>
-      </div>
+  {% if (mode == 'view' and Entity.entityData.uploads) or mode == 'edit' %}
+  <div class='d-flex justify-content-between'>
+    <div>{# necessary div for flex #}
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
+        <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
+        {% plural Entity.entityData.uploads|length %}
+        Attached files
+        {% endtrans %}
+      </h3>
     </div>
 
-    <div class='row mt-2' id='uploadsDiv' data-save-hidden='uploadsDiv'>
+    {# id is used with data-toggle-target-extra #}
+    <div id='uploadsViewToggler'>
+      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+        <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
+        <i class='fas fa-fw fa-table-cells'></i>
+      </button>
+      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('archived') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
+        <i class='fas fa-fw fa-box-archive'></i>
+      </button>
+    </div>
+  </div>
+
+  <div class='row mt-2 mx-0' id='uploadsDiv' data-save-hidden='uploadsDiv'>
+    {# ADD NEW FILE #}
+    {% if mode == 'edit' %}
+      <div class='col-md-4 col-sm-6'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
+        {%- endif %}
+        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
+      </div>
+    {% endif %}
+
+    {# TABLE LAYOUT (0) #}
+    {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
+      <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
+        <thead>
+          <tr>
+            <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
+            <th scope='col'>{{ 'Comment'|trans }}</th>
+            <th scope='col'>{{ 'Creation date'|trans }}</th>
+            <th scope='col'>{{ 'Filesize'|trans }}</th>
+            <th scope='col'>{{ 'Actions'|trans }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for upload in Entity.entityData.uploads %}
+            <tr id='uploadDiv_{{ upload.id }}'>
+              <td>
+                <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
+                  <i class='fas fa-caret-right fa-fw'></i>
+                </button>
+                <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
+                <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
+                  {% include 'upload-more-info.html' %}
+                </div>
+                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+                  <i class='fas fa-box-archive mr-1'></i>{{ 'Archived'|trans }}
+                {% endif %}
+              </td>
+              {# COMMENT #}
+              <td>{% include('upload-comment.html') %}</td>
+              {# CREATED AT #}
+              <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
+              {# FILESIZE #}
+              <td>{{ upload.filesize|formatBytes }}</td>
+              {# ACTIONS #}
+              <td>
+                {% if loop.first %}
+                  <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
+                {% endif %}
+                <a href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                  <i class='fas fa-download fa-fw'></i>
+                </a>
+                {% if not upload.immutable %}
+                  {% if mode == 'edit' %}
+                    {# EDIT FILENAME #}
+                    <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='rename-upload' data-id='{{ upload.id }}'>
+                      <i class='fas fa-fw fa-pencil-alt'></i>
+                    </button>
+                    {# UPLOAD NEW VERSION #}
+                    <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
+                      <i class='fas fa-fw fa-sync-alt'></i>
+                    </button>
+                    {% include('upload-replace-form.html') %}
+                  {% endif %}
+                  {% if not Entity.isReadOnly %}
+                    {# ARCHIVE #}
+                    <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn hover-warning p-1 mr-1' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+                      <i class='fas fa-box-archive'></i>
+                    </button>
+                    {# DESTROY #}
+                    <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'class='btn hover-danger p-1 mr-1' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                      <i class='fas fa-trash-alt'></i>
+                    </button>
+                  {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {# DEFAULT LAYOUT (1) #}
+    {% else %}
       {% for upload in Entity.entityData.uploads %}
         {% set ext = upload.real_name|getExt %}
-
-        {# COMPACT LAYOUT (0) #}
-        {% if App.Users.userData.uploads_layout == 0 %}
-          <div class='col-md-3 col-sm-4 hl-hover-gray rounded'>
+        <div class='col-md-4 col-sm-6' id='uploadDiv_{{ upload.id }}'>
+          {% if loop.first %}
+            <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
+          {% endif %}
+          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
             {% include('upload-dropdown-menu.html') %}
-            <div>
-              <i class='fas fa-fw fa-download mr-1'></i>
-              <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
-            </div>
-            {% include('upload-comment.html') %}
-            {% include('upload-more-info.html') %}
-            {% include('upload-replace-form.html') %}
-          </div>
+            {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+            <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
+            {% endif %}
 
-        {# DEFAULT LAYOUT (1) #}
-        {% else %}
-          <div class='col-md-4 col-sm-6'>
-            <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
-              {% include('upload-dropdown-menu.html') %}
-              {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
-              <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
+            {# IMAGES #}
+            {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
+              {# don't make the thumbnail clickable if it's a tif #}
+              {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
+                <div class='text-center'>
+                  <a class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                    {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name|e('html_attr') }}'{% endif %}
+                    {% if upload.comment %}title='{{ upload.comment|e('html_attr') }}' data-caption='{{ upload.comment|e('html_attr') }}'{% endif %}
+                  >
               {% endif %}
-
-              {# IMAGES #}
+              {% set thumb_name = upload.long_name ~ '_th.jpg' %}
+              {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
               {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                {# don't make the thumbnail clickable if it's a tif #}
-                {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
-                  <div class='text-center'>
-                    <a class='text-break' href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
-                       {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name }}'{% endif %}
-                      {% if upload.comment %}title='{{ upload.comment }}' data-caption='{{ upload.comment }}'{% endif %}
-                    >
-                {% endif %}
-                {% set thumb_name = upload.long_name ~ '_th.jpg' %}
-                {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
-                {% if ext matches '/(jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
-                  <div class='text-center'>
-                    <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' alt='thumbnail' />
-                  </div>
-                {% else %}
-                  <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
-                {% endif %}
-                {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
-                    </a>
-                  </div>
-                {% endif %}
-
-              {# MOLFILES #}
-              {% elseif ext == 'mol' %}
                 <div class='text-center'>
-                  <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'></canvas>
+                  <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' alt='thumbnail' />
                 </div>
-
-              {# MOLECULES #}
-              {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
-                {# build control dropdown to change the representation style #}
-                <div style='padding-bottom: 5px' class='btn-group'>
-                  <button type='button'
-                    class='btn btn-secondary btn-xs dropdown-toggle'
-                    data-toggle='dropdown'
-                    aria-haspopup='true'
-                    aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
-                  </button>
-
-                  <ul class='dropdown-menu clickable'>
-                    {% set moldivId = '3Dmol_' ~ upload.id %}
-                    <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
-                    </li>
-                    <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
-                    </li>
-                    <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
-                    </li>
-                    <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
-                    </li>
-                    <li class='dropdown-item'>
-                      <span class='3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {# IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format #}
-                <div class='viewer_3Dmoljs'
-                  data-href='app/download.php?storage={{ upload.storage }}&f={{ upload.long_name }}&name={{ upload.real_name }}'
-                  data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick' }}"
-                  data-backgroundcolor='0xffffff'
-                  id='3Dmol_{{ upload.id }}'>
-                </div>
-
-              {# DNA #}
-              {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
-                <div class='viewer-ove'
-                  data-href='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}'
-                  data-real-name='{{ upload.real_name }}'
-                  id='OVE_{{ upload.id }}'>
-                </div>
-
-              {# TEXT #}
-              {% elseif ext matches '/(txt|md|json)$/i' %}
-                <span class='eye-overlay'
-                  data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
-                  data-storage='{{ upload.storage }}'
-                  data-path='{{ upload.long_name }}'
-                  data-name='{{ upload.real_name }}'>
-                  <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
-                </span>
-
-              {% elseif ext matches '/(mp4|webm)$/i' %}
-                <div class='text-center'>
-                  <video controls width='300' preload='metadata'>
-                    <source src='app/download.php?f={{ upload.long_name }}&storage={{ upload.storage }}&name={{ upload.real_name }}' type='video/{{ ext }}'>
-                  </video>
-                </div>
-
-              {# ANYTHING ELSE #}
               {% else %}
                 <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
               {% endif %}
+              {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
+                  </a>
+                </div>
+              {% endif %}
 
-              <div class='caption'>
-                <i class='fas fa-fw fa-download mr-1'></i>
-                <p class='d-inline'>
-                  <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name }}&name={{ upload.real_name }}&storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
-                  <span class='smallgray' style='display:inline'>
-                    {% if upload.filesize %}
-                      {{ upload.filesize|formatBytes }} -
-                    {% endif %}
-                    {{ upload.created_at }}
-                  </span>
-                </p>
-              <br>
-              {% include('upload-comment.html') %}
+            {# MOLFILES #}
+            {% elseif ext == 'mol' %}
+              <div class='text-center'>
+                <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'></canvas>
+              </div>
 
+            {# MOLECULES #}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
+              {# build control dropdown to change the representation style #}
+              <div style='padding-bottom: 5px' class='btn-group'>
+                <button type='button'
+                  class='btn btn-secondary btn-xs dropdown-toggle'
+                  data-toggle='dropdown'
+                  aria-haspopup='true'
+                  aria-expanded='false'>{{ 'Style'|trans }} <span class='caret'></span>
+                </button>
+
+                <ul class='dropdown-menu clickable'>
+                  {% set moldivId = '3Dmol_' ~ upload.id %}
+                  <li class='dropdown-item'>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='cartoon'>{{ 'Cartoon (proteins only)'|trans }}</span>
+                  </li>
+                  <li class='dropdown-item'>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='cross'>{{ 'Cross'|trans }}</span>
+                  </li>
+                  <li class='dropdown-item'>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='line'>{{ 'Line'|trans }}</span>
+                  </li>
+                  <li class='dropdown-item'>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='sphere'>{{ 'Sphere'|trans }}</span>
+                  </li>
+                  <li class='dropdown-item'>
+                    <span data-action='set-3dmol-style' data-divid='{{ moldivId }}' data-style='stick'>{{ 'Stick'|trans }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              {# IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format #}
+              <div class='viewer_3Dmoljs'
+                data-href='app/download.php?storage={{ upload.storage }}&amp;f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}'
+                data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick' }}"
+                data-backgroundcolor='0xffffff'
+                id='3Dmol_{{ upload.id }}'>
+              </div>
+
+            {# DNA #}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
+              <div class='viewer-ove'
+                data-href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                data-real-name='{{ upload.real_name|e('html_attr') }}'
+                id='OVE_{{ upload.id }}'>
+              </div>
+
+            {# TEXT #}
+            {% elseif ext matches '/(txt|md|json)$/i' %}
+              <span class='eye-overlay'
+                data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
+                data-storage='{{ upload.storage }}'
+                data-path='{{ upload.long_name|e('html_attr') }}'
+                data-name='{{ upload.real_name|e('html_attr') }}'>
+                <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
+              </span>
+
+            {% elseif ext matches '/(mp4|webm)$/i' %}
+              <div class='text-center'>
+                <video controls width='300' preload='metadata'>
+                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='video/{{ ext }}'>
+                </video>
+              </div>
+
+            {# ANYTHING ELSE #}
+            {% else %}
+              <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
+            {% endif %}
+
+            <div class='caption'>
+              <i class='fas fa-fw fa-download mr-1'></i>
+              <p class='d-inline'>
+                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
+                <span class='smallgray' style='display:inline'>
+                  {% if upload.filesize %}
+                    {{ upload.filesize|formatBytes }} -
+                  {% endif %}
+                  {{ upload.created_at }}
+                </span>
+              </p>
+            <br>
+            {% include('upload-comment.html') %}
+
+            <div id='moreInfo_{{ upload.id }}' class='d-none'>
               {% include('upload-more-info.html') %}
-              </div>{# end div.caption #}
-              {% include('upload-replace-form.html') %}
             </div>
+            </div>{# end div.caption #}
+            {% include('upload-replace-form.html') %}
           </div>
-        {% endif %}
+        </div>
       {% endfor %}
-    </div>
-    <hr>
+    {% endif %}
+  </div>
+  <hr>
   {% endif %}
 </div>{# #filesdiv #}

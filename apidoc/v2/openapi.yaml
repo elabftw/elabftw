@@ -77,8 +77,6 @@ components:
           type: integer
         debug:
           type: string
-        deletable_xp:
-          type: string
         email_domain:
           type: string
         extauth_email:
@@ -264,7 +262,7 @@ components:
           type: string
           description: JSON string for write permissions.
         category:
-          type: string
+          type: integer
           nullable: true
         category_color:
           type: string
@@ -335,6 +333,14 @@ components:
         recent_comment:
           type: string
           nullable: true
+        related_experiments_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        related_items_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         sharelink:
           type: string
         state:
@@ -450,6 +456,8 @@ components:
           type: integer
         is_pinned:
           type: integer
+        sharelink:
+          type: string
         status:
           type: integer
           nullable: true
@@ -539,16 +547,18 @@ components:
     link:
       type: object
       properties:
-        itemid:
+        entityid:
           type: integer
         title:
-          type: string
-        elabid:
           type: string
         is_bookable:
           type: integer
         link_state:
           type: integer
+        category_color:
+          type: string
+        category_title:
+          type: string
     notification:
       type: object
       properties:
@@ -636,10 +646,6 @@ components:
           type: string
         common_template_md:
           type: string
-        deletable_xp:
-          type: integer
-        deletable_item:
-          type: integer
         user_create_tag:
           type: integer
         force_exp_tpl:
@@ -759,6 +765,8 @@ components:
           type: string
         validated:
           type: integer
+        valid_until:
+          type: string
         archived:
           type: integer
         last_login:
@@ -1015,6 +1023,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: owner
+          in: query
+          schema:
+            type: integer
+          description: |
+            Filter results by author (user id)
+          examples:
+            first:
+              summary: Only display results from user with id 2
+              value: 2
       responses:
         '200':
           description: A list of experiments
@@ -1239,6 +1257,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
+        - name: owner
+          in: query
+          schema:
+            type: integer
+          description: |
+            Filter results by author (user id)
+          examples:
+            first:
+              summary: Only display results from user with id 2
+              value: 2
       # end duplicate from GET /experiments
       responses:
         '200':

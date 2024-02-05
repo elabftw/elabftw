@@ -50,12 +50,14 @@ class Populate
     public function generate(Experiments | Items $Entity): void
     {
         $Teams = new Teams($Entity->Users, $Entity->Users->team);
+        $Teams->bypassWritePermission = true;
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
+            $Category->bypassWritePermission = true;
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
         }

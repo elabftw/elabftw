@@ -32,6 +32,10 @@ abstract class AbstractZip extends AbstractImport
         'application/x-zip-compressed',
     );
 
+    // in version 5.0.0 we switched from filter input to escape output
+    // setting this to true will convert html escaped entities into the correct character
+    protected bool $switchToEscapeOutput = false;
+
     public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
     {
         parent::__construct($Users, $target, $canread, $canwrite, $UploadedFile);
@@ -50,5 +54,35 @@ abstract class AbstractZip extends AbstractImport
     public function __destruct()
     {
         $this->fs->deleteDirectory($this->tmpDir);
+    }
+
+    /**
+     * subject might needs to be transformed due to the switch from filter input to escape output strategy
+     */
+    protected function transformIfNecessary(
+        string $subject,
+        bool $isComment=false,
+        bool $isMetadata=false,
+    ): string {
+        // skip transformation
+        if (!$this->switchToEscapeOutput || $subject === '') {
+            return $subject;
+        }
+
+        $search = array('&#34;', '&#39;');
+        $replace = array('"', '\'');
+
+        if ($isMetadata) {
+            $replace = array('\\"', '\'');
+        } elseif ($isComment) {
+            $search[] = '<br />';
+            $replace[] = '';
+        }
+
+        return str_replace(
+            $search,
+            $replace,
+            $subject,
+        );
     }
 }

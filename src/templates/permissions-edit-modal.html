@@ -1,4 +1,4 @@
-{# required vars: rw visibilityArr teamsArr myTeamgroupsArr usersArr #}
+{# required vars: rw visibilityArr teamsArr allTeamgroupsArr usersArr #}
 {% if ucpPage %}{# set this to true on ucp page for default permissions #}
   {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
   {% set permissionsJson = App.Users.userData[column] %}
@@ -22,7 +22,7 @@
   {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
 {# Modal for permission edit #}
-<div class='modal fade' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}' aria-hidden='true'>
+<div class='modal fade' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -54,9 +54,9 @@
           </select>
           {# TEAMGROUPS #}
           <label for='{{ identifier }}_select_teamgroups'>{{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
-          <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}{{ myTeamgroupsArr|length == 0 ? ' ' ~ 'You do not belong to any teamgroup.'|trans }}</p>
-          <select {{ myTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
-            {% for tg in myTeamgroupsArr %}
+          <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
+          <select {{ allTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
+            {% for tg in allTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
                       >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>

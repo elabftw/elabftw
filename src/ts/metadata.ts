@@ -11,6 +11,7 @@ import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
+import i18next from 'i18next';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,11 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DELETE EXTRA FIELD
     if (el.matches('[data-action="metadata-rm-field"]')) {
-      MetadataC.read().then(metadata => {
-        const name = el.parentElement.closest('div').querySelector('label').innerText;
-        delete metadata.extra_fields[name];
-        MetadataC.update(metadata as ValidMetadata);
-      });
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        MetadataC.read().then(metadata => {
+          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
+          delete metadata.extra_fields[name];
+          MetadataC.update(metadata as ValidMetadata);
+        });
+      }
     }
   });
 
@@ -123,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
-        $('#fieldLoaderModal').modal('hide');
       });
     }
   });
@@ -207,13 +209,36 @@ document.addEventListener('DOMContentLoaded', () => {
         json['extra_fields'][fieldKey] = field;
 
         // jQuery selector required for .modal()
-        MetadataC.update(json as ValidMetadata).then(() => { $('#fieldBuilderModal').modal('hide'); });
+        MetadataC.update(json as ValidMetadata).then(() => {
+          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
+          // remove all extra inputs (dropdown and radio)
+          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+          // clear all fields
+          form.reset();
+        });
       });
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {
+      const newGroup = document.createElement('div');
+      newGroup.classList.add('input-group', 'mb-1');
       const newInput = document.createElement('input');
-      newInput.classList.add('form-control', 'mb-1');
-      el.parentElement.querySelector('div').append(newInput);
+      // the is-extra-input class is used to remove them upon save
+      newInput.classList.add('form-control', 'is-extra-input');
+      const appendDiv = document.createElement('div');
+      appendDiv.classList.add('input-group-append');
+      const btn = document.createElement('button');
+      btn.setAttribute('type', 'button');
+      btn.dataset.action = 'remove-self';
+      btn.classList.add('btn', 'btn-secondary');
+      btn.textContent = '−';
+      appendDiv.appendChild(btn);
+
+      newGroup.appendChild(newInput);
+      newGroup.appendChild(appendDiv);
+      el.parentElement.querySelector('div').append(newGroup);
+    // REMOVE INPUT FROM MULTI INPUT TYPES (DROPDOWN, RADIO)
+    } else if (el.matches('[data-action="remove-self"]')) {
+      el.parentElement.parentElement.remove();
     // SAVE NEW GROUP
     } else if (el.matches('[data-action="save-new-fields-group"]')) {
       const nameInput = (document.getElementById('newFieldsGroupKeyInput') as HTMLInputElement);

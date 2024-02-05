@@ -16,7 +16,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -147,7 +146,7 @@ class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Incorrect format value.');
             }
             // fit the request with what makecontroller expects
-            if ($this->Model instanceof AbstractConcreteEntity) {
+            if ($this->Model instanceof AbstractEntity) {
                 $this->Request->query->set('type', $this->Model->type);
                 $this->Request->query->set('id', $this->id);
             }
@@ -241,7 +240,7 @@ class Apiv2Controller extends AbstractApiController
                 (string) $this->Request->query->get('end', '2119-12-23T00:00:00+01:00'),
                 $this->Request->query->getInt('cat'),
             ),
-            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim((string) $this->Request->query->get('q', '')), $this->Request->query->getInt('limit')),
+            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim($this->Request->query->getString('q')), $this->Request->query->getInt('limit')),
             'favtags' => new FavTags($this->Users, $this->id),
             'team_tags' => new TeamTags($this->Users, $this->id),
             'teams' => new Teams($this->Users, $this->id),

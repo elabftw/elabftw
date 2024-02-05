@@ -51,7 +51,7 @@ class DashboardController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $now = new DateTimeImmutable();
         $Scheduler = new Scheduler($Items, null, $now->format(DateTimeImmutable::ATOM));
-        // for items we need to create a new DisplayParams object, otherwise the show_team setting will also apply here
+        // for items we need to create a new DisplayParams object, otherwise the scope setting will also apply here
         $DisplayParamsItems = new DisplayParams($this->App->Users, $this->App->Request, EntityType::Items);
         $DisplayParamsItems->limit = self::SHOWN_NUMBER;
         $DisplayParamsItems->orderby = Orderby::Lastchange;

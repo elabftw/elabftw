@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\State;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Services\Filter;
 use League\Flysystem\Filesystem;
@@ -16,7 +17,9 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
-    protected bool $immutable = false;
+    protected int $immutable = 0;
+
+    protected State $state = State::Normal;
 
     public function __construct(private string $realName, private string $filePath, private ?string $comment = null)
     {
@@ -34,8 +37,8 @@ class CreateUpload implements CreateUploadParamsInterface
 
     public function getComment(): ?string
     {
-        if ($this->comment !== null) {
-            return nl2br(Filter::sanitize($this->comment));
+        if ($this->comment !== null && $this->comment !== '') {
+            return $this->comment;
         }
         return null;
     }
@@ -50,12 +53,13 @@ class CreateUpload implements CreateUploadParamsInterface
         return dirname($this->filePath) . '/';
     }
 
-    // convert that bool to int for db insert
     public function getImmutable(): int
     {
-        if ($this->immutable) {
-            return 1;
-        }
-        return 0;
+        return $this->immutable;
+    }
+
+    public function getState(): State
+    {
+        return $this->state;
     }
 }

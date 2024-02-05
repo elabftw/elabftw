@@ -4,7 +4,7 @@
 {% endblock %}
 
 {# Modal for advanced search #}
-<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
+<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -13,7 +13,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <h3>Search terms</h3>
         <p>The search is performed against title, body, date, and elabid.<br>
             The entire team will be searched unless there is an author field.</p>
@@ -207,7 +207,7 @@
 
 {# SEARCH PAGE BEGIN #}
 <hr>
-<form method='get' action='search.php'>
+<form method='get' action='search.php' aria-label='Main search form'>
 {# MAIN TEXTAREA FOR EXTENDED QUERY #}
 <div class='row'>
   <div class='col-md-12 mb-2'>
@@ -221,7 +221,7 @@
         class='form-control'
         placeholder="{{ 'Enter search query, e.g.: %s'|trans|format(getExtendedSearchExample()) }}"
         spellcheck='false'
-        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim }}' />
+        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
@@ -278,8 +278,8 @@
     <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -290,8 +290,8 @@
     <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -302,8 +302,8 @@
     <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -314,8 +314,8 @@
     <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -361,12 +361,12 @@
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
         {% for user in usersArr %}
-          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
+          <option value='author:{{ user.fullname|e('html_attr') }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
         {% endfor %}
       </optgroup>
       <optgroup label='{{ 'Groups'|trans }}'>
         {% for group in teamGroups %}
-          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
+          <option value='group:{{ group }}' {{- Request.query.get('owner') == 'group:' ~ group ? ' selected' }}>[{{ 'group'|trans }}] {{ group }}</option>
         {% endfor %}
       </optgroup>
     </select>

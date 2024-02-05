@@ -10,7 +10,6 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Local;
-use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -46,19 +45,22 @@ try {
     $TeamTags = new TeamTags($App->Users);
 
     $Templates = new Templates($App->Users);
-    $templatesArr = $Templates->getWriteableTemplatesList();
     $Category = new ExperimentsCategories($Teams);
     $Status = new ExperimentsStatus($Teams);
     $entityData = array();
     $changelogData = array();
     $metadataGroups = array();
     if ($App->Request->query->has('templateid')) {
-        $Templates->setId((int) $App->Request->query->get('templateid'));
+        $Templates->setId($App->Request->query->getInt('templateid'));
         $entityData = $Templates->readOne();
         $Metadata = new Metadata($Templates->entityData['metadata']);
         $metadataGroups = $Metadata->getGroups();
         $Changelog = new Changelog($Templates);
         $changelogData = $Changelog->readAll();
+    }
+
+    if ($App->Request->query->get('mode') === 'edit') {
+        $Templates->canOrExplode('write');
     }
 
     // TEAM GROUPS
@@ -110,16 +112,15 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
-        'langsArr' => Language::getAllHuman(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
         'metadataGroups' => $metadataGroups,
-        'myTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
+        'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
-        'templatesArr' => $templatesArr,
+        'templatesArr' => $Templates->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),

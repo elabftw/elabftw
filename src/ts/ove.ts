@@ -49,7 +49,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           'real_name': realName + '.png',
           'content': reader.result,
         };
-        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
       };
     }
 
@@ -70,10 +70,6 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         const msg = 'Invalid DNA data in file ' + realName;
         notif({res: false, msg: msg});
         throw msg;
-      }
-
-      if (parsedData[0].messages.length !== 0) {
-        throw 'File: ' + realName + '\n' + parsedData[0].messages.join('\n');
       }
 
       const parsedSequence = parsedData[0].parsedSequence;
@@ -136,7 +132,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          reloadElement('filesdiv');
+          reloadElement('uploadsDiv');
         },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format
@@ -207,7 +203,6 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         readOnly: true,
         // Open Vector Editor data model
         sequenceData: parsedSequence,
-        updateSequenceData: {},
         // clear the sequenceDataHistory if there is any left over from a previous sequence
         sequenceDataHistory: {},
         annotationVisibility: {
@@ -259,8 +254,6 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       return Promise.reject(response.status);
-    }).catch(error => {
-      console.error(error);
-    });
+    }).catch(error => console.error(error));
   });
 }

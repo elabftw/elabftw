@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\TimestampResponse;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Models\Experiments;
@@ -36,7 +37,7 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
         $mockResponse = $this->fixturesFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
 
-        $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity());
+        $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity(), ExportFormat::Json);
         $pdfBlob = $this->fixturesFs->read('dfn.pdf');
         $tsUtils = new TimestampUtils($client, $pdfBlob, $Maker->getTimestampParameters(), new TimestampResponse());
         $this->assertInstanceOf(TimestampResponse::class, $tsUtils->timestamp());

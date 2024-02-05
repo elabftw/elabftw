@@ -9,6 +9,7 @@
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\State;
 use League\Flysystem\Filesystem;
 
 /**
@@ -27,4 +28,6 @@ interface CreateUploadParamsInterface
     public function getSourcePath(): string;
 
     public function getImmutable(): int;
+
+    public function getState(): State;
 }

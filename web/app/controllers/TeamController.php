@@ -36,8 +36,8 @@ try {
     }
 
     // EMAIL TEAM
-    if ($Request->request->has('emailUsers')) {
-        $target = (string) $Request->request->get('target');
+    if ($App->Request->request->has('emailUsers')) {
+        $target = $App->Request->request->getString('target');
         // default to team
         $targetId = $App->Users->userData['team'];
         $targetType = EmailTarget::Team;
@@ -54,8 +54,8 @@ try {
         $sent = $Email->massEmail(
             $targetType,
             $targetId,
-            $Request->request->getString('subject'),
-            $Request->request->getString('body'),
+            $App->Request->request->getString('subject'),
+            $App->Request->request->getString('body'),
             $replyTo,
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));

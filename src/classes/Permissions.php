@@ -148,7 +148,8 @@ class Permissions
         if ($this->Users->isAdmin && ($this->item['team'] === $this->Users->userData['team'])) {
             return array('read' => true, 'write' => true);
         }
-        return array('read' => false, 'write' => false);
+        // everyone has read access
+        return array('read' => true, 'write' => false);
     }
 
     /**

@@ -23,7 +23,7 @@ $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
-@import 'dropzone/dist/dropzone';
+@import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';
 @import 'jquery-ui/themes/base/core';
 @import 'jquery-ui/themes/base/autocomplete';
@@ -1115,12 +1115,13 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* make dropzone blue border on hover */
+/* Dropzone is the file uploader */
 .dropzone {
-    border: 1px solid $white;
+    background-color: $white;
+    border: 3px dashed $secondlevel;
 
     &:hover {
-        border: 1px solid $elabblue;
+        border: 3px dashed $medium;
     }
 }
 

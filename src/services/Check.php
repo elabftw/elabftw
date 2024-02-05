@@ -60,11 +60,12 @@ class Check
      */
     public static function color(string $color): string
     {
-        $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
-        if ($color === false || mb_strlen($color) !== 6) {
-            throw new ImproperActionException('Bad color');
+        $length = strlen($color) - 1;
+        $color = substr($color, 1, $length);
+        if (ctype_xdigit($color) && $length === 6) {
+            return $color;
         }
-        return $color;
+        throw new ImproperActionException('The color attribute is invalid.');
     }
 
     /**

@@ -45,7 +45,7 @@ class Local implements AuthInterface
             throw new QuantumException(_('Invalid email/password combination.'));
         }
         $this->Db = Db::getConnection();
-        $this->email = Filter::sanitize($email);
+        $this->email = Filter::sanitizeEmail($email);
         $this->userid = $this->getUseridFromEmail();
         $this->AuthResponse = new AuthResponse();
     }

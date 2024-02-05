@@ -13,6 +13,7 @@ use function array_column;
 use function array_unique;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -30,7 +31,6 @@ class EntitySqlBuilder
      *
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
-     * @phan-suppress PhanPluginPrintfVariableFormatString
      */
     public function getReadSqlBeforeWhere(bool $getTags = true, bool $fullSelect = false): string
     {
@@ -54,7 +54,8 @@ class EntitySqlBuilder
                 entity.state,
                 entity.canread,
                 entity.canwrite,
-                entity.modified_at,';
+                entity.modified_at,
+                entity.timestamped,';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $select .= implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns'))) . ',';
@@ -127,7 +128,6 @@ class EntitySqlBuilder
         $from = 'FROM %1$s AS entity';
 
         if ($this->entity instanceof Experiments) {
-            $select .= ', entity.timestamped';
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
             $select .= ', entity.is_bookable';
@@ -164,12 +164,6 @@ class EntitySqlBuilder
     public function getCanFilter(string $can): string
     {
         $sql = '';
-        // teamFilter is to restrict to the team for items only
-        // as they have a team column
-        $teamFilter = '';
-        if ($this->entity instanceof Items) {
-            $teamFilter = ' AND users2teams.teams_id = entity.team';
-        }
         // for anon add an AND base = full (public)
         if ($this->entity->isAnon) {
             $sql .= sprintf(
@@ -180,45 +174,47 @@ class EntitySqlBuilder
         }
         // add pub/org/team filter
         $sqlPublicOrg = sprintf(
-            '(entity.%1$s->"$.base" = %2$d OR entity.%1$s->"$.base" = %3$d)',
+            '(entity.%1$s->\'$.base\' = %2$d
+                OR entity.%1$s->\'$.base\' = %3$d)',
             $can,
             BasePermissions::Full->value,
             BasePermissions::Organization->value
         );
-        if (!$this->entity->Users->userData['show_public']) {
-            $sqlPublicOrg = sprintf(
-                '(%s AND entity.userid = users2teams.users_id)',
-                $sqlPublicOrg
-            );
+        if ($this->entity->Users->userData['scope_' . $this->entity->type] !== Scope::Everything->value) {
+            $sqlPublicOrg = "($sqlPublicOrg AND entity.userid = users2teams.users_id)";
         }
         $sql .= sprintf(
             ' AND (%1$s
-                   OR (entity.%2$s->"$.base" = %3$d AND users2teams.users_id = entity.userid %4$s)
-                   OR (entity.%2$s->"$.base" = %5$d AND entity.userid = %6$s)',
+                   OR (entity.%2$s->\'$.base\' = %3$d
+                        AND users2teams.users_id = entity.userid
+                        AND %4$s)
+                   OR (entity.%2$s->\'$.base\' = %5$d
+                        AND entity.userid = %6$s)',
             $sqlPublicOrg,
             $can,
             BasePermissions::MyTeams->value,
-            $teamFilter,
+            // teamFilter is to restrict to the team for items only as they have a team column
+            $this->entity instanceof Items
+                ? 'users2teams.teams_id = entity.team'
+                : '1',
             BasePermissions::User->value,
             // admin will see the experiments with visibility user for user of their team
-            $this->entity->Users->isAdmin ? 'users2teams.users_id' : ':userid'
+            $this->entity->Users->isAdmin
+                ? 'users2teams.users_id'
+                : ':userid',
         );
         // add entities in useronly visibility only if we own them
         $sql .= sprintf(
-            ' OR (entity.%s->"$.base" = %d AND entity.userid = :userid)',
+            ' OR (entity.%s->\'$.base\' = %d AND entity.userid = :userid)',
             $can,
-            BasePermissions::UserOnly->value
+            BasePermissions::UserOnly->value,
         );
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(
-                    ' OR (%d MEMBER OF (entity.%s->>"$.teams"))',
-                    $team,
-                    $can
-                );
+                $sql .= " OR ($team MEMBER OF (entity.$can->>'$.teams'))";
             }
         }
         // look for teamgroups
@@ -227,18 +223,11 @@ class EntitySqlBuilder
         $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(
-                    ' OR (%d MEMBER OF (entity.%s->>"$.teamgroups"))',
-                    $teamgroup,
-                    $can
-                );
+                $sql .= " OR ($teamgroup MEMBER OF (entity.$can->>'$.teamgroups'))";
             }
         }
         // look for our userid in users part of the json
-        $sql .= sprintf(
-            ' OR (:userid MEMBER OF (entity.%s->>"$.users"))',
-            $can
-        );
+        $sql .= " OR (:userid MEMBER OF (entity.$can->>'$.users'))";
         $sql .= ')';
 
         return $sql;

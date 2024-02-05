@@ -3,7 +3,7 @@
 {% block body %}
 <hr>
 {# PROFILE PAGE #}
-<h4>{{ App.Users.userData.fullname|raw }}</h4>
+<h4>{{ App.Users.userData.fullname }}</h4>
 <p class='smallgray'>{{ App.Users.userData.email }}</p>
 
 <div class='d-flex mb-4'>
@@ -26,10 +26,10 @@
     </div>
     {% for teamGroup in teamGroupsArr %}
       <details>
-        <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team|raw }}</span> {{ teamGroup.name|raw }}</summary>
+        <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team }}</span> {{ teamGroup.name }}</summary>
         <ul>
       {% for user in teamGroup.users %}
-        <li class='list-unstyled text-muted'>{{ user.fullname|raw }}</li>
+        <li class='list-unstyled text-muted'>{{ user.fullname }}</li>
       {% endfor %}
         </ul>
       </details>

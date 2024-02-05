@@ -7,14 +7,16 @@
  */
 import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
+import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, display3DMolecules, getEntity, reloadElement } from './misc';
+import { displayMolFiles, getEntity, relativeMoment, reloadElement, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
   // holds info about the page through data attributes
@@ -29,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   displayMolFiles();
-  display3DMolecules();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
       }
     },
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('upload-file-comment'),
   });
   malleableFilecomment.listen();
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('.real-container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
     // RENAME UPLOAD
     if (el.matches('[data-action="rename-upload"]')) {
@@ -96,36 +97,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout}).then(() => {
-        reloadElement('filesdiv');
-      });
+      ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+        .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 
     // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
     } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
       // set the title for modal window
       document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
       // get the file content
-      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-        const plainTextContentDiv = document.getElementById('plainTextContentDiv');
-        if (el.dataset.ext === 'md') {
-          response.text().then(content => plainTextContentDiv.innerHTML = marked(content));
-        } else if (el.dataset.ext === 'json') {
-          const preBlock = document.createElement('pre');
-          preBlock.classList.add('language-json');
-          const codeBlock = document.createElement('code');
-          codeBlock.classList.add('language-json');
-          preBlock.appendChild(codeBlock);
-          response.json().then(content => {
-            // use prismjs to display highlighted pretty-printed json content
-            codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
-            // make sure to blank any previous content before appending
-            plainTextContentDiv.innerHTML = '';
-            plainTextContentDiv.appendChild(preBlock);
-          });
-        } else { // TXT
-          response.text().then(content => plainTextContentDiv.innerText = content);
-        }
-      });
+      const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
+      const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+      if (el.dataset.ext === 'md') {
+        plainTextContentDiv.innerHTML = await marked(await response.text());
+      } else if (el.dataset.ext === 'json') {
+        const preBlock = document.createElement('pre');
+        preBlock.classList.add('language-json');
+        const codeBlock = document.createElement('code');
+        codeBlock.classList.add('language-json');
+        preBlock.appendChild(codeBlock);
+        response.json().then(content => {
+          // use prismjs to display highlighted pretty-printed json content
+          codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
+          // make sure to blank any previous content before appending
+          plainTextContentDiv.innerHTML = '';
+          plainTextContentDiv.appendChild(preBlock);
+        });
+      } else { // TXT
+        response.text().then(content => plainTextContentDiv.innerText = content);
+      }
 
     // TOGGLE SHOW ARCHIVED
     } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
@@ -169,18 +168,33 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': el.dataset.name + '.png',
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
+        .then(() => reloadElement('uploadsDiv'));
+
+    // CHANGE 3DMOL FILES VISUALIZATION STYLE
+    } else if (el.matches('[data-action="set-3dmol-style"]')) {
+      const targetStyle = el.dataset.style;
+      let options = {};
+      const style = {};
+      if (targetStyle === 'cartoon') {
+        options = { color: 'spectrum' };
+      }
+      style[targetStyle] = options;
+
+      $3Dmol.viewers[el.dataset.divid].setStyle(style).render();
 
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
-      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive}).then(() => reloadElement('filesdiv'));
+      ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
+        .then(() => reloadElement('uploadsDiv'));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`).then(() => reloadElement('filesdiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
+          .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
       }
     }
   });
@@ -188,12 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();
 
-  // Create an observer instance linked to the callback function(mutationList, observer)
-  // Start observing the target node for configured mutations
-  new MutationObserver(() => {
-    displayMolFiles();
-    display3DMolecules(true);
-    displayPlasmidViewer(about);
-    malleableFilecomment.listen();
-  }).observe(document.getElementById('filesdiv'), {childList: true});
+  const uploadsDiv = document.getElementById('uploadsDiv');
+  if (uploadsDiv) {
+    new MutationObserver(() => {
+      displayMolFiles();
+      $3Dmol.autoload();
+      displayPlasmidViewer(about);
+      malleableFilecomment.listen();
+      if ('edit' === about.page) {
+        (new Uploader()).init();
+      }
+      relativeMoment();
+      // don't use option {subtree: true} or there is an infinite loop that will destroy the world
+    }).observe(uploadsDiv, {childList: true});
+  }
 });

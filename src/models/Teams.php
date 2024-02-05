@@ -79,7 +79,7 @@ class Teams implements RestInterface
      */
     public function synchronize(int $userid, array $teams): void
     {
-        $Users2Teams = new Users2Teams();
+        $Users2Teams = new Users2Teams($this->Users);
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -250,7 +250,7 @@ class Teams implements RestInterface
 
     public function canWriteOrExplode(): void
     {
-        if ($this->bypassWritePermission || $this->Users->userData['is_sysadmin'] === 1) {
+        if ($this->bypassWritePermission || ($this->Users->userData['is_sysadmin'] ?? 0) === 1) {
             return;
         }
         if ($this->id === null) {
@@ -281,18 +281,19 @@ class Teams implements RestInterface
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
+        $this->setId($newId);
 
         $user = new Users();
         // create default status
-        $Status = new ExperimentsStatus(new self($user, $newId));
+        $Status = new ExperimentsStatus($this);
         $Status->createDefault();
 
         // create default item type
         $user->team = $newId;
         $ItemsTypes = new ItemsTypes($user);
-        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
+        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
         $defaultPermissions = BasePermissions::MyTeams->toJson();
         $extra = array(
             'color' => '#32a100',

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Controllers;
 
+use Elabftw\AuditEvent\Import;
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Storage;
@@ -18,8 +19,8 @@ use Elabftw\Import\Eln;
 use Elabftw\Import\Zip;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\ImportInterface;
+use Elabftw\Models\AuditLogs;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,7 +28,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ImportController implements ControllerInterface
 {
-    public function __construct(private App $app, private Request $request)
+    private const AUDIT_THRESHOLD = 12;
+
+    public function __construct(private App $App)
     {
     }
 
@@ -35,13 +38,17 @@ class ImportController implements ControllerInterface
     {
         $Importer = $this->getImporter();
         $Importer->import();
+        $inserted = $Importer->getInserted();
         $msg = sprintf(
             '%d %s',
-            $Importer->getInserted(),
-            ngettext('item imported successfully.', 'items imported successfully.', $Importer->getInserted()),
+            $inserted,
+            ngettext('item imported successfully.', 'items imported successfully.', $inserted),
         );
-        $this->app->Session->getFlashBag()->add('ok', $msg);
-        if (str_starts_with((string) $this->request->request->get('target'), 'items')) {
+        if ($inserted > self::AUDIT_THRESHOLD) {
+            AuditLogs::create(new Import($this->App->Users->userid ?? 0, $inserted));
+        }
+        $this->App->Session->getFlashBag()->add('ok', $msg);
+        if (str_starts_with($this->App->Request->request->getString('target'), 'items')) {
             return new RedirectResponse('/database.php?order=lastchange');
         }
         return new RedirectResponse('/experiments.php?order=lastchange');
@@ -49,19 +56,19 @@ class ImportController implements ControllerInterface
 
     private function getImporter(): ImportInterface
     {
-        $uploadedFile = $this->request->files->get('file');
+        $uploadedFile = $this->App->Request->files->get('file');
         $allowedExtensions = array('.eln', '.zip', '.csv');
 
         // the import menu only allows basic permission to be set, so translate this in proper json
-        $canread = BasePermissions::tryFrom($this->request->request->getInt('canread')) ?? BasePermissions::MyTeams;
-        $canwrite = BasePermissions::tryFrom($this->request->request->getInt('canwrite')) ?? BasePermissions::User;
+        $canread = BasePermissions::tryFrom($this->App->Request->request->getInt('canread')) ?? BasePermissions::MyTeams;
+        $canwrite = BasePermissions::tryFrom($this->App->Request->request->getInt('canwrite')) ?? BasePermissions::User;
 
         // figure out the filetype depending on file extension
         switch ($uploadedFile->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
-                    $this->app->Users,
-                    (string) $this->request->request->get('target'),
+                    $this->App->Users,
+                    $this->App->Request->request->getString('target'),
                     $canread->toJson(),
                     $canwrite->toJson(),
                     $uploadedFile,
@@ -69,8 +76,8 @@ class ImportController implements ControllerInterface
                 );
             case 'zip':
                 return new Zip(
-                    $this->app->Users,
-                    (string) $this->request->request->get('target'),
+                    $this->App->Users,
+                    $this->App->Request->request->getString('target'),
                     $canread->toJson(),
                     $canwrite->toJson(),
                     $uploadedFile,
@@ -78,8 +85,8 @@ class ImportController implements ControllerInterface
                 );
             case 'csv':
                 return new Csv(
-                    $this->app->Users,
-                    (string) $this->request->request->get('target'),
+                    $this->App->Users,
+                    $this->App->Request->request->getString('target'),
                     $canread->toJson(),
                     $canwrite->toJson(),
                     $uploadedFile,

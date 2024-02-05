@@ -12,9 +12,11 @@ namespace Elabftw\Make;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -46,17 +48,39 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $this->Make = new MakeBloxberg($client, new Experiments(new Users(1, 1), 1));
+        $entity = new Experiments(new Users(1, 1), 1);
+        $configArr = Config::getConfig()->configArr;
+        $configArr['blox_anon'] = '1';
+        $this->Make = new MakeBloxberg($configArr, $entity, $client);
     }
 
     public function testGetFileName(): void
     {
-        $this->assertStringContainsString('bloxberg-proof_', $this->Make->getFileName());
+        $this->assertStringContainsString('-timestamped.zip', $this->Make->getFileName());
     }
 
     public function testTimestamp(): void
     {
-        $this->assertTrue($this->Make->timestamp());
+        $this->assertIsInt($this->Make->timestamp());
+    }
+
+    public function testTimestampDisallowed(): void
+    {
+        $entity = new Experiments(new Users(1, 1), 1);
+        $this->expectException(ImproperActionException::class);
+        new MakeBloxberg(array('ts_limit' => '666', 'blox_enabled' => '0'), $entity, new Client());
+    }
+
+    public function testTimestampFailGettingKey(): void
+    {
+        $mock = new MockHandler(array(
+            new ConnectException('Server is down?', new Request('GET', 'test')),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $entity = new Experiments(new Users(1, 1), 1);
+        $this->expectException(ImproperActionException::class);
+        new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
     }
 
     public function testTimestampFail(): void
@@ -67,7 +91,8 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $Make = new MakeBloxberg($client, new Experiments(new Users(1, 1), 1));
+        $entity = new Experiments(new Users(1, 1), 1);
+        $Make = new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
         $this->expectException(ImproperActionException::class);
         $Make->timestamp();
     }
@@ -82,7 +107,8 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $Make = new MakeBloxberg($client, new Experiments(new Users(1, 1), 1));
+        $entity = new Experiments(new Users(1, 1), 1);
+        $Make = new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
         $this->expectException(FilesystemErrorException::class);
         $Make->timestamp();
     }

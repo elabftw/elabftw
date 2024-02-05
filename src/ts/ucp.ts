@@ -43,6 +43,23 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
+  // FILTER TEMPLATES
+  if (document.getElementById('templatesFilterInput')) {
+    document.getElementById('templatesFilterInput').addEventListener('keyup', event => {
+      const el = (event.target as HTMLInputElement);
+      const query = el.value;
+      // find all links that are endpoints
+      document.querySelectorAll('#tplTable tr').forEach(el => {
+        // begin by showing all so they don't stay hidden
+        el.removeAttribute('hidden');
+        // now simply hide the ones that don't match the query
+        if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
+          el.setAttribute('hidden', '');
+        }
+      });
+    });
+  }
+
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -84,6 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
         delete params['orcid'];
       }
       ApiC.patch(`${Model.User}/me`, params);
+
+    // CLEAR THE FILTER INPUT FOR TEMPLATES
+    } else if (el.matches('[data-action="clear-templates-search"]')) {
+      const searchInput = el.parentElement.parentElement.querySelector('input');
+      searchInput.value = '';
+      searchInput.focus();
+      document.querySelectorAll('#tplTable tr').forEach(el => {
+        el.removeAttribute('hidden');
+      });
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message

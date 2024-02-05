@@ -6,9 +6,9 @@
 {{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
 
 {% if Entity.type == 'experiments_templates' %}
-  <a href='ucp.php?tab=3&templateid={{ Entity.id }}'
+  <a href='ucp.php?tab=3&amp;templateid={{ Entity.id }}'
 {% else %}
-  <a href='{{ Entity.page }}.php?mode=view&id={{ Entity.id }}'
+  <a href='{{ Entity.page }}.php?mode=view&amp;id={{ Entity.id }}'
 {% endif %}
    class='btn hl-hover-gray'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
@@ -31,7 +31,7 @@
           <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
             <i class='fas fa-square-plus fa-fw'></i>
           </span>
-          <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname|raw }}
+          <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname }}
         </div>
         <div class='ml-auto'>
           {% if not Entity.isReadOnly %}<button type='button' data-action='restore-revision' data-id='{{ Entity.id }}' data-type='{{ Entity.type }}' data-revid='{{ revision.id }}' class='btn hl-hover-gray'>{{ 'Restore'|trans }}</button>{% endif %}

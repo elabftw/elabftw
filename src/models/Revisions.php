@@ -30,7 +30,7 @@ class Revisions implements RestInterface
 
     protected Db $Db;
 
-    public function __construct(private AbstractEntity $Entity, private int $maxRevisions, private int $minDelta, private int $minDays, ?int $id = null)
+    public function __construct(private AbstractEntity $Entity, private int $maxRevisions = 10, private int $minDelta = 100, private int $minDays = 23, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->id = $id;

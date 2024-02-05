@@ -14,6 +14,7 @@ use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\PdfFormat;
+use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -28,14 +29,14 @@ final class UserParams extends ContentParams implements ContentParamsInterface
         return match ($this->target) {
             // checked in update
             'email' => trim($this->content),
-            'firstname', 'lastname', 'orgid' => Filter::sanitize($this->content),
+            'firstname', 'lastname', 'orgid' => $this->content,
             'valid_until' => (
                 function () {
                     // clicking the little cross on the input will send an empty string, so set a date far in the future instead
                     if (empty($this->content)) {
                         return '3000-01-01';
                     }
-                    return Filter::sanitize($this->content);
+                    return $this->content;
                 }
             )(),
             // return the hash of the password
@@ -45,8 +46,9 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
+            'scope_experiments', 'scope_items', 'scope_experiments_templates' => (string) (Scope::tryFrom((int) $this->content) ?? Scope::Team)->value,
             'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->content),
-            'is_sysadmin', 'show_team', 'show_team_templates', 'show_public', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'disable_shortcuts', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email' => (string) Filter::toBinary($this->content),
+            'is_sysadmin', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'disable_shortcuts', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email' => (string) Filter::toBinary($this->content),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (string) (Entrypoint::tryFrom((int) $this->content) ?? Entrypoint::Dashboard)->value,
             'default_read', 'default_write' => Check::visibility($this->content),

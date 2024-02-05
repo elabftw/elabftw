@@ -12,13 +12,13 @@
 
   {% if mode == 'edit' %}
     {# VIEW #}
-    <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'View mode'|trans }}' href='?tab=3&mode=view&templateid={{ Entity.id }}'>
+    <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'View mode'|trans }}' href='?tab=3&amp;mode=view&amp;templateid={{ Entity.id }}'>
       <i class='fas fa-eye fa-fw'></i>
     </a>
   {% else %}
     {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
       {# EDIT #}
-      <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'Edit'|trans }}' href='?tab=3&mode=edit&templateid={{ Entity.id }}'>
+      <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'Edit'|trans }}' href='?tab=3&amp;mode=edit&amp;templateid={{ Entity.id }}'>
         <i class='fas fa-pencil fa-fw'></i>
       </a>
     {% endif %}
@@ -34,10 +34,8 @@
     <i class='fas fa-copy fa-fw'></i>
   </button>
 
-  {# DOWNLOAD #}
-  <button type='button' title='{{ 'Download template'|trans }}' aria-label='{{ 'Download template'|trans }}' data-action='download-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-    <i class='fas fa-download fa-fw'></i>
-  </button>
+  {# DOWNLOAD / EXPORT MENU #}
+  {% include 'export-menu.html' %}
 
   {# IMPORT #}
   {% if App.Request.getScriptName|split('/')|last == 'team.php' -%}
@@ -78,9 +76,9 @@
           <button class='dropdown-item' type='button' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
         {% endif %}
         {# REVISIONS #}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
-        <a class='dropdown-item' href='?templateid={{ Entity.id }}&mode=changelog&tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+        <a class='dropdown-item' href='?templateid={{ Entity.id }}&amp;mode=changelog&amp;tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
         {# TRANSFER OWNERSHIP #}
         {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
@@ -111,14 +109,31 @@
     {# TITLE #}
     <div class='d-flex mb-2 justify-content-between align-items-center'>
       <label for='title_input' maxlength='255' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|raw }}' required />
+      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
     </div>
     {# CATEGORY / STATUS #}
     {% include('catstat-edit.html') %}
     {# TAGS #}
     {% include('edit-tags.html') %}
     {# PERMISSIONS #}
+    <hr>
+    <h5>{{ 'Permissions for the template'|trans }}</h5>
     {% include('edit-permissions.html') %}
+    {# TARGET PERMISSIONS #}
+    <h5>{{ 'Permissions for the derived experiment'|trans }}</h5>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANREAD #}
+      {% set rw = 'canread_target' %}
+      {% set can = Entity.entityData.canread_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANWRITE #}
+      {% set rw = 'canwrite_target' %}
+      {% set can = Entity.entityData.canwrite_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <hr>
 
     {# MAIN CONTENT #}
     <div class='mt-4'>

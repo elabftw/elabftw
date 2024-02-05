@@ -9,8 +9,8 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\AuditEvent\IsSysadminChanged;
 use Elabftw\AuditEvent\PasswordChanged;
+use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
@@ -97,8 +97,8 @@ class Users implements RestInterface
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        $firstname = trim(Filter::sanitize($firstname));
-        $lastname = trim(Filter::sanitize($lastname));
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
 
         // Registration date is stored in epoch
         $registerDate = time();
@@ -170,7 +170,7 @@ class Users implements RestInterface
         // check if the team is empty before adding the user to the team
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
-        $Users2Teams = new Users2Teams();
+        $Users2Teams = new Users2Teams($this->requester);
         $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'), $group);
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
@@ -181,7 +181,7 @@ class Users implements RestInterface
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
-        AuditLogs::create(new UserRegister($userid));
+        AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $userid));
         return $userid;
     }
 
@@ -224,7 +224,7 @@ class Users implements RestInterface
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret,
+            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
@@ -264,7 +264,12 @@ class Users implements RestInterface
     public function readAll(): array
     {
         $Request = Request::createFromGlobals();
-        return $this->readFromQuerySafe($Request->query->getAlnum('q'), 0);
+        return $this->readFromQuery(
+            $Request->query->getAlnum('q'),
+            0,
+            $Request->query->getBoolean('includeArchived'),
+            $Request->query->getBoolean('onlyAdmins'),
+        );
     }
 
     /**
@@ -327,13 +332,13 @@ class Users implements RestInterface
                     if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    (new Users2Teams())->create($this->userData['userid'], $team);
+                    (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams())->PatchUser2Team($this->requester, $params),
-            Action::Unreference => (new Users2Teams())->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this))->toggleArchive((bool) $params['with_exp']),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
+            Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
+            Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) $params['with_exp']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
@@ -501,18 +506,6 @@ class Users implements RestInterface
         throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
-    /**
-     * Remove sensitives values from readFromQuery()
-     */
-    private function readFromQuerySafe(string $query, int $team): array
-    {
-        $users = $this->readFromQuery($query, $team);
-        foreach ($users as &$user) {
-            unset($user['mfa_secret']);
-        }
-        return $users;
-    }
-
     private function canReadOrExplode(): void
     {
         // it's ourself or we are sysadmin
@@ -546,15 +539,30 @@ class Users implements RestInterface
             if ($this->requester->userData['is_sysadmin'] === 0) {
                 throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
             }
-            /** @psalm-suppress PossiblyNullArgument */
-            AuditLogs::create(new IsSysadminChanged($this->requester->userid, (int) $params->getContent(), $this->userData['userid']));
         }
 
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        $auditLoggableTargets = array(
+            'email',
+            'orgid',
+            'is_sysadmin',
+        );
+
+        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->userid ?? 0,
+                $params->getTarget(),
+                (string) $this->userData[$params->getTarget()],
+                $params->getContent(),
+            ));
+        }
+        return $res;
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool
@@ -577,8 +585,13 @@ class Users implements RestInterface
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PasswordChanged($this->userid));
+        AuditLogs::create(new PasswordChanged(
+            $this->requester->userid ?? 0,
+            $this->userid ?? 0,
+            'password',
+            'the old password',
+            'the new password',
+        ));
         return $res;
     }
 

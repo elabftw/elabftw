@@ -1,15 +1,16 @@
 {# Modal for timestamping #}
-<div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel' aria-hidden='true'>
+<div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='timestampModalLabel'>{{ 'Timestamp Experiment'|trans }}</h5>
+        <h5 class='modal-title' id='timestampModalLabel'>{{ 'Timestamp Entry'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <p>{{ 'Timestamping your experiment is like taking a snapshot of your experiment at this instant, and storing it on the side, in an immutable archive. This snapshot is validated (timestamped) by a trusted third party.'|trans }}</p>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
+        <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
         {% if App.Config.configArr.ts_authority == 'universign' or App.Config.configArr.ts_authority == 'custom' %}
           <p><i class='fas fa-exclamation-triangle'></i>
             {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
@@ -19,7 +20,31 @@
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='timestamp' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+        <button type='button' data-action='timestamp' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for blockchain timestamping #}
+<div class='modal fade' id='blocktimestampModal' tabindex='-1' role='dialog' aria-labelledby='blocktimestampModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='blocktimestampModalLabel'>{{ 'Timestamp Entry'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        {# this first paragraph is the same as above for trusted timestamping #}
+        <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
+        <p>{{ 'With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum.'|trans }}</p>
+      </div>
+      <div class='timestamp-error'></div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='bloxberg' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
   </div>
@@ -44,13 +69,13 @@
 
   {% if mode == 'edit' %}
     {# VIEW #}
-    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 main-action-button lh-normal border-0'>
+    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 main-action-button lh-normal border-0'>
       <i class='fas fa-eye fa-fw'></i>
     </a>
   {% else %}
     {# EDIT #}
     {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0'>
+      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0'>
         <i class='fas fa-pencil fa-fw'></i>
       </a>
     {% endif %}
@@ -64,7 +89,7 @@
     </button>
 
     {% if Entity.type == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
-      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&item={{ Entity.id }}'>
+      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&amp;item={{ Entity.id }}'>
         <i class='fas fa-calendar-plus fa-fw'></i>
       </a>
     {% endif %}
@@ -81,16 +106,16 @@
   {% endif %}
 
 
-  {# TIMESTAMP EXPERIMENT #}
-  {% if Entity.type == 'experiments' and not App.Session.has('is_anon') and not Entity.isReadOnly %}
-    <button type='button' title='{{ 'Timestamp Experiment'|trans }}' aria-label='{{ 'Timestamp Experiment'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  {# TIMESTAMP #}
+  {% if not App.Session.has('is_anon') and not Entity.isReadOnly %}
+    <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-calendar-check fa-fw'></i>
     </button>
   {% endif %}
 
   {# BLOXBERG TIMESTAMP #}
   {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
-    <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='bloxberg' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-cubes fa-fw'></i>
     </button>
   {% endif %}
@@ -100,21 +125,7 @@
   {% endif %}
 
   {# DOWNLOAD / EXPORT MENU #}
-  <div class='dropdown'>
-    <button class='btn hl-hover-gray d-inline p-2 mr-2' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
-      <i class='fas fa-download fa-fw'></i>
-    </button>
-    <div class='dropdown-menu'>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zipa'><i class='fas fa-file-archive fa-fw'></i> {{ 'Long term storage ZIP'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=qrpng'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</a>
-      <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}'><i class='fas fa-code fa-fw'></i> JSON</a>
-    </div>
-  </div>
+  {% include 'export-menu.html' %}
 
   <div class='ml-auto d-flex align-items-center'>
     {% if not App.Session.has('is_anon') %}
@@ -157,20 +168,18 @@
           <button type='button' class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
         {% endif %}
         {# REVISIONS #}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
-        <a class='dropdown-item' href='?id={{ Entity.id }}&mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+        <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
 
         {% if not App.Session.has('is_anon') %}
           <button type='button' class='dropdown-item hover-warning' data-action='archive-entity'>
             <i class='fas fa-fw fa-box-archive fa-fw' title='{{ 'Archive/Unarchive'|trans }}'></i> {{ 'Archive/Unarchive'|trans }}
           </button>
         {% endif %}
-        {% if App.Config.configArr.deletable_xp == '1' %}
-          <div class='dropdown-divider'></div>
-          {# DELETE #}
-          <button type='button' class='dropdown-item hover-danger {{ Entity.entityData.timestamped or (not deletableXp and (Entity.type == 'experiments')) ? 'disabled' }}' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
-        {% endif %}
+        <div class='dropdown-divider'></div>
+        {# DELETE #}
+        <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
       </div>
     </div>
   </div>

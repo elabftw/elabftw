@@ -123,8 +123,14 @@ function doneTyping(): void {
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image link pagebreak codesample template mention visualblocks visualchars';
-  if (page !== 'admin') {
+  let toolbar1 = 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save';
+  let removedMenuItems = 'newdocument, image, anchor';
+  if (page === 'edit') {
     plugins += ' autosave';
+    // add Image button in toolbar
+    toolbar1 = toolbar1.replace('link |', 'link image |');
+    // let Image in menu
+    removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
 
@@ -140,9 +146,12 @@ export function getTinymceBaseConfig(page: string): object {
     // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
     //resize: true,
     plugins: plugins,
+    pagebreak_split_block: true,
     pagebreak_separator: '<div class="page-break"></div>',
-    toolbar1: 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save',
-    removed_menuitems: 'newdocument, image, anchor',
+    toolbar1: toolbar1,
+    // disable automatic h1 when using #
+    text_patterns: false,
+    removed_menuitems: removedMenuItems,
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended
     images_upload_credentials: true,
@@ -157,6 +166,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'C', value: 'c'},
       {text: 'C++', value: 'cpp'},
       {text: 'CSS', value: 'css'},
+      {text: 'Diff', value: 'diff'},
       {text: 'Fortran', value: 'fortran'},
       {text: 'Go', value: 'go'},
       {text: 'Java', value: 'java'},
@@ -191,6 +201,19 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
+        // mask word operators 'not', 'and', 'or' of extended search query
+        ['not', 'or', 'and'].forEach(word => {
+          const re = new RegExp(`\\b${word}\\b`, 'g');
+          query = query.replace(re, ` '${word}' `);
+        });
+        // escape extended search query wildcards
+        ['_', '%'].forEach(wildcard => {
+          query = query.replace(wildcard, `\\${wildcard}`);
+        });
+        // mask special characters of extended search query by wildcard
+        ['!', '|', '&'].forEach(operator => {
+          query = query.replace(operator, '_');
+        });
         // grab experiments and items
         const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&q=${query}`);
         const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&q=${query}`);

@@ -11,5 +11,5 @@ namespace Elabftw\Elabftw;
 
 class CreateImmutableUpload extends CreateUpload
 {
-    protected bool $immutable = true;
+    protected int $immutable = 1;
 }

@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EnforceMfa;
-use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
@@ -58,8 +57,8 @@ try {
     if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
-            filter_var($App->Request->query->get('q'), FILTER_SANITIZE_STRING),
-            (int) filter_var($App->Request->query->get('teamFilter'), FILTER_SANITIZE_NUMBER_INT),
+            $App->Request->query->getString('q'),
+            $App->Request->query->getInt('teamFilter'),
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
         );
@@ -131,7 +130,6 @@ try {
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
-        'langsArr' => Language::getAllHuman(),
         'phpInfos' => $phpInfos,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,

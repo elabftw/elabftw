@@ -40,17 +40,25 @@ class QueryBuilderVisitor implements Visitor
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
+        // body is stored as html after htmlPurifier worked on it
+        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $param = $this->getUniqueID();
-        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %1$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param);
+        $paramBody = $this->getUniqueID();
+        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %2$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param, $paramBody);
 
-        return new WhereCollector(
-            $query,
-            array(array(
-                'param' => $param,
-                'value' => '%' . $simpleValueWrapper->getValue() . '%',
-                'type' => PDO::PARAM_STR,
-            )),
+        $bindValues = array();
+        $bindValues[] = array(
+            'param' => $param,
+            'value' => '%' . $simpleValueWrapper->getValue() . '%',
+            'type' => PDO::PARAM_STR,
         );
+        $bindValues[] = array(
+            'param' => $paramBody,
+            'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
+            'type' => PDO::PARAM_STR,
+        );
+
+        return new WhereCollector($query, $bindValues);
     }
 
     public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): WhereCollector

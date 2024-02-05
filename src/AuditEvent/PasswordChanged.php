@@ -11,13 +11,8 @@ namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 
-class PasswordChanged extends AbstractAuditEvent
+class PasswordChanged extends UserAttributeChanged
 {
-    public function getBody(): string
-    {
-        return 'Password was changed';
-    }
-
     public function getCategory(): int
     {
         return AuditCategory::PasswordChanged->value;

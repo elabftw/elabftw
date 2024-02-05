@@ -32,6 +32,12 @@
           <span class='tag'>{{ tag }}</span>
         {% endfor %}<br>
       {% endif %}
+      {% if entityData.category_title %}
+      <strong>{{ 'Category'|trans }}:</strong> {{ entityData.category_title }}<br>
+      {% endif %}
+      {% if entityData.status_title %}
+      <strong>{{ 'Status'|trans }}:</strong> {{ entityData.status_title }}<br>
+      {% endif %}
       <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
     </p>
   </div>
@@ -54,7 +60,7 @@
 
     {% for link in entityData.experiments_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&amp;id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>
@@ -69,7 +75,7 @@
 
     {% for link in entityData.items_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&amp;id={{ link.itemid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>
@@ -97,13 +103,13 @@
     {% for upload in entityData.uploads %}
       <p class='pdf-ul'>{{ upload.real_name }}
       {# add a comment? don't add if it's the default text or if it's null #}
-      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment }}){% endif %}
+      {% if upload.comment and upload.comment != 'Click to add a comment' %} ({{ upload.comment|nl2br }}){% endif %}
       {# add hash? don't add if we don't have it #}
       {% if upload.hash|length >= 32 %}<br>{{ upload.hash_algorithm }}: {{ upload.hash }}{% endif %}
 
       {% if upload.base64_thumbnail %}
       {# Note: adding charset to the data string makes it fail #}
-        <br><img class='attached-image' src='data:image/jpeg;base64,{{ upload.base64_thumbnail }}' alt='{{ upload.comment }}' />
+        <br><img class='attached-image' src='data:image/jpeg;base64,{{ upload.base64_thumbnail }}' alt='{{ upload.comment|e('html_attr') }}' />
       {% endif %}
       </p>
     {% endfor %}
@@ -119,7 +125,7 @@
       {% endtrans %}
     </h3>
     {% for comment in entityData.comments %}
-      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname|raw }} wrote:<br>{{ comment.comment|raw }}</p>
+      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname }} wrote:<br>{{ comment.comment|nl2br }}</p>
     {% endfor %}
   </section>
 {% endif %}
@@ -128,6 +134,7 @@
   <table class='noborder' role='presentation'>
     <tr>
       <td class='noborder'>
+        {# use raw here as this is an mpdf special tag and the url needs to be passed unmodified #}
         <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
       </td>
       <td class='noborder'>
@@ -135,7 +142,7 @@
         {% if locked %}
           <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
         {% endif %}
-        <p class='elabid'>Link: <a href='{{ url|raw }}'>{{ url }}</a></p>
+        <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
       </td>
     </tr>
   </table>
@@ -158,8 +165,14 @@
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
-        {# use of raw to make the link to revisions page work #}
-        <td>{{ change.content|raw }}</td>
+          {# cannot use ternary here as it is an expression and filters are applied after evaluation #}
+          {%- if change.target == 'body' -%}
+            {# use of raw to make the link to revisions page work #}
+            {{ change.content|raw }}
+          {%- else -%}
+            {{ change.content }}
+          {%- endif -%}
+        </td>
       </tr>
       {% endfor %}
     </tbody>

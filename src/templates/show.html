@@ -34,6 +34,8 @@
         <i class='fas fa-fw fa-table'></i>
       </button>
 
+      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.type} %}
+
       <button class='btn btn-secondary btn-sm mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
         <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
       </button>
@@ -74,9 +76,9 @@
     {% else %}
       <form
     {% endif %}
-       class='form-group form-inline mb-2'>
+      class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
       {% if not searchPage %}
-        <input type='hidden' name='q' value='{{ DisplayParams.query }}' />
+        <input type='hidden' name='q' value='{{ DisplayParams.query|e('html_attr') }}' />
       {% endif %}
       {% if DisplayParams.searchType == 'related' %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
@@ -87,7 +89,7 @@
         <option value=''>{{ 'Filter category'|trans }}</option>
         {% for category in categoryArr %}
           <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-          {{ category.title|raw }}</option>
+          {{ category.title }}</option>
         {% endfor %}
       </select>
 
@@ -96,7 +98,7 @@
         <option value=''>{{ 'Filter status'|trans }}</option>
         {% for status in statusArr %}
           <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected' }}>
-          {{ status.title|raw }}</option>
+          {{ status.title }}</option>
         {% endfor %}
       </select>
 
@@ -105,7 +107,7 @@
         <option value=''>{{ 'Filter owner'|trans }}</option>
         {% for user in usersArr %}
           <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
-          {{ user.fullname|raw }}</option>
+          {{ user.fullname }}</option>
         {% endfor %}
       </select>
 
@@ -114,8 +116,8 @@
         <select name='extended' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter visibility'|trans }}'>
           <option value=''>{{ 'Filter visibility'|trans }}</option>
           {% for vis in visibilityArr %}
-          <option value='visibility:"{{ vis }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
-            {{ vis|raw }}</option>
+          <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+            {{ vis }}</option>
           {% endfor %}
         </select>
 
@@ -140,10 +142,9 @@
       {%- endif %}
       <select multiple name='tags[]' class='form-control mr-1 mb-2 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
         {% for tag in tagsArrForSelect %}
-          <option value='{{ tag.tag }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag|raw }}</option>
+          <option value='{{ tag.tag|e('html_attr') }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
         {% endfor %}
       </select>
-      {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
       {# ARCHIVED filter #}
       <div class='input-group mr-1 mb-2'>
         <div class='input-group-text'>
@@ -152,6 +153,7 @@
         </div>
       </div>
 
+      {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
       <button class='btn btn-primary mb-2' type='submit'>{{ 'Go'|trans }}</button>
       {# on search page we use its form everywhere else we need an independent form #}
       {% if searchPage %}
@@ -176,7 +178,7 @@
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
     <div class='row d-flex'>
-      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q') }}'>
+      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|trim|e('url') }}'>
         <button class='btn btn-primary' type='button'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
       </a>
     </div>
@@ -195,7 +197,7 @@
               {{ 'Change category'|trans }}
             </option>
             {% for category in categoryArr %}
-                <option value='{{ category.id }}'>{{ category.title|raw }}</option>
+                <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
           </select>
           {# CHANGE STATUS #}
@@ -204,7 +206,7 @@
               {{ 'Change status'|trans }}
             </option>
             {% for status in statusArr %}
-                <option value='{{ status.id }}'>{{ status.title|raw }}</option>
+                <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
 
@@ -237,7 +239,7 @@
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
                 {% for cat in itemsCategoryArr %}
-                  <option value='{{ cat.id }}'>{{ cat.title|raw }}</option>
+                  <option value='{{ cat.id }}'>{{ cat.title }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -257,12 +259,8 @@
           </div>
 
           <button data-action='lock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          {% if Entity.type == 'experiments' %}
-            <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-          {% endif %}
-          {% if (deletableXp and (Entity.type == 'experiments')) or Entity.type == 'items' %}
-            <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-          {% endif %}
+          <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         </div>
       </div>
 
@@ -342,12 +340,7 @@
 
       {# PREVIOUS/NEXT PAGE buttons #}
       <div class='text-center page-buttons mt-2'>
-        {% if DisplayParams.offset != 0 %}
-          <button class='btn btn-neutral previousPage' type='button' data-action='previous-page'>{{ 'Previous page'|trans }}</button>
-        {% endif %}
-        {% if DisplayParams.limit < itemsArr|length %}
-          <button class='btn btn-primary nextPage' type='button' data-action='next-page'>{{ 'Next page'|trans }}</button>
-        {% endif %}
+        <button class='btn btn-primary ' type='button' id='loadMoreBtn' data-action='load-more'>{{ 'Load more'|trans }}</button>
       </div>
 
   {% endif %}

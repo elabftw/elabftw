@@ -5,27 +5,20 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, updateCatStat, escapeRegExp, notifError } from './misc';
+import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import Dropzone from 'dropzone';
 import type { DropzoneFile } from 'dropzone';
 import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
-
-class CustomDropzone extends Dropzone {
-  tinyImageSuccess: null | undefined | ((url: string) => void);
-}
-
-// the dropzone is created programmatically, disable autodiscover
-Dropzone.autoDiscover = false;
+import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -48,42 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const editor = getEditor();
   editor.init();
 
-  // UPLOAD FORM
-  const dropZoneElement = '#elabftw-dropzone';
-  const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
-  const dropZoneOptions = {
-    // i18n message to user
-    dictDefaultMessage: i18next.t('dropzone-upload-area') + `<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
-    maxFilesize: maxsize,
-    timeout: 900000,
-    headers: {
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
-    },
-    init: function(): void {
-      // once it is done
-      this.on('complete', function() {
-        // reload the #filesdiv once the file is uploaded
-        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-          reloadElement('filesdiv').then(() => {
-            const dropZone = Dropzone.forElement(dropZoneElement) as CustomDropzone;
-            // Check to make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
-            if (typeof dropZone.tinyImageSuccess !== 'undefined' && dropZone.tinyImageSuccess !== null) {
-              // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
-              let url = $('#uploadsDiv').children().last().find('[id^=upload-filename]').attr('href');
-              // Slices out the url by finding the &name query param from the download link. This does not care about extensions or thumbnails.
-              url = url.slice(0, url.indexOf('&name='));
-              // This gives tinyMce the actual url of the uploaded image. TinyMce updates its editor to link to this rather than the temp location it sets up initially.
-              dropZone.tinyImageSuccess(url);
-              // This is to make sure that we do not end up adding a file to tinymce if a previous file was pasted and a consecutive file was uploaded using Dropzone.
-              // The 'undefined' check is not enough. That is just for before any file was pasted.
-              dropZone.tinyImageSuccess = null;
-            }
-          });
-        }
-      });
-    },
-  };
-  new Dropzone(dropZoneElement, dropZoneOptions);
+  // initialize the file uploader
+  const uploader = new Uploader();
+  const dropZone = uploader.init();
 
   ////////////////
   // DATA RECOVERY
@@ -257,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': realName,
         'content': content,
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('filesdiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -375,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tinyConfig = getTinymceBaseConfig('edit');
 
     const imagesUploadHandler = (blobInfo): Promise<string> => new Promise((resolve, reject) => {
-      const dropZone = Dropzone.forElement('#elabftw-dropzone') as CustomDropzone;
       // Edgecase for editing an image using tinymce ImageTools
       // Check if it was selected. This is set by an event hook below
       if (tinymceEditImage.selected === true) {
@@ -402,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
               resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
               // save here because using the old real_name will not return anything from the db (status is archived now)
               updateEntityBody();
-              reloadElement('filesdiv');
+              reloadElement('uploadsDiv');
             });
           });
         } else {
@@ -417,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof filename !== 'undefined' && filename !== null) {
           const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
           dropZone.addFile(file);
-          dropZone.tinyImageSuccess = resolve;
+          uploader.tinyImageSuccess = resolve;
         } else {
           // Just disregard the edit if the name prompt is cancelled
           tinymce.activeEditor.undoManager.undo();
@@ -425,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         dropZone.addFile(blobInfo.blob());
-        dropZone.tinyImageSuccess = resolve;
+        uploader.tinyImageSuccess = resolve;
       }
     });
 
@@ -479,6 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // REPLACE UPLOADED FILE
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesdiv').addEventListener('submit', event => {
     const el = event.target as HTMLElement;
@@ -497,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData,
       }).then(resp => {
-        reloadElement('filesdiv');
+        reloadElement('uploadsDiv');
         // return early if longName is not found in body
         if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
           && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)

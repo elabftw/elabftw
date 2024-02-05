@@ -45,12 +45,15 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $teamGroupsFromUser = array();
 
+    protected array $allTeamgroupsArr = array();
+
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
+        $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
         $this->templatesArr = $Templates->Pins->readAllSimple();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
@@ -115,7 +118,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
-            'deletableXp' => $this->getDeletableXp(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'maxUploadSize' => Tools::getMaxUploadSize(),
@@ -159,7 +161,7 @@ abstract class AbstractEntityController implements ControllerInterface
         if ($this->App->Request->query->has('access_key') && $this->App->Request->query->get('access_key') !== $this->Entity->entityData['access_key']) {
             // for that we fetch the id not from the id param but from the access_key, so we will get a valid id that corresponds to an entity
             // with this access_key
-            $id = (new AccessKeyHelper($this->Entity))->getIdFromAccessKey((string) $this->App->Request->query->get('access_key'));
+            $id = (new AccessKeyHelper($this->Entity))->getIdFromAccessKey($this->App->Request->query->getString('access_key'));
             if ($id > 0) {
                 $this->Entity->bypassReadPermission = true;
             }
@@ -175,7 +177,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
-            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
@@ -185,19 +186,13 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $Teams->readAll(),
             'maxUploadSize' => Tools::getMaxUploadSize(),
             'maxUploadSizeRaw' => ini_get('post_max_size'),
-            'myTeamgroupsArr' => $this->teamGroupsFromUser,
+            'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
-
-        // RELATED ITEMS AND EXPERIMENTS
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            $renderArr['relatedItemsArr'] = $this->Entity->ItemsLinks->readRelated();
-            $renderArr['relatedExperimentsArr'] = $this->Entity->ExperimentsLinks->readRelated();
-        }
 
         $Response = new Response();
         $Response->prepare($this->App->Request);
@@ -211,7 +206,7 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function edit(): Response
     {
-        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        $this->Entity->setId($this->App->Request->query->getInt('id'));
         // check permissions
         $this->Entity->canOrExplode('write');
         // a locked entity cannot be edited
@@ -236,7 +231,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
-            'deletableXp' => $this->getDeletableXp(),
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
             // Do we display the main body of a concrete entity? Default is true
@@ -251,7 +245,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
-            'myTeamgroupsArr' => $this->teamGroupsFromUser,
+            'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
@@ -265,7 +259,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected function changelog(): Response
     {
-        $this->Entity->setId((int) $this->App->Request->query->get('id'));
+        $this->Entity->setId($this->App->Request->query->getInt('id'));
         // check permissions
         $this->Entity->canOrExplode('read');
 
@@ -280,24 +274,5 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('changelog.html', $renderArr));
         return $Response;
-    }
-
-    /**
-     * Can we delete experiments? This is used to disable the Delete button in menu.
-     */
-    private function getDeletableXp(): bool
-    {
-        // get the config option from team setting
-        $Teams = new Teams($this->App->Users);
-        $deletableXp = (bool) $Teams->readOne()['deletable_xp'];
-        // general config will override the team config only if it's more restrictive
-        if ($this->App->Config->configArr['deletable_xp'] === '0') {
-            $deletableXp = false;
-        }
-        // an admin is able to delete
-        if ($this->App->Users->isAdmin) {
-            $deletableXp = true;
-        }
-        return $deletableXp;
     }
 }

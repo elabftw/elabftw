@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -35,9 +36,11 @@ use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
 use function is_bool;
+use function json_decode;
 use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
+use function ksort;
 use PDO;
 use PDOStatement;
 use function sprintf;
@@ -131,11 +134,12 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Count the number of timestamped experiments during past month (sliding window)
+     * Count the number of timestamp archives created during past month (sliding window)
+     * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart
      */
     public function getTimestampLastMonth(): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
+        $sql = "SELECT COUNT(id) FROM uploads WHERE comment LIKE 'Timestamp archive%'= 1 AND created_at > (NOW() - INTERVAL 1 MONTH)";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
@@ -255,8 +259,7 @@ abstract class AbstractEntity implements RestInterface
             $displayParams->sort->value,
             ', entity.id',
             $displayParams->sort->value,
-            // add one so we can display Next page if there are more things to display
-            sprintf('LIMIT %d', $displayParams->limit + 1),
+            sprintf('LIMIT %d', $displayParams->limit),
             sprintf('OFFSET %d', $displayParams->offset),
         );
 
@@ -341,6 +344,15 @@ abstract class AbstractEntity implements RestInterface
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
+    }
+
+    public function readOneFull(): array
+    {
+        $base = $this->readOne();
+        $base['revisions'] = (new Revisions($this))->readAll();
+        $base['changelog'] = (new Changelog($this))->readAll();
+        ksort($base);
+        return $base;
     }
 
     /**
@@ -437,7 +449,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTimestamperFullname(): string
     {
-        if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
+        if ($this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);
@@ -452,21 +464,6 @@ abstract class AbstractEntity implements RestInterface
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['lockedby']);
-    }
-
-    /**
-     * Check if the current entity is pin of current user
-     */
-    public function isPinned(): bool
-    {
-        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-        return $req->rowCount() > 0;
     }
 
     public function getIdFromCategory(int $category): array
@@ -534,6 +531,8 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
@@ -549,8 +548,32 @@ abstract class AbstractEntity implements RestInterface
         if ($this->entityData['content_type'] === self::CONTENT_MD) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
+        }
         ksort($this->entityData);
         return $this->entityData;
+    }
+
+    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
+    {
+        $this->canOrExplode('write');
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach($params->ordering as $ordering => $name) {
+            // build jsonPath to field
+            $field = sprintf(
+                '$.%s.%s.%s',
+                MetadataEnum::ExtraFields->value,
+                json_encode($name, JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Position->value,
+            );
+            $req->bindParam(':field', $field);
+            $req->bindValue(':value', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+        return $this->readOne();
     }
 
     /**

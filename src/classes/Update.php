@@ -15,6 +15,7 @@ use Elabftw\Exceptions\InvalidSchemaException;
 use PDO;
 use function random_bytes;
 use function sha1;
+use function sprintf;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -28,7 +29,7 @@ use function sha1;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const REQUIRED_SCHEMA = 134;
+    public const REQUIRED_SCHEMA = 141;
 
     private Db $Db;
 
@@ -81,7 +82,7 @@ class Update
         // new style with SQL files instead of functions
         while ($this->currentSchema < self::REQUIRED_SCHEMA) {
             ++$this->currentSchema;
-            $this->Sql->execFile('schema' . (string) ($this->currentSchema) . '.sql', $force);
+            $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
             // schema57: add an elabid to existing database items
             if ($this->currentSchema === 57) {
                 $this->addElabidToItems();

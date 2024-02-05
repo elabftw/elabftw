@@ -36,7 +36,7 @@ class MakeCsv extends AbstractMakeCsv
      */
     protected function getHeader(): array
     {
-        return array('id', 'date', 'title', 'content', 'category', 'elabid', 'rating', 'url', 'metadata');
+        return array('id', 'date', 'title', 'body', 'category', 'category_title', 'category_color', 'status', 'status_title', 'status_color', 'custom_id', 'elabid', 'rating', 'url', 'metadata', 'tags');
     }
 
     /**
@@ -58,16 +58,22 @@ class MakeCsv extends AbstractMakeCsv
                     $this->Entity->entityData['date'],
                     htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
                     html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
-                    htmlspecialchars_decode((string) $this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
+                    (string) $this->Entity->entityData['category'],
+                    htmlspecialchars_decode((string) $this->Entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),
+                    (string) $this->Entity->entityData['category_color'],
+                    (string) $this->Entity->entityData['status'],
+                    htmlspecialchars_decode((string) $this->Entity->entityData['status_title'], ENT_QUOTES | ENT_COMPAT),
+                    (string) $this->Entity->entityData['status_color'],
+                    $this->Entity->entityData['custom_id'] ?? '',
                     $this->Entity->entityData['elabid'] ?? '',
                     $this->Entity->entityData['rating'],
                     $this->getUrl(),
                     $this->Entity->entityData['metadata'] ?? '',
+                    $this->Entity->entityData['tags'] ?? '',
                 );
                 $rows[] = $row;
             }
         }
-
         return $rows;
     }
 }

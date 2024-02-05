@@ -34,7 +34,7 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ constant('Elabftw\\Elabftw\\App::WHATSNEWLINK') }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
+    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink() }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
     Made with ♥ by <a href='https://www.deltablot.com'>Deltablot</a>
     {% if App.Config.configArr.debug %}
       <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
@@ -44,6 +44,35 @@
     {% endif %}
   </p>
 </footer>
+
+{# Modal for selecting language #}
+<div class='modal fade' id='selectLanguageModal' tabindex='-1' role='dialog' aria-labelledby='selectLanguageModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='selectLanguageModalLabel'>{{ 'Select language'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div id='selectLanguageForm' class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <label for='langSelect' class='col-form-label'>{{ 'Language'|trans }}</label>
+        <select class='form-control' id='langSelect'>
+          {% for lang, text in langsArr|sort %}
+            <option value='{{ lang }}'
+            {{ App.getLang() == lang ? ' selected' }}
+            >{{ text }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='select-lang' data-dismiss='modal' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </div>{# end container #}
 </div>{# end real-container #}
@@ -66,7 +95,7 @@
 {% endif %}
 
 {# Modal for policies #}
-<div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel' aria-hidden='true'>
+<div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>

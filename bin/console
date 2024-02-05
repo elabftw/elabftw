@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php
+<?php declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,17 +7,19 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Commands;
 
-use Symfony\Component\Console\Application;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use function dirname;
-use Elabftw\Storage\Cache;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
-use Symfony\Component\Mailer\Mailer;
 use Elabftw\Services\Email;
+use Elabftw\Storage\Cache;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -26,14 +28,21 @@ $Application = new Application();
 $Config = Config::getConfig();
 $Logger = new Logger('elabftw');
 $Logger->pushHandler(new ErrorLogHandler());
-$Email = new Email(
-    new Mailer(Transport::fromDsn($Config->getDsn())),
-    $Logger,
-    $Config->configArr['mail_from'],
-);
+try {
+    $Email = new Email(
+        new Mailer(Transport::fromDsn($Config->getDsn())),
+        $Logger,
+        $Config->configArr['mail_from'],
+    );
+} catch (WrongKeyOrModifiedCiphertextException $e) {
+    echo "ERROR:\n";
+    echo "It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\n";
+    echo "Error message:\n";
+    echo $e->getMessage() . "\n";
+    exit;
+}
 
 $Application->add(new InstallRedir());
-$Application->add(new GenSecretKey());
 $Application->add(new GenI18n4Js());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
@@ -55,6 +64,7 @@ $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
 $Application->add(new SendNotifications($Email));
+$Application->add(new SendExpirationNotifications($Email));
 $Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new PruneExperiments());

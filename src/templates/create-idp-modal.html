@@ -1,5 +1,5 @@
 {# Modal for IDP creation #}
-<div class='modal fade' id='createIdpModal' tabindex='-1' role='dialog' aria-labelledby='createidpModalLabel' aria-hidden='true'>
+<div class='modal fade' id='createIdpModal' tabindex='-1' role='dialog' aria-labelledby='createidpModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -8,7 +8,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div id='createIdpForm' class='modal-body' data-wait='{{ 'Please wait…' }}'>
+      <div id='createIdpForm' class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <div class='d-flex justify-content-between'>
           <label for='name' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
           <input class='form-control col-md-4' type='text' placeholder='Acme Looniversity' id='name' name='name' required />
@@ -55,7 +55,7 @@
         <div class='d-flex justify-content-between'>
           <div>
             <label for='x509_idp' class='col-form-label'>x509 Certificate</label>
-            <input type='file' data-action='load-file-on-change' data-target='x509_idp' class='form-control' />
+            <input type='file' data-action='load-file-on-change' data-target='x509_idp' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
           </div>
             <textarea class='form-control col-md-4' id='x509_idp' placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...' name='x509' required></textarea>
         </div>
@@ -64,7 +64,7 @@
         <div class='d-flex justify-content-between'>
           <div>
             <label for='x509_new_idp' class='col-form-label'>x509 Certificate (additional for rollover)</label>
-            <input type='file' data-action='load-file-on-change' data-target='x509_new_idp' class='form-control' />
+            <input type='file' data-action='load-file-on-change' data-target='x509_new_idp' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
           </div>
           <textarea class='form-control col-md-4' id='x509_new_idp' name='x509_new' required></textarea>
         </div>

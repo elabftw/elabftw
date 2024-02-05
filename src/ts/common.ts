@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Your session expired!');
           window.location.replace('login.php');
         }
-      });
+      }).catch(error => alert(error));
     }, heartRate);
   }
 
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => json[original.dataset.target]);
     },
     listenOn: '.malleableColumn',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -227,10 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // modal plugin requires jquery
         $('#policiesModal').modal('toggle');
       });
+    } else if (el.matches('[data-reload-on-click]')) {
+      reloadElement(el.dataset.reloadOnClick).then(() => relativeMoment());
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);
+      // make sure to set the offset to 0, see #4826
+      params.set('offset', '0');
       window.location.href = `?${params.toString()}`;
 
     // SCROLL TO TOP
@@ -352,6 +356,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const entity = getEntity();
         ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
+
+    } else if (el.matches('[data-action="select-lang"]')) {
+      const select = (document.getElementById('langSelect') as HTMLSelectElement);
+      fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
 
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
@@ -540,34 +548,26 @@ document.addEventListener('DOMContentLoaded', () => {
         queryUrl += `/revisions/${el.dataset.revid}`;
       }
       ApiC.getJson(queryUrl).then(json => {
-        // do we display the body?
-        const metadata = JSON.parse(json.metadata || '{}');
-        if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
-          && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
-          && !metadata.elabftw.display_main_text
-        ) {
-          // add extra fields elements from metadata json
-          const entity = {type: el.dataset.type as EntityType, id: entityId};
-          const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-          MetadataC.metadataDiv = contentDiv;
-          MetadataC.display('view').then(() => {
-            // go over all the type: url elements and create a link dynamically
-            generateMetadataLink();
-          });
-        } else {
-          // add html content
-          contentDiv.innerHTML = json.body_html;
+        // add extra fields elements from metadata json
+        const entity = {type: el.dataset.type as EntityType, id: entityId};
+        const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+        MetadataC.metadataDiv = contentDiv;
+        MetadataC.display('view').then(() => {
+          // go over all the type: url elements and create a link dynamically
+          generateMetadataLink();
+        });
+        // add html content
+        contentDiv.innerHTML = json.body_html;
 
-          // adjust the width of the children
-          // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-          const width = document.getElementById('parent_' + randId).clientWidth - 30;
-          bodyDiv.style.width = String(width);
+        // adjust the width of the children
+        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+        const width = document.getElementById('parent_' + randId).clientWidth - 30;
+        bodyDiv.style.width = String(width);
 
-          // ask mathjax to reparse the page
-          MathJax.typeset();
+        // ask mathjax to reparse the page
+        MathJax.typeset();
 
-          TableSortingC.init();
-        }
+        TableSortingC.init();
 
         bodyDiv.toggleAttribute('hidden');
         bodyDiv.dataset.bodyLoaded = '1';

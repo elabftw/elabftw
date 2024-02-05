@@ -45,9 +45,9 @@ class QueryBuilderVisitor implements Visitor
         $paramCustomId = $this->getUniqueID();
         $query = sprintf(
             '(entity.title LIKE %1$s
-                OR entity.body LIKE %2$s
                 OR entity.date LIKE %1$s
                 OR entity.elabid LIKE %1$s
+                OR entity.body LIKE %2$s
                 OR entity.custom_id = %3$s)',
             $param,
             $paramBody,

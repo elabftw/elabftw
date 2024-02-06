@@ -173,17 +173,21 @@ class AutoComplete {
   }
 
   matcher(item) {
-    return this.query.toLowerCase().split(' ').every(word => item[this.options.queryBy].toLowerCase().includes(word));
+    return this.query.toLowerCase().split(' ').every(word => item[this.options.queryBy].toLowerCase().includes(word))
+      || /^[1-9]\d*$/.test(this.query) && parseInt(this.query, 10) === item.custom_id;
   }
 
   sorter(items) {
+    const customId = [];
     const beginswith = [];
     const caseSensitive = [];
     const caseInsensitive = [];
     let item;
 
     while ((item = items.shift()) !== undefined) {
-      if (!item[this.options.queryBy].toLowerCase().indexOf(this.query.toLowerCase())) {
+      if (parseInt(this.query, 10) === item.custom_id) {
+        customId.push(item);
+      } else if (!item[this.options.queryBy].toLowerCase().indexOf(this.query.toLowerCase())) {
         beginswith.push(item);
       } else if (~item[this.options.queryBy].indexOf(this.query)) {
         caseSensitive.push(item);
@@ -192,7 +196,7 @@ class AutoComplete {
       }
     }
 
-    return beginswith.concat(caseSensitive, caseInsensitive);
+    return customId.concat(beginswith, caseSensitive, caseInsensitive);
   }
 
   highlighter(text) {
@@ -246,7 +250,9 @@ class AutoComplete {
     $.each(items, (i, item) => {
       const $element = $(this.render(item));
       $element.html($element.html().replace($element.text(), this.highlighter($element.text())));
+      $element.find('a').prepend(this.addCustomId(item));
       $element.find('a').prepend(this.addCategory(item));
+      // final list entry will be: {category} - {custom id} {title}
 
       $.each(items[i], (key, val) => {
         $element.attr('data-' + key, val);
@@ -270,7 +276,17 @@ class AutoComplete {
     return `<li><a href="javascript:;" class='dropdown-item'><span>${item[this.options.queryBy]}</span></a></li>`;
   }
 
-  addCategory(item){
+  addCustomId(item) {
+    if (item.custom_id) {
+      if (item.custom_id === parseInt(this.query, 10)) {
+        return `<strong>${item.custom_id}</strong> `;
+      }
+      return `${item.custom_id} `;
+    }
+    return '';
+  }
+
+  addCategory(item) {
     return item.category_title
       ? `<span style='color:#${item.category_color}'>${item.category_title}</span> - `
       : '';

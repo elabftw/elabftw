@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use function array_column;
 use function array_unique;
-
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
@@ -19,6 +18,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Services\UsersHelper;
+use function implode;
 
 class EntitySqlBuilder
 {
@@ -169,51 +169,148 @@ class EntitySqlBuilder
     public function getCanFilter(string $can): string
     {
         $sql = '';
-        // teamFilter is to restrict to the team for items only
-        // as they have a team column
-        $teamFilter = '';
-        if ($this->entity instanceof Items) {
-            $teamFilter = ' AND users2teams.teams_id = entity.team';
-        }
-        // for anon add an AND base = full (public)
         if ($this->entity->isAnon) {
-            $sql .= sprintf(" AND JSON_EXTRACT(entity.%s, '$.base') = %s ", $can, BasePermissions::Full->value);
+            $sql .= ' AND ' . $this->canAnon($can);
         }
-        // add pub/org/team filter
-        $sqlPublicOrg = sprintf("((JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) AND entity.userid = users2teams.users_id) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
-        if ($this->entity->Users->userData['scope_' . $this->entity->type] === Scope::Everything->value) {
-            $sqlPublicOrg = sprintf("(JSON_EXTRACT(entity.%s, '$.base') = %d OR JSON_EXTRACT(entity.%s, '$.base') = %d) OR ", $can, BasePermissions::Full->value, $can, BasePermissions::Organization->value);
+        $sql .= sprintf(
+            ' AND (%s)',
+            implode(' OR ', array(
+                $this->canBasePubOrg($can),
+                $this->canBaseMyTeams($can),
+                $this->canBaseUser($can),
+                $this->canBaseUserOnly($can),
+                $this->canTeams($can),
+                $this->canTeamGroups($can),
+                $this->canUsers($can),
+            )),
+        );
+
+        return $sql;
+    }
+
+    /**
+     * anon filter
+     */
+    private function canAnon(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %s",
+            $can,
+            BasePermissions::Full->value,
+        );
+    }
+
+    /**
+     * base pub/org filter
+     * scope_x is not a permission but rather a user choice to limit what is shown
+     */
+    private function canBasePubOrg(string $can): string
+    {
+        $sql = sprintf(
+            '(entity.%1$s->\'$.base\' = %2$d
+                OR entity.%1$s->\'$.base\' = %3$d)',
+            $can,
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value,
+        );
+        if ($this->entity->Users->userData['scope_' . $this->entity->type] !== Scope::Everything->value) {
+            $sql = "($sql AND entity.userid = users2teams.users_id)";
         }
-        $sql .= sprintf(" AND ( %s (JSON_EXTRACT(entity.%s, '$.base') = %d AND users2teams.users_id = entity.userid %s) OR (JSON_EXTRACT(entity.%s, '$.base') = %d ", $sqlPublicOrg, $can, BasePermissions::MyTeams->value, $teamFilter, $can, BasePermissions::User->value);
-        // admin will see the experiments with visibility user for user of their team
-        if ($this->entity->Users->isAdmin) {
-            $sql .= 'AND entity.userid = users2teams.users_id)';
-        } else {
-            $sql .= 'AND entity.userid = :userid)';
-        }
-        // add entities in useronly visibility only if we own them
-        $sql .= sprintf(" OR (JSON_EXTRACT(entity.%s, '$.base') = %d AND entity.userid = :userid)", $can, BasePermissions::UserOnly->value);
-        // look for teams
+        return $sql;
+    }
+
+    /**
+     * base my teams filter
+     * experiments are accessible for all my teams
+     * items are restricted to the team they belong to
+     */
+    private function canBaseMyTeams(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND users2teams.users_id = entity.userid
+                AND %s)",
+            $can,
+            BasePermissions::MyTeams->value,
+            $this->entity instanceof Items
+                ? 'users2teams.teams_id = entity.team'
+                : '1',
+        );
+    }
+
+    /**
+     * base user filter
+     * entities are accessible for admins too
+     */
+    private function canBaseUser(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND %s)",
+            $can,
+            BasePermissions::User->value,
+            $this->entity->Users->isAdmin
+                ? 'entity.userid = users2teams.users_id'
+                : 'entity.userid = :userid',
+        );
+    }
+
+    /**
+     * base user only filter
+     * entities are listed only if we own them
+     */
+    private function canBaseUserOnly(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND entity.userid = :userid)",
+            $can,
+            BasePermissions::UserOnly->value,
+        );
+    }
+
+    /**
+     * teams filter
+     */
+    private function canTeams(string $can): string
+    {
         $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
-            foreach ($teamsOfUser as $team) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teams'))", $team, $can);
-            }
+            // JSON_OVERLAPS checks for the intersection of two arrays
+            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
+            return sprintf(
+                "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
+                $can,
+                implode(', ', $teamsOfUser),
+            );
         }
-        // look for teamgroups
-        // Note: could not find a way to only have one bit of sql to search: [4,5,6] member of [2,6] for instance, and the 6 would match
-        // Only when the search is an AND between searched values we can have it (also with json_contains), so it is necessary to build a query with multiple OR ()
+        return '0';
+    }
+
+    /**
+     * teamgroups filter
+     */
+    private function canTeamGroups(string $can): string
+    {
         $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(" OR (%d MEMBER OF (entity.%s->>'$.teamgroups'))", $teamgroup, $can);
-            }
+            // JSON_OVERLAPS checks for the intersection of two arrays
+            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
+            return sprintf(
+                "JSON_OVERLAPS(entity.%s->'$.teamgroups', CAST('[%s]' AS JSON))",
+                $can,
+                implode(', ', $teamgroupsOfUser),
+            );
         }
-        // look for our userid in users part of the json
-        $sql .= sprintf(" OR (:userid MEMBER OF (entity.%s->>'$.users'))", $can);
-        $sql .= ')';
+        return '0';
+    }
 
-        return $sql;
+    /**
+     * users filter
+     */
+    private function canUsers(string $can): string
+    {
+        return ":userid MEMBER OF (entity.$can->>'$.users')";
     }
 }

@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -82,7 +83,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'sc_favorite' => 'f',
             'sc_todo' => 't',
             'sc_search' => 's',
-            'scope_experiments' => '3',
+            'scope_experiments' => Scope::Everything->value,
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_read' => BasePermissions::Organization->toJson(),

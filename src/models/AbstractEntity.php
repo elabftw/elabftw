@@ -23,6 +23,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\SearchType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -209,6 +210,7 @@ abstract class AbstractEntity implements RestInterface
      * Only logged in users use this function
      * @param DisplayParams $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
+     * @psalm-suppress UnusedForeachValue
      *
      *                   \||/
      *                   |  @___oo
@@ -223,7 +225,6 @@ abstract class AbstractEntity implements RestInterface
      *     \______(_______;;; __;;;
      *
      *          Here be dragons!
-     *  @psalm-suppress UnusedForeachValue
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
@@ -233,7 +234,12 @@ abstract class AbstractEntity implements RestInterface
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
+            $extended,
+            $extended,
+            $displayParams->hasMetadataSearch,
+            $displayParams->searchType === SearchType::Related,
+        );
 
         // first WHERE is the state, possibly including archived
         $stateSql = 'entity.state = :normal';

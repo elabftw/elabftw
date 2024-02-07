@@ -39,7 +39,8 @@ class EntitySqlBuilder
     public function getReadSqlBeforeWhere(
         bool $getTags = true,
         bool $fullSelect = false,
-        bool $includeMetadata = false
+        bool $includeMetadata = false,
+        bool $includeLinks = false,
     ): string {
         $this->entity($fullSelect, $includeMetadata);
         $this->status();
@@ -52,7 +53,9 @@ class EntitySqlBuilder
             $this->teamEvents();
         }
         $this->steps();
-        $this->links();
+        if ($includeLinks) {
+            $this->links();
+        }
         $this->usersTeams();
         $this->uploads();
 

@@ -82,6 +82,7 @@
       {% endif %}
       {% if DisplayParams.searchType == constant('Elabftw\\Enums\\SearchType::Related') %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
+        <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
       {% endif %}
 
       {# CATEGORY #}

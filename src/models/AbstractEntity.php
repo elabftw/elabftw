@@ -238,7 +238,7 @@ abstract class AbstractEntity implements RestInterface
             $extended,
             $extended,
             $displayParams->hasMetadataSearch,
-            $displayParams->searchType === SearchType::Related,
+            $displayParams->searchType === SearchType::Related ? $displayParams->relatedOrigin : null,
         );
 
         // first WHERE is the state, possibly including archived

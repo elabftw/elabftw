@@ -52,6 +52,8 @@ class DisplayParams
     // if this variable is not Undefined the error message shown will be different if there are no results
     public SearchType $searchType = SearchType::Undefined;
 
+    public EntityType $relatedOrigin;
+
     // start metadata stuff
     public bool $hasMetadataSearch = false;
 
@@ -166,6 +168,7 @@ class DisplayParams
         if (Check::id($this->Request->query->getInt('related')) !== false) {
             $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
             $this->searchType = SearchType::Related;
+            $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
         if (Check::id($this->Request->query->getInt('cat')) !== false) {

@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 use function array_column;
 use function array_unique;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
@@ -35,12 +36,14 @@ class EntitySqlBuilder
      *
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
+     * @param bool $includeMetadata only include metadata if we really need it to avoid mysql out-of-sort-memory error
+     * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
      */
     public function getReadSqlBeforeWhere(
         bool $getTags = true,
         bool $fullSelect = false,
         bool $includeMetadata = false,
-        bool $includeLinks = false,
+        ?EntityType $relatedOrigin = null,
     ): string {
         $this->entity($fullSelect, $includeMetadata);
         $this->status();
@@ -53,8 +56,9 @@ class EntitySqlBuilder
             $this->teamEvents();
         }
         $this->steps();
-        if ($includeLinks) {
-            $this->links();
+        // The links tables are only joined if we want to show related entities
+        if ($relatedOrigin !== null) {
+            $this->links($relatedOrigin);
         }
         $this->usersTeams();
         $this->uploads();
@@ -231,10 +235,20 @@ class EntitySqlBuilder
                     AND uploads.type = \'%1$s\')';
     }
 
-    private function links(): void
+    private function links(EntityType $relatedOrigin): void
     {
-        $this->joinsSql[] = 'LEFT JOIN %1$s_links AS linkst
-            ON (linkst.item_id = entity.id)';
+        $table = 'items';
+        if ($this->entity->entityType === EntityType::Experiments) {
+            $table = 'experiments';
+        }
+
+        $related = '_links';
+        if ($relatedOrigin === EntityType::Experiments) {
+            $related = '2experiments';
+        }
+
+        $this->joinsSql[] = "LEFT JOIN $table$related AS linkst
+            ON (linkst.item_id = entity.id)";
     }
 
     private function steps(): void

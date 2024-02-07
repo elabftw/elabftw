@@ -429,6 +429,33 @@
     <hr>
   </div>
 
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='d-flex justify-content-between'>
+      <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.min_password_length }}' data-trigger='blur' data-model='config' data-target='min_password_length' id='min_password_length' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='password_complexity_requirement' class='col-form-label'>{{ 'Password complexity requirement'|trans }}</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='password_complexity_requirement' id='password_complexity_requirement'>
+        {% for value, human in passwordComplexityArr %}
+          <option value='{{ value }}' {{- App.Config.configArr.password_complexity_requirement == value ? ' selected' }}>{{ human }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <p class='smallgray'>{{ 'The minimum password length is always enforced.'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='max_password_age_days' class='col-form-label'>{{ 'Maximum number of days since last password change'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.max_password_age_days }}' data-trigger='blur' data-model='config' data-target='max_password_age_days' id='max_password_age_days' />
+    </div>
+    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
+    <hr>
+  </div>
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h3>
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>

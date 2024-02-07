@@ -105,14 +105,22 @@ try {
         // we get the Users object from the email encrypted in the key
         $Users = $ResetPasswordKey->validate($App->Request->request->getString('key'));
         // Replace new password in database
-        $Users->resetPassword($App->Request->request->getString('password'));
+        // make sure the new password is not the same as the old one
+        // but only if we're in a required reset process
+        if ($App->Session->has('renew_password_required')) {
+            $Users->requireResetPassword($App->Request->request->getString('password'));
+            $App->Session->remove('renew_password_required');
+        } else {
+            $Users->resetPassword($App->Request->request->getString('password'));
+        }
         $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (QuantumException $e) {
     $App->Session->getFlashBag()->add('ok', $e->getMessage());
 } catch (ImproperActionException $e) {
-    // show message to user
+    // show message to user and redirect to the change pass page
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
+    $Response = new RedirectResponse('/change-pass.php?key=' . $App->Request->request->getString('key'));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));

@@ -40,6 +40,8 @@ class AuthResponse
 
     public bool $hasVerifiedMfa = false;
 
+    public bool $mustRenewPassword = false;
+
     public function setTeams(): void
     {
         $UsersHelper = new UsersHelper($this->userid);

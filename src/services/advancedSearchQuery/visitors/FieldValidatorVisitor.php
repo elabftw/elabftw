@@ -11,6 +11,7 @@
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 use Elabftw\Services\AdvancedSearchQuery\Collectors\InvalidFieldCollector;
+use Elabftw\Services\AdvancedSearchQuery\Enums\Fields;
 use Elabftw\Services\AdvancedSearchQuery\Enums\TimestampFields;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
@@ -94,10 +95,18 @@ class FieldValidatorVisitor implements Visitor
 
     public function visitField(Field $field, VisitorParameters $parameters): InvalidFieldCollector
     {
-        // Call class methods dynamically to avoid many if statements.
-        // This works because the parser and the Fields enum define the list of fields.
-        $method = 'visitField' . ucfirst($field->getFieldType()->value);
-        return $this->$method($field->getValue(), $field->getAffix(), $parameters);
+        // only add the class methods that are actually used
+        if ($field->getFieldType() === Fields::Visibility
+            || $field->getFieldType() === Fields::Timestamped
+            || $field->getFieldType() === Fields::Group
+        ) {
+            // Call class methods dynamically to avoid many if statements.
+            // This works because the parser and the Fields enum define the list of fields.
+            $method = 'visitField' . ucfirst($field->getFieldType()->value);
+            return $this->$method($field->getValue(), $field->getAffix(), $parameters);
+        }
+
+        return new InvalidFieldCollector();
     }
 
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): InvalidFieldCollector
@@ -159,31 +168,6 @@ class FieldValidatorVisitor implements Visitor
         ));
     }
 
-    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldAuthor(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldBody(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldCategory(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldElabid(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
     private function visitFieldGroup(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
         $teamGroups = $parameters->getTeamGroups();
@@ -199,36 +183,11 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
-    private function visitFieldId(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldLocked(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldRating(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldStatus(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
-        return new InvalidFieldCollector();
-    }
-
     private function visitFieldTimestamped(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
         if ($parameters->getEntityType() !== 'experiments') {
             return new InvalidFieldCollector(array('timestamped: is only allowed when searching in experiments.'));
         }
-        return new InvalidFieldCollector();
-    }
-
-    private function visitFieldTitle(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
-    {
         return new InvalidFieldCollector();
     }
 

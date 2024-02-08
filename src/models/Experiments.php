@@ -75,12 +75,8 @@ class Experiments extends AbstractConcreteEntity
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
             // use user settings for permissions
-            if ($this->Users->userData['default_read'] !== null) {
-                $canread = $this->Users->userData['default_read'];
-            }
-            if ($this->Users->userData['default_write'] !== null) {
-                $canwrite = $this->Users->userData['default_write'];
-            }
+            $canread = $this->Users->userData['default_read'];
+            $canwrite = $this->Users->userData['default_write'];
         }
         // load common template
         if ($template === 0) {

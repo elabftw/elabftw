@@ -51,7 +51,6 @@ CALL update_column('experiments_steps', 'body');
 CALL update_column('experiments_templates', 'title');
 CALL update_column_metadata('experiments_templates');
 CALL update_column('experiments_templates_steps', 'body');
-CALL update_column_metadata('experiments_revisions');
 CALL update_column('items', 'title');
 CALL update_column_metadata('items');
 CALL update_column('items_comments', 'comment');

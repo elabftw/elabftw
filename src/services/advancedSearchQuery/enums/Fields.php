@@ -16,6 +16,7 @@ enum Fields: string
     case Author = 'author';
     case Body = 'body';
     case Category = 'category';
+    case CustomId = 'custom_id';
     case Elabid = 'elabid';
     case Group = 'group';
     case Id = 'id';

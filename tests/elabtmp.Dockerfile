@@ -5,7 +5,7 @@ ARG BASE_IMAGE_VERSION=hypernext
 FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # install phpcov
-ADD --chmod=755 https://phar.phpunit.de/phpcov.phar /usr/bin/phpcov
+ADD --chmod=755 https://phar.phpunit.de/phpcov-9.0.2.phar /usr/bin/phpcov
 
 RUN yarn install
 # Install xdebug for coverage

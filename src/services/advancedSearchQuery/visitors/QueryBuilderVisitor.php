@@ -40,11 +40,19 @@ class QueryBuilderVisitor implements Visitor
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
-        // body is stored as html after htmlPurifier worked on it
-        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $param = $this->getUniqueID();
         $paramBody = $this->getUniqueID();
-        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %2$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param, $paramBody);
+        $paramCustomId = $this->getUniqueID();
+        $query = sprintf(
+            '(entity.title LIKE %1$s
+                OR entity.date LIKE %1$s
+                OR entity.elabid LIKE %1$s
+                OR entity.body LIKE %2$s
+                OR entity.custom_id = %3$s)',
+            $param,
+            $paramBody,
+            $paramCustomId,
+        );
 
         $bindValues = array();
         $bindValues[] = array(
@@ -52,10 +60,17 @@ class QueryBuilderVisitor implements Visitor
             'value' => '%' . $simpleValueWrapper->getValue() . '%',
             'type' => PDO::PARAM_STR,
         );
+        // body is stored as html after htmlPurifier worked on it
+        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $bindValues[] = array(
             'param' => $paramBody,
             'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
             'type' => PDO::PARAM_STR,
+        );
+        $bindValues[] = array(
+            'param' => $paramCustomId,
+            'value' => $simpleValueWrapper->getValue(),
+            'type' => PDO::PARAM_INT,
         );
 
         return new WhereCollector($query, $bindValues);
@@ -220,6 +235,7 @@ class QueryBuilderVisitor implements Visitor
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
+        // Custom_id:    entity.custom_id
         // ELabID:       entity.elabid
         // Id:           entity.id
         // Locked:       entity.locked
@@ -383,6 +399,15 @@ class QueryBuilderVisitor implements Visitor
             'categoryt.title LIKE ',
             $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
+        );
+    }
+
+    private function visitFieldCustom_id(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        return $this->getWhereCollector(
+            'entity.custom_id = ',
+            $searchTerm,
+            PDO::PARAM_INT,
         );
     }
 

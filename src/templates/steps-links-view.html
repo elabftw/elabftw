@@ -120,12 +120,10 @@
       {% endfor %}
     </div>
 
-    {# TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='experiments.php?mode=show&amp;related={{ Entity.id }}'>{{ 'Show related experiments'|trans }}</a>
-    </div
-    #}
+      <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related experiments'|trans }}</a>
+    </div>
     <hr>
   {% endif %}
 
@@ -157,12 +155,10 @@
       {% endfor %}
     </div>
 
-    {# TODO FIXME
     <div class='ml-3 mt-3'>
       <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='database.php?mode=show&amp;related={{ Entity.id }}'>{{ 'Show related items'|trans }}</a>
-    </div
-    #}
+      <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related items'|trans }}</a>
+    </div>
     <hr>
   {% endif %}
 

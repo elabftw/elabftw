@@ -84,9 +84,9 @@ FieldTimestamp
   }
 
 FieldId
-  = 'id'i ':' id:$(Digit19 Digit*)
+  = field:('custom_id'i / 'id'i) ':' id:$(Digit19 Digit*)
   {
-    return new Field('id', new SimpleValueWrapper($id));
+    return new Field(strtolower($field), new SimpleValueWrapper($id));
   }
 
 FieldDate

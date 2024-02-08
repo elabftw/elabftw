@@ -56,7 +56,7 @@ import Prism from 'prismjs';
         'punctuation': /:/,
         'number': /\d+/,
       },
-      pattern: /\bid\b:[1-9][0-9]*/i,
+      pattern: /\b(?:custom_id|id)\b:[1-9][0-9]*/i,
     },
     'field-rating': {
       alias: 'keyword',

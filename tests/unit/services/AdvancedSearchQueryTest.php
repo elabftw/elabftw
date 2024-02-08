@@ -66,7 +66,6 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'custom_id:123',
         ));
 
-
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
             'experiments',
             $this->groups,

@@ -105,7 +105,6 @@ try {
         (int) $App->Config->configArr['enforce_mfa'],
     );
 
-
     $template = 'ucp.html';
     $renderArr = array(
         'Entity' => $Templates,

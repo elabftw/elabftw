@@ -212,7 +212,6 @@ class IdpsHelper
                 */
                 'signMetadata' => (bool) $this->Config->configArr['saml_signmetadata'],
 
-
                 /** signatures and encryptions required */
                 // Indicates a requirement for the <samlp:Response>, <samlp:LogoutRequest> and
                 // <samlp:LogoutResponse> elements received by this SP to be signed.

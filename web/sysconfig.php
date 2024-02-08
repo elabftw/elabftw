@@ -88,7 +88,6 @@ try {
         }
     }
 
-
     $samlSecuritySettings = array(
         array('slug' => 'saml_nameidencrypted', 'label' => 'Encrypt the nameID of the samlp:logoutRequest sent by this SP (nameIdEncrypted)'),
         array('slug' => 'saml_authnrequestssigned', 'label' => 'Sign the samlp:AuthnRequest messages sent (authnRequestsSigned)'),

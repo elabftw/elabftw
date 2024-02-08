@@ -27,7 +27,6 @@ require_once 'init.inc.php';
 
 $redirectUrl = '/login.php';
 
-
 $destroySession = function () use ($App): void {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();
@@ -173,7 +172,6 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     // no SLO, usual logout using destroySession
     $destroySession();
 }
-
 
 // and redirect to login page or ext auth logout url
 $Response = new RedirectResponse($redirectUrl);

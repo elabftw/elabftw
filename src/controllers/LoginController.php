@@ -136,7 +136,6 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('mfa_secret');
         }
 
-
         ////////////////////
         // TEAM SELECTION //
         ////////////////////

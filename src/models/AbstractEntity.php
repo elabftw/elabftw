@@ -658,7 +658,6 @@ abstract class AbstractEntity implements RestInterface
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 
-
         // build jsonPath to field
         $field = sprintf(
             '$.%s.%s.value',

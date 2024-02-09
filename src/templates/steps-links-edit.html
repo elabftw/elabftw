@@ -138,7 +138,7 @@
           <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
         </div>
         <div class='input-group-prepend' style='max-width:33%;'>
-          <select id='addLinkExpCatFilter' class='brl-none brr-none form-control' aria-label='Limit author'>
+          <select id='addLinkOwnerFilter' class='brl-none brr-none form-control' aria-label='Limit author'>
             <option selected value=''>{{ 'Any author'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}'>{{ user.fullname }}</option>

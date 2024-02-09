@@ -336,16 +336,6 @@ export function addAutocompleteToLinkInputs(): void {
     filterFamily: 'cat',
     inputElId: 'addLinkItemsInput',
   }, {
-    selectElid: 'addLinkExpCatFilter',
-    itemType: EntityType.Experiment,
-    filterFamily: 'owner',
-    inputElId: 'addLinkExpInput',
-  }, {
-    selectElid: 'addLinkCatFilter',
-    itemType: EntityType.Item,
-    filterFamily: 'cat',
-    inputElId: 'addLinkItemsInput',
-  }, {
     selectElid: 'addLinkOwnerFilter',
     itemType: EntityType.Experiment,
     filterFamily: 'owner',

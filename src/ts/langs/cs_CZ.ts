@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Klikněte pro úpravu",
     "cancel": "Zrušit",
     "comment-add": "Přidat komentář",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Pro nahrání přetáhni soubory sem",
     "dropzone-filesize-limit": "Omezení velikosti souboru:",
     "editing-metadata": "Právě upravujete metadata připojená k tomuto záznamu.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Vymazat to?",
     "link-delete-warning": "Smazat tento odkaz?",
     "new-apikey-warning": "Toto je jediný okamžik, kdy se klíč zobrazí! Nezapomeňte si ho zkopírovat na bezpečné místo, protože už ho nebudete moci vidět:",
+    "no-self-links": "No self links!",
     "not-set": "Nenastavený",
     "nothing-selected": "Nic není vybráno!",
     "now": "Nyní",
@@ -32,7 +34,6 @@ const t = {
     "today": "Dnes",
     "undefined-group": "Nedefinovaná skupina",
     "upload-file-comment": "Komentář k souboru",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

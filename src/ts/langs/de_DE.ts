@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Zum bearbeiten anklicken",
     "cancel": "Abbrechen",
     "comment-add": "Einen Kommentar hinzufügen",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Dateien zum Hochladen hier fallen lassen",
     "dropzone-filesize-limit": "Begrenzung der Dateigröße:",
     "editing-metadata": "Sie bearbeiten gerade die Metadaten zu diesem Eintrag.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Element löschen?",
     "link-delete-warning": "Diesen Link löschen?",
     "new-apikey-warning": "Dies ist das einzige Mal, dass der Schlüssel gezeigt wird! Kopiere ihn an eine sicheren Ort, da er nicht mehr angezeigt werden wird.",
+    "no-self-links": "No self links!",
     "not-set": "Nicht festgelegt",
     "nothing-selected": "Nichts ausgewählt!",
     "now": "Jetzt",
@@ -32,7 +34,6 @@ const t = {
     "today": "Heute",
     "undefined-group": "Unbestimmte Gruppe",
     "upload-file-comment": "Dateikommentar",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

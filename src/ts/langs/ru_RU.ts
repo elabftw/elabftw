@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "Отмена",
     "comment-add": "Добавить комментарий",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Перетащите сюда файлы для загрузки",
     "dropzone-filesize-limit": "File size limit:",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Удалить?",
     "link-delete-warning": "Удалить эту ссылку?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "no-self-links": "No self links!",
     "not-set": "Not set",
     "nothing-selected": "Ничего не выбрано!",
     "now": "Now",
@@ -32,7 +34,6 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Файловый комментарий",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

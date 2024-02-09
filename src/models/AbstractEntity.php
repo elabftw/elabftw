@@ -34,6 +34,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Check;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
@@ -665,9 +666,13 @@ abstract class AbstractEntity implements RestInterface
     {
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : $value;
+
+        if (Check::isSelfLink($this->id, $this->type, $key, $valueAsString)) {
+            throw new ImproperActionException(_('No self links!'));
+        }
+
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-
 
         // build jsonPath to field
         $field = sprintf(

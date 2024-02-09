@@ -76,9 +76,7 @@
   {# SHOW EVENTS #}
   {% if Entity.entityData.events_start %}<i class='far fa-calendar-alt'></i>
     {% for event in Entity.entityData.events_start|split('|') %}
-    <a href='team.php?item={{ Entity.id }}&amp;start={{ event|url_encode }}'>
-      <button type='button' class='m-1 btn btn-neutral relative-moment' title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></button>
-    </a>
+      <a href='team.php?item={{ Entity.id }}&amp;start={{ event|url_encode }}' class='m-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
     {% endfor %}
   {% endif %}
 

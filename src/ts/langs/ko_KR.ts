@@ -17,7 +17,7 @@ const t = {
     "generic-delete-warning": "삭제할까요?",
     "link-delete-warning": "링크를 삭제할까요?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
-    "no-self-links": "No self links!",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",
     "nothing-selected": "Nothing selected!",
     "now": "Now",

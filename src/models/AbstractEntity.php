@@ -668,7 +668,7 @@ abstract class AbstractEntity implements RestInterface
         $valueAsString = is_array($value) ? implode(', ', $value) : $value;
 
         if (Check::isSelfLink($this->id, $this->type, $key, $valueAsString)) {
-            throw new ImproperActionException(_('Linking an item to itself is not allowed. Please choose a different target.'));
+            throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
         }
 
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));

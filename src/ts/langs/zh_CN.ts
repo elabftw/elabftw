@@ -17,7 +17,7 @@ const t = {
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
     "new-apikey-warning": "密钥将只显示这一次！请确保将其复制到安全的地方，因为您将无法再次看到它：",
-    "no-self-links": "No self links!",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "未设置",
     "nothing-selected": "未选中任何选项！",
     "now": "现在",

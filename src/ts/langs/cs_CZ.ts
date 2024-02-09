@@ -17,7 +17,7 @@ const t = {
     "generic-delete-warning": "Vymazat to?",
     "link-delete-warning": "Smazat tento odkaz?",
     "new-apikey-warning": "Toto je jediný okamžik, kdy se klíč zobrazí! Nezapomeňte si ho zkopírovat na bezpečné místo, protože už ho nebudete moci vidět:",
-    "no-self-links": "No self links!",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Nenastavený",
     "nothing-selected": "Nic není vybráno!",
     "now": "Nyní",

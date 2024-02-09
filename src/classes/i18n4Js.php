@@ -45,7 +45,7 @@ class i18n4Js
             'generic-delete-warning' => _('Delete this?'),
             'link-delete-warning' => _('Delete this link?'),
             'new-apikey-warning' => _("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"),
-            'no-self-links' => _('No self links!'),
+            'no-self-links' => _('Linking an item to itself is not allowed. Please choose a different target.'),
             'not-set' => _('Not set'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),

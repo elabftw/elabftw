@@ -41,11 +41,6 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt(TwigFunctions::getNumberOfQueries());
     }
 
-    public function testGetMinPasswordLength(): void
-    {
-        $this->assertIsInt(TwigFunctions::getMinPasswordLength());
-    }
-
     public function testToDatetime(): void
     {
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', TwigFunctions::toDatetime('2023-02-01'));

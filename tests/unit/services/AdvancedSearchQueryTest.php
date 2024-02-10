@@ -49,9 +49,13 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'attachment:0 author:"Toto Le sysadmin" body:"some text goes here"',
             'elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated',
             'status:"only meaningful with experiments but no error"',
-            'timestamped: timestamped:true title:"very cool experiment" visibility:%owner',
+            'timestamped:0 timestamped:true title:"very cool experiment" visibility:%owner',
             'date:>2020.06,21 date:2020/06-21..20201231',
             'group:"Group Name"',
+            'extrafield:key:value',
+            'extrafield:s:key:value',
+            'extrafield:s:"key with space":"value with space"',
+            'extrafield:**:%',
             'attachment:"hello world"',
             'timestamped_at:2022.12.01..2022-12-31',
             'timestamped_at:2022/12/09',
@@ -90,7 +94,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('Line 1, Column ', $advancedSearchQuery->getException());
+        $this->assertStringStartsWith('SyntaxError: Expected', $advancedSearchQuery->getException());
     }
 
     public function testComplexityLimit(): void

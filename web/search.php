@@ -15,6 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
@@ -42,6 +43,7 @@ $ExperimentsCategories = new ExperimentsCategories($Teams);
 $ExperimentsStatus = new ExperimentsStatus($Teams);
 $ItemsTypes = new ItemsTypes($App->Users);
 $ItemsStatus = new ItemsStatus($Teams);
+$ExtraFieldsKeys = new ExtraFieldsKeys($App->Users, '', -1);
 
 // TEAM GROUPS
 $TeamGroups = new TeamGroups($App->Users);
@@ -61,6 +63,7 @@ $renderArr = array(
     'usersArr' => $usersArr,
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     'teamGroups' => array_column($teamGroupsArr, 'name'),
+    'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
 );
 
 $responseContent = $App->render('search.html', $renderArr);

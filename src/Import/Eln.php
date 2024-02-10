@@ -239,7 +239,6 @@ class Eln extends AbstractZip
             'content' => json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
         ));
 
-
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
         // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff

@@ -12,12 +12,12 @@ namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
 class InvalidFieldCollector
 {
-    public function __construct(private ?array $fieldErrors = null)
+    public function __construct(private array $fieldErrors = array())
     {
     }
 
     public function getfieldErrors(): array
     {
-        return $this->fieldErrors ?? array();
+        return $this->fieldErrors;
     }
 }

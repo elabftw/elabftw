@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
@@ -25,8 +26,8 @@ $App->pageTitle = _('Reset password');
 $Response = new Response();
 $Response->prepare($Request);
 
-$template = 'error.html';
 $renderArr = array();
+$template = 'change-pass.html';
 
 try {
     // make sure this page is accessed with a key
@@ -38,9 +39,14 @@ try {
     $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
     $ResetPasswordKey->validate($App->Request->query->getAlnum('key'));
 
-    $template = 'change-pass.html';
-    $renderArr = array('key' => $App->Request->query->getAlnum('key'));
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+    $renderArr = array(
+        'key' => $App->Request->query->getAlnum('key'),
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
+    );
 } catch (Exception $e) {
+    $template = 'error.html';
     $renderArr['error'] = $e->getMessage();
 } finally {
     $Response->setContent($App->render($template, $renderArr));

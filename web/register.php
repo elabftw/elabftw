@@ -9,6 +9,7 @@
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Teams;
 use Exception;
@@ -45,11 +46,15 @@ try {
     $Teams->bypassReadPermission = true;
     $teamsArr = $Teams->readAll();
 
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+
     $template = 'register.html';
     $renderArr = array(
+        'hideTitle' => true,
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $teamsArr,
-        'hideTitle' => true,
     );
 } catch (ImproperActionException $e) {
     $renderArr['error'] = $e->getMessage();

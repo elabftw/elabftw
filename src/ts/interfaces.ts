@@ -86,6 +86,7 @@ enum Model {
   Notification = 'notifications',
   ExperimentsCategories = 'experiments_categories',
   ExperimentsStatus = 'experiments_status',
+  ExtraFieldsKeys = 'extra_fields_keys',
   Step = 'steps',
   Tag = 'tags',
   Team = 'teams',

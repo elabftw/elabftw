@@ -180,8 +180,7 @@
                       <i class='fas fa-fw fa-key'></i>
                     </button>
                     <div hidden class='input-group'>
-                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-                      <input class='form-control' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ pattern }}' />
+                      <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
                       <div class='input-group-append'>
                         <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
                       </div>

@@ -16,7 +16,6 @@ use Elabftw\Enums\Sort;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use function memory_get_usage;
 use function microtime;
 use function round;
@@ -78,11 +77,6 @@ class TwigFunctions
     {
         $Db = Db::getConnection();
         return $Db->getNumberOfQueries();
-    }
-
-    public static function getMinPasswordLength(): int
-    {
-        return Check::MIN_PASSWORD_LENGTH;
     }
 
     /**

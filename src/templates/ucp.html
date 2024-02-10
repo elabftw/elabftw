@@ -270,7 +270,7 @@
       </div>
     </div>
 
-    <h2 class='p-2 pl-3 section-title'>{{ 'Personal informations'|trans }}</h2>
+    <h2 class='p-2 pl-3 section-title'>{% trans %}Personal information{% plural 2 %}Personal information{% endtrans %}</h2>
     <div class='pl-3 mt-2 mb-5'>
 
       <div class='d-flex justify-content-between'>
@@ -282,7 +282,7 @@
       <div class='d-flex justify-content-between'>
         <label for='password' class='col-form-label'>{{ 'Modify your password'|trans }}</label>
         <div class='input-group col-md-3 px-0'>
-          <input class='form-control' id='password' name='password' type='password' pattern='.{8,}' autocomplete='new-password' />
+          <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' id='password' name='password' type='password' pattern='{{ passwordInputPattern|e('html_attr') }}' autocomplete='new-password' />
           <div class='input-group-append'>
             <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
           </div>

@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function array_filter;
+
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -103,6 +105,7 @@ try {
     if (isset($ItemsTypes->entityData['metadata'])) {
         $metadataGroups = (new Metadata($ItemsTypes->entityData['metadata']))->getGroups();
     }
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     $template = 'admin.html';
     $renderArr = array(
@@ -117,6 +120,8 @@ try {
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $itemsStatusArr,
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,

@@ -132,6 +132,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // the "load more" button triggers a reloading of div#showModeContent
+  // so we keep track of the expanded and selected entities
+  function getExpandedAndSelectedEntities(): void {
+    const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
+    const expendedEntities: string[] = [];
+    const selectedEntities: string[] = [];
+    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+      if (item.checked) {
+        selectedEntities.push(item.dataset.id);
+      }
+      if (!document.getElementById(item.dataset.randomid).hidden) {
+        expendedEntities.push(item.dataset.id);
+      }
+    });
+    document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
+  }
+
+  function setExpandedAndSelectedEntities(): void {
+    const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+    if (state.expanded) {
+      const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
+      linkEl.dataset.status = 'opened';
+      linkEl.textContent = linkEl.dataset.collapse;
+      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
+        toggleButton.click();
+      });
+    }
+    if (state.selectedEntities.length > 0) {
+      document.getElementById('withSelected').classList.remove('d-none');
+    }
+    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+      if (state.selectedEntities.includes(item.dataset.id)) {
+        item.click();
+      }
+      if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
+        (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
+      }
+    });
+  }
+
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -140,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(document.location.search);
     // LOAD MORE
     if (el.matches('[data-action="load-more"]')) {
+      // we keep track of the expanded and selected entities
+      getExpandedAndSelectedEntities();
       // NOTE: in an ideal world, we can request the delta elements in json via api and inject them in page
       // this would avoid having to re-query all items every time, especially after a few clicks where limit is a few hundreds, might bring strain on mysql servers
       // so here the strategy is simply to increase the "limit" to show more stuff
@@ -159,6 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
       params.set('limit', String(newLimit));
       history.replaceState(null, '', `?${params.toString()}`);
       reloadEntitiesShow().then(() => {
+        // expand and select what was expanded and selected
+        setExpandedAndSelectedEntities();
         // remove Load more button if no new entries appeared
         const newNumber = document.querySelectorAll('.item').length;
         if (previousNumber === newNumber) {

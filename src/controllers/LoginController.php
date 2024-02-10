@@ -29,10 +29,12 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Users;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
 use Elabftw\Services\MfaHelper;
+use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -134,6 +136,21 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('enforce_mfa');
             $this->App->Session->remove('mfa_auth_required');
             $this->App->Session->remove('mfa_secret');
+        }
+
+        /////////////////////
+        // RENEW PASSWORD //
+        ///////////////////
+        // check if we need to renew our local password
+        if ($AuthResponse->mustRenewPassword) {
+            // remember which user is authenticated
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            $this->App->Session->set('rememberme', $icanhazcookies);
+            $this->App->Session->set('renew_password_required', true);
+            $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+            $Users = new Users($this->App->Session->get('auth_userid'));
+            $key = $ResetPasswordKey->generate($Users->userData['email']);
+            return new RedirectResponse('/change-pass.php?key=' . $key);
         }
 
         ////////////////////

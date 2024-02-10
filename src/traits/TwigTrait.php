@@ -72,7 +72,6 @@ trait TwigTrait
         $generationTime = new TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
         $memoryUsage = new TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
         $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
-        $minPasswordLength = new TwigFunction('minPasswordLength', '\Elabftw\Elabftw\TwigFunctions::getMinPasswordLength');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
         $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
         $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
@@ -107,7 +106,6 @@ trait TwigTrait
         $TwigEnvironment->addFunction($generationTime);
         $TwigEnvironment->addFunction($memoryUsage);
         $TwigEnvironment->addFunction($numberOfQueries);
-        $TwigEnvironment->addFunction($minPasswordLength);
         $TwigEnvironment->addFunction($ext2icon);
         $TwigEnvironment->addFunction($sortIcon);
         $TwigEnvironment->addFunction($getExtendedSearchExample);

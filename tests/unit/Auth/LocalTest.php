@@ -18,7 +18,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->AuthService = new Local('toto@yopmail.com', 'totototo');
+        $this->AuthService = new Local('toto@yopmail.com', 'totototototo');
     }
 
     public function testEmptyPassword(): void

@@ -47,24 +47,13 @@ class ExtraFieldsKeys implements RestInterface
 
     public function readOne(): array
     {
-        // not used
-        return array();
-    }
-
-    public function readAll(): array
-    {
-        return $this->getExtraFieldsKeys();
-    }
-
-    public function destroy(): bool
-    {
-        return false;
+        return $this->readAll();
     }
 
     /**
      * Get all exta fields keys of a team from experiments and items
      */
-    private function getExtraFieldsKeys(): array
+    public function readAll(): array
     {
         $sql = array();
         foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
@@ -114,5 +103,10 @@ class ExtraFieldsKeys implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function destroy(): bool
+    {
+        return false;
     }
 }

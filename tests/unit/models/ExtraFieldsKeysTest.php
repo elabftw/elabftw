@@ -10,6 +10,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+
 class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;
@@ -27,5 +29,15 @@ class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1))->readAll());
         // custom limit
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', 100))->readAll());
+    }
+
+    public function testRest(): void
+    {
+        $ExtraFieldsKeys = new ExtraFieldsKeys($this->Users, '');
+        $this->assertIsArray($ExtraFieldsKeys->readOne());
+        $this->assertIsArray($ExtraFieldsKeys->patch(Action::Update, array()));
+        $this->assertEquals(0, $ExtraFieldsKeys->postAction(Action::Create, array()));
+        $this->assertEquals('extra_fields_keys', $ExtraFieldsKeys->getPage());
+        $this->assertFalse($ExtraFieldsKeys->destroy());
     }
 }

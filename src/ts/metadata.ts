@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notifError } from './misc';
+import { getEntity, notifError, addAutocompleteToExtraFieldsKeyInputs } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('fieldBuilderModal')) {
     return;
   }
+
+  addAutocompleteToExtraFieldsKeyInputs();
 
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'select', 'selectradio', 'checkbox', 'number'];

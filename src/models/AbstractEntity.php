@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use function array_column;
-use function array_keys;
 use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
@@ -237,7 +236,6 @@ abstract class AbstractEntity implements RestInterface
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,
-            $displayParams->hasMetadataSearch,
             $displayParams->searchType === SearchType::Related ? $displayParams->relatedOrigin : null,
         );
 
@@ -261,8 +259,6 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            // build the having clause for metadata
-            $displayParams->getMetadataHavingSql(),
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
@@ -279,12 +275,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
         if ($displayParams->includeArchived) {
             $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
-        if ($displayParams->hasMetadataSearch) {
-            foreach (array_keys($displayParams->metadataKey) as $i) {
-                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
-                $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
-            }
         }
 
         $this->bindExtendedValues($req);
@@ -531,7 +521,7 @@ abstract class AbstractEntity implements RestInterface
             throw new IllegalActionException('No id was set!');
         }
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true, true);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 
@@ -667,7 +657,6 @@ abstract class AbstractEntity implements RestInterface
         $valueAsString = is_array($value) ? implode(', ', $value) : $value;
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-
 
         // build jsonPath to field
         $field = sprintf(

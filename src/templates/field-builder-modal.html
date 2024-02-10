@@ -56,7 +56,8 @@
 
             {# NAME #}
             <label for='newFieldKeyInput' class='required-label'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
-            <input type='text' autocomplete='off' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+            <input type='text' autocomplete='off' data-autocomplete='extraFieldsKeys' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+            <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
 
             {# DESCRIPTION #}
             <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>

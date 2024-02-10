@@ -77,7 +77,6 @@ try {
         $App->Session->remove('is_auth');
     }
 
-
     // Check if already logged in
     if ($App->Session->has('is_auth')) {
         $Response = new RedirectResponse('experiments.php');

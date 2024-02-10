@@ -126,7 +126,6 @@ class Populate
             'scientific literature',
         );
 
-
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);
             $Entity->setId($id);

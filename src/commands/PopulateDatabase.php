@@ -92,7 +92,6 @@ class PopulateDatabase extends Command
             }
         }
 
-
         // drop database
         $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();

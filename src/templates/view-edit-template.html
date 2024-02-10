@@ -30,7 +30,7 @@
   </button>
 
   {# DUPLICATE TEMPLATE #}
-  <button type='button' title='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
     <i class='fas fa-copy fa-fw'></i>
   </button>
 
@@ -39,14 +39,14 @@
 
   {# IMPORT #}
   {% if App.Request.getScriptName|split('/')|last == 'team.php' -%}
-    <button type='button' title='{{ 'Import to your profile'|trans }}' data-action='import-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <button type='button' title='{{ 'Import to your profile'|trans }}' aria-label='{{ 'Import to your profile'|trans }}' data-action='import-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-file-import fa-fw'></i>
     </button>
   {% endif %}
 
   {# RIGHT PART #}
   {# TOGGLE PIN #}
-  <button type='button' title='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' class='btn {{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 lh-normal border-0 ml-auto mr-2'>
+  <button type='button' title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' class='btn {{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 lh-normal border-0 ml-auto mr-2'>
     <i class='fas fa-thumbtack fa-fw {{- not Entity.Pins.isPinned ? ' color-weak' }}'></i>
   </button>
 
@@ -142,7 +142,7 @@
         <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
       {% else %}
         <div>{# << this div is added around the textarea to fix an issue on mobile editor. See #3107 #}
-          <textarea id='e{{ Entity.entityData.id }}' class='mceditable' style='height:500px;'>{{ Entity.entityData.body }}</textarea>
+          <textarea id='e{{ Entity.entityData.id }}' class='mceditable'>{{ Entity.entityData.body }}</textarea>
         </div>
       {% endif %}
       <div class='text-center mt-4'>
@@ -167,5 +167,7 @@
   {% endif %}
 
 </div>
-
-<div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+{# in view mode templates-view.html gets included which has its own <div id='info'> #}
+{% if mode != 'view' %}
+  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+{% endif %}

@@ -111,7 +111,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
 
-
         $template = 'show.html';
 
         $renderArr = array(

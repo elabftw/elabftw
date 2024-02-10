@@ -60,14 +60,16 @@ class AdvancedSearchQuery
     {
         try {
             $parser = new Parser();
-            $this->parsedQuery = $parser->parse($this->expertQuery);
+            $this->parsedQuery = $parser->parse($this->expertQuery, array('grammarSource' => _('Search query')));
         } catch (SyntaxError $e) {
-            $this->exception = sprintf(
-                'Line %d, Column %d: %s',
-                $e->grammarLine,
-                $e->grammarColumn,
-                $e->getMessage(),
+            $errorElements = explode("\n", $e->format(array(array('source' => _('Search query'), 'text' => $this->expertQuery))));
+            $errorMessage = sprintf(
+                "%s<pre class='alert-danger pb-3'>%s</pre>",
+                $errorElements[0],
+                implode("\n", array_slice($errorElements, 1)),
             );
+
+            $this->exception = $errorMessage;
             return false;
         }
         return true;

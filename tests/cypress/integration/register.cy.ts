@@ -8,7 +8,7 @@ describe('Register new user', () => {
     cy.htmlvalidate();
     cy.get('div.dropdown.bootstrap-select.form-control').click().get('div.dropdown-menu.show').contains('Alpha').click();
     cy.get('#email').type('newCypressUser@yopmail.com').blur();
-    cy.get('#password').type('cypress1').blur();
+    cy.get('#password').type('cypress1cypress').blur();
     cy.get('#firstname').type('newCypress').blur();
     cy.get('#lastname').type('User').blur();
     cy.get('form').submit();
@@ -21,7 +21,7 @@ describe('Register new user', () => {
     cy.get('input[name="bot"]').type('I am a bot', {force: true});
     cy.get('div.dropdown.bootstrap-select.form-control').click().get('div.dropdown-menu.show').contains('Alpha').click();
     cy.get('#email').type('newCypressUser@yopmail.com').blur();
-    cy.get('#password').type('cypress1').blur();
+    cy.get('#password').type('cypress1cypress').blur();
     cy.get('#firstname').type('newCypress').blur();
     cy.get('#lastname').type('User').blur();
     cy.get('form').submit();

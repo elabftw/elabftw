@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
@@ -121,6 +122,7 @@ try {
     array_walk($auditLogsArr, function (&$event) {
         $event['category'] = AuditCategory::from($event['category'])->name;
     });
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
@@ -130,6 +132,8 @@ try {
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'isSearching' => $isSearching,
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
         'phpInfos' => $phpInfos,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
@@ -139,6 +143,7 @@ try {
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
+        'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

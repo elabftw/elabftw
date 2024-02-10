@@ -42,7 +42,7 @@ teams:
 # unless a password is set here
 users:
   - email: toto@yopmail.com
-    password: totototo
+    password: totototototo
     firstname: Toto
     lastname: Le sysadmin
     team: Alpha

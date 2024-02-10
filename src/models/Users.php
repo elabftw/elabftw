@@ -454,6 +454,21 @@ class Users implements RestInterface
     }
 
     /**
+     * For when password must be different than older one
+     * Here the happy path is in the catch... Not great, not terrible...
+     */
+    public function requireResetPassword(string $password): bool
+    {
+        $LocalAuth = new Local($this->userData['email'], $password);
+        try {
+            $LocalAuth->tryAuth();
+        } catch (InvalidCredentialsException) {
+            return $this->updatePassword(array('password' => $password), true);
+        }
+        throw new ImproperActionException(_('New password must not be the same as the current one.'));
+    }
+
+    /**
      * This function allows us to set a new password without having to provide the old password
      */
     public function resetPassword(string $password): bool
@@ -580,7 +595,7 @@ class Users implements RestInterface
         // this will properly hash the password
         $params = new UserParams('password', $params['password']);
         // don't use the update() function so it cannot be bypassed by setting Action::Update instead of Action::UpdatePassword
-        $sql = 'UPDATE users SET password_hash = :content WHERE userid = :userid';
+        $sql = 'UPDATE users SET password_hash = :content, password_modified_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);

@@ -10,6 +10,7 @@
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Local;
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -105,6 +106,7 @@ try {
         (int) $App->Config->configArr['enforce_mfa'],
     );
 
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -118,6 +120,8 @@ try {
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $Templates->readAll(),

@@ -34,9 +34,9 @@ enum PasswordComplexity: int
     {
         return match ($case) {
             PasswordComplexity::None => '.*',
-            PasswordComplexity::Weak => '^(?=.*[a-z])(?=.*[A-Z]).*$',
-            PasswordComplexity::Medium => '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$',
-            PasswordComplexity::Strong => '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).*$',
+            PasswordComplexity::Weak => '^(?=.*\p{Ll})(?=.*\p{Lu}).*$',
+            PasswordComplexity::Medium => '^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d).*$',
+            PasswordComplexity::Strong => '^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d)(?=.*[\p{P}\p{S}]).*$',
         };
     }
 
@@ -46,7 +46,7 @@ enum PasswordComplexity: int
      */
     public static function toPhPattern(self $case): string
     {
-        return '/' . $case::toPattern($case) . '/';
+        return '/' . $case::toPattern($case) . '/u';
     }
 
     public static function getAssociativeArray(): array

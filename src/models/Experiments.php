@@ -52,7 +52,6 @@ class Experiments extends AbstractConcreteEntity
             $contentType = AbstractEntity::CONTENT_MD;
         }
 
-
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
         if ($template > 0) {

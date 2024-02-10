@@ -15,6 +15,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\MetadataField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
@@ -35,6 +36,11 @@ class DepthValidatorVisitor implements Visitor
     }
 
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): int
+    {
+        return 1;
+    }
+
+    public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): int
     {
         return 1;
     }

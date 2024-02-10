@@ -18,16 +18,26 @@ import Prism from 'prismjs';
     inside: {
       'important': /[\\]?(?:_|%)/,
     },
-    pattern: /(["'])(?:(?!\1)[^\n\r\f])+\1/i,
+    pattern: /(["'])(?:\\['"]|(?!\1)[^\n\r\f])+\1/i,
   };
   const simpleTerm = {
     alias: 'string',
     greedy: true,
     inside: {
-      'important': /[\\]?(?:_|%)/,
+      'important': /[\\]?[_%]/,
     },
-    pattern: /[^\n\r\f"'|!&() ]+/,
+    pattern: /[^\n\r\f"'|!&(): ]+/,
   };
+  const simpleOrQuotedTerm = '(?:' + quotedTerm['pattern'].source + '|' + simpleTerm['pattern'].source + ')';
+  const strict = {
+    greedy: true,
+    inside: {
+      'punctuation': /:/,
+      'keyword': /s/,
+    },
+    pattern: /(?:s:)/,
+  };
+  const comparisonOperators = /(?:[<>]=?|!?=)/;
 
   Prism.languages.elabftwquery = {
     'field-bool': {
@@ -37,17 +47,52 @@ import Prism from 'prismjs';
         'punctuation': /:/,
         'boolean': RegExp(bool, 'i'),
       },
-      pattern: RegExp('\\b(?:attachment|locked|timestamped)\\b:' + bool, 'i'),
+      pattern: RegExp(
+        '\\b(?:attachment|locked|timestamped)\\b'
+          + ':'
+          + bool,
+        'i',
+      ),
     },
     'field-date': {
       alias: 'keyword',
       greedy: true,
       inside: {
-        'operator': /\.\.|[<>]=?|!?=/,
+        'operator': RegExp('\\.\\.|' + comparisonOperators.source),
         'punctuation': /[:.,/-]/,
         'number': /\d+/,
       },
-      pattern: RegExp('\\b(?:date|created_at|locked_at|timestamped_at)\\b:(?:' + date + '\\.\\.' + date + '|(?:[<>]=?|!?=)?' + date + ')', 'i'),
+      pattern: RegExp(
+        '\\b(?:date|created_at|locked_at|timestamped_at)\\b'
+          + ':'
+          +'(?:'
+            + date + '\\.\\.' + date
+            + '|'
+            + comparisonOperators.source + '?' + date
+          + ')',
+        'i',
+      ),
+    },
+    'field-extrafield': {
+      greedy: true,
+      inside: {
+        'keyword': /\b(?:extrafield)\b/i,
+        // 'number': /\d+/,
+        'strict': strict,
+        'punctuation': /:/,
+        'quoted-term': quotedTerm,
+        'simple-term': simpleTerm,
+      },
+      pattern: RegExp(
+        '\\bextrafield\\b'
+        + ':'
+        + strict.pattern.source + '?'
+        + simpleOrQuotedTerm
+        + ':'
+        // uncouple the quotedTerm backreferences so that mixed quotations can be used i.e. 'key':"value" and "key":'value'
+        + simpleOrQuotedTerm.replace(new RegExp('1', 'g'), '2'),
+        'i',
+      ),
     },
     'field-id': {
       alias: 'keyword',
@@ -69,22 +114,21 @@ import Prism from 'prismjs';
       pattern: /\brating\b:(?:[0-5]|\bunrated\b)/i,
     },
     'field': {
-      alias: 'keyword',
       greedy: true,
       inside: {
         'keyword': fieldKeywords,
-        'strict': {
-          pattern: /:s:/,
-          inside: {
-            'punctuation': /:/,
-            'keyword': /s/,
-          },
-        },
+        'strict': strict,
         'punctuation': /:/,
         'quoted-term': quotedTerm,
         'simple-term': simpleTerm,
       },
-      pattern: RegExp(fieldKeywords.source + ':(?:s:)?(?:' + quotedTerm['pattern'].source + '|' + simpleTerm['pattern'].source + ')', 'i'),
+      pattern: RegExp(
+        fieldKeywords.source
+          + ':'
+          + strict.pattern.source + '?'
+          + simpleOrQuotedTerm,
+        'i',
+      ),
     },
     'operator': {
       lookbehind: true,

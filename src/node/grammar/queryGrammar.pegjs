@@ -67,11 +67,12 @@ Fields
   / FieldRating
   / FieldAttachment
   / FieldId
+  / FieldMetadata
 
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i
       / 'group'i / 'status'i / 'title'i / 'visibility'i
-    ) ':' strict:('s:' {return true;})? term:(List / LiteralInField)
+    ) ':' strict:StrictOperator term:(List / LiteralInField)
   {
     return new Field(strtolower($field), $term, $strict);
   }
@@ -106,7 +107,7 @@ DateBetween
   }
 
 DateSimple
-  = operator:$([<>] '='? / '!'? '=' )? date:Date
+  = operator:ComparisonOperators date:Date
   {
     return array(
       'type' => 'simple',
@@ -155,7 +156,7 @@ FieldRating
   }
 
 FieldAttachment
-  = 'attachment'i ':' strict:('s:' {return true;})? term:(
+  = 'attachment'i ':' strict:StrictOperator term:(
     bool:Boolean
       {
         return new SimpleValueWrapper($bool);
@@ -165,6 +166,15 @@ FieldAttachment
   {
     return new Field('attachment', $term, $strict);
   }
+
+FieldMetadata
+  = 'extrafield'i ':' strict:StrictOperator key:(List / LiteralInField) ':' value:(List / LiteralInField)
+  {
+    return new MetadataField($key, $value, $strict);
+  }
+
+StrictOperator
+  = ('s:' {return true;})?
 
 List 'quoted term'
   = wordList:(List1 / List2)
@@ -178,6 +188,7 @@ List1
 ListString1
   = chars:(
     [^\n\r\f\\']
+    / "\\'" {return "'";}
     / Escape
   )+
   {
@@ -190,6 +201,7 @@ List2
 ListString2
   = chars:(
     [^\n\r\f\\"]
+    / '\\"' {return '"';}
     / Escape
   )+
   {
@@ -217,7 +229,7 @@ Literal 'term'
 
 String
   = chars:(
-    [^\n\r\f\\"'|&!() ]
+    [^\n\r\f\\"'|&!(): ]
     / Escape
   )+
   {
@@ -227,6 +239,9 @@ String
 Escape
   = $('\\' [%_]) // Escape MySQL wildcard characters
   / '\\' {return '\\\\';} // Search for literal slash by default
+
+ComparisonOperators
+  = $([<>] '='? / '!'? '=')?
 
 Digit
   = [0-9]

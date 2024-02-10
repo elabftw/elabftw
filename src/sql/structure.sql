@@ -861,6 +861,7 @@ CREATE TABLE `users` (
   `salt` varchar(255) NULL DEFAULT NULL,
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
+  `password_modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mfa_secret` varchar(32) NULL DEFAULT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,

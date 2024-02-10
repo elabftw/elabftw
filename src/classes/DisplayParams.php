@@ -11,7 +11,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\SearchType;
@@ -19,9 +18,6 @@ use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use function implode;
-use function json_encode;
-use const JSON_HEX_APOS;
-use const JSON_THROW_ON_ERROR;
 use PDO;
 use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,19 +50,7 @@ class DisplayParams
 
     public EntityType $relatedOrigin;
 
-    // start metadata stuff
-    public bool $hasMetadataSearch = false;
-
-    public array $metadataKey = array();
-
-    public array $metadataValuePath = array();
-
-    public array $metadataValue = array();
-    // end metadata stuff
-
     public bool $includeArchived = false;
-
-    private array $metadataHaving = array();
 
     public function __construct(private Users $Users, private Request $Request, public EntityType $entityType)
     {
@@ -82,31 +66,6 @@ class DisplayParams
     public function appendFilterSql(FilterableColumn $column, int $value): void
     {
         $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
-    }
-
-    public function getMetadataHavingSql(): string
-    {
-        if (!empty($this->metadataHaving)) {
-            return 'HAVING ' . implode(' AND ', $this->metadataHaving);
-        }
-        return '';
-    }
-
-    private function addMetadataFilter(string $extraFieldKey, string $searchTerm): void
-    {
-        $this->hasMetadataSearch = true;
-        $i = count($this->metadataKey);
-
-        $jsonPath = sprintf(
-            '$.%s.%s',
-            MetadataEnum::ExtraFields->value,
-            // Note: the extraFieldKey gets double quoted so spaces are not an issue
-            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
-        );
-        $this->metadataKey[] = $jsonPath;
-        $this->metadataValuePath[] = $jsonPath . '.value';
-        $this->metadataValue[] = $searchTerm;
-        $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
     }
 
     /**
@@ -185,12 +144,6 @@ class DisplayParams
         if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
             $this->searchType = SearchType::Owner;
-        }
-        // METADATA SEARCH
-        foreach ($this->Request->query->all('metakey') as $i => $metakey) {
-            if (!empty($metakey)) {
-                $this->addMetadataFilter($metakey, $this->Request->query->all('metavalue')[$i]);
-            }
         }
     }
 }

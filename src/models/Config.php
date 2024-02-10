@@ -174,6 +174,9 @@ final class Config implements RestInterface
             ('enforce_mfa', '0'),
             ('emit_audit_logs', '0'),
             ('admins_create_users_remote_dir', '0'),
+            ('min_password_length', '12'),
+            ('password_complexity_requirement', '0'),
+            ('max_password_age_days', '3650'),
             ('remote_dir_service', 'eairef'),
             ('remote_dir_config', NULL)";
 

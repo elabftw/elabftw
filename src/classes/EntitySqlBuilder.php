@@ -36,16 +36,14 @@ class EntitySqlBuilder
      *
      * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
-     * @param bool $includeMetadata only include metadata if we really need it to avoid mysql out-of-sort-memory error
      * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
      */
     public function getReadSqlBeforeWhere(
         bool $getTags = true,
         bool $fullSelect = false,
-        bool $includeMetadata = false,
         ?EntityType $relatedOrigin = null,
     ): string {
-        $this->entity($fullSelect, $includeMetadata);
+        $this->entity($fullSelect);
         $this->status();
         $this->category();
         $this->comments();
@@ -96,7 +94,7 @@ class EntitySqlBuilder
         return $sql;
     }
 
-    private function entity(bool $fullSelect, bool $includeMetadata): void
+    private function entity(bool $fullSelect): void
     {
         if ($fullSelect) {
             // get all the columns of entity table
@@ -123,12 +121,7 @@ class EntitySqlBuilder
                 entity.canwrite,
                 entity.modified_at,
                 entity.timestamped';
-            // don't include the metadata column unless we really need it
-            // see https://stackoverflow.com/questions/29575835/error-1038-out-of-sort-memory-consider-increasing-sort-buffer-size
-            if ($includeMetadata) {
-                $this->selectSql[] = 'entity.metadata';
-            }
-            // only include columns (created_at, locked_at, timestamped_at,) if actually searching for it
+            // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));
             }
@@ -327,6 +320,7 @@ class EntitySqlBuilder
                 AND %s)",
             $can,
             BasePermissions::MyTeams->value,
+            // items are restricted to the team linked
             $this->entity instanceof Items
                 ? 'users2teams.teams_id = entity.team'
                 : '1',
@@ -341,12 +335,12 @@ class EntitySqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND %s)",
+                AND entity.userid = %s)",
             $can,
             BasePermissions::User->value,
             $this->entity->Users->isAdmin
-                ? 'entity.userid = users2teams.users_id'
-                : 'entity.userid = :userid',
+                ? 'users2teams.users_id'
+                : ':userid',
         );
     }
 

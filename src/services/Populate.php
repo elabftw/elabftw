@@ -31,7 +31,7 @@ use Elabftw\Models\Users;
 class Populate
 {
     /** @var string DEFAULT_PASSWORD the password to use if none are provided */
-    private const DEFAULT_PASSWORD = 'totototo';
+    private const DEFAULT_PASSWORD = 'totototototo';
 
     /** @var int TEMPLATES_ITER number of templates to generate */
     private const TEMPLATES_ITER = 5;
@@ -125,7 +125,6 @@ class Populate
             'statistical analysis',
             'scientific literature',
         );
-
 
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);

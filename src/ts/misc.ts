@@ -399,6 +399,22 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
+export function addAutocompleteToExtraFieldsKeyInputs(): void {
+  const ApiC = new Api();
+  $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
+    appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      ApiC.getJson(`${Model.ExtraFieldsKeys}/?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(entry => {
+          res.push(entry.extra_fields_key);
+        });
+        response(res);
+      });
+    },
+  });
+}
+
 // update category or status, returns the color as string
 export async function updateCatStat(target: string, entity: Entity, value: string): Promise<string> {
   const params = {};

@@ -5,7 +5,7 @@ describe('Login page', () => {
 
   it('sets auth cookie when logging in via form submission', () => {
     const email = 'toto@yopmail.com';
-    const password = 'totototo';
+    const password = 'totototototo';
 
     cy.visit('/login.php');
 

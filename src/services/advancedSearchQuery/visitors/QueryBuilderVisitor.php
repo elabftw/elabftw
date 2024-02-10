@@ -12,11 +12,13 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 use function array_merge;
 use function bin2hex;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\MetadataField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
@@ -69,6 +71,46 @@ class QueryBuilderVisitor implements Visitor
             'param' => $paramCustomId,
             'value' => $simpleValueWrapper->getValue(),
             'type' => PDO::PARAM_INT,
+        );
+
+        return new WhereCollector($query, $bindValues);
+    }
+
+    public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): WhereCollector
+    {
+        $pathParam = $this->getUniqueID();
+        $valueParam = $this->getUniqueID();
+        $column = 'entity.metadata';
+        $query = sprintf(
+            'JSON_UNQUOTE(JSON_EXTRACT(LOWER(%s), LOWER(%s))) LIKE LOWER(%s)',
+            $column,
+            $pathParam,
+            $valueParam,
+        );
+        
+        $bindValues = array();
+        // value path
+        $bindValues[] = array(
+            'param' => $pathParam,
+            'value' => sprintf(
+                '$.%s%s.%s',
+                MetadataEnum::ExtraFields->value,
+                // JSON path '$.extra_fields**.value' can be used to search all keys
+                // Note: the extraFieldKey gets double quoted by json_encode() so spaces are not an issue
+                $metadataField->getKey() === '**'
+                    ? '**'
+                    : '.' . json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Value->value,
+            ),
+            'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
+        );
+        // value
+        $bindValues[] = array(
+            'param' => $valueParam,
+            'value' => $metadataField->getAffix() . $metadataField->getValue() . $metadataField->getAffix(),
+            'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
         );
 
         return new WhereCollector($query, $bindValues);

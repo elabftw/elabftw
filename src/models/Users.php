@@ -121,7 +121,7 @@ class Users implements RestInterface
             $validated = 1;
         }
 
-        $defaultRead = BasePermissions::MyTeams->toJson();
+        $defaultRead = BasePermissions::Team->toJson();
         $defaultWrite = BasePermissions::User->toJson();
 
         $sql = 'INSERT INTO users (

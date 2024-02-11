@@ -65,8 +65,8 @@ class Zip extends AbstractZip
         $Status = new ItemsStatus($Teams);
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, status, elabid, metadata)
-                VALUES(:title, :date, :userid, :canread, :canwrite, :category, :status, :elabid, :metadata)';
+            $sql = 'INSERT into experiments(team, title, date, userid, canread, canwrite, category, status, elabid, metadata)
+                VALUES(:team, :title, :date, :userid, :canread, :canwrite, :category, :status, :elabid, :metadata)';
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
         }
@@ -77,9 +77,7 @@ class Zip extends AbstractZip
         $item['title'] = $this->transformIfNecessary($item['title'] ?? _('Untitled'));
 
         $req = $this->Db->prepare($sql);
-        if ($this->Entity instanceof Items) {
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        }
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindValue(':status', $Status->getDefault());

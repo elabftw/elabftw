@@ -60,7 +60,7 @@ class ImportController implements ControllerInterface
         $allowedExtensions = array('.eln', '.zip', '.csv');
 
         // the import menu only allows basic permission to be set, so translate this in proper json
-        $canread = BasePermissions::tryFrom($this->App->Request->request->getInt('canread')) ?? BasePermissions::MyTeams;
+        $canread = BasePermissions::tryFrom($this->App->Request->request->getInt('canread')) ?? BasePermissions::Team;
         $canwrite = BasePermissions::tryFrom($this->App->Request->request->getInt('canwrite')) ?? BasePermissions::User;
 
         // figure out the filetype depending on file extension

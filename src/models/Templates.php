@@ -50,7 +50,7 @@ class Templates extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $title = Filter::title($title);
-        $canread = BasePermissions::MyTeams->toJson();
+        $canread = BasePermissions::Team->toJson();
         $canwrite = BasePermissions::User->toJson();
 
         if (isset($this->Users->userData['default_read'])) {
@@ -189,7 +189,7 @@ class Templates extends AbstractTemplateEntity
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND users2teams.users_id = experiments_templates.userid) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::MyTeams->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::Team->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();

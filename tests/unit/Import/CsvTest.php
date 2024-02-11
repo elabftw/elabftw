@@ -30,8 +30,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $Import = new Csv(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
         );
         $Import->import();
@@ -52,8 +52,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $Import = new Csv(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
         );
         $Import->import();
@@ -73,8 +73,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $Import = new Csv(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
         );
         $this->expectException(ImproperActionException::class);

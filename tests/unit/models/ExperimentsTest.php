@@ -84,7 +84,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         foreach ($matrix as $column) {
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::MyTeams->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->toJson())));
         }

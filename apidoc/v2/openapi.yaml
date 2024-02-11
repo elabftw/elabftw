@@ -364,6 +364,8 @@ components:
         tags_id:
           type: string
           nullable: true
+        team:
+          type: integer
         timestamped:
           type: integer
         timestampedby:

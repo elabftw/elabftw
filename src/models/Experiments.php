@@ -44,7 +44,7 @@ class Experiments extends AbstractConcreteEntity
         $category = null;
         $status = $Status->getDefault();
         $body = null;
-        $canread = BasePermissions::MyTeams->toJson();
+        $canread = BasePermissions::Team->toJson();
         $canwrite = BasePermissions::User->toJson();
         $metadata = null;
         $contentType = AbstractEntity::CONTENT_HTML;
@@ -94,9 +94,10 @@ class Experiments extends AbstractConcreteEntity
         $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
         $req->bindValue(':category', $category, PDO::PARAM_INT);
@@ -145,9 +146,10 @@ class Experiments extends AbstractConcreteEntity
         // figure out the custom id
         $customId = $this->getNextCustomId((int) $this->entityData['category']);
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
         $req->bindValue(':category', $this->entityData['category']);

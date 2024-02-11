@@ -9,20 +9,15 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function filter_var;
 use function intval;
-use function json_encode;
 use JsonException;
-
 use function mb_strlen;
-use PDO;
 
 /**
  * When values need to be checked
@@ -147,25 +142,5 @@ class Check
             return Usergroup::User;
         }
         return $group;
-    }
-
-    public static function isSelfLink(?int $id, string $table, string $key, string $value): bool
-    {
-        $Db = Db::getConnection();
-        // build jsonPath to field type
-        $field = sprintf(
-            '$.%s.%s.type',
-            MetadataEnum::ExtraFields->value,
-            json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
-        );
-        $sql = "SELECT metadata->>'$field' FROM $table WHERE id = :id";
-        $req = $Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $Db->execute($req);
-        $type = $req->fetchColumn();
-        if ($type === $table && $id === intval($value)) {
-            return true;
-        }
-        return false;
     }
 }

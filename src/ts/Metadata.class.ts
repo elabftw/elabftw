@@ -59,8 +59,7 @@ export class Metadata {
     }
 
     // prevent self links
-    if ((el.dataset.completeTarget === ExtraFieldInputType.Experiments
-        || el.dataset.completeTarget === ExtraFieldInputType.Items)
+    if (el.dataset.completeTarget === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
       notifError(new Error(i18next.t('no-self-links')));

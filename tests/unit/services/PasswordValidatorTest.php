@@ -14,26 +14,40 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class PasswordValidatorTest extends \PHPUnit\Framework\TestCase
 {
+    private PasswordValidator $PasswordValidator;
+
+    protected function setUp(): void
+    {
+        $this->PasswordValidator = new PasswordValidator(6, PasswordComplexity::None);
+
+    }
+
     public function testPasswordLength(): void
     {
-        $PasswordValidator = new PasswordValidator(12, PasswordComplexity::None);
-        $this->expectException(ImproperActionException::class);
-        $PasswordValidator->validate('aa');
-        // 11 chars japanese
-        $this->expectException(ImproperActionException::class);
-        $PasswordValidator->validate('みうろねかたへゆのけを');
-        // 12 chars japanese
-        $this->assertTrue($PasswordValidator->validate('みうろねかたへゆのけをけ'));
         // 12 chars ascii
-        $this->assertTrue($PasswordValidator->validate('abcdefghijkl'));
+        $this->assertTrue($this->PasswordValidator->validate('abcdefghijkl'));
+        $this->expectException(ImproperActionException::class);
+        $this->PasswordValidator->validate('aa');
+    }
+
+    public function testPasswordJapanese(): void
+    {
+        // 12 chars japanese
+        $this->assertTrue($this->PasswordValidator->validate('みうろねかたへゆのけをけ'));
+
+        // 5 chars japanese
+        $this->expectException(ImproperActionException::class);
+        $this->PasswordValidator->validate('みうろねか');
     }
 
     public function testPasswordWeak(): void
     {
         $PasswordValidator = new PasswordValidator(6, PasswordComplexity::Weak);
+        $this->assertTrue($PasswordValidator->validate('Abcdef'));
+        // no capital letters but japanese characters
+        $this->assertTrue($this->PasswordValidator->validate('みうろねのけをけか'));
         $this->expectException(ImproperActionException::class);
         $PasswordValidator->validate('abcdefghijkl');
-        $this->assertTrue($PasswordValidator->validate('Abcdefghijkl'));
     }
 
     public function testPasswordMedium(): void

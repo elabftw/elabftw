@@ -6,12 +6,11 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, notifError } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -58,6 +57,15 @@ export class Metadata {
     if (el.dataset.units === '1') {
       return this.updateUnit(event);
     }
+
+    // prevent self links
+    if (el.dataset.completeTarget === document.getElementById('info').dataset.type
+      && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
+    ) {
+      notifError(new Error(i18next.t('no-self-links')));
+      return false;
+    }
+
     // by default the value is simply the value of the input, which is the event target
     let value = el.value;
     // special case for checkboxes
@@ -74,6 +82,8 @@ export class Metadata {
     params[el.dataset.field] = value;
     this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
       this.editor.loadMetadata();
+    }).catch(() => {
+      return;
     });
     return true;
   }

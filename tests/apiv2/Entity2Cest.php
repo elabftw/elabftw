@@ -190,4 +190,14 @@ class Entity2Cest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('title' => 'Testing the eLabFTW lab notebook'));
     }
+
+    public function improperLinkToSelfTest(Apiv2Tester $I)
+    {
+        $I->wantTo('Improperly link an entity to itself');
+        $I->sendPatch('/experiments/1', array('metadata' => '{"extra_fields":{"self-link":{"type":"experiments"}}}'));
+        $I->sendPatch('/experiments/1', array('action' => 'updatemetadatafield', 'self-link' => '1'));
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
+        $I->seeResponseIsJson();
+        $I->seeResponseContainsJson(array('description' => 'Linking an item to itself is not allowed. Please select a different target.'));
+    }
 }

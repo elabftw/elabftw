@@ -11,10 +11,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
+use function intval;
+use function json_encode;
 use PDO;
 
 /**
@@ -144,6 +147,29 @@ abstract class AbstractLinks implements RestInterface
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
+    {
+        // get the extra field type for the given key
+        // build json path to field type
+        $jsonPath = sprintf(
+            '$.%s.%s.type',
+            MetadataEnum::ExtraFields->value,
+            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+        $sql = sprintf(
+            "SELECT metadata->>'%s' FROM %s WHERE id = :id",
+            $jsonPath,
+            $this->Entity->type,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $extraFieldType = $req->fetchColumn();
+
+        return $this->Entity->type === $extraFieldType
+            && $this->Entity->id === intval($targetId);
     }
 
     abstract protected function getTargetType(): string;

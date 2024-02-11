@@ -22,6 +22,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Services\PasswordValidator;
 
 use function trim;
 
@@ -63,17 +64,10 @@ final class UserParams extends ContentParams implements ContentParamsInterface
     private function validateAndHashPassword(): string
     {
         $Config = Config::getConfig();
-        // validate length
         $min = (int) $Config->configArr['min_password_length'];
-        if (mb_strlen($this->content) < $min) {
-            throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), $min));
-        }
-        // validate regex
         $passwordComplexity = PasswordComplexity::from((int) $Config->configArr['password_complexity_requirement']);
-        $pattern = PasswordComplexity::toPhPattern($passwordComplexity);
-        if (!preg_match($pattern, $this->content)) {
-            throw new ImproperActionException(sprintf(_('Password does not match requirement: %s'), PasswordComplexity::toHuman($passwordComplexity)));
-        }
+        $PasswordValidator = new PasswordValidator($min, $passwordComplexity);
+        $PasswordValidator->validate($this->content);
 
         return password_hash($this->content, PASSWORD_DEFAULT);
     }

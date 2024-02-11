@@ -10,7 +10,19 @@ import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, relativeMoment, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
+import {
+  adjustHiddenState,
+  escapeExtendedQuery,
+  generateMetadataLink,
+  getEntity,
+  listenTrigger,
+  makeSortableGreatAgain,
+  notifError,
+  permissionsToJson,
+  relativeMoment,
+  reloadElement,
+  togglePlusIcon,
+} from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -256,11 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.completeTarget === 'users') {
         transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
       }
+
       // use autocomplete jquery-ui plugin
       $(el).autocomplete({
         // this option is necessary or the autocomplete box will get lost under the permissions modal
         appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
+            request.term = escapeExtendedQuery(request.term);
+          }
           ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
             response(json.map(entry => transformer(entry)));
           });

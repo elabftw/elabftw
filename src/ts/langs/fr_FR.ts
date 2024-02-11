@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Cliquer pour modifier",
     "cancel": "Annuler",
     "comment-add": "Ajouter un commentaire",
+    "custom-id-in-use": "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre.",
     "dropzone-upload-area": "Déposez ici les fichiers à uploader",
     "dropzone-filesize-limit": "Taille limite de fichier :",
     "editing-metadata": "Vous êtes en train de modifier les métadonnées jointes à cette entrée.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Supprimer ça ?",
     "link-delete-warning": "Supprimer ce lien ?",
     "new-apikey-warning": "C'est la seule fois où la clé sera affichée ! Veillez à la copier dans un endroit sûr, car vous ne pourrez plus la voir à nouveau :",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Non défini",
     "nothing-selected": "Aucune sélection !",
     "now": "Maintenant",
@@ -24,7 +26,7 @@ const t = {
     "request-filename": "Nom du fichier",
     "save": "Enregistrer",
     "saved": "Enregistré",
-    "sort-by-column": "Sort by column",
+    "sort-by-column": "Trier par colonne",
     "step-delete-warning": "Supprimer cette étape ?",
     "step-unfinish-warning": "Êtes-vous certain(e) de vouloir défaire cette étape ?",
     "tag-delete-warning": "Supprimer ce tag ?",
@@ -32,7 +34,6 @@ const t = {
     "today": "Aujourd’hui",
     "undefined-group": "Groupe non défini",
     "upload-file-comment": "Commentaire du fichier",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

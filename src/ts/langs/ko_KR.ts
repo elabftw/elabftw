@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "취소",
     "comment-add": "의견 추가",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "dropzone-filesize-limit": "File size limit:",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "삭제할까요?",
     "link-delete-warning": "링크를 삭제할까요?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",
     "nothing-selected": "Nothing selected!",
     "now": "Now",
@@ -32,7 +34,6 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "파일 코멘트",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

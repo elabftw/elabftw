@@ -56,7 +56,7 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import EntityClass from './Entity.class';
 import { EntityType, Target } from './interfaces';
-import { getEntity, reloadElement } from './misc';
+import { getEntity, reloadElement, escapeExtendedQuery } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
 
@@ -201,19 +201,7 @@ export function getTinymceBaseConfig(page: string): object {
       delimiter: ['#'],
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
-        // mask word operators 'not', 'and', 'or' of extended search query
-        ['not', 'or', 'and'].forEach(word => {
-          const re = new RegExp(`\\b${word}\\b`, 'g');
-          query = query.replace(re, ` '${word}' `);
-        });
-        // escape extended search query wildcards
-        ['_', '%'].forEach(wildcard => {
-          query = query.replace(wildcard, `\\${wildcard}`);
-        });
-        // mask special characters of extended search query by wildcard
-        ['!', '|', '&'].forEach(operator => {
-          query = query.replace(operator, '_');
-        });
+        query = escapeExtendedQuery(query);
         // grab experiments and items
         const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&q=${query}`);
         const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&q=${query}`);

@@ -59,7 +59,7 @@ export class Api {
       return response;
     }).catch(error => {
       notifError(error);
-      return new Promise((resolve, reject) => reject(new Error(error.message)));
+      return Promise.reject(new Error(error.message));
     });
   }
 

@@ -33,6 +33,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Check;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
@@ -655,6 +656,12 @@ abstract class AbstractEntity implements RestInterface
     {
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : $value;
+
+        // Either ExperimentsLinks or ItmesLinks could be used here
+        if ($this->ExperimentsLinks->isSelfLinkViaMetadata($key, $valueAsString)) {
+            throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+        }
+
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 

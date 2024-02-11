@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "キャンセル",
     "comment-add": "コメントを追加",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
     "dropzone-filesize-limit": "File size limit:",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "これを削除しますか？",
     "link-delete-warning": "このリンクを削除しますか？",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",
     "nothing-selected": "Nothing selected!",
     "now": "Now",
@@ -32,7 +34,6 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "ファイルコメント",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

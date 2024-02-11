@@ -336,16 +336,6 @@ export function addAutocompleteToLinkInputs(): void {
     filterFamily: 'cat',
     inputElId: 'addLinkItemsInput',
   }, {
-    selectElid: 'addLinkExpCatFilter',
-    itemType: EntityType.Experiment,
-    filterFamily: 'owner',
-    inputElId: 'addLinkExpInput',
-  }, {
-    selectElid: 'addLinkCatFilter',
-    itemType: EntityType.Item,
-    filterFamily: 'cat',
-    inputElId: 'addLinkItemsInput',
-  }, {
     selectElid: 'addLinkOwnerFilter',
     itemType: EntityType.Experiment,
     filterFamily: 'owner',
@@ -374,7 +364,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(res);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${request.term}`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}`).then(json => {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
@@ -508,4 +498,25 @@ export function escapeHTML(text: string): string {
     '\'': '&#39;',
   };
   return text.replace(/[&<>'"]/g, char => escapeMap[char]);
+}
+
+export function escapeExtendedQuery(searchTerm: string): string {
+  // the order of the replacement is important
+  // 1) escape extended search query wildcards
+  ['_', '%'].forEach(wildcard => {
+    searchTerm = searchTerm.replaceAll(wildcard, `\\${wildcard}`);
+  });
+
+  // 2) mask special characters of extended search query by single character wildcard
+  ['!', '|', '&', '(', ')', '"', '\''].forEach(specialChar => {
+    searchTerm = searchTerm.replaceAll(specialChar, '_');
+  });
+
+  // 3) mask word operators 'not', 'and', 'or' of extended search query
+  ['not', 'or', 'and'].forEach(word => {
+    const re = new RegExp(`\\b${word}\\b`, 'g');
+    searchTerm = searchTerm.replaceAll(re, ` '${word}' `);
+  });
+
+  return searchTerm.trim();
 }

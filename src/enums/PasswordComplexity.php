@@ -24,19 +24,22 @@ enum PasswordComplexity: int
     {
         return match ($case) {
             PasswordComplexity::None => _('Minimum password length'),
-            PasswordComplexity::Weak => _('Must have at least one upper and one lower case letter'),
-            PasswordComplexity::Medium => _('Must have at least one digit, one upper and one lower case letter'),
-            PasswordComplexity::Strong => _('Must have at least one special character, one digit, one upper and one lower case letter'),
+            PasswordComplexity::Weak => _('Must have at least one upper and one lower case letter, if your language allows'),
+            PasswordComplexity::Medium => _('Must have at least one upper and one lower case letter, if your language allows, and one digit'),
+            PasswordComplexity::Strong => _('Must have at least one upper and one lower case letter, if your language allows, one special character, and one digit'),
         };
     }
 
     public static function toPattern(self $case): string
     {
+        // we need Lo for unicase/unicameral alphabets like Chinese, Japanese, and Korean
+        $letters = '(?:(?=.*\p{Ll})(?=.*\p{Lu})|(?=.*\p{Lo}))';
+        $digits = '(?=.*\d)';
         return match ($case) {
             PasswordComplexity::None => '.*',
-            PasswordComplexity::Weak => '^(?=.*\p{Ll})(?=.*\p{Lu}).*$',
-            PasswordComplexity::Medium => '^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d).*$',
-            PasswordComplexity::Strong => '^(?=.*\p{Ll})(?=.*\p{Lu})(?=.*\d)(?=.*[\p{P}\p{S}]).*$',
+            PasswordComplexity::Weak => "^$letters.*$",
+            PasswordComplexity::Medium => "^$letters$digits.*$",
+            PasswordComplexity::Strong => "^$letters$digits(?=.*[\p{P}\p{S}]).*$",
         };
     }
 

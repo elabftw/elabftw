@@ -54,7 +54,7 @@ class Csv extends AbstractImport
 
         if ($this->Entity instanceof Experiments) {
             $sql = 'INSERT INTO experiments(team, title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
-                VALUES(:title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
+                VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
         }
         $req = $this->Db->prepare($sql);
 

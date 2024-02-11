@@ -45,7 +45,7 @@ class LoginHelper
             $this->setToken();
         }
         // if we run a version newer than the last time the user logged in, create a notification
-        if ($this->getLastSeenVersion() < App::INSTALLED_VERSION_INT) {
+        if ($this->getLastSeenVersion() < App::INSTALLED_VERSION_INT && $this->AuthResponse->isAnonymous === false) {
             $Notifications = new NewVersionInstalled();
             $Notifications->create($this->AuthResponse->userid);
         }

@@ -16,6 +16,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
+use function intval;
 use function json_encode;
 use PDO;
 
@@ -167,7 +168,8 @@ abstract class AbstractLinks implements RestInterface
         $this->Db->execute($req);
         $extraFieldType = $req->fetchColumn();
 
-        return $extraFieldType === $this->Entity->type && $this->Entity->id === intval($targetId);
+        return $this->Entity->type === $extraFieldType
+            && $this->Entity->id === intval($targetId);
     }
 
     abstract protected function getTargetType(): string;

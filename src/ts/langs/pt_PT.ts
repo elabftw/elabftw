@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Clique para editar",
     "cancel": "Cancelar",
     "comment-add": "Adicionar um comentário",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Arraste os ficheiros para aqui para os carregar",
     "dropzone-filesize-limit": "Limite de tamanho do ficheiro:",
     "editing-metadata": "Está atualmente a editar os metadados associados a esta entrada.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Eliminar isto?",
     "link-delete-warning": "Excluir este link?",
     "new-apikey-warning": "Esta é a única vez que a chave será mostrada! Certifica-te de que a copias num local seguro, pois não poderás voltar a vê-la:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Não definido",
     "nothing-selected": "Nada foi selecionado!",
     "now": "Agora",
@@ -32,7 +34,6 @@ const t = {
     "today": "Hoje",
     "undefined-group": "Grupo não definido",
     "upload-file-comment": "Comentário no arquivo",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

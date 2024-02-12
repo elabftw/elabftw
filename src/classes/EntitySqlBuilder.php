@@ -321,7 +321,8 @@ class EntitySqlBuilder
     private function canBaseTeam(string $can): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d AND users2teams.teams_id = entity.team)",
+            "(entity.%s->'$.base' = %d
+                AND users2teams.teams_id = entity.team)",
             $can,
             BasePermissions::Team->value,
         );
@@ -335,7 +336,8 @@ class EntitySqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.userid = %s AND users2teams.teams_id = entity.team)",
+                AND entity.userid = %s
+                AND users2teams.teams_id = entity.team)",
             $can,
             BasePermissions::User->value,
             $this->entity->Users->isAdmin
@@ -352,7 +354,8 @@ class EntitySqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.userid = :userid AND users2teams.teams_id = entity.team)",
+                AND entity.userid = :userid
+                AND users2teams.teams_id = entity.team)",
             $can,
             BasePermissions::UserOnly->value,
         );

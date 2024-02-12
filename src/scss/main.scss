@@ -206,12 +206,6 @@ select.form-control {
     color: $elabblue;
 }
 
-/* GENERAL */
-img {
-    margin-right: 3px;
-    vertical-align: -3px;
-}
-
 /* BLOCKQUOTE */
 blockquote {
     background: #f9f9f9;
@@ -380,10 +374,17 @@ button:disabled {
     transform: rotate(35deg);
 }
 
-#body_view p {
-    // break super long words, see #4169
-    overflow-wrap: break-word;
-    word-wrap: break-word;
+#body_view {
+    img {
+        height: auto;
+        max-width: 100%;
+    }
+
+    p {
+        // break super long words, see #4169
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
 }
 
 /* fix for big images uploaded in the text */

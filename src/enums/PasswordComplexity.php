@@ -24,9 +24,9 @@ enum PasswordComplexity: int
     {
         return match ($case) {
             PasswordComplexity::None => _('Minimum password length'),
-            PasswordComplexity::Weak => _('Must have at least one upper and one lower case letter, if your language allows'),
-            PasswordComplexity::Medium => _('Must have at least one upper and one lower case letter, if your language allows, and one digit'),
-            PasswordComplexity::Strong => _('Must have at least one upper and one lower case letter, if your language allows, one special character, and one digit'),
+            PasswordComplexity::Weak => _('Must have at least one upper and one lower case letter, if your alphabet allows'),
+            PasswordComplexity::Medium => _('Must have at least one upper and one lower case letter, if your alphabet allows, and one digit'),
+            PasswordComplexity::Strong => _('Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit'),
         };
     }
 

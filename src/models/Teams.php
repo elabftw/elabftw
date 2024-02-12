@@ -134,17 +134,6 @@ class Teams implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readMyTeams(): array
-    {
-        $this->canReadOrExplode();
-        $sql = 'SELECT teams.id, teams.name, teams.orgid FROM teams CROSS JOIN users2teams ON (users2teams.teams_id = teams.id AND users2teams.users_id = :userid) WHERE users2teams.users_id = :userid ORDER BY name ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
     public function readNamesFromIds(array $idArr): array
     {
         if (empty($idArr)) {

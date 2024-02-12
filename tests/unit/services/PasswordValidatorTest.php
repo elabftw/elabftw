@@ -45,7 +45,7 @@ class PasswordValidatorTest extends \PHPUnit\Framework\TestCase
         $PasswordValidator = new PasswordValidator(6, PasswordComplexity::Weak);
         $this->assertTrue($PasswordValidator->validate('Abcdef'));
         // no capital letters but japanese characters
-        $this->assertTrue($this->PasswordValidator->validate('みうろねのけをけか'));
+        $this->assertTrue($PasswordValidator->validate('みうろねのけをけか'));
         $this->expectException(ImproperActionException::class);
         $PasswordValidator->validate('abcdefghijkl');
     }

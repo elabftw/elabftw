@@ -80,7 +80,8 @@ class EntitySqlBuilder
         $sql .= sprintf(
             ' AND (%s)',
             implode(' OR ', array(
-                $this->canBasePubOrg($can),
+                $this->canBasePub($can),
+                $this->canBaseOrg($can),
                 $this->canBaseTeam($can),
                 $this->canBaseUser($can),
                 $this->canBaseUserOnly($can),
@@ -291,15 +292,25 @@ class EntitySqlBuilder
     }
 
     /**
-     * base pub/org filter
+     * base pub filter
      */
-    private function canBasePubOrg(string $can): string
+    private function canBasePub(string $can): string
     {
         return sprintf(
-            '(entity.%1$s->\'$.base\' = %2$d
-                OR entity.%1$s->\'$.base\' = %3$d)',
+            "entity.%s->'$.base' = %d",
             $can,
             BasePermissions::Full->value,
+        );
+    }
+
+    /**
+     * base org filter
+     */
+    private function canBaseOrg(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %d",
+            $can,
             BasePermissions::Organization->value,
         );
     }

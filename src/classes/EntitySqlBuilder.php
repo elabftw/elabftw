@@ -316,7 +316,7 @@ class EntitySqlBuilder
     }
 
     /**
-     * base my teams filter
+     * base team filter
      */
     private function canBaseTeam(string $can): string
     {

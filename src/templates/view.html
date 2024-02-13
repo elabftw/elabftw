@@ -81,9 +81,9 @@
         <a href='team.php?item={{ Entity.id }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
       {% endfor %}
     </div>
+    <hr>
   {% endif %}
 
-  <hr>
 
   {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}

@@ -20,10 +20,8 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag').should('exist');
 
     // delete tag
-    cy.window().then(win => {
-      cy.stub(win, 'confirm').returns(true);
-      cy.contains('some tag').click();
-    });
+    cy.on('window:confirm', () => { return true; });
+    cy.contains('some tag').click();
     cy.get('div.tags').contains('some tag').should('not.exist');
 
     // create step

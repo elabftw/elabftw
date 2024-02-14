@@ -21,6 +21,7 @@ import {
   permissionsToJson,
   relativeMoment,
   reloadElement,
+  replaceWithTitle,
   togglePlusIcon,
 } from './misc';
 import i18next from 'i18next';
@@ -131,6 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // show human friendly moments
   relativeMoment();
+
+  replaceWithTitle();
 
   // look for elements that should have focus
   const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);

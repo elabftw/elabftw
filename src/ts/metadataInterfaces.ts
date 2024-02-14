@@ -34,7 +34,7 @@ export enum ExtraFieldInputType {
 
 export interface ExtraFieldProperties {
   type?: ExtraFieldInputType;
-  value: string|string[];
+  value: string|string[]|number;
   group_id?: number;
   position?: number;
   options?: string[];

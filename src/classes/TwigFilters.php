@@ -14,6 +14,8 @@ use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users;
+
 use function is_array;
 use function sprintf;
 
@@ -85,12 +87,12 @@ class TwigFilters
                     ? sprintf('<span class="smallgray">%s</span>', Tools::eLabHtmlspecialchars($field[MetadataEnum::Description->value]))
                     : '';
                 $value = $field[MetadataEnum::Value->value];
-                // checkbox is a special case
+                // type:checkbox is a special case
                 if ($field[MetadataEnum::Type->value] === 'checkbox') {
                     $checked = $field[MetadataEnum::Value->value] === 'on' ? ' checked="checked"' : '';
                     $value = '<input class="d-block" disabled type="checkbox"' . $checked . '>';
                 }
-                // url is another special case
+                // type:url is another special case
                 elseif ($field[MetadataEnum::Type->value] === 'url') {
                     $value = sprintf(
                         '<a href="%1$s"%2$s>%1$s</a>',
@@ -98,17 +100,24 @@ class TwigFilters
                         $newTab,
                     );
                 }
-                // exp/items is another special case
+                // type:exp/items is another special case
                 elseif (in_array($field[MetadataEnum::Type->value], array('experiments', 'items'), true)) {
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
                     $value = sprintf(
-                        '<a href="/%s.php?mode=view&amp;id=%d"%s>%s</a>',
+                        '<a href="/%s.php?mode=view&amp;id=%d"%s><span data-replace-with-title="true" data-id="%d" data-endpoint=%s>%s</span></a>',
                         $page,
                         $id,
                         $newTab,
+                        $id,
+                        $field[MetadataEnum::Type->value],
                         Tools::eLabHtmlspecialchars($value),
                     );
+                }
+                // type:users is also a special case where we go fetch the name of the user
+                elseif ($field[MetadataEnum::Type->value] === 'users') {
+                    $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
+                    $value = $linkedUser->userData['fullname'];
                 }
                 // multi select will be an array of options
                 elseif (is_array($value)) {

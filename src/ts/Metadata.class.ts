@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, notifError } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
@@ -76,6 +76,14 @@ export class Metadata {
     if (el.hasAttribute('multiple')) {
       // collect all the selected options, and the value will be an array
       value = [...el.selectedOptions].map(option => option.value);
+    }
+    // special case for Experiment/Resource/User link
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
+      value = parseInt(value.split(' ')[0], 10);
+      // also create a link automatically for experiments and resources
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
+        this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      }
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
@@ -175,7 +183,7 @@ export class Metadata {
 
     let valueEl: HTMLElement;
     // checkbox is special case
-    if (properties.type === 'checkbox') {
+    if (properties.type === ExtraFieldInputType.Checkbox) {
       valueEl = document.createElement('input');
       valueEl.setAttribute('type', 'checkbox');
       valueEl.classList.add('d-block');
@@ -192,7 +200,7 @@ export class Metadata {
       valueEl.innerText = value;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
-      if (properties.type === 'url') {
+      if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
     }

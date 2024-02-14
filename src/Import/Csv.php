@@ -53,8 +53,8 @@ class Csv extends AbstractImport
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT INTO experiments(title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
-                VALUES(:title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
+            $sql = 'INSERT INTO experiments(team, title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
+                VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
         }
         $req = $this->Db->prepare($sql);
 
@@ -72,9 +72,9 @@ class Csv extends AbstractImport
             }
 
             if ($this->Entity instanceof Items) {
-                $req->bindParam(':team', $this->Users->userData['team']);
                 $req->bindParam(':canbook', $this->canread);
             }
+            $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->Users->userData['userid']);

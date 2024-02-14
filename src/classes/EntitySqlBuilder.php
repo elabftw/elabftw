@@ -13,7 +13,6 @@ use function array_column;
 use function array_unique;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -81,8 +80,9 @@ class EntitySqlBuilder
         $sql .= sprintf(
             ' AND (%s)',
             implode(' OR ', array(
-                $this->canBasePubOrg($can),
-                $this->canBaseMyTeams($can),
+                $this->canBasePub($can),
+                $this->canBaseOrg($can),
+                $this->canBaseTeam($can),
                 $this->canBaseUser($can),
                 $this->canBaseUserOnly($can),
                 $this->canTeams($can),
@@ -112,6 +112,7 @@ class EntitySqlBuilder
                 entity.custom_id,
                 entity.date,
                 entity.category,
+                entity.team,
                 entity.status,
                 entity.rating,
                 entity.userid,
@@ -170,14 +171,16 @@ class EntitySqlBuilder
         $this->selectSql[] = "users.firstname,
             users.lastname,
             users.orcid,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname";
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            teams.name AS team_name";
 
         $this->joinsSql[] = 'LEFT JOIN users
             ON (users.userid = entity.userid)';
         $this->joinsSql[] = sprintf(
             'LEFT JOIN users2teams
                 ON (users2teams.users_id = users.userid
-                    AND users2teams.teams_id = %s)',
+                    AND users2teams.teams_id = %d)
+            LEFT JOIN teams ON (entity.team = teams.id)',
             $this->entity->Users->userData['team'],
         );
     }
@@ -289,41 +292,39 @@ class EntitySqlBuilder
     }
 
     /**
-     * base pub/org filter
-     * scope_x is not a permission but rather a user choice to limit what is shown
+     * base pub filter
      */
-    private function canBasePubOrg(string $can): string
+    private function canBasePub(string $can): string
     {
-        $sql = sprintf(
-            '(entity.%1$s->\'$.base\' = %2$d
-                OR entity.%1$s->\'$.base\' = %3$d)',
+        return sprintf(
+            "entity.%s->'$.base' = %d",
             $can,
             BasePermissions::Full->value,
-            BasePermissions::Organization->value,
         );
-        if ($this->entity->Users->userData['scope_' . $this->entity->type] !== Scope::Everything->value) {
-            $sql = "($sql AND entity.userid = users2teams.users_id)";
-        }
-        return $sql;
     }
 
     /**
-     * base my teams filter
-     * experiments are accessible for all my teams
-     * items are restricted to the team they belong to
+     * base org filter
      */
-    private function canBaseMyTeams(string $can): string
+    private function canBaseOrg(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %d",
+            $can,
+            BasePermissions::Organization->value,
+        );
+    }
+
+    /**
+     * base team filter
+     */
+    private function canBaseTeam(string $can): string
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND users2teams.users_id = entity.userid
-                AND %s)",
+                AND users2teams.teams_id = entity.team)",
             $can,
-            BasePermissions::MyTeams->value,
-            // items are restricted to the team linked
-            $this->entity instanceof Items
-                ? 'users2teams.teams_id = entity.team'
-                : '1',
+            BasePermissions::Team->value,
         );
     }
 
@@ -335,7 +336,8 @@ class EntitySqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.userid = %s)",
+                AND entity.userid = %s
+                AND users2teams.teams_id = entity.team)",
             $can,
             BasePermissions::User->value,
             $this->entity->Users->isAdmin
@@ -352,7 +354,8 @@ class EntitySqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.userid = :userid)",
+                AND entity.userid = :userid
+                AND users2teams.teams_id = entity.team)",
             $can,
             BasePermissions::UserOnly->value,
         );

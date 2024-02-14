@@ -27,8 +27,8 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $extra = array(
             'color' => '#faaccc',
             'body' => 'body',
-            'canread' => BasePermissions::MyTeams->toJson(),
-            'canwrite' => BasePermissions::MyTeams->toJson(),
+            'canread' => BasePermissions::Team->toJson(),
+            'canwrite' => BasePermissions::Team->toJson(),
         );
         $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
         $this->ItemsTypes->patch(Action::Update, $extra);

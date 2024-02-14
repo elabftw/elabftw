@@ -42,7 +42,7 @@ class ItemsTypes extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $this->isAdminOrExplode();
-        $defaultPermissions = BasePermissions::MyTeams->toJson();
+        $defaultPermissions = BasePermissions::Team->toJson();
         $title = Filter::title($title);
         $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);

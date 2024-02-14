@@ -94,6 +94,9 @@ class DisplayParams
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
         }
+        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team);
+        }
         // TAGS SEARCH
         if (!empty(($this->Request->query->all('tags'))[0])) {
             // get all the ids with that tag

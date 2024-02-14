@@ -134,17 +134,6 @@ class Teams implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readMyTeams(): array
-    {
-        $this->canReadOrExplode();
-        $sql = 'SELECT teams.id, teams.name, teams.orgid FROM teams CROSS JOIN users2teams ON (users2teams.teams_id = teams.id AND users2teams.users_id = :userid) WHERE users2teams.users_id = :userid ORDER BY name ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
     public function readNamesFromIds(array $idArr): array
     {
         if (empty($idArr)) {
@@ -276,8 +265,8 @@ class Teams implements RestInterface
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $req->bindValue(':link_name', 'Documentation');
         $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        $req->bindValue(':force_canread', BasePermissions::MyTeams->toJson());
-        $req->bindValue(':force_canwrite', BasePermissions::MyTeams->toJson());
+        $req->bindValue(':force_canread', BasePermissions::Team->toJson());
+        $req->bindValue(':force_canwrite', BasePermissions::Team->toJson());
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
@@ -294,7 +283,7 @@ class Teams implements RestInterface
         // we can't patch something that is not in our team!
         $ItemsTypes->bypassWritePermission = true;
         $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
-        $defaultPermissions = BasePermissions::MyTeams->toJson();
+        $defaultPermissions = BasePermissions::Team->toJson();
         $extra = array(
             'color' => '#32a100',
             'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',

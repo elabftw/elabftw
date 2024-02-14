@@ -98,6 +98,7 @@ CREATE TABLE `config` (
 
 CREATE TABLE `experiments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `team` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `body` mediumtext,

@@ -68,7 +68,7 @@ class Populate
         $visibilityArr = array(
             BasePermissions::Full->toJson(),
             BasePermissions::Organization->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             BasePermissions::UserOnly->toJson(),
         );

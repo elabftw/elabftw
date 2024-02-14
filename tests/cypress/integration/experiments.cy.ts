@@ -76,6 +76,6 @@ describe('Experiments page', () => {
   it('can import csv files', () => {
     importWrapper('importable.csv', 'experiments:1', '30', '20', 'text/csv', 'experiments.php?order=lastchange');
     cy.get('div.alert.alert-success').should('contain', '3 items imported successfully.');
-    cy.get('#itemList').should('contain', 'from csv row 3');
+    cy.get('#itemList').should('contain', 'Effect of temperature');
   });
 });

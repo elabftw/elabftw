@@ -128,7 +128,7 @@ class UnfinishedSteps implements RestInterface
         // add team filter
         $sql .= sprintf(
             " OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid)",
-            BasePermissions::MyTeams->value,
+            BasePermissions::Team->value,
         );
 
         // add user filter

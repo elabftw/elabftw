@@ -47,7 +47,7 @@ final class PermissionsHelper
         $base = array(
             BasePermissions::Full->value => BasePermissions::Full->toHuman(),
             BasePermissions::Organization->value => BasePermissions::Organization->toHuman(),
-            BasePermissions::MyTeams->value => BasePermissions::MyTeams->toHuman(),
+            BasePermissions::Team->value => BasePermissions::Team->toHuman(),
             BasePermissions::User->value => BasePermissions::User->toHuman(),
         );
 
@@ -68,7 +68,7 @@ final class PermissionsHelper
         $englishBase = array(
             'public' => BasePermissions::Full->value,
             'organization' => BasePermissions::Organization->value,
-            'myteams' => BasePermissions::MyTeams->value,
+            'myteam' => BasePermissions::Team->value,
             'user' => BasePermissions::User->value,
         );
         // add the only me setting only if it is allowed by main config

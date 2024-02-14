@@ -60,11 +60,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->patch(Action::Update, $params);
     }
 
-    public function testReadMyTeams(): void
-    {
-        $this->assertCount(1, $this->Teams->readMyTeams());
-    }
-
     public function testReadNamesFromIds(): void
     {
         $this->assertCount(3, $this->Teams->readNamesFromIds(array(1, 2, 3)));

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, notifError } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
@@ -80,6 +80,10 @@ export class Metadata {
     // special case for Experiment/Resource/User link
     if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
       value = parseInt(value.split(' ')[0], 10);
+      // also create a link automatically for experiments and resources
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
+        this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      }
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;

@@ -652,10 +652,10 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    private function updateJsonField(string $key, string|array $value): bool
+    private function updateJsonField(string $key, string|array|int $value): bool
     {
         $Changelog = new Changelog($this);
-        $valueAsString = is_array($value) ? implode(', ', $value) : $value;
+        $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
 
         // Either ExperimentsLinks or ItmesLinks could be used here
         if ($this->ExperimentsLinks->isSelfLinkViaMetadata($key, $valueAsString)) {

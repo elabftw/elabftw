@@ -520,3 +520,12 @@ export function escapeExtendedQuery(searchTerm: string): string {
 
   return searchTerm.trim();
 }
+
+export function replaceWithTitle(): void {
+  document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
+    const ApiC = new Api();
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+      el.innerText = json.title;
+    });
+  });
+}

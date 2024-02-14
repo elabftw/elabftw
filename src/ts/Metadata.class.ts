@@ -77,6 +77,10 @@ export class Metadata {
       // collect all the selected options, and the value will be an array
       value = [...el.selectedOptions].map(option => option.value);
     }
+    // special case for Experiment/Resource/User link
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
+      value = parseInt(value.split(' ')[0], 10);
+    }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
@@ -175,7 +179,7 @@ export class Metadata {
 
     let valueEl: HTMLElement;
     // checkbox is special case
-    if (properties.type === 'checkbox') {
+    if (properties.type === ExtraFieldInputType.Checkbox) {
       valueEl = document.createElement('input');
       valueEl.setAttribute('type', 'checkbox');
       valueEl.classList.add('d-block');
@@ -192,7 +196,7 @@ export class Metadata {
       valueEl.innerText = value;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
-      if (properties.type === 'url') {
+      if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
     }

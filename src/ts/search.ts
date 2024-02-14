@@ -7,14 +7,11 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
-import { addAutocompleteToExtraFieldsKeyInputs } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
     return;
   }
-
-  addAutocompleteToExtraFieldsKeyInputs();
 
   // scroll to anchor if there is a search
   const params = new URLSearchParams(document.location.search.slice(1));

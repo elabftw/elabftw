@@ -15,6 +15,7 @@ use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,7 @@ try {
         $ApiKeys = new ApiKeys(new Users());
         $key = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         // replace the Users in App
-        $App->Users = new Users($key['userid'], $key['team']);
+        $App->Users = new AuthenticatedUser($key['userid'], $key['team']);
         $canWrite = (bool) $key['can_write'];
     } else {
         if ($App->Session->get('is_auth') !== 1) {

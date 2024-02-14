@@ -105,7 +105,7 @@ class TwigFilters
                     $id = (int) $field[MetadataEnum::Value->value];
                     $page = $field[MetadataEnum::Type->value] === 'items' ? 'database' : 'experiments';
                     $value = sprintf(
-                        '<a href="/%s.php?mode=view&amp;id=%d"%s><span data-replace-with-title="true" data-id=%d data-endpoint=%s>%s</span></a>',
+                        '<a href="/%s.php?mode=view&amp;id=%d"%s><span data-replace-with-title="true" data-id="%d" data-endpoint=%s>%s</span></a>',
                         $page,
                         $id,
                         $newTab,

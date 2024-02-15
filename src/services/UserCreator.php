@@ -38,6 +38,9 @@ class UserCreator
             }
             // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
+            if (!$this->requester->isAdmin) {
+                throw new IllegalActionException('User tried to create user and this is not allowed');
+            }
         }
         $validUntil = $this->reqBody['valid_until'] ?? null;
         $orgid = null;

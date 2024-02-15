@@ -107,6 +107,10 @@ class Users2Teams
     private function patchTeamGroup(int $userid, int $teamid, Usergroup $group): int
     {
         $group = Check::usergroup($this->requester, $group)->value;
+        // make sure requester is admin of target user
+        if (!$this->requester->isAdminOf($userid)) {
+            throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
+        }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':group', $group, PDO::PARAM_INT);

@@ -51,7 +51,7 @@ export class Metadata {
    */
   handleEvent(event: Event): Promise<Response> | boolean {
     const el = event.target as HTMLFormElement;
-    if (el.reportValidity() === false || el.hasAttribute('readonly') || el.value === el.defaultValue) {
+    if (el.reportValidity() === false || el.hasAttribute('readonly')) {
       return false;
     }
     if (el.dataset.units === '1') {
@@ -268,9 +268,6 @@ export class Metadata {
         (element as HTMLInputElement).checked = properties.value === 'on' ? true : false;
       }
       if (properties.allow_multi_values !== true) {
-        if (element instanceof HTMLInputElement) {
-          element.defaultValue = properties.value as string;
-        }
         element.value = properties.value as string;
       }
     }

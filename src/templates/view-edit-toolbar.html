@@ -11,11 +11,6 @@
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
         <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
-        {% if App.Config.configArr.ts_authority == 'universign' or App.Config.configArr.ts_authority == 'custom' %}
-          <p><i class='fas fa-exclamation-triangle'></i>
-            {{ 'Depending on your configuration, timestamping can incur costs. Are you sure you want to do this?'|trans }}
-          </p>
-        {% endif %}
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>

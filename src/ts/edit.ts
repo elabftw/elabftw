@@ -396,7 +396,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.getJson(`${EntityType.Template}`).then(json => {
           const res = [];
           json.forEach(tpl => {
-            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+            // only display pinned templates
+            if (tpl.is_pinned) {
+              res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+            }
           });
           callback(res);
         });

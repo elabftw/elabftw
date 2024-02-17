@@ -47,9 +47,10 @@ CREATE TABLE `api_keys` (
 CREATE TABLE `audit_logs` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `body` TEXT NOT NULL,
   `category` INT UNSIGNED NOT NULL,
-  `userid` INT UNSIGNED NOT NULL,
+  `requester_userid` INT UNSIGNED NOT NULL,
+  `target_userid` INT UNSIGNED NOT NULL,
+  `body` TEXT NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -97,6 +98,7 @@ CREATE TABLE `config` (
 
 CREATE TABLE `experiments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `team` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `body` mediumtext,
@@ -203,7 +205,6 @@ CREATE TABLE `experiments_revisions` (
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
-  `metadata` json NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -258,6 +259,8 @@ CREATE TABLE `experiments_templates` (
   `locked_at` timestamp NULL DEFAULT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_target` JSON NOT NULL,
+  `canwrite_target` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -412,6 +415,9 @@ CREATE TABLE `items` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `timestampedby` int NULL DEFAULT NULL,
+  `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -507,6 +513,8 @@ CREATE TABLE `items_types` (
   `content_type` tinyint NOT NULL DEFAULT 1,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_target` JSON NOT NULL,
+  `canwrite_target` JSON NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
@@ -727,8 +735,6 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `common_template` text,
   `common_template_md` text,
-  `deletable_xp` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `deletable_item` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `link_name` varchar(255) NOT NULL,
@@ -856,6 +862,7 @@ CREATE TABLE `users` (
   `salt` varchar(255) NULL DEFAULT NULL,
   `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
+  `password_modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mfa_secret` varchar(32) NULL DEFAULT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -872,9 +879,9 @@ CREATE TABLE `users` (
   `sc_favorite` varchar(1) NOT NULL DEFAULT 'f',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `sc_search` varchar(1) NOT NULL DEFAULT 's',
-  `show_team` tinyint UNSIGNED NOT NULL DEFAULT 1,
-  `show_team_templates` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `show_public` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
+  `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
+  `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `uploads_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `validated` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -893,6 +900,7 @@ CREATE TABLE `users` (
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
+  `last_seen_version` INT UNSIGNED NOT NULL DEFAULT 40900,
   `allow_untrusted` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_comment_created` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_comment_created_email` tinyint UNSIGNED NOT NULL DEFAULT 1,

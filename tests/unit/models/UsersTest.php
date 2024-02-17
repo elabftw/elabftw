@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -82,7 +83,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'sc_favorite' => 'f',
             'sc_todo' => 't',
             'sc_search' => 's',
-            'show_team' => 'on',
+            'scope_experiments' => Scope::Everything->value,
             'lang' => 'en_GB',
             'pdf_format' => 'A4',
             'default_read' => BasePermissions::Organization->toJson(),
@@ -153,19 +154,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdatePassword(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo', 'current_password' => 'testPassword')));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemodemo', 'current_password' => 'testPassword')));
     }
 
     public function testResetPassword(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->assertTrue($Users->resetPassword('demodemo'));
+        $this->assertTrue($Users->resetPassword('demodemodemo'));
     }
 
     public function testUpdatePasswordAsSysadmin(): void
     {
         $Users = new Users(4, 2, new Users(1, 1));
-        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemo')));
+        $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemodemo')));
     }
 
     public function testTryToBecomeSysadmin(): void

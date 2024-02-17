@@ -14,7 +14,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -42,9 +41,9 @@ class Todolist implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $content = Filter::sanitize($reqBody['content'] ?? '');
+        $content = $reqBody['content'] ?? '';
         // no other actions than create
-        $sql = 'INSERT INTO todolist(body, userid) VALUES(:content, :userid)';
+        $sql = 'INSERT INTO todolist (body, userid) VALUES(:content, :userid)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);

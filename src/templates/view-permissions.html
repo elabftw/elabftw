@@ -5,7 +5,7 @@
 {% set icon = 'eye' %}
 {% set label = 'Visibility'|trans %}
 {% set modalTitle = 'Select who can see this entry'|trans %}
-{% if rw == 'canwrite' %}
+{% if rw == 'canwrite' or rw == 'canwrite_target' %}
   {% set icon = 'pencil-alt' %}
   {% set label = 'Can write'|trans %}
   {% set modalTitle = 'Select who can edit this entry'|trans %}
@@ -19,9 +19,9 @@
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
 {% if not Entity.isReadOnly %}
-  <div data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal' data-action='toggle-modal' data-target='permModal-{{ rw }}'>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>
-  </div>
+  </button>
 {% endif %}
-<div class='vertical-separator mx-3'></div>
+<div class='vertical-separator'></div>
 {% include('view-permissions-details.html') %}

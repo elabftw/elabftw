@@ -11,11 +11,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
+use function intval;
+use function json_encode;
 use PDO;
 
 /**
@@ -82,7 +84,7 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color';
+        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color, entity.state AS link_state';
 
         if ($this instanceof ItemsLinks) {
             $sql .= ', entity.is_bookable';
@@ -92,47 +94,12 @@ abstract class AbstractLinks implements RestInterface
             LEFT JOIN ' . $this->getTargetType() . ' AS entity ON (entity_links.item_id = entity.id)
             LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)';
 
-        // Only load entities from database for which the user has read permission.
-        $sql .= sprintf(
-            " LEFT JOIN users ON (entity.userid = users.userid)
-            CROSS JOIN users2teams ON (
-                users2teams.users_id = users.userid
-                AND users2teams.teams_id = :team_id
-            )
-            WHERE entity_links.link_id = :id
-            AND (
-                (JSON_EXTRACT(entity.canread, '$.base') = %d) OR
-                (JSON_EXTRACT(entity.canread, '$.base') = %d) OR
-                (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid) OR
-                (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :user_id) OR
-                (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :user_id)",
-            BasePermissions::Full->value,
-            BasePermissions::Organization->value,
-            BasePermissions::MyTeams->value,
-            BasePermissions::User->value,
-            BasePermissions::UserOnly->value,
-        );
-
-        // look for teamgroups
-        $TeamGroups = new TeamGroups($this->Entity->Users);
-        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))', $teamgroup);
-            }
-        }
-
-        // look for our userid in users part of the json
-        $sql .= ' OR (:user_id MEMBER OF (entity.canread->>"$.users"))';
-
-        $sql .= sprintf(') AND entity.state = %d ORDER by', State::Normal->value);
+        $sql .= sprintf('WHERE entity_links.link_id = :id AND (entity.state = %d OR entity.state = %d) ORDER by', State::Normal->value, State::Archived->value);
 
         $sql .= ' categoryt.title ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':user_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team_id', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -180,6 +147,29 @@ abstract class AbstractLinks implements RestInterface
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
+    {
+        // get the extra field type for the given key
+        // build json path to field type
+        $jsonPath = sprintf(
+            '$.%s.%s.type',
+            MetadataEnum::ExtraFields->value,
+            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+        );
+        $sql = sprintf(
+            "SELECT metadata->>'%s' FROM %s WHERE id = :id",
+            $jsonPath,
+            $this->Entity->type,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $extraFieldType = $req->fetchColumn();
+
+        return $this->Entity->type === $extraFieldType
+            && $this->Entity->id === intval($targetId);
     }
 
     abstract protected function getTargetType(): string;

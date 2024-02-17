@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
@@ -37,6 +38,23 @@ abstract class AbstractCategory implements RestInterface
      * Get all the things
      */
     abstract public function readAll(): array;
+
+    /**
+     * Get an id of an existing one or create it and get its id
+     */
+    public function getIdempotentIdFromTitle(string $title): int
+    {
+        $sql = sprintf('SELECT id FROM %s WHERE title = :title AND team = :team', $this->table);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_STR);
+        $this->Db->execute($req);
+        $res = $req->fetch(PDO::FETCH_COLUMN);
+        if (!is_int($res)) {
+            return $this->postAction(Action::Create, array('name' => $title));
+        }
+        return $res;
+    }
 
     public function getDefault(): ?int
     {

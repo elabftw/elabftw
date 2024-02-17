@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "Zrušiť",
     "comment-add": "Pridať komentár",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
     "dropzone-filesize-limit": "File size limit:",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Odstrániť toto?",
     "link-delete-warning": "Odstrániť tento odkaz?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",
     "nothing-selected": "Nič nevybrané!",
     "now": "Now",
@@ -24,6 +26,7 @@ const t = {
     "request-filename": "Zadajte názov súboru",
     "save": "Uložiť",
     "saved": "Uložené",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Odstrániť tento krok?",
     "step-unfinish-warning": "Naozaj chceš vrátiť krok späť ?",
     "tag-delete-warning": "Odstrániť túto značku?",
@@ -31,7 +34,6 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Komentár k súboru",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

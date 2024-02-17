@@ -1,15 +1,23 @@
+{# TEAM #}
+<div class='d-flex mb-2 align-items-center'>
+  <div class='edit-mode-label'>
+    <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i>{{ 'Team'|trans }}
+  </div>
+  {{ Entity.entityData.team_name }}
+</div>
+
 {# CATEGORY #}
 <div class='d-flex mb-2 align-items-center'>
   <div class='edit-mode-label'>
-    <i aria-hidden='true' class='fas fa-folder mr-1'></i>{{ 'Category'|trans }}
+    <i aria-hidden='true' class='fas fa-fw fa-folder mr-1'></i>{{ 'Category'|trans }}
   </div>
-  <span style='--bg: #{{ Entity.entityData.category_color|default('bdbdbd') }}' data-target='category' class='catstat-btn category-btn malleableCategory'>{{ Entity.entityData.category_title|raw|default('Not set'|trans) }}</span>
+  <button style='--bg: #{{ Entity.entityData.category_color|default('bdbdbd') }}' type='button' data-target='category' class='btn catstat-btn category-btn malleableCategory lh-normal border-0'>{{ Entity.entityData.category_title|default('Not set'|trans) }}</button>
 </div>
 
 {# STATUS #}
 <div id='statusViewDiv' class='d-flex mb-2 align-items-center'>
   <div class='edit-mode-label'>
-    <i aria-hidden='true' class='fas fa-check-square mr-1'></i>{{ 'Status'|trans }}
+    <i aria-hidden='true' class='fas fa-fw fa-check-square mr-1'></i>{{ 'Status'|trans }}
   </div>
-  <span data-target='status' class='catstat-btn status-btn malleableStatus'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('bdbdbd') }}'></i> {{ Entity.entityData.status_title|raw|default('Not set'|trans) }}</span>
+  <button data-target='status' type='button' class='btn catstat-btn status-btn malleableStatus lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('bdbdbd') }}'></i> {{ Entity.entityData.status_title|default('Not set'|trans) }}</button>
 </div>

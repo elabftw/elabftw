@@ -10,6 +10,8 @@
 namespace Elabftw\Elabftw;
 
 use function array_filter;
+
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -25,7 +27,6 @@ use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UsersHelper;
 use Exception;
-use function filter_var;
 
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,9 +35,9 @@ use Symfony\Component\HttpFoundation\Response;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel'); // @phan-suppress PhanTypeExpectedObjectPropAccessButGotNull
+$App->pageTitle = _('Admin panel');
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 $template = 'error.html';
 $renderArr = array();
@@ -57,7 +58,7 @@ try {
     $itemsCategoryArr = $ItemsTypes->readAll();
     $ExperimentsCategories = new ExperimentsCategories($Teams);
     $experimentsCategoriesArr = $ExperimentsCategories->readAll();
-    if ($Request->query->has('templateid')) {
+    if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
     }
     $statusArr = $Status->readAll();
@@ -72,10 +73,10 @@ try {
     // Users search
     $isSearching = false;
     $usersArr = array();
-    if ($Request->query->has('q')) {
+    if ($App->Request->query->has('q')) {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
-            filter_var($Request->query->get('q'), FILTER_SANITIZE_STRING),
+            $App->Request->query->getString('q'),
             $App->Request->query->getBoolean('includeNotTeam') ? 0 : $App->Users->userData['team'],
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
@@ -104,6 +105,7 @@ try {
     if (isset($ItemsTypes->entityData['metadata'])) {
         $metadataGroups = (new Metadata($ItemsTypes->entityData['metadata']))->getGroups();
     }
+    $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     $template = 'admin.html';
     $renderArr = array(
@@ -114,10 +116,12 @@ try {
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
-        'myTeamgroupsArr' => $TeamGroups->readAllSimple(),
+        'allTeamgroupsArr' => $TeamGroups->readAllGlobal(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $itemsStatusArr,
+        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
+        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,

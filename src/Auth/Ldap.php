@@ -16,7 +16,6 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
-use Elabftw\Services\Filter;
 use function explode;
 use function is_array;
 use LdapRecord\Connection;
@@ -30,17 +29,13 @@ use LdapRecord\Query\ObjectNotFoundException;
  */
 class Ldap implements AuthInterface
 {
-    // the login string, email or uid or else
-    private string $login = '';
-
     private AuthResponse $AuthResponse;
 
-    public function __construct(Connection $connection, private Entry $entries, private array $configArr, string $login, private string $password)
+    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, private string $password)
     {
         // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
         $connection->connect();
         Container::addConnection($connection);
-        $this->login = Filter::sanitize($login);
         $this->AuthResponse = new AuthResponse();
     }
 
@@ -94,10 +89,10 @@ class Ldap implements AuthInterface
                     return $this->AuthResponse;
                 }
                 $teamFromLdap = array($teamId);
-            // it is found and it is a string
+                // it is found and it is a string
             } elseif (is_string($teamFromLdap)) {
                 $teamFromLdap = array($teamFromLdap);
-            // it is found and it is an array
+                // it is found and it is an array
             } elseif (is_array($teamFromLdap)) {
                 if (is_array($teamFromLdap[0])) {
                     // go one level deeper

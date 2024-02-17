@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Scope;
+
 /**
  * An anonymous user is "logged in" in a team and has default settings
  * With a userid of 0
@@ -26,12 +28,12 @@ final class AnonymousUser extends Users
         $this->userData['team'] = $this->team;
         $this->userData['limit_nb'] = 15;
         $this->userData['display_mode'] = 'it';
-        $this->userData['orderby'] = 'date';
+        $this->userData['orderby'] = 'lastchange';
         $this->userData['sort'] = 'desc';
         $this->userData['disable_shortcuts'] = 1;
-        $this->userData['show_team'] = 1;
-        $this->userData['show_team_templates'] = 0;
-        $this->userData['show_public'] = 0;
+        $this->userData['scope_experiments'] = Scope::Team->value;
+        $this->userData['scope_items'] = Scope::Team->value;
+        $this->userData['scope_experiments_templates'] = Scope::Team->value;
         $this->userData['fullname'] = 'Anon Ymous';
         $this->userData['is_sysadmin'] = 0;
         $this->userData['lang'] = $this->lang;

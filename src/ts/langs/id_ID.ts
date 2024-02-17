@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Klik untuk mengedit",
     "cancel": "Batal",
     "comment-add": "Tambahkan komentar",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "dropzone-filesize-limit": "Batas ukuran berkas:",
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
     "new-apikey-warning": "Ini adalah satu-satunya waktu kunci akan ditampilkan! Pastikan untuk menyalinnya di tempat yang aman karena Anda tidak akan dapat melihatnya lagi:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Tidak diatur",
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Sekarang",
@@ -24,6 +26,7 @@ const t = {
     "request-filename": "Masukkan nama file",
     "save": "Simpan",
     "saved": "Tersimpan",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
     "tag-delete-warning": "Hapus label ini?",
@@ -31,7 +34,6 @@ const t = {
     "today": "Hari ini",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

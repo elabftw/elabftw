@@ -10,7 +10,20 @@ import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
 import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
-import { makeSortableGreatAgain, notifError, reloadElement, adjustHiddenState, getEntity, generateMetadataLink, relativeMoment, listenTrigger, togglePlusIcon,  permissionsToJson } from './misc';
+import {
+  adjustHiddenState,
+  escapeExtendedQuery,
+  generateMetadataLink,
+  getEntity,
+  listenTrigger,
+  makeSortableGreatAgain,
+  notifError,
+  permissionsToJson,
+  relativeMoment,
+  reloadElement,
+  replaceWithTitle,
+  togglePlusIcon,
+} from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
@@ -50,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Your session expired!');
           window.location.replace('login.php');
         }
-      });
+      }).catch(error => alert(error));
     }, heartRate);
   }
 
@@ -77,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // BACK TO TOP BUTTON
-  const btn = document.createElement('div');
+  const btn = document.createElement('button');
+  btn.type = 'button';
   btn.dataset.action = 'scroll-top';
   // make it look like a button, and on the right side of the screen, not too close from the bottom
   btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
@@ -89,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
   // give it an id so we can remove it easily
   btn.setAttribute('id', 'backToTopButton');
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.title = 'Back to top';
 
   // called when viewport approaches the footer
   const intersectionCallback = (entries): void => {
@@ -117,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // show human friendly moments
   relativeMoment();
 
+  replaceWithTitle();
+
   // look for elements that should have focus
   const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);
   if (needFocus) {
@@ -143,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => json[original.dataset.target]);
     },
     listenOn: '.malleableColumn',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
@@ -168,26 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
-   * Make sure the icon for toggle-next is correct depending on the stored state in localStorage
-   */
-  document.querySelectorAll('[data-icon]').forEach((el: HTMLElement) => {
-    const iconEl = el.querySelector('i');
-    let contentDiv: HTMLElement;
-    if (el.dataset.iconTarget) {
-      contentDiv = document.getElementById(el.dataset.iconTarget);
-    } else {
-      contentDiv = el.nextElementSibling as HTMLElement;
-    }
-    if (contentDiv.hasAttribute('hidden')) {
-      iconEl.classList.remove('fa-caret-down');
-      iconEl.classList.add('fa-caret-right');
-    } else {
-      iconEl.classList.add('fa-caret-down');
-      iconEl.classList.remove('fa-caret-right');
-    }
-  });
-
-  /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
   * Use the "passive" option to avoid impact on performance.
@@ -199,13 +197,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
+
+  /**
+   * make 'toggle next' elements accessible by keyboard
+   * redirect to click event
+   */
+  document.getElementById('container').addEventListener('keydown', event => {
+    const el = event.target as HTMLElement;
+    if (el.matches('[data-action="toggle-next"]')
+        && (event.key === ' ' || event.key === 'Enter' || event.key === 'Spacebar')) {
+      el.dispatchEvent(new Event('click', { bubbles: true, cancelable: false }));
+      event.preventDefault();
+    }
+  });
+
   /**
    * MAIN click event listener bound to container
    * this will listen for click events on the container and if the element
    * matches a known action then that action is triggered
    */
   document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
+    const el = event.target as HTMLElement;
     // SHOW PRIVACY POLICY
     if (el.matches('[data-action="show-policy"]')) {
       fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
@@ -230,10 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // modal plugin requires jquery
         $('#policiesModal').modal('toggle');
       });
+    } else if (el.matches('[data-reload-on-click]')) {
+      reloadElement(el.dataset.reloadOnClick).then(() => relativeMoment());
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);
+      // make sure to set the offset to 0, see #4826
+      params.set('offset', '0');
       window.location.href = `?${params.toString()}`;
 
     // SCROLL TO TOP
@@ -255,11 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.completeTarget === 'users') {
         transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
       }
+
       // use autocomplete jquery-ui plugin
       $(el).autocomplete({
         // this option is necessary or the autocomplete box will get lost under the permissions modal
         appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
+            request.term = escapeExtendedQuery(request.term);
+          }
           ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
             response(json.map(entry => transformer(entry)));
           });
@@ -356,19 +376,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
       }
 
+    } else if (el.matches('[data-action="select-lang"]')) {
+      const select = (document.getElementById('langSelect') as HTMLSelectElement);
+      fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
+
     /* TOGGLE NEXT ACTION
      * An element with "toggle-next" as data-action value will appear clickable.
      * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
-     * If there is a data-toggle-next-n value, the "hidden" attribute of the nth next sibling element will be toggled.
-     * If there is a data-icon value, it is toggled > or V
      */
     } else if (el.matches('[data-action="toggle-next"]')) {
-      let targetEl: HTMLElement;
+      let targetEl = el.nextElementSibling as HTMLElement;
       if (el.dataset.toggleTarget) {
         targetEl = document.getElementById(el.dataset.toggleTarget);
-      } else {
-        const n = Array.from(el.parentNode.children).indexOf(el) + (parseInt(el.dataset.toggleNextN, 10) || 1);
-        targetEl = el.parentNode.children[n] as HTMLElement;
       }
       targetEl.toggleAttribute('hidden');
 
@@ -382,10 +401,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           if (targetEl.hasAttribute('hidden')) {
             iconEl.classList.remove('fa-caret-down');
-            iconEl.classList.add('fa-caret-right');
+            if (el.dataset.toggleTarget !== 'filtersDiv') {
+              iconEl.classList.add('fa-caret-right');
+            }
+            el.setAttribute('aria-expanded', 'false');
           } else {
             iconEl.classList.add('fa-caret-down');
             iconEl.classList.remove('fa-caret-right');
+            el.setAttribute('aria-expanded', 'true');
           }
         }
       }
@@ -544,34 +567,26 @@ document.addEventListener('DOMContentLoaded', () => {
         queryUrl += `/revisions/${el.dataset.revid}`;
       }
       ApiC.getJson(queryUrl).then(json => {
-        // do we display the body?
-        const metadata = JSON.parse(json.metadata || '{}');
-        if (Object.prototype.hasOwnProperty.call(metadata, 'elabftw')
-          && Object.prototype.hasOwnProperty.call(metadata.elabftw, 'display_main_text')
-          && !metadata.elabftw.display_main_text
-        ) {
-          // add extra fields elements from metadata json
-          const entity = {type: el.dataset.type as EntityType, id: entityId};
-          const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-          MetadataC.metadataDiv = contentDiv;
-          MetadataC.display('view').then(() => {
-            // go over all the type: url elements and create a link dynamically
-            generateMetadataLink();
-          });
-        } else {
-          // add html content
-          contentDiv.innerHTML = json.body_html;
+        // add extra fields elements from metadata json
+        const entity = {type: el.dataset.type as EntityType, id: entityId};
+        const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+        MetadataC.metadataDiv = contentDiv;
+        MetadataC.display('view').then(() => {
+          // go over all the type: url elements and create a link dynamically
+          generateMetadataLink();
+        });
+        // add html content
+        contentDiv.innerHTML = json.body_html;
 
-          // adjust the width of the children
-          // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-          const width = document.getElementById('parent_' + randId).clientWidth - 30;
-          bodyDiv.style.width = String(width);
+        // adjust the width of the children
+        // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+        const width = document.getElementById('parent_' + randId).clientWidth - 30;
+        bodyDiv.style.width = String(width);
 
-          // ask mathjax to reparse the page
-          MathJax.typeset();
+        // ask mathjax to reparse the page
+        MathJax.typeset();
 
-          TableSortingC.init();
-        }
+        TableSortingC.init();
 
         bodyDiv.toggleAttribute('hidden');
         bodyDiv.dataset.bodyLoaded = '1';

@@ -20,8 +20,6 @@ config:
   admin_validate: 0
   # set debug mode ON
   debug: 1
-  # set the mail_from config
-  mailfrom: elabftw@example.com
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
   # this is the default password of osixia/openldap docker container
@@ -44,7 +42,7 @@ teams:
 # unless a password is set here
 users:
   - email: toto@yopmail.com
-    password: totototo
+    password: totototototo
     firstname: Toto
     lastname: Le sysadmin
     team: Alpha
@@ -52,7 +50,6 @@ users:
     api_key: apiKey4Test
     create_experiments: true
     create_items: true
-    create_templates: true
     user_preferences:
       orderby: lastchange
       cjk_fonts: 1
@@ -60,20 +57,18 @@ users:
   - email: titi@yopmail.com
     team: Alpha
     create_experiments: true
-    create_templates: false
+    create_templates: true
     create_mfa_secret: false
 
   - email: tutu@yopmail.com
     team: Alpha
     create_experiments: true
-    create_templates: false
     create_mfa_secret: true
 
   - email: demo@elabftw.net
     password: testPassword
     team: Alpha
     create_experiments: true
-    create_templates: false
 
   - email: tata@yopmail.com
     team: Bravo
@@ -92,6 +87,197 @@ users:
   - team: Charlie
 
   - team: Delta
+
+templates:
+
+  - title: Ant Colony Response to Pheromones
+    body: |
+        <p><strong>Objective:</strong> To observe and analyze the response of an ant colony to different types or concentrations of pheromones.</p>
+        <p><strong>Materials:</strong></p>
+        <ol>
+        <li>Ant colony (preferably of the same species)</li>
+        <li>Pheromones (e.g., trail pheromones, alarm pheromones)</li>
+        <li>Observation chamber (e.g., a glass tank or a controlled environment where ants can be observed)</li>
+        <li>Small containers or dispensers for pheromones</li>
+        <li>Markers or identifiers for individual ants (optional but useful for tracking)</li>
+        <li>Camera or recording equipment for documentation (optional)</li>
+        </ol>
+        <p><strong>Procedure:</strong></p>
+        <ol>
+        <li>
+        <p>Set up the observation chamber in a controlled environment with minimal external disturbances.</p>
+        </li>
+        <li>
+        <p>Acquire the ant colony and place it within the observation chamber. Ensure the colony is healthy and active.</p>
+        </li>
+        <li>
+        <p>Identify the types of pheromones you will be testing (e.g., trail pheromones, alarm pheromones). Prepare different concentrations or types of pheromones if necessary.</p>
+        </li>
+        <li>
+        <p>Introduce the pheromones into the observation chamber at specified locations or intervals. Ensure that the distribution of pheromones is controlled and consistent.</p>
+        </li>
+        <li>
+        <p>Observe and document the ant colony's response to the pheromones. Note the following parameters:</p>
+        <ul>
+        <li>Movement patterns: Follow individual ants or observe their collective behavior in response to the introduced pheromones.</li>
+        <li>Aggregation or dispersion: Note whether the ants gather or disperse in response to different pheromones.</li>
+        <li>Communication behavior: Monitor any signs of increased or decreased communication among ants.</li>
+        </ul>
+        </li>
+        <li>
+        <p>Record observations using written notes, photographs, or videos. Maintain a log detailing the time, type/concentration of pheromones introduced, and the observed responses.</p>
+        </li>
+        <li>
+        <p>Repeat the experiments multiple times with different concentrations or types of pheromones to ensure consistency and reliability of observations.</p>
+        </li>
+        <li>
+        <p>Analyze the collected data to draw conclusions regarding the ant colony's response to specific types or concentrations of pheromones. Compare and contrast the responses to different stimuli.</p>
+        </li>
+        <li>
+        <p>Prepare a report summarizing the experiment, including methodology, observations, and conclusions.</p>
+        </li>
+        </ol>
+        <p><strong>Safety Precautions:</strong></p>
+        <ul>
+        <li>Handle the ants carefully to prevent injury or damage to the colony.</li>
+        <li>Use pheromones as directed and follow safety guidelines provided by the manufacturer.</li>
+        <li>Work in a well-ventilated area when using pheromones to avoid exposure to concentrated fumes.</li>
+        </ul>
+    tags:
+      - ants
+      - pheromones
+    category: 3
+
+  - title: High-Speed Insect Flight Analysis
+    body: |
+        <p>Objective: To analyze the flight characteristics and performance of a subject (e.g., bird, insect, drone) during high-speed flight.</p>
+        <p>Materials:</p>
+        <ol>
+        <li>High-speed cameras or imaging systems capable of capturing fast-moving subjects at high frame rates (e.g., Phantom cameras, specialized high-speed cameras).</li>
+        <li>Flight test area with ample space and controlled environmental conditions.</li>
+        <li>Subject for analysis (e.g., bird, insect, drone).</li>
+        <li>Motion capture systems (optional but useful for detailed movement analysis).</li>
+        <li>Data recording and analysis software.</li>
+        <li>Calibration equipment for cameras and measurement devices.</li>
+        </ol>
+        <p>Procedure:</p>
+        <ol>
+        <li>
+        <p>Setup:</p>
+        <p>a. Choose an appropriate flight test area with minimal obstructions and controlled environmental conditions (wind, temperature).</p>
+        <p>b. Set up high-speed cameras or imaging systems at strategic positions to capture the flight path and details of the subject.</p>
+        <p>c. Calibrate cameras and any measurement devices to ensure accurate data collection.</p>
+        </li>
+        <li>
+        <p>Subject Preparation:</p>
+        <p>a. If the subject is an animal (e.g., bird or insect), ensure it is acclimated to the testing environment and is comfortable with the setup.</p>
+        <p>b. For drones or artificial subjects, ensure they are fully functional and properly calibrated.</p>
+        </li>
+        <li>
+        <p>Flight Testing:</p>
+        <p>a. Initiate the high-speed flight of the subject within the designated test area.</p>
+        <p>b. Start the high-speed cameras/imaging systems to capture the flight at the desired frame rates.</p>
+        <p>c. Record multiple flight sessions from different angles and distances to obtain comprehensive data.</p>
+        <p>d. If using motion capture systems, synchronize them with the high-speed cameras to gather detailed movement information.</p>
+        </li>
+        <li>
+        <p>Data Collection:</p>
+        <p>a. Collect raw footage and data from the high-speed cameras and any additional measurement devices.</p>
+        <p>b. Organize and label the collected data according to flight conditions, speeds, and angles.</p>
+        </li>
+        <li>
+        <p>Analysis:</p>
+        <p>a. Use specialized software to analyze the recorded footage and data. Analyze factors such as speed, acceleration, wing movement, trajectory, and any other relevant flight parameters.</p>
+        <p>b. Utilize motion capture data, if available, for detailed kinematic analysis of the subject's movements.</p>
+        </li>
+        <li>
+        <p>Interpretation and Conclusion:</p>
+        <p>a. Interpret the analyzed data to understand the flight characteristics and performance of the subject during high-speed flight.</p>
+        <p>b. Compare different flight sessions or conditions to identify patterns or variations in flight behavior.</p>
+        <p>c. Draw conclusions regarding the subject's aerodynamic performance, maneuverability, and any other relevant aspects.</p>
+        </li>
+        <li>
+        <p>Reporting:</p>
+        <p>a. Prepare a detailed report summarizing the experiment methodology, observations, analysis, and conclusions.</p>
+        <p>b. Include visuals such as graphs, charts, and images/videos to support the findings.</p>
+        </li>
+        </ol>
+        <p>Safety Precautions:</p>
+        <ul>
+        <li>Follow safety protocols when working with high-speed equipment and flight subjects to prevent accidents or injury.</li>
+        <li>Ensure the test area is safe and clear of obstacles to avoid collisions during high-speed flight sessions.</li>
+        <li>Handle the subjects (animals or drones) with care and ensure their well-being throughout the experiment.</li>
+        </ul>
+    tags:
+      - high-speed
+    category: 2
+    status: 1
+
+  - title: Western Blot
+    tags:
+      - western blot
+
+  - title: Videomicroscopy
+    tags:
+      - microscopy
+    category: 1
+    metadata: |
+        {"extra_fields": {"Camera binning": {"type": "number","unit": "","units": [],"value": ""},"Sample temperature": {"type": "number","unit": "°C","units": ["°C","°K","°F"],"value": ""},"Sample holder": {"type": "select","value": "Broken holder","options": ["Broken holder","Cool holder","Old holder","Great holder"],"required": true,"description": "The holder that was used"}}}
+
+  - title: Electronic Microscopy
+    tags:
+      - microscopy
+    category: 4
+
+  - title: Superconductivity Characterization at High Magnetic Field Strengths
+    category: 3
+
+  - title: Aliquot antibody
+    category: 3
+    body: |
+        <p>Materials:</p>
+        <ol>
+        <li>Antibody stock solution</li>
+        <li>Sterile microcentrifuge tubes or aliquot vials</li>
+        <li>Micropipettes (adjustable volume) and corresponding tips</li>
+        <li>Sterile gloves</li>
+        <li>Benchtop centrifuge (optional but useful for initial antibody stock preparation)</li>
+        <li>Labels and marker pen</li>
+        <li>Ice bucket or refrigerated centrifuge (optional but helpful for maintaining antibody stability during aliquoting)</li>
+        </ol>
+        <p>Procedure:</p>
+        <ol>
+        <li>
+        <p>Preparation: a. Ensure a clean and sterile work area. Wear sterile gloves throughout the procedure to prevent contamination. b. If the antibody stock has been stored frozen, thaw it by gently swirling or tapping the vial, and then briefly centrifuge it to collect any droplets. c. Keep the antibody stock on ice or in a refrigerated centrifuge throughout the procedure to maintain its stability.</p>
+        </li>
+        <li>
+        <p>Prepare Aliquot Tubes: a. Label sterile microcentrifuge tubes or aliquot vials with necessary information such as antibody name, concentration, date, and any other relevant details. b. Arrange the tubes in a rack or holder for easy access during aliquoting.</p>
+        </li>
+        <li>
+        <p>Calculate Aliquot Volume: a. Determine the desired volume for each aliquot based on your experimental needs and the concentration of the antibody stock. b. Ensure the total volume of the aliquots does not exceed the original volume of the antibody stock.</p>
+        </li>
+        <li>
+        <p>Aliquoting: a. Using a micropipette, set the volume to the calculated amount for each aliquot. b. Carefully aspirate the appropriate volume of the antibody stock and dispense it into the labeled microcentrifuge tubes or aliquot vials. Avoid introducing bubbles. c. Be precise and consistent in aliquoting to ensure uniform volumes in each aliquot.</p>
+        </li>
+        <li>
+        <p>Sealing and Storage: a. Securely cap each aliquot tube or vial to prevent evaporation or contamination. b. Store aliquots appropriately, considering factors like stability and sensitivity to temperature. Typically, store aliquots at recommended temperatures (e.g., -20&deg;C or -80&deg;C for long-term storage) unless otherwise specified by the manufacturer. c. If needed, note down the storage conditions on the labels.</p>
+        </li>
+        <li>
+        <p>Cleanup: a. Discard any unused or excess antibody stock according to laboratory waste disposal guidelines. b. Decontaminate work surfaces and dispose of any used materials properly.</p>
+        </li>
+        <li>
+        <p>Record Keeping: a. Maintain a record detailing the antibody aliquoting process, including the number of aliquots, volumes, concentrations, and storage locations. b. Store this information in a logbook or electronic database for future reference.</p>
+        </li>
+        </ol>
+        <p>Safety Precautions:</p>
+        <ul>
+        <li>Handle antibodies with care to avoid contamination.</li>
+        <li>Use sterile techniques to maintain the integrity of the antibody aliquots.</li>
+        <li>Dispose of waste according to laboratory safety guidelines.</li>
+        </ul>
+
+  - title: Water sample collection
+    category: 2
 
 experiments:
 

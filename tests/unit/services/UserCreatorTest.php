@@ -43,7 +43,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(4, 2), array(
+        $UserCreator = new UserCreator(new Users(5, 2), array(
             'team' => 2,
             'email' => 'praisetheprophets@staff.ds9.bjr',
             'firstname' => 'Kira',
@@ -55,7 +55,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSysadminFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(4, 2), array(
+        $UserCreator = new UserCreator(new Users(5, 2), array(
             'team' => 2,
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',

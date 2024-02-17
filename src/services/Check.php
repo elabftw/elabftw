@@ -9,12 +9,13 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users;
-
 use function filter_var;
-
+use function intval;
 use JsonException;
 use function mb_strlen;
 
@@ -34,8 +35,10 @@ class Check
      */
     public static function passwordLength(string $password): string
     {
-        if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), self::MIN_PASSWORD_LENGTH));
+        $Config = Config::getConfig();
+        $min = (int) $Config->configArr['min_password_length'];
+        if (mb_strlen($password) < $min) {
+            throw new ImproperActionException(sprintf(_('Password must contain at least %d characters.'), $min));
         }
         return $password;
     }
@@ -60,11 +63,12 @@ class Check
      */
     public static function color(string $color): string
     {
-        $color = filter_var(substr($color, 1, 7), FILTER_SANITIZE_STRING);
-        if ($color === false || mb_strlen($color) !== 6) {
-            throw new ImproperActionException('Bad color');
+        $length = strlen($color) - 1;
+        $color = substr($color, 1, $length);
+        if (ctype_xdigit($color) && $length === 6) {
+            return $color;
         }
-        return $color;
+        throw new ImproperActionException('The color attribute is invalid.');
     }
 
     /**
@@ -94,7 +98,7 @@ class Check
             throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
         // Note: if we want to server-side check for useronly disabled, it would be here, by removing 10
-        $allowedBase = array(10, 20, 30, 40, 50);
+        $allowedBase = array_map(fn ($case) => $case->value, BasePermissions::cases());
         if (!in_array($decoded['base'], $allowedBase, true)) {
             throw new ImproperActionException('The base visibility parameter is wrong.');
         }

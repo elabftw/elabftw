@@ -24,13 +24,15 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 
 try {
+    // Note: this code should be in logincontroller!
+
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
         $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
 
         $IdpsHelper = new IdpsHelper($App->Config, new Idps());
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
-        $resp = new SamlResponse(new SamlSettings($tmpSettings), (string) $App->Request->request->get('SAMLResponse'));
+        $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
 
         $settings = $IdpsHelper->getSettingsByEntityId($entId);
@@ -65,12 +67,16 @@ try {
             $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
             $location = '/login.php';
 
-        // if the user is in several teams, we need to redirect to the team selection
+            // if the user is in several teams, we need to redirect to the team selection
         } elseif ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->selectableTeams);
             $App->Session->set('auth_userid', $AuthResponse->userid);
             $location = '/login.php';
+
+        } elseif ($AuthResponse->isValidated === false) {
+            // send a helpful message if account requires validation, needs to be after team selection
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         } else {
             $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login($rememberMe);

@@ -1,62 +1,49 @@
 {# JSON EDITOR #}
 {% include('field-builder-modal.html') %}
 
-<section id='json-editor'>
+<section id='json-editor' aria-label='json editor'>
   {# id for icon is used when focusing after loading from file #}
-  <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
+  <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <hr>
     {# JSON EDITOR TOOLBAR #}
     <div class='d-flex align-items-center'>
       {# ADD FIELD #}
-      <div class='mr-2'>
-        <div title='{{ 'Add field'|trans }}' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='hl-hover-gray p-2 rounded main-action-button'>
-          <i class='fas fa-plus fa-fw'></i>
-        </div>
-      </div>
+      <button title='{{ 'Add field'|trans }}' aria-label='{{ 'Add field'|trans }}' type='button' data-action='toggle-modal' data-target='fieldBuilderModal' id='jsonEditorAddFieldButton' class='btn hl-hover-gray p-2 main-action-button lh-normal border-0'>
+        <i class='fas fa-plus fa-fw'></i>
+      </button>
 
-      <div class='vertical-separator mx-3'></div>
+      <div class='vertical-separator'></div>
 
       {# IMPORT FROM FILE #}
-      <div class='mr-2'>
-        <div title='{{ 'Import from file'|trans }}' data-action='json-import-file' class='hl-hover-gray p-2 rounded'>
-          <i class='fas fa-upload fa-fw'></i>
-        </div>
-      </div>
+      <button title='{{ 'Import from file'|trans }}' aria-label='{{ 'Import from file'|trans }}' type='button' data-action='json-import-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+        <i class='fas fa-upload fa-fw'></i>
+      </button>
 
       {# SAVE TO FILE #}
-      <div class='mr-2'>
-        <div title='{{ 'Save as…'|trans }}' data-action='json-saveas-file' class='hl-hover-gray p-2 rounded'>
-          <i class='fas fa-download fa-fw'></i>
-        </div>
-      </div>
+      <button title='{{ 'Save as…'|trans }}' aria-label='{{ 'Save as…'|trans }}' type='button' data-action='json-saveas-file' class='btn hl-hover-gray p-2 lh-normal border-0'>
+        <i class='fas fa-download fa-fw'></i>
+      </button>
 
-      <div class='vertical-separator mx-3'></div>
+      <div class='vertical-separator'></div>
 
       {# SAVE AS ATTACHMENT #}
-      <div class='mr-2'>
-        <div title='{{ 'Save as attachment'|trans }}' data-action='json-save-file' class='hl-hover-gray p-2 rounded'>
-          <i class='fas fa-paperclip fa-fw'></i>
-        </div>
-      </div>
+      <button title='{{ 'Save as attachment'|trans }}' aria-label='{{ 'Save as attachment'|trans }}' type='button' data-action='json-save-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+        <i class='fas fa-paperclip fa-fw'></i>
+      </button>
 
       {# SAVE #}
-      <div class='mr-2'>
-        <div title='{{ 'Save'|trans }}' data-action='json-save' class='hl-hover-gray p-2 rounded'>
-          <i class='fas fa-save fa-fw'></i>
-        </div>
-      </div>
+      <button title='{{ 'Save'|trans }}' aria-label='{{ 'Save'|trans }}' type='button' data-action='json-save' class='btn hl-hover-gray p-2 lh-normal border-0 mr-2'>
+        <i class='fas fa-save fa-fw'></i>
+      </button>
+
       <span hidden id='jsonUnsavedChangesWarningDiv'>{{ 'You have unsaved changes'|trans }}</span>
 
       {# CLEAR #}
-      <div class='ml-auto d-flex align-items-center'>
-        <div class='mr-2'>
-          <div title='{{ 'Clear'|trans }}' data-action='json-clear' class='hl-hover-gray p-2 rounded'>
-            <i class='fas fa-trash-alt fa-fw'></i>
-          </div>
-        </div>
-      </div>
+      <button title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}' type='button' data-action='json-clear' class='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
+        <i class='fas fa-trash-alt fa-fw'></i>
+      </button>
     </div>
 
     <div hidden id='jsonImportFileDiv'>
@@ -68,15 +55,19 @@
 
     {# Display main text switch #}
     <div class='d-inline-flex p-1'>
-      <div class='mr-1'>{{ 'Display main text'|trans }}</div>
+      <label class='mr-1' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
       <label class='switch'>
         <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
         <span class='slider'></span>
       </label>
     </div>
 
-    <span data-action='toggle-next'><i class='fas fa-fw fa-info-circle'></i></span><span hidden><a target='_blank' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
+    <button class='btn lh-normal border-0 px-0' type='button' data-action='toggle-next' aria-expanded='false' title='{{ 'Information'|trans }}' aria-label='{{ 'Information'|trans }}'><i class='fas fa-fw fa-info-circle'></i></button><span hidden><a target='_blank' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></span>
     <h6 id='jsonEditorTitle'></h6>
+    {% if App.Config.configArr.debug -%}
+      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+      <!-- [html-validate-disable-block no-deprecated-attr, text-content, no-unused-disable: suppress errors from jsonEditor] -->
+    {%- endif %}
     <div id='jsonEditorContainer' data-preload-json='1'></div>
   </div>
 </section>

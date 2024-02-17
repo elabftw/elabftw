@@ -26,7 +26,7 @@
 
 Cypress.Commands.add('login', () => {
   const email = 'toto@yopmail.com';
-  const password = 'totototo';
+  const password = 'totototototo';
   cy.request('/login.php')
     .its('body')
     .then(body => {

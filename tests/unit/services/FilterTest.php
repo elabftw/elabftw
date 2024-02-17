@@ -22,16 +22,13 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(date('Y-m-d'), Filter::kdate("\n"));
     }
 
-    public function testSanitize(): void
-    {
-        $this->assertEquals('', Filter::sanitize('<img></img>'));
-    }
-
     public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));
-        $this->assertEquals('Yep ', Filter::title("Yep\n"));
+        $this->assertEquals('Yep Yop Yip Yup', Filter::title("Yep\r\nYop\nYip\rYup"));
         $this->assertEquals('Untitled', Filter::title(''));
+        $this->assertEquals('Untitled', Filter::title(' '));
+        $this->assertEquals('no whitespace around', Filter::title(' no whitespace around '));
     }
 
     public function testBody(): void

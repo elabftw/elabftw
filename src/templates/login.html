@@ -3,21 +3,21 @@
 {% block body %}
 
 {# Modal for reset password #}
-<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel' aria-hidden='true'>
+<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel'>
   <div class='modal-dialog modal-dialog-centered' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='resetModalLabel'>{{ 'Reset your password'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php' aria-label='{{ 'Reset password'|trans }}'>
           {{ App.Session.get('csrf')|csrf }}
-          <input class='form-control' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+          <input class='form-control' aria-label='email address' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
           <div class='text-center'>
-            <button class='btn btn-primary mt-2' type="submit" name="Submit">{{ 'Send reset link'|trans }}</button>
+            <button class='btn btn-primary mt-2' type='submit' name='Submit'>{{ 'Send reset link'|trans }}</button>
           </div>
         </form>
       </div>
@@ -65,7 +65,7 @@
       {{ 'Your account has been created and will need to be validated by an admin.'|trans|msg('ok') }}
     {% else %}
       {{ 'Your account has been created and is now active. Try logging in again.'|trans|msg('ok') }}
-      <a href='login.php?rm_teaminit=1'><button class='btn btn-primary'>{{ 'Continue'|trans }}</button></a>
+      <a href='login.php?rm_teaminit=1' class='btn btn-primary'>{{ 'Continue'|trans }}</a>
     {% endif %}
 
   {% elseif App.Session.has('team_selection_required') %}
@@ -86,9 +86,9 @@
       <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
     </form>
   {% elseif App.Request.server.get(App.Config.configArr.extauth_remote_user) %}
-    <!-- user is already authed with external auth, so just present a continue button
-      we don't autologin anymore -->
-      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
+    {# user is already authed with external auth, so just present a continue button
+      we don't autologin anymore #}
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off' aria-label='autologin form'>
         {{ App.Session.get('csrf')|csrf }}
         <input type='hidden' name='auth_type' value='external'>
         <h2 class='mt-4'>{{ 'You are already authenticated'|trans }}</h2>
@@ -99,32 +99,33 @@
 
     {% if showLocal or App.Config.configArr.ldap_toggle %}
       {# Login form , the id is for an acceptance test #}
-      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off'>
+      <form method='post' id='login' action='app/controllers/LoginController.php' autocomplete='off' aria-label='local or ldap login'>
         {{ App.Session.get('csrf')|csrf }}
-        <h1 class='mt-4'>{{ 'Login to your account'|trans }}</h1>
-        <br>
+        <h1 class='my-4 '>{{ 'Login to your account'|trans }}</h1>
         <div class='col-md-4 mx-auto text-left form-group'>
           <label for='email'>{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'Email'|trans : 'Login'|trans }}</label>
           <input class='form-control mb-4' id='email' name='email' type='{{ App.Config.configArr.ldap_search_attr == 'mail' ? 'email' : 'text' }}' value='{{ App.Session.has('email') ? App.Session.get('email') }}' autocomplete='email' required />
           <label for='password'>{{ 'Password'|trans }}</label>
-          {# add tabindex=-1 to the forget password so we can switch from login to password with tab #}
-          {% if showLocal %}
-            <a class='float-right underlined resetPassword' tabindex='-1' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</a>
-          {% endif %}
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' autocomplete='current-password' required />
             <div class='input-group-append'>
-              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+              <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
             </div>
           </div>
 
-          {# Remember me checkbox #}
-          {% if App.Config.configArr.remember_me_allowed %}
-            <div class='form-check mt-2'>
-              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
-              <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-            </div>
-          {% endif %}
+          <div class='d-flex align-itemc-center mt-2'>
+            {# Remember me checkbox #}
+            {% if App.Config.configArr.remember_me_allowed %}
+              <div class='form-check'>
+                <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-1' />
+                <label for='rememberme-1' class='form-check-label'>{{ 'Remember me'|trans }}</label>
+              </div>
+            {% endif %}
+
+            {% if showLocal %}
+              <button type='button' class='btn underlined lh-normal border-0 p-0 m-0 ml-auto link-like' style='font-weight:500;' data-action='toggle-modal' data-target='resetModal'>{{ 'Forgot password?'|trans }}</button>
+            {% endif %}
+          </div>
         </div>
 
         {% if App.Config.configArr.ldap_toggle %}
@@ -147,7 +148,7 @@
         <button type='submit' class='btn btn-primary' name='Submit'>{{ 'Login'|trans }}</button>
       </form>
       {% if App.Config.configArr.local_register %}
-      <p>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
+      <p class='mt-4'>{{ "Don't have an account? %sRegister%s now!"|trans|format("<a href='register.php'>", "</a>")|raw }}</p>
       {% endif %}
 
     {% endif %}

@@ -10,18 +10,19 @@
 namespace Elabftw\Models;
 
 use function array_column;
-use function array_keys;
 use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\SearchType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -32,13 +33,16 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Check;
 use Elabftw\Traits\EntityTrait;
 use function explode;
 use function implode;
 use function is_bool;
+use function json_decode;
 use function json_encode;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
+use function ksort;
 use PDO;
 use PDOStatement;
 use function sprintf;
@@ -132,11 +136,12 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Count the number of timestamped experiments during past month (sliding window)
+     * Count the number of timestamp archives created during past month (sliding window)
+     * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart
      */
     public function getTimestampLastMonth(): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE timestamped = 1 AND timestamped_at > (NOW() - INTERVAL 1 MONTH)';
+        $sql = "SELECT COUNT(id) FROM uploads WHERE comment LIKE 'Timestamp archive%'= 1 AND created_at > (NOW() - INTERVAL 1 MONTH)";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
@@ -205,6 +210,7 @@ abstract class AbstractEntity implements RestInterface
      * Only logged in users use this function
      * @param DisplayParams $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
+     * @psalm-suppress UnusedForeachValue
      *
      *                   \||/
      *                   |  @___oo
@@ -219,7 +225,6 @@ abstract class AbstractEntity implements RestInterface
      *     \______(_______;;; __;;;
      *
      *          Here be dragons!
-     *  @psalm-suppress UnusedForeachValue
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
@@ -229,7 +234,11 @@ abstract class AbstractEntity implements RestInterface
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere($extended, $extended, $displayParams->hasMetadataSearch);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
+            $extended,
+            $extended,
+            $displayParams->searchType === SearchType::Related ? $displayParams->relatedOrigin : null,
+        );
 
         // first WHERE is the state, possibly including archived
         $stateSql = 'entity.state = :normal';
@@ -251,15 +260,12 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            // build the having clause for metadata
-            $displayParams->getMetadataHavingSql(),
             'ORDER BY',
             $displayParams->orderby::toSql($displayParams->orderby),
             $displayParams->sort->value,
             ', entity.id',
             $displayParams->sort->value,
-            // add one so we can display Next page if there are more things to display
-            sprintf('LIMIT %d', $displayParams->limit + 1),
+            sprintf('LIMIT %d', $displayParams->limit),
             sprintf('OFFSET %d', $displayParams->offset),
         );
 
@@ -270,12 +276,6 @@ abstract class AbstractEntity implements RestInterface
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
         if ($displayParams->includeArchived) {
             $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
-        if ($displayParams->hasMetadataSearch) {
-            foreach (array_keys($displayParams->metadataKey) as $i) {
-                $req->bindParam(sprintf(':metadata_value_path_%d', $i), $displayParams->metadataValuePath[$i]);
-                $req->bindParam(sprintf(':metadata_value_%d', $i), $displayParams->metadataValue[$i]);
-            }
         }
 
         $this->bindExtendedValues($req);
@@ -296,7 +296,7 @@ abstract class AbstractEntity implements RestInterface
             FROM tags2entity
             LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE tags2entity.item_type = :type AND ' . $sqlid;
+            WHERE tags2entity.item_type = :type AND ' . $sqlid . ' ORDER by tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':type', $this->type);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -350,6 +350,15 @@ abstract class AbstractEntity implements RestInterface
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
+    }
+
+    public function readOneFull(): array
+    {
+        $base = $this->readOne();
+        $base['revisions'] = (new Revisions($this))->readAll();
+        $base['changelog'] = (new Changelog($this))->readAll();
+        ksort($base);
+        return $base;
     }
 
     /**
@@ -446,7 +455,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTimestamperFullname(): string
     {
-        if ($this instanceof Items || $this->entityData['timestamped'] === 0) {
+        if ($this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);
@@ -461,21 +470,6 @@ abstract class AbstractEntity implements RestInterface
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['lockedby']);
-    }
-
-    /**
-     * Check if the current entity is pin of current user
-     */
-    public function isPinned(): bool
-    {
-        $sql = 'SELECT DISTINCT id FROM pin2users WHERE entity_id = :entity_id AND type = :type AND users_id = :users_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Users->userData['userid']);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->type);
-
-        $this->Db->execute($req);
-        return $req->rowCount() > 0;
     }
 
     public function getIdFromCategory(int $category): array
@@ -528,7 +522,7 @@ abstract class AbstractEntity implements RestInterface
             throw new IllegalActionException('No id was set!');
         }
         $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true, true);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 
@@ -543,6 +537,8 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
@@ -558,8 +554,32 @@ abstract class AbstractEntity implements RestInterface
         if ($this->entityData['content_type'] === self::CONTENT_MD) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
+        }
         ksort($this->entityData);
         return $this->entityData;
+    }
+
+    public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
+    {
+        $this->canOrExplode('write');
+        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach($params->ordering as $ordering => $name) {
+            // build jsonPath to field
+            $field = sprintf(
+                '$.%s.%s.%s',
+                MetadataEnum::ExtraFields->value,
+                json_encode($name, JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Position->value,
+            );
+            $req->bindParam(':field', $field);
+            $req->bindValue(':value', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+        return $this->readOne();
     }
 
     /**
@@ -632,20 +652,18 @@ abstract class AbstractEntity implements RestInterface
     /**
      * Update only one field in the metadata json
      */
-    private function updateJsonField(string $key, string|array $value): bool
+    private function updateJsonField(string $key, string|array|int $value): bool
     {
         $Changelog = new Changelog($this);
-        // yes this is ugly but linters...
-        $valueAsString = '';
-        if (is_string($value)) {
-            $valueAsString = $value;
+        $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
+
+        // Either ExperimentsLinks or ItmesLinks could be used here
+        if ($this->ExperimentsLinks->isSelfLinkViaMetadata($key, $valueAsString)) {
+            throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
         }
-        if (is_array($value)) {
-            $valueAsString = implode(', ', $value);
-        }
+
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
-
 
         // build jsonPath to field
         $field = sprintf(

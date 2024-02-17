@@ -74,7 +74,7 @@ class Permissions
         }
 
         // if the base setting is teams, check we are in the same team than the $item
-        if ($can['base'] === BasePermissions::MyTeams->value) {
+        if ($can['base'] === BasePermissions::Team->value) {
             // items will have a team, make sure it's the same as the one we are logged in
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return true;
@@ -148,7 +148,8 @@ class Permissions
         if ($this->Users->isAdmin && ($this->item['team'] === $this->Users->userData['team'])) {
             return array('read' => true, 'write' => true);
         }
-        return array('read' => false, 'write' => false);
+        // everyone has read access
+        return array('read' => true, 'write' => false);
     }
 
     /**

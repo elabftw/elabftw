@@ -32,9 +32,13 @@ class Scheduler implements RestInterface
 {
     use EntityTrait;
 
-    private string $start = '2012-31-12T00:00:00+00:00';
+    public const EVENT_START = '2012-31-12T00:00:00+00:00';
 
-    private string $end = '2037-31-12T00:00:00+00:00';
+    public const EVENT_END = '2037-31-12T00:00:00+00:00';
+
+    private string $start = self::EVENT_START;
+
+    private string $end = self::EVENT_END;
 
     public function __construct(
         public Items $Items,
@@ -76,7 +80,7 @@ class Scheduler implements RestInterface
         if (!$this->Items->canBook()) {
             throw new ImproperActionException(_('You do not have the permission to book this entry.'));
         }
-        $title = Filter::title($reqBody['title'] ?? _('Untitled'));
+        $title = Filter::title($reqBody['title'] ?? '');
 
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);

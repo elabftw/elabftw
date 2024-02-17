@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "单击编辑",
     "cancel": "取消",
     "comment-add": "添加评论",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "拖动文件到此处进行上传",
     "dropzone-filesize-limit": "文件大小限制:",
     "editing-metadata": "当前正在编辑附加到此项的元数据。",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
     "new-apikey-warning": "密钥将只显示这一次！请确保将其复制到安全的地方，因为您将无法再次看到它：",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "未设置",
     "nothing-selected": "未选中任何选项！",
     "now": "现在",
@@ -24,6 +26,7 @@ const t = {
     "request-filename": "输入文件名",
     "save": "保存",
     "saved": "已保存",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
     "tag-delete-warning": "删除这个标签？",
@@ -31,7 +34,6 @@ const t = {
     "today": "今天",
     "undefined-group": "默认分组",
     "upload-file-comment": "档案评论",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

@@ -1,10 +1,10 @@
 {# Modal for ownership transfer #}
-<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel' aria-hidden='true'>
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -15,7 +15,7 @@
           {% for user in Entity.Users.readAllFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}
-            >{{ user.fullname|raw }}</option>
+            >{{ user.fullname }}</option>
           {% endfor %}
         </select>
       </div>

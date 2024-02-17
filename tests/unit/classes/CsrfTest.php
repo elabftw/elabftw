@@ -23,32 +23,32 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateGet(): void
     {
-        $request = Request::create('/', 'GET');
-        $Csrf = new Csrf($request);
+        $Request = Request::create('/', 'GET');
+        $Csrf = new Csrf($Request);
         $Csrf->validate();
     }
 
     public function testValidateAjaxFail(): void
     {
-        $request = Request::create('/', 'POST');
-        $request->headers->set('X-Requested-With', 'XMLHttpRequest');
-        $Csrf = new Csrf($request);
+        $Request = Request::create('/', 'POST');
+        $Request->headers->set('X-Requested-With', 'XMLHttpRequest');
+        $Csrf = new Csrf($Request);
         $this->expectException(InvalidCsrfTokenException::class);
         $Csrf->validate();
     }
 
     public function testValidateFormFail(): void
     {
-        $request = Request::create('/', 'POST');
-        $Csrf = new Csrf($request);
+        $Request = Request::create('/', 'POST');
+        $Csrf = new Csrf($Request);
         $this->expectException(InvalidCsrfTokenException::class);
         $Csrf->validate();
     }
 
     public function testValidateForm(): void
     {
-        $request = Request::create('/', 'POST', array('csrf' => 'fake-token'));
-        $Csrf = new Csrf($request);
+        $Request = Request::create('/', 'POST', array('csrf' => 'fake-token'));
+        $Csrf = new Csrf($Request);
         $Csrf->setToken('fake-token');
         $Csrf->validate();
     }

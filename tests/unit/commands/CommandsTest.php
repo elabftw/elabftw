@@ -246,4 +246,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('Snap', $commandTester->getDisplay());
     }
+
+    public function testUploadsCheck(): void
+    {
+        $commandTester = new CommandTester(new CheckUploads());
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
 }

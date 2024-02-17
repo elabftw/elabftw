@@ -2,10 +2,10 @@
 
 {% block body %}
 <ul class='tabbed-menu'>
-  <li data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</li>
-  <li data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -14,17 +14,18 @@
 </div>
 
 {# Modal for event click #}
-<div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel' aria-hidden='true'>
+<div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='eventModalLabel'>{{ 'Edit event'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <h3 id='eventTitle' class='editable hl-hover'></h3>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        {# "placeholder" will be replaced with real title by js #}
+        <h3 id='eventTitle' class='editable hl-hover'>placeholder</h3>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
@@ -35,14 +36,14 @@
 
         {# BIND EXPERIMENT #}
         <div class='mt-2'>
-          <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind an experiment'|trans }}</h5>
+          <i class='fas fa-link mr-1'></i><h5 class='d-inline' id='bindExpInputLabel'>{{ 'Bind an experiment'|trans }}</h5>
           <div id='eventBoundExp'></div>
-          <button data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
+          <button data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
             <div class='input-group mb-3'>
               <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Search'|trans }}</span>
               </div>
-              <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' />
+              <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
               <div class='input-group-append'>
                 <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
               </div>
@@ -51,14 +52,14 @@
         </div>
         {# BIND ITEM #}
         <div class='mt-2'>
-          <i class='fas fa-link mr-1'></i><h5 class='d-inline'>{{ 'Bind a resource'|trans }}</h5>
+          <i class='fas fa-link mr-1'></i><h5 class='d-inline' id='bindItemInputLabel'>{{ 'Bind a resource'|trans }}</h5>
           <div id='eventBoundDb'></div>
-          <button data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' aria-hidden='true' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
+          <button data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
             <div class='input-group mb-3'>
               <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Search'|trans }}</span>
               </div>
-              <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' />
+              <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
               <div class='input-group-append'>
                 <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
               </div>
@@ -70,18 +71,18 @@
         {% if bookableItemData.book_is_cancellable == 1 or App.Users.isAdmin %}
           <div>
             <h5>{{ 'Cancel booking slot'|trans }}</h5>
-            <h6>{{ 'Add a custom message'|trans }}</h6>
+            <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
               <textarea id='cancelEventTextarea' class='form-control'></textarea>
               <label>{{ 'Send to'|trans }}</label>
               <div class='form-check'>
                 <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
               </div>
               <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name) }}</label>
               </div>
               {% for teamgroup in teamGroupsArr %}
                 <div class='form-check'>
-                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
                 </div>
               {% endfor %}
               <div class='mt-2'>
@@ -100,50 +101,68 @@
 
 {# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
-  {% if itemsArr|length == 0 %}
-    {{ 'No bookable items.'|trans|msg('warning', false) }}
-  {% else %}
-  <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
-  <div class='row mb-3'>
-    <div class='col-md-3'>
-      {# CATEGORY #}
-      <form>
-        <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
-          <option value=''>{{ 'Filter by type'|trans }}</option>
-          {% for category in bookableItemsTypes %}
-            <option style='color:#{{ category.color }}' value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-          {{ category.title|raw }}</option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
+  <div class='mb-2'>
+    {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+  </div>
 
-    <div class='col-md-3'>
-      {# ITEM LIST #}
-      <form>
-        <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
-          <option value=''>{{ 'Select an equipment'|trans }}</option>
-          {% for item in itemsArr %}
-            {# data-color is used to set the background during initial drag #}
-            <option data-color='{{ item.category_color }}' style='color:#{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-            {{ item.category_title|raw }} - {{ item.title|raw }}</option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
-
-    {% if bookableItemData %}
-      <div class='col-md-3 ml-auto'>
-        <div class='input-group justify-content-end flex-nowrap'>
-          <div class='input-group-prepend'>
-            <button class='btn btn-secondary' data-action='remove-param-reload' data-target='item'>X</button>
-          </div>
-          <a href='database.php?mode=view&id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title|raw }}</a>
-        </div>
+  <div id='mainSchedulerContent'>
+    {% if itemsArr|length == 0 %}
+      {{ 'No bookable items.'|trans|msg('warning', false) }}
+    {% else %}
+    <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
+    <div class='row mb-3'>
+      <div class='col-md-3'>
+        {# CATEGORY #}
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+        {%- endif %}
+        <form aria-label='{{ 'Filter by category'|trans }}'>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+          {%- endif %}
+          <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
+            <option value=''>{{ 'Filter by type'|trans }}</option>
+            {% for category in bookableItemsTypes %}
+              <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+            {{ category.title }}</option>
+            {% endfor %}
+          </select>
+        </form>
       </div>
+
+      <div class='col-md-3'>
+        {# ITEM LIST #}
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
+        {%- endif %}
+        <form aria-label='{{ 'Select a resource'|trans }}'>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+          {%- endif %}
+          <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
+            <option value=''>{{ 'Select an equipment'|trans }}</option>
+            {% for item in itemsArr %}
+              {# data-color is used to set the background during initial drag #}
+              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
+              {{ item.category_title }} - {{ item.title }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+
+      {% if bookableItemData %}
+        <div class='col-md-3 ml-auto'>
+          <div class='input-group justify-content-end flex-nowrap'>
+            <div class='input-group-prepend'>
+              <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
+            </div>
+            <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
-  {% endif %}
   <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 
@@ -151,16 +170,16 @@
 <div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
   {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} − {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) − {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ teamsStats.totdb }}
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
   <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
     <thead>
       <tr>
-          <th>{{ 'Name'|trans }}</th>
-          <th>{{ 'Email'|trans }}</th>
-          <th>ORCID</th>
+          <th scope='col'>{{ 'Name'|trans }}</th>
+          <th scope='col'>{{ 'Email'|trans }}</th>
+          <th scope='col'>ORCID</th>
       </tr>
     </thead>
     <tbody>
@@ -170,14 +189,14 @@
         <td>
           <a href='experiments.php?owner={{ user.userid }}'>
             <span>
-              {{ user.fullname|raw }}
+              {{ user.fullname }}
               {% if user.usergroup in range(1, 3) %}
                 ({{ 'Admin'|trans }})
               {% endif %}
             </span>
           </a>
         </td>
-        <td><a href='mailto:{{ user.email }}'>{{ user.email }}</a></td>
+        <td><a href='mailto:{{ user.email|e('html_attr') }}'>{{ user.email }}</a></td>
         <td>{{ user.orcid }}</td>
       </tr>
       {% endfor %}
@@ -188,28 +207,22 @@
 {# TAB 3 TEMPLATE #}
 <div data-tabcontent='3' hidden>
   <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
-  {% if App.Request.query.has('templateid') %}
-    {% include 'view-edit-template.html' %}
-  {% else %}
-    {% include 'show-templates-select.html' %}
-  {% endif %}
+  <p class='mt-3'>All the experiments templates are now visible at one place: the <a href='/ucp.php?tab=3'>User Control Panel</a>.</p>
 </div>
-
-        {# <p>{{ 'No templates from other members of the team to display!'|trans }}</p> #}
 
 {# TAB 4 EMAIL #}
 <div data-tabcontent='4' hidden>
   <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-envelope'></i> {{ 'Send an email to users'|trans }}</h3>
-  <form class='pl-3' method='post' action='app/controllers/TeamController.php'>
+  <form class='pl-3' method='post' action='app/controllers/TeamController.php' aria-label='{{ 'Mass email form'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
     <input type='hidden' name='emailUsers' />
     <label>{{ 'Send to'|trans }}</label>
     <div class='form-check'>
-      <input class='form-check-input' type='radio' name='target' value='team' id='targetTeam' checked> <label class='form-check-label' for='targetTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name|raw) }}</label>
+      <input class='form-check-input' type='radio' name='target' value='team' id='targetTeam' checked> <label class='form-check-label' for='targetTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name) }}</label>
     </div>
     {% for teamgroup in teamGroupsArr %}
       <div class='form-check'>
-        <input class='form-check-input' type='radio' name='target' value='teamgroup_{{ teamgroup.id }}' id='targetTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name|raw) }}</label>
+        <input class='form-check-input' type='radio' name='target' value='teamgroup_{{ teamgroup.id }}' id='targetTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
       </div>
     {% endfor %}
     <div class='form-group'>

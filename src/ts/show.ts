@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const entity = getEntity();
-  const limit = parseInt(about.limit, 10);
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
@@ -40,30 +39,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // background color for selected entities
   const bgColor = '#c4f9ff';
 
-  document.getElementById('favtagsPanel').addEventListener('keyup', event => {
-    const el = (event.target as HTMLInputElement);
-    const query = el.value;
-    if (el.matches('[data-action="favtags-search"]')) {
-      // find all links that are endpoints
-      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
-        // begin by showing all so they don't stay hidden
-        el.removeAttribute('hidden');
-        // now simply hide the ones that don't match the query
-        if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-          el.setAttribute('hidden', '');
-        }
-      });
-    }
-  });
+  if (document.getElementById('favtagsPanel')) {
+    document.getElementById('favtagsPanel').addEventListener('keyup', event => {
+      const el = (event.target as HTMLInputElement);
+      const query = el.value;
+      if (el.matches('[data-action="favtags-search"]')) {
+        // find all links that are endpoints
+        document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+          // begin by showing all so they don't stay hidden
+          el.removeAttribute('hidden');
+          // now simply hide the ones that don't match the query
+          if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
+            el.setAttribute('hidden', '');
+          }
+        });
+      }
+    });
+  }
 
-  // get offset as number
-  function getOffset(): number {
+  // get query param value as number
+  function getParamNum(param: string): number {
     const params = new URLSearchParams(document.location.search);
-    let currentOffset = params.get('offset');
-    if (!currentOffset) {
-      currentOffset = '0';
+    let val = params.get(param);
+    if (!val) {
+      val = '0';
     }
-    return parseInt(currentOffset, 10);
+    return parseInt(val, 10);
   }
 
   /////////////////////////////////////////
@@ -131,23 +132,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // the "load more" button triggers a reloading of div#showModeContent
+  // so we keep track of the expanded and selected entities
+  function getExpandedAndSelectedEntities(): void {
+    const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
+    const expendedEntities: string[] = [];
+    const selectedEntities: string[] = [];
+    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+      if (item.checked) {
+        selectedEntities.push(item.dataset.id);
+      }
+      if (!document.getElementById(item.dataset.randomid).hidden) {
+        expendedEntities.push(item.dataset.id);
+      }
+    });
+    document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
+  }
+
+  function setExpandedAndSelectedEntities(): void {
+    const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+    if (state.expanded) {
+      const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
+      linkEl.dataset.status = 'opened';
+      linkEl.textContent = linkEl.dataset.collapse;
+      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
+        toggleButton.click();
+      });
+    }
+    if (state.selectedEntities.length > 0) {
+      document.getElementById('withSelected').classList.remove('d-none');
+    }
+    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+      if (state.selectedEntities.includes(item.dataset.id)) {
+        item.click();
+      }
+      if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
+        (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
+      }
+    });
+  }
+
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const params = new URLSearchParams(document.location.search);
-    // previous page
-    if (el.matches('[data-action="previous-page"]')) {
-      params.set('offset', String(getOffset() - limit));
-      history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow();
+    // LOAD MORE
+    if (el.matches('[data-action="load-more"]')) {
+      // we keep track of the expanded and selected entities
+      getExpandedAndSelectedEntities();
+      // NOTE: in an ideal world, we can request the delta elements in json via api and inject them in page
+      // this would avoid having to re-query all items every time, especially after a few clicks where limit is a few hundreds, might bring strain on mysql servers
+      // so here the strategy is simply to increase the "limit" to show more stuff
 
-    // next page
-    } else if (el.matches('[data-action="next-page"]')) {
-      params.set('offset', String(getOffset() + limit));
+      // we want to know if the newly applied limit actually brought new items
+      // because if not, we disable the button
+      // so simply count them
+      const previousNumber = document.querySelectorAll('.item').length;
+      // this will be 0 if the button has not been clicked yet
+      const queryLimit = getParamNum('limit');
+      const usualLimit = parseInt(about.limit, 10);
+      let newLimit = queryLimit + usualLimit;
+      // handle edge case for first click
+      if (queryLimit < usualLimit) {
+        newLimit = usualLimit * 2;
+      }
+      params.set('limit', String(newLimit));
       history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow();
+      reloadEntitiesShow().then(() => {
+        // expand and select what was expanded and selected
+        setExpandedAndSelectedEntities();
+        // remove Load more button if no new entries appeared
+        const newNumber = document.querySelectorAll('.item').length;
+        if (previousNumber === newNumber) {
+          document.getElementById('loadMoreBtn').remove();
+        }
+      });
 
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
@@ -162,15 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
           target = 'tb';
         }
         ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
-          reloadElement('showModeContent');
+          reloadEntitiesShow();
         });
       });
-
-    // TOGGLE text input to add a new favorite tag
-    } else if (el.matches('[data-action="toggle-addfav"]')) {
-      const input = document.getElementById('createFavTagInput');
-      input.toggleAttribute('hidden');
-      input.focus();
 
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
@@ -186,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // clear the filter input for favtags
     } else if (el.matches('[data-action="clear-favtags-search"]')) {
-      const searchInput = (document.querySelector('[data-action="favtags-search"]') as HTMLInputElement);
+      const searchInput = el.parentElement.parentElement.querySelector('input');
       searchInput.value = '';
       searchInput.focus();
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
@@ -199,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsPanel'));
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsTagsDiv'));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -217,7 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
-        document.getElementById(id).classList.remove('d-none');
+        const el = document.getElementById(id);
+        const scroll = el.classList.contains('d-none');
+        el.classList.remove('d-none');
+        if (id === 'withSelected' && scroll && el.getBoundingClientRect().bottom > 0) {
+          window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
+        }
       });
       if ((el as HTMLInputElement).checked) {
         (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
@@ -235,7 +295,16 @@ document.addEventListener('DOMContentLoaded', () => {
         el.dataset.status = 'closed';
         el.innerText = el.dataset.expand;
       }
-      document.querySelectorAll('[data-action="toggle-body"]').forEach(toggler => (toggler as HTMLElement).click());
+      const status = el.dataset.status;
+      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLElement) => {
+        const isHidden = document.getElementById(toggleButton.dataset.randid).hidden;
+        if ((status === 'opened' && !isHidden)
+          || (status === 'closed' && isHidden)
+        ) {
+          return;
+        }
+        toggleButton.click();
+      });
 
     // SELECT ALL CHECKBOXES
     } else if (el.matches('[data-action="select-all-entities"]')) {

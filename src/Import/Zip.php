@@ -65,8 +65,8 @@ class Zip extends AbstractZip
         $Status = new ItemsStatus($Teams);
 
         if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT into experiments(title, date, userid, canread, canwrite, category, status, elabid, metadata)
-                VALUES(:title, :date, :userid, :canread, :canwrite, :category, :status, :elabid, :metadata)';
+            $sql = 'INSERT into experiments(team, title, date, userid, canread, canwrite, category, status, elabid, metadata)
+                VALUES(:team, :title, :date, :userid, :canread, :canwrite, :category, :status, :elabid, :metadata)';
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
         }
@@ -74,17 +74,21 @@ class Zip extends AbstractZip
         // make sure there is an elabid (might not exist for items before v4.0)
         $elabid = $item['elabid'] ?? Tools::generateElabid();
 
+        $item['title'] = $this->transformIfNecessary($item['title'] ?? _('Untitled'));
+
         $req = $this->Db->prepare($sql);
-        if ($this->Entity instanceof Items) {
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        }
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $item['title']);
         $req->bindParam(':date', $item['date']);
         $req->bindValue(':status', $Status->getDefault());
         $req->bindValue(':canread', $this->canread);
         $req->bindValue(':canwrite', $this->canwrite);
         $req->bindParam(':elabid', $elabid);
-        $req->bindParam(':metadata', $item['metadata']);
+        $metadata = null;
+        if (!empty($item['metadata'])) {
+            $metadata = $this->transformIfNecessary($item['metadata'], isMetadata: true);
+        }
+        $req->bindValue(':metadata', $metadata);
         if ($this->Entity instanceof Experiments) {
             $req->bindParam(':userid', $this->targetNumber, PDO::PARAM_INT);
             $req->bindValue(':category', $Category->getDefault());
@@ -102,8 +106,10 @@ class Zip extends AbstractZip
         $this->Entity->setId($newItemId);
 
         // add tags
-        if (mb_strlen($item['tags'] ?? '') > 1) {
-            $this->tagsDbInsert($item['tags']);
+        $item['tags'] ??= '';
+        if (mb_strlen($item['tags']) > 1) {
+            // no need to run the transformation on the individual tags
+            $this->tagsDbInsert($this->transformIfNecessary($item['tags']));
         }
         // add links
         if (!empty($item['links'])) {
@@ -113,13 +119,20 @@ class Zip extends AbstractZip
             $end = '</ul>';
             $linkText = '';
             foreach ($item['links'] as $link) {
-                $linkText .= sprintf('<li>[%s] %s</li>', $link['name'], $link['title']);
+                $linkText .= sprintf(
+                    '<li>[%s] %s</li>',
+                    $this->transformIfNecessary($link['name'] ?? ''),
+                    $this->transformIfNecessary($link['title'] ?? ''),
+                );
             }
             $this->Entity->patch(Action::Update, array('title' => $item['title'], 'date' => $item['date'], 'bodyappend' => $header . $linkText . $end));
         }
         // add steps
         if (!empty($item['steps'])) {
             foreach ($item['steps'] as $step) {
+                if (isset($step['body'])) {
+                    $step['body'] = $this->transformIfNecessary($step['body']);
+                }
                 $this->Entity->Steps->import($step);
             }
         }
@@ -143,7 +156,13 @@ class Zip extends AbstractZip
      */
     private function importAll(array $json): void
     {
-        foreach ($json as &$item) {
+        // do we need to update data: don't sanitize input, escape output
+        // if the data/meta keys exist, it's a new zip, otherwise it's an old one that needs transformation
+        if (!array_key_exists('data', $json)) {
+            $json['data'] = $json;
+            $this->switchToEscapeOutput = true;
+        }
+        foreach ($json['data'] as &$item) {
             $this->dbInsert($item);
 
             // upload the attached files
@@ -164,7 +183,11 @@ class Zip extends AbstractZip
                     if (!is_readable($filePath)) {
                         throw new ImproperActionException(sprintf('Tried to import a file but it was not present in the zip archive: %s.', basename($filePath)));
                     }
-                    $newUploadId = $this->Entity->Uploads->create(new CreateUpload(basename($filePath), $filePath, $file['comment']));
+                    $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
+                        basename($filePath),
+                        $filePath,
+                        $this->transformIfNecessary($file['comment'] ?? '', true) ?: null,
+                    ));
                     // read the newly created upload so we can get the long_name to replace the old in the body
                     $Uploads = new Uploads($this->Entity, $newUploadId);
                     $item['body'] = str_replace($file['long_name'], $Uploads->uploadData['long_name'], $item['body']);

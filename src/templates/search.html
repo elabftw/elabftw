@@ -3,204 +3,11 @@
   <h1 id='pageTitle'>{{ App.pageTitle }}</h1>
 {% endblock %}
 
-{# Modal for advanced search #}
-<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel' aria-hidden='true'>
-  <div class='modal-dialog modal-xl' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Syntax'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…' }}'>
-        <h3>Search terms</h3>
-        <p>The search is performed against title, body, date, and elabid.<br>
-            The entire team will be searched unless there is an author field.</p>
-        <dl>
-          <dt>Term</dt>
-          <dd>A sequence of characters without space (<code>&blank;</code>),
-              <code><span class='token operator'>|</span></code>,
-              <code><span class='token operator'>&amp;</span></code>,
-              <code><span class='token operator'>!</span></code>,
-              <code><span class='token punctuation'>(</span></code>,
-              <code><span class='token punctuation'>)</span></code>,
-              <code><span class='token string'>'</span></code> and
-              <code><span class='token string'>"</span></code>.<br>
-              <em><code><span class='token string'>termA</span></code></em> or
-              <em><code><span class='token string'>termB</span></code></em> or
-              <em><code><span class='token string'>456</span></code></em>
-          </dd>
-          <dt>Quoted term</dt>
-          <dd>A sequence of characters including space (<code>&blank;</code>)
-              enclosed in single (<code><span class='token string'>'</span></code>)
-              or double (<code><span class='token string'>"</span></code>) quotation marks.<br>
-              <em><code><span class='token string'>'Hello world'</span></code></em> or
-              <em><code><span class='token string'>"I love eLabFTW!"</span></code></em>
-          </dd>
-        </dl>
-        <p>Two wildcards are available. The percent sign
-          (<code><span class='token important'>%</span></code>)
-          matches zero or more characters while the underscore
-          (<code><span class='token important'>_</span></code>)
-          matches exactly one character. To search for literal
-          <code><span class='token important'>%</span></code> or
-          <code><span class='token important'>_</span></code>
-          the characters need to be escaped with a backslash
-          <code><span class='token important'>\%</span></code> or
-          <code><span class='token important'>\_</span></code>.</p>
-        <h3>Term concatenation and grouping</h3>
-        <p>Terms can be connected in different ways:</p>
-        <ul>
-          <li>
-            <code><span class='token operator'>OR</span></code> or
-            <code><span class='token operator'>|</span></code>:
-            <em><code><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span><span class='token operator'>|</span><span class='token string'>termB</span></code></em>
-          </li>
-          <li>
-            <code><span class='token operator'>AND</span></code>,
-            <code><span class='token operator'>&amp;</span></code> or
-            space (<code>&blank;</code>):
-            <em><code><span class='token string'>termA</span> <span class='token operator'>AND</span> <span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span><span class='token operator'>&amp;</span><span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span>&nbsp;<span class='token string'>termB</span></code></em>
-          </li>
-          <li>
-            <code><span class='token operator'>NOT</span></code>,
-            <code><span class='token operator'>!</span></code>:
-            <em><code><span class='token operator'>NOT</span> <span class='token string'>termA</span></code></em> or
-            <em><code><span class='token operator'>!</span><span class='token string'>termA</span></code></em>
-          </li>
-          <li>Parenthesis <code><span class='token punctuation'>()</span></code>: <em><code><span class='token punctuation'>(</span><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>AND</span> <span class='token operator'>!</span><span class='token string'>termC</span></code></em></li>
-        </ul>
-        <p>The operators are listed in increasing order of precedence. Note the whitespace around the operators.
-          <code><span class='token operator'>OR</span></code>,
-          <code><span class='token operator'>AND</span></code> and
-          <code><span class='token operator'>NOT</span></code>
-          require to be surrounded by whitespace while
-          <code><span class='token operator'>|</span></code>,
-          <code><span class='token operator'>&amp;</span></code> and
-          <code><span class='token operator'>!</span></code>
-          don't.<br>
-          <em><code><span class='token string'>termA</span> <span class='token string'>termB</span> <span class='token operator'>OR</span> <span class='token string'>termC</span></code></em>
-          is equivalent to
-          <em><code><span class='token punctuation'>(</span><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token simple-term string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span></code></em>.
-          To give priority to
-          <code><span class='token operator'>OR</span></code>
-          use parenthesis:
-          <em><code><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token punctuation'>(</span><span class='token simple-term string'>termB</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span><span class='token punctuation'>)</span></code></em>.
-        </p>
-        <h3>Field/value pair searches</h3>
-        <p>Field/value pairs are also applicable in the quick search fields.</p>
-        <p>Basic syntax <code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code></p>
-        <p>By default wildcards are added to Terms and Quoted terms. The strict switch (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>) disables the wildcards.</p>
-        <dl>
-          <dt><span class='token keyword'>attachment</span></dt>
-          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>:<br>
-              search entries with/out attachments<br>
-              Term or Quoted term:<br>
-              search in filenames and comments of attachments</dd>
-          <dt><span class='token keyword'>author</span></dt>
-          <dd>
-            Term or Quoted term<br>
-            Without any author the entire team will be searched.
-          </dd>
-          <dt><span class='token keyword'>body</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>category</span></dt>
-          <dd>Term or Quoted term; Only if Database is selected.</dd>
-          <dt><span class='token keyword'>created_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>date</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>elabid</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>group</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>id</span></dt>
-          <dd>Id (integer) of an experiment or item</dd>
-          <dt><span class='token keyword'>locked</span></dt>
-          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>
-          </dd>
-          <dt><span class='token keyword'>locked_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>rating</span></dt>
-          <dd><span class='token number'>1</span>,
-              <span class='token number'>2</span>,
-              <span class='token number'>3</span>,
-              <span class='token number'>4</span>,
-              <span class='token number'>5</span>,
-              <span class='token constant'>unrated</span> or
-              <span class='token number'>0</span>
-          </dd>
-          <dt><span class='token keyword'>status</span></dt>
-          <dd>Term or Quoted term; Only if Experiment is selected.</dd>
-          <dt><span class='token keyword'>timestamped</span></dt>
-          <dd><span class='token boolean'>yes</span> or
-              <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or
-              <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or
-              <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or
-              <span class='token boolean'>off</span>
-          </dd>
-          <dt><span class='token keyword'>timestamped_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>title</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>visibility</span></dt>
-          <dd>Term or Quoted term<br>
-              {# A group name (e.g., <span class='token string'>'Lab Heroes'</span>) or #}
-              <span class='token string'>public</span>,
-              <span class='token string'>organization</span>,
-              <span class='token string'>myteams</span>,
-              <span class='token string'>user</span>, or
-              <span class='token string'>useronly</span>.
-          </dd>
-        </dl>
-        <h3 id='dateFormats'>Date formats</h3>
-        <p>A date has to be provided in the following format: <code><span class='token number'>YYYYMMDD</span></code>,
-          i.e., four digit year, two digit month, and two digit day.
-          Year, month and day can&mdash;but don't have to&mdash;be separated by
-          hyphen (<code><span class='token operator'>-</span></code>),
-          slash (<code><span class='token operator'>/</span></code>),
-          period (<code><span class='token operator'>.</span></code>),
-          or comma (<code><span class='token operator'>,</span></code>).<br>
-          Either a <strong>single date</strong> or a <strong>date range</strong> can be used.</p>
-        <dl>
-          <dt>Single date: <span class='token operator'>operator</span><span class='token number'>date<span></dt>
-          <dd>operator: <code><span class='token operator'>&lt;</span></code>, <code><span class='token operator'>&lt;=</span></code>, <code><span class='token operator'>=</span></code>, <code><span class='token operator'>&gt;=</span></code>, <code><span class='token operator'>&gt;</span></code>, or <code><span class='token operator'>!=</span></code><br>
-            An operator is optional. default is <span class='token operator'>=</span><br>
-            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>17890714</span></span></code></em> or
-            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;</span><span class='token number'>1909</span><span class='token punctuation'>-</span><span class='token number'>12</span><span class='token punctuation'>-</span><span class='token number'>12</span></span></code></em> or
-            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;=</span><span class='token number'>1867</span><span class='token punctuation'>.</span><span class='token number'>11</span><span class='token punctuation'>.</span><span class='token number'>07</span></span></code></em>
-          </dd>
-          <dt>Date range: <span class='token number'>date</span><span class='token operator'>..</span><span class='token number'>date</span></dt>
-          <dd>Two dates separated by two periods (<code><span class='token operator'>..</span></code>)<br>
-            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>20200101</span><span class='token operator'>..</span><span class='token number'>20201231</span></span></code></em>
-          </dd>
-        </dl>
-        <p>Date fields ending with <span class='token keyword'>_at</span> only accept dates between <em><code><span class='token number'>1970</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>02</span></em></code> and <em><code><span class='token number'>2038</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>18</span></em></code>.</p>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% include 'search-syntax-doc-modal.html' %}
 
 {# SEARCH PAGE BEGIN #}
 <hr>
-<form method='get' action='search.php'>
+<form method='get' action='search.php' aria-label='Main search form'>
 {# MAIN TEXTAREA FOR EXTENDED QUERY #}
 <div class='row'>
   <div class='col-md-12 mb-2'>
@@ -214,7 +21,7 @@
         class='form-control'
         placeholder="{{ 'Enter search query, e.g.: %s'|trans|format(getExtendedSearchExample()) }}"
         spellcheck='false'
-        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim }}' />
+        value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
       <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
     </div>
     <p class='smallgray mt-2'>{{ 'Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both.'|trans }}<br>
@@ -223,9 +30,9 @@
   </div>
 </div>
 
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Help'|trans }}</h3>
 <div class='mt-2' hidden data-save-hidden='advancedSearchHelpDiv'>
-  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'> {{ 'value'|trans }}</span></code>):</p>
+  <p>{{ 'Allowed Fields'|trans }} (<code><span class='token keyword'>{{ 'field'|trans }}</span><span class='token punctuation'>:</span><span class='token string'>{{ 'value'|trans }}</span></code>):</p>
   <div class='row'>
     <div class='col-md-6'>
       <ul class='list-unstyled'>
@@ -233,14 +40,16 @@
         <li class='mb-2'><kbd>author:</kbd> {{ 'simple or quoted term'|trans }}</li>
         <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
         <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>custom_id:</kbd> {{ 'number'|trans }}</li>
         <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
         <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
-        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
+        <li class='mb-2'><kbd>extrafield:key:value</kbd> {{ 'simple or quoted term'|trans }}</li>
       </ul>
     </div>
 
     <div class='col-md-6'>
       <ul class='list-unstyled'>
+        <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
         <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
         <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
         <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
@@ -270,8 +79,8 @@
     <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -282,8 +91,8 @@
     <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -294,8 +103,8 @@
     <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -306,8 +115,8 @@
     <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
-        <option value='{{ category.title }}'>
-          {{ category.title|raw }}
+        <option value='{{ category.title|e('html_attr') }}'>
+          {{ category.title }}
         </option>
       {% endfor %}
     </select>
@@ -320,7 +129,7 @@
     <label class='d-inline' for='date'>{{ 'Date from'|trans }}</label>
     <div class='input-group'>
       <div class='input-group-prepend'>
-        <select id='dateOperator' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
+        <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
           <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
           <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
           <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
@@ -344,18 +153,21 @@
 {# NEW ROW #}
 <div class='row mb-2'>
   {# AUTHOR/OWNER HELPER #}
-  <div class='col-md-4'>
-    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label><br>
+  <div class='col-md-5'>
+    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label>
+    {% if App.Config.configArr.debug -%}
+      <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+    {%- endif %}
     <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
       <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
         {% for user in usersArr %}
-          <option value='author:{{ user.fullname|raw }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname|raw ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname|raw }}</option>
+          <option value='author:{{ user.fullname|e('html_attr') }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
         {% endfor %}
       </optgroup>
       <optgroup label='{{ 'Groups'|trans }}'>
         {% for group in teamGroups %}
-          <option value='group:{{ group|raw }}' {{- Request.query.get('owner') == 'group:' ~ group|raw ? ' selected' }}>[{{ 'group'|trans }}] {{ group|raw }}</option>
+          <option value='group:{{ group }}' {{- Request.query.get('owner') == 'group:' ~ group ? ' selected' }}>[{{ 'group'|trans }}] {{ group }}</option>
         {% endfor %}
       </optgroup>
     </select>
@@ -364,7 +176,7 @@
 
   {# VISIBILITY SEARCH #}
   <div class='col-md-4'>
-    <label for='visibility'>{{ 'And visibility is:'|trans }} </label><br>
+    <label for='visibility'>{{ 'And visibility is:'|trans }} </label>
     <select id='visibility' name='vis' data-filter='visibility' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select visibility'|trans }}</option>
       {% for value in visibilityArr %}
@@ -373,12 +185,9 @@
     </select>
   </div>
   {# END VISIBILITY SEARCH #}
-</div>
 
-{# NEW ROW #}
-<div class='row mb-2'>
   {# RATING #}
-  <div class='col-md-6'>
+  <div class='col-md-3'>
     <label for='rating'>{{ 'And rating is'|trans }}</label>
     <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
       <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
@@ -389,8 +198,52 @@
     </select>
   </div>
   {# END RATING #}
+</div>
+
+{# NEW ROW #}
+<div class='row mb-2'>
+  {# METADATA SEARCH #}
+  <div class='col-md-5'>
+    <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
+    <div class='input-group flex-nowrap'>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+      {%- endif %}
+      <select
+        aria-label='{{ 'Name of field'|trans }}'
+        class='form-control filterHelper selectpicker'
+        data-filter='extrafield'
+        data-live-search='true'
+        data-style=''
+        data-style-base='form-control filterHelper'
+        id='metakey'
+        name='metakey'
+        title='{{ 'Name of field'|trans }}'
+      >
+        <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
+        {% for metakey in metakeyArrForSelect %}
+          <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
+        {% endfor %}
+      </select>
+      <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
+      <input
+        aria-label='{{ 'Value'|trans }}'
+        class='form-control filterHelper'
+        data-filter='extrafield'
+        id='metavalue'
+        name='metavalue'
+        placeholder='{{ 'Value'|trans }}'
+        type='text'
+        value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
+      />
+    </div>
+    <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
+    <p class='mt-1 text-muted'>{{ "Tip: you can use '%' as wildcard in value"|trans }}</p>
+  </div>
+  {# METADATA SEARCH END #}
+
   {# LOCK #}
-  <div class='col-md-3'>
+  <div class='col-md-4'>
     <label for='locked'>{{ 'Locked'|trans }}</label>
     <select id='locked' name='locked' class='form-control filterHelper' data-filter='locked'>
       <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
@@ -412,31 +265,6 @@
   {# END LOCK #}
 </div>
 
-<hr>
-{# METADATA SEARCH #}
-<h4 data-action='toggle-next' class='d-inline togglable-section-title mt-3 mb-2'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Extra fields search'|trans }}</h4>
-<div hidden data-save-hidden='metadataSearchDiv'>
-  {# add as many extra fields as present in the query but at least one #}
-  {% for metakey in (Request.query.all('metakey') ?: ['']) %}
-    {% set metavalue = Request.query.all('metavalue')[loop.index0] %}
-    <div class='row' {{- loop.first ? "id='metadataFirstInputs'" -}} >
-      <div class='col-md-4'>
-        {% set randomid = random() %}
-        <label for='metakey_{{ randomid }}'>{{ 'Name of field'|trans }}</label>
-        <input type='text' id='metakey_{{ randomid }}' class='form-control' name='metakey[]' value='{{ metakey != '' ? metakey }}' />
-      </div>
-      <div class='col-md-4'>
-        <label for='metavalue_{{ randomid }}'>{{ 'Value'|trans }}</label>
-        <input type='text' id='metavalue_{{ randomid }}' class='form-control' name='metavalue[]' value='{{ metavalue != '' ? metavalue }}' />
-        <p>{{ "Tip: you can use '%' as wildcard"|trans }}</p>
-      </div>
-    </div>
-  {% endfor %}
-
-  {# button to add an extra field input #}
-  <div data-action='add-extra-fields-search-inputs'><i class='fas fa-plus-circle fa-2x'></i></div>
-</div>
-
 {# Search action buttons #}
 <div style='margin:30px;' class='text-center'>
   <button id='searchButton' class='btn btn-primary' value='Submit' type='submit'>
@@ -447,11 +275,10 @@
   </a>
 </div>
 
-<!-- if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
-  it avoids having to repeat the query params -->
-<a href='#' id='anchor'></a>
+{# if there is no query, end the form here, otherwise let it open so the filter/order/sort menu can be part of it
+  it avoids having to repeat the query params #}
 {% if App.Request.query.has('type') %}
-  <h2>{{ 'Results'|trans }}</h2>
+  <h2 id='anchor'>{{ 'Results'|trans }}</h2>
 {% else %}
   </form>
 {% endif %}

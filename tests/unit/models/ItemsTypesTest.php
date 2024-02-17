@@ -11,6 +11,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\ImproperActionException;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,11 +27,23 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $extra = array(
             'color' => '#faaccc',
             'body' => 'body',
-            'canread' => BasePermissions::MyTeams->toJson(),
-            'canwrite' => BasePermissions::MyTeams->toJson(),
+            'canread' => BasePermissions::Team->toJson(),
+            'canwrite' => BasePermissions::Team->toJson(),
         );
         $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
         $this->ItemsTypes->patch(Action::Update, $extra);
         $this->assertTrue($this->ItemsTypes->destroy());
+    }
+
+    public function testDuplicate(): void
+    {
+        $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
+        $this->expectException(ImproperActionException::class);
+        $this->ItemsTypes->duplicate();
+    }
+
+    public function testGetPage(): void
+    {
+        $this->assertIsString($this->ItemsTypes->getPage());
     }
 }

@@ -30,6 +30,11 @@ class Field implements Term, Visitable, FieldType
 
     public function getValue(): string
     {
+        // body is stored as html after htmlPurifier worked on it
+        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
+        if (Fields::from($this->field) === Fields::Body) {
+            return htmlspecialchars($this->valueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+        }
         return $this->valueWrapper->getValue();
     }
 

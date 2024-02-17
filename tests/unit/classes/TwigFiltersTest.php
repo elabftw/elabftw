@@ -26,7 +26,7 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
             },
             "url current tab": {
               "type": "url",
-              "value": "https://example.com",
+              "value": "https://example.com/foo/bar.php?fizz=buzz&test=success&amp;test2=elabftw",
               "open_in_current_tab": true,
               "position": 5
             },
@@ -65,10 +65,40 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
             "checked checkbox": {
               "type": "checkbox",
               "value": "on"
+            },
+            "experiments link": {
+              "type": "experiments",
+              "value": 1,
+              "group_id": 1
             }
+          },
+          "elabftw": {
+            "extra_fields_groups": [
+              {
+                "id": 1,
+                "name": "Some <&\'\"> group"
+              }
+            ]
           }
         }';
-        $expected = '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div><li class="list-group-item"><h5 class="mb-0">first one</h5><h6>first</h6></li><li class="list-group-item"><h5 class="mb-0">second one</h5><h6>second</h6></li><li class="list-group-item"><h5 class="mb-0">unchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" ></h6></li><li class="list-group-item"><h5 class="mb-0">url current tab</h5><h6><a href="https://example.com" >https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">url default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li><li class="list-group-item"><h5 class="mb-0">last one</h5><span class="smallgray">last position</span><h6>last content</h6></li><li class="list-group-item"><h5 class="mb-0">number with unit</h5><h6>12 kPa</h6></li><li class="list-group-item"><h5 class="mb-0">multi select</h5><h6><p>yep</p><p>yip</p></h6></li><li class="list-group-item"><h5 class="mb-0">checked checkbox</h5><h6><input class="d-block" disabled type="checkbox" checked="checked"></h6></li></div>';
+        $expected = sprintf(
+            '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Some &lt;&amp;&apos;&quot;&gt; group</h4><div>'
+                . '%1$sexperiments link</h5><h6><a href="/experiments.php?mode=view&amp;id=1" target="_blank" rel="noopener"><span data-replace-with-title="true" data-id="1" data-endpoint=experiments>1</span></a></h6></li>'
+                . '</div>'
+                . '<h4 data-action=\'toggle-next\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Undefined group</h4><div>'
+                . '%1$sfirst one</h5><h6>first</h6></li>'
+                . '%1$ssecond one</h5><h6>second</h6></li>'
+                . '%1$sunchecked checkbox</h5><h6><input class="d-block" disabled type="checkbox"></h6></li>'
+                . '%1$surl current tab</h5><h6>'
+                . '<a href="https://example.com/foo/bar.php?fizz=buzz&amp;test=success&amp;test2=elabftw">https://example.com/foo/bar.php?fizz=buzz&amp;test=success&amp;test2=elabftw</a></h6></li>'
+                . '%1$surl default</h5><h6><a href="https://example.com" target="_blank" rel="noopener">https://example.com</a></h6></li>'
+                . '%1$slast one</h5><span class="smallgray">last position</span><h6>last content</h6></li>'
+                . '%1$snumber with unit</h5><h6>12 kPa</h6></li>'
+                . '%1$smulti select</h5><h6><p>yep</p><p>yip</p></h6></li>'
+                . '%1$schecked checkbox</h5><h6><input class="d-block" disabled type="checkbox" checked="checked"></h6></li>'
+                . '</div>',
+            '<li class="list-group-item"><h5 class="mb-0">',
+        );
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }
 

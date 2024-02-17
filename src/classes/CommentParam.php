@@ -20,10 +20,9 @@ final class CommentParam implements ParamInterface
 
     public function getContent(): string
     {
-        $comment = filter_var($this->content, FILTER_SANITIZE_STRING);
-        if ($comment === false || empty($comment)) {
+        if ($this->content === '') {
             throw new ImproperActionException('Invalid comment.');
         }
-        return nl2br($comment);
+        return $this->content;
     }
 }

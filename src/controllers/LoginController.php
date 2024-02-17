@@ -29,10 +29,12 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Users;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
 use Elabftw\Services\MfaHelper;
+use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -136,6 +138,20 @@ class LoginController implements ControllerInterface
             $this->App->Session->remove('mfa_secret');
         }
 
+        /////////////////////
+        // RENEW PASSWORD //
+        ///////////////////
+        // check if we need to renew our local password
+        if ($AuthResponse->mustRenewPassword) {
+            // remember which user is authenticated
+            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            $this->App->Session->set('rememberme', $icanhazcookies);
+            $this->App->Session->set('renew_password_required', true);
+            $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+            $Users = new Users($this->App->Session->get('auth_userid'));
+            $key = $ResetPasswordKey->generate($Users->userData['email']);
+            return new RedirectResponse('/change-pass.php?key=' . $key);
+        }
 
         ////////////////////
         // TEAM SELECTION //
@@ -186,7 +202,7 @@ class LoginController implements ControllerInterface
             return;
         }
         // a devicetoken cookie might or might not exist, so this can be null
-        $token = (string) $this->App->Request->cookies->get('devicetoken');
+        $token = $this->App->Request->cookies->getString('devicetoken');
         // if a token is sent, we need to validate it
         $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
         $isTokenValid = $DeviceTokenValidator->validate();
@@ -194,7 +210,7 @@ class LoginController implements ControllerInterface
         if ($isTokenValid === false) {
             // email might be for non existing user, which will throw exception
             try {
-                $Users = ExistingUser::fromEmail((string) $this->App->Request->request->get('email'));
+                $Users = ExistingUser::fromEmail($this->App->Request->request->getString('email'));
             } catch (ResourceNotFoundException) {
                 throw new QuantumException(_('Invalid email/password combination.'));
             }
@@ -228,20 +244,29 @@ class LoginController implements ControllerInterface
                 );
                 $connection = new Connection($ldapConfig);
                 // use a generic Entry object https://ldaprecord.com/docs/core/v2/models/#entry-model
-                return new Ldap($connection, new Entry(), $c, (string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
+                return new Ldap(
+                    $connection,
+                    new Entry(),
+                    $c,
+                    $this->App->Request->request->getString('email'),
+                    $this->App->Request->request->getString('password')
+                );
 
                 // AUTH WITH LOCAL DATABASE
             case 'local':
                 $this->App->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
-                return new Local((string) $this->App->Request->request->get('email'), (string) $this->App->Request->request->get('password'));
+                return new Local(
+                    $this->App->Request->request->getString('email'),
+                    $this->App->Request->request->getString('password')
+                );
 
                 // AUTH WITH SAML
             case 'saml':
                 $this->App->Session->set('auth_service', self::AUTH_SAML);
                 $IdpsHelper = new IdpsHelper($this->App->Config, new Idps());
-                $idpId = (int) $this->App->Request->request->get('idpId');
+                $idpId = $this->App->Request->request->getInt('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $IdpsHelper->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
@@ -257,14 +282,14 @@ class LoginController implements ControllerInterface
                 // AUTH AS ANONYMOUS USER
             case 'anon':
                 $this->App->Session->set('auth_service', self::AUTH_ANON);
-                return new Anon($this->App->Config->configArr, (int) $this->App->Request->request->get('team_id'));
+                return new Anon($this->App->Config->configArr, $this->App->Request->request->getInt('team_id'));
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated
             case 'team':
                 return new Team(
-                    $this->App->Session->get('auth_userid'),
-                    (int) $this->App->Request->request->get('selected_team'),
+                    (int) $this->App->Session->get('auth_userid'),
+                    $this->App->Request->request->getInt('selected_team'),
                 );
 
                 // MFA AUTH
@@ -290,9 +315,9 @@ class LoginController implements ControllerInterface
             // create a user in the requested team
             $newUser = ExistingUser::fromScratch(
                 $this->App->Session->get('teaminit_email'),
-                array((int) $this->App->Request->request->get('team_id')),
-                (string) $this->App->Request->request->get('teaminit_firstname'),
-                (string) $this->App->Request->request->get('teaminit_lastname'),
+                array($this->App->Request->request->getInt('team_id')),
+                $this->App->Request->request->getString('teaminit_firstname'),
+                $this->App->Request->request->getString('teaminit_lastname'),
             );
             $this->App->Session->set('teaminit_done', true);
             // will display the appropriate message to user

@@ -11,7 +11,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SortableTrait;
@@ -48,7 +50,7 @@ class Templates extends AbstractTemplateEntity
     public function create(string $title): int
     {
         $title = Filter::title($title);
-        $canread = BasePermissions::MyTeams->toJson();
+        $canread = BasePermissions::Team->toJson();
         $canwrite = BasePermissions::User->toJson();
 
         if (isset($this->Users->userData['default_read'])) {
@@ -58,14 +60,16 @@ class Templates extends AbstractTemplateEntity
             $canwrite = $this->Users->userData['default_write'];
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite)
-            VALUES(:team, :title, :userid, :canread, :canwrite)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target)
+            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':title', Filter::title($title));
+        $req->bindValue(':title', $title);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_target', $canread);
+        $req->bindParam(':canwrite_target', $canwrite);
         $req->execute();
         $id = $this->Db->lastInsertId();
 
@@ -83,8 +87,8 @@ class Templates extends AbstractTemplateEntity
     {
         $template = $this->readOne();
 
-        $sql = 'INSERT INTO experiments_templates(team, title, category, status, body, userid, canread, canwrite, metadata)
-            VALUES(:team, :title, :category, :status, :body, :userid, :canread, :canwrite, :metadata)';
+        $sql = 'INSERT INTO experiments_templates(team, title, category, status, body, userid, canread, canwrite, canread_target, canwrite_target, metadata)
+            VALUES(:team, :title, :category, :status, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':title', $template['title']);
@@ -94,6 +98,8 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':canread', $template['canread']);
         $req->bindParam(':canwrite', $template['canwrite']);
+        $req->bindParam(':canread_target', $template['canread_target']);
+        $req->bindParam(':canwrite_target', $template['canwrite_target']);
         $req->bindParam(':metadata', $template['metadata']);
         $req->execute();
         $newId = $this->Db->lastInsertId();
@@ -121,6 +127,7 @@ class Templates extends AbstractTemplateEntity
         $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
             experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
             experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
+            experiments_templates.canread_target, experiments_templates.canwrite_target,
             experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
             users.firstname, users.lastname, users.orcid,
@@ -138,35 +145,15 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->entityData = $this->Db->fetch($req);
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
         $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['sharelink'] = sprintf('%s/ucp.php?tab=3&mode=view&templateid=%d', Config::fromEnv('SITE_URL'), $this->id);
         return $this->entityData;
-    }
-
-    /**
-     * Filter the readable templates to only get the ones where we can write to
-     * Use this to display templates in UCP
-     */
-    public function getWriteableTemplatesList(): array
-    {
-        $TeamGroups = new TeamGroups($this->Users);
-        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
-
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-
-        return array_filter($this->readAll(), function ($t) use ($teamgroupsOfUser, $teamsOfUser) {
-            $canwrite = json_decode($t['canwrite'], true, 3, JSON_THROW_ON_ERROR);
-            return $canwrite['base'] === BasePermissions::Full->value || $canwrite['base'] === BasePermissions::Organization->value ||
-                ($canwrite['base'] === BasePermissions::MyTeams->value && ((int) $t['teams_id'] === $this->Users->userData['team'])) ||
-                ($canwrite['base'] === BasePermissions::User->value && $t['userid'] === $this->Users->userData['userid']) ||
-                ($canwrite['base'] === BasePermissions::UserOnly->value && $t['userid'] === $this->Users->userData['userid']) ||
-                (!empty(array_intersect($canwrite['users'], array($this->Users->userData['userid'])))) ||
-                (!empty(array_intersect($canwrite['teams'], $teamsOfUser))) ||
-                (!empty(array_intersect($canwrite['teamgroups'], $teamgroupsOfUser)));
-        });
     }
 
     /**
@@ -181,6 +168,7 @@ class Templates extends AbstractTemplateEntity
         $sql = sprintf("SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
                 experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
                 experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
+                experiments_templates.canread_target, experiments_templates.canwrite_target,
                 CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.modified_at,
                 users2teams.teams_id, teams.name AS team_name,
                 (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,
@@ -201,7 +189,7 @@ class Templates extends AbstractTemplateEntity
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND users2teams.users_id = experiments_templates.userid) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
-                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::MyTeams->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
+                    (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::Team->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
         // look for teams
         $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
@@ -217,6 +205,13 @@ class Templates extends AbstractTemplateEntity
         // look for our userid in users part of the json
         $sql .= ' OR (:userid MEMBER OF (experiments_templates.canread->>"$.users"))';
         $sql .= ')';
+
+        if ($this->Users->userData['scope_experiments_templates'] === Scope::User->value) {
+            $sql .= ' AND experiments_templates.userid = :userid';
+        }
+        if ($this->Users->userData['scope_experiments_templates'] === Scope::Team->value) {
+            $sql .= ' AND experiments_templates.team = :team';
+        }
 
         $sql .= $this->filterSql;
 

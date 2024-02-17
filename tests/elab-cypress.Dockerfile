@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for Cypress
-FROM cypress/included:12.17.4
+FROM cypress/included:13.6.0
 
 WORKDIR /home/node
 
@@ -10,7 +10,8 @@ USER node
 # use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
-RUN npm install --user typescript
+# add html validation tools to cypress
+RUN npm install typescript html-validate@^8 cypress-html-validate@^6
 
 # copy everything because we can't bind mount
 COPY cypress.config.ts .

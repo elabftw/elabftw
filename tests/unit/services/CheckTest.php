@@ -40,7 +40,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testVisibility(): void
     {
-        $this->assertEquals(BasePermissions::MyTeams->toJson(), Check::visibility(BasePermissions::MyTeams->toJson()));
+        $this->assertEquals(BasePermissions::Team->toJson(), Check::visibility(BasePermissions::Team->toJson()));
         $this->expectException(ImproperActionException::class);
         Check::visibility('pwet');
     }

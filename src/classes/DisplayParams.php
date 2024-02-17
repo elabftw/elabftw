@@ -11,16 +11,13 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Scope;
+use Elabftw\Enums\SearchType;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use Elabftw\Services\Filter;
 use function implode;
-use function json_encode;
-use const JSON_HEX_APOS;
-use const JSON_THROW_ON_ERROR;
 use PDO;
 use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,22 +45,12 @@ class DisplayParams
     // the extended search query
     public string $extendedQuery = '';
 
-    // if this variable is not empty the error message shown will be different if there are no results
-    public string $searchType = '';
+    // if this variable is not Undefined the error message shown will be different if there are no results
+    public SearchType $searchType = SearchType::Undefined;
 
-    // start metadata stuff
-    public bool $hasMetadataSearch = false;
-
-    public array $metadataKey = array();
-
-    public array $metadataValuePath = array();
-
-    public array $metadataValue = array();
-    // end metadata stuff
+    public EntityType $relatedOrigin;
 
     public bool $includeArchived = false;
-
-    private array $metadataHaving = array();
 
     public function __construct(private Users $Users, private Request $Request, public EntityType $entityType)
     {
@@ -81,31 +68,6 @@ class DisplayParams
         $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
     }
 
-    public function getMetadataHavingSql(): string
-    {
-        if (!empty($this->metadataHaving)) {
-            return 'HAVING ' . implode(' AND ', $this->metadataHaving);
-        }
-        return '';
-    }
-
-    private function addMetadataFilter(string $extraFieldKey, string $searchTerm): void
-    {
-        $this->hasMetadataSearch = true;
-        $i = count($this->metadataKey);
-
-        $jsonPath = sprintf(
-            '$.%s.%s',
-            MetadataEnum::ExtraFields->value,
-            // Note: the extraFieldKey gets double quoted so spaces are not an issue
-            json_encode(Filter::sanitize($extraFieldKey), JSON_HEX_APOS | JSON_THROW_ON_ERROR)
-        );
-        $this->metadataKey[] = $jsonPath;
-        $this->metadataValuePath[] = $jsonPath . '.value';
-        $this->metadataValue[] = Filter::sanitize($searchTerm);
-        $this->metadataHaving[] = sprintf('(JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(:metadata_value_path_%1$d))) LIKE LOWER(:metadata_value_%1$d))', $i);
-    }
-
     /**
      * Adjust the settings based on the Request
      */
@@ -118,19 +80,22 @@ class DisplayParams
             $this->offset = $this->Request->query->getInt('offset');
         }
         if (!empty($this->Request->query->get('q'))) {
-            $this->query = trim((string) $this->Request->query->get('q'));
-            $this->searchType = 'query';
+            $this->query = trim($this->Request->query->getString('q'));
+            $this->searchType = SearchType::Query;
         }
         if (!empty($this->Request->query->get('extended'))) {
-            $this->extendedQuery = trim((string) $this->Request->query->get('extended'));
-            $this->searchType = 'extended';
+            $this->extendedQuery = trim($this->Request->query->getString('extended'));
+            $this->searchType = SearchType::Extended;
         }
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($this->entityType === EntityType::Experiments && !$this->Users->userData['show_team'] && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
+        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
+        }
+        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team);
         }
         // TAGS SEARCH
         if (!empty(($this->Request->query->all('tags'))[0])) {
@@ -155,7 +120,7 @@ class DisplayParams
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
-            $this->searchType = 'tags';
+            $this->searchType = SearchType::Tags;
         }
         // now get ordering/sorting parameters from the query string
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
@@ -164,29 +129,24 @@ class DisplayParams
         // RELATED FILTER
         if (Check::id($this->Request->query->getInt('related')) !== false) {
             $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
-            $this->searchType = 'related';
+            $this->searchType = SearchType::Related;
+            $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
         if (Check::id($this->Request->query->getInt('cat')) !== false) {
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
-            $this->searchType = 'category';
+            $this->searchType = SearchType::Category;
         }
         // STATUS FILTER
         if (Check::id($this->Request->query->getInt('status')) !== false) {
             $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
-            $this->searchType = 'status';
+            $this->searchType = SearchType::Status;
         }
 
         // OWNER (USERID) FILTER
         if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
-            $this->searchType = 'owner';
-        }
-        // METADATA SEARCH
-        foreach ($this->Request->query->all('metakey') as $i => $metakey) {
-            if (!empty($metakey)) {
-                $this->addMetadataFilter($metakey, $this->Request->query->all('metavalue')[$i]);
-            }
+            $this->searchType = SearchType::Owner;
         }
     }
 }

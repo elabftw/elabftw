@@ -1,7 +1,7 @@
 <h3 class='p-2 pl-3 section-title'>{{ 'Search users'|trans }}</h3>
 <div class='pl-3'>
   <div class='form-group'>
-    <form method='get' id ='userSearchForm'>
+    <form method='get' id='userSearchForm' aria-label='{{ 'Search users'|trans }}'>
       {# stay on correct tab #}
       <input type='hidden' value='3' name='tab' />
 
@@ -11,7 +11,7 @@
         </div>
         {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
           <div class='input-group-prepend'>
-            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter'>
+            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
               <option value=''>{{ 'All teams'|trans }}</option>
               {% for team in teamsArr %}
                 <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
@@ -19,7 +19,7 @@
             </select>
           </div>
         {% endif %}
-        <input type='text' class='form-control' value='{{ App.Request.query.get('q') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
+        <input type='text' class='form-control' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
         </div>
@@ -28,19 +28,19 @@
         </div>
         <div class='input-group-append'>
           <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}
+            <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}</label>
           </div>
         </div>
         {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
           <div class='input-group-append'>
             <div class='input-group-text'>
-              <input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}
+              <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}</label>
             </div>
           </div>
         {% endif %}
         <div class='input-group-append'>
           <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}
+            <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}</label>
           </div>
         </div>
       </div>
@@ -56,12 +56,12 @@
         {% for user in usersArr %}
           {% include('archive-user-modal.html') %}
           {# Modal for managing users to teams, generated for each user #}
-          <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-label='{{ 'Manage teams for user'|trans }}' aria-hidden='true'>
+          <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-labelledby='manageTeamsForUser'>
             <div class='modal-dialog modal-xl' role='document'>
               <div class='modal-content'>
                 <div class='modal-header'>
-                  <h5 class='modal-title'>{{ 'Manage teams for user'|trans }} - {{ user.fullname|raw }}</h5>
-                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                  <h5 class='modal-title' id='manageTeamsForUser'>{{ 'Manage teams for user'|trans }} - {{ user.fullname }}</h5>
+                  <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
                     <span aria-hidden='true'>&times;</span>
                   </button>
                 </div>
@@ -80,11 +80,11 @@
                               <option value='2' {{ currentTeam.usergroup == 2 ? 'selected' }}>{{ 'Admin'|trans }}</option>
                               <option value='4' {{ currentTeam.usergroup == 4 ? 'selected' }}>{{ 'User'|trans }}</option>
                             </select>
-                            <button data-action='patch-user2team-group' data-userid='{{ user.userid }}' data-team='{{ team.id }}' data-target='usergroup' class='btn btn-primary brl-none'>{{ 'Save'|trans }}</button>
+                            <button type='button' data-action='patch-user2team-group' data-userid='{{ user.userid }}' data-team='{{ team.id }}' data-target='usergroup' class='btn btn-primary brl-none'>{{ 'Save'|trans }}</button>
                           </span>
                         </div>
                         <div class='d-flex justify-content-between'>
-                          <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'>{{ 'Is Owner'|trans }}</label>
+                          <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'><abbr title='{{ 'Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only.'|trans }}'>{{ 'Is Owner'|trans }}</label>
                           <label class='switch ucp-align'>
                             <input type='checkbox' autocomplete='off' data-trigger='change' data-custom-action='patch-user2team-is-owner' data-userid='{{ user.userid }}' data-team='{{ team.id }}' {{ currentTeam.is_owner ? 'checked="checked"' }} id='user_{{ user.id }}_isOwnerTeam_{{ team.id }}'>
                             <span class='slider'></span>
@@ -103,7 +103,7 @@
                         <option value='{{ team.id }}'>{{ team.name }}</option>
                         {% endfor %}
                       </select>
-                      <button data-action='create-user2team' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+                      <button type='button' data-action='create-user2team' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Go'|trans }}</button>
                     </span>
                   {% endif %}
                 </div>
@@ -116,7 +116,7 @@
           {# end modal #}
         {% endfor %}
 
-        <table id='usersTable' class='table' aria-label='users table' data-table-sort='true'>
+        <table id='usersTable' class='table' aria-label='{{ 'Users table'|trans }}' data-table-sort='true'>
           <thead>
             <tr>
               <th scope='col'>{{ 'User ID'|trans }}</th>
@@ -145,10 +145,10 @@
                   </div>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname|raw }}</span>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname }}</span>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname|raw }}</span>
+                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname }}</span>
                 </td>
                 <td>
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
@@ -167,55 +167,54 @@
                 </td>
                 <td>
                   <div class='d-flex justify-content-between'>
-                    <label class='switch ucp-align {{ App.Users.userData.is_sysadmin == 0 ? 'disabled' }}'>
+                    <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}'>
                       <input type='checkbox' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} data-trigger='change' data-model='users/{{ user.userid }}' data-target='is_sysadmin' {{ user.is_sysadmin ? 'checked="checked"' }}>
                       <span class='slider'></span>
                     </label>
                   </div>
                 </td>
-                <td>{% if user.mfa_secret %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                <td>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
                 <td>
                   {% if App.Users.userData.is_sysadmin == '1' %}
-                    <div class='clickable p-2 hl-hover-gray text-center rounded' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>
-                      <i class='fas fa-fw fa-key mr-1'></i>
-                    </div>
+                    <button class='btn p-2 hl-hover-gray text-center mr-1' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>
+                      <i class='fas fa-fw fa-key'></i>
+                    </button>
                     <div hidden class='input-group'>
-                      {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
-                      <input class='form-control' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ pattern }}' />
+                      <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
                       <div class='input-group-append'>
                         <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
                       </div>
                       <div class='input-group-append'>
-                        <button data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+                        <button type='button' data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
                       </div>
                     </div>
                   {% endif %}
                   {# MORE OPTIONS MENU #}
                   <div class='dropdown'>
-                    <div class='clickable p-2 hl-hover-gray text-center rounded' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' role='button'>
-                      <i class='fas fa-ellipsis-v'></i>
-                    </div>
-                    <div class='dropdown-menu dropdown-menu-right' aria-label='{{ 'More options'|trans }}'>
+                    <button class='btn p-2 hl-hover-gray text-center ' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
+                      <i class='fas fa-ellipsis-v fa-fw'></i>
+                    </button>
+                    <div class='dropdown-menu dropdown-menu-right'>
                       {# MANAGE TEAMS #}
                       {% if App.Users.userData.is_sysadmin and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
-                        <div class='dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>
                           <i class='mr-1 fas fa-pencil fa-fw'></i>{{ 'Manage teams for user'|trans }}
-                        </div>
+                        </button>
                       {% endif %}
                       {# on admin page, allow promoting someone to admin of the same team #}
                       {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
                         {% set currentTeam = user.teams|filter(t => t.id == App.Users.userData.team)|first %}
                         {# Promote to Admin #}
                         {% if currentTeam.usergroup == 4 %}
-                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-admin-user' data-promote='1' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-up-long mr-1'></i>{{ 'Promote to Admin'|trans }}
-                          </div>
+                          </button>
                         {% endif %}
                         {# Demote from Admin #}
                         {% if currentTeam.usergroup == 2 %}
-                          <div class='dropdown-item' data-action='toggle-admin-user' data-promote='0' data-userid='{{ user.userid }}'>
+                          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-admin-user' data-promote='0' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                             <i class='fas fa-fw fa-down-long mr-1'></i>{{ 'Demote from Admin'|trans }}
-                          </div>
+                          </button>
                         {% endif %}
                         {# Add to team #}
                         {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty and App.Config.configArr.admins_import_users %}
@@ -226,26 +225,28 @@
                       {% endif %}
                       {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
                       {% if user.mfa_secret and App.Users.userData.is_sysadmin %}
-                        <div class='dropdown-item' data-action='remove-user-2fa' data-userid='{{ user.userid }}'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='remove-user-2fa' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
-                        </div>
+                        </button>
                       {% endif %}
                       {# ARCHIVE USER #}
                       {% if user.archived %}
-                        <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Unarchive user'|trans }}
-                        </div>
+                        </button>
                       {% else %}
-                      <div class='dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='archiveUserModal_{{ user.userid }}'>
                           <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
-                        </div>
+                        </button>
                       {% endif %}
                       {% if user.validated == 0 %}
-                        <div class='dropdown-item' data-action='validate-user' data-userid='{{ user.userid }}'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='validate-user' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
-                        </div>
+                        </button>
                       {% endif %}
-                      <div class='dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'><i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}</div>
+                      <button type='button' class='btn btn-dropdown-item dropdown-item hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>
+                        <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}
+                      </button>
                     </div>
                   </div>
                 </td>
@@ -313,7 +314,7 @@
 
     {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
-      <button data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+      <button type='button' data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>
   </div>
 </div>
@@ -343,7 +344,7 @@
 
     {% if App.Request.query.has('remote_dir_query') %}
       <div class='mt-2'>
-        <table class='table' id='remoteDirectoryUsersTable' aria-label='Remote directory users list' data-table-sort='true'>
+        <table class='table' id='remoteDirectoryUsersTable' aria-label='{{ 'Remote directory users list'|trans }}' data-table-sort='true'>
           <thead>
             <tr>
               <th scope='col'>{{ 'Selection'|trans }}</th>
@@ -367,20 +368,22 @@
         </table>
         <div class='col-md-12 text-center mt-2'>
           <div class='input-group'>
-          {# team selection dropdown, disabled on admin page #}
-          <div class='input-group-prepend'>
-            <select class='custom-select brr-none' id='remoteUserTeam' {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }}>
-              {% for team in teamsArr %}
-                <option value='{{ team.id }}' {{- App.Users.userData.team == team.id ? ' selected' }}>{{ team.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        <div class='input-group-prepend'>
-          <div class='input-group-text'>
-            <input type='checkbox' class='mr-1' id='remoteUserIsAdmin'>{{ 'Admin'|trans }}
+            {# team selection dropdown, disabled on admin page #}
+            <div class='input-group-prepend'>
+              <select class='custom-select brr-none' id='remoteUserTeam' {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }}>
+                {% for team in teamsArr %}
+                  <option value='{{ team.id }}' {{- App.Users.userData.team == team.id ? ' selected' }}>{{ team.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class='input-group-prepend'>
+              <div class='input-group-text'>
+                <input type='checkbox' class='mr-1' id='remoteUserIsAdmin'>{{ 'Admin'|trans }}
+              </div>
+            </div>
+            <button type='button' data-action='create-user-from-remote' class='brl-none btn btn-primary'>{{ 'Add selected'|trans }}</button>
           </div>
         </div>
-          <button data-action='create-user-from-remote' class='brl-none btn btn-primary'>{{ 'Add selected'|trans }}</button>
       </div>
     {% endif %}
   </div>

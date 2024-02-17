@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import * as $3Dmol from '3dmol';
 import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
@@ -48,43 +47,62 @@ export function relativeMoment(): void {
 // Add a listener for all elements triggered by an event
 // and POST an update request
 // select will be on change, text inputs on blur
-export function listenTrigger(): void {
+function triggerHandler(event: Event, el: HTMLInputElement): void {
   const ApiC = new Api();
-  document.querySelectorAll('[data-trigger]').forEach((el: HTMLInputElement) => {
-    el.addEventListener(el.dataset.trigger, event => {
-      event.preventDefault();
-      el.classList.remove('is-invalid');
-      // for a checkbox element, look at the checked attribute, not the value
-      let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-      if (el.dataset.customAction === 'patch-user2team-is-owner') {
-        // currently only for modifying is_owner of a user in a given team
-        const team = parseInt(el.dataset.team, 10);
-        const userid = parseInt(el.dataset.userid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
-        return;
-      }
+  event.preventDefault();
+  el.classList.remove('is-invalid');
+  // for a checkbox element, look at the checked attribute, not the value
+  let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+  if (el.dataset.customAction === 'patch-user2team-is-owner') {
+    // currently only for modifying is_owner of a user in a given team
+    const team = parseInt(el.dataset.team, 10);
+    const userid = parseInt(el.dataset.userid, 10);
+    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
+    return;
+  }
 
-      if (el.dataset.transform === 'permissionsToJson') {
-        value = permissionsToJson(parseInt(value, 10), []);
+  if (el.dataset.transform === 'permissionsToJson') {
+    value = permissionsToJson(parseInt(value, 10), []);
+  }
+  if (el.dataset.value) {
+    value = el.dataset.value;
+  }
+  const params = {};
+  params[el.dataset.target] = value;
+  ApiC.patch(`${el.dataset.model}`, params).then(() => {
+    // data-reload can be "page" to reload the page, "reloadEntitiesShow" to reload properly entities in show mode,
+    // or a comma separated list of ids of elements to reload
+    if (el.dataset.reload) {
+      if (el.dataset.reload === 'page') {
+        location.reload();
+      } else {
+        el.dataset.reload.split(',').forEach(toreload => {
+          if (toreload === 'reloadEntitiesShow') {
+            reloadEntitiesShow();
+          } else {
+            reloadElement(toreload);
+          }
+        });
       }
-      if (el.dataset.value) {
-        value = el.dataset.value;
-      }
-      const params = {};
-      params[el.dataset.target] = value;
-      ApiC.patch(`${el.dataset.model}`, params).then(() => {
-        if (el.dataset.reload) {
-          reloadElement(el.dataset.reload).then(() => {
-            // make sure we listen to the new element too
-            listenTrigger();
-          });
-        }
-      }).catch(error => {
-        if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
-          el.classList.add('is-invalid');
-        }
-      });
-    });
+    }
+  }).catch(error => {
+    if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+      el.classList.add('is-invalid');
+    }
+  });
+}
+
+export function listenTrigger(elementId: string = ''): void {
+  let elems: NodeList;
+  if (elementId) {
+    elems = document.getElementById(elementId).querySelectorAll('[data-trigger]');
+  } else {
+    elems = document.querySelectorAll('[data-trigger]');
+  }
+  elems.forEach((el: HTMLInputElement) => {
+    // remove event first to avoid stacking them
+    el.removeEventListener(el.dataset.trigger, event => { triggerHandler(event, el); });
+    el.addEventListener(el.dataset.trigger, event => { triggerHandler(event, el); });
   });
 }
 
@@ -198,25 +216,6 @@ export function displayMolFiles(): void {
   });
 }
 
-// DISPLAY 3D MOL FILES
-export function display3DMolecules(autoload = false): void {
-  if (autoload) {
-    $3Dmol.autoload();
-  }
-  // Top left menu to change the style of the displayed molecule
-  $('.dropdown-item').on('click', '.3dmol-style', function() {
-    const targetStyle = $(this).data('style');
-    let options = {};
-    const style = {};
-    if (targetStyle === 'cartoon') {
-      options = { color: 'spectrum' };
-    }
-    style[targetStyle] = options;
-
-    $3Dmol.viewers[$(this).data('divid')].setStyle(style).render();
-  });
-}
-
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: string, value: string): void {
   const params = new URLSearchParams(document.location.search.slice(1));
@@ -238,7 +237,7 @@ export function makeSortableGreatAgain(): void {
     // do ajax request to update db with new order
     update: function() {
       // send the order as an array
-      const params = {'table': $(this).data('table'), 'ordering': $(this).sortable('toArray')};
+      const params = {table: $(this).data('table'), entity: getEntity(), ordering: $(this).sortable('toArray')};
       fetch('app/controllers/SortableAjaxController.php', {
         method: 'POST',
         headers: {
@@ -282,18 +281,8 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToLinkInputs();
   // tags too
   addAutocompleteToTagInputs();
-}
-
-export async function reloadElements(elementIds: string[]): Promise<void> {
-  const html = await fetchCurrentPage();
-  elementIds.forEach(id => {
-    if (!document.getElementById(id)) {
-      console.error(`Could not find element with id ${id} to reload!`);
-      return;
-    }
-    document.getElementById(id).innerHTML = html.getElementById(id).innerHTML;
-    listenTrigger();
-  });
+  // listen to data-trigger elements
+  listenTrigger();
 }
 
 export async function reloadElement(elementId: string): Promise<void> {
@@ -303,7 +292,11 @@ export async function reloadElement(elementId: string): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
-  listenTrigger();
+  listenTrigger(elementId);
+}
+
+export async function reloadElements(elementIds: string[]): Promise<void> {
+  elementIds.forEach(id => reloadElement(id));
 }
 
 /**
@@ -312,17 +305,23 @@ export async function reloadElement(elementId: string): Promise<void> {
  */
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
-    const localStorageKey = (el as HTMLElement).dataset.saveHidden + '-isHidden';
-    const caretIcon = el.previousElementSibling.querySelector('i');
+    const targetElement = (el as HTMLElement).dataset.saveHidden;
+    const localStorageKey = targetElement + '-isHidden';
+    const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
       caretIcon.classList.remove('fa-caret-down');
-      caretIcon.classList.add('fa-caret-right');
+      if (targetElement !== 'filtersDiv') {
+        caretIcon.classList.add('fa-caret-right');
+      }
+      button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
       caretIcon.classList.remove('fa-caret-right');
       caretIcon.classList.add('fa-caret-down');
+      button.setAttribute('aria-expanded', 'true');
     }
   });
 }
@@ -332,16 +331,6 @@ export function addAutocompleteToLinkInputs(): void {
   const cache = {};
   const ApiC = new Api();
   [{
-    selectElid: 'addLinkCatFilter',
-    itemType: EntityType.Item,
-    filterFamily: 'cat',
-    inputElId: 'addLinkItemsInput',
-  }, {
-    selectElid: 'addLinkExpCatFilter',
-    itemType: EntityType.Experiment,
-    filterFamily: 'owner',
-    inputElId: 'addLinkExpInput',
-  }, {
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
     filterFamily: 'cat',
@@ -364,7 +353,8 @@ export function addAutocompleteToLinkInputs(): void {
           const term = request.term;
           const format = entity => {
             const category = entity.category_title ? `${entity.category_title} - `: '';
-            return `${entity.id} - ${category}${entity.title.substring(0, 60)}`;
+            const customid = entity.custom_id ? `${entity.custom_id} - `: '';
+            return `${entity.id} - ${category}${customid}${entity.title.substring(0, 60)}`;
           };
           if (term in cache[object.selectElid]) {
             const res = [];
@@ -374,7 +364,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(res);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${request.term}`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}`).then(json => {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
@@ -402,6 +392,22 @@ export function addAutocompleteToTagInputs(): void {
         const res = [];
         json.forEach(tag => {
           res.push(tag.tag);
+        });
+        response(res);
+      });
+    },
+  });
+}
+
+export function addAutocompleteToExtraFieldsKeyInputs(): void {
+  const ApiC = new Api();
+  $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
+    appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      ApiC.getJson(`${Model.ExtraFieldsKeys}/?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(entry => {
+          res.push(entry.extra_fields_key);
         });
         response(res);
       });
@@ -479,4 +485,47 @@ export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
     plusMinusIcon.classList.add('fa-square-plus');
     plusMinusIcon.classList.remove('fa-square-minus');
   }
+}
+
+// escape text similar to htmlspecialchars() of php
+// https://stackoverflow.com/a/4835406
+export function escapeHTML(text: string): string {
+  const escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&#34;',
+    '\'': '&#39;',
+  };
+  return text.replace(/[&<>'"]/g, char => escapeMap[char]);
+}
+
+export function escapeExtendedQuery(searchTerm: string): string {
+  // the order of the replacement is important
+  // 1) escape extended search query wildcards
+  ['_', '%'].forEach(wildcard => {
+    searchTerm = searchTerm.replaceAll(wildcard, `\\${wildcard}`);
+  });
+
+  // 2) mask special characters of extended search query by single character wildcard
+  ['!', '|', '&', '(', ')', '"', '\''].forEach(specialChar => {
+    searchTerm = searchTerm.replaceAll(specialChar, '_');
+  });
+
+  // 3) mask word operators 'not', 'and', 'or' of extended search query
+  ['not', 'or', 'and'].forEach(word => {
+    const re = new RegExp(`\\b${word}\\b`, 'g');
+    searchTerm = searchTerm.replaceAll(re, ` '${word}' `);
+  });
+
+  return searchTerm.trim();
+}
+
+export function replaceWithTitle(): void {
+  document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
+    const ApiC = new Api();
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+      el.innerText = json.title;
+    });
+  });
 }

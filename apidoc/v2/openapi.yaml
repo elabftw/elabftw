@@ -77,8 +77,6 @@ components:
           type: integer
         debug:
           type: string
-        deletable_xp:
-          type: string
         email_domain:
           type: string
         extauth_email:
@@ -264,7 +262,7 @@ components:
           type: string
           description: JSON string for write permissions.
         category:
-          type: string
+          type: integer
           nullable: true
         category_color:
           type: string
@@ -335,6 +333,14 @@ components:
         recent_comment:
           type: string
           nullable: true
+        related_experiments_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        related_items_links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
         sharelink:
           type: string
         state:
@@ -358,6 +364,8 @@ components:
         tags_id:
           type: string
           nullable: true
+        team:
+          type: integer
         timestamped:
           type: integer
         timestampedby:
@@ -450,6 +458,8 @@ components:
           type: integer
         is_pinned:
           type: integer
+        sharelink:
+          type: string
         status:
           type: integer
           nullable: true
@@ -539,16 +549,18 @@ components:
     link:
       type: object
       properties:
-        itemid:
+        entityid:
           type: integer
         title:
-          type: string
-        elabid:
           type: string
         is_bookable:
           type: integer
         link_state:
           type: integer
+        category_color:
+          type: string
+        category_title:
+          type: string
     notification:
       type: object
       properties:
@@ -636,10 +648,6 @@ components:
           type: string
         common_template_md:
           type: string
-        deletable_xp:
-          type: integer
-        deletable_item:
-          type: integer
         user_create_tag:
           type: integer
         force_exp_tpl:
@@ -759,6 +767,8 @@ components:
           type: string
         validated:
           type: integer
+        valid_until:
+          type: string
         archived:
           type: integer
         last_login:
@@ -788,7 +798,13 @@ components:
                 type: integer
               is_owner:
                 type: integer
-
+    extra_fields_keys:
+      type: object
+      properties:
+        extra_fields_key:
+          type: string
+        frequency:
+          type: integer
 
 security:
   - token:
@@ -1009,30 +1025,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
-        - name: metakey[]
+        - name: owner
           in: query
           schema:
-            type: array
-            items:
-              type: string
+            type: integer
           description: |
-            Key search in metadata.
+            Filter results by author (user id)
           examples:
             first:
-              summary: Look for a metadata key of "Magnification".
-              value: Magnification
-        - name: metavalue[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Value search in metadata.
-          examples:
-            first:
-              summary: Look for a value of "20X".
-              value: 20X
+              summary: Only display results from user with id 2
+              value: 2
       responses:
         '200':
           description: A list of experiments
@@ -1257,30 +1259,16 @@ paths:
             first:
               summary: Skip 3 first results.
               value: 3
-        - name: metakey[]
+        - name: owner
           in: query
           schema:
-            type: array
-            items:
-              type: string
+            type: integer
           description: |
-            Key search in metadata.
+            Filter results by author (user id)
           examples:
             first:
-              summary: Look for a metadata key of "Magnification".
-              value: Magnification
-        - name: metavalue[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            Value search in metadata.
-          examples:
-            first:
-              summary: Look for a value of "20X".
-              value: 20X
+              summary: Only display results from user with id 2
+              value: 2
       # end duplicate from GET /experiments
       responses:
         '200':
@@ -1849,7 +1837,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/event'
-
   /events/{id}:
     parameters:
       - name: id
@@ -1970,6 +1957,7 @@ paths:
       responses:
         '204':
           description: The event was deleted.
+
   # FAVTAGS
   /favtags:
     summary: Favorite tags for the logged-in user.
@@ -2497,7 +2485,6 @@ paths:
                   type: integer
                   description: Is it the default status for the team?
 
-
   # ONE ITEMS STATUS
   /teams/{id}/items_status/{subid}:
     parameters:
@@ -2757,6 +2744,8 @@ paths:
       responses:
         '204':
           description: The todoitem was removed.
+
+  # UNFINISHED STEPS
   /unfinished_steps:
     summary: Unfinished steps from the user or the team, in experiments or items.
     parameters:
@@ -2781,6 +2770,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
+
   # USERS
   /users:
     summary: Display information about users on the instance.
@@ -3271,7 +3261,6 @@ paths:
       responses:
         '204':
           description: The tags were deleted.
-
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -3754,3 +3743,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/revision'
+
+  # EXTRA FIELDS KEYS
+  /extra_fields_keys:
+    summary: Search for extra fields keys used by a team. Results are sorted by frequency.
+    parameters:
+      - name: q
+        in: query
+        description: |
+          Search for a term in the extra fields keys.
+        schema:
+          type: string
+          default: ''
+      - name: limit
+        in: query
+        description: |
+          Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
+        schema:
+          type: int
+          default: 0
+    get:
+      tags: ['Extra Fields Keys']
+      summary: Read extra fields keys.
+      operationId: extra-fields-keys
+      responses:
+        '200':
+          description: A list of extra fields keys and their frequency.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/extra_fields_keys'

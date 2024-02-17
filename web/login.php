@@ -32,11 +32,11 @@ require_once 'app/init.inc.php';
 $App->pageTitle = _('Login');
 
 $Response = new Response();
-$Response->prepare($Request);
+$Response->prepare($App->Request);
 
 try {
     // if we are not in https, die saying we work only in https
-    if (!$Request->isSecure() && !$Request->server->has('HTTP_X_FORWARDED_PROTO')) {
+    if (!$App->Request->isSecure() && !$App->Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
         $url = Config::fromEnv('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
@@ -44,7 +44,7 @@ try {
         throw new ImproperActionException($message);
     }
 
-    if ($Request->query->has('rm_teaminit')) {
+    if ($App->Request->query->has('rm_teaminit')) {
         $App->Session->remove('teaminit_done');
     }
 
@@ -70,13 +70,12 @@ try {
         exit;
     }
 
-    if ($Request->query->get('switch_team') === '1') {
+    if ($App->Request->query->get('switch_team') === '1') {
         $App->Session->set('team_selection_required', true);
         $App->Session->set('team_selection', $App->Users->userData['teams']);
         $App->Session->set('auth_userid', $App->Users->userData['userid']);
         $App->Session->remove('is_auth');
     }
-
 
     // Check if already logged in
     if ($App->Session->has('is_auth')) {
@@ -88,7 +87,7 @@ try {
     // don't show the local login form if it's disabled
     $showLocal = true;
     // if there is a ?letmein in the url, we still show it.
-    if (!$App->Config->configArr['local_login'] && !$Request->query->has('letmein')) {
+    if (!$App->Config->configArr['local_login'] && !$App->Request->query->has('letmein')) {
         $showLocal = false;
     }
 
@@ -99,7 +98,7 @@ try {
     $Teams->bypassReadPermission = true;
     $teamsArr = $Teams->readAll();
 
-    if ($Request->cookies->has('kickreason')) {
+    if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->ko[] = _('Your session expired.');
     }

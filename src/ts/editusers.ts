@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'team': team,
           'usergroup': usergroup,
         });
+        row.remove();
       });
       users.forEach(user => {
         ApiC.post('users', {...user});

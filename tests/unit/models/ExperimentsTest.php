@@ -9,14 +9,13 @@
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\Request;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -85,7 +84,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         foreach ($matrix as $column) {
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::MyTeams->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->toJson())));
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->toJson())));
         }
@@ -125,7 +124,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTimestampThisMonth(): void
     {
-        $this->assertEquals(0, $this->Experiments->getTimestampLastMonth());
+        $this->assertEquals(4, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void
@@ -144,16 +143,18 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('val1', 'val2'), $decoded['extra_fields']['multiselect']['value']);
     }
 
-    public function testExtraFieldsSearch(): void
+    public function testUpdateExtraFieldsOrdering(): void
     {
-        $request = Request::createFromGlobals();
-        $request->query->add(array(
-            'metakey' => array('test'),
-            'metavalue' => array('some text'),
+        $OrderingParams = new ExtraFieldsOrderingParams(array(
+            'entity' => array('type' => EntityType::Experiments->value, 'id' => '123'),
+            'ordering' => array('multiselect', 'test'),
+            'table' => 'extra_fields',
         ));
-        $displayParams = new DisplayParams($this->Users, $request, EntityType::Experiments);
-        $res = $this->Experiments->readShow($displayParams);
-        $this->assertEquals(1, $res[0]['id']);
+        $this->Experiments->setId(1);
+        $entityData = $this->Experiments->updateExtraFieldsOrdering($OrderingParams);
+        $decoded = json_decode($entityData['metadata'], true);
+        $this->assertEquals(0, $decoded['extra_fields']['multiselect']['position']);
+        $this->assertEquals(1, $decoded['extra_fields']['test']['position']);
     }
 
     public function testReuseCustomId(): void

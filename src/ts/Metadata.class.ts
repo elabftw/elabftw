@@ -6,12 +6,11 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -58,6 +57,15 @@ export class Metadata {
     if (el.dataset.units === '1') {
       return this.updateUnit(event);
     }
+
+    // prevent self links
+    if (el.dataset.completeTarget === document.getElementById('info').dataset.type
+      && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
+    ) {
+      notifError(new Error(i18next.t('no-self-links')));
+      return false;
+    }
+
     // by default the value is simply the value of the input, which is the event target
     let value = el.value;
     // special case for checkboxes
@@ -69,11 +77,21 @@ export class Metadata {
       // collect all the selected options, and the value will be an array
       value = [...el.selectedOptions].map(option => option.value);
     }
+    // special case for Experiment/Resource/User link
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
+      value = parseInt(value.split(' ')[0], 10);
+      // also create a link automatically for experiments and resources
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
+        this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      }
+    }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
     this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
       this.editor.loadMetadata();
+    }).catch(() => {
+      return;
     });
     return true;
   }
@@ -165,7 +183,7 @@ export class Metadata {
 
     let valueEl: HTMLElement;
     // checkbox is special case
-    if (properties.type === 'checkbox') {
+    if (properties.type === ExtraFieldInputType.Checkbox) {
       valueEl = document.createElement('input');
       valueEl.setAttribute('type', 'checkbox');
       valueEl.classList.add('d-block');
@@ -182,7 +200,7 @@ export class Metadata {
       valueEl.innerText = value;
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
-      if (properties.type === 'url') {
+      if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
     }
@@ -430,12 +448,18 @@ export class Metadata {
     // collect all extra fields, normalize position and group_id, add an element property
     const elements = [];
     for (const [name, properties] of Object.entries(json.extra_fields)) {
+      // 0 is a valid position, so don't do something with "|| 9999"
+      let position = parseInt(String(properties.position), 10);
+      if (typeof position !== 'number') {
+        position = 999;
+      }
       elements.push({
         name: name,
         description: properties.description,
         element: this.generateElement(mode, name, properties),
-        position: parseInt(String(properties.position), 10) || 99999,
+        position: position,
         group_id: properties.group_id || -1,
+        required: properties.required ? properties.required : false,
       });
     }
 
@@ -496,7 +520,9 @@ export class Metadata {
           }
 
           const wrapperUl = document.createElement('ul');
-          wrapperUl.classList.add('list-group', 'mt-2');
+          wrapperUl.classList.add('list-group', 'mt-2', 'sortable');
+          wrapperUl.dataset.axis = 'y';
+          wrapperUl.dataset.table = 'extra_fields';
           wrapperUl.dataset.saveHidden = `extra_fields_group_${this.entity.type}_${this.entity.id}_${group.id}`;
 
           for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
@@ -509,21 +535,38 @@ export class Metadata {
             const label = document.createElement('label');
             label.htmlFor = element.element.id;
             label.innerText = element.name as string;
-            if (element.element.required) {
+            if (element.required) {
               label.classList.add('required-label');
             }
             label.classList.add('py-2');
 
+            // div to hold the drag and delete buttons
+            const handleDeleteDiv = document.createElement('div');
+
+            // add a button to set the position of the field
+            const handle = document.createElement('div');
+            handle.dataset.action = 'metadata-reposition-field';
+            handle.classList.add('btn', 'p-0', 'mr-3', 'border-0', 'lh-normal');
+            const handleIconSpan = document.createElement('span');
+            handleIconSpan.classList.add('draggable', 'sortableHandle');
+            const handleIcon = document.createElement('i');
+            handleIcon.classList.add('fas', 'fa-grip-vertical');
+            handleIconSpan.appendChild(handleIcon);
+            handle.appendChild(handleIconSpan);
+
             // add a button to delete the field
-            const deleteBtn = document.createElement('div');
+            const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
-            deleteBtn.classList.add('rounded', 'p-2', 'hl-hover-gray');
+            deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
+            handleDeleteDiv.appendChild(handle);
+            handleDeleteDiv.appendChild(deleteBtn);
+
             labelDiv.append(label);
-            labelDiv.append(deleteBtn);
+            labelDiv.append(handleDeleteDiv);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {
@@ -540,6 +583,10 @@ export class Metadata {
               listItem.append(element.element);
             }
 
+            // this is useful for Sortable (re-ordering the elements): it needs to have an id
+            // and we use the label to get the name of the field
+            listItem.id = label.innerText;
+
             wrapperUl.append(listItem);
           }
           groupWrapperDiv.append(groupHeader);
@@ -549,6 +596,6 @@ export class Metadata {
       });
 
       this.metadataDiv.append(wrapperDiv);
-    });
+    }).then(() => makeSortableGreatAgain());
   }
 }

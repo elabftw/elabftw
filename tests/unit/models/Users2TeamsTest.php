@@ -18,7 +18,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users2Teams = new Users2Teams();
+        $this->Users2Teams = new Users2Teams(new Users(1, 1));
     }
 
     public function testRmUserFromTeams(): void
@@ -37,7 +37,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'target' => 'group',
             'content' => 4,
         );
-        $this->assertEquals(4, $this->Users2Teams->patchUser2Team(new Users(1, 1), $params));
+        $this->assertEquals(4, $this->Users2Teams->patchUser2Team($params));
     }
 
     public function testPatchIsOwner(): void
@@ -48,8 +48,10 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'target' => 'is_owner',
             'content' => '1',
         );
-        $this->assertEquals(1, $this->Users2Teams->patchUser2Team(new Users(1, 1), $params));
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params));
+        // now do it with a non sysadmin user
         $this->expectException(IllegalActionException::class);
-        $this->Users2Teams->patchUser2Team(new Users(2, 1), $params);
+        $Users2Teams = new Users2Teams(new Users(2, 1));
+        $Users2Teams->patchUser2Team($params);
     }
 }

@@ -12,11 +12,13 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 use function array_merge;
 use function bin2hex;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Field;
+use Elabftw\Services\AdvancedSearchQuery\Grammar\MetadataField;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\NotExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrOperand;
@@ -39,16 +41,79 @@ class QueryBuilderVisitor implements Visitor
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
-        $query = sprintf('(entity.title LIKE %1$s OR entity.body LIKE %1$s OR entity.date LIKE %1$s OR entity.elabid LIKE %1$s)', $param);
-
-        return new WhereCollector(
-            $query,
-            array(array(
-                'param' => $param,
-                'value' => '%' . $simpleValueWrapper->getValue() . '%',
-                'type' => PDO::PARAM_STR,
-            )),
+        $paramBody = $this->getUniqueID();
+        $paramCustomId = $this->getUniqueID();
+        $query = sprintf(
+            '(entity.title LIKE %1$s
+                OR entity.date LIKE %1$s
+                OR entity.elabid LIKE %1$s
+                OR entity.body LIKE %2$s
+                OR entity.custom_id = %3$s)',
+            $param,
+            $paramBody,
+            $paramCustomId,
         );
+
+        $bindValues = array();
+        $bindValues[] = array(
+            'param' => $param,
+            'value' => '%' . $simpleValueWrapper->getValue() . '%',
+            'type' => PDO::PARAM_STR,
+        );
+        // body is stored as html after htmlPurifier worked on it
+        // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
+        $bindValues[] = array(
+            'param' => $paramBody,
+            'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
+            'type' => PDO::PARAM_STR,
+        );
+        $bindValues[] = array(
+            'param' => $paramCustomId,
+            'value' => $simpleValueWrapper->getValue(),
+            'type' => PDO::PARAM_INT,
+        );
+
+        return new WhereCollector($query, $bindValues);
+    }
+
+    public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): WhereCollector
+    {
+        $pathParam = $this->getUniqueID();
+        $valueParam = $this->getUniqueID();
+        $column = 'entity.metadata';
+        $query = sprintf(
+            'JSON_UNQUOTE(JSON_EXTRACT(LOWER(%s), LOWER(%s))) LIKE LOWER(%s)',
+            $column,
+            $pathParam,
+            $valueParam,
+        );
+        
+        $bindValues = array();
+        // value path
+        $bindValues[] = array(
+            'param' => $pathParam,
+            'value' => sprintf(
+                '$.%s%s.%s',
+                MetadataEnum::ExtraFields->value,
+                // JSON path '$.extra_fields**.value' can be used to search all keys
+                // Note: the extraFieldKey gets double quoted by json_encode() so spaces are not an issue
+                $metadataField->getKey() === '**'
+                    ? '**'
+                    : '.' . json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
+                MetadataEnum::Value->value,
+            ),
+            'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
+        );
+        // value
+        $bindValues[] = array(
+            'param' => $valueParam,
+            'value' => $metadataField->getAffix() . $metadataField->getValue() . $metadataField->getAffix(),
+            'type' => PDO::PARAM_STR,
+            'additional_columns' => $column,
+        );
+
+        return new WhereCollector($query, $bindValues);
     }
 
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): WhereCollector
@@ -170,6 +235,7 @@ class QueryBuilderVisitor implements Visitor
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
+        // Custom_id:    entity.custom_id
         // ELabID:       entity.elabid
         // Id:           entity.id
         // Locked:       entity.locked
@@ -333,6 +399,15 @@ class QueryBuilderVisitor implements Visitor
             'categoryt.title LIKE ',
             $affix . $searchTerm . $affix,
             PDO::PARAM_STR,
+        );
+    }
+
+    private function visitFieldCustom_id(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        return $this->getWhereCollector(
+            'entity.custom_id = ',
+            $searchTerm,
+            PDO::PARAM_INT,
         );
     }
 

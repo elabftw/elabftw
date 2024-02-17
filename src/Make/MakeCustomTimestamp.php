@@ -16,7 +16,7 @@ use Elabftw\Models\Config;
 /**
  * RFC3161 timestamping with a custom TSA
  */
-class MakeCustomTimestamp extends AbstractMakeTimestamp
+class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 {
     /** default hash algo for file */
     private const TS_HASH = 'sha256';

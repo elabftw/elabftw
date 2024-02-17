@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Click to edit",
     "cancel": "Annuleer",
     "comment-add": "Voeg een opmerking toe",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Sleep bestanden om te uploaden hierheen",
     "dropzone-filesize-limit": "File size limit:",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Dit verwijderen?",
     "link-delete-warning": "Deze link verwijderen?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",
     "nothing-selected": "Niets geselecteerd!",
     "now": "Now",
@@ -24,6 +26,7 @@ const t = {
     "request-filename": "Voer de naam van het bestand in",
     "save": "Opslaan",
     "saved": "Opgeslagen",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
     "tag-delete-warning": "Dit label verwijderen?",
@@ -31,7 +34,6 @@ const t = {
     "today": "Today",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Bestandscommentaar",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

@@ -10,23 +10,11 @@
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Metadata;
-use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\MakeTimestampInterface;
-use Elabftw\Make\MakeCustomTimestamp;
-use Elabftw\Make\MakeDfnTimestamp;
-use Elabftw\Make\MakeDigicertTimestamp;
-use Elabftw\Make\MakeGlobalSignTimestamp;
-use Elabftw\Make\MakeSectigoTimestamp;
-use Elabftw\Make\MakeUniversignTimestamp;
-use Elabftw\Make\MakeUniversignTimestampDev;
-use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\InsertTagsTrait;
-use GuzzleHttp\Client;
 use PDO;
 
 /**
@@ -56,14 +44,13 @@ class Experiments extends AbstractConcreteEntity
         $category = null;
         $status = $Status->getDefault();
         $body = null;
-        $canread = BasePermissions::MyTeams->toJson();
+        $canread = BasePermissions::Team->toJson();
         $canwrite = BasePermissions::User->toJson();
         $metadata = null;
         $contentType = AbstractEntity::CONTENT_HTML;
         if ($this->Users->userData['use_markdown']) {
             $contentType = AbstractEntity::CONTENT_MD;
         }
-
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
@@ -74,29 +61,30 @@ class Experiments extends AbstractConcreteEntity
             $category = $templateArr['category'];
             $status = $templateArr['status'];
             $body = $templateArr['body'];
-            $canread = $templateArr['canread'];
-            $canwrite = $templateArr['canwrite'];
+            $canread = $templateArr['canread_target'];
+            $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
             $contentType = (int) $templateArr['content_type'];
         }
 
-        if ($template === 0) {
-            // no template, make sure admin didn't disallow it
+        // we don't use a proper template (use of common tpl or blank)
+        if ($template === 0 || $template === -1) {
+            // if admin forced template use, throw error
             if ($teamConfigArr['force_exp_tpl'] === 1) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
+            // use user settings for permissions
+            $canread = $this->Users->userData['default_read'];
+            $canwrite = $this->Users->userData['default_write'];
+        }
+        // load common template
+        if ($template === 0) {
             $commonTemplateKey = 'common_template';
             // use the markdown template if the user prefers markdown
             if ($this->Users->userData['use_markdown']) {
                 $commonTemplateKey .= '_md';
             }
             $body = $teamConfigArr[$commonTemplateKey];
-            if ($this->Users->userData['default_read'] !== null) {
-                $canread = $this->Users->userData['default_read'];
-            }
-            if ($this->Users->userData['default_write'] !== null) {
-                $canwrite = $this->Users->userData['default_write'];
-            }
         }
 
         // enforce the permissions if the admin has set them
@@ -106,9 +94,10 @@ class Experiments extends AbstractConcreteEntity
         $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $body, PDO::PARAM_STR);
         $req->bindValue(':category', $category, PDO::PARAM_INT);
@@ -157,9 +146,10 @@ class Experiments extends AbstractConcreteEntity
         // figure out the custom id
         $customId = $this->getNextCustomId((int) $this->entityData['category']);
 
-        $sql = 'INSERT INTO experiments(title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
-            VALUES(:title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
+            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title, PDO::PARAM_STR);
         $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
         $req->bindValue(':category', $this->entityData['category']);
@@ -188,24 +178,8 @@ class Experiments extends AbstractConcreteEntity
      */
     public function destroy(): bool
     {
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        $Config = Config::getConfig();
-        if ((!$teamConfigArr['deletable_xp'] && !$this->Users->isAdmin)
-            || $Config->configArr['deletable_xp'] === '0') {
-            throw new ImproperActionException('You cannot delete experiments!');
-        }
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        $this->canOrExplode('write');
-        return match ($action) {
-            Action::Timestamp => $this->timestamp(),
-            default => parent::patch($action, $params),
-        };
     }
 
     protected function getNextCustomId(int $category): ?int
@@ -219,38 +193,5 @@ class Experiments extends AbstractConcreteEntity
             return null;
         }
         return ++$res['custom_id'];
-    }
-
-    private function getTimestampMaker(array $config): MakeTimestampInterface
-    {
-        return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($config, $this),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this) : new MakeUniversignTimestamp($config, $this),
-            'digicert' => new MakeDigicertTimestamp($config, $this),
-            'sectigo' => new MakeSectigoTimestamp($config, $this),
-            'globalsign' => new MakeGlobalSignTimestamp($config, $this),
-            'custom' => new MakeCustomTimestamp($config, $this),
-            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
-        };
-    }
-
-    private function timestamp(): array
-    {
-        $Config = Config::getConfig();
-        $Maker = $this->getTimestampMaker($Config->configArr);
-        $pdfBlob = $Maker->generatePdf();
-        $TimestampUtils = new TimestampUtils(
-            new Client(),
-            $pdfBlob,
-            $Maker->getTimestampParameters(),
-            new TimestampResponse(),
-        );
-        $tsResponse = $TimestampUtils->timestamp();
-        $Maker->saveTimestamp($TimestampUtils->getDataPath(), $tsResponse);
-
-        // decrement the balance
-        $Config->decrementTsBalance();
-
-        return $this->readOne();
     }
 }

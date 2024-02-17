@@ -10,6 +10,9 @@
 namespace Elabftw\Make;
 
 use function count;
+use DateTimeImmutable;
+
+use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use function json_encode;
@@ -21,8 +24,8 @@ use ZipStream\ZipStream;
  */
 class MakeStreamZip extends AbstractMakeZip
 {
-    // array that will be converted to json
-    protected array $jsonArr = array();
+    // data array (entries) that will be converted to json
+    protected array $dataArr = array();
 
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr, protected bool $usePdfa = false)
     {
@@ -57,9 +60,23 @@ class MakeStreamZip extends AbstractMakeZip
         }
 
         // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile('.elabftw.json', json_encode($this->jsonArr, JSON_THROW_ON_ERROR, 512));
+        $this->Zip->addFile('.elabftw.json', json_encode(array('data' => $this->dataArr, 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512));
 
         $this->Zip->finish();
+    }
+
+    /**
+     * Produce metadata for the "meta" key of the json file
+     */
+    protected function getMeta(): array
+    {
+        $creationDateTime = new DateTimeImmutable();
+        return array(
+            'elabftw_producer_version' => App::INSTALLED_VERSION,
+            'elabftw_producer_version_int' => App::INSTALLED_VERSION_INT,
+            'dateCreated' => $creationDateTime->format(DateTimeImmutable::ATOM),
+            'count' => count($this->dataArr),
+        );
     }
 
     /**
@@ -91,7 +108,7 @@ class MakeStreamZip extends AbstractMakeZip
             }
             $this->addPdf();
             // add an entry to the json file
-            $this->jsonArr[] = $entityArr;
+            $this->dataArr[] = $entityArr;
         }
     }
 }

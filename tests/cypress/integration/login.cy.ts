@@ -3,11 +3,13 @@ describe('Login page', () => {
     cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
-  it('sets auth cookie when logging in via form submission', function() {
+  it('sets auth cookie when logging in via form submission', () => {
     const email = 'toto@yopmail.com';
-    const password = 'totototo';
+    const password = 'totototototo';
 
     cy.visit('/login.php');
+
+    cy.htmlvalidate();
 
     cy.get('input[id=email]').type(email);
 
@@ -25,7 +27,7 @@ describe('Login page', () => {
     cy.get('h6.dropdown-header').should('contain', 'Toto');
   });
 
-  function fillEmailAddress(email) {
+  function fillEmailAddress(email: string): void {
     cy.visit('/login.php');
     cy.intercept('/app/controllers/ResetPasswordController.php').as('ResetPasswordController');
     cy.intercept('/login.php').as('login');

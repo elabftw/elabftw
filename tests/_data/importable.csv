@@ -1,4 +1,44 @@
-id,date,title,content,category,elabid,rating,url,tags
-157,2022-02-03,from csv row 1,csv body row 1,Molecule,20220203-ce0b5cd8286bad29ab32407a3e6b70c147da9cc8,0,https://elab.local:3148/database.php?mode=view&id=157,some tag
-155,2022-02-03,from csv row 2,csv body row 2,Plasmid,20220203-dc09cc0930539adec6c55ee66fa11cdd772a5339,0,https://elab.local:3148/database.php?mode=view&id=155,multiple tags|yep
-154,2022-02-03,from csv row 3,csv body row 3,Plasmid,20220203-b84165d7d87903f3bbc350aa5074581881560ba2,0,https://elab.local:3148/database.php?mode=view&id=154,
+﻿id,date,title,body,category,category_title,category_color,status,status_title,status_color,custom_id,elabid,rating,url,metadata,tags
+261,2025-01-02,"Effect of temperature on enzyme activity","Effect of Temperature on Enzyme Activity
+
+Enzymes are biological molecules that catalyze chemical reactions in living organisms. In this experiment, we investigated the effect of temperature on the activity of the enzyme amylase, which catalyzes the hydrolysis of starch into glucose.
+
+Experimental Design
+
+We prepared a solution of starch and added a small amount of amylase to the solution. We then incubated the solution at different temperatures, ranging from 4°C to 70°C, for 5 minutes. After the incubation period, we added iodine to the solution to detect the presence of starch. The disappearance of the blue-black color of the iodine indicated the breakdown of starch into glucose.
+
+Results
+
+The results showed that the activity of amylase increased with increasing temperature up to 37°C, which is the optimum temperature for amylase activity. At temperatures above 37°C, the activity of amylase decreased rapidly, and at 70°C, the enzyme was completely denatured and lost its catalytic activity.
+
+
+The relationship between temperature and enzyme activity can be described by the Arrhenius equation, which relates the rate constant of a reaction to the activation energy and temperature. The equation can be written as:
+
+
+$$k = Ae^{-E_a/RT}$$
+
+
+where k is the rate constant, A is the pre-exponential factor, E_a is the activation energy, R is the gas constant, and T is the absolute temperature. The activation energy is the energy required to break the bonds in the reactants and form the products. The rate constant increases with increasing temperature due to the increase in the number of reactant molecules with sufficient kinetic energy to overcome the activation energy barrier.
+
+
+The effect of temperature on enzyme activity can also be described by the Q10 value, which is the ratio of the reaction rate at a given temperature to the reaction rate at a temperature 10°C lower. The Q10 value for most enzyme-catalyzed reactions is around 2-3, indicating that the reaction rate doubles or triples with each 10°C increase in temperature.
+
+",2,"Project CRYPTO-COOL",2898b5,3,"Need to be redone",C0C0C0,,20240205-ec2b09dc45a58a1ebddd76035e49432c857ff859,0,https://elab.local:3148/experiments.php?mode=view&id=261,"{""elabftw"": {""extra_fields_groups"": [{""id"": 1, ""name"": ""Group name""}]}, ""extra_fields"": {""Text input"": {""type"": ""text"", ""value"": ""text value"", ""readonly"": true, ""required"": true, ""description"": ""description text"", ""blank_value_on_duplicate"": true}, ""time input"": {""type"": ""time"", ""value"": """", ""group_id"": 1}, ""email field"": {""type"": ""email"", ""value"": ""test@yopmail.com"", ""group_id"": 1, ""required"": true, ""description"": ""enter email""}}}","enzymology|test|Project ENZYTEMP"
+259,2025-01-02,"Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties","Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
+
+The emergence of drug-resistant bacterial strains has become a major public health concern, highlighting the need for the development of new antimicrobial agents. In this study, we aimed to synthesize a novel organic compound with potential antimicrobial activity.
+
+Experimental Design
+
+The compound was synthesized via a multi-step reaction scheme. The starting material, benzaldehyde, was reacted with aniline in the presence of an acid catalyst to form the intermediate product, N-phenylbenzamide. The intermediate product was then reacted with thionyl chloride to form the corresponding acid chloride. The acid chloride was then reacted with aminoguanidine in the presence of a base catalyst to form the final product, which was purified by recrystallization.
+
+Characterization
+
+The synthesized compound was characterized using various spectroscopic techniques. The melting point of the compound was determined using a melting point apparatus and compared to the literature value. The IR spectrum of the compound was obtained using a Fourier transform infrared spectrometer and compared to the expected spectrum. The NMR spectrum of the compound was obtained using a nuclear magnetic resonance spectrometer and analyzed to confirm the structure of the compound.
+
+Antimicrobial Activity
+
+The antimicrobial activity of the synthesized compound was evaluated against several bacterial strains using the disk diffusion method. The results showed that the compound exhibited significant antimicrobial activity against both Gram-positive and Gram-negative bacteria, suggesting its potential as a new antimicrobial agent.
+
+",2,"Project CRYPTO-COOL",2898b5,4,Fail,C24F3D,,20240205-2e02014ed4917f1c3d5e290e31a949fb79966918,1,https://elab.local:3148/experiments.php?mode=view&id=259,{},synthesis|antimicrobial|chemistry
+258,2025-01-02,"Transfection of p103Δ12-22 into RPE-1 Actin-RFP","GoalTransfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.",2,"Project CRYPTO-COOL",2898b5,2,Success,54AA08,,20240205-81076104d1342113caf1562357b0f47be385e433,0,https://elab.local:3148/experiments.php?mode=view&id=258,{},transfection|biocell|RPE-1

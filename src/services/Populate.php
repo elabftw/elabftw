@@ -31,7 +31,7 @@ use Elabftw\Models\Users;
 class Populate
 {
     /** @var string DEFAULT_PASSWORD the password to use if none are provided */
-    private const DEFAULT_PASSWORD = 'totototo';
+    private const DEFAULT_PASSWORD = 'totototototo';
 
     /** @var int TEMPLATES_ITER number of templates to generate */
     private const TEMPLATES_ITER = 5;
@@ -50,12 +50,14 @@ class Populate
     public function generate(Experiments | Items $Entity): void
     {
         $Teams = new Teams($Entity->Users, $Entity->Users->team);
+        $Teams->bypassWritePermission = true;
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
             $Category = new ItemsTypes($Entity->Users);
+            $Category->bypassWritePermission = true;
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
         }
@@ -66,7 +68,7 @@ class Populate
         $visibilityArr = array(
             BasePermissions::Full->toJson(),
             BasePermissions::Organization->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             BasePermissions::UserOnly->toJson(),
         );
@@ -123,7 +125,6 @@ class Populate
             'statistical analysis',
             'scientific literature',
         );
-
 
         for ($i = 0; $i <= $this->iter; $i++) {
             $id = $Entity->create($tpl);

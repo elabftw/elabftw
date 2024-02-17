@@ -11,12 +11,13 @@ namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\UserLogin;
 use Elabftw\Auth\CookieToken;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
-
+use Elabftw\Models\Notifications\NewVersionInstalled;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -43,13 +44,27 @@ class LoginHelper
         if ($setCookie) {
             $this->setToken();
         }
-        $this->updateLastLogin();
+        // if we run a version newer than the last time the user logged in, create a notification
+        if ($this->getLastSeenVersion() < App::INSTALLED_VERSION_INT && $this->AuthResponse->isAnonymous === false) {
+            $Notifications = new NewVersionInstalled();
+            $Notifications->create($this->AuthResponse->userid);
+        }
+        $this->updateLast();
         $this->setDeviceToken();
         // only update this value if it is set, won't be set for cookie login for instance
         if ($this->Session->has('auth_service')) {
             $this->updateAuthService();
         }
-        AuditLogs::create(new UserLogin($this->AuthResponse->userid));
+        AuditLogs::create(new UserLogin($this->AuthResponse->userid, $this->AuthResponse->userid));
+    }
+
+    private function getLastSeenVersion(): int
+    {
+        $sql = 'SELECT last_seen_version FROM users WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -65,12 +80,13 @@ class LoginHelper
     }
 
     /**
-     * Update last login time of user
+     * Update last login time of user and last seen version
      */
-    private function updateLastLogin(): void
+    private function updateLast(): void
     {
-        $sql = 'UPDATE users SET last_login = NOW() WHERE userid = :userid';
+        $sql = 'UPDATE users SET last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':version', App::INSTALLED_VERSION_INT, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
     }

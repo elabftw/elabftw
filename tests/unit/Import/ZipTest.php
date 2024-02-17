@@ -43,8 +43,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         new Zip(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -63,8 +63,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         new Zip(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -83,8 +83,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         $Import = new Zip(
             new Users(1, 1),
             'experiments:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -105,8 +105,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         $Import = new Zip(
             new Users(1, 1),
             'experiments:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -127,8 +127,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         $Import = new Zip(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
@@ -149,8 +149,8 @@ class ZipTest extends \PHPUnit\Framework\TestCase
         $Import = new Zip(
             new Users(1, 1),
             'items:1',
-            BasePermissions::MyTeams->toJson(),
-            BasePermissions::MyTeams->toJson(),
+            BasePermissions::Team->toJson(),
+            BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );

@@ -35,7 +35,7 @@
 
 {% include('view-edit-toolbar.html') %}
 
-<section id='main_section'>
+<section id='main_section' aria-label='main section'>
 
   {# DATE and RATING #}
   <div class='d-flex mb-2'>
@@ -48,7 +48,7 @@
     <div class='ml-auto rating' id='editRatingDiv'>
       <span class='cancel-button' data-trigger='click' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
       {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}'></label>
+        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
       {% endfor %}
     </div>
   </div>
@@ -60,7 +60,7 @@
     <label for='custom_id_input' class='col-form-label mx-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
     <div class='input-group justify-content-end flex-nowrap'>
       <div class='input-group-prepend'>
-        <button class='btn btn-secondary' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
+        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
       </div>
       <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
@@ -70,7 +70,7 @@
   <div class='d-flex mb-2 justify-content-between align-items-center'>
     <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
     {# no data-trigger here because custom code in edit.ts #}
-    <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|raw }}' required />
+    <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
   </div>
 
   {# CATEGORY / STATUS #}
@@ -78,24 +78,28 @@
   {# TAGS #}
   {% include('edit-tags.html') %}
   {# PERMISSIONS #}
+  <hr>
   {% include('edit-permissions.html') %}
 
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>
-    <h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-    <div>
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+    <div data-save-hidden='mainTextDiv'>
       <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {% if editor == 'md' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
         {% else %}
         {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+          {%- endif %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
       </div>
 
       <div class='mt-4 text-center'>
-        <button {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+        <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
       </div>
     </div>
     <hr>
@@ -104,7 +108,7 @@
 </section>
 
 {# EXTRA FIELDS #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
 <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
   {# this div is filled in JS by Metadata.class.ts edit() #}
   <div id='metadataDiv'></div>
@@ -112,16 +116,12 @@
     <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
     <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
   </div>
+  <hr>
 </div>
-<hr>
+
 
 {# STEPS #}
 {% include 'steps-links-edit.html' %}
-
-{# UPLOAD FORM: not togglable or dropzone doesn't register #}
-<h3 class='d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Attach a file'|trans }}</h3>
-<form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone'></form>
-<hr>
 
 {% include 'uploads.html' %}
 
@@ -131,7 +131,7 @@
 
 {# DOODLE #}
 {# id for the i is needed by the annotate-image action #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='doodleDiv'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='d-flex'>
     {# do not use w-100 here as it will break the canvas #}
@@ -163,8 +163,8 @@
 
       <hr>
       <div>
-        <button id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-        <button id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <button type='button' id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -173,16 +173,20 @@
 <hr>
 
 {# CHEM EDITOR #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='chemDiv'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
 <div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
   {# chemdoodle #}
   <div>
+    {% if App.Config.configArr.debug -%}
+      {# set no-unused-disable and text-content and wcag/h37 because removing or leaving text-content and wcag/h37 brings up error #}
+      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h37, wcag/h67, text-content, no-implicit-button-type, no-redundant-role, no-unused-disable: suppress errors from sketcher] -->
+    {%- endif %}
     <canvas id='sketcher'></canvas>
   </div>
   <div class='mt-3'>
-    <button class='btn btn-primary mr-3' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
-    <button class='btn btn-primary mr-3' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
-    <button class='btn btn-primary mr-3' data-filetype='rxn' data-action='save-chem-as-file'>{{ 'Save as RXN'|trans }}</button>
+    <button class='btn btn-primary mr-3' type='button' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
+    <button class='btn btn-primary mr-3' type='button' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
+    <button class='btn btn-primary mr-3' type='button' data-filetype='rxn' data-action='save-chem-as-file'>{{ 'Save as RXN'|trans }}</button>
   </div>
 </div>
 

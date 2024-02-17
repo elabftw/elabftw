@@ -24,6 +24,7 @@ use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use function is_string;
@@ -91,7 +92,6 @@ class PopulateDatabase extends Command
             }
         }
 
-
         // drop database
         $output->writeln('Dropping current database and loading structure...');
         $this->dropAndInitDb();
@@ -115,11 +115,15 @@ class PopulateDatabase extends Command
             $Teams->setId($id);
 
             // create fake categories and status
-            $Category->postAction(Action::Create, array('name' => 'Projet X', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Cell biology', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Project CRYPTO-COOL', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Project CASIMIR', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Category->postAction(Action::Create, array('name' => 'Tests', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Above Top Secret', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Demo', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Discussions', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Category->postAction(Action::Create, array('name' => 'Production', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Category->postAction(Action::Create, array('name' => 'R&D', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Category->postAction(Action::Create, array('name' => 'Support ticket', 'color' => $faker->hexColor(), 'is_default' => 0));
 
             $Status->postAction(Action::Create, array('name' => 'Maintenance mode', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Operational', 'color' => $faker->hexColor(), 'is_default' => 0));
@@ -128,6 +132,8 @@ class PopulateDatabase extends Command
             $Status->postAction(Action::Create, array('name' => 'Destroyed', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Processed', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Waiting', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $faker->hexColor(), 'is_default' => 0));
+            $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $faker->hexColor(), 'is_default' => 0));
 
             if (isset($team['visible'])) {
                 $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
@@ -144,6 +150,38 @@ class PopulateDatabase extends Command
             $Populate->createUser($Teams, $user);
         }
 
+        // create predefined templates
+        if (isset($yaml['templates'])) {
+            foreach ($yaml['templates'] as $template) {
+                $user = new Users((int) ($template['user'] ?? 1), (int) ($template['team'] ?? 1));
+                $Templates = new Templates($user);
+                $id = $Templates->postAction(Action::Create, array());
+                $Templates->setId($id);
+                $patch = array(
+                    'title' => $template['title'],
+                    'body' => $template['body'] ?? '',
+                    'category' => $template['category'] ?? 2,
+                    'status' => $template['status'] ?? 2,
+                    'metadata' => $template['metadata'] ?? '{}',
+                );
+                $Templates->patch(Action::Update, $patch);
+                if (isset($template['locked'])) {
+                    $Templates->toggleLock();
+                }
+                if (isset($template['tags'])) {
+                    foreach ($template['tags'] as $tag) {
+                        $Templates->Tags->postAction(Action::Create, array('tag' => $tag));
+                    }
+                }
+                if (isset($template['items_links'])) {
+                    foreach ($template['items_links'] as $target) {
+                        $Templates->ItemsLinks->setId($target);
+                        $Templates->ItemsLinks->postAction(Action::Create, array());
+                    }
+                }
+            }
+        }
+
         if (isset($yaml['experiments'])) {
             // read defined experiments
             foreach ($yaml['experiments'] as $experiment) {
@@ -155,7 +193,8 @@ class PopulateDatabase extends Command
                     'title' => $experiment['title'],
                     'body' => $experiment['body'] ?? '',
                     'date' => $experiment['date'],
-                    'category' => $experiment['status'] ?? 2,
+                    'category' => $experiment['category'] ?? 2,
+                    'status' => $experiment['status'] ?? 2,
                     'metadata' => $experiment['metadata'] ?? '{}',
                     'rating' => $experiment['rating'] ?? 0,
                 );
@@ -196,7 +235,7 @@ class PopulateDatabase extends Command
                 $ItemsTypes = new ItemsTypes($user);
                 $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
                 $ItemsTypes->bypassWritePermission = true;
-                $defaultPermissions = BasePermissions::MyTeams->toJson();
+                $defaultPermissions = BasePermissions::Team->toJson();
                 $patch = array(
                     'color' => $items_types['color'],
                     'body' => $items_types['template'] ?? '',

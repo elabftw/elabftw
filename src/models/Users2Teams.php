@@ -27,7 +27,7 @@ class Users2Teams
 {
     protected Db $Db;
 
-    public function __construct()
+    public function __construct(private Users $requester)
     {
         $this->Db = Db::getConnection();
     }
@@ -44,21 +44,21 @@ class Users2Teams
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $req->bindValue(':group', $group, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamAddition($teamid, $group, $userid));
+        AuditLogs::create(new TeamAddition($teamid, $group, $this->requester->userid ?? 0, $userid));
         return $res;
     }
 
-    public function patchUser2Team(Users $requester, array $params): int
+    public function patchUser2Team(array $params): int
     {
         $userid = (int) $params['userid'];
         $teamid = (int) $params['team'];
         if ($params['target'] === 'group') {
             $group = Usergroup::from((int) $params['content']);
-            return $this->patchTeamGroup($requester, $userid, $teamid, $group);
+            return $this->patchTeamGroup($userid, $teamid, $group);
         }
 
         // currently only other value for target is: is_owner
-        return $this->patchIsOwner($requester, $userid, $teamid, (int) $params['content']);
+        return $this->patchIsOwner($userid, $teamid, (int) $params['content']);
     }
 
     /**
@@ -100,13 +100,17 @@ class Users2Teams
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamRemoval($teamid, $userid));
+        AuditLogs::create(new TeamRemoval($teamid, 0, $userid));
         return $res;
     }
 
-    private function patchTeamGroup(Users $requester, int $userid, int $teamid, Usergroup $group): int
+    private function patchTeamGroup(int $userid, int $teamid, Usergroup $group): int
     {
-        $group = Check::usergroup($requester, $group)->value;
+        $group = Check::usergroup($this->requester, $group)->value;
+        // make sure requester is admin of target user
+        if (!$this->requester->isAdminOf($userid)) {
+            throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
+        }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':group', $group, PDO::PARAM_INT);
@@ -115,14 +119,14 @@ class Users2Teams
 
         $this->Db->execute($req);
         /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PermissionLevelChanged($requester->userid, $group, $userid, $teamid));
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $group, $userid, $teamid));
         return $group;
     }
 
-    private function patchIsOwner(Users $requester, int $userid, int $teamid, int $content): int
+    private function patchIsOwner(int $userid, int $teamid, int $content): int
     {
         // only sysdamin can do that
-        if ($requester->userData['is_sysadmin'] === 0) {
+        if ($this->requester->userData['is_sysadmin'] === 0) {
             throw new IllegalActionException('Only a sysadmin can modify is_owner value.');
         }
         $sql = 'UPDATE users2teams SET is_owner = :content WHERE `users_id` = :userid AND `teams_id` = :team';

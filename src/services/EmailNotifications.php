@@ -27,11 +27,11 @@ use function textdomain;
  */
 class EmailNotifications
 {
-    private const BASE_SUBJECT = '[eLabFTW] ';
+    protected const BASE_SUBJECT = '[eLabFTW] ';
 
     protected Db $Db;
 
-    public function __construct(private Email $emailService)
+    public function __construct(protected Email $emailService)
     {
         $this->Db = Db::getConnection();
     }
@@ -41,7 +41,7 @@ class EmailNotifications
         $toSend = $this->getNotificationsToSend();
         foreach ($toSend as $notif) {
             $targetUser = new Users((int) $notif['userid']);
-            $this->setLang((int) $notif['userid']);
+            $this->setLang($targetUser->userData['lang']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
             $Factory = new NotificationsFactory((int) $notif['category'], $notif['body']);
             $email = $Factory->getMailable()->getEmail();
@@ -52,22 +52,13 @@ class EmailNotifications
         return count($toSend);
     }
 
-    private function setEmailSent(int $id): bool
-    {
-        $sql = 'UPDATE notifications SET email_sent = 1, email_sent_at = NOW() WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     /**
      * set the lang to the one of the target user (see issue #2700)
      * @psalm-suppress UnusedFunctionCall
      */
-    private function setLang(int $userid): void
+    protected function setLang(string $lang = 'en_GB'): void
     {
-        $targetUser = new Users($userid);
-        $locale = $targetUser->userData['lang'] . '.utf8';
+        $locale = $lang . '.utf8';
         // configure gettext
         $domain = 'messages';
         putenv("LC_ALL=$locale");
@@ -76,7 +67,7 @@ class EmailNotifications
         textdomain($domain);
     }
 
-    private function getNotificationsToSend(): array
+    protected function getNotificationsToSend(): array
     {
         $sql='SELECT id, userid, category, body FROM notifications
             WHERE send_email = 1 AND email_sent = 0 AND (category <> :deadline OR (category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)))';
@@ -85,5 +76,13 @@ class EmailNotifications
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    private function setEmailSent(int $id): bool
+    {
+        $sql = 'UPDATE notifications SET email_sent = 1, email_sent_at = NOW() WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 }

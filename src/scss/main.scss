@@ -23,7 +23,7 @@ $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
-@import 'dropzone/dist/dropzone';
+@import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';
 @import 'jquery-ui/themes/base/core';
 @import 'jquery-ui/themes/base/autocomplete';
@@ -206,12 +206,6 @@ select.form-control {
     color: $elabblue;
 }
 
-/* GENERAL */
-img {
-    margin-right: 3px;
-    vertical-align: -3px;
-}
-
 /* BLOCKQUOTE */
 blockquote {
     background: #f9f9f9;
@@ -283,16 +277,25 @@ h5 {
     padding: 0;
 
     li {
-        color: $medium;
-        cursor: pointer;
         display: inline;
+        margin: 0;
         margin-right: 2%;
-        text-transform: uppercase;
-    }
 
-    .selected {
-        border-bottom: 6px solid $elabblue;
-        padding-bottom: 0;
+        button {
+            border: 0;
+            border-radius: 0;
+            color: $medium;
+            font-weight: 500;
+            margin: 0;
+            margin-bottom: 6px;
+            padding: 0;
+            text-transform: uppercase;
+        }
+
+        .selected {
+            border-bottom: 6px solid $elabblue;
+            margin-bottom: 0;
+        }
     }
 }
 
@@ -371,10 +374,17 @@ button:disabled {
     transform: rotate(35deg);
 }
 
-#body_view p {
-    // break super long words, see #4169
-    overflow-wrap: break-word;
-    word-wrap: break-word;
+#body_view {
+    img {
+        height: auto;
+        max-width: 100%;
+    }
+
+    p {
+        // break super long words, see #4169
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
 }
 
 /* fix for big images uploaded in the text */
@@ -458,7 +468,7 @@ tr:nth-child(odd) {
 
 /* required labels/input for extra fields */
 #metadataDiv,
-#newFieldForm {
+.new-field-form {
     /* any invalid field will get this red border */
     :invalid {
         border: 1px solid $lightred;
@@ -477,10 +487,14 @@ tr:nth-child(odd) {
 .vertical-separator {
     border-right: 1px solid $secondlevel;
     height: 1.8rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 
     /* separator disappears on small screens */
     @media (max-width: 550px) {
-        display: none;
+        border-right: 0;
+        margin-left: 0;
+        margin-right: 0.5rem;
     }
 }
 
@@ -618,6 +632,11 @@ tr:nth-child(odd) {
 /* make the text of buttons in bold to increase readability because contrast ratio is not great */
 .btn {
     font-weight: bold;
+}
+
+.btn-dropdown-item {
+    font-weight: 400;
+    line-height: normal;
 }
 
 /* SIDE PANEL */
@@ -786,6 +805,11 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $firstlevel;
 }
 
+.hl-hover-gray:focus-visible {
+    background-color: $firstlevel;
+    outline: none;
+}
+
 /* COMMENTS */
 .comment-header {
     background-color: $firstlevel;
@@ -853,6 +877,10 @@ the form-control fails to do that so we do the border ourselves */
     line-height: 150%;
 }
 
+.lh-normal {
+    line-height: normal;
+}
+
 .togglable-section-title {
     color: $medium;
     font-size: 100%;
@@ -862,10 +890,12 @@ the form-control fails to do that so we do the border ourselves */
 
 /* Category and Status buttons */
 .catstat-btn {
+    border: 0;
+    border-radius: .25rem;
     font-size: 72%;
     font-weight: bold;
+    line-height: normal;
     text-transform: uppercase;
-    border-radius: .25rem;
     padding: .25rem;
 
     /* Only Category */
@@ -1086,12 +1116,13 @@ the form-control fails to do that so we do the border ourselves */
     width: 100%;
 }
 
-/* make dropzone blue border on hover */
+/* Dropzone is the file uploader */
 .dropzone {
-    border: 1px solid $white;
+    background-color: $white;
+    border: 3px dashed $secondlevel;
 
     &:hover {
-        border: 1px solid $elabblue;
+        border: 3px dashed $medium;
     }
 }
 
@@ -1345,7 +1376,7 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px $elabblue;
+    box-shadow: 0 0 8px $elabblue;
 }
 
 input:checked + .slider::before {

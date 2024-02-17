@@ -5,6 +5,7 @@ const t = {
     "click-to-edit": "Clique para editar",
     "cancel": "Cancelar",
     "comment-add": "Adicionar um comentário",
+    "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Arraste aqui os arquivos que quiser anexar ao experimento",
     "dropzone-filesize-limit": "Limite de tamanho do arquivo:",
     "editing-metadata": "No momento, você está editando os metadados anexados a este registro.",
@@ -16,6 +17,7 @@ const t = {
     "generic-delete-warning": "Deletar isso aqui?",
     "link-delete-warning": "Deletar este link?",
     "new-apikey-warning": "Esta é a única vez que a chave será exibida! Não se esqueça de guardá-la em um local seguro, pois você não poderá vê-la novamente:",
+    "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Não definido",
     "nothing-selected": "Nada foi selecionado!",
     "now": "Agora",
@@ -24,6 +26,7 @@ const t = {
     "request-filename": "Digite o nome do arquivo",
     "save": "Salvar",
     "saved": "Alterações salvas",
+    "sort-by-column": "Sort by column",
     "step-delete-warning": "Deletar esta etapa?",
     "step-unfinish-warning": "Tem certeza que gostaria de desfazer esta etapa?",
     "tag-delete-warning": "Deletar esta tag?",
@@ -31,7 +34,6 @@ const t = {
     "today": "Hoje",
     "undefined-group": "Grupo não definido",
     "upload-file-comment": "Comentário no arquivo",
-    "custom-id-in-use": "Custom ID is already used! Try another one.",
   },
 };
 export default t;

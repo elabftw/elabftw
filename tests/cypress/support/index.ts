@@ -13,4 +13,6 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import 'cypress-html-validate/commands';
+
 import './commands';

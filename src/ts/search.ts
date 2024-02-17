@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
     return;
   }
+
   // scroll to anchor if there is a search
   const params = new URLSearchParams(document.location.search.slice(1));
   if (params.has('type')) {
@@ -43,6 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const filtersDiv = document.getElementById('filtersDiv');
   if (filtersDiv) {
     filtersDiv.toggleAttribute('hidden', false);
+    const button = document.querySelector('[data-toggle-target="filtersDiv"]');
+    button.firstElementChild.classList.add('fa-caret-down');
+    button.setAttribute('aria-expanded', 'true');
   }
 
   // Submit form with ctrl+enter from within textarea
@@ -52,75 +56,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Main click event listener
-  document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-    // Add a new key/value inputs block on top of the + button in metadata search block
-    if (el.matches('[data-action="add-extra-fields-search-inputs"]')) {
-      // the first set of inputs is cloned
-      const row = (document.getElementById('metadataFirstInputs').cloneNode(true) as HTMLElement);
-      // remove id 'metadataFirstInputs'
-      row.removeAttribute('id');
-      // give new ids to the labels/inputs
-      row.querySelectorAll('label').forEach(l => {
-        const id = crypto.randomUUID();
-        l.setAttribute('for', id);
-        const input = l.nextElementSibling as HTMLInputElement;
-        input.setAttribute('id', id);
-        input.value = '';
-      });
-      // add inputs block
-      el.parentNode.insertBefore(row, el);
-    }
-  });
-
-  function getOperator(): string {
-    return (document.getElementById('dateOperator') as HTMLSelectElement).value;
-  }
-
-  // a filter helper can be a select or an input (for date), so we need a function to get its value
+  // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
   function getFilterValueFromElement(element: HTMLElement): string {
+    const escapeDoubleQuotes = (string: string): string => {
+      // escape double quotes if not already escaped
+      return string.replace(/(?<!\\)"/g, '\\"');
+    };
+    const handleDate = (): string => {
+      const date = (document.getElementById('date') as HTMLInputElement).value;
+      const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+      const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
+      const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
+      if (date === '') {
+        return '';
+      }
+      if (dateTo === '') {
+        return dateOperator + date;
+      }
+      return date + '..' + dateTo;
+    };
+    const handleMetadata = (): string => {
+      const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
+      const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
+      const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
+      if (metakey === '' || metavalue === '') {
+        return '';
+      }
+      const keyQuotes = getQuotes(metakey);
+      const valueQuotes = getQuotes(metavalue);
+      return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
+    };
     if (element instanceof HTMLSelectElement) {
       // clear action
       if (element.options[element.selectedIndex].dataset.action === 'clear') {
         return '';
       }
       if (element.id === 'dateOperator') {
-        const date = (document.getElementById('date') as HTMLInputElement).value;
-        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-        if (date === '') {
-          return '';
-        }
-        if (dateTo === '') {
-          return getOperator() + date;
-        }
-        return date + '..' + dateTo;
+        return handleDate();
       }
-      return `${element.options[element.selectedIndex].value}`;
+      if (element.id === 'metakey') {
+        return handleMetadata();
+      }
+      return escapeDoubleQuotes(element.options[element.selectedIndex].value);
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {
-        if (element.value === '') {
-          return '';
-        }
-        const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-        if (dateTo === '') {
-          return getOperator() + element.value;
-        }
-        return element.value + '..' + dateTo;
+        return handleDate();
       }
       if (element.id === 'dateTo') {
-        const date = (document.getElementById('date') as HTMLInputElement).value;
-        if (date === '') {
-          return '';
-        }
-        if (element.value === '') {
-          return getOperator() + date;
-        }
-        return date + '..' + element.value;
+        return handleDate();
+      }
+      if (element.id === 'metavalue') {
+        return handleMetadata();
       }
     }
     return '😶';
+  }
+
+  // don't add quotes unless we need them (space or some special chars exist)
+  function getQuotes(filterValue: string): string {
+    let quotes = '';
+    if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
+      quotes = '"';
+    }
+    return quotes;
   }
 
   // add a change event listener to all elements that helps constructing the query string
@@ -132,29 +131,44 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasInput = curVal.length != 0;
       const hasSpace = curVal.endsWith(' ');
       const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+      let filterName = elem.dataset.filter;
 
-      // look if the filter key already exists in the extendedArea
-      // paste the regex on regex101.com to understand it, note that here \ need to be escaped
-      const regex = new RegExp(elem.dataset.filter + ':(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|[\\S]+)\\s?');
-      const found = curVal.match(regex);
-      // don't add quotes unless we need them (space exists)
-      let quotes = '';
-      let filterValue = getFilterValueFromElement(elem);
-      if (filterValue.includes(' ')) {
-        quotes = '"';
+      // look if the filter key already exists in the search input
+      // paste the regex on regex101.com to understand it
+      const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+      const operatorRegex = '(?:[<>]=?|!?=)?';
+      let valueRegex = baseRegex;
+
+      if (filterName === 'date') {
+        // date can use operator
+        valueRegex = operatorRegex + baseRegex;
       }
+      if (filterName === 'extrafield') {
+        // extrafield has key and value so we need the regex above twice
+        valueRegex = baseRegex + ':' + baseRegex;
+      }
+      const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
+      const found = curVal.match(regex);
       // default value is clearing everything
       let filter = '';
+      let filterValue = getFilterValueFromElement(elem);
+      let quotes = getQuotes(filterValue);
       // but if we have a correct value, we add the filter
       if (filterValue !== '') {
-        let filterName = elem.dataset.filter;
+        if (filterName === 'date') {
+          quotes = '';
+        }
 
         if (filterName === '(?:author|group)') {
           filterName = filterValue.split(':')[0];
           filterValue = filterValue.substring(filterName.length + 1);
         }
 
-        filter = `${filterName}:${quotes}${filterValue}${quotes}`;
+        filter = filterName + ':' + quotes + filterValue + quotes;
+
+        if (filterName === 'extrafield') {
+          filter = `${filterName}:${filterValue}`;
+        }
       }
 
       // add additional filter at cursor position

@@ -89,8 +89,7 @@ class TeamTags implements RestInterface
     public function readAll(): array
     {
         // TODO move this out of here
-        $Request = Request::createFromGlobals();
-        $query = Filter::sanitize($Request->query->getString('q'));
+        $query = (Request::createFromGlobals())->query->getString('q');
         $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)

@@ -10,7 +10,6 @@ import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
 import { Action } from './interfaces';
-import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -75,11 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TIMESTAMP button in modal
     } else if (el.matches('[data-action="timestamp"]')) {
-      // prevent double click
-      (event.target as HTMLButtonElement).disabled = true;
       EntityC.timestamp(entity.id).then(() => {
-        $('#timestampModal').modal('toggle');
-        reloadElement('filesdiv');
         reloadElement('isTimestampedByInfoDiv');
       });
 
@@ -102,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('container').append(overlay);
       ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
-        .then(() => reloadElement('filesdiv'))
+        .then(() => reloadElement('uploadsDiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
     // ARCHIVE ENTITY

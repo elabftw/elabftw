@@ -11,7 +11,7 @@ namespace Elabftw\Elabftw;
 
 use function bin2hex;
 use function date;
-use function filter_var;
+use function htmlspecialchars;
 use function implode;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
@@ -124,12 +124,12 @@ class Tools
     public static function getExt(string $filename): string
     {
         // Get file extension
-        $ext = filter_var(pathinfo($filename, PATHINFO_EXTENSION), FILTER_SANITIZE_STRING);
-        if ($ext !== null && $ext !== '' && $ext !== false) {
-            return $ext;
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if ($ext === '') {
+            return 'unknown';
         }
 
-        return 'unknown';
+        return $ext;
     }
 
     /**
@@ -169,11 +169,24 @@ class Tools
         }
         foreach ($arr as $key => $val) {
             if (is_array($val)) {
-                $html .= sprintf('<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span> %s</li>', $key, self::printArr($val));
+                $html .= sprintf(
+                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span><ul>%s</ul></li>',
+                    self::eLabHtmlspecialchars($key),
+                    self::printArr($val),
+                );
             } else {
-                $html .= sprintf('<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>', $key, $val);
+                $html .= sprintf(
+                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>',
+                    self::eLabHtmlspecialchars($key),
+                    self::eLabHtmlspecialchars($val),
+                );
             }
         }
         return sprintf('<ul>%s</ul>', $html);
+    }
+
+    public static function eLabHtmlspecialchars(mixed $string): string
+    {
+        return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);
     }
 }

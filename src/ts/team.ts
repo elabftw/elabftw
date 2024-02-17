@@ -49,8 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  const info = document.getElementById('info').dataset;
-
   const ApiC = new Api();
 
   // start and end inputs
@@ -67,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;
-  if (info.all || !params.has('item')) {
+  if (!params.has('item')) {
     editable = false;
     selectable = false;
     if (document.getElementById('selectBookableWarningDiv')) {
@@ -263,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(resp => resp.json()).then(json => json.title);
     },
     listenOn: '#eventTitle',
-    returnedValueIsTrustedHtml: true,
+    returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),

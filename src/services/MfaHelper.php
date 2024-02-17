@@ -81,7 +81,6 @@ class MfaHelper
         if ($this->secret === null) {
             throw new RuntimeException('No secret to verify!');
         }
-        $code = Filter::sanitize($code);
         return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 

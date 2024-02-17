@@ -1,11 +1,14 @@
 {# Modal for field builder #}
-<div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel' aria-hidden='true'>
+<div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
-      <form id='newFieldForm'>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
+      {%- endif %}
+      <form id ='newFieldForm' class='new-field-form' aria-label='new extra field'>
         <div class='modal-header'>
           <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>
-          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
             <span aria-hidden='true'>&times;</span>
           </button>
         </div>
@@ -53,7 +56,8 @@
 
             {# NAME #}
             <label for='newFieldKeyInput' class='required-label'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
-            <input type='text' autocomplete='off' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+            <input type='text' autocomplete='off' data-autocomplete='extraFieldsKeys' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+            <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
 
             {# DESCRIPTION #}
             <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
@@ -68,6 +72,7 @@
             <div id='newFieldContentDiv_selectradio' hidden>
               <label>{{ 'Choices'|trans }}</label>
               <div id='choicesInputDiv'>
+                {# show two inputs at first #}
                 <input type='text' class='form-control mb-1' autocomplete='off'>
                 <input type='text' class='form-control mb-1' autocomplete='off'>
               </div>
@@ -105,7 +110,7 @@
             {# Blank value on duplicate switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='blankValueOnDuplicateSwitch'><p>{{ 'Blank value on duplicate'|trans }}</p></div>
+                <label class='d-inline mr-1' for='blankValueOnDuplicateSwitch'>{{ 'Blank value on duplicate'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
                   <span class='slider'></span>
@@ -115,7 +120,7 @@
             {# required switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='requiredSwitch'><p>{{ 'Required'|trans }}</p></div>
+                <label class='d-inline mr-1' for='requiredSwitch'>{{ 'Required'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='requiredSwitch'>
                   <span class='slider'></span>
@@ -125,7 +130,7 @@
             {# readonly switch #}
             <div>
               <div class='d-inline-flex flex-row'>
-                <div class='d-inline mr-1' for='readonlySwitch'><p>{{ 'Read-only'|trans }}</p></div>
+                <label class='d-inline mr-1' for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='readonlySwitch'>
                   <span class='slider'></span>
@@ -136,58 +141,56 @@
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button type='button' class='btn btn-primary' data-action='save-new-field'>{{ 'Save'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='save-new-field'>{{ 'Save'|trans }}</button>
         </div>
       </div>
     </form>
   </div>
 </div>
 {# Modal for field loader #}
-<div class='modal fade' id='fieldLoaderModal' tabindex='-1' role='dialog' aria-labelledby='fieldLoaderLabel' aria-hidden='true'>
+<div class='modal fade' id='fieldLoaderModal' tabindex='-1' role='dialog' aria-labelledby='fieldLoaderLabel'>
   <div class='modal-dialog modal-lg' role='document'>
-    <div class='modal-content'>
-      <form id='newFieldForm'>
-        <div class='modal-header'>
-          <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
-          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-            <span aria-hidden='true'>&times;</span>
-          </button>
+    <div class='modal-content new-field-form'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
+        <div class='input-group'>
+          <select class='form-control' id='loadMetadataSelect_items_types'>
+            {% for itemType in itemsCategoryArr %}
+              <option value='{{ itemType.id }}'>{{ itemType.title }}</option>
+            {% endfor %}
+          </select>
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-primary' data-target='items_types' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+          </div>
         </div>
-        <div class='modal-body'>
-          <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
+        {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
+          <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
           <div class='input-group'>
-            <select class='form-control' id='loadMetadataSelect_items_types'>
-              {% for itemType in itemsCategoryArr %}
-                <option value="{{ itemType.id }}">{{ itemType.title|raw }}</option>
+            <select class='form-control' id='loadMetadataSelect_experiments_templates'>
+              {% for template in templatesArr %}
+                <option value='{{ template.id }}'>{{ template.title }}</option>
               {% endfor %}
             </select>
             <div class='input-group-append'>
-              <button type='button' class='btn btn-primary' data-target='items_types' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
+              <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
             </div>
           </div>
-          {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
-            <h5 class='my-3'>{{ 'Load from an experiment template'|trans }}</h5>
-            <div class='input-group'>
-              <select class='form-control' id='loadMetadataSelect_experiments_templates'>
-                {% for template in templatesArr %}
-                  <option value="{{ template.id }}">{{ template.title }}</option>
-                {% endfor %}
-              </select>
-              <div class='input-group-append'>
-                <button type='button' class='btn btn-primary' data-target='experiments_templates' data-action='load-metadata-from'>{{ 'Load'|trans }}</button>
-              </div>
-            </div>
-          {% endif %}
-          <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
-          <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
-          <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>
-        </div>
-
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button id='applyMetadataLoadBtn' type='button' class='btn btn-primary' disabled data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
-        </div>
+        {% endif %}
+        <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
+        <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
+        <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>
       </div>
-    </form>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button id='applyMetadataLoadBtn' type='button' class='btn btn-primary' disabled data-dismiss='modal' data-action='load-metadata-from-textarea'>{{ 'Apply'|trans }}</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Auth;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EnforceMfa;
@@ -17,6 +18,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
@@ -45,7 +47,7 @@ class Local implements AuthInterface
             throw new QuantumException(_('Invalid email/password combination.'));
         }
         $this->Db = Db::getConnection();
-        $this->email = Filter::sanitize($email);
+        $this->email = Filter::sanitizeEmail($email);
         $this->userid = $this->getUseridFromEmail();
         $this->AuthResponse = new AuthResponse();
     }
@@ -175,7 +177,7 @@ class Local implements AuthInterface
 
     private function authWithModernAlgo(): void
     {
-        $sql = 'SELECT password_hash, mfa_secret, validated FROM users WHERE userid = :userid;';
+        $sql = 'SELECT password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -192,6 +194,16 @@ class Local implements AuthInterface
             $req->bindParam(':password_hash', $passwordHash);
             $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
             $this->Db->execute($req);
+        }
+        // check if last password modification date was too long ago and require changing it if yes
+        $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
+        $now = new DateTimeImmutable();
+        $diff = $now->diff($modifiedAt);
+        $daysDifference = (int) $diff->format('%a');
+        $Config = Config::getConfig();
+        $maxPasswordAgeDays = (int) $Config->configArr['max_password_age_days'];
+        if ($daysDifference > $maxPasswordAgeDays && $maxPasswordAgeDays !== 0) {
+            $this->AuthResponse->mustRenewPassword = true;
         }
 
         $this->AuthResponse->userid = $this->userid;

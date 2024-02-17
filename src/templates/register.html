@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<a href='login.php'>
+<a href='login.php' class='p-2 rounded hl-hover-gray'>
   <i class='fas fa-chevron-left'></i> {{ 'go back to login page'|trans }}
 </a>
 
 {# Modal for privacy policy #}
-<div class='modal fade' id='policyModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel' aria-hidden='true'>
+<div class='modal fade' id='policyModal' tabindex='-1' role='dialog' aria-labelledby='policyModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='policyModalLabel'>{{ 'Privacy policy'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
@@ -29,8 +29,6 @@
     <img src='/assets/images/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
     <h2 class='mb-2 mt-2'>{{ 'Create your account'|trans }}</h2>
     {# Register form #}
-    {# min pass length minimum, no maximum #}
-    {% set pattern = '.{' ~ minPasswordLength() ~ ',}' %}
 
     <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
       <input hidden type='text' name='bot' value=''>
@@ -40,6 +38,9 @@
         {# TEAM #}
         <div class='row'>
           <label for='team'>{{ 'Team'|trans }}</label>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+          {%- endif %}
           <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
             {# on this page, only show the visible teams #}
@@ -50,7 +51,7 @@
         </div>
 
         {# EMAIL #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='email'>{{ 'Email'|trans }}</label>
           <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
           {% if App.Config.configArr.email_domain %}
@@ -62,10 +63,10 @@
         </div>
 
         {# PASSWORD #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='password'>{{ 'Password'|trans }}</label>
           <div class='input-group'>
-            <input name='password' type='password' class='form-control' title='8 characters minimum' id='password' pattern='{{ pattern }}' autocomplete='new-password' required />
+            <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' pattern='{{ passwordInputPattern|e('html_attr') }}' id='password' autocomplete='new-password' required />
             <div class='input-group-append'>
               <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
@@ -73,20 +74,20 @@
         </div>
 
         {# FIRSTNAME #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='firstname'>{{ 'Firstname'|trans }}</label>
           <input name='firstname' class='form-control' type='text' id='firstname' autocomplete='given-name' required />
         </div>
 
         {# LASTNAME #}
-        <div class='row'>
+        <div class='row mt-2'>
           <label for='lastname'>{{ 'Lastname'|trans }}</label>
           <input name='lastname' class='form-control' type='text' id='lastname' autocomplete='family-name' required />
         </div>
 
         {# PRIVACY POLICY #}
         {% if App.Config.configArr.privacy_policy %}
-        <div class='row'>
+        <div class='row mt-2'>
           <div class='form-group form-check'>
             <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
             <label class='form-check-label' for='privacy-policy'>

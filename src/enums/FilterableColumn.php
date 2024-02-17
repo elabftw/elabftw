@@ -17,4 +17,5 @@ enum FilterableColumn: string
     case Owner = 'entity.userid';
     case Related = 'linkst.link_id';
     case Status = 'statust.id';
+    case Team = 'entity.team';
 }

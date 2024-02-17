@@ -44,7 +44,7 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '5.0.0-beta3';
+    public const INSTALLED_VERSION = '5.0.0';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each

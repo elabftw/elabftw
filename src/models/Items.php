@@ -97,6 +97,11 @@ class Items extends AbstractConcreteEntity
         return $Permissions->getCan($can);
     }
 
+    public function canBookInPast(): bool
+    {
+        return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
+    }
+
     public function duplicate(): int
     {
         $this->canOrExplode('read');

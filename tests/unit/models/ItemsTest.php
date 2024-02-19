@@ -50,6 +50,26 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
+    public function testReadBookable(): void
+    {
+        $this->assertIsArray($this->Items->readBookable());
+    }
+
+    public function testCanBookInPast(): void
+    {
+        // use a normal user
+        $Items = new Items(new Users(2, 1));
+        $new = $Items->create(1);
+        $Items->setId($new);
+        $Items->patch(Action::Update, array('book_users_can_in_past' => '1'));
+        $this->assertTrue($Items->canBookInPast());
+        $Items->patch(Action::Update, array('book_users_can_in_past' => '0'));
+        $this->assertFalse($Items->canBookInPast());
+        // now as admin
+        $this->Items->setId($new);
+        $this->assertTrue($this->Items->canBookInPast());
+    }
+
     public function testDuplicate(): void
     {
         $this->Items->setId(1);

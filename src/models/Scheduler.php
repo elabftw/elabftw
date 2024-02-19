@@ -434,16 +434,16 @@ class Scheduler implements RestInterface
 
     /**
      * Check that the date is in the future
-     * Unlike Admins, Users can't create/modify something in the past
+     * Unlike Admins, Users can't create/modify something in the past, unless book_users_can_in_past is truthy
      * Input can be false because DateTime::createFromFormat will return false on failure
      */
     private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
     {
+        if ($this->Items->canBookInPast()) {
+            return;
+        }
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
-        }
-        if ($this->Items->Users->isAdmin) {
-            return;
         }
         $now = new DateTime();
         if ($now > $date) {

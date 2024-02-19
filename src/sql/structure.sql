@@ -423,6 +423,7 @@ CREATE TABLE `items` (
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `book_users_can_in_past` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)

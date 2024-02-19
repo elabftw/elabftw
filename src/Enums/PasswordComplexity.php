@@ -54,11 +54,12 @@ enum PasswordComplexity: int
 
     public static function getAssociativeArray(): array
     {
-        return array_combine(
-            array_column(self::cases(), 'value'),
-            // we use alternative syntax instead of 'self::toHuman' here because
-            // https://github.com/phpstan/phpstan/issues/4376
-            array_map(array(__CLASS__, 'toHuman'), self::cases()),
-        );
+        $cases = self::cases();
+        $values = array_column($cases, 'value');
+        $descriptions = array_map(function ($case) {
+            return $case->toHuman();
+        }, $cases);
+
+        return array_combine($values, $descriptions);
     }
 }

@@ -8,7 +8,7 @@ coverage:
         - src/classes/*
         - src/commands/*
         - src/controllers/*
-        - src/enums/*
+        - src/Enums/*
         - src/exceptions/*
         - src/factories/*
         - src/Import/*

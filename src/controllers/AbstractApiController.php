@@ -9,7 +9,9 @@
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidEndpointException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -28,7 +30,7 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected string $search = '';
 
-    protected string $endpoint;
+    protected ApiEndpoint $endpoint;
 
     public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
     {
@@ -76,9 +78,9 @@ abstract class AbstractApiController implements ControllerInterface
             $this->search = trim($this->Request->query->getString('search'));
         }
 
-        // assign the endpoint (experiments, items, uploads, items_types, status)
-        // 0 is "", 1 is "api", 2 is "v1"
-        $this->endpoint = $req[3] ?? 'invalid_endpoint';
+        // assign the endpoint, see ApiEndpoint enum
+        // req array: 0 is "", 1 is "api", 2 is "v2"
+        $this->endpoint = ApiEndpoint::tryFrom((string) $req[3]) ?? throw new InvalidEndpointException();
 
         // assign the id if there is one
         if (Check::id((int) ($req[4] ?? 0)) !== false) {

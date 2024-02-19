@@ -10,6 +10,7 @@
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
@@ -222,32 +223,31 @@ class Apiv2Controller extends AbstractApiController
     private function getModel(): RestInterface
     {
         return match ($this->endpoint) {
-            'apikeys' => new ApiKeys($this->Users, $this->id),
-            'config' => Config::getConfig(),
-            'idps' => new Idps($this->id),
-            'info' => new Info(),
-            'experiments',
-            'items',
-            'experiments_templates',
-            'items_types' => EntityType::from($this->endpoint)->toInstance($this->Users, $this->id),
+            ApiEndpoint::ApiKeys => new ApiKeys($this->Users, $this->id),
+            ApiEndpoint::Config => Config::getConfig(),
+            ApiEndpoint::Idps => new Idps($this->id),
+            ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Experiments,
+            ApiEndpoint::Items,
+            ApiEndpoint::ExperimentsTemplates,
+            ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->Users, $this->id),
             // for a single event, the id is the id of the event
-            'event' => new Scheduler(new Items($this->Users), $this->id),
+            ApiEndpoint::Event => new Scheduler(new Items($this->Users), $this->id),
             // otherwise it's the id of the item
-            'events' => new Scheduler(
+            ApiEndpoint::Events => new Scheduler(
                 new Items($this->Users, $this->id),
                 null,
                 $this->Request->query->getString('start', Scheduler::EVENT_START),
                 $this->Request->query->getString('end', Scheduler::EVENT_END),
                 $this->Request->query->getInt('cat'),
             ),
-            'extra_fields_keys' => new ExtraFieldsKeys($this->Users, trim($this->Request->query->getString('q')), $this->Request->query->getInt('limit')),
-            'favtags' => new FavTags($this->Users, $this->id),
-            'team_tags' => new TeamTags($this->Users, $this->id),
-            'teams' => new Teams($this->Users, $this->id),
-            'todolist' => new Todolist($this->Users->userData['userid'], $this->id),
-            'unfinished_steps' => new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team'),
-            'users' => new Users($this->id, $this->Users->team, $this->Users),
-            default => throw new ImproperActionException('Invalid endpoint: available endpoints: apikeys, config, experiments, info, items, experiments_templates, items_types, event, events, extra_fields_keys, team_tags, teams, todolist, unfinished_steps, users.'),
+            ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys($this->Users, trim($this->Request->query->getString('q')), $this->Request->query->getInt('limit')),
+            ApiEndpoint::FavTags => new FavTags($this->Users, $this->id),
+            ApiEndpoint::TeamTags => new TeamTags($this->Users, $this->id),
+            ApiEndpoint::Teams => new Teams($this->Users, $this->id),
+            ApiEndpoint::Todolist => new Todolist($this->Users->userData['userid'], $this->id),
+            ApiEndpoint::UnfinishedSteps => new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team'),
+            ApiEndpoint::Users => new Users($this->id, $this->Users->team, $this->Users),
         };
     }
 

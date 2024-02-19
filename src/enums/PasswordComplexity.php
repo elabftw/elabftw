@@ -20,26 +20,26 @@ enum PasswordComplexity: int
     case Medium = 20;
     case Strong = 30;
 
-    public static function toHuman(self $case): string
+    public function toHuman(): string
     {
-        return match ($case) {
-            PasswordComplexity::None => _('Minimum password length'),
-            PasswordComplexity::Weak => _('Must have at least one upper and one lower case letter, if your alphabet allows'),
-            PasswordComplexity::Medium => _('Must have at least one upper and one lower case letter, if your alphabet allows, and one digit'),
-            PasswordComplexity::Strong => _('Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit'),
+        return match ($this) {
+            self::None => _('Minimum password length'),
+            self::Weak => _('Must have at least one upper and one lower case letter, if your alphabet allows'),
+            self::Medium => _('Must have at least one upper and one lower case letter, if your alphabet allows, and one digit'),
+            self::Strong => _('Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit'),
         };
     }
 
-    public static function toPattern(self $case): string
+    public function toPattern(): string
     {
         // we need Lo for unicase/unicameral alphabets like Chinese, Japanese, and Korean
         $letters = '(?:(?=.*\p{Ll})(?=.*\p{Lu})|(?=.*\p{Lo}))';
         $digits = '(?=.*\d)';
-        return match ($case) {
-            PasswordComplexity::None => '.*',
-            PasswordComplexity::Weak => "^$letters.*$",
-            PasswordComplexity::Medium => "^$letters$digits.*$",
-            PasswordComplexity::Strong => "^$letters$digits(?=.*[\p{P}\p{S}]).*$",
+        return match ($this) {
+            self::None => '.*',
+            self::Weak => "^$letters.*$",
+            self::Medium => "^$letters$digits.*$",
+            self::Strong => "^$letters$digits(?=.*[\p{P}\p{S}]).*$",
         };
     }
 
@@ -47,9 +47,9 @@ enum PasswordComplexity: int
      * For php, we need to add / as pre+suffix
      * @return non-empty-string
      */
-    public static function toPhPattern(self $case): string
+    public function toPhPattern(): string
     {
-        return '/' . $case::toPattern($case) . '/u';
+        return '/' . $this->toPattern() . '/u';
     }
 
     public static function getAssociativeArray(): array

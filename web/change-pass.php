@@ -42,8 +42,8 @@ try {
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
     $renderArr = array(
         'key' => $App->Request->query->getAlnum('key'),
-        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
-        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
+        'passwordInputHelp' => $passwordComplexity->toHuman(),
+        'passwordInputPattern' => $passwordComplexity->toPattern(),
     );
 } catch (Exception $e) {
     $template = 'error.html';

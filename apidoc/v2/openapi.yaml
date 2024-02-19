@@ -521,6 +521,8 @@ components:
               type: integer
             book_can_overlap:
               type: integer
+            book_users_can_in_past:
+              type: integer
             book_is_cancellable:
               type: integer
             book_cancel_minutes:

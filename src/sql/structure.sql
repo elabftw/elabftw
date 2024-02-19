@@ -859,8 +859,6 @@ CREATE TABLE `uploads` (
 
 CREATE TABLE `users` (
   `userid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `salt` varchar(255) NULL DEFAULT NULL,
-  `password` varchar(255) NULL DEFAULT NULL,
   `password_hash` varchar(255) NULL DEFAULT NULL,
   `password_modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mfa_secret` varchar(32) NULL DEFAULT NULL,

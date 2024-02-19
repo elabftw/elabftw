@@ -13,7 +13,6 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EnforceMfa;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -54,13 +53,39 @@ class Local implements AuthInterface
 
     public function tryAuth(): AuthResponse
     {
-        if ($this->needUpgrade()) {
-            // authenticate with old password mechanism first
-            $this->authWithSha();
-            // and then upgrade to new algorithm
-            $this->upgrade();
+        $sql = 'SELECT password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        // verify password
+        if (password_verify($this->password, $res['password_hash']) !== true) {
+            throw new InvalidCredentialsException($this->userid);
         }
-        $this->authWithModernAlgo();
+        // check if it needs rehash (new algo)
+        if (password_needs_rehash($res['password_hash'], PASSWORD_DEFAULT)) {
+            $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
+            $sql = 'UPDATE users SET password_hash = :password_hash WHERE userid = :userid';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':password_hash', $passwordHash);
+            $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+        // check if last password modification date was too long ago and require changing it if yes
+        $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
+        $now = new DateTimeImmutable();
+        $diff = $now->diff($modifiedAt);
+        $daysDifference = (int) $diff->format('%a');
+        $Config = Config::getConfig();
+        $maxPasswordAgeDays = (int) $Config->configArr['max_password_age_days'];
+        if ($daysDifference > $maxPasswordAgeDays && $maxPasswordAgeDays !== 0) {
+            $this->AuthResponse->mustRenewPassword = true;
+        }
+
+        $this->AuthResponse->userid = $this->userid;
+        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
+        $this->AuthResponse->isValidated = (bool) $res['validated'];
+        $this->AuthResponse->setTeams();
         return $this->AuthResponse;
     }
 
@@ -98,22 +123,6 @@ class Local implements AuthInterface
         }
     }
 
-    /**
-     * Get the salt for the user so we can generate a correct hash
-     */
-    private function getSalt(): string
-    {
-        $sql = 'SELECT salt FROM users WHERE email = :email AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $this->email);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false || $res === null) {
-            throw new ImproperActionException('Could not find salt!');
-        }
-        return (string) $res;
-    }
-
     private function getUseridFromEmail(): int
     {
         try {
@@ -123,92 +132,5 @@ class Local implements AuthInterface
             throw new QuantumException(_('Invalid email/password combination.'));
         }
         return $Users->userData['userid'];
-    }
-
-    /**
-     * A user account needs upgrade if they have nothing in password_hash column
-     */
-    private function needUpgrade(): bool
-    {
-        $sql = 'SELECT password_hash FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetchColumn();
-        return $res === null;
-    }
-
-    /**
-     * Upgrade means we create a new password hash with modern algorithm
-     */
-    private function upgrade(): void
-    {
-        $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
-        $sql = 'UPDATE users SET password_hash = :password_hash WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':password_hash', $passwordHash);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // clear old columns, we don't need to keep the salted sha around anymore
-        $sql = 'UPDATE users SET `password` = NULL, `salt` = NULL WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Old mechanism to authenticate users
-     */
-    private function authWithSha(): void
-    {
-        $passwordHash = hash('sha512', $this->getSalt() . $this->password);
-
-        $sql = 'SELECT userid FROM users WHERE email = :email AND password = :passwordHash
-            AND validated = 1 AND archived = 0';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $this->email);
-        $req->bindParam(':passwordHash', $passwordHash);
-        $this->Db->execute($req);
-
-        if ($req->rowCount() !== 1) {
-            throw new InvalidCredentialsException($this->userid);
-        }
-    }
-
-    private function authWithModernAlgo(): void
-    {
-        $sql = 'SELECT password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        // verify password
-        if (password_verify($this->password, $res['password_hash']) !== true) {
-            throw new InvalidCredentialsException($this->userid);
-        }
-        // check if it needs rehash (new algo)
-        if (password_needs_rehash($res['password_hash'], PASSWORD_DEFAULT)) {
-            $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
-            $sql = 'UPDATE users SET password_hash = :password_hash WHERE userid = :userid';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':password_hash', $passwordHash);
-            $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-        // check if last password modification date was too long ago and require changing it if yes
-        $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
-        $now = new DateTimeImmutable();
-        $diff = $now->diff($modifiedAt);
-        $daysDifference = (int) $diff->format('%a');
-        $Config = Config::getConfig();
-        $maxPasswordAgeDays = (int) $Config->configArr['max_password_age_days'];
-        if ($daysDifference > $maxPasswordAgeDays && $maxPasswordAgeDays !== 0) {
-            $this->AuthResponse->mustRenewPassword = true;
-        }
-
-        $this->AuthResponse->userid = $this->userid;
-        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $res['validated'];
-        $this->AuthResponse->setTeams();
     }
 }

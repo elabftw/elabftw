@@ -51,8 +51,8 @@ try {
     $template = 'register.html';
     $renderArr = array(
         'hideTitle' => true,
-        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
-        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
+        'passwordInputHelp' => $passwordComplexity->toHuman(),
+        'passwordInputPattern' => $passwordComplexity->toPattern(),
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $teamsArr,
     );

@@ -83,7 +83,7 @@
         "src/exceptions"
       ],
       "Elabftw\\Enums\\": [
-        "src/enums"
+        "src/Enums"
       ],
       "Elabftw\\Factories\\": [
         "src/factories"

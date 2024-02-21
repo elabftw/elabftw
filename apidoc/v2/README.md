@@ -9,7 +9,7 @@ This folder contains the `openapi.yaml` file describing the REST API v2 for eLab
 To see if the specification file has errors, we can use the validator in debug mode:
 
 ~~~bash
-curl --data-binary @apidoc/v2/openapi.yaml -H 'Content-Type:application/yaml' https://validator.swagger.io/validator/debug",
+curl --data-binary @apidoc/v2/openapi.yaml -H 'Content-Type:application/yaml' https://validator.swagger.io/validator/debug
 ~~~
 
 ## Building the documentation

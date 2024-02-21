@@ -2081,7 +2081,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'deduplicate'
+                  enum: ['deduplicate']
               description: Find all duplicate tags and deduplicate them.
       responses:
         '200':
@@ -2131,7 +2131,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'updatetag'
+                  enum: ['updatetag']
                 tag:
                   type: string
                   description: The content of the tag.
@@ -2204,7 +2204,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'current'
+              enum: ['current']
         examples:
           first:
             summary: Access the current team.
@@ -2304,14 +2304,14 @@ paths:
           type: integer
       - name: subid
         in: path
-        description: ID of the status
+        description: ID of the category
         required: true
         schema:
           type: integer
     get:
       tags: ['Experiments categories']
       operationId: read-team-one-expcat
-      summary: Read a status.
+      summary: Read a category.
       responses:
         '200':
           description: Read a category.
@@ -2390,6 +2390,14 @@ paths:
                 default:
                   type: integer
                   description: Is it the default status for the team?
+      responses:
+        '201':
+          description: New experiments status created.
+          headers:
+            location:
+              description: An URL to the experiments status that was created.
+              schema:
+                type: string
   # ONE EXPERIMENTS STATUS
   /teams/{id}/experiments_status/{subid}:
     parameters:
@@ -2486,6 +2494,14 @@ paths:
                 default:
                   type: integer
                   description: Is it the default status for the team?
+      responses:
+        '201':
+          description: New resources status created.
+          headers:
+            location:
+              description: An URL to the resources status that was created.
+              schema:
+                type: string
 
   # ONE ITEMS STATUS
   /teams/{id}/items_status/{subid}:
@@ -2891,7 +2907,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -2998,7 +3014,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -3051,7 +3067,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -3311,7 +3327,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'unreference'
+                  enum: ['unreference']
       responses:
         '200':
           description: The updated tag.
@@ -3467,7 +3483,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'update'
+                  enum: ['update']
                 real_name:
                   type: string
                 comment:
@@ -3475,13 +3491,13 @@ paths:
                 state:
                   type: integer
                   enum: [1, 2, 3]
-            anyOf:
-              - required:
-                  - real_name
-              - required:
-                  - comment
-              - required:
-                  - state
+              anyOf:
+                - required:
+                    - real_name
+                - required:
+                    - comment
+                - required:
+                    - state
       responses:
         '200':
           description: The updated upload.
@@ -3608,7 +3624,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'update'
+                  enum: ['update']
       responses:
         '200':
           description: The updated idp.
@@ -3735,7 +3751,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'replace'
+                  enum: ['replace']
                   description: |
                     The `replace` action will restore the revision body to the entity.
       responses:

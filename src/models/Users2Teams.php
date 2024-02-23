@@ -108,7 +108,7 @@ class Users2Teams
     {
         $group = Check::usergroup($this->requester, $group)->value;
         // make sure requester is admin of target user
-        if (!$this->requester->isAdminOf($userid)) {
+        if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
         }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';

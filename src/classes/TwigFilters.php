@@ -115,7 +115,7 @@ class TwigFilters
                     );
                 }
                 // type:users is also a special case where we go fetch the name of the user
-                elseif ($field[MetadataEnum::Type->value] === 'users') {
+                elseif ($field[MetadataEnum::Type->value] === 'users' && !empty($value)) {
                     $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
                     $value = $linkedUser->userData['fullname'];
                 }

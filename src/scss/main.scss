@@ -393,6 +393,11 @@ button:disabled {
 }
 
 .table {
+    thead {
+        position: sticky;
+        top: 0;
+    }
+
     tbody {
         background-color: $white;
 

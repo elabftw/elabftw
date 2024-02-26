@@ -50,7 +50,7 @@ class Info implements RestInterface
         $base = array(
             'elabftw_version' => App::INSTALLED_VERSION,
             'ts_balance' => (int) $Config->configArr['ts_balance'],
-            'ts_limit' => (int) $Config->configArr['ts_balance'],
+            'ts_limit' => (int) $Config->configArr['ts_limit'],
         );
         return array_merge($base, $this->getAllStats());
     }

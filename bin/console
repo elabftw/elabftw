@@ -19,8 +19,10 @@ use Elabftw\Storage\Cache;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -37,6 +39,18 @@ try {
 } catch (WrongKeyOrModifiedCiphertextException $e) {
     echo "ERROR:\n";
     echo "It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\n";
+    echo "Error message:\n";
+    echo $e->getMessage() . "\n";
+    exit;
+} catch (RfcComplianceException $e) {
+    echo "ERROR:\n";
+    echo "It seems the configured sending email address is wrong. Try setting the 'mail_from' value to a valid email address: update config set conf_value = 'example@example.com' where conf_name = 'mail_from';\n";
+    echo "Error message:\n";
+    echo $e->getMessage() . "\n";
+    exit;
+} catch (InvalidArgumentException $e) {
+    echo "ERROR:\n";
+    echo "It seems your SMTP configuration is wrong. Try setting the 'smtp_address' value to a valid hostname: update config set conf_value = 'example.com' where conf_name = 'smtp_address';\n";
     echo "Error message:\n";
     echo $e->getMessage() . "\n";
     exit;

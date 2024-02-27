@@ -36,10 +36,11 @@ class Transform
         return match (Notifications::from($notif['category'])) {
             Notifications::CommentCreated =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="experiments.php?mode=view&amp;id=%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s.php?mode=view&amp;id=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
-                    (int) $notif['body']['experiment_id'],
-                    _('New comment on your experiment.'),
+                    $notif['body']['page'],
+                    (int) $notif['body']['entity_id'],
+                    _('New comment on your entry.'),
                     $notif['created_at'],
                 ),
             Notifications::EventDeleted =>

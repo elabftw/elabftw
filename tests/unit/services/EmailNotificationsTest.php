@@ -26,7 +26,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
     public function testSendEmails(): void
     {
         // create a notification to fake send so there is something to process
-        $Notifications = new CommentCreated(1, 2);
+        $Notifications = new CommentCreated('experiments', 1, 2);
         $Notifications->create(1);
         $Notifications = new UserCreated(3, 'Some team name');
         $Notifications->create(1);

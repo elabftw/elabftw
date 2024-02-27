@@ -13,6 +13,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
@@ -116,8 +117,12 @@ class TwigFilters
                 }
                 // type:users is also a special case where we go fetch the name of the user
                 elseif ($field[MetadataEnum::Type->value] === 'users' && !empty($value)) {
-                    $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
-                    $value = $linkedUser->userData['fullname'];
+                    try {
+                        $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
+                        $value = $linkedUser->userData['fullname'];
+                    } catch (ResourceNotFoundException) {
+                        $value = _('User could not be found.');
+                    }
                 }
                 // multi select will be an array of options
                 elseif (is_array($value)) {

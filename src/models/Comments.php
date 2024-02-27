@@ -114,9 +114,7 @@ class Comments implements RestInterface
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-        if ($this->Entity instanceof Experiments) {
-            $this->createNotification();
-        }
+        $this->createNotification();
 
         return $this->Db->lastInsertId();
     }
@@ -131,10 +129,9 @@ class Comments implements RestInterface
             return;
         }
 
-        // TODO: have a AbstractConcreteEntityWithId
         /** @psalm-suppress PossiblyNullArgument */
-        $Notif = new CommentCreated($this->Entity->id, (int) $this->Entity->Users->userData['userid']);
-        // target user is the owner of the experiment
+        $Notif = new CommentCreated($this->Entity->page, $this->Entity->id, (int) $this->Entity->Users->userData['userid']);
+        // target user is the owner of the entry
         $Notif->create($this->Entity->entityData['userid']);
     }
 }

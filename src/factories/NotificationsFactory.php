@@ -36,7 +36,7 @@ class NotificationsFactory
     public function getMailable(): MailableInterface
     {
         return match (Notifications::from($this->category)) {
-            Notifications::CommentCreated => new CommentCreated($this->body['experiment_id'], $this->body['commenter_userid']),
+            Notifications::CommentCreated => new CommentCreated($this->body['page'], $this->body['entity_id'], $this->body['commenter_userid']),
             Notifications::UserCreated => new UserCreated($this->body['userid'], $this->body['team']),
             Notifications::UserNeedValidation => new UserNeedValidation($this->body['userid'], $this->body['team']),
             Notifications::StepDeadline => new StepDeadline($this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),

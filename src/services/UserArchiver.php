@@ -56,6 +56,7 @@ class UserArchiver
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException(_('This instance configuration only permits Sysadmin users to archive a user.'));
         }
+        $this->target->invalidateToken();
         // if we are archiving a user, also lock all experiments (if asked)
         return $lockExp ? $this->lockAndArchiveExperiments() : true;
     }
@@ -96,7 +97,7 @@ class UserArchiver
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
         $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

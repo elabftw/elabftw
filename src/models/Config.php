@@ -262,11 +262,13 @@ final class Config implements RestInterface
 
         // loop the array and update config
         foreach ($params as $name => $value) {
-            $req->bindParam(':value', $value);
-            $req->bindParam(':name', $name);
-            $this->Db->execute($req);
-            AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
-            $this->configArr[$name] = (string) $value;
+            if ($this->configArr[$name] !== $value) {
+                $req->bindParam(':value', $value);
+                $req->bindParam(':name', $name);
+                $this->Db->execute($req);
+                AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
+                $this->configArr[$name] = (string) $value;
+            }
         }
 
         return $this->readAll();

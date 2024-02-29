@@ -47,7 +47,7 @@ class UserCreator
         if (isset($this->reqBody['orgid'])) {
             $orgid = (new UserParams('orgid', $this->reqBody['orgid']))->getContent();
         }
-        return (new Users())->createOne(
+        return (new Users(null, null, $this->requester))->createOne(
             (new UserParams('email', $this->reqBody['email']))->getContent(),
             $teams,
             (new UserParams('firstname', $this->reqBody['firstname']))->getContent(),

@@ -50,6 +50,7 @@ class MakeReport extends AbstractMakeCsv
             'lastname',
             'orgid',
             'email',
+            'has_mfa_enabled',
             'validated',
             'archived',
             'last_login',

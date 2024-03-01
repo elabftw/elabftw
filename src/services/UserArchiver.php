@@ -93,11 +93,12 @@ class UserArchiver
     private function lockAndArchiveExperiments(): bool
     {
         $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, locked_at = CURRENT_TIMESTAMP, state = :archived WHERE userid = :userid';
+            SET locked = :locked, lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP, state = :archived WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
         $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':lockedby', $this->requester->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

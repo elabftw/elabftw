@@ -219,7 +219,8 @@ class TeamGroups implements RestInterface
             FROM (
               -- get groups of a certain user
                 SELECT team_groups.id,
-                    team_groups.name
+                    team_groups.name,
+                    team_groups.team
                 FROM users2team_groups
                 LEFT JOIN team_groups ON (
                   team_groups.id = users2team_groups.groupid
@@ -231,7 +232,7 @@ class TeamGroups implements RestInterface
                 users2team_groups.groupid = team_groups_of_user.id
             )
             LEFT JOIN users USING (userid)
-            LEFT JOIN teams ON (teams.id = team_groups_of_user.id)
+            LEFT JOIN teams ON (teams.id = team_groups_of_user.team)
             GROUP BY team_groups_of_user.id
             ORDER BY team_groups_of_user.name ASC";
 

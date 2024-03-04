@@ -20,6 +20,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use function explode;
+use function json_decode;
 use PDO;
 
 /**
@@ -214,8 +215,9 @@ class TeamGroups implements RestInterface
     {
         $sql = "SELECT team_groups_of_user.name,
                 teams.name AS team_name,
-                GROUP_CONCAT(users.userid ORDER BY users.userid) AS usersids,
-                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.userid) AS fullnames
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'userid', users.userid,
+                    'fullname', CONCAT(users.firstname, ' ', users.lastname))) AS users
             FROM (
               -- get groups of a certain user
                 SELECT team_groups.id,
@@ -245,16 +247,9 @@ class TeamGroups implements RestInterface
             $fullGroups[] = array(
                 'name' => $group['name'],
                 'team' => $group['team_name'],
-                'users' => array_map(
-                    function (string $userid, ?string $fullname): array {
-                        return array(
-                            'userid' => $userid,
-                            'fullname' => $fullname,
-                        );
-                    },
-                    explode(',', $group['usersids']),
-                    explode(',', $group['fullnames'])
-                ),
+                'users' => empty($group['users'])
+                    ? array()
+                    : json_decode($group['users'], true),
             );
         }
 

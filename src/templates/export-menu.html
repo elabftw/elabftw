@@ -4,13 +4,13 @@
     <i class='fas fa-download fa-fw'></i>
   </button>
   <div class='dropdown-menu'>
-    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdf' target='_blank'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=pdfa' target='_blank'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=zipa'><i class='fas fa-file-archive fa-fw'></i> {{ 'Long term storage ZIP'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=qrpng'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}'><i class='fas fa-code fa-fw'></i> JSON</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}?format=qrpng' target='_blank'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.type }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i> JSON</a>
   </div>
 </div>

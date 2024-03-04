@@ -118,6 +118,16 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Maker->getTimestampParameters());
     }
 
+    public function testDgn(): void
+    {
+        $config = array();
+        $config['ts_login'] = 'fakelogin@example.com';
+        // create a fake encrypted password
+        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+        $Maker = new MakeDgnTimestamp($config, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $this->assertIsArray($Maker->getTimestampParameters());
+    }
+
     public function testSectigo(): void
     {
         $Maker = new MakeSectigoTimestamp(array(), $this->getFreshTimestampableEntity(), $this->dataFormat);

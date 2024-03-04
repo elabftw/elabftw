@@ -2,11 +2,12 @@
 <div class='d-flex justify-content-between'>
   <label for='ts_authority' class='col-form-label'>{{ 'Select timestamping authority (TSA)'|trans }}</label>
   <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='ts_authority' id='ts_authority' autocomplete='off'>
-    <option value='dfn' {{ App.Config.configArr.ts_authority == 'dfn' ? 'selected' }}>{{ 'DFN (free, no account required)'|trans }}</option>
-    <option value='universign' {{ App.Config.configArr.ts_authority == 'universign' ? 'selected' }}>{{ 'Universign (requires account)'|trans }}</option>
-    <option value='digicert' {{ App.Config.configArr.ts_authority == 'digicert' ? 'selected' }}>{{ 'Digicert (free, no account required)'|trans }}</option>
-    <option value='sectigo' {{ App.Config.configArr.ts_authority == 'sectigo' ? 'selected' }}>{{ 'Sectigo (free, no account required)'|trans }}</option>
-    <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>{{ 'GlobalSign (free, no account required)'|trans }}</option>
+    <option value='dfn' {{ App.Config.configArr.ts_authority == 'dfn' ? 'selected' }}>DFN.de {{ '(free, no account required)'|trans }}</option>
+    <option value='universign' {{ App.Config.configArr.ts_authority == 'universign' ? 'selected' }}>Universign.com {{ '(requires account)'|trans }}</option>
+    <option value='dgn' {{ App.Config.configArr.ts_authority == 'dgn' ? 'selected' }}>DGN.de {{ '(requires account)'|trans }}</option>
+    <option value='digicert' {{ App.Config.configArr.ts_authority == 'digicert' ? 'selected' }}>Digicert.com {{ '(free, no account required)'|trans }}</option>
+    <option value='sectigo' {{ App.Config.configArr.ts_authority == 'sectigo' ? 'selected' }}>Sectigo.com {{ '(free, no account required)'|trans }}</option>
+    <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>GlobalSign.com {{ '(free, no account required)'|trans }}</option>
     <option value='custom' {{ App.Config.configArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
   </select>
 </div>

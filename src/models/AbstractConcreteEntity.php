@@ -20,6 +20,7 @@ use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
+use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
 use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
@@ -65,6 +66,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($config, $this, $dataFormat),
+            'dgn' => new MakeDgnTimestamp($config, $this, $dataFormat),
             'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this, $dataFormat) : new MakeUniversignTimestamp($config, $this, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($config, $this, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($config, $this, $dataFormat),

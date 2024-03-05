@@ -22,58 +22,20 @@ class UserStats
 {
     private Db $Db;
 
+    private array $pieData = array();
+
     /**
-     * Count is the number of experiments of the user
+     * @param $count is the number of all experiments of the user
      */
     public function __construct(private Users $Users, private int $count)
     {
         $this->Db = Db::getConnection();
+        $this->readPieDataFromDB();
     }
 
-    /**
-     * Generate data for pie chart of status
-     * We want an array with each value corresponding to a status with: name, percent and color
-     */
     public function getPieData(): array
     {
-        $res = array();
-
-        // prevent division by zero error if user has no experiments
-        if ($this->count === 0) {
-            return $res;
-        }
-
-        // get all status name and id
-        $Status = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
-        $statusArr = $Status->readAll();
-
-        $sql = 'SELECT COUNT(id)
-            FROM experiments
-            WHERE userid = :userid
-            AND category = :category
-            AND state = :state';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-
-        // populate arrays
-        foreach ($statusArr as $status) {
-            $statusArr = array();
-            $statusArr['name'] = $status['title'];
-            $statusArr['id'] = $status['id'];
-            $statusArr['color'] = '#' . $status['color'];
-
-            // now get the count
-            $req->bindParam(':category', $status['id'], PDO::PARAM_INT);
-            $req->execute();
-            $statusArr['count'] = $req->fetchColumn();
-
-            // calculate the percent
-            $statusArr['percent'] = round(((float) $statusArr['count'] / (float) $this->count) * 100.0);
-
-            $res[] = $statusArr;
-        }
-        return $res;
+        return $this->pieData;
     }
 
     /**
@@ -82,25 +44,89 @@ class UserStats
      */
     public function getFormattedPieData(): string
     {
-        $pieData = $this->getPieData();
-        $res = '';
+        $res = array();
         $percentSum = 0;
-        foreach ($pieData as $key => $value) {
-            if ($key === array_key_first($pieData)) {
-                $res .= $value['color'] . ' ' . $value['percent'] . '%,';
+        foreach ($this->pieData as $key => $value) {
+            if ($key === array_key_first($this->pieData)) {
+                $res[] = sprintf('%s %s%%,', $value['color'], $value['percent']);
                 $percentSum = $value['percent'];
                 continue;
             }
 
             // last one is just 0
-            if ($key === array_key_last($pieData)) {
-                $res .= $value['color'] . ' 0';
+            if ($key === array_key_last($this->pieData)) {
+                $res[] = $value['color'] . ' 0';
                 continue;
             }
             // the percent value needs to be added to the previous sum of percents
             $percentSum += $value['percent'];
-            $res .= $value['color'] . ' 0 ' . $percentSum . '%,';
+            $res[] = $value['color'] . ' 0 ' . $percentSum . '%,';
         }
-        return $res;
+        return implode($res);
+    }
+
+    /**
+     * Generate data for pie chart of status
+     * We want an array with each value corresponding to a status with: name, percent and color
+     */
+    private function readPieDataFromDB(): void
+    {
+        // prevent division by zero error if user has no experiments
+        if ($this->count === 0) {
+            return;
+        }
+        $percentFactor = 100.0 / (float) $this->count;
+
+        // get all status name and id with State::Normal
+        $statusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->team)))->readAllPlus();
+        // add "status" for experiments without status
+        $statusArr[] = array(
+            'title' => _('Not set'),
+            'id' => -1,
+            'color' => 'bdbdbd',
+        );
+
+        // get number of experiments without status
+        $sql = 'SELECT COUNT(id)
+            FROM experiments
+            WHERE userid = :userid
+                AND state = :state
+                AND status IS NULL';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->execute();
+        $countExpWithoutStatus = $req->fetchColumn();
+
+        // prepare sql query for experiments with status
+        $sql = 'SELECT COUNT(id)
+            FROM experiments
+            WHERE userid = :userid
+                AND state = :state
+                AND status = :status';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+
+        // populate arrays
+        foreach ($statusArr as $status) {
+            $this->pieData[] = array();
+            $lastKey = array_key_last($this->pieData);
+            $this->pieData[$lastKey]['name'] = $status['title'];
+            $this->pieData[$lastKey]['id'] = $status['id'];
+            $this->pieData[$lastKey]['color'] = '#' . $status['color'];
+
+            if ($status['id'] === -1) {
+                $this->pieData[$lastKey]['count'] = $countExpWithoutStatus;
+            } else {
+                // now get the count
+                $req->bindParam(':status', $status['id'], PDO::PARAM_INT);
+                $req->execute();
+                $this->pieData[$lastKey]['count'] = $req->fetchColumn();
+            }
+
+            // calculate the percent
+            $this->pieData[$lastKey]['percent'] = round($percentFactor * (float) $this->pieData[$lastKey]['count']);
+        }
     }
 }

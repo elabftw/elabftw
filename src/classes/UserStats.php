@@ -45,29 +45,30 @@ class UserStats
 
     /**
      * Take the raw data and make a string that can be injected into conic-gradient css value
-     * example: #29AEB9 18%,#54AA08 0 43%,#C0C0C0 0 74%,#C24F3D 0
+     * example: #29AEB9 18%, #54AA08 0 43%, #C0C0C0 0 74%, #C24F3D 0
      */
     public function getFormattedPieData(): string
     {
         $res = array();
         $percentSum = 0;
         foreach ($this->pieData as $key => $value) {
-            if ($key === array_key_first($this->pieData)) {
-                $res[] = sprintf('%s %s%%,', $value['color'], $value['percent']);
-                $percentSum = $value['percent'];
-                continue;
-            }
-
-            // last one is just 0
-            if ($key === array_key_last($this->pieData)) {
-                $res[] = $value['color'] . ' 0';
-                continue;
-            }
             // the percent value needs to be added to the previous sum of percents
             $percentSum += $value['percent'];
-            $res[] = $value['color'] . ' 0 ' . $percentSum . '%,';
+
+            $res[] = sprintf(
+                '%s %s %s',
+                $value['color'],
+                // don't add 0 for first entry
+                $key === array_key_first($this->pieData)
+                    ? ''
+                    : '0',
+                // don't add percentSum for last entry
+                $key === array_key_last($this->pieData)
+                    ? ''
+                    : "$percentSum%",
+            );
         }
-        return implode($res);
+        return implode(', ', $res);
     }
 
     /**

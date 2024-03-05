@@ -9,11 +9,16 @@
 
 namespace Elabftw\Elabftw;
 
+use function array_key_first;
+use function array_key_last;
 use Elabftw\Enums\State;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use function implode;
 use PDO;
+use function round;
+use function sprintf;
 
 /**
  * Generate experiments statistics for a user (shown on profile page)
@@ -25,7 +30,7 @@ class UserStats
     private array $pieData = array();
 
     /**
-     * @param $count is the number of all experiments of the user
+     * @param int $count the number of all experiments of the user with state normal
      */
     public function __construct(private Users $Users, private int $count)
     {
@@ -98,7 +103,7 @@ class UserStats
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
 
-        // populate arrays
+        // populate pieData
         foreach ($statusArr as $status) {
             $this->pieData[] = array();
             $lastKey = array_key_last($this->pieData);

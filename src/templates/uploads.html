@@ -87,7 +87,7 @@
               {# CREATED AT #}
               <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
               {# FILESIZE #}
-              <td>{{ upload.filesize|formatBytes }}</td>
+              <td>{{ upload.filesize|default('0')|formatBytes }}</td>
               {# ACTIONS #}
               <td>
                 {% if loop.first %}

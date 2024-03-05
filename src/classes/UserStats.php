@@ -87,24 +87,14 @@ class UserStats
         );
 
         // get number of experiments without status
-        $sql = 'SELECT COUNT(id)
-            FROM experiments
-            WHERE userid = :userid
-                AND state = :state
-                AND status IS NULL';
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare($this->getSQL(true));
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $req->execute();
         $countExpWithoutStatus = $req->fetchColumn();
 
         // prepare sql query for experiments with status
-        $sql = 'SELECT COUNT(id)
-            FROM experiments
-            WHERE userid = :userid
-                AND state = :state
-                AND status = :status';
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare($this->getSQL());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
 
@@ -128,5 +118,20 @@ class UserStats
             // calculate the percent
             $this->pieData[$lastKey]['percent'] = round($percentFactor * (float) $this->pieData[$lastKey]['count']);
         }
+    }
+
+    /**
+     * @param bool $statusIsNull Are we looking for experiments where the status is null
+     */
+    private function getSQL(bool $statusIsNull = false): string
+    {
+        return sprintf(
+            'SELECT COUNT(id)
+                FROM experiments
+                WHERE userid = :userid
+                    AND state = :state
+                    AND status %s',
+            $statusIsNull ? 'IS NULL' : '= :status'
+        );
     }
 }

@@ -45,15 +45,15 @@ class UserStats
 
     /**
      * Take the raw data and make a string that can be injected into conic-gradient css value
-     * example: #29AEB9 18%, #54AA08 0 43%, #C0C0C0 0 74%, #C24F3D 0
+     * example: #29AEB9 90deg, #54AA08 0 180deg, #C0C0C0 0 270deg, #C24F3D 0
      */
     public function getFormattedPieData(): string
     {
         $res = array();
-        $percentSum = 0;
+        $degSum = 0;
         foreach ($this->pieData as $key => $value) {
-            // the percent value needs to be added to the previous sum of percents
-            $percentSum += $value['percent'];
+            // the degree value needs to be added to the previous sum of degrees
+            $degSum += $value['deg'];
 
             $res[] = sprintf(
                 '%s %s %s',
@@ -62,10 +62,10 @@ class UserStats
                 $key === array_key_first($this->pieData)
                     ? ''
                     : '0',
-                // don't add percentSum for last entry
+                // don't add degSum for last entry
                 $key === array_key_last($this->pieData)
                     ? ''
-                    : "$percentSum%",
+                    : "{$degSum}deg",
             );
         }
         return implode(', ', $res);
@@ -82,6 +82,7 @@ class UserStats
             return;
         }
         $percentFactor = 100.0 / (float) $this->count;
+        $degFactor = 360.0 / (float) $this->count;
 
         // get all status name and id independent of state
         $statusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->team)))->readAllIgnoreState();
@@ -121,8 +122,9 @@ class UserStats
                 $this->pieData[$lastKey]['count'] = $req->fetchColumn();
             }
 
-            // calculate the percent
+            // calculate the percent and deg
             $this->pieData[$lastKey]['percent'] = round($percentFactor * (float) $this->pieData[$lastKey]['count']);
+            $this->pieData[$lastKey]['deg'] = round($degFactor * (float) $this->pieData[$lastKey]['count'], 2);
         }
     }
 

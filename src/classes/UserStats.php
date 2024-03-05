@@ -77,8 +77,8 @@ class UserStats
         }
         $percentFactor = 100.0 / (float) $this->count;
 
-        // get all status name and id with State::Normal
-        $statusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->team)))->readAllPlus();
+        // get all status name and id independent of state
+        $statusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->team)))->readAllIgnoreState();
         // add "status" for experiments without status
         $statusArr[] = array(
             'title' => _('Not set'),

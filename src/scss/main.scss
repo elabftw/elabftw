@@ -1235,8 +1235,10 @@ input[type='color'] {
 
 /* to make the pie smaller */
 .pie-chart-container {
-    max-width: 450px;
-    padding: 66px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 360px;
+    padding: 5%;
 }
 
 /* pure css pie chart based on: https://codepen.io/chriscoyier/pen/RPLqMg */

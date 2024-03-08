@@ -9,11 +9,16 @@
 
 namespace Elabftw\Elabftw;
 
+use function array_key_first;
+use function array_key_last;
 use Elabftw\Enums\State;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use function implode;
 use PDO;
+use function round;
+use function sprintf;
 
 /**
  * Generate experiments statistics for a user (shown on profile page)
@@ -22,85 +27,119 @@ class UserStats
 {
     private Db $Db;
 
+    private array $pieData = array();
+
     /**
-     * Count is the number of experiments of the user
+     * @param int $count the number of all experiments of the user with state normal
      */
     public function __construct(private Users $Users, private int $count)
     {
         $this->Db = Db::getConnection();
+        $this->readPieDataFromDB();
+    }
+
+    public function getPieData(): array
+    {
+        return $this->pieData;
+    }
+
+    /**
+     * Take the raw data and make a string that can be injected into conic-gradient css value
+     * example: #29AEB9 90deg, #54AA08 0 180deg, #C0C0C0 0 270deg, #C24F3D 0
+     */
+    public function getFormattedPieData(): string
+    {
+        $res = array();
+        $degSum = 0;
+        foreach ($this->pieData as $key => $value) {
+            // the degree value needs to be added to the previous sum of degrees
+            $degSum += $value['deg'];
+
+            $res[] = sprintf(
+                '%s %s %s',
+                $value['color'],
+                // don't add 0 for first entry
+                $key === array_key_first($this->pieData)
+                    ? ''
+                    : '0',
+                // don't add degSum for last entry
+                $key === array_key_last($this->pieData)
+                    ? ''
+                    : "{$degSum}deg",
+            );
+        }
+        return implode(', ', $res);
     }
 
     /**
      * Generate data for pie chart of status
      * We want an array with each value corresponding to a status with: name, percent and color
      */
-    public function getPieData(): array
+    private function readPieDataFromDB(): void
     {
-        $res = array();
-
         // prevent division by zero error if user has no experiments
         if ($this->count === 0) {
-            return $res;
+            return;
         }
+        $percentFactor = 100.0 / (float) $this->count;
+        $degFactor = 360.0 / (float) $this->count;
 
-        // get all status name and id
-        $Status = new ExperimentsStatus(new Teams($this->Users, $this->Users->team));
-        $statusArr = $Status->readAll();
+        // get all status name and id independent of state
+        $statusArr = (new ExperimentsStatus(new Teams($this->Users, $this->Users->team)))->readAllIgnoreState();
+        // add "status" for experiments without status
+        $statusArr[] = array(
+            'title' => _('Not set'),
+            'id' => -1,
+            'color' => 'bdbdbd',
+        );
 
-        $sql = 'SELECT COUNT(id)
-            FROM experiments
-            WHERE userid = :userid
-            AND category = :category
-            AND state = :state';
-        $req = $this->Db->prepare($sql);
+        // get number of experiments without status
+        $req = $this->Db->prepare($this->getSQL(true));
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->execute();
+        $countExpWithoutStatus = $req->fetchColumn();
+
+        // prepare sql query for experiments with status
+        $req = $this->Db->prepare($this->getSQL());
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
 
-        // populate arrays
+        // populate pieData
         foreach ($statusArr as $status) {
-            $statusArr = array();
-            $statusArr['name'] = $status['title'];
-            $statusArr['id'] = $status['id'];
-            $statusArr['color'] = '#' . $status['color'];
+            $this->pieData[] = array();
+            $lastKey = array_key_last($this->pieData);
+            $this->pieData[$lastKey]['name'] = $status['title'];
+            $this->pieData[$lastKey]['id'] = $status['id'];
+            $this->pieData[$lastKey]['color'] = '#' . $status['color'];
 
-            // now get the count
-            $req->bindParam(':category', $status['id'], PDO::PARAM_INT);
-            $req->execute();
-            $statusArr['count'] = $req->fetchColumn();
+            if ($status['id'] === -1) {
+                $this->pieData[$lastKey]['count'] = $countExpWithoutStatus;
+            } else {
+                // now get the count
+                $req->bindParam(':status', $status['id'], PDO::PARAM_INT);
+                $req->execute();
+                $this->pieData[$lastKey]['count'] = $req->fetchColumn();
+            }
 
-            // calculate the percent
-            $statusArr['percent'] = round(((float) $statusArr['count'] / (float) $this->count) * 100.0);
-
-            $res[] = $statusArr;
+            // calculate the percent and deg
+            $this->pieData[$lastKey]['percent'] = round($percentFactor * (float) $this->pieData[$lastKey]['count']);
+            $this->pieData[$lastKey]['deg'] = round($degFactor * (float) $this->pieData[$lastKey]['count'], 2);
         }
-        return $res;
     }
 
     /**
-     * Take the raw data and make a string that can be injected into conic-gradient css value
-     * example: #29AEB9 18%,#54AA08 0 43%,#C0C0C0 0 74%,#C24F3D 0
+     * @param bool $statusIsNull Are we looking for experiments where the status is null
      */
-    public function getFormattedPieData(): string
+    private function getSQL(bool $statusIsNull = false): string
     {
-        $pieData = $this->getPieData();
-        $res = '';
-        $percentSum = 0;
-        foreach ($pieData as $key => $value) {
-            if ($key === array_key_first($pieData)) {
-                $res .= $value['color'] . ' ' . $value['percent'] . '%,';
-                $percentSum = $value['percent'];
-                continue;
-            }
-
-            // last one is just 0
-            if ($key === array_key_last($pieData)) {
-                $res .= $value['color'] . ' 0';
-                continue;
-            }
-            // the percent value needs to be added to the previous sum of percents
-            $percentSum += $value['percent'];
-            $res .= $value['color'] . ' 0 ' . $percentSum . '%,';
-        }
-        return $res;
+        return sprintf(
+            'SELECT COUNT(id)
+                FROM experiments
+                WHERE userid = :userid
+                    AND state = :state
+                    AND status %s',
+            $statusIsNull ? 'IS NULL' : '= :status'
+        );
     }
 }

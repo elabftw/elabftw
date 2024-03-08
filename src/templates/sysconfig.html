@@ -332,7 +332,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='smtp_port' class='col-form-label'>{{ 'SMTP Port'|trans }}</label>
-      <input class='form-control col-md-3' type='text' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' data-trigger='blur' data-model='config' data-target='smtp_port' id='smtp_port' />
+      <input class='form-control col-md-3' type='number' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' data-trigger='blur' data-model='config' data-target='smtp_port' id='smtp_port' />
     </div>
     <p class='smallgray'>{{ 'Default is 587.'|trans }}</p>
     <hr>

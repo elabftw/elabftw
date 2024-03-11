@@ -11,6 +11,7 @@ import { notifSaved, notifError } from './misc';
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up
   notifOnSaved = true;
+  notifOnError = true;
 
   get(query: string): Promise<Response> {
     return this.send(Method.GET, query);
@@ -58,7 +59,9 @@ export class Api {
       }
       return response;
     }).catch(error => {
-      notifError(error);
+      if (this.notifOnError) {
+        notifError(error);
+      }
       return Promise.reject(new Error(error.message));
     });
   }

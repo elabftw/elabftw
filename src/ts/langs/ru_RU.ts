@@ -24,6 +24,7 @@ const t = {
     "please-wait": "Пожалуйста, подождите…",
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "request-filename": "Введите имя файла",
+    "resource-not-found": "С этим id ничего нет",
     "save": "Сохранить",
     "saved": "Сохранено",
     "sort-by-column": "Sort by column",

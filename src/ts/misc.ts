@@ -524,8 +524,21 @@ export function escapeExtendedQuery(searchTerm: string): string {
 export function replaceWithTitle(): void {
   document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
     const ApiC = new Api();
+    // mask error notifications
+    ApiC.notifOnError = false;
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
-      el.innerText = json.title;
+      if (el instanceof HTMLInputElement) {
+        let value = `${json.id} - ${json.title}`;
+        if (el.dataset.endpoint === Model.User) {
+          value = `${json.userid} - ${json.fullname}`;
+        }
+        el.value = value;
+      } else {
+        el.innerText = json.title;
+      }
+    }).catch(() => {
+      el.innerText = i18next.t('resource-not-found');
+      el.classList.add('color-warning');
     });
   });
 }

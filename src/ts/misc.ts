@@ -526,18 +526,25 @@ export function replaceWithTitle(): void {
     const ApiC = new Api();
     // mask error notifications
     ApiC.notifOnError = false;
+    // view mode is innerText
+    let changedAttribute = 'innerText';
+    // edit mode is value because it's an input
+    if (el instanceof HTMLInputElement) {
+      changedAttribute = 'value';
+    }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+      // view mode for Experiments or Resources
+      let value = json.title;
+      // edit mode
       if (el instanceof HTMLInputElement) {
-        let value = `${json.id} - ${json.title}`;
+        value = `${json.id} - ${json.title}`;
         if (el.dataset.endpoint === Model.User) {
           value = `${json.userid} - ${json.fullname}`;
         }
-        el.value = value;
-      } else {
-        el.innerText = json.title;
       }
+      el[changedAttribute] = value;
     }).catch(() => {
-      el.innerText = i18next.t('resource-not-found');
+      el[changedAttribute] = i18next.t('resource-not-found');
       el.classList.add('color-warning');
     });
   });

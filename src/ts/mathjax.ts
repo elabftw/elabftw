@@ -44,6 +44,7 @@ insert(
       inlineMath: [ ['$','$'], ['\\(','\\)'] ],
       displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
       processEscapes: true,
+      tags: 'ams',
       packages: ['base', 'ams', 'autoload'],
     },
     options: {

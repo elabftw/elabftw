@@ -23,7 +23,7 @@ export default defineConfig({
           rules: {
             'heading-level': Severity.DISABLED, // should be WARN but does not work, TODO: fix violations
             // we keep autocomplete on checkboxes because it's important in firefox
-            'valid-autocomplete': Severity.WARN,
+            'valid-autocomplete': Severity.DISABLED,
             'require-sri': [Severity.ERROR, {
               target: 'crossorigin',
               exclude: ['https://elabtmp'], // this is treated as crossorigin so we exclude it

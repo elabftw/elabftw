@@ -15,6 +15,7 @@ RUN npm install typescript html-validate@^8 cypress-html-validate@^6
 
 # copy everything because we can't bind mount
 COPY cypress.config.ts .
+COPY .htmlvalidate.json .
 COPY tests/cypress/ ./tests/cypress/
 COPY tests/_data/ ./tests/_data/
 

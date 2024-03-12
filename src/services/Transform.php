@@ -103,8 +103,7 @@ class Transform
                 ),
             Notifications::NewVersionInstalled =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="https://www.deltablot.com/posts/release-%d">%s</span>' . $relativeMoment,
-                    (int) $notif['id'],
+                    '<a class="color-white" href="https://www.deltablot.com/posts/release-%d" target="_blank">%s</span>' . $relativeMoment,
                     App::INSTALLED_VERSION_INT,
                     sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],

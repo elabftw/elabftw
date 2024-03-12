@@ -24,6 +24,7 @@ const t = {
     "please-wait": "잠시만 기다려주세요…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "파일 이름 입력",
+    "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",
     "save": "저장",
     "saved": "저장됨",
     "sort-by-column": "Sort by column",

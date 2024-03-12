@@ -24,6 +24,7 @@ const t = {
     "please-wait": "Attendere, prego…",
     "replace-edited-file": "Si vuole rimpiazzare il file sul server con questo?",
     "request-filename": "Inserire il nome del file",
+    "resource-not-found": "Non vi è nulla con questo ID",
     "save": "Salva",
     "saved": "Salvato",
     "sort-by-column": "Sort by column",

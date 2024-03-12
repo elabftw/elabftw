@@ -24,6 +24,7 @@ const t = {
     "please-wait": "Prosím počkajte…",
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",
     "request-filename": "Zadajte názov súboru",
+    "resource-not-found": "Nič sa nezobrazí s týmto identifikátorom",
     "save": "Uložiť",
     "saved": "Uložené",
     "sort-by-column": "Sort by column",

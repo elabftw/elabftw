@@ -24,6 +24,7 @@ const t = {
     "please-wait": "お待ちください…",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "ファイルの名前を入力してください",
+    "resource-not-found": "このIDで表示するものはありません",
     "save": "保存",
     "saved": "保存済み",
     "sort-by-column": "Sort by column",

@@ -9,6 +9,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
 import i18next from 'i18next';
@@ -292,6 +293,8 @@ export async function reloadElement(elementId: string): Promise<void> {
   }
   const html = await fetchCurrentPage();
   document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+
+  (new TableSorting()).init();
   listenTrigger(elementId);
 }
 

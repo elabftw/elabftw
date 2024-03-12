@@ -4,16 +4,12 @@
 version: '3'
 
 services:
-# our first container is nginx + php-fpm + elabftw
     web:
         image: elabtmp
         build:
           context: ..
           dockerfile: ./tests/elabtmp.Dockerfile
         container_name: elabtmp
-        # restrict capabilities of the root user to the strict minimum
-        # see CIS Docker Benchmark v1.5 5.3
-        # see ANSSI-FT-082 23/09/2020 R8
         cap_drop:
             - ALL
         cap_add:
@@ -25,27 +21,18 @@ services:
         env_file:
             - elabftw-user.env
         environment:
-            # no need to change
             - DB_HOST=mysqltmp
-            # no need to change
             - DB_NAME=phpunit
-            # no need to change
             - DB_USER=phpunit
-            # need to change
+            # oMg tHe sOuRcE CoDe cOnTaInS PaSsWoRdS In pLaIn tExT!!!
             - DB_PASSWORD=phpunit
             - SECRET_KEY=def00000195a92432f2ebb86bf6e9b9646b45ea955cab7b8f2d96ba2259a85c9e09b04647078c425c5392cb631fa3d9816974bbe8e458d61e16f897ef36c0def362458fd
-            # optional: change to your server name in nginx config
             - SERVER_NAME=elab.local
-            # optional: disable https, use this to have an http server listening on port 443
-            # useful if the SSL stack is handled by haproxy or something alike
             - DISABLE_HTTPS=false
-            # set to true to use letsencrypt certificates
             - ENABLE_LETSENCRYPT=false
             - MAX_UPLOAD_SIZE=200M
             - PHP_TIMEZONE=Europe/Paris
             - TZ=Europe/Paris
-            - USE_REDIS=false
-            - ENABLE_IPV6=true
             - DEV_MODE=true
             - SITE_URL=https://elab.local:3148
             - ELAB_AWS_ACCESS_KEY=yep
@@ -62,8 +49,6 @@ services:
             - /elabftw/cache:uid=1000,gid=1000
         networks:
             - elabftw-net
-        # make sure we wait for mysql to be available before starting
-        # note: the mysql container needs an healthcheck block for this to work
         depends_on:
             mysql:
                 condition: service_healthy
@@ -71,14 +56,11 @@ services:
     mysql:
         image: mysql:8.0
         container_name: mysqltmp
-        # add an healthcheck block so the web container knows when it is ready to accept connections
-        # use double $ here so env vars are correctly found
         healthcheck:
             test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute 'SHOW DATABASES;'"
             interval: 2s
             timeout: 5s
             retries: 20
-        # drop some capabilities
         cap_drop:
             - AUDIT_WRITE
             - MKNOD
@@ -86,13 +68,9 @@ services:
             - SETFCAP
             - NET_RAW
         environment:
-            # need to change
             - MYSQL_ROOT_PASSWORD=phpunit
-            # no need to change
             - MYSQL_DATABASE=phpunit
-            # no need to change
             - MYSQL_USER=phpunit
-            # need to change
             - MYSQL_PASSWORD=phpunit
             - TZ=Europe/Paris
         networks:

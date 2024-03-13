@@ -151,7 +151,7 @@
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname }}</span>
                 </td>
                 <td>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
+                  <span class='p-1 rounded {{ App.Users.userData.is_sysadmin == '1' ? 'hl-hover-gray malleableColumn' }}' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
                 </td>
                 <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
                 <td>

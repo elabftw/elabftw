@@ -12,6 +12,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -200,9 +201,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // force admin validation so we can run all code paths
         $Config = Config::getConfig();
         $Config->patch(Action::Update, array('admin_validate' => 1));
-        $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), 'blah', 'yop', 'somePassword!', 2, false, false));
+        $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), 'blah', 'yop', 'somePassword!', Usergroup::Admin, false, false));
         $Config->patch(Action::Update, array('admin_validate' => 0));
-        $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', 2, true, false));
+        $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
     }
 
     public function testUnArchiveButAnotherUserExists(): void
@@ -211,7 +212,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Admin = new Users(5, 2);
         $Users = new Users(6, 2, $Admin);
         // create another active user with the same email
-        ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', 4, false, false);
+        ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', Usergroup::User, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
         $Users->patch(Action::Lock, array());
@@ -236,7 +237,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $Admin = new Users(5, 2);
-        $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', 4, false, false);
+        $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->assertTrue($Target->destroy());
     }

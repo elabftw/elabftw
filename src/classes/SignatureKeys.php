@@ -22,14 +22,11 @@ use function unpack;
 
 class SignatureKeys
 {
-    public const KEYID_BYTES = 8;
+    private const KEYID_BYTES = 8;
 
-    private const REGEX = '#^' . SignatureHelper::COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
+    private const REGEX = '#^' . SignatureHelper::UNTRUSTED_COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
 
     private const KDF_LENGTH = 104;
-
-    // ed25519
-    private const SIGNATURE_ALGO = 'Ed';
 
     public function __construct(
         public readonly string $signatureAlgo,
@@ -65,7 +62,7 @@ class SignatureKeys
         /** @var non-empty-string */
         $priv = sodium_crypto_sign_secretkey($keypair);
 
-        return new self(self::SIGNATURE_ALGO, $id, $priv, $pub, $salt, $derivedKey);
+        return new self(SignatureHelper::SIGNATURE_ALGO, $id, $priv, $pub, $salt, $derivedKey);
     }
 
     /**
@@ -88,7 +85,8 @@ class SignatureKeys
         $unpackedOpsLimit = unpack('V', $packedOpsLimit);
         $unpackedMemLimit = unpack('V', $packedMemLimit);
         if ($unpackedOpsLimit === false || $unpackedMemLimit === false) {
-            throw new ImproperActionException('Error unpacking limits for kdf');
+            // Note: this error message is not translated because unless you're a cryptogeek, this means nothing in any language
+            throw new ImproperActionException('Error unpacking ops or mem limits for key derivation function');
         }
         $kdfOpsLimit = (int) $unpackedOpsLimit[1];
         $kdfMemLimit = (int) $unpackedMemLimit[1];
@@ -96,21 +94,25 @@ class SignatureKeys
         /** @psalm-suppress RedundantCast */
         $remainder = (string) (Binary::safeSubstr($decoded, 54, 136) ^ $derivedKey);
         // Note: had to change second arg from 2 to 0 here to make checksum work! (from php impl)
-        $keyId = Binary::safeSubstr($remainder, 0, SignatureHelper::KEYID_BYTES);
+        $id = Binary::safeSubstr($remainder, 0, self::KEYID_BYTES);
         /** @var non-empty-string */
-        $priv = Binary::safeSubstr($remainder, SignatureHelper::KEYID_BYTES, SODIUM_CRYPTO_SIGN_SECRETKEYBYTES);
-        $pub = Binary::safeSubstr($remainder, SignatureHelper::KEYID_BYTES + SODIUM_CRYPTO_SIGN_SECRETKEYBYTES, SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES);
+        $priv = Binary::safeSubstr($remainder, self::KEYID_BYTES, SODIUM_CRYPTO_SIGN_SECRETKEYBYTES);
+        $pub = Binary::safeSubstr($remainder, self::KEYID_BYTES + SODIUM_CRYPTO_SIGN_SECRETKEYBYTES, SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES);
         $checksum = Binary::safeSubstr($remainder, 72, 32);
 
         // verify checksum
-        $expectedHash = sodium_crypto_generichash($sigAlg . $keyId . $priv);
-        if (!hash_equals($expectedHash, $checksum)) {
+        $expected = sodium_crypto_generichash($sigAlg . $id . $priv);
+        if (!hash_equals($expected, $checksum)) {
             throw new ImproperActionException(_('Error decrypting private key. Are you certain of the passphrase?'));
         }
 
-        return new self($sigAlg, $keyId, $priv, $pub, $salt, $derivedKey);
+        return new self($sigAlg, $id, $priv, $pub, $salt, $derivedKey);
     }
 
+    /**
+     * This function is responsible from generating a derived key from a passphrase.
+     * It allows encrypting the private key with a passphrase.
+     */
     private static function kdf(string $passphrase, string $salt, int $kdfOpsLimit, int $kdfMemLimit): string
     {
         // derive a key from the passphrase

@@ -22,27 +22,30 @@ use ParagonIE\ConstantTime\Base64;
 use ParagonIE\ConstantTime\Hex;
 use function sodium_crypto_generichash;
 
+/**
+ * Helper class for minisign compatible signatures
+ * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
+ * Inspired by the code from https://github.com/soatok/minisign-php by Soatok Dreamseeker
+ */
 class SignatureHelper
 {
-    public const COMMENT_PREFIX = 'untrusted comment: ';
-
-    public const KEYID_BYTES = 8;
-
-    private const TRUSTED_COMMENT_PREFIX = 'trusted comment: ';
+    public const UNTRUSTED_COMMENT_PREFIX = 'untrusted comment: ';
 
     // ed25519
-    private const SIGNATURE_ALGO = 'Ed';
+    public const SIGNATURE_ALGO = 'Ed';
+
+    private const TRUSTED_COMMENT_PREFIX = 'trusted comment: ';
 
     // hashed DSA: we use Ed25519ph from https://datatracker.ietf.org/doc/html/rfc8032#section-5.1
     private const HASHED_DSA = 'ED';
 
-    // scrypt
+    // our key derivation algo: scrypt
     private const KDF_ALGO = 'Sc';
 
-    // blake2
+    // our checksum algo: blake2
     private const CKSUM_ALGO = 'B2';
 
-    protected Db $Db;
+    private Db $Db;
 
     public function __construct(private Users $Users)
     {
@@ -61,9 +64,9 @@ class SignatureHelper
         return $req->execute();
     }
 
-    public function serializeSignature(string $secretKey, string $passphrase, string $message, Meaning $meaning): string
+    public function serializeSignature(string $privkey, string $passphrase, string $message, Meaning $meaning): string
     {
-        $Key = SignatureKeys::deserialize($secretKey, $passphrase);
+        $Key = SignatureKeys::deserialize($privkey, $passphrase);
         // because we use Ed25519ph (pre-hashed), we hash the message before signing it
         $signature = sodium_crypto_sign_detached(
             sodium_crypto_generichash($message, '', SODIUM_CRYPTO_GENERICHASH_BYTES_MAX),
@@ -71,32 +74,30 @@ class SignatureHelper
         );
 
         // trusted comment: this comment is signed and contains metadata about the signature
-        $DateTime = new DateTimeImmutable();
+        // we encode it in JSON to make it easy to parse by an eventual downstream app
         $trustedCommentArr = array(
             'firstname' => $this->Users->userData['firstname'],
             'lastname' => $this->Users->userData['lastname'],
             'email' => $this->Users->userData['email'],
-            'created_at' => $DateTime->format(DateTimeImmutable::ATOM),
+            'created_at' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
             'site_url' => Config::fromEnv('SITE_URL'),
             'created_by' => sprintf('eLabFTW %d', App::INSTALLED_VERSION_INT),
             'meaning' => $meaning->name,
         );
-        $trustedComment = json_encode($trustedCommentArr, JSON_THROW_ON_ERROR);
+        $trustedCommentJson = json_encode($trustedCommentArr, JSON_THROW_ON_ERROR);
         // this is the global signature for the signature and comment combined
-        $globalSignature = sodium_crypto_sign_detached($signature . $trustedComment, $Key->priv);
+        $globalSignature = sodium_crypto_sign_detached($signature . $trustedCommentJson, $Key->priv);
 
         $firstLine = sprintf(
             "%selabftw/%d: signature from key %s\n",
-            self::COMMENT_PREFIX,
+            self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
             Hex::encode($Key->id),
         );
 
         return $firstLine .
-            Base64::encode(self::HASHED_DSA . $Key->id . $signature) .
-            "\n".
-            self::TRUSTED_COMMENT_PREFIX .
-            $trustedComment . "\n" .
+            Base64::encode(self::HASHED_DSA . $Key->id . $signature) . "\n" .
+            self::TRUSTED_COMMENT_PREFIX . $trustedCommentJson . "\n" .
             Base64::encode($globalSignature) . "\n";
     }
 
@@ -109,7 +110,7 @@ class SignatureHelper
     {
         return sprintf(
             "%selabftw/%d: public key %s\n%s\n",
-            self::COMMENT_PREFIX,
+            self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
             Hex::encode($key->id),
             Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
@@ -126,16 +127,14 @@ class SignatureHelper
     {
         $firstLine = sprintf(
             "%selabftw/%d: encrypted secret key %s\n",
-            self::COMMENT_PREFIX,
+            self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
             Hex::encode($key->id),
         );
         $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $key->salt;
         $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE) . "\0\0\0\0";
         $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE) . "\0\0\0\0";
-        $checksum = sodium_crypto_generichash(
-            self::SIGNATURE_ALGO . $key->id . $key->priv
-        );
+        $checksum = sodium_crypto_generichash(self::SIGNATURE_ALGO . $key->id . $key->priv);
         $toXor = $key->id . $key->priv . $checksum;
         $toEncode .= $key->derivedKey ^ $toXor;
         return $firstLine . Base64::encode($toEncode) . "\n";

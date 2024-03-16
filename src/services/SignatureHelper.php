@@ -12,7 +12,7 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\SigSecretKey;
+use Elabftw\Elabftw\SignatureKeys;
 use Elabftw\Enums\Meaning;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -20,10 +20,9 @@ use function pack;
 
 use ParagonIE\ConstantTime\Base64;
 use ParagonIE\ConstantTime\Hex;
-use function random_bytes;
 use function sodium_crypto_generichash;
 
-class Sigkeys
+class SignatureHelper
 {
     public const COMMENT_PREFIX = 'untrusted comment: ';
 
@@ -52,22 +51,23 @@ class Sigkeys
 
     public function create(string $passphrase): bool
     {
-        $keypair = $this->generateKeypair($passphrase);
+        $Key = SignatureKeys::generate($passphrase);
+
         $sql = 'UPDATE users SET sig_pubkey = :sig_pubkey, sig_privkey = :sig_privkey WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':sig_pubkey', $keypair['pubkey']);
-        $req->bindParam(':sig_privkey', $keypair['privkey']);
+        $req->bindValue(':sig_pubkey', $this->serializePk($Key));
+        $req->bindValue(':sig_privkey', $this->serializeSk($Key));
         $req->bindParam(':userid', $this->Users->userid);
         return $req->execute();
     }
 
-    public function sign(string $secretKey, string $passphrase, string $message, Meaning $meaning): string
+    public function serializeSignature(string $secretKey, string $passphrase, string $message, Meaning $meaning): string
     {
-        $SigSecretKey = SigSecretKey::deserialize($secretKey, $passphrase);
+        $Key = SignatureKeys::deserialize($secretKey, $passphrase);
         // because we use Ed25519ph (pre-hashed), we hash the message before signing it
         $signature = sodium_crypto_sign_detached(
             sodium_crypto_generichash($message, '', SODIUM_CRYPTO_GENERICHASH_BYTES_MAX),
-            $SigSecretKey->key
+            $Key->priv
         );
 
         // trusted comment: this comment is signed and contains metadata about the signature
@@ -83,80 +83,61 @@ class Sigkeys
         );
         $trustedComment = json_encode($trustedCommentArr, JSON_THROW_ON_ERROR);
         // this is the global signature for the signature and comment combined
-        $globalSignature = sodium_crypto_sign_detached($signature . $trustedComment, $SigSecretKey->key);
+        $globalSignature = sodium_crypto_sign_detached($signature . $trustedComment, $Key->priv);
 
         $firstLine = sprintf(
             "%selabftw/%d: signature from key %s\n",
             self::COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($SigSecretKey->id),
+            Hex::encode($Key->id),
         );
 
         return $firstLine .
-            Base64::encode(self::HASHED_DSA . $SigSecretKey->id . $signature) .
+            Base64::encode(self::HASHED_DSA . $Key->id . $signature) .
             "\n".
             self::TRUSTED_COMMENT_PREFIX .
             $trustedComment . "\n" .
             Base64::encode($globalSignature) . "\n";
     }
 
-    private function serializePk(string $keyId, string $publicKey)
+    /**
+     * Public key format https://jedisct1.github.io/minisign/#public-key-format
+     * untrusted comment: <arbitrary text>
+     * base64(<signature_algorithm> || <key_id> || <public_key>)
+     */
+    private function serializePk(SignatureKeys $key): string
     {
         return sprintf(
             "%selabftw/%d: public key %s\n%s\n",
             self::COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($keyId),
-            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $keyId . $publicKey),
+            Hex::encode($key->id),
+            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
         );
     }
 
-    private function serializeSk(SigSecretKey $secretKey, string $salt, string $derivedKey): string
+    /**
+     * Secret key format https://jedisct1.github.io/minisign/#secret-key-format
+     * untrusted comment: <arbitrary text>
+     * base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> ||
+     * <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
+     */
+    private function serializeSk(SignatureKeys $key): string
     {
         $firstLine = sprintf(
             "%selabftw/%d: encrypted secret key %s\n",
             self::COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($secretKey->id),
+            Hex::encode($key->id),
         );
-        $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $salt;
+        $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $key->salt;
         $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE) . "\0\0\0\0";
         $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE) . "\0\0\0\0";
         $checksum = sodium_crypto_generichash(
-            self::SIGNATURE_ALGO . $secretKey->id . $secretKey->key
+            self::SIGNATURE_ALGO . $key->id . $key->priv
         );
-        $toXor = $secretKey->id . $secretKey->key . $checksum;
-        $toEncode .= $derivedKey ^ $toXor;
+        $toXor = $key->id . $key->priv . $checksum;
+        $toEncode .= $key->derivedKey ^ $toXor;
         return $firstLine . Base64::encode($toEncode) . "\n";
-    }
-
-    private function generateKeypair(string $passphrase): array
-    {
-        // Generate a salt for key derivation
-        // SCRYPT_SALSA208SHA256 salt should be crypto_pwhash_scryptsalsa208sha256_SALTBYTES bytes
-        $salt = random_bytes(SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES);
-
-        // derive a key from the passphrase
-        $derivedKey = SigSecretKey::kdf(
-            $passphrase,
-            $salt,
-            SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE,
-            SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE,
-        );
-
-        // the key ID is 8 random bytes to give a hint about which secret key was used to sign a message
-        $keyId = random_bytes(self::KEYID_BYTES);
-
-        // generate a random Ed25519 keypair as one string
-        $keypair = sodium_crypto_sign_keypair();
-        $pubkey = sodium_crypto_sign_publickey($keypair);
-        $privkey = sodium_crypto_sign_secretkey($keypair);
-
-        $SecretKey = new SigSecretKey(self::SIGNATURE_ALGO, $keyId, $privkey, $pubkey);
-
-        return array(
-            'pubkey' => $this->serializePk($keyId, $pubkey),
-            'privkey' => $this->serializeSk($SecretKey, $salt, $derivedKey),
-        );
     }
 }

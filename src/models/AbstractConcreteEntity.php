@@ -28,7 +28,7 @@ use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
-use Elabftw\Services\Sigkeys;
+use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
 use ZipArchive;
@@ -119,10 +119,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     protected function sign(string $passphrase, Meaning $meaning): array
     {
-        $Sigkeys = new Sigkeys($this->Users);
+        $Sigkeys = new SignatureHelper($this->Users);
         $Maker = new MakeFullJson($this, array($this->id));
         $message= $Maker->getFileContent();
-        $signature = $Sigkeys->sign($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         // save the signature and data in a zip archive
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Signature archive by %s'), $this->Users->userData['fullname']);

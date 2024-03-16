@@ -9,7 +9,7 @@ import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
-import { Action, Model, Target } from './interfaces';
+import { Action } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 

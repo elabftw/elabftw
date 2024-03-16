@@ -56,8 +56,8 @@ class SignatureHelper
     {
         $sql = 'UPDATE users SET sig_pubkey = :sig_pubkey, sig_privkey = :sig_privkey WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':sig_pubkey', $this->serializePk($key));
-        $req->bindValue(':sig_privkey', $this->serializeSk($key));
+        $req->bindValue(':sig_pubkey', $this::serializePk($key));
+        $req->bindValue(':sig_privkey', $this::serializeSk($key));
         // use requester here: one can only impact their own account for signature keys
         $req->bindParam(':userid', $this->Users->requester->userid);
         return $req->execute();
@@ -101,28 +101,12 @@ class SignatureHelper
     }
 
     /**
-     * Public key format https://jedisct1.github.io/minisign/#public-key-format
-     * untrusted comment: <arbitrary text>
-     * base64(<signature_algorithm> || <key_id> || <public_key>)
-     */
-    private function serializePk(SignatureKeys $key): string
-    {
-        return sprintf(
-            "%selabftw/%d: public key %s\n%s\n",
-            self::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
-            Hex::encode($key->id),
-            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
-        );
-    }
-
-    /**
      * Secret key format https://jedisct1.github.io/minisign/#secret-key-format
      * untrusted comment: <arbitrary text>
      * base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> ||
      * <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
      */
-    private function serializeSk(SignatureKeys $key): string
+    public static function serializeSk(SignatureKeys $key): string
     {
         $firstLine = sprintf(
             "%selabftw/%d: encrypted secret key %s\n",
@@ -137,5 +121,21 @@ class SignatureHelper
         $toXor = $key->id . $key->priv . $checksum;
         $toEncode .= $key->derivedKey ^ $toXor;
         return $firstLine . Base64::encode($toEncode) . "\n";
+    }
+
+    /**
+     * Public key format https://jedisct1.github.io/minisign/#public-key-format
+     * untrusted comment: <arbitrary text>
+     * base64(<signature_algorithm> || <key_id> || <public_key>)
+     */
+    private static function serializePk(SignatureKeys $key): string
+    {
+        return sprintf(
+            "%selabftw/%d: public key %s\n%s\n",
+            self::UNTRUSTED_COMMENT_PREFIX,
+            App::INSTALLED_VERSION_INT,
+            Hex::encode($key->id),
+            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
+        );
     }
 }

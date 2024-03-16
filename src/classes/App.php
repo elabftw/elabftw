@@ -185,7 +185,8 @@ class App
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
-        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::EnglishGB);
+        $Language = Language::tryFrom($this->getLang()) ?? Language::EnglishGB;
+        return $Language->toCalendar();
     }
 
     public static function getWhatsnewLink(): string

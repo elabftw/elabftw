@@ -915,6 +915,8 @@ CREATE TABLE `users` (
   `auth_service` tinyint UNSIGNED NULL DEFAULT NULL,
   `valid_until` date NULL DEFAULT NULL,
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `sig_pubkey` TEXT NULL DEFAULT NULL,
+  `sig_privkey` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

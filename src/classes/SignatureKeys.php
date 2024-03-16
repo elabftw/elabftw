@@ -18,6 +18,7 @@ use function preg_match;
 use function sodium_crypto_generichash;
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
+use function sodium_memzero;
 use function unpack;
 
 class SignatureKeys
@@ -110,7 +111,7 @@ class SignatureKeys
     }
 
     /**
-     * This function is responsible from generating a derived key from a passphrase.
+     * This function is responsible from generating a key derived from a passphrase.
      * It allows encrypting the private key with a passphrase.
      */
     private static function kdf(string $passphrase, string $salt, int $kdfOpsLimit, int $kdfMemLimit): string

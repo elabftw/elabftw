@@ -52,6 +52,7 @@ enum Method {
 enum Action {
   Create = 'create',
   CreateFromString = 'createfromstring',
+  CreateSigkeys = 'createsigkeys',
   Read = 'read',
   Update = 'update',
   Destroy = 'destroy',
@@ -67,6 +68,7 @@ enum Action {
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   Replace = 'replace',
+  Sign = 'sign',
   Timestamp = 'timestamp',
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
@@ -125,6 +127,8 @@ enum Target {
   MetadataField = 'metadatafield',
   Rating = 'rating',
   RealName = 'real_name',
+  Sigkey = 'sigkeys',
+  Sigpassphrase = 'sig_passphrase',
   Title = 'title',
   UserId = 'userid',
 }

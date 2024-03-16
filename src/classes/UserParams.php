@@ -33,7 +33,7 @@ final class UserParams extends ContentParams implements ContentParamsInterface
         return match ($this->target) {
             // checked in update
             'email' => trim($this->content),
-            'firstname', 'lastname', 'orgid' => $this->content,
+            'firstname', 'lastname', 'orgid', 'sig_passphrase' => $this->content,
             'valid_until' => (
                 function () {
                     // clicking the little cross on the input will send an empty string, so set a date far in the future instead

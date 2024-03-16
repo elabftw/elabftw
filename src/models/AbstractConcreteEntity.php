@@ -14,6 +14,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
@@ -22,12 +23,15 @@ use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
+use Elabftw\Services\Sigkeys;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
+use ZipArchive;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -48,6 +52,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $this->canOrExplode('write');
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
+            Action::Sign => $this->sign($params['sig_passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
@@ -109,6 +114,26 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         // decrement the balance
         $Config->decrementTsBalance();
 
+        return $this->readOne();
+    }
+
+    protected function sign(string $passphrase, Meaning $meaning): array
+    {
+        $Sigkeys = new Sigkeys($this->Users);
+        $Maker = new MakeFullJson($this, array($this->id));
+        $message= $Maker->getFileContent();
+        $signature = $Sigkeys->sign($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        // save the signature and data in a zip archive
+        $zipPath = FsTools::getCacheFile() . '.zip';
+        $comment = sprintf(_('Signature archive by %s'), $this->Users->userData['fullname']);
+        $ZipArchive = new ZipArchive();
+        $ZipArchive->open($zipPath, ZipArchive::CREATE);
+        $ZipArchive->addFromString('data.json.minisig', $signature);
+        $ZipArchive->addFromString('data.json', $message);
+        $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
+        $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
+        $ZipArchive->close();
+        $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
         return $this->readOne();
     }
 }

@@ -9,7 +9,7 @@ import { getEntity, notif, reloadElement, collectForm, updateCatStat } from './m
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Model, Target } from './interfaces';
+import { Action, Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('#tplTable tr').forEach(el => {
         el.removeAttribute('hidden');
       });
+    // GENERATE SIGKEY
+    } else if (el.matches('[data-action="create-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
+      ApiC.patch(`${Model.User}/me`, {action: Action.CreateSigkeys, sig_passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message

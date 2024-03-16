@@ -17,6 +17,7 @@ enum Action: string
     case Bloxberg = 'bloxberg';
     case Create = 'create';
     case CreateFromString = 'createfromstring';
+    case CreateSigkeys = 'createsigkeys';
     case Deduplicate = 'deduplicate';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
@@ -26,6 +27,7 @@ enum Action: string
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';
+    case Sign = 'sign';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';

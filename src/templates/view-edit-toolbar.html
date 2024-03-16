@@ -45,6 +45,51 @@
   </div>
 </div>
 
+{# Modal for signature #}
+<div class='modal fade' id='addSignatureModal' tabindex='-1' role='dialog' aria-labelledby='addSignatureModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='addSignatureModalLabel'>{{ 'Add signature'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <p>{{ 'Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived).'|trans }}</p>
+        {% if not App.Users.userData.sig_privkey %}
+          <p>{{ 'Your account is missing a cryptographic key pair, necessary for signature. You must generate one before you can sign an entry.'|trans }}</p>
+          <div class='text-center'>
+          </div>
+        {% else %}
+          <label for='sigMeaningSelect'>{{ 'Select a meaning for this signature'|trans }}</label>
+          <select id='sigMeaningSelect' class='form-control'>
+            {% for meaning, text in meaningArr|sort %}
+              <option value='{{ meaning }}'>{{ text }}</option>
+            {% endfor %}
+          </select>
+
+          <label for='sigPassphraseInput'>{{ 'Enter your passphrase to unlock your secret key:'|trans }}</label>
+          <div class='input-group'>
+            <input class='form-control' type='password' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='sigPassphraseInput'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        {% if App.Users.userData.sig_privkey %}
+          <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add signature'|trans }}</button>
+        {% else %}
+          <a href='/ucp.php?tab=2#ucp-sigkeys'><button type='button' class='btn btn-primary'>{{ 'Go to User Control Panel'|trans }}</button></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
 <hr>
 
 {# TOP TOOLBAR #}
@@ -114,6 +159,11 @@
       <i class='fas fa-cubes fa-fw'></i>
     </button>
   {% endif %}
+
+  {# SIGN #}
+  <button type='button' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <i class='fas fa-signature fa-fw'></i>
+  </button>
 
   {% if not App.Session.has('is_anon') %}
     <div class='vertical-separator'></div>

@@ -14,6 +14,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Meaning;
 use Elabftw\Enums\SearchType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -42,6 +43,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $visibilityArr = array();
 
+    protected array $meaningArr = array();
+
     protected array $templatesArr = array();
 
     protected array $teamGroupsFromUser = array();
@@ -53,6 +56,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
+        $this->meaningArr = Meaning::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
@@ -190,6 +194,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
+            'meaningArr' => $this->meaningArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -246,6 +251,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
+            'meaningArr' => $this->meaningArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

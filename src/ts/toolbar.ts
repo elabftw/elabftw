@@ -9,7 +9,7 @@ import { getEntity, reloadElement } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
-import { Action } from './interfaces';
+import { Action, Model, Target } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -100,6 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElement('uploadsDiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
+
+    // SIGN ENTITY
+    } else if (el.matches('[data-action="sign-entity"]')) {
+      const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
+      const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, sig_passphrase: passphraseInput.value, meaning: meaningSelect.value});
     // ARCHIVE ENTITY
     } else if (el.matches('[data-action="archive-entity"]')) {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));

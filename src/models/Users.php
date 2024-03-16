@@ -30,6 +30,7 @@ use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
+use Elabftw\Services\Sigkeys;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
@@ -335,6 +336,7 @@ class Users implements RestInterface
                     (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
                 }
             )(),
+            Action::CreateSigkeys => $this->createSigkeys($params['sig_passphrase']),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
@@ -666,5 +668,11 @@ class Users implements RestInterface
         foreach ($admins as $admin) {
             $Notifications->create((int) $admin);
         }
+    }
+
+    private function createSigkeys(string $passphrase): bool
+    {
+        $Sigkeys = new Sigkeys($this);
+        return $Sigkeys->create($passphrase);
     }
 }

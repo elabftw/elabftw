@@ -14,6 +14,7 @@ use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\SignatureKeys;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
@@ -336,7 +337,7 @@ class Users implements RestInterface
                     (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
                 }
             )(),
-            Action::CreateSigkeys => (new SignatureHelper($this))->create((string) $params['sig_passphrase']),
+            Action::CreateSigkeys => (new SignatureHelper($this))->create(SignatureKeys::generate((string) $params['sig_passphrase'])),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),

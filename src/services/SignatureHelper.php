@@ -52,15 +52,14 @@ class SignatureHelper
         $this->Db = Db::getConnection();
     }
 
-    public function create(string $passphrase): bool
+    public function create(SignatureKeys $key): bool
     {
-        $Key = SignatureKeys::generate($passphrase);
-
         $sql = 'UPDATE users SET sig_pubkey = :sig_pubkey, sig_privkey = :sig_privkey WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':sig_pubkey', $this->serializePk($Key));
-        $req->bindValue(':sig_privkey', $this->serializeSk($Key));
-        $req->bindParam(':userid', $this->Users->userid);
+        $req->bindValue(':sig_pubkey', $this->serializePk($key));
+        $req->bindValue(':sig_privkey', $this->serializeSk($key));
+        // use requester here: one can only impact their own account for signature keys
+        $req->bindParam(':userid', $this->Users->requester->userid);
         return $req->execute();
     }
 

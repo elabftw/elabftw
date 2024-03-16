@@ -241,12 +241,19 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getString('end', Scheduler::EVENT_END),
                 $this->Request->query->getInt('cat'),
             ),
-            ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys($this->Users, trim($this->Request->query->getString('q')), $this->Request->query->getInt('limit')),
+            ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys(
+                $this->Users,
+                trim($this->Request->query->getString('q')),
+                $this->Request->query->getInt('limit'),
+            ),
             ApiEndpoint::FavTags => new FavTags($this->Users, $this->id),
             ApiEndpoint::TeamTags => new TeamTags($this->Users, $this->id),
             ApiEndpoint::Teams => new Teams($this->Users, $this->id),
             ApiEndpoint::Todolist => new Todolist($this->Users->userData['userid'], $this->id),
-            ApiEndpoint::UnfinishedSteps => new UnfinishedSteps($this->Users, $this->Request->query->get('scope') === 'team'),
+            ApiEndpoint::UnfinishedSteps => new UnfinishedSteps(
+                $this->Users,
+                $this->Request->query->get('scope') === 'team',
+            ),
             ApiEndpoint::Users => new Users($this->id, $this->Users->team, $this->Users),
         };
     }

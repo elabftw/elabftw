@@ -351,7 +351,7 @@
       <p>{{ 'Your signature encrypted private key (keep it secret):'|trans }}<p>
       <button type='button' data-action='download-sig_privkey' class='btn btn-secondary'>{{ 'Download private key'|trans }}</button>
       <p>{{ 'Your signature public key (share it with the world):'|trans }}<p>
-      <textarea class='form-control' readonly>{{ App.Users.userData.sig_pubkey }}</textarea>
+      <textarea class='form-control' disabled>{{ App.Users.userData.sig_pubkey }}</textarea>
       <button type='button' data-action='download-sig_pubkey' class='btn btn-secondary mt-1'>{{ 'Download public key'|trans }}</button>
     {% endif %}
 

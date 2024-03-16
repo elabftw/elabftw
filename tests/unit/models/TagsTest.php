@@ -46,8 +46,6 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $Teams->patch(Action::Update, array('user_create_tag' => 0));
         $this->expectException(ImproperActionException::class);
         $Tags->postAction(Action::Create, array('tag' => 'tag2i222'));
-        // bring back config
-        $Teams->patch(Action::Update, array('user_create_tag' => 1));
     }
 
     public function testReadAll(): void

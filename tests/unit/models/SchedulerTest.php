@@ -71,15 +71,26 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Scheduler->readOne());
     }
 
-    public function testPatchEpoch(): void
+    public function testPatchEpoch(): Scheduler
     {
         $Items = new Items(new Users(1, 1), 1);
         $id = $this->testCreate();
         $Scheduler = new Scheduler($Items, $id, $this->start, $this->end);
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => date('U'))));
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => date('U'))));
+        return $Scheduler;
+    }
+
+    public function testPatchEpochInvalidTarget(): void
+    {
+        $Scheduler = $this->testPatchEpoch();
         $this->expectException(ImproperActionException::class);
         $Scheduler->patch(Action::Update, array('target' => 'oops', 'epoch' => date('U')));
+    }
+
+    public function testPatchEpochInvalidEpoch(): void
+    {
+        $Scheduler = $this->testPatchEpoch();
         $this->expectException(ImproperActionException::class);
         $Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => ''));
     }
@@ -288,7 +299,11 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $id = $this->Scheduler->postAction(Action::Create, array('start' => '2016-07-22T19:42:00+02:00', 'end' => '2016-07-23T19:42:00+02:00', 'title' => 'Yep'));
+        $id = $this->Scheduler->postAction(Action::Create, array(
+            'start' => '2016-07-22T19:42:00+02:00',
+            'end' => '2016-07-23T19:42:00+02:00',
+            'title' => 'Yep',
+        ));
         $this->Scheduler->setId($id);
         $this->assertTrue($this->Scheduler->destroy());
     }

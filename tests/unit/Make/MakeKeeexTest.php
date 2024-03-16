@@ -23,15 +23,37 @@ class MakeKeeexTest extends \PHPUnit\Framework\TestCase
         // https://docs.guzzlephp.org/en/stable/testing.html
         $mock = new MockHandler(array(
             new Response(200, array(), 'fake keeexed content'),
-            new Response(400, array(), 'fake keeexed content'),
-            new Response(500, array(), 'fake keeexed content'),
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $Maker = new MakeKeeex($client);
         $this->assertIsString($Maker->fromString('source content'));
+    }
+
+    public function testClientError(): void
+    {
+        // don't use the real guzzle client, but use a mock
+        // https://docs.guzzlephp.org/en/stable/testing.html
+        $mock = new MockHandler(array(
+            new Response(400, array(), 'fake keeexed content'),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $Maker = new MakeKeeex($client);
         $this->expectException(ImproperActionException::class);
         $Maker->fromString('trigger client error');
+    }
+
+    public function testServerError(): void
+    {
+        // don't use the real guzzle client, but use a mock
+        // https://docs.guzzlephp.org/en/stable/testing.html
+        $mock = new MockHandler(array(
+            new Response(500, array(), 'fake keeexed content'),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $Maker = new MakeKeeex($client);
         $this->expectException(ImproperActionException::class);
         $Maker->fromString('trigger server error');
     }

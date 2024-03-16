@@ -125,7 +125,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         // save the signature and data in a zip archive
         $zipPath = FsTools::getCacheFile() . '.zip';
-        $comment = sprintf(_('Signature archive by %s'), $this->Users->userData['fullname']);
+        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
         $ZipArchive->addFromString('data.json.minisig', $signature);

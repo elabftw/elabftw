@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement } from './misc';
+import { getEntity, reloadElement, relativeMoment } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
@@ -105,7 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="sign-entity"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, sig_passphrase: passphraseInput.value, meaning: meaningSelect.value});
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, sig_passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
+        if (document.getElementById('commentsDiv')) {
+          reloadElement('commentsDiv').then(() => {
+            relativeMoment();
+          });
+        }
+      });
     // ARCHIVE ENTITY
     } else if (el.matches('[data-action="archive-entity"]')) {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));

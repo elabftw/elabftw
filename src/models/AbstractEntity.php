@@ -353,6 +353,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readOneFull(): array
     {
+        $this->Uploads->includeArchived = true;
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
         $base['changelog'] = (new Changelog($this))->readAll();

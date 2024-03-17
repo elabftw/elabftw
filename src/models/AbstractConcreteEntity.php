@@ -123,6 +123,9 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $Maker = new MakeFullJson($this, array($this->id));
         $message= $Maker->getFileContent();
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        $Comments = new ImmutableComments($this);
+        $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $Comments->postAction(Action::Create, array('comment' => $comment));
         // save the signature and data in a zip archive
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);

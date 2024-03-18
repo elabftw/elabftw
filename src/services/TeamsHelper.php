@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use PDO;
 
@@ -28,16 +29,16 @@ class TeamsHelper
      * 2 = admin for first user in a team
      * 4 = normal user
      */
-    public function getGroup(): int
+    public function getGroup(): Usergroup
     {
         if ($this->isFirstUser()) {
-            return 1;
+            return Usergroup::Sysadmin;
         }
 
         if ($this->isFirstUserInTeam()) {
-            return 2;
+            return Usergroup::Admin;
         }
-        return 4;
+        return Usergroup::User;
     }
 
     public function getPermissions(int $userid): array
@@ -68,7 +69,7 @@ class TeamsHelper
 
     public function isAdminInTeam(int $userid): bool
     {
-        return $this->getUserInTeam($userid)['groups_id'] <= 2;
+        return $this->getUserInTeam($userid)['groups_id'] <= Usergroup::Admin->value;
     }
 
     /**

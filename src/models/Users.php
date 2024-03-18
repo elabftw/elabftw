@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -73,6 +74,7 @@ class Users implements RestInterface
 
     /**
      * Create a new user
+     * @param bool $forceValidation true: user is automatically validated
      */
     public function createOne(
         string $email,
@@ -80,7 +82,7 @@ class Users implements RestInterface
         string $firstname = '',
         string $lastname = '',
         string $passwordHash = '',
-        ?int $group = null,
+        ?Usergroup $usergroup = null,
         bool $forceValidation = false,
         bool $alertAdmin = true,
         ?string $validUntil = null,
@@ -103,20 +105,13 @@ class Users implements RestInterface
         // Registration date is stored in epoch
         $registerDate = time();
 
-        // get the group for the new user
-        if ($group === null) {
-            $group = $TeamsHelper->getGroup();
-        }
+        // get the user group for the new users
+        $usergroup ??= $TeamsHelper->getGroup();
 
-        $isSysadmin = $group === 1 ? 1 : 0;
-
-        // transform group in 2 if it is 1 because users2teams.groups_id is 2 or 4, not 1
-        if ($group === 1) {
-            $group = 2;
-        }
+        $isSysadmin = $usergroup === Usergroup::Sysadmin ? 1 : 0;
 
         // will new user be validated?
-        $validated = $Config->configArr['admin_validate'] && ($group === 4) ? 0 : 1;
+        $validated = $Config->configArr['admin_validate'] && ($usergroup === Usergroup::User) ? 0 : 1;
         if ($forceValidation) {
             $validated = 1;
         }
@@ -171,7 +166,14 @@ class Users implements RestInterface
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);
-        $Users2Teams->addUserToTeams($userid, array_column($teams, 'id'), $group);
+        $Users2Teams->addUserToTeams(
+            $userid,
+            array_column($teams, 'id'),
+            // transform Sysadmin to Admin because users2teams.groups_id is 2 (Admin) or 4 (User), but never 1 (Sysadmin)
+            $usergroup === Usergroup::Sysadmin
+                ? Usergroup::Admin->value
+                : $usergroup->value,
+        );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }

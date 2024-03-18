@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 
@@ -24,11 +25,11 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetGroup(): void
     {
-        $this->assertEquals(4, $this->TeamsHelper->getGroup());
+        $this->assertEquals(Usergroup::User, $this->TeamsHelper->getGroup());
         // now create a new team and try to get group
         $Teams = new Teams(new Users(1));
         $team = $Teams->postAction(Action::Create, array('name' => 'New team'));
         $TeamsHelper = new TeamsHelper($team);
-        $this->assertEquals(2, $TeamsHelper->getGroup());
+        $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
     }
 }

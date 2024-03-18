@@ -36,8 +36,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
         $this->expectException(ImproperActionException::class);
-        $body = str_repeat('a', 4120001);
-        Filter::body($body);
+        Filter::body(str_repeat('a', 4120001));
     }
 
     public function testForFilesystem(): void

@@ -10,16 +10,17 @@
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
+use Elabftw\AuditEvent\SignatureKeysCreated;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\SignatureKeys;
 use Elabftw\Enums\Meaning;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use function pack;
 
 use ParagonIE\ConstantTime\Base64;
-use ParagonIE\ConstantTime\Hex;
 use function sodium_crypto_generichash;
 
 /**
@@ -60,7 +61,11 @@ class SignatureHelper
         $req->bindValue(':sig_privkey', $this::serializeSk($key));
         // use requester here: one can only impact their own account for signature keys
         $req->bindParam(':userid', $this->Users->requester->userid);
-        return $req->execute();
+        $res = $req->execute();
+        if ($res) {
+            AuditLogs::create(new SignatureKeysCreated($key->getIdHex(), $this->Users->userData['userid'], $this->Users->userData['userid']));
+        }
+        return $res;
     }
 
     public function serializeSignature(string $privkey, string $passphrase, string $message, Meaning $meaning): string
@@ -91,7 +96,7 @@ class SignatureHelper
             "%selabftw/%d: signature from key %s\n",
             self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($Key->id),
+            $Key->getIdHex(),
         );
 
         return $firstLine .
@@ -112,7 +117,7 @@ class SignatureHelper
             "%selabftw/%d: encrypted secret key %s\n",
             self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($key->id),
+            $key->getIdHex(),
         );
         $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $key->salt;
         $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE) . "\0\0\0\0";
@@ -134,7 +139,7 @@ class SignatureHelper
             "%selabftw/%d: public key %s\n%s\n",
             self::UNTRUSTED_COMMENT_PREFIX,
             App::INSTALLED_VERSION_INT,
-            Hex::encode($key->id),
+            $key->getIdHex(),
             Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
         );
     }

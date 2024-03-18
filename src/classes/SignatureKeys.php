@@ -14,6 +14,8 @@ use Elabftw\Services\SignatureHelper;
 use function hash_equals;
 use ParagonIE\ConstantTime\Base64;
 use ParagonIE\ConstantTime\Binary;
+use ParagonIE\ConstantTime\Hex;
+
 use function preg_match;
 use function sodium_crypto_generichash;
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
@@ -38,6 +40,11 @@ class SignatureKeys
         public readonly string $salt,
         public readonly string $derivedKey,
     ) {
+    }
+
+    public function getIdHex(): string
+    {
+        return Hex::encode($this->id);
     }
 
     public static function generate(string $passphrase): self
@@ -124,7 +131,7 @@ class SignatureKeys
             $kdfOpsLimit,
             $kdfMemLimit,
         );
-        // clear passphrase from memory: we don't need it anymore
+        // zero out passphrase in memory: we don't need it anymore
         sodium_memzero($passphrase);
         return $derivedKey;
     }

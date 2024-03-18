@@ -26,4 +26,5 @@ enum AuditCategory: int
     case ConfigModified = 60;
     case Export = 70;
     case Import = 80;
+    case SignatureKeysCreated = 90;
 }

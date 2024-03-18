@@ -125,26 +125,26 @@ class Scheduler implements RestInterface
      */
     public function readAll(): array
     {
-        $start = $this->normalizeDate($this->start);
-        $end = $this->normalizeDate($this->end, true);
-
-        $categoryFilter = '';
-        if ($this->category > 0) {
-            $categoryFilter = ' AND items.category = :category';
-        }
         // the title of the event is title + Firstname Lastname of the user who booked it
-        $sql = "SELECT team_events.id, team_events.title AS title_only, team_events.start, team_events.end, team_events.userid,
-            TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
-            CONCAT(u.firstname, ' ', u.lastname) AS fullname,
-            CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
-            items.title AS item_title, items.book_is_cancellable,
-            CONCAT('#', items_types.color) AS color,
-            team_events.experiment,
-            items.category AS items_category,
-            items.id AS items_id,
-            experiments.title AS experiment_title,
-            team_events.item_link,
-            items_linkt.title AS item_link_title
+        $sql = sprintf(
+            "SELECT
+                team_events.id,
+                team_events.title AS title_only,
+                team_events.start,
+                team_events.end,
+                team_events.userid,
+                TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
+                CONCAT(u.firstname, ' ', u.lastname) AS fullname,
+                CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
+                items.title AS item_title,
+                items.book_is_cancellable,
+                CONCAT('#', items_types.color) AS color,
+                team_events.experiment,
+                items.category AS items_category,
+                items.id AS items_id,
+                experiments.title AS experiment_title,
+                team_events.item_link,
+                items_linkt.title AS item_link_title
             FROM team_events
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
             LEFT JOIN items ON (team_events.item = items.id)
@@ -152,11 +152,21 @@ class Scheduler implements RestInterface
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             WHERE (team_events.team = :team OR items.team = :team)
-            AND team_events.start > :start AND team_events.end <= :end " . $categoryFilter;
+                --                 |start  search range  end|
+                -- | event 1 | | event 2 | | event 3 | | event 4 | | event 5 |
+                --               |           event 6          |
+                -- events.start <= range.end and events.end >= range.start
+                AND team_events.start <= :end
+                AND team_events.end >= :start
+                %s",
+            $this->category > 0
+                ? 'AND items.category = :category'
+                : ''
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':start', $start);
-        $req->bindParam(':end', $end);
+        $req->bindValue(':start', $this->normalizeDate($this->start));
+        $req->bindValue(':end', $this->normalizeDate($this->end, true));
         if ($this->category > 0) {
             $req->bindParam(':category', $this->category);
         }
@@ -222,8 +232,6 @@ class Scheduler implements RestInterface
      */
     private function read(): array
     {
-        $start = $this->normalizeDate($this->start);
-        $end = $this->normalizeDate($this->end, true);
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
         $sql = "SELECT team_events.*,
@@ -240,11 +248,16 @@ class Scheduler implements RestInterface
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
-            AND team_events.start > :start AND team_events.end <= :end";
+                --                 |start  search range  end|
+                -- | event 1 | | event 2 | | event 3 | | event 4 | | event 5 |
+                --               |           event 6          |
+                -- events.start <= range.end and events.end >= range.start
+                AND team_events.start <= :end
+                AND team_events.end >= :start";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
-        $req->bindParam(':start', $start);
-        $req->bindParam(':end', $end);
+        $req->bindValue(':start', $this->normalizeDate($this->start));
+        $req->bindValue(':end', $this->normalizeDate($this->end, true));
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -274,10 +287,21 @@ class Scheduler implements RestInterface
 
     private function readOneEvent(): array
     {
-        $sql = 'SELECT team_events.id, team_events.team, team_events.item, team_events.start, team_events.end, team_events.title, team_events.userid, team_events.experiment, team_events.item_link, items.book_is_cancellable, items.book_cancel_minutes,
-            team_events.title AS title_only,
-            experiments.title AS experiment_title,
-            items_linkt.title AS item_link_title
+        $sql = 'SELECT
+                team_events.id,
+                team_events.team,
+                team_events.item,
+                team_events.start,
+                team_events.end,
+                team_events.title,
+                team_events.userid,
+                team_events.experiment,
+                team_events.item_link,
+                items.book_is_cancellable,
+                items.book_cancel_minutes,
+                team_events.title AS title_only,
+                experiments.title AS experiment_title,
+                items_linkt.title AS item_link_title
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)

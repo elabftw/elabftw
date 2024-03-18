@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedItem = params.get('item');
   }
   // allow filtering the category of items in events
-  let queryString = '?';
+  let queryString = '';
   if (params.get('cat')) {
-    queryString += 'cat=' + params.get('cat');
+    queryString += '?cat=' + params.get('cat');
   }
 
   let eventBackgroundColor = 'a9a9a9';

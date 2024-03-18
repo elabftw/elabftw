@@ -19,7 +19,7 @@ class ExpirationNotifierTest extends \PHPUnit\Framework\TestCase
     public function testSendEmails(): void
     {
         // first make a user close to expiration
-        $user = ValidatedUser::fromAdmin('expire@soon.example', array(1), 'expire', 'soon', Usergroup::User->value);
+        $user = ValidatedUser::fromAdmin('expire@soon.example', array(1), 'expire', 'soon', Usergroup::User);
         $date = new DateTimeImmutable('tomorrow');
         $user->patch(Action::Update, array('valid_until' => $date->format('Y-m-d')));
         // now alert user and admin

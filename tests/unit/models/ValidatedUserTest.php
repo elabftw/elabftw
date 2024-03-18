@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Usergroup;
+
 class ValidatedUserTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateFromAdmin(): void
@@ -18,7 +20,7 @@ class ValidatedUserTest extends \PHPUnit\Framework\TestCase
             array('Alpha'),
             'valid',
             'user',
-            4,
+            Usergroup::User,
         );
         $this->assertInstanceOf(ExistingUser::class, $User);
     }

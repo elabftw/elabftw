@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Usergroup;
+
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team
  */
@@ -29,7 +31,7 @@ class ValidatedUser extends ExistingUser
         return parent::fromScratch($email, $teams, $firstname, $lastname, null, true);
     }
 
-    public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, int $usergroup): Users
+    public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup): Users
     {
         return parent::fromScratch($email, $teams, $firstname, $lastname, $usergroup, true, false);
     }

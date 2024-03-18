@@ -9,6 +9,8 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Usergroup;
+
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team, and they might not be validated
  */
@@ -24,12 +26,15 @@ class ExistingUser extends Users
         return self::search('orgid', $orgid);
     }
 
+    /**
+     * @param bool $forceValidation true: user is automatically validated
+     */
     public static function fromScratch(
         string $email,
         array $teams,
         string $firstname,
         string $lastname,
-        ?int $usergroup = null,
+        ?Usergroup $usergroup = null,
         bool $forceValidation = false,
         bool $alertAdmin = true,
     ): Users {

@@ -10,6 +10,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -26,7 +27,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'email' => 'livelongandprosper@vulcan.gov.vn',
             'firstname' => 'Leonard',
             'lastname' => 'Nimoy',
-            'usergroup' => 4,
+            'usergroup' => Usergroup::User->value,
         ));
     }
 
@@ -48,7 +49,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'email' => 'praisetheprophets@staff.ds9.bjr',
             'firstname' => 'Kira',
             'lastname' => 'Nerys',
-            'usergroup' => 4,
+            'usergroup' => Usergroup::User->value,
         ));
         $this->assertIsInt($UserCreator->create());
     }
@@ -60,7 +61,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',
             'lastname' => 'Fontaine',
-            'usergroup' => 1,
+            'usergroup' => Usergroup::Sysadmin->value,
         ));
         $this->expectException(ImproperActionException::class);
         $UserCreator->create();
@@ -75,7 +76,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',
             'lastname' => 'Fontaine',
-            'usergroup' => 1,
+            'usergroup' => Usergroup::Sysadmin->value,
         ));
         $this->expectException(IllegalActionException::class);
         $UserCreator->create();

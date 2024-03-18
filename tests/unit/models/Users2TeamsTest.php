@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -35,7 +36,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'userid' => 2,
             'team' => 1,
             'target' => 'group',
-            'content' => 4,
+            'content' => Usergroup::User->value,
         );
         $this->assertEquals(4, $this->Users2Teams->patchUser2Team($params));
     }

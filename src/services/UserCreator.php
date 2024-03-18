@@ -54,7 +54,7 @@ class UserCreator
             (new UserParams('lastname', $this->reqBody['lastname']))->getContent(),
             // password is never set by admin/sysadmin
             '',
-            Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? 4))),
+            Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? Usergroup::User->value))),
             // automatically validate user
             true,
             // don't alert admin

@@ -220,7 +220,7 @@ class Users implements RestInterface
 
         $admins = '';
         if ($onlyAdmins) {
-            $admins = ' AND users2teams.groups_id = ' . (string) Usergroup::Admin->value;
+            $admins = sprintf(' AND users2teams.groups_id = %d', Usergroup::Admin->value);
         }
 
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.

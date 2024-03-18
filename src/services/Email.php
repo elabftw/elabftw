@@ -144,7 +144,7 @@ class Email
                 break;
             case EmailTarget::Admins:
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
-                $filter = 'AND users2teams.groups_id = ' . (string) Usergroup::Admin->value;
+                $filter = sprintf('AND users2teams.groups_id = %d', Usergroup::Admin->value);
                 break;
             case EmailTarget::Sysadmins:
                 $join = '';

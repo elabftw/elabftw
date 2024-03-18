@@ -108,13 +108,10 @@ class Users implements RestInterface
         // get the user group for the new users
         $usergroup ??= $TeamsHelper->getGroup();
 
-        $isSysadmin = $usergroup === Usergroup::Sysadmin ? 1 : 0;
+        $isSysadmin = $usergroup === Usergroup::Sysadmin;
 
-        // will new user be validated?
-        $validated = $Config->configArr['admin_validate'] && ($usergroup === Usergroup::User) ? 0 : 1;
-        if ($forceValidation) {
-            $validated = 1;
-        }
+        // is user validated automatically (true) or by an admin (false)?
+        $validated = $forceValidation || !$Config->configArr['admin_validate'] || $usergroup !== Usergroup::User;
 
         $defaultRead = BasePermissions::Team->toJson();
         $defaultWrite = BasePermissions::User->toJson();
@@ -156,7 +153,7 @@ class Users implements RestInterface
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
-        $req->bindValue(':is_sysadmin', $isSysadmin);
+        $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
         $this->Db->execute($req);
@@ -177,7 +174,7 @@ class Users implements RestInterface
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
         }
-        if ($validated === 0) {
+        if (!$validated) {
             $Notifications = new SelfNeedValidation();
             $Notifications->create($userid);
             // set a flag to show correct message to user
@@ -659,10 +656,10 @@ class Users implements RestInterface
         return $this->userData;
     }
 
-    private function notifyAdmins(array $admins, int $userid, int $validated, string $team): void
+    private function notifyAdmins(array $admins, int $userid, bool $validated, string $team): void
     {
         $Notifications = new UserCreated($userid, $team);
-        if ($validated === 0) {
+        if (!$validated) {
             $Notifications = new UserNeedValidation($userid, $team);
         }
         foreach ($admins as $admin) {

@@ -26,20 +26,17 @@ class ExistingUser extends Users
         return self::search('orgid', $orgid);
     }
 
-    /**
-     * @param bool $forceValidation true: user is automatically validated
-     */
     public static function fromScratch(
         string $email,
         array $teams,
         string $firstname,
         string $lastname,
         ?Usergroup $usergroup = null,
-        bool $forceValidation = false,
+        bool $automaticValidationEnabled = false,
         bool $alertAdmin = true,
     ): Users {
         $Users = new self();
-        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
+        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $automaticValidationEnabled, $alertAdmin);
         $fresh = new self($userid);
         // we need to report the needValidation flag into the new object
         $fresh->needValidation = $Users->needValidation;

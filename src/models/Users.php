@@ -74,7 +74,6 @@ class Users implements RestInterface
 
     /**
      * Create a new user
-     * @param bool $forceValidation true: user is automatically validated
      */
     public function createOne(
         string $email,
@@ -83,7 +82,7 @@ class Users implements RestInterface
         string $lastname = '',
         string $passwordHash = '',
         ?Usergroup $usergroup = null,
-        bool $forceValidation = false,
+        bool $automaticValidationEnabled = false,
         bool $alertAdmin = true,
         ?string $validUntil = null,
         ?string $orgid = null,
@@ -111,7 +110,7 @@ class Users implements RestInterface
         $isSysadmin = $usergroup === Usergroup::Sysadmin;
 
         // is user validated automatically (true) or by an admin (false)?
-        $validated = $forceValidation || !$Config->configArr['admin_validate'] || $usergroup !== Usergroup::User;
+        $isValidated = $automaticValidationEnabled || !$Config->configArr['admin_validate'] || $usergroup !== Usergroup::User;
 
         $defaultRead = BasePermissions::Team->toJson();
         $defaultWrite = BasePermissions::User->toJson();
@@ -149,7 +148,7 @@ class Users implements RestInterface
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindParam(':register_date', $registerDate);
-        $req->bindParam(':validated', $validated, PDO::PARAM_INT);
+        $req->bindParam(':validated', $isValidated, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
@@ -172,9 +171,9 @@ class Users implements RestInterface
                 : $usergroup->value,
         );
         if ($alertAdmin && !$isFirstUser) {
-            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $validated, $teams[0]['name']);
+            $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
         }
-        if (!$validated) {
+        if (!$isValidated) {
             $Notifications = new SelfNeedValidation();
             $Notifications->create($userid);
             // set a flag to show correct message to user
@@ -656,10 +655,10 @@ class Users implements RestInterface
         return $this->userData;
     }
 
-    private function notifyAdmins(array $admins, int $userid, bool $validated, string $team): void
+    private function notifyAdmins(array $admins, int $userid, bool $isValidated, string $team): void
     {
         $Notifications = new UserCreated($userid, $team);
-        if (!$validated) {
+        if (!$isValidated) {
             $Notifications = new UserNeedValidation($userid, $team);
         }
         foreach ($admins as $admin) {

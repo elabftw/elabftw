@@ -215,12 +215,12 @@ class Users implements RestInterface
 
         $archived = '';
         if ($includeArchived) {
-            $archived = 'OR users.archived = 1';
+            $archived = ' OR users.archived = 1';
         }
 
         $admins = '';
         if ($onlyAdmins) {
-            $admins = 'AND users2teams.groups_id = 2';
+            $admins = ' AND users2teams.groups_id = ' . (string) Usergroup::Admin->value;
         }
 
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
@@ -231,9 +231,9 @@ class Users implements RestInterface
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service
             FROM users
-            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . ' ' . $admins . ')
+            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            AND (users.archived = 0 ' . $archived . ')
+            AND (users.archived = 0' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
@@ -303,7 +303,10 @@ class Users implements RestInterface
 
     public function isAdminSomewhere(): bool
     {
-        $sql = 'SELECT users_id FROM users2teams WHERE users_id = :userid AND groups_id <= 2';
+        $sql = sprintf(
+            'SELECT users_id FROM users2teams WHERE users_id = :userid AND groups_id <= %d',
+            Usergroup::Admin->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid']);
         $this->Db->execute($req);
@@ -445,9 +448,16 @@ class Users implements RestInterface
             return true;
         }
         // check if in the teams we have in common, the potential admin is admin
-        $sql = 'SELECT * FROM users2teams u1
-                INNER JOIN users2teams u2 ON u1.teams_id = u2.teams_id
-                WHERE u1.users_id = :admin_userid AND u2.users_id = :user_userid AND u1.groups_id <= 2';
+        $sql = sprintf(
+            'SELECT *
+                FROM users2teams u1
+                INNER JOIN users2teams u2
+                    ON (u1.teams_id = u2.teams_id)
+                WHERE u1.users_id = :admin_userid
+                    AND u2.users_id = :user_userid
+                    AND u1.groups_id <= %d)',
+            Usergroup::Admin->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':admin_userid', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':user_userid', $userid, PDO::PARAM_INT);

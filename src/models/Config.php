@@ -314,6 +314,8 @@ final class Config implements RestInterface
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return (bool) $this->create();
+        $this->create();
+        $this->configArr = $this->readAll();
+        return (bool) $this->configArr;
     }
 }

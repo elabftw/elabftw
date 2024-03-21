@@ -63,6 +63,8 @@ enum Action {
   Deduplicate = 'deduplicate',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
+  Finish = 'finish',
+  Notif = 'notif',
   Lock = 'lock',
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',

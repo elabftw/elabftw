@@ -90,6 +90,19 @@ abstract class AbstractStatus extends AbstractCategory
         return $req->fetchAll();
     }
 
+    /**
+     * Get all status from team independent of state
+     */
+    public function readAllIgnoreState(): array
+    {
+        $sql = sprintf('SELECT id, title, color
+            FROM %s WHERE team = :team ORDER BY ordering ASC', $this->table);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     public function patch(Action $action, array $params): array
     {
         $this->Teams->canWriteOrExplode();

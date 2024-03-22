@@ -91,9 +91,17 @@ class TeamsHelper
      */
     public function getAllAdminsUserid(): array
     {
-        $sql = 'SELECT users_id FROM users2teams
-            LEFT JOIN users ON (users2teams.users_id = users.userid)
-            WHERE groups_id IN (1, 2) AND users.archived = 0 AND users2teams.teams_id = :team';
+        $sql = sprintf(
+            'SELECT users_id
+                FROM users2teams
+                LEFT JOIN users
+                    ON (users2teams.users_id = users.userid)
+                WHERE groups_id IN (%d, %d)
+                    AND users.archived = 0
+                    AND users2teams.teams_id = :team',
+            Usergroup::Sysadmin->value,
+            Usergroup::Admin->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);

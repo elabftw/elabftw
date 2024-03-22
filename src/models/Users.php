@@ -401,9 +401,7 @@ class Users implements RestInterface
         $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return true;
+        return $this->Db->execute($req);
     }
 
     /**
@@ -423,7 +421,7 @@ class Users implements RestInterface
                     ON (u1.teams_id = u2.teams_id)
                 WHERE u1.users_id = :admin_userid
                     AND u2.users_id = :user_userid
-                    AND u1.groups_id <= %d)',
+                    AND u1.groups_id <= %d',
             Usergroup::Admin->value,
         );
         $req = $this->Db->prepare($sql);

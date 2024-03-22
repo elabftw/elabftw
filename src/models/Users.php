@@ -396,37 +396,9 @@ class Users implements RestInterface
         if ($UsersHelper->cannotBeDeleted()) {
             throw new ImproperActionException('Cannot delete a user that owns experiments, items, comments, templates or uploads!');
         }
+
+        // Due to the InnoDB cascading actions of the foreign key constraints the deletion will also happen in the other tables
         $sql = 'DELETE FROM users WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM users2teams WHERE users_id = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM users2team_groups WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM todolist WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM team_events WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM notifications WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $sql = 'DELETE FROM favtags2users WHERE users_id = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);

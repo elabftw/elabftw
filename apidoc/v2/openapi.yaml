@@ -2265,7 +2265,7 @@ paths:
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
-      summary: Create a new experiments status.
+      summary: Create a new experiments categories.
       requestBody:
         description: Parameters for creating a status.
         content:
@@ -2466,7 +2466,7 @@ paths:
     post:
       tags: ['Resources status']
       operationId: post-team-one-resstat
-      summary: Create a new experiments status.
+      summary: Create a new resources status.
       requestBody:
         description: Parameters for creating a resources status.
         content:

@@ -376,7 +376,7 @@ button:disabled {
 
 #body_view {
     img {
-        height: auto;
+        max-height: 100%;
         max-width: 100%;
     }
 

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, collectForm, updateCatStat } from './misc';
+import { getEntity, notif, reloadElement, collectForm, updateCatStat, saveStringAsFile } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -114,6 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="create-sigkeys"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       ApiC.patch(`${Model.User}/me`, {action: Action.CreateSigkeys, sig_passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
+    // DOWNLOAD SIG KEY (pub or priv)
+    } else if (el.matches('[data-action="download-sigkey"]')) {
+      ApiC.getJson(`${Model.User}/me`).then(user => {
+        saveStringAsFile(`elabftw-signature-key.${el.dataset.target.split('_')[1]}`, user[el.dataset.target]);
+      });
+
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message

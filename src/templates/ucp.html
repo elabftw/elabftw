@@ -22,6 +22,27 @@
   <div class='lds-dual-ring'></div>
 </div>
 
+{# Modal for regenerating sigkeys #}
+<div class='modal fade' id='regenerateSigkeysModal' tabindex='-1' role='dialog' aria-labelledby='regenerateSigkeysModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='regenerateSigkeysModalLabel'>{{ 'Regenerate signature keys'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <p>{{ 'Warning: regenerating your signature keys mean you will overwrite your current key pair.'|trans }}</p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='regenerateSigkeys' data-dismiss='modal' class='btn btn-primary'>{{ 'Regenerate'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {# TAB 1 - USER PREFERENCES #}
 <div data-tabcontent='1' hidden>
   {# LANGUAGE #}
@@ -37,7 +58,7 @@
         {% endfor %}
       </select>
     </div>
-    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }}</a></p>
   </div>
 
   {# DISPLAY #}
@@ -337,7 +358,24 @@
 
   <h2 class='p-2 pl-3 section-title mt-4'>{{ 'Signature keys'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5' id='ucp-sigkeys'>
-    <p>{{ 'Signature keys allow you to cryptographically sign some data. Have a look at the %scomplete documentation%s.'|trans|format("<a target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
+    <div class='dropdown float-right'>
+      <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
+        <i class='fas fa-ellipsis-v fa-fw'></i>
+      </button>
+      <div class='dropdown-menu dropdown-menu-right'>
+        <button type='button' data-action='download-sigkey' data-target='sig_privkey' class='btn btn-dropdown-item dropdown-item'>
+          <i class='mr-1 fas fa-download fa-fw'></i>{{ 'Download private key'|trans }}
+        </button>
+        <button type='button' data-action='download-sigkey' data-target='sig_pubkey' class='btn btn-dropdown-item dropdown-item'>
+          <i class='mr-1 fas fa-download fa-fw'></i>{{ 'Download public key'|trans }}
+        </button>
+        <div class='dropdown-divider'></div>
+        <button type='button' data-action='toggle-modal' data-target='regenerateSigkeysModal' class='btn btn-dropdown-item hover-danger dropdown-item'>
+          <i class='mr-1 fas fa-recycle fa-fw'></i>{{ 'Regenerate keys'|trans }}
+        </button>
+      </div>
+    </div>
+    <p>{{ 'Signature keys allow you to cryptographically sign some data. Have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
       <p>{{ 'You do not have a key pair associated with your account yet. In order to generate one, enter a passphrase below and click the button.'|trans }}<p>
     <div class='input-group'>
@@ -346,13 +384,11 @@
         <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>
       </div>
     </div>
-      <span class='smallgray'>{{ 'Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s.'|trans|format("<a target='_blank' rel='noopener' href='https://xkcd.com/936/'>", "</a>")|raw }}</span>
+      <span class='smallgray'>{{ 'Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s.'|trans|format("<a target='_blank' rel='noopener' class='external-link' href='https://xkcd.com/936/'>", "</a>")|raw }}</span>
     {% else %}
-      <p>{{ 'Your signature encrypted private key (keep it secret):'|trans }}<p>
-      <button type='button' data-action='download-sig_privkey' class='btn btn-secondary'>{{ 'Download private key'|trans }}</button>
-      <p>{{ 'Your signature public key (share it with the world):'|trans }}<p>
+      <p>{{ 'Your account is already associated with a keypair.'|trans }}<p>
+      <p>{{ 'Here is your public key. You can share it with the world:'|trans }}<p>
       <textarea class='form-control' disabled>{{ App.Users.userData.sig_pubkey }}</textarea>
-      <button type='button' data-action='download-sig_pubkey' class='btn btn-secondary mt-1'>{{ 'Download public key'|trans }}</button>
     {% endif %}
 
   </div>
@@ -371,7 +407,7 @@
 
 {# TAB 4 - API KEYS #}
 <div data-tabcontent='4' hidden>
-  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
   <div id='newKeyPlaceholder'></div>{# the newly created key will be displayed here #}
   <div class='pl-3 mt-2 mb-5'>

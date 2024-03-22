@@ -178,21 +178,6 @@ export default class JsonEditorHelper {
     });
   }
 
-  saveAsFile(): void {
-    const realName = this.askFilename();
-    const content = JSON.stringify(this.editor.get());
-    const blob = new Blob([content], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    // we create a link and click it
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = realName;
-    this.editorDiv.appendChild(link);
-    link.click();
-    // cleanup by revoking the URL object
-    URL.revokeObjectURL(url);
-  }
-
   // edit an existing file
   saveFile(): void {
     const formData = new FormData();

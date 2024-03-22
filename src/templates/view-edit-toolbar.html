@@ -58,7 +58,7 @@
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived).'|trans }}</p>
         {% if not App.Users.userData.sig_privkey %}
-          <p>{{ 'Your account is missing a cryptographic key pair, necessary for signature. You must generate one before you can sign an entry.'|trans }}</p>
+          <p>{{ 'Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry.'|trans }}</p>
           <div class='text-center'>
           </div>
         {% else %}

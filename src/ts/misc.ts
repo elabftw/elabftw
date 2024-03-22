@@ -552,3 +552,17 @@ export function replaceWithTitle(): void {
     });
   });
 }
+
+export function saveStringAsFile(filename: string, content: string, contentType: string = 'text/plain;charset=utf-8'): void {
+  const blob = new Blob([content], {type: contentType});
+  const url = URL.createObjectURL(blob);
+  // we create a link and click it
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  // cleanup by revoking the URL object
+  URL.revokeObjectURL(url);
+  link.remove();
+}

@@ -153,6 +153,16 @@ a:hover,
     text-decoration: none;
 }
 
+/* add arrow going out of square icon after external links */
+.external-link::after {
+    content: '\f08e'; // arrow-up-right-from-square
+    font-family: 'Font Awesome 6 Free';
+    font-size: 0.6em;
+    font-weight: 700;
+    padding-left: 3px;
+    vertical-align: text-top;
+}
+
 .underlined {
     text-decoration: underline !important;
 }

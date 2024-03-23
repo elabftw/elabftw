@@ -44,12 +44,12 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '5.0.3';
+    public const INSTALLED_VERSION = '5.0.4';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const INSTALLED_VERSION_INT = 50000;
+    public const INSTALLED_VERSION_INT = 50004;
 
     public Users $Users;
 

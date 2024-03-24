@@ -224,7 +224,7 @@
                         {% endif %}
                       {% endif %}
                       {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
-                      {% if user.mfa_secret and App.Users.userData.is_sysadmin %}
+                      {% if user.has_mfa_enabled and App.Users.userData.is_sysadmin %}
                         <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='remove-user-2fa' data-userid='{{ user.userid }}'>
                           <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
                         </button>

@@ -2265,7 +2265,7 @@ paths:
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
-      summary: Create a new experiments categories.
+      summary: Create a new category for experiments.
       requestBody:
         description: Parameters for creating a category.
         content:

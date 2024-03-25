@@ -2302,7 +2302,7 @@ paths:
           type: integer
       - name: subid
         in: path
-        description: ID of the status
+        description: ID of the category.
         required: true
         schema:
           type: integer

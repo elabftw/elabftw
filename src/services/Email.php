@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EmailTarget;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use PDO;
@@ -143,7 +144,7 @@ class Email
                 break;
             case EmailTarget::Admins:
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
-                $filter = 'AND users2teams.groups_id = 2';
+                $filter = sprintf('AND users2teams.groups_id = %d', Usergroup::Admin->value);
                 break;
             case EmailTarget::Sysadmins:
                 $join = '';

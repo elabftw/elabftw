@@ -22,7 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
-      ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => reloadElement('editUsersBox'));
+      ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => {
+        el.closest('div.form-group').querySelectorAll('input').forEach(input => {
+          input.value = '';
+        });
+        reloadElement('editUsersBox');
+      });
 
     // CREATE USER(s) FROM REMOTE DIRECTORY
     } else if (el.matches('[data-action="create-user-from-remote"]')) {

@@ -980,7 +980,7 @@ paths:
           examples:
             first:
               summary: Search for all items with a rating of 2.
-              value: "rating%3A2"
+              value: "rating:2"
         - name: related
           in: query
           schema:
@@ -1223,7 +1223,7 @@ paths:
           examples:
             first:
               summary: Search for all items with a rating of 2.
-              value: "rating%3A2"
+              value: "rating:2"
         # This one is not exactly copy paste
         - name: cat
           in: query

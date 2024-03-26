@@ -7,6 +7,7 @@
  */
 
 import { Api } from './Apiv2.class';
+import { Action } from './interfaces';
 import { notifError } from './misc';
 import DiffMatchPatch from 'diff-match-patch';
 
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         diffDiv.appendChild(span);
       });
     } else if (el.matches('[data-action="restore-revision"]')) {
-      ApiC.patch(`${el.dataset.type}/${el.dataset.id}/revisions/${el.dataset.revid}`, {'action': 'replace'});
+      ApiC.patch(`${el.dataset.type}/${el.dataset.id}/revisions/${el.dataset.revid}`, {'action': Action.Replace});
     }
   });
 });

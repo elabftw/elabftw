@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Model, Target, Entity } from './interfaces';
+import { Model, Target, Entity, Action } from './interfaces';
 import { Api } from './Apiv2.class';
 import { getEditor } from './Editor.class';
 
@@ -39,11 +39,15 @@ export default class Step {
   }
 
   finish(id: number): Promise<Response> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {'action': 'finish'});
+    return this.genericPatch(id, Action.Finish);
   }
 
   notif(id: number): Promise<Response> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {'action': 'notif'});
+    return this.genericPatch(id, Action.Notif);
+  }
+
+  genericPatch(id: number, action: Action): Promise<Response> {
+    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {action});
   }
 
   destroy(id: number): Promise<Response> {

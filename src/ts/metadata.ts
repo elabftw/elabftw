@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (field['type'] === 'checkbox') {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
-        field['value'] = fieldValue;
+        field['value'] = fieldValue || '';
         // get the description
         if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
           field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;

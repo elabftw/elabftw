@@ -55,7 +55,7 @@ final class Config implements RestInterface
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    public function create(): int
+    public function create(): bool
     {
         $schema = Update::getRequiredSchema();
 
@@ -183,7 +183,7 @@ final class Config implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        return (int) $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -314,6 +314,8 @@ final class Config implements RestInterface
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return (bool) $this->create();
+        $createResult = $this->create();
+        $this->configArr = $this->readAll();
+        return $createResult;
     }
 }

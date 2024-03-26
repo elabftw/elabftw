@@ -43,12 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
       StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
-
     // DESTROY DEADLINE ON STEP
     } else if (el.matches('[data-action="step-destroy-deadline"]')) {
-      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline).then(() => {
-        reloadElement('stepsDiv');
-      });
+      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
+        .then(() => reloadElement('stepsDiv'));
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
       Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));

@@ -36,17 +36,21 @@ module.exports = {
               }
             }
             const checksum = project.storedChecksums.get(tinymceLocator.locatorHash) ?? null;
-            const path = cache.getLocatorPath(tinymceLocator, checksum);
+            const locatorPath = cache.getLocatorPath(tinymceLocator, checksum);
 
-            const extractFile = (filename) => {
-              const requestedFile = `${path}/node_modules/tinymce/skins/ui/oxide/${filename}`;
+            const extractFile = (nodeModulesPath, sourceName, targetName) => {
+              targetName = typeof targetName === 'string' && targetName !== ''
+                ? targetName
+                : sourceName;
+              const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;
               const fileContent = crossFs.readFileSync(requestedFile);
-              const destinationPath = `web/assets/${filename}`;
+              const destinationPath = `web/assets/${targetName}`;
               crossFs.writeFileSync(destinationPath, fileContent, 'utf8');
             };
 
-            extractFile('skin.min.css');
-            extractFile('content.min.css');
+            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css');
+            extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
+            extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
           },
         },
       },

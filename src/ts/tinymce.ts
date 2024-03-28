@@ -138,9 +138,10 @@ export function getTinymceBaseConfig(page: string): object {
   return {
     selector: '.mceditable',
     browser_spellcheck: true,
-    // make it load the skin.min.css and content.min.css from there
+    // location of the skin directory
     skin_url: '/assets',
-    content_css: '/assets/content.min.css',
+    content_css: '/assets/tinymce_content.min.css',
+    emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,

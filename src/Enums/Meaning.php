@@ -14,18 +14,11 @@ namespace Elabftw\Enums;
  */
 enum Meaning: int
 {
+    use \Elabftw\Traits\EnumsTrait;
+
     case Approval = 10;
     case Authorship = 20;
     case Responsibility = 30;
     case Review = 40;
     case Safety = 50;
-
-    public static function getAssociativeArray(): array
-    {
-        $all = array();
-        foreach (self::cases() as $case) {
-            $all[$case->value] = _($case->name);
-        }
-        return $all;
-    }
 }

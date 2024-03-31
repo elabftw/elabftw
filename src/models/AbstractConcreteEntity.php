@@ -15,6 +15,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
@@ -114,6 +115,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         // decrement the balance
         $Config->decrementTsBalance();
 
+        // clear any request action
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Timestamp);
+
         return $this->readOne();
     }
 
@@ -137,6 +142,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
         $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Sign);
         return $this->readOne();
     }
 }

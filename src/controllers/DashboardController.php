@@ -25,6 +25,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Models\UserRequestActions;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -59,6 +60,8 @@ class DashboardController implements ControllerInterface
         $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
         $ExperimentsStatus = new ExperimentsStatus(new Teams($this->App->Users));
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
+        $UserRequestActions = new UserRequestActions($this->App->Users);
+
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'itemsCategoryArr' => $ItemsTypes->readAll(),
@@ -67,6 +70,7 @@ class DashboardController implements ControllerInterface
             'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
             'experimentsStatusArr' => $ExperimentsStatus->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
+            'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $PermissionsHelper->getAssociativeArray(),

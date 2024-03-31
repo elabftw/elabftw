@@ -12,3 +12,15 @@
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}
 {% endif %}
 </div>
+
+{# REQUEST ACTIONS #}
+<div id='requestActionsDiv'>
+  {% if entityRequestActionsArr %}
+    <ul class='list-group mt-2'>
+      {% for action in entityRequestActionsArr %}
+      <li class='list-group-item'>
+        <i class='fas fa-person-circle-exclamation fa-2x mr-2'></i><button type='button' class='btn btn-primary' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button> has been requested by {{ action.requester_firstname }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>

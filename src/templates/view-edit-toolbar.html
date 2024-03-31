@@ -1,3 +1,38 @@
+{# Modal for request action #}
+<div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='requestActionModalLabel'>{{ 'Request action'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# SELECT ACTION #}
+        <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
+        <select id='requestActionActionSelect' class='form-control'>
+          {% for value, text in requestActionArr|sort %}
+            <option value='{{ value }}'>{{ text }}</option>
+          {% endfor %}
+        </select>
+        {# SELECT USER #}
+        <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
+        <select id='requestActionUserSelect' class='form-control'>
+          {% for user in Entity.Users.readAllFromTeam %}
+            <option value='{{ user.userid }}'
+            {{ Entity.entityData.userid == user.userid ? ' selected' }}
+            >{{ user.fullname }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='request-action'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {# Modal for timestamping #}
 <div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -80,8 +115,9 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='toggle-modal' data-target='requestActionModal' data-dismiss='modal' class='btn btn-secondary'>{{ 'Request signature'|trans }}</button>
         {% if App.Users.userData.sig_privkey %}
-          <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add signature'|trans }}</button>
+          <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
         {% else %}
           <a href='/ucp.php?tab=2#ucp-sigkeys'><button type='button' class='btn btn-primary'>{{ 'Go to User Control Panel'|trans }}</button></a>
         {% endif %}
@@ -146,13 +182,13 @@
   {% endif %}
 
   {# SIGN #}
-  <button type='button' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  <button type='button' id='actionButton-sign' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
     <i class='fas fa-signature fa-fw'></i>
   </button>
 
   {# TIMESTAMP #}
   {% if not App.Session.has('is_anon') and not Entity.isReadOnly %}
-    <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='toggle-modal' data-target='timestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-calendar-check fa-fw'></i>
     </button>
   {% endif %}
@@ -186,7 +222,7 @@
           {% set lockIcon = 'fa-lock' %}
           {% set alt = Entity.entityData.locked_at %}
       {% endif %}
-      <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='lock-entity' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
+      <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
         <i class='fas {{ lockIcon }} fa-fw'></i>
       </button>
     {% endif %}
@@ -203,6 +239,8 @@
         {% if Entity.type == 'items' %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
         {% endif %}
+        {# REQUEST ACTION #}
+        <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='requestActionModal'><i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i> {{ 'Request action'|trans }}</button>
         {# TRANSFER OWNERSHIP #}
         {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
@@ -217,7 +255,7 @@
         <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
 
         {% if not App.Session.has('is_anon') %}
-          <button type='button' class='dropdown-item hover-warning' data-action='archive-entity'>
+          <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
             <i class='fas fa-fw fa-box-archive fa-fw' title='{{ 'Archive/Unarchive'|trans }}'></i> {{ 'Archive/Unarchive'|trans }}
           </button>
         {% endif %}

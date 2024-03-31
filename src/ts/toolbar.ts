@@ -5,10 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement, relativeMoment } from './misc';
+import { getEntity, reloadElement, reloadElements, relativeMoment } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
+import $ from 'jquery';
 import { Action } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,11 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       EntityC.duplicate(entity.id).then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
 
-    // TOGGLE LOCK
-    } else if (el.matches('[data-action="lock-entity"]')) {
-      // reload the page to change the icon and make the edit button disappear (#1897)
-      EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
-
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
       EntityC.read(entity.id).then(json => {
@@ -73,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     // TIMESTAMP button in modal
-    } else if (el.matches('[data-action="timestamp"]')) {
+    } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
       EntityC.timestamp(entity.id).then(() => {
         reloadElement('isTimestampedByInfoDiv');
       });
@@ -106,15 +102,43 @@ document.addEventListener('DOMContentLoaded', () => {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, sig_passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
-        if (document.getElementById('commentsDiv')) {
-          reloadElement('commentsDiv').then(() => {
-            relativeMoment();
-          });
-        }
+        reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
+          relativeMoment();
+        });
       });
-    // ARCHIVE ENTITY
-    } else if (el.matches('[data-action="archive-entity"]')) {
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
+    // REQUEST ACTION
+    } else if (el.matches('[data-action="request-action"]')) {
+      const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
+      const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
+      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
+        action: Action.Create,
+        target_action: actionSelect.value,
+        target_userid: userSelect.value,
+      });
+    } else if (el.matches('[data-action="show-action"]')) {
+      const btn = document.getElementById(`actionButton-${el.dataset.target}`);
+      btn.classList.add('border-danger');
+
+    // DO REQUEST ACTION
+    } else if (el.matches('[data-action="do-requestable-action"]')) {
+      switch (el.dataset.target.toLowerCase()) {
+      case Action.Archive:
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
+        break;
+      case Action.Lock:
+        // reload the page to change the icon and make the edit button disappear (#1897)
+        EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        break;
+      case Action.Timestamp:
+        $('#timestampModal').modal('toggle');
+        break;
+      case Action.Sign:
+        $('#addSignatureModal').modal('toggle');
+        break;
+      }
+      reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
+        relativeMoment();
+      });
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

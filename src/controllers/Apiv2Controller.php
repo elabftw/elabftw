@@ -33,6 +33,7 @@ use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Steps;
@@ -43,6 +44,7 @@ use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Exception;
 use JsonException;
@@ -266,6 +268,7 @@ class Apiv2Controller extends AbstractApiController
                 'comments' => new Comments($this->Model, $this->subId),
                 'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
                 'items_links' => new ItemsLinks($this->Model, $this->subId),
+                'request_actions' => new RequestActions($this->Users, $this->Model, $this->subId),
                 'revisions' => new Revisions(
                     $this->Model,
                     (int) $Config->configArr['max_revisions'],
@@ -293,6 +296,7 @@ class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof Users) {
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
+                'request_actions' => new UserRequestActions($this->Model),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }

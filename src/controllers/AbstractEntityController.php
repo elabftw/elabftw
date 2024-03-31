@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\SearchType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -23,10 +24,12 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
+use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,6 +48,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $meaningArr = array();
 
+    protected array $requestActionArr = array();
+
     protected array $templatesArr = array();
 
     protected array $teamGroupsFromUser = array();
@@ -57,6 +62,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
+        $this->requestActionArr = RequestableAction::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
@@ -116,6 +122,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
+        $RequestActions = new UserRequestActions($this->App->Users);
 
         $renderArr = array(
             'DisplayParams' => $DisplayParams,
@@ -128,6 +135,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
+            'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // generate light show page
             'searchPage' => $isSearchPage,
             'searchType' => $isSearchPage ? SearchType::SearchPage : $DisplayParams->searchType,
@@ -177,6 +185,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $Teams = new Teams($this->Entity->Users);
+        $RequestActions = new RequestActions($this->App->Users, $this->Entity);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
@@ -184,6 +193,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'hideTitle' => true,
@@ -195,6 +205,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
+            'requestActionArr' => $this->requestActionArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -233,11 +244,14 @@ abstract class AbstractEntityController implements ControllerInterface
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
 
+        $RequestActions = new RequestActions($this->App->Users, $this->Entity);
+
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
+            'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => $Metadata->getDisplayMainText(),
             'hideTitle' => true,
@@ -252,6 +266,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamTagsArr' => $TeamTags->readAll(),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
+            'requestActionArr' => $this->requestActionArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

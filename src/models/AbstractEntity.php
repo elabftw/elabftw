@@ -22,6 +22,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\SearchType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -194,6 +195,10 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
 
+        // clear any request action
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Lock);
+
         return $this->readOne();
     }
 
@@ -325,6 +330,9 @@ abstract class AbstractEntity implements RestInterface
                         }
                     }
                     $this->update(new EntityParams('state', (string) $targetState->value));
+                    // clear any request action
+                    $RequestActions = new RequestActions($this->Users, $this);
+                    $RequestActions->remove(RequestableAction::Archive);
                 }
             )(),
             Action::Lock => $this->toggleLock(),

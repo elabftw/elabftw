@@ -70,6 +70,7 @@ enum Action {
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   Replace = 'replace',
+  RequestAction = 'requestaction',
   Sign = 'sign',
   Timestamp = 'timestamp',
   Unreference = 'unreference',

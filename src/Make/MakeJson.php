@@ -53,12 +53,6 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             } catch (IllegalActionException) {
                 continue;
             }
-            // move metadata_decode to metadata column because it's json
-            if (isset($all['metadata'])) {
-                $all['metadata'] = $all['metadata_decoded'];
-                // no need to have it twice
-                unset($all['metadata_decoded']);
-            }
             $res[] = $all;
         }
 

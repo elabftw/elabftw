@@ -22,6 +22,7 @@ import 'tinymce/plugins/autosave';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/code';
 import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/fullscreen';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/insertdatetime';
@@ -122,8 +123,8 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image link pagebreak codesample template mention visualblocks visualchars';
-  let toolbar1 = 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap adddate | codesample | link | sort-table | save';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image link pagebreak codesample template mention visualblocks visualchars emoticons';
+  let toolbar1 = 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table | save';
   let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit') {
     plugins += ' autosave';
@@ -137,9 +138,10 @@ export function getTinymceBaseConfig(page: string): object {
   return {
     selector: '.mceditable',
     browser_spellcheck: true,
-    // make it load the skin.min.css and content.min.css from there
+    // location of the skin directory
     skin_url: '/assets',
-    content_css: '/assets/content.min.css',
+    content_css: '/assets/tinymce_content.min.css',
+    emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,

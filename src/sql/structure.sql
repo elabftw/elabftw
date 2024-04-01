@@ -196,6 +196,21 @@ CREATE TABLE `experiments_links` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_request_actions`
+--
+CREATE TABLE IF NOT EXISTS `experiments_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_request_actions_experiments_id` (`entity_id`),
+    CONSTRAINT `fk_experiments_request_actions_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
+
+--
 -- Table structure for table `experiments_revisions`
 --
 
@@ -479,6 +494,22 @@ CREATE TABLE `items_comments` (
 --
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `items_request_actions`
+--
+
+CREATE TABLE IF NOT EXISTS `items_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_request_actions_items_id` (`entity_id`),
+    CONSTRAINT `fk_items_request_actions_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
 
 --
 -- Table structure for table `items_revisions`

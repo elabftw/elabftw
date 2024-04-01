@@ -151,6 +151,8 @@ export function getTinymceBaseConfig(page: string): object {
     pagebreak_split_block: true,
     pagebreak_separator: '<div class="page-break"></div>',
     toolbar1: toolbar1,
+    // this addresses CVE-2024-29881, it defaults to true in 7.0, so can be removed in tiny 7.0 TODO
+    convert_unsafe_embeds: true,
     // disable automatic h1 when using #
     text_patterns: false,
     removed_menuitems: removedMenuItems,

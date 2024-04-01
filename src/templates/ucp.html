@@ -378,6 +378,7 @@
     <p>{{ 'Signature keys allow you to cryptographically sign some data. Have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
       <p>{{ 'You do not have a key pair associated with your account yet. In order to generate one, enter a passphrase below and click the button.'|trans }}<p>
+    <label for='sigPassphraseInput'>{{ 'Enter a passphrase:'|trans }}</label>
     <div class='input-group'>
       <input type='password' class='form-control' autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
       <div class='input-group-append'>

@@ -135,7 +135,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
-            'entityRequestActionsArr' => $RequestActions->readAllFull(),
+            'requestActionsArr' => $RequestActions->readAllFull(),
             // generate light show page
             'searchPage' => $isSearchPage,
             'searchType' => $isSearchPage ? SearchType::SearchPage : $DisplayParams->searchType,

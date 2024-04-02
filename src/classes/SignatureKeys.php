@@ -111,7 +111,7 @@ class SignatureKeys
         // verify checksum
         $expected = sodium_crypto_generichash($sigAlg . $id . $priv);
         if (!hash_equals($expected, $checksum)) {
-            throw new ImproperActionException(_('Error decrypting private key. Are you certain of the passphrase?'));
+            throw new ImproperActionException(_('Could not decrypt private key. Are you certain of the passphrase?'));
         }
 
         return new self($sigAlg, $id, $priv, $pub, $salt, $derivedKey);

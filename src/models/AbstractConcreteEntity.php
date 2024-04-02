@@ -50,7 +50,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
+        // was "write" previously, but let's make timestamping/signing only require read access
+        $this->canOrExplode('read');
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
             Action::Sign => $this->sign($params['sig_passphrase'], Meaning::from((int) $params['meaning'])),

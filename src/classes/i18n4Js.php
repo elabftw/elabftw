@@ -49,7 +49,7 @@ class i18n4Js
             'not-set' => _('Not set'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
-            'onboarding-email-resent' => _('Onboarding email(s) will soon be sent.'),
+            'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'please-wait' => _('Please wait…'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'request-filename' => _('Enter name of the file'),

@@ -47,10 +47,10 @@
     {% include 'binary-setting.html' with {
       'model': model,
       'src': src,
-      'slug': 'different_onboarding_email_for_admins',
+      'slug': 'onboarding_email_different_for_admins',
       'label': 'Send a different email for (sys)admins.'|trans
     } %}
-    <div id='onboarding-email-for-admins' {{- App.Config.configArr.different_onboarding_email_for_admins == 0 ? ' hidden' }}>
+    <div id='onboarding-email-for-admins' {{- App.Config.configArr.onboarding_email_different_for_admins == 0 ? ' hidden' }}>
       <p>{{ 'This email will be sent to new (sys)admins.'|trans }}</p>
 
       <label for='onboarding_email_admins_subject' class='col-form-label'>{{ 'Subject'|trans }}</label>

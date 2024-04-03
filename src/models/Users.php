@@ -167,7 +167,8 @@ class Users implements RestInterface
         if ($isValidated) {
             // do we send an email for the instance
             if ($Config->configArr['onboarding_email_active'] === '1') {
-                (new OnboardingEmail(-1, $usergroup->isAdmin()))->create($userid);
+                $isAdmin = $usergroup === Usergroup::Admin || $usergroup === Usergroup::Sysadmin;
+                (new OnboardingEmail(-1, $isAdmin))->create($userid);
             }
             // send email for each team
             $Users2Teams->sendOnboardingEmailOfTeams = true;
@@ -664,7 +665,7 @@ class Users implements RestInterface
     private function sendOnboardingEmailsAfterValidation(): void
     {
         // do we send an eamil for the instance
-        if ((int) Config::getConfig()->configArr['onboarding_email_active'] === 1) {
+        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
             (new OnboardingEmail(-1, $this->isAdmin))->create($this->userData['userid']);
         }
 

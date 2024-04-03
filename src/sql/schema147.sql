@@ -3,7 +3,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
   ('onboarding_email_active', 0),
   ('onboarding_email_subject', NULL),
   ('onboarding_email_body', NULL),
-  ('different_onboarding_email_for_admins', 0),
+  ('onboarding_email_different_for_admins', 0),
   ('onboarding_email_admins_subject', NULL),
   ('onboarding_email_admins_body', NULL);
 ALTER TABLE `teams`

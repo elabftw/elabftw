@@ -1,15 +1,15 @@
-<div class='modal fade' id='resendOnboardingEmailModal' tabindex='-1' role='dialog' aria-labelledby='resendOnboardingEmailModalLabel'>
+<div class='modal fade' id='sendOnboardingEmailModal' tabindex='-1' role='dialog' aria-labelledby='sendOnboardingEmailModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='resendOnboardingEmailModalLabel'><i class='fas fa-fw fa-envelope'></i> {{ 'Resend onboarding email'|trans }}</h5>
+        <h5 class='modal-title' id='sendOnboardingEmailModalLabel'><i class='fas fa-fw fa-envelope'></i> {{ 'Resend onboarding email'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body'>
-        <label for='resendOnboardingEmailToUsers'>{{ 'Select users to whom the onboarding email will be send again.'|trans }}</label>
-        <select id='resendOnboardingEmailToUsers' class='form-control' multiple>
+        <label for='sendOnboardingEmailToUsers'>{{ 'Select users to whom the onboarding email will be send again.'|trans }}</label>
+        <select id='sendOnboardingEmailToUsers' class='form-control' multiple>
           {% for user in activeUsersArr %}
           <option value='{{ user.userid }}'>{{ user.fullname }} ( {{ user.email }})</option>
           {% endfor %}
@@ -18,7 +18,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='resend-onboarding-emails' >{{ 'Send'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='send-onboarding-emails' >{{ 'Send'|trans }}</button>
       </div>
     </div>
   </div>

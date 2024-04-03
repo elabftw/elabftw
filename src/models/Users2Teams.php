@@ -123,15 +123,14 @@ class Users2Teams
     private function patchTeamGroup(int $userid, int $teamid, Usergroup $group): int
     {
         $group = Check::usergroup($this->requester, $group);
-        $promoteToAdmin = $group->isAdmin() && !$this->wasAdminAlready($userid);
-        $group = $group->value;
+        $promoteToAdmin = $group === Usergroup::Admin && !$this->wasAdminAlready($userid);
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
         }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':group', $group, PDO::PARAM_INT);
+        $req->bindValue(':group', $group->value, PDO::PARAM_INT);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 
@@ -139,13 +138,13 @@ class Users2Teams
 
         // send the admin onboarding email only when user becomes admin the first time
         if ($promoteToAdmin
-            && (int) (Config::getConfig())->configArr['onboarding_email_active'] === 1
+            && (Config::getConfig())->configArr['onboarding_email_active'] === '1'
         ) {
             (new OnboardingEmail(-1, $promoteToAdmin))->create($userid);
         }
         /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $group, $userid, $teamid));
-        return $group;
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $group->value, $userid, $teamid));
+        return $group->value;
     }
 
     private function patchIsOwner(int $userid, int $teamid, int $content): int

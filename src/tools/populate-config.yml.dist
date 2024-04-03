@@ -31,7 +31,7 @@ config:
   onboarding_email_subject: test email subject
   onboarding_email_body: <p>Test email body for <strong>users</strong>.</p>
   onboarding_email_active: 1
-  different_onboarding_email_for_admins: 1
+  onboarding_email_different_for_admins: 1
   onboarding_email_admins_subject: subject for admins
   onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
 

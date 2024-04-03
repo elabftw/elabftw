@@ -26,6 +26,7 @@ enum Action: string
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';
+    case SendOnboardingEmails = 'sendonboardingemails';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';
@@ -33,5 +34,4 @@ enum Action: string
     case UpdateMetadataField = 'updatemetadatafield';
     case Unreference = 'unreference';
     case Validate = 'validate';
-    case ResendOnboardingEmails = 'resendonboardingemails';
 }

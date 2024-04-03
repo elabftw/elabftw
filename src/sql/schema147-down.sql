@@ -3,7 +3,7 @@ DELETE FROM `config`
 WHERE `conf_name` = 'onboarding_email_active'
   OR `conf_name` = 'onboarding_email_subject'
   OR `conf_name` = 'onboarding_email_body'
-  OR `conf_name` = 'different_onboarding_email_for_admins'
+  OR `conf_name` = 'onboarding_email_different_for_admins'
   OR `conf_name` = 'onboarding_email_admins_subject'
   OR `conf_name` = 'onboarding_email_admins_body';
 ALTER TABLE `teams`

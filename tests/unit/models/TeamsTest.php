@@ -84,19 +84,19 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->destroy();
     }
 
-    public function testResendOnboardingEmails(): void
+    public function testSendOnboardingEmails(): void
     {
         $userids = array('userids' => array(1, 2, 3, 4, 5));
 
         $this->assertIsArray($this->Teams->patch(
-            Action::ResendOnboardingEmails,
+            Action::SendOnboardingEmails,
             $userids,
         ));
 
         $Team = new Teams(new Users(2, 1));
         $this->expectException(IllegalActionException::class);
         $Team->patch(
-            Action::ResendOnboardingEmails,
+            Action::SendOnboardingEmails,
             $userids,
         );
     }

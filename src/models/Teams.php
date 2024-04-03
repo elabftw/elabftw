@@ -164,7 +164,7 @@ class Teams implements RestInterface
                     }
                 }
             )(),
-            Action::ResendOnboardingEmails => $this->resendOnboardingEmails($params['userids']),
+            Action::SendOnboardingEmails => $this->sendOnboardingEmails($params['userids']),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -338,7 +338,7 @@ class Teams implements RestInterface
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }
 
-    private function resendOnboardingEmails(array $userids): void
+    private function sendOnboardingEmails(array $userids): void
     {
         // validate that userid is part of team and active
         foreach(array_intersect(array_column($this->Users->readAllActiveFromTeam(), 'userid'), $userids) as $userid) {

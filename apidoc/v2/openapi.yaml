@@ -133,6 +133,20 @@ components:
           type: string
         min_delta_revisions:
           type: string
+        onboarding_email_active:
+          enum: [0, 1]
+          type: string
+        onboarding_email_admins_body:
+          type: string
+        onboarding_email_admins_subject:
+          type: string
+        onboarding_email_body:
+          type: string
+        onboarding_email_different_for_admins:
+          enum: [0, 1]
+          type: string
+        onboarding_email_subject:
+          type: string
         open_science:
           type: string
         open_team:
@@ -676,11 +690,12 @@ components:
           type: string
           nullable: true
         onboarding_email_active:
+          enum: [0, 1]
           type: integer
-        onboarding_email_subject:
+        onboarding_email_body:
           type: string
           nullable: true
-        onboarding_email_body:
+        onboarding_email_subject:
           type: string
           nullable: true
     teamgroup:
@@ -2247,17 +2262,17 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/team'
                 - type: object
-                  description: Resend the onboarding email to all users specified in the userids property. Only admins can resend emails for their team members.
+                  description: (Re)send the onboarding email to all users specified in the userids property. Only admins can send emails to their team members.
                   properties:
                       action:
-                        enum: ['resendonboardingemails']
+                        enum: ['sendonboardingemails']
                         type: string
                       userids:
-                        description: A list of user ids for which the onboarding email shall be resent.
+                        description: A list of user ids for which the onboarding email shall be sent.
                         type: array
                         items:
                           type: integer
-                        example: [1, 2, 3, 4]
+                        example: [5, 11, 7, 31]
       responses:
         '200':
           description: The updated team.

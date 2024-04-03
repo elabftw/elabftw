@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Onboarding email for admins
    */
-  (document.getElementById('different_onboarding_email_for_admins')).addEventListener('change', () => {
+  (document.getElementById('onboarding_email_different_for_admins')).addEventListener('change', () => {
     document.getElementById('onboarding-email-for-admins').toggleAttribute('hidden');
   });
 

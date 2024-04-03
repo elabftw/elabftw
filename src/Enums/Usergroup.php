@@ -23,13 +23,4 @@ enum Usergroup: int
             $this::User => _('User'),
         };
     }
-
-    public function isAdmin(): bool
-    {
-        return match ($this) {
-            $this::Sysadmin => true,
-            $this::Admin => true,
-            $this::User => false,
-        };
-    }
 }

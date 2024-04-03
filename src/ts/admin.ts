@@ -210,17 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
       // reload the modal in case the users of the team have changed
-      reloadElement('resendOnboardingEmailModal');
-      $('#resendOnboardingEmailModal').modal('toggle');
-    } else if (el.matches('[data-action="resend-onboarding-emails"]')) {
+      reloadElement('sendOnboardingEmailModal');
+      $('#sendOnboardingEmailModal').modal('toggle');
+    } else if (el.matches('[data-action="send-onboarding-emails"]')) {
       ApiC.notifOnSaved = false;
       ApiC.patch(`${Model.Team}/current`, {
-        'action': 'resendonboardingemails',
-        'userids': Array.from((document.getElementById('resendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+        'action': Action.SendOnboardingEmails,
+        'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
           .map(option => parseInt(option.value, 10)),
       }).then(response => {
         if (response.ok) {
-          notif({'res': true, 'msg': i18next.t('onboarding-email-resent')});
+          notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
         }
       });
     }

@@ -166,7 +166,7 @@ class Users implements RestInterface
         // only send onboarding emails for new teams when user is validated
         if ($isValidated) {
             // do we send an email for the instance
-            if ((int) $Config->configArr['onboarding_email_active'] === 1) {
+            if ($Config->configArr['onboarding_email_active'] === '1') {
                 (new OnboardingEmail(-1, $usergroup->isAdmin()))->create($userid);
             }
             // send email for each team

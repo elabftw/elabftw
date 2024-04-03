@@ -748,6 +748,9 @@ CREATE TABLE `teams` (
   `do_force_canwrite` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `announcement` varchar(255) NULL DEFAULT NULL,
+  `onboarding_email_active` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  `onboarding_email_subject` VARCHAR(255) NULL,
+  `onboarding_email_body` TEXT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

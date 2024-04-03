@@ -12,9 +12,11 @@ namespace Elabftw\Services;
 use function bindtextdomain;
 use function count;
 use function dirname;
+use Elabftw\AuditEvent\OnboardingEmailSent;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
 use Elabftw\Factories\NotificationsFactory;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
 use PDO;
 use function putenv;
@@ -45,8 +47,20 @@ class EmailNotifications
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
             $Factory = new NotificationsFactory((int) $notif['category'], $notif['body']);
             $email = $Factory->getMailable()->getEmail();
-            if ($this->emailService->sendEmail($to, self::BASE_SUBJECT . $email['subject'], $email['body'])) {
+            $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
+            $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
+            $isEmailSent = $this->emailService->sendEmail(
+                $to,
+                self::BASE_SUBJECT . $email['subject'],
+                $email['body'],
+                $cc,
+                $htmlBody,
+            );
+            if ($isEmailSent) {
                 $this->setEmailSent((int) $notif['id']);
+                if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
+                    AuditLogs::create(new OnboardingEmailSent($email['team'], (int) $notif['userid'], $email['forAdmin']));
+                }
             }
         }
         return count($toSend);
@@ -69,8 +83,16 @@ class EmailNotifications
 
     protected function getNotificationsToSend(): array
     {
-        $sql='SELECT id, userid, category, body FROM notifications
-            WHERE send_email = 1 AND email_sent = 0 AND (category <> :deadline OR (category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)))';
+        // for step deadline only select notifications where deadline is in the next 30 min
+        $sql = 'SELECT id, userid, category, body
+            FROM notifications
+            WHERE send_email = 1
+                AND email_sent = 0
+                AND (category <> :deadline
+                    OR (category = :deadline
+                        AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(body->"$.deadline" AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
+                    )
+                )';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $this->Db->execute($req);

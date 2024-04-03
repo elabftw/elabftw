@@ -202,6 +202,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
       window.location.href = `make.php?format=schedulerReport&start=${from}&end=${to}`;
+    // PATCH ONBOARDING EMAIL
+    } else if (el.matches('[data-action="patch-onboarding-email"]')) {
+      const key = 'onboarding_email_body';
+      ApiC.patch(`${Model.Team}/current`, {
+        [key]: tinymce.get(key).getContent(),
+      });
+    } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
+      // reload the modal in case the users of the team have changed
+      reloadElement('resendOnboardingEmailModal');
+      $('#resendOnboardingEmailModal').modal('toggle');
+    } else if (el.matches('[data-action="resend-onboarding-emails"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.patch(`${Model.Team}/current`, {
+        'action': 'resendonboardingemails',
+        'userids': Array.from((document.getElementById('resendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+          .map(option => parseInt(option.value, 10)),
+      }).then(response => {
+        if (response.ok) {
+          notif({'res': true, 'msg': i18next.t('onboarding-email-resent')});
+        }
+      });
     }
   });
 });

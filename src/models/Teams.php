@@ -18,6 +18,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
@@ -80,6 +81,10 @@ class Teams implements RestInterface
     public function synchronize(int $userid, array $teams): void
     {
         $Users2Teams = new Users2Teams($this->Users);
+        // send onboarding email of teams newly added to a user
+        if ($this->Users->userData['validated']) {
+            $Users2Teams->sendOnboardingEmailOfTeams = true;
+        }
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -159,6 +164,7 @@ class Teams implements RestInterface
                     }
                 }
             )(),
+            Action::ResendOnboardingEmails => $this->resendOnboardingEmails($params['userids']),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -330,5 +336,14 @@ class Teams implements RestInterface
             return $this->postAction(Action::Create, array('name' => $name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
+    }
+
+    private function resendOnboardingEmails(array $userids): void
+    {
+        // validate that userid is part of team and active
+        foreach(array_intersect(array_column($this->Users->readAllActiveFromTeam(), 'userid'), $userids) as $userid) {
+            /** @psalm-suppress PossiblyNullArgument */
+            (new OnboardingEmail($this->id))->create($userid);
+        }
     }
 }

@@ -33,4 +33,5 @@ enum Action: string
     case UpdateMetadataField = 'updatemetadatafield';
     case Unreference = 'unreference';
     case Validate = 'validate';
+    case ResendOnboardingEmails = 'resendonboardingemails';
 }

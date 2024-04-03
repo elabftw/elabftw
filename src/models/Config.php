@@ -178,7 +178,13 @@ final class Config implements RestInterface
             ('password_complexity_requirement', '0'),
             ('max_password_age_days', '3650'),
             ('remote_dir_service', 'eairef'),
-            ('remote_dir_config', NULL)";
+            ('remote_dir_config', NULL),
+            ('onboarding_email_active', 0),
+            ('onboarding_email_subject', NULL),
+            ('onboarding_email_body', NULL),
+            ('different_onboarding_email_for_admins', 0),
+            ('onboarding_email_admins_subject', NULL),
+            ('onboarding_email_admins_body', NULL)";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

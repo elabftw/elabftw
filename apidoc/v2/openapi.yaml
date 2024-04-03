@@ -672,6 +672,17 @@ components:
           type: integer
         visible:
           type: integer
+        announcement:
+          type: string
+          nullable: true
+        onboarding_email_active:
+          type: integer
+        onboarding_email_subject:
+          type: string
+          nullable: true
+        onboarding_email_body:
+          type: string
+          nullable: true
     teamgroup:
       type: object
       properties:
@@ -2233,7 +2244,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/team'
+              oneOf:
+                - $ref: '#/components/schemas/team'
+                - type: object
+                  description: Resend the onboarding email to all users specified in the userids property. Only admins can resend emails for their team members.
+                  properties:
+                      action:
+                        enum: ['resendonboardingemails']
+                        type: string
+                      userids:
+                        description: A list of user ids for which the onboarding email shall be resent.
+                        type: array
+                        items:
+                          type: integer
+                        example: [1, 2, 3, 4]
       responses:
         '200':
           description: The updated team.

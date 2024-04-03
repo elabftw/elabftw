@@ -135,8 +135,16 @@ class PopulateDatabase extends Command
             $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $faker->hexColor(), 'is_default' => 0));
 
-            if (isset($team['visible'])) {
-                $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
+            $columns = array(
+                'visible',
+                'onboarding_email_body',
+                'onboarding_email_subject',
+                'onboarding_email_active',
+            );
+            foreach ($columns as $column) {
+                if (isset($team[$column])) {
+                    $Teams->patch(Action::Update, array($column => (string) $team[$column]));
+                }
             }
         }
 

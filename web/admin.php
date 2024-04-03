@@ -70,6 +70,9 @@ try {
     $unvalidatedUsersArr = array_filter($allTeamUsersArr, function ($u) {
         return $u['validated'] === 0;
     });
+    $activeUsersArr = array_filter($allTeamUsersArr, function ($user) {
+        return $user['archived'] === 0;
+    });
     // Users search
     $isSearching = false;
     $usersArr = array();
@@ -128,6 +131,7 @@ try {
         'teamsArr' => $teamsArr,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
+        'activeUsersArr' => $activeUsersArr,
     );
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));

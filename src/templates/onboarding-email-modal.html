@@ -10,8 +10,8 @@
       <div class='modal-body'>
         <label for='sendOnboardingEmailToUsers'>{{ 'Select users to whom the onboarding email will be send again.'|trans }}</label>
         <select id='sendOnboardingEmailToUsers' class='form-control' multiple>
-          {% for user in activeUsersArr %}
-          <option value='{{ user.userid }}'>{{ user.fullname }} ( {{ user.email }})</option>
+          {% for user in allTeamUsersArr|filter(user => user.archived == 0) %}
+            <option value='{{ user.userid }}'>{{ user.fullname }} ({{ user.email }})</option>
           {% endfor %}
         </select>
         <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>

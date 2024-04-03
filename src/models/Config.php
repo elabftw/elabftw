@@ -81,7 +81,7 @@ final class Config implements RestInterface
             ('ts_balance', '0'),
             ('ts_login', NULL),
             ('ts_password', NULL),
-            ('ts_url', 'NULL'),
+            ('ts_url', NULL),
             ('ts_cert', NULL),
             ('ts_hash', 'sha256'),
             ('ts_limit', '0'),

@@ -13,7 +13,6 @@ use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -22,7 +21,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 {
     private Email $Email;
 
-    private LoggerInterface $Logger;
+    private Logger $Logger;
 
     protected function setUp(): void
     {

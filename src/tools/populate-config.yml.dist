@@ -52,7 +52,6 @@ users:
     create_items: true
     user_preferences:
       orderby: lastchange
-      cjk_fonts: 1
 
   - email: titi@yopmail.com
     team: Alpha

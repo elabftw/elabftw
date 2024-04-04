@@ -164,18 +164,6 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <div>
-        <label for='cjk_fonts' class='col-form-label'>{{ 'Enable Chinese, Japanese and Korean fonts in PDF generation'|trans }}</label>
-        <p class='smallgray'>{{ 'WARNING: this will dramatically increase the file size unless you disable PDF/A'|trans }}</p>
-      </div>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='cjk_fonts' {{ App.Users.userData.cjk_fonts == 1 ? 'checked="checked"' }} id='cjk_fonts'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
       <label for='inc_files_pdf' class='col-form-label'>{{ 'Add attached files summary to the PDF'|trans }}</label>
       <label class='switch ucp-align' title='{{ 'Add attached files summary to the PDF'|trans }}'>
         <input type='checkbox' data-trigger='change' data-model='users/me' data-target='inc_files_pdf' {{ App.Users.userData.inc_files_pdf == 1 ? 'checked="checked"' }} id='inc_files_pdf'>

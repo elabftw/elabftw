@@ -238,7 +238,6 @@ class MakePdf extends AbstractMakePdf
                 'items' => Config::fromEnv('SITE_URL') . '/database.php',
                 'experiments' => Config::fromEnv('SITE_URL') . '/experiments.php',
             ),
-            'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 
         $Config = Config::getConfig();

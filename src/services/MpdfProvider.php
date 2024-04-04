@@ -12,8 +12,8 @@ namespace Elabftw\Services;
 use function dirname;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
+// use Mpdf\Config\ConfigVariables;
+// use Mpdf\Config\FontVariables;
 use Mpdf\Mpdf;
 
 /**
@@ -32,17 +32,17 @@ class MpdfProvider implements MpdfProviderInterface
 
     public function getInstance(): Mpdf
     {
-        $fontVariables = (new FontVariables())->getDefaults();
-        $fontData = $fontVariables['fontdata'];
+        // $fontVariables = (new FontVariables())->getDefaults();
+        // $fontData = $fontVariables['fontdata'];
         // create the pdf
         $mpdf = new Mpdf(array(
             'format' => $this->format,
             'tempDir' => FsTools::getCacheFolder('mpdf'),
             'mode' => 'utf-8',
             'fontDir' => array_merge(
-                    //(new ConfigVariables())->getDefaults()['fontDir'],
-                    array(dirname(__DIR__, 2) . '/src/font/Noto'),
-                ),
+                //(new ConfigVariables())->getDefaults()['fontDir'],
+                array(dirname(__DIR__, 2) . '/src/font/Noto'),
+            ),
             'fontdata' => array_merge(
                 array(
                     'notosans' => array(
@@ -104,9 +104,9 @@ class MpdfProvider implements MpdfProviderInterface
                 'notosanskr',
                 'notosanssc',
                 'notosanstc'),
-            'fonttrans' => array('noto' => 'notosans'),//array_merge(, $fontVariables['fonttrans']),
-            'sans_fonts' => array('notosans'),//array_merge(, $fontVariables['sans_fonts']),
-            'mono_fonts' => array('notosansmono'),//array_merge(, $fontVariables['mono_fonts']),
+            'fonttrans' => array('noto' => 'notosans'), //array_merge(, $fontVariables['fonttrans']),
+            'sans_fonts' => array('notosans'), //array_merge(, $fontVariables['sans_fonts']),
+            'mono_fonts' => array('notosansmono'), //array_merge(, $fontVariables['mono_fonts']),
             'useSubstitutions' => true,
             // disallow getting external things
             'whitelistStreamWrappers' => array(''),

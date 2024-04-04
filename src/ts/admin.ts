@@ -15,11 +15,19 @@ import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
+import TomSelect from 'tom-select/dist/js/tom-select.base';
+import TomSelectRemoveButton from 'tom-select/dist/js/plugins/remove_button';
+import TomSelectNoActiveItems from 'tom-select/dist/js/plugins/no_active_items';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
+
+  // bind plugins to TomSelect
+  TomSelect.define('remove_button', TomSelectRemoveButton);
+  TomSelect.define('no_active_items', TomSelectNoActiveItems);
+
   const ApiC = new Api();
 
   const TabMenu = new Tab();
@@ -210,8 +218,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
       // reload the modal in case the users of the team have changed
-      reloadElement('sendOnboardingEmailModal');
-      $('#sendOnboardingEmailModal').modal('toggle');
+      reloadElement('sendOnboardingEmailModal')
+        .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
+        .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
+          plugins: ['remove_button', 'no_active_items'],
+        }));
     } else if (el.matches('[data-action="send-onboarding-emails"]')) {
       ApiC.notifOnSaved = false;
       ApiC.patch(`${Model.Team}/current`, {

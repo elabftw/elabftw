@@ -1,4 +1,4 @@
--- schema 147
+-- schema 148
 ALTER TABLE users ADD sig_pubkey TEXT NULL DEFAULT NULL;
 ALTER TABLE users ADD sig_privkey TEXT NULL DEFAULT NULL;
 ALTER TABLE experiments_comments ADD immutable TINYINT UNSIGNED NOT NULL DEFAULT 0;
@@ -25,4 +25,4 @@ CREATE TABLE IF NOT EXISTS `items_request_actions` (
     PRIMARY KEY (`id`),
     KEY `fk_items_request_actions_items_id` (`entity_id`),
     CONSTRAINT `fk_items_request_actions_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
-UPDATE config SET conf_value = 147 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 148 WHERE conf_name = 'schema';

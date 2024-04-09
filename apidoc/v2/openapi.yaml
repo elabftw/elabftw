@@ -64,6 +64,7 @@ components:
         admin_validate:
           type: string
         announcement:
+          description: This text will be shown on every page, including login page.
           type: string
         anon_users:
           type: string
@@ -120,6 +121,7 @@ components:
         local_register:
           type: string
         login_announcement:
+          description: This text will only be shown on the login page.
           type: string
         login_tries:
           type: string
@@ -132,6 +134,7 @@ components:
         min_days_revisions:
           type: string
         min_delta_revisions:
+          description: Minimum number of characters changed required to trigger a revision save.
           type: string
         onboarding_email_active:
           enum: [0, 1]
@@ -687,9 +690,11 @@ components:
         visible:
           type: integer
         announcement:
+          description: Text shown on top of every page for all users of this team.
           type: string
           nullable: true
         onboarding_email_active:
+          description: Do we send onboarding emails to new users?
           enum: [0, 1]
           type: integer
         onboarding_email_body:

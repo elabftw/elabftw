@@ -26,7 +26,7 @@ use PDO;
  */
 class Users2Teams
 {
-    // are onboarding emails send in general?
+    // are onboarding emails sent in general?
     // setting for each team is checked additionally
     public bool $sendOnboardingEmailOfTeams = false;
 

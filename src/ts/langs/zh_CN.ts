@@ -21,6 +21,7 @@ const t = {
     "not-set": "未设置",
     "nothing-selected": "未选中任何选项！",
     "now": "现在",
+    "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "请稍候…",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
     "request-filename": "输入文件名",

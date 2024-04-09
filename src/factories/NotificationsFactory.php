@@ -15,6 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Notifications\EventDeleted;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\StepDeadline;
@@ -43,6 +44,7 @@ class NotificationsFactory
             Notifications::EventDeleted => new EventDeleted($this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
             Notifications::SelfNeedValidation => new SelfNeedValidation(),
             Notifications::SelfIsValidated => new SelfIsValidated(),
+            Notifications::OnboardingEmail => new OnboardingEmail($this->body['team'], $this->body['forAdmin'] ?? false),
             default => throw new ImproperActionException('This notification is not mailable.'),
         };
     }

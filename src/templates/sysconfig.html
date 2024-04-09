@@ -291,6 +291,11 @@
     </div>
   </div>
 
+  {# ONBOARDINGELCOME EMAIL #}
+  {% set model = 'config' %}
+  {% set src = App.Config.configArr %}
+  {% include 'onboarding-email.html' %}
+
   {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
   <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>

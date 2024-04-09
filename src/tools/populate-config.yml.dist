@@ -28,10 +28,19 @@ config:
   # increase this a bit
   login_tries: 10
   s3_region: fr-par-42
+  onboarding_email_subject: test email subject
+  onboarding_email_body: <p>Test email body for <strong>users</strong>.</p>
+  onboarding_email_active: 1
+  onboarding_email_different_for_admins: 1
+  onboarding_email_admins_subject: subject for admins
+  onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
 
 teams:
   - name: Alpha
     default_category_name: Generated
+    onboarding_email_subject: test email subject
+    onboarding_email_body: <p>Test email body <strong>with</strong> HTML.</p>
+    onboarding_email_active: 1
   - name: Bravo
   - name: Charlie
   - name: Delta

@@ -17,9 +17,13 @@ enum EmailTarget: string
     case Sysadmins = 'sysadmins';
     case BookableItem = 'bookable_item';
     case ActiveUsers = 'active_users';
+    case AdminsOfTeam = 'admins_of_team';
 
     public function needsId(): bool
     {
-        return $this === self::Team || $this === self::TeamGroup || $this === self::BookableItem;
+        return $this === self::Team
+            || $this === self::TeamGroup
+            || $this === self::BookableItem
+            || $this === self::AdminsOfTeam;
     }
 }

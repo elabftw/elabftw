@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ec0077ccd5808b02a89ead9f2103cff",
+    "content-hash": "4a869e9f4ff907a415d7e5026b687a05",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3526,6 +3526,50 @@
                 }
             ],
             "time": "2023-12-11T16:03:32+00:00"
+        },
+        {
+            "name": "stevebauman/hypertext",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stevebauman/hypertext.git",
+                "reference": "fab77cc43a4bb9397ee3e1f1dc1a31c18b8d8d50"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stevebauman/hypertext/zipball/fab77cc43a4bb9397ee3e1f1dc1a31c18b8d8d50",
+                "reference": "fab77cc43a4bb9397ee3e1f1dc1a31c18b8d8d50",
+                "shasum": ""
+            },
+            "require": {
+                "ezyang/htmlpurifier": "^4.16"
+            },
+            "require-dev": {
+                "pestphp/pest": "^2.24",
+                "spatie/ray": "^1.39"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stevebauman\\Hypertext\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Bauman",
+                    "email": "steven_bauman@outlook.com"
+                }
+            ],
+            "description": "The best HTML to text transformer",
+            "support": {
+                "issues": "https://github.com/stevebauman/hypertext/issues",
+                "source": "https://github.com/stevebauman/hypertext/tree/v1.0.1"
+            },
+            "time": "2023-12-21T12:23:33+00:00"
         },
         {
             "name": "symfony/console",

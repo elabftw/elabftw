@@ -15,11 +15,19 @@ import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
+import TomSelect from 'tom-select/dist/js/tom-select.base';
+import TomSelectRemoveButton from 'tom-select/dist/js/plugins/remove_button';
+import TomSelectNoActiveItems from 'tom-select/dist/js/plugins/no_active_items';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
+
+  // bind plugins to TomSelect
+  TomSelect.define('remove_button', TomSelectRemoveButton);
+  TomSelect.define('no_active_items', TomSelectNoActiveItems);
+
   const ApiC = new Api();
 
   const TabMenu = new Tab();
@@ -202,6 +210,30 @@ document.addEventListener('DOMContentLoaded', () => {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
       window.location.href = `make.php?format=schedulerReport&start=${from}&end=${to}`;
+    // PATCH ONBOARDING EMAIL
+    } else if (el.matches('[data-action="patch-onboarding-email"]')) {
+      const key = 'onboarding_email_body';
+      ApiC.patch(`${Model.Team}/current`, {
+        [key]: tinymce.get(key).getContent(),
+      });
+    } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
+      // reload the modal in case the users of the team have changed
+      reloadElement('sendOnboardingEmailModal')
+        .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
+        .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
+          plugins: ['remove_button', 'no_active_items'],
+        }));
+    } else if (el.matches('[data-action="send-onboarding-emails"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.patch(`${Model.Team}/current`, {
+        'action': Action.SendOnboardingEmails,
+        'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+          .map(option => parseInt(option.value, 10)),
+      }).then(response => {
+        if (response.ok) {
+          notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
+        }
+      });
     }
   });
 });

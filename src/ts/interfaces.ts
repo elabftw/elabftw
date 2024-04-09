@@ -69,6 +69,7 @@ enum Action {
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   Replace = 'replace',
+  SendOnboardingEmails = 'sendonboardingemails',
   Timestamp = 'timestamp',
   Unreference = 'unreference',
   UpdateMetadataField = 'updatemetadatafield',

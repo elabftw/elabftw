@@ -13,7 +13,6 @@ use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -22,7 +21,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 {
     private Email $Email;
 
-    private LoggerInterface $Logger;
+    private Logger $Logger;
 
     protected function setUp(): void
     {
@@ -64,6 +63,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(6, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo));
+        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo));
     }
 
     public function testSendEmail(): void

@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group, userid: userid});
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
-      ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
+      ApiC.patch(Model.Config, {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);
@@ -167,12 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params[input.name] = input.value;
-      ApiC.patch('config', params);
+      ApiC.patch(Model.Config, params);
     } else if (el.matches('[data-action="clear-password"]')) {
       const key = `${el.dataset.target}_password`;
       const params = {};
       params[key] = null;
-      ApiC.patch('config', params).then(() => {
+      ApiC.patch(Model.Config, params).then(() => {
         reloadElement(el.dataset.reload);
       });
     // PATCH POLICY - save or clear
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params[el.dataset.confname] = content;
-      ApiC.patch('config', params);
+      ApiC.patch(Model.Config, params);
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);
@@ -219,7 +219,26 @@ document.addEventListener('DOMContentLoaded', () => {
           id: el.dataset.id,
         }).then(() => reloadElement('idpsDiv'));
       }
+      // PATCH ONBOARDING EMAIL USERS
+    } else if (el.matches('[data-action="patch-onboarding-email"]')) {
+      const key = 'onboarding_email_body';
+      ApiC.patch(Model.Config, {
+        [key]: tinymce.get(key).getContent(),
+      });
+      // PATCH ONBOARDING EMAIL ADMINS
+    } else if (el.matches('[data-action="patch-onboarding-email-for-admins"]')) {
+      const key = 'onboarding_email_admins_body';
+      ApiC.patch(Model.Config, {
+        [key]: tinymce.get(key).getContent(),
+      });
     }
+  });
+
+  /**
+   * Onboarding email for admins
+   */
+  (document.getElementById('onboarding_email_different_for_admins')).addEventListener('change', () => {
+    document.getElementById('onboarding-email-for-admins').toggleAttribute('hidden');
   });
 
   function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {

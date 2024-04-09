@@ -20,7 +20,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Config= Config::getConfig();
+        $this->Config = Config::getConfig();
         $this->setupValues = $this->Config->configArr;
     }
 

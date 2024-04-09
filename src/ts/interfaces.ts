@@ -72,6 +72,7 @@ enum Action {
   Replace = 'replace',
   RequestAction = 'requestaction',
   Sign = 'sign',
+  SendOnboardingEmails = 'sendonboardingemails',
   Timestamp = 'timestamp',
   Unreference = 'unreference',
   UpdateMetadataField = 'updatemetadatafield',

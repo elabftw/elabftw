@@ -22,4 +22,5 @@ enum Notifications: int
     case PdfAppendmentFailed = 50;
     case PdfGenericError = 60;
     case NewVersionInstalled = 70;
+    case OnboardingEmail = 80;
 }

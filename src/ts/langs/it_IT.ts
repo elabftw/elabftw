@@ -21,6 +21,7 @@ const t = {
     "not-set": "Not set",
     "nothing-selected": "Nessuna selezione!",
     "now": "Now",
+    "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Attendere, prego…",
     "replace-edited-file": "Si vuole rimpiazzare il file sul server con questo?",
     "request-filename": "Inserire il nome del file",

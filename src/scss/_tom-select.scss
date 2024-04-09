@@ -1,0 +1,16 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Marcel Bolten <github@marcelbolten.de>
+ * @copyright 2024 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+ @import 'tom-select/dist/scss/tom-select.bootstrap4';
+
+.focus .ts-control {
+    border-color: $elabblue;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+    outline: 0;
+}

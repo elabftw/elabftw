@@ -24,10 +24,10 @@ class TeamsHelper
     }
 
     /**
-     * Return the group int that will be assigned to a new user in a team
-     * 1 = sysadmin if it's the first user ever
-     * 2 = admin for first user in a team
-     * 4 = normal user
+     * Return the usergroup that will be assigned to a new user in a team
+     * Sysadmin if it's the first user ever
+     * Admin for first user in a team
+     * Normal user
      */
     public function getGroup(): Usergroup
     {

@@ -18,9 +18,16 @@ final class TeamParam extends ContentParams
     {
         return match ($this->target) {
             'name', 'orgid', 'link_name' => parent::getContent(),
-            'announcement' => $this->getNullableContent(),
+            'announcement',
+            'onboarding_email_subject',
+            'onboarding_email_body' => $this->getNullableContent(),
             'common_template', 'common_template_md' => $this->getBody(),
-            'user_create_tag', 'force_exp_tpl', 'do_force_canread', 'do_force_canwrite', 'visible' => parent::getBinary(),
+            'user_create_tag',
+            'force_exp_tpl',
+            'do_force_canread',
+            'do_force_canwrite',
+            'visible',
+            'onboarding_email_active' => parent::getBinary(),
             'link_href' => $this->getUrl(),
             'force_canread', 'force_canwrite' => Check::visibility($this->content),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),

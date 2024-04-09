@@ -47,7 +47,8 @@
     "twig/intl-extra": "^3.3",
     "symfony/yaml": "^6.2",
     "fakerphp/faker": "^1.21",
-    "paragonie/constant_time_encoding": "^2.6"
+    "paragonie/constant_time_encoding": "^2.6",
+    "stevebauman/hypertext": "^1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

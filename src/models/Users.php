@@ -25,6 +25,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\UserCreated;
@@ -164,13 +165,23 @@ class Users implements RestInterface
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);
+        // only send onboarding emails for new teams when user is validated
+        if ($isValidated) {
+            // do we send an email for the instance
+            if ($Config->configArr['onboarding_email_active'] === '1') {
+                $isAdmin = $usergroup === Usergroup::Admin || $usergroup === Usergroup::Sysadmin;
+                (new OnboardingEmail(-1, $isAdmin))->create($userid);
+            }
+            // send email for each team
+            $Users2Teams->sendOnboardingEmailOfTeams = true;
+        }
         $Users2Teams->addUserToTeams(
             $userid,
             array_column($teams, 'id'),
             // transform Sysadmin to Admin because users2teams.groups_id is 2 (Admin) or 4 (User), but never 1 (Sysadmin)
             $usergroup === Usergroup::Sysadmin
-                ? Usergroup::Admin->value
-                : $usergroup->value,
+                ? Usergroup::Admin
+                : $usergroup,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
@@ -336,7 +347,11 @@ class Users implements RestInterface
                     if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
+                    $Users2Teams = new Users2Teams($this->requester);
+                    if ($this->userData['validated']) {
+                        $Users2Teams->sendOnboardingEmailOfTeams = true;
+                    }
+                    $Users2Teams->create($this->userData['userid'], $team);
                 }
             )(),
             Action::CreateSigkeys => (new SignatureHelper($this))->create(SignatureKeys::generate((string) $params['sig_passphrase'])),
@@ -619,6 +634,7 @@ class Users implements RestInterface
         $this->Db->execute($req);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
+        $this->sendOnboardingEmailsAfterValidation();
         return $this->readOne();
     }
 
@@ -649,6 +665,21 @@ class Users implements RestInterface
         }
         foreach ($admins as $admin) {
             $Notifications->create((int) $admin);
+        }
+    }
+
+    private function sendOnboardingEmailsAfterValidation(): void
+    {
+        // do we send an eamil for the instance
+        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            (new OnboardingEmail(-1, $this->isAdmin))->create($this->userData['userid']);
+        }
+
+        // Check setting for each team individually
+        foreach (array_column($this->userData['teams'], 'id') as $teamId) {
+            if ((new Teams($this))->readOne()['onboarding_email_active'] === 1) {
+                (new OnboardingEmail($teamId))->create($this->userData['userid']);
+            }
         }
     }
 }

@@ -28,6 +28,7 @@ enum Action: string
     case Pin = 'pin';
     case Replace = 'replace';
     case Sign = 'sign';
+    case SendOnboardingEmails = 'sendonboardingemails';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';

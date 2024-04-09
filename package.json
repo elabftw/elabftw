@@ -44,6 +44,7 @@
     "sass": "^1.69.5",
     "terser-webpack-plugin": "^5.3.10",
     "tinymce": "^6.8.2",
+    "tom-select": "^2.3.1",
     "ts-loader": "^9.5.1",
     "typescript": "5.2.2",
     "webpack": "^5.90.0",

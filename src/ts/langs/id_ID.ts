@@ -21,6 +21,7 @@ const t = {
     "not-set": "Tidak diatur",
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Sekarang",
+    "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Mohon tunggu…",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",

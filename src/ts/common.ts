@@ -8,7 +8,6 @@
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
-import 'bootstrap-select';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,

@@ -21,7 +21,6 @@ $theme-colors: (
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
 @import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';

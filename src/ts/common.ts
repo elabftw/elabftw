@@ -23,6 +23,7 @@ import {
   reloadElement,
   replaceWithTitle,
   togglePlusIcon,
+  TomSelect,
 } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -167,6 +168,17 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // tom-select for team selection on login and register page
+  ['init_team_select', 'team'].forEach(id =>{
+    if (document.getElementById(id)) {
+      new TomSelect(`#${id}`, {
+        plugins: [
+          'dropdown_input',
+          'no_active_items',
+        ],
+      });
+    }
+  });
 
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility

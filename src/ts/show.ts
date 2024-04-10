@@ -5,7 +5,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
+import {
+  getCheckedBoxes,
+  getEntity,
+  notif,
+  permissionsToJson,
+  reloadElement,
+  reloadEntitiesShow,
+  TomSelect,
+} from './misc';
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
@@ -405,4 +413,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('isfavtagsOpen') === '1') {
     FavTagC.toggle();
   }
+
+  new TomSelect('#tagFilter', {
+    plugins: {
+      checkbox_options: {
+        checkedClassNames: ['ts-checked'],
+        uncheckedClassNames: ['ts-unchecked'],
+      },
+      clear_button: {},
+      dropdown_input: {},
+      no_active_items: {},
+      remove_button: {},
+    },
+  });
 });

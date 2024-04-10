@@ -46,7 +46,7 @@
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group mx-auto col-md-4'>
         <label for='init_team_select'>{{ 'Select a team'|trans }}</label>
-        <select required name='team_id' class='form-control selectpicker' id='init_team_select' data-show-subtext='true' data-live-search='true'>
+        <select required name='team_id' class='form-control' id='init_team_select' autocomplete='off'>
           {% for team in teamsArr|filter(v => v.visible == 1) %}
             <option value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}

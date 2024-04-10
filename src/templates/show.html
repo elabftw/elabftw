@@ -139,11 +139,18 @@
 
       {# SEARCH WITH TAG #}
       {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+        <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
       {%- endif %}
-      <select multiple name='tags[]' class='form-control mr-1 mb-2 selectpicker' data-show-subtext='true' data-none-selected-text='{{ 'Tags'|trans }}' data-live-search='true' data-style='' data-style-base='form-control' data-showtick='true' data-actions-box='true'>
+      <select
+        id='tagFilter'
+        multiple
+        name='tags[]'
+        class='form-control mr-1 mb-2 '
+        placeholder='{{ 'Tags'|trans }}'
+      >
+        <option value='' disabled >{{ 'Tags'|trans }}</option>
         {% for tag in tagsArrForSelect %}
-          <option value='{{ tag.tag|e('html_attr') }}'{{ tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
+          <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
         {% endfor %}
       </select>
       {# ARCHIVED filter #}

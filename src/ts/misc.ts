@@ -256,7 +256,7 @@ export function makeSortableGreatAgain(): void {
 
 export function getCheckedBoxes(): Array<CheckableItem> {
   const checkedBoxes = [];
-  $('.item input[type=checkbox]:checked').each(function() {
+  $('.entity input[type=checkbox]:checked').each(function() {
     checkedBoxes.push({
       id: parseInt($(this).data('id')),
       // the randomid is used to get the parent container and hide it when delete

@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // we want to know if the newly applied limit actually brought new items
       // because if not, we disable the button
       // so simply count them
-      const previousNumber = document.querySelectorAll('.item').length;
+      const previousNumber = document.querySelectorAll('.entity').length;
       // this will be 0 if the button has not been clicked yet
       const queryLimit = getParamNum('limit');
       const usualLimit = parseInt(about.limit, 10);
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // expand and select what was expanded and selected
         setExpandedAndSelectedEntities();
         // remove Load more button if no new entries appeared
-        const newNumber = document.querySelectorAll('.item').length;
+        const newNumber = document.querySelectorAll('.entity').length;
         if (previousNumber === newNumber) {
           document.getElementById('loadMoreBtn').remove();
         }
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.item').remove());
+      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.entity').remove());
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
@@ -280,9 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       if ((el as HTMLInputElement).checked) {
-        (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+        (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
-        (el.closest('.item') as HTMLElement).style.backgroundColor = '';
+        (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
 
     // EXPAND ALL
@@ -310,9 +310,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="select-all-entities"]')) {
       event.preventDefault();
       // check all boxes and set background color
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = true;
-        (box.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       });
       // show advanced options and withSelected menu
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
@@ -322,9 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // UNSELECT ALL CHECKBOXES
     } else if (el.matches('[data-action="unselect-all-entities"]')) {
       event.preventDefault();
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = false;
-        (box.closest('.item') as HTMLElement).style.backgroundColor = '';
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
       });
       // hide menu
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
@@ -334,13 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // INVERT SELECTION
     } else if (el.matches('[data-action="invert-entities-selection"]')) {
       event.preventDefault();
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = !(box as HTMLInputElement).checked;
         let newBgColor = '';
         if ((box as HTMLInputElement).checked) {
           newBgColor = bgColor;
         }
-        (box.closest('.item') as HTMLElement).style.backgroundColor = newBgColor;
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
 

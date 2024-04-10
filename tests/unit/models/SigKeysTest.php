@@ -10,7 +10,6 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
 
 class SigKeysTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,8 +33,6 @@ class SigKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->SigKeys->readOne());
         $this->assertIsArray($this->SigKeys->readAll());
         $this->assertTrue($this->SigKeys->touch());
-        $this->expectException(ImproperActionException::class);
-        $this->SigKeys->destroy();
     }
 
     public function testPatch(): void

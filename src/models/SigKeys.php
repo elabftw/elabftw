@@ -13,6 +13,7 @@ use Elabftw\AuditEvent\SignatureKeysCreated;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -28,9 +29,12 @@ class SigKeys implements RestInterface
 
     private Db $Db;
 
+    private int $userid;
+
     public function __construct(private Users $Users, public ?int $id = null)
     {
         $this->Db = Db::getConnection();
+        $this->userid = $this->Users->userData['userid'] ?? throw new ImproperActionException('Invalid userid!');
         $this->setId($id);
     }
 
@@ -38,17 +42,16 @@ class SigKeys implements RestInterface
     {
         $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException('No passphrase provided!'));
 
-        $this->archiveAll();
+        $this->destroy();
         $sql = 'INSERT INTO sig_keys (pubkey, privkey, userid) VALUES (:pubkey, :privkey, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':pubkey', $key->serializePk());
-        $req->bindValue(':privkey', $key->serializeSk());
-        // use requester here: one can only impact their own account for signature keys
-        $req->bindParam(':userid', $this->Users->requester->userid);
+        $req->bindValue(':pubkey', $key->serializePk(), PDO::PARAM_STR);
+        $req->bindValue(':privkey', $key->serializeSk(), PDO::PARAM_STR);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $res = $req->execute();
         $keyId = $this->Db->lastInsertId();
         if ($res) {
-            AuditLogs::create(new SignatureKeysCreated($key->getIdHex(), $this->Users->userData['userid'], $this->Users->userData['userid']));
+            AuditLogs::create(new SignatureKeysCreated($key->getIdHex(), $this->userid, $this->userid));
         }
         return $keyId;
     }
@@ -64,7 +67,7 @@ class SigKeys implements RestInterface
 
     public function getPage(): string
     {
-        return 'api/v2/sig_keys';
+        return sprintf('api/v2/%s/', ApiEndpoint::SigKeys->value);
     }
 
     /**
@@ -75,7 +78,7 @@ class SigKeys implements RestInterface
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
             FROM sig_keys WHERE userid = :userid ORDER BY state ASC';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -92,29 +95,24 @@ class SigKeys implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    /**
+     * Make all existing keys inactive (state:archived) for that user
+     */
     public function destroy(): bool
     {
-        throw new ImproperActionException('No delete action for signature keys.');
+        $sql = 'UPDATE sig_keys SET state = :state WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Archived->value, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     public function touch(): bool
     {
         $sql = 'UPDATE sig_keys SET last_used_at = NOW() WHERE userid = :userid AND state = :state LIMIT 1';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Make all existing keys inactive (state:archived) for that user
-     */
-    private function archiveAll(): bool
-    {
-        $sql = 'UPDATE sig_keys SET state = :state WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', State::Archived->value, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

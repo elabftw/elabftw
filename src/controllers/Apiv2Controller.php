@@ -31,6 +31,7 @@ use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\RequestActions;
@@ -281,7 +282,7 @@ class Apiv2Controller extends AbstractApiController
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, request_actions, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {
@@ -291,8 +292,9 @@ class Apiv2Controller extends AbstractApiController
                 'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
                 'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
                 'items_status' => new ItemsStatus($this->Model, $this->subId),
+                'items_categories' => new ItemsTypes($this->Users, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
+                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
             };
         }
         if ($this->Model instanceof Users) {

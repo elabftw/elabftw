@@ -48,7 +48,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $meaningArr = array();
 
-    protected array $requestActionArr = array();
+    protected array $requestableActionArr = array();
 
     protected array $templatesArr = array();
 
@@ -62,7 +62,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
-        $this->requestActionArr = RequestableAction::getAssociativeArray();
+        $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
@@ -205,7 +205,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
-            'requestActionArr' => $this->requestActionArr,
+            'requestableActionArr' => $this->requestableActionArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -266,7 +266,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamTagsArr' => $TeamTags->readAll(),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
-            'requestActionArr' => $this->requestActionArr,
+            'requestableActionArr' => $this->requestableActionArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

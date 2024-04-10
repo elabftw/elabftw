@@ -49,7 +49,9 @@ class RequestActions implements RestInterface
     {
         return array_map(function ($action) {
             $Requester = new Users($action['requester_userid']);
-            $action['requester_firstname'] = $Requester->userData['firstname'];
+            $action['requester_fullname'] = $Requester->userData['fullname'];
+            $Target = new Users($action['target_userid']);
+            $action['target_fullname'] = $Target->userData['fullname'];
             $action['action'] = RequestableAction::from($action['action'])->name;
             return $action;
         }, $this->readAll());

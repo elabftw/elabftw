@@ -12,7 +12,7 @@
         {# SELECT ACTION #}
         <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
         <select id='requestActionActionSelect' class='form-control'>
-          {% for value, text in requestActionArr|sort %}
+          {% for value, text in requestableActionArr|sort %}
             <option value='{{ value }}'>{{ text }}</option>
           {% endfor %}
         </select>

@@ -10,6 +10,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
@@ -65,7 +66,13 @@ class Uploads implements RestInterface
      */
     public function create(CreateUploadParamsInterface $params): int
     {
-        $this->Entity->canOrExplode('write');
+        // by default we need write access to an entity to upload files
+        $rw = 'write';
+        // but timestamping/sign only needs read access
+        if ($params instanceof CreateImmutableArchivedUpload) {
+            $rw = 'read';
+        }
+        $this->Entity->canOrExplode($rw);
 
         // original file name
         $realName = $params->getFilename();

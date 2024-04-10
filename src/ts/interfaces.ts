@@ -52,7 +52,6 @@ enum Method {
 enum Action {
   Create = 'create',
   CreateFromString = 'createfromstring',
-  CreateSigkeys = 'createsigkeys',
   Read = 'read',
   Update = 'update',
   Destroy = 'destroy',
@@ -93,6 +92,7 @@ enum Model {
   ExperimentsCategories = 'experiments_categories',
   ExperimentsStatus = 'experiments_status',
   ExtraFieldsKeys = 'extra_fields_keys',
+  Sigkeys = 'sig_keys',
   Step = 'steps',
   Tag = 'tags',
   Team = 'teams',
@@ -129,10 +129,10 @@ enum Target {
   Member = 'member',
   Metadata = 'metadata',
   MetadataField = 'metadatafield',
+  Passphrase = 'passphrase',
   Rating = 'rating',
   RealName = 'real_name',
   Sigkey = 'sigkeys',
-  Sigpassphrase = 'sig_passphrase',
   Title = 'title',
   UserId = 'userid',
 }

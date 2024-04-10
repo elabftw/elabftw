@@ -10,15 +10,11 @@
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
-use Elabftw\AuditEvent\SignatureKeysCreated;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\SignatureKeys;
+use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Meaning;
-use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
-use function pack;
 
 use ParagonIE\ConstantTime\Base64;
 use function sodium_crypto_generichash;
@@ -32,45 +28,20 @@ class SignatureHelper
 {
     public const UNTRUSTED_COMMENT_PREFIX = 'untrusted comment: ';
 
-    // ed25519
-    public const SIGNATURE_ALGO = 'Ed';
+    public const REGEX = '#^' . self::UNTRUSTED_COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
 
     private const TRUSTED_COMMENT_PREFIX = 'trusted comment: ';
 
     // hashed DSA: we use Ed25519ph from https://datatracker.ietf.org/doc/html/rfc8032#section-5.1
     private const HASHED_DSA = 'ED';
 
-    // our key derivation algo: scrypt
-    private const KDF_ALGO = 'Sc';
-
-    // our checksum algo: blake2
-    private const CKSUM_ALGO = 'B2';
-
-    private Db $Db;
-
     public function __construct(private Users $Users)
     {
-        $this->Db = Db::getConnection();
-    }
-
-    public function create(SignatureKeys $key): bool
-    {
-        $sql = 'UPDATE users SET sig_pubkey = :sig_pubkey, sig_privkey = :sig_privkey WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':sig_pubkey', $this::serializePk($key));
-        $req->bindValue(':sig_privkey', $this::serializeSk($key));
-        // use requester here: one can only impact their own account for signature keys
-        $req->bindParam(':userid', $this->Users->requester->userid);
-        $res = $req->execute();
-        if ($res) {
-            AuditLogs::create(new SignatureKeysCreated($key->getIdHex(), $this->Users->userData['userid'], $this->Users->userData['userid']));
-        }
-        return $res;
     }
 
     public function serializeSignature(string $privkey, string $passphrase, string $message, Meaning $meaning): string
     {
-        $Key = SignatureKeys::deserialize($privkey, $passphrase);
+        $Key = MinisignKeys::deserialize($privkey, $passphrase);
         // because we use Ed25519ph (pre-hashed), we hash the message before signing it
         $signature = sodium_crypto_sign_detached(
             sodium_crypto_generichash($message, '', SODIUM_CRYPTO_GENERICHASH_BYTES_MAX),
@@ -103,44 +74,5 @@ class SignatureHelper
             Base64::encode(self::HASHED_DSA . $Key->id . $signature) . "\n" .
             self::TRUSTED_COMMENT_PREFIX . $trustedCommentJson . "\n" .
             Base64::encode($globalSignature) . "\n";
-    }
-
-    /**
-     * Secret key format https://jedisct1.github.io/minisign/#secret-key-format
-     * untrusted comment: <arbitrary text>
-     * base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> ||
-     * <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
-     */
-    public static function serializeSk(SignatureKeys $key): string
-    {
-        $firstLine = sprintf(
-            "%selabftw/%d: encrypted secret key %s\n",
-            self::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
-            $key->getIdHex(),
-        );
-        $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $key->salt;
-        $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE) . "\0\0\0\0";
-        $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE) . "\0\0\0\0";
-        $checksum = sodium_crypto_generichash(self::SIGNATURE_ALGO . $key->id . $key->priv);
-        $toXor = $key->id . $key->priv . $checksum;
-        $toEncode .= $key->derivedKey ^ $toXor;
-        return $firstLine . Base64::encode($toEncode) . "\n";
-    }
-
-    /**
-     * Public key format https://jedisct1.github.io/minisign/#public-key-format
-     * untrusted comment: <arbitrary text>
-     * base64(<signature_algorithm> || <key_id> || <public_key>)
-     */
-    private static function serializePk(SignatureKeys $key): string
-    {
-        return sprintf(
-            "%selabftw/%d: public key %s\n%s\n",
-            self::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
-            $key->getIdHex(),
-            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $key->id . $key->pub),
-        );
     }
 }

@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="sign-entity"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, sig_passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
         reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
           relativeMoment();
         });

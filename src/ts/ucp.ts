@@ -113,7 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-      ApiC.patch(`${Model.User}/me`, {action: Action.CreateSigkeys, sig_passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
+      ApiC.post(`${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
+    // REGENERATE SIGKEY
+    } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
+      ApiC.patch(`${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
     // DOWNLOAD SIG KEY (pub or priv)
     } else if (el.matches('[data-action="download-sigkey"]')) {
       ApiC.getJson(`${Model.User}/me`).then(user => {

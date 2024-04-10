@@ -36,6 +36,7 @@ use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\SigKeys;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -249,6 +250,7 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->Users, $this->id),
+            ApiEndpoint::SigKeys => new SigKeys($this->Users, $this->id),
             ApiEndpoint::TeamTags => new TeamTags($this->Users, $this->id),
             ApiEndpoint::Teams => new Teams($this->Users, $this->id),
             ApiEndpoint::Todolist => new Todolist($this->Users->userData['userid'], $this->id),

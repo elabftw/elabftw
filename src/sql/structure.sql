@@ -721,6 +721,18 @@ CREATE TABLE `items_status` (
 
 -- --------------------------------------------------------
 
+CREATE TABLE IF NOT EXISTS `sig_keys` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pubkey` TEXT NULL DEFAULT NULL,
+  `privkey` TEXT NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `userid` int UNSIGNED NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `type` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+);
+
 --
 -- Table structure for table `tags`
 --
@@ -951,8 +963,6 @@ CREATE TABLE `users` (
   `auth_service` tinyint UNSIGNED NULL DEFAULT NULL,
   `valid_until` date NULL DEFAULT NULL,
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `sig_pubkey` TEXT NULL DEFAULT NULL,
-  `sig_privkey` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1161,6 +1171,12 @@ ALTER TABLE `experiments_categories`
   ADD KEY `fk_experiments_categories_teams_team_id` (`team`);
 
 --
+-- Indexes for table `sig_keys`
+--
+ALTER TABLE `sig_keys`
+  ADD KEY `fk_sig_keys_users_userid` (`userid`);
+
+--
 -- Indexes for table `tags`
 --
 ALTER TABLE `tags`
@@ -1326,6 +1342,12 @@ ALTER TABLE `items_status`
   ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `experiments_categories`
   ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `sig_keys`
+--
+ALTER TABLE `sig_keys`
+  ADD CONSTRAINT `fk_sig_keys_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tags`

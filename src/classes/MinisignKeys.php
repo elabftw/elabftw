@@ -23,13 +23,25 @@ use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
 use function sodium_memzero;
 use function unpack;
 
-class SignatureKeys
+/**
+ * This class is a representation of a minisign key
+ * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
+ * Inspired by the code from https://github.com/soatok/minisign-php by Soatok Dreamseeker
+ */
+class MinisignKeys
 {
+    // ed25519
+    private const SIGNATURE_ALGO = 'Ed';
+
     private const KEYID_BYTES = 8;
 
-    private const REGEX = '#^' . SignatureHelper::UNTRUSTED_COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
-
     private const KDF_LENGTH = 104;
+
+    // our key derivation algo: scrypt
+    private const KDF_ALGO = 'Sc';
+
+    // our checksum algo: blake2
+    private const CKSUM_ALGO = 'B2';
 
     public function __construct(
         public readonly string $signatureAlgo,
@@ -70,7 +82,7 @@ class SignatureKeys
         /** @var non-empty-string */
         $priv = sodium_crypto_sign_secretkey($keypair);
 
-        return new self(SignatureHelper::SIGNATURE_ALGO, $id, $priv, $pub, $salt, $derivedKey);
+        return new self(self::SIGNATURE_ALGO, $id, $priv, $pub, $salt, $derivedKey);
     }
 
     /**
@@ -81,7 +93,7 @@ class SignatureKeys
     public static function deserialize(string $secretKey, string $passphrase): self
     {
         $sk = array();
-        if (!preg_match(self::REGEX, $secretKey, $sk)) {
+        if (!preg_match(SignatureHelper::REGEX, $secretKey, $sk)) {
             throw new ImproperActionException(_('Invalid secret key format!'));
         }
         $decoded = Base64::decode($sk[2]);
@@ -118,7 +130,46 @@ class SignatureKeys
     }
 
     /**
-     * This function is responsible from generating a key derived from a passphrase.
+     * Secret key format https://jedisct1.github.io/minisign/#secret-key-format
+     * untrusted comment: <arbitrary text>
+     * base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> ||
+     * <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
+     */
+    public function serializeSk(): string
+    {
+        $firstLine = sprintf(
+            "%selabftw/%d: encrypted secret key %s\n",
+            SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
+            App::INSTALLED_VERSION_INT,
+            $this->getIdHex(),
+        );
+        $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $this->salt;
+        $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE) . "\0\0\0\0";
+        $toEncode .= pack('V', SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE) . "\0\0\0\0";
+        $checksum = sodium_crypto_generichash(self::SIGNATURE_ALGO . $this->id . $this->priv);
+        $toXor = $this->id . $this->priv . $checksum;
+        $toEncode .= $this->derivedKey ^ $toXor;
+        return $firstLine . Base64::encode($toEncode) . "\n";
+    }
+
+    /**
+     * Public key format https://jedisct1.github.io/minisign/#public-key-format
+     * untrusted comment: <arbitrary text>
+     * base64(<signature_algorithm> || <key_id> || <public_key>)
+     */
+    public function serializePk(): string
+    {
+        return sprintf(
+            "%selabftw/%d: public key %s\n%s\n",
+            SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
+            App::INSTALLED_VERSION_INT,
+            $this->getIdHex(),
+            Base64::encodeUnpadded(self::SIGNATURE_ALGO . $this->id . $this->pub),
+        );
+    }
+
+    /**
+     * This function is responsible for generating a key derived from a passphrase.
      * It allows encrypting the private key with a passphrase.
      */
     private static function kdf(string $passphrase, string $salt, int $kdfOpsLimit, int $kdfMemLimit): string

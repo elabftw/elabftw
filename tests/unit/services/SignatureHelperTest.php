@@ -9,36 +9,40 @@
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\SignatureKeys;
+use Elabftw\Elabftw\MinisignKeys;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\SigKeys;
 use Elabftw\Models\Users;
 
-class SignatureKeysTest extends \PHPUnit\Framework\TestCase
+class SignatureHelperTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGenerate(): void
+    public function testSerializeSignature(): void
     {
         $passphrase = 'correct horse battery staple';
         $message = "Don't push me cause I'm close to the edge
             I'm trying not to lose my head
             It's like a jungle sometimes
             It makes me wonder how I keep from goin' under";
-        $Key = SignatureKeys::generate($passphrase);
-        $SignatureHelper = new SignatureHelper(new Users(1, 1));
-        $this->assertTrue($SignatureHelper->create($Key));
-        $privkey = $SignatureHelper->serializeSk($Key);
-        $this->assertIsString($SignatureHelper->serializeSignature($privkey, $passphrase, $message, Meaning::Approval));
-        $this->assertInstanceOf(SignatureKeys::class, $Key);
+        $user = new Users(1, 1);
+        $SigKeys = new SigKeys($user);
+        $keyId = $SigKeys->postAction(Action::Create, array('passphrase' => $passphrase));
+        $this->assertIsInt($keyId);
+        $SigKeys->setId($keyId);
+        $key = $SigKeys->readOne();
+        $SignatureHelper = new SignatureHelper($user);
+        $this->assertIsString($SignatureHelper->serializeSignature($key['privkey'], $passphrase, $message, Meaning::Approval));
         $this->expectException(ImproperActionException::class);
         $SignatureHelper->serializeSignature('invalid key', $passphrase, $message, Meaning::Authorship);
     }
 
     public function testInvalidPassphrase(): void
     {
-        $Key = SignatureKeys::generate('Tr0ub4dor&3');
-        $privkey = SignatureHelper::serializeSk($Key);
+        $Key = MinisignKeys::generate('Tr0ub4dor&3');
+        $privkey = $Key->serializeSk();
         $SignatureHelper = new SignatureHelper(new Users(1, 1));
         $this->expectException(ImproperActionException::class);
-        $this->assertIsString($SignatureHelper->serializeSignature($privkey, 'wrong passphrase', 'a', Meaning::Approval));
+        $SignatureHelper->serializeSignature($privkey, 'wrong passphrase', 'a', Meaning::Approval);
     }
 }

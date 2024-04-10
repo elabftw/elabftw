@@ -14,11 +14,11 @@ use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\SignatureKeys;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -33,7 +33,6 @@ use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
-use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
@@ -238,14 +237,16 @@ class Users implements RestInterface
             users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.orcid, users.auth_service, users.sig_pubkey
+            users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
             FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             AND (users.archived = 0' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         if ($teamId > 0) {
             $req->bindValue(':team', $teamId);
         }
@@ -354,7 +355,6 @@ class Users implements RestInterface
                     $Users2Teams->create($this->userData['userid'], $team);
                 }
             )(),
-            Action::CreateSigkeys => (new SignatureHelper($this))->create(SignatureKeys::generate((string) $params['sig_passphrase'])),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
@@ -643,11 +643,14 @@ class Users implements RestInterface
      */
     private function readOneFull(): array
     {
-        $sql = "SELECT users.*,
+        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users WHERE users.userid = :userid";
+            FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
+            WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->userData = $this->Db->fetch($req);

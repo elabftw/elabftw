@@ -1,6 +1,16 @@
 -- schema 148
-ALTER TABLE users ADD sig_pubkey TEXT NULL DEFAULT NULL;
-ALTER TABLE users ADD sig_privkey TEXT NULL DEFAULT NULL;
+CREATE TABLE IF NOT EXISTS `sig_keys` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pubkey` TEXT NULL DEFAULT NULL,
+  `privkey` TEXT NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `userid` int UNSIGNED NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `type` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  KEY `fk_sig_keys_users_userid` (`userid`),
+  CONSTRAINT `fk_sig_keys_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE);
 ALTER TABLE experiments_comments ADD immutable TINYINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE items_comments ADD immutable TINYINT UNSIGNED NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS `experiments_request_actions` (

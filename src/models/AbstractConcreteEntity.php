@@ -54,7 +54,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $this->canOrExplode('read');
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
-            Action::Sign => $this->sign($params['sig_passphrase'], Meaning::from((int) $params['meaning'])),
+            Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
@@ -129,6 +129,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $Maker = new MakeFullJson($this, array($this->id));
         $message= $Maker->getFileContent();
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        $SigKeys = new SigKeys($this->Users);
+        $SigKeys->touch();
         $Comments = new ImmutableComments($this);
         $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $Comments->postAction(Action::Create, array('comment' => $comment));

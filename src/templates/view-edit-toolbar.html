@@ -115,7 +115,6 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='toggle-modal' data-target='requestActionModal' data-dismiss='modal' class='btn btn-secondary'>{{ 'Request signature'|trans }}</button>
         {% if App.Users.userData.sig_privkey %}
           <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
         {% else %}
@@ -227,6 +226,11 @@
       </button>
     {% endif %}
 
+    {# REQUEST ACTION #}
+    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
+      <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+    </button>
+
     <div class='vertical-separator'></div>
     {# MORE OPTIONS #}
     <div class='dropdown'>
@@ -239,8 +243,6 @@
         {% if Entity.type == 'items' %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
         {% endif %}
-        {# REQUEST ACTION #}
-        <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='requestActionModal'><i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i> {{ 'Request action'|trans }}</button>
         {# TRANSFER OWNERSHIP #}
         {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>

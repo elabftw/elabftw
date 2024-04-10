@@ -71,11 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // TIMESTAMP button in modal
     } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
       EntityC.timestamp(entity.id).then(() => {
-        reloadElement('isTimestampedByInfoDiv');
+        reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       });
 
     // BLOXBERG
-    } else if (el.matches('[data-action="bloxberg"]')) {
+    } else if (el.matches(`[data-action="${Action.Bloxberg}"]`)) {
       const overlay = document.createElement('div');
       overlay.id = 'loadingOverlay';
       const loading = document.createElement('p');
@@ -102,8 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
-        reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
+        // using reloadElements here doesn't work for relativeMoment
+        reloadElement('commentsDiv').then(() => {
           relativeMoment();
+          reloadElement('requestActionsDiv');
         });
       });
     // REQUEST ACTION
@@ -114,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Create,
         target_action: actionSelect.value,
         target_userid: userSelect.value,
-      });
+      }).then(() => reloadElement('requestActionsDiv'));
+    // SHOW ACTION
     } else if (el.matches('[data-action="show-action"]')) {
       const btn = document.getElementById(`actionButton-${el.dataset.target}`);
       btn.classList.add('border-danger');

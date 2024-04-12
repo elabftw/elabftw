@@ -155,7 +155,7 @@
   {# AUTHOR/OWNER HELPER #}
   <div class='col-md-5'>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block input-missing-label element-permitted-content: suppress errors from tom-select] -->
+      <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
     {%- endif %}
     <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label>
     <select
@@ -212,7 +212,7 @@
     <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
     <div class='input-group flex-nowrap'>
       {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable-block input-missing-label prefer-native-element: suppress errors from tom-select] -->
+        <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
       {%- endif %}
       <select
         aria-label='{{ 'Name of field'|trans }}'
@@ -227,6 +227,9 @@
           <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
         {% endfor %}
       </select>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+      {%- endif %}
       <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
       <input
         aria-label='{{ 'Value'|trans }}'

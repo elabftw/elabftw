@@ -113,12 +113,9 @@
     <div class='row mb-3'>
       <div class='col-md-3'>
         {# CATEGORY #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Filter by category'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block prefer-native-element input-missing-label: suppress errors from tom-select] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
           <select
             aria-label='Filter category'
@@ -138,12 +135,9 @@
 
       <div class='col-md-3'>
         {# ITEM LIST #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Select a resource'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block prefer-native-element input-missing-label: suppress errors from tom-select] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
           <select
             aria-label='Filter item'

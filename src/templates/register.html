@@ -38,7 +38,7 @@
         {# TEAM #}
         <div class='row'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label prefer-native-element: suppress error from tom-select] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <label for='team'>{{ 'Team'|trans }}</label>
           <select name='team' class='form-control' id='team' required autocomplete='off' placeholder='{{ 'Select a team'|trans }}' aria-label='{{ 'Team'|trans }}'>

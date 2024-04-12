@@ -139,7 +139,7 @@
 
       {# SEARCH WITH TAG #}
       {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+        <!-- [html-validate-disable prefer-native-element: suppress error from tom-select] -->
       {%- endif %}
       <select
         id='tagFilter'
@@ -153,6 +153,10 @@
           <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
         {% endfor %}
       </select>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-enable prefer-native-element: end suppress error from tom-select] -->
+      {%- endif %}
+
       {# ARCHIVED filter #}
       <div class='input-group mr-1 mb-2'>
         <div class='input-group-text'>

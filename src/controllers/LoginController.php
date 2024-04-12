@@ -172,6 +172,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
             return new RedirectResponse('/login.php');
         }
 
@@ -318,6 +319,10 @@ class LoginController implements ControllerInterface
                 array($this->App->Request->request->getInt('team_id')),
                 $this->App->Request->request->getString('teaminit_firstname'),
                 $this->App->Request->request->getString('teaminit_lastname'),
+                null,
+                false,
+                true,
+                $this->App->Session->get('teaminit_orgid'),
             );
             $this->App->Session->set('teaminit_done', true);
             // will display the appropriate message to user

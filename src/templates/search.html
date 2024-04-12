@@ -76,10 +76,10 @@
   {# EXPERIMENTS CATEGORIES #}
   <div class='col-md-4' id='experimentsCategoriesDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
     <label for='experimentsCategoriesSelect'>{{ 'And category is'|trans }}</label>
-    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category' name='expCatHelper'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('expCatHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -88,10 +88,10 @@
   {# RESOURCES CATEGORIES (items types) #}
   <div class='col-md-4' id='resourcesCategoriesDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
     <label for='resourcesCategoriesSelect'>{{ 'And category is'|trans }}</label>
-    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category' name='resCatHelper'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('resCatHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -100,10 +100,10 @@
   {# EXPERIMENTS STATUS #}
   <div class='col-md-4' id='experimentsStatusDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
     <label for='experimentsStatusSelect'>{{ 'And status is'|trans }}</label>
-    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
+    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status' name='expStatusHelper'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('expStatusHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -112,10 +112,10 @@
   {# RESOURCES STATUS #}
   <div class='col-md-4' id='resourcesStatusDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
     <label for='resourcesStatusSelect'>{{ 'And status is'|trans }}</label>
-    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
+    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status' name='resStatusHelper'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('resStatusHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}

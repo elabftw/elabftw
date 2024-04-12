@@ -89,7 +89,9 @@
       <select name='cat' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter category'|trans }}'>
         <option value=''>{{ 'Filter category'|trans }}</option>
         {% for category in categoryArr %}
-          <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+          <option value='{{ category.id }}'
+            {{- App.Request.query.get('cat') == category.id or (searchPage and (App.Request.query.get('expCatHelper') == category.title or App.Request.query.get('resCatHelper') == category.title)) ? ' selected' -}}
+          >
           {{ category.title }}</option>
         {% endfor %}
       </select>
@@ -98,7 +100,9 @@
       <select name='status' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter status'|trans }}'>
         <option value=''>{{ 'Filter status'|trans }}</option>
         {% for status in statusArr %}
-          <option value='{{ status.id }}'{{ App.Request.query.get('status') == status.id ? ' selected' }}>
+          <option value='{{ status.id }}'
+            {{- App.Request.query.get('status') == status.id or (searchPage and (App.Request.query.get('expStatusHelper') == status.title or App.Request.query.get('resStatusHelper') == status.title)) ? ' selected' -}}
+          >
           {{ status.title }}</option>
         {% endfor %}
       </select>

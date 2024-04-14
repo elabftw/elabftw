@@ -442,6 +442,11 @@ CREATE TABLE `items` (
   `book_users_can_in_past` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
+  `is_procurable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `proc_pack_qty` MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+  `proc_price_notax` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `proc_price_tax` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `proc_currency` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -666,6 +671,25 @@ CREATE TABLE `pin_items2users` (
   PRIMARY KEY (`users_id`,`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Table structure for table `procurement_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `procurement_requests` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `team` INT UNSIGNED NOT NULL,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `qty_ordered` INT UNSIGNED NOT NULL DEFAULT 1,
+    `qty_received` INT UNSIGNED NOT NULL DEFAULT 0,
+    `body` TEXT NULL DEFAULT NULL,
+    `quote` INT UNSIGNED NULL DEFAULT NULL,
+    `email_sent` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `email_sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `experiments_status`
@@ -1517,6 +1541,20 @@ ALTER TABLE `pin_items2users`
 ALTER TABLE `pin_items2users`
   ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `procurement_requests`
+--
+ALTER TABLE `procurement_requests`
+  ADD KEY `fk_teams_id_proc_team` (`team`),
+  ADD KEY `fk_items_id_entity_id` (`entity_id`);
+
+--
+-- Constraints for table `procurement_requests`
+--
+ALTER TABLE `procurement_requests`
+  ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

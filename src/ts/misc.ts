@@ -15,6 +15,12 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
+import TomSelect from 'tom-select/dist/esm/tom-select';
+import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
+import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin';
+import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin';
+import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin';
+import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -256,7 +262,7 @@ export function makeSortableGreatAgain(): void {
 
 export function getCheckedBoxes(): Array<CheckableItem> {
   const checkedBoxes = [];
-  $('.item input[type=checkbox]:checked').each(function() {
+  $('.entity input[type=checkbox]:checked').each(function() {
     checkedBoxes.push({
       id: parseInt($(this).data('id')),
       // the randomid is used to get the parent container and hide it when delete
@@ -552,3 +558,11 @@ export function replaceWithTitle(): void {
     });
   });
 }
+
+// bind used plugins to TomSelect
+TomSelect.define('checkbox_options', TomSelectCheckboxOptions);
+TomSelect.define('clear_button', TomSelectClearButton);
+TomSelect.define('dropdown_input', TomSelectDropdownInput);
+TomSelect.define('no_active_items', TomSelectNoActiveItems);
+TomSelect.define('remove_button', TomSelectRemoveButton);
+export { TomSelect };

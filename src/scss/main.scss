@@ -21,7 +21,6 @@ $theme-colors: (
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
 @import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';
@@ -389,7 +388,7 @@ button:disabled {
 }
 
 /* fix for big images uploaded in the text */
-.item .txt {
+.entity .txt {
     overflow: auto;
 }
 
@@ -570,8 +569,8 @@ tr:nth-child(odd) {
     }
 }
 
-/* ITEMS */
-.item {
+/* ENTITIES */
+.entity {
     background-color: $white;
     border: 1px solid $firstlevel;
     border-left: 6px solid var(--left-color);
@@ -1053,7 +1052,7 @@ the form-control fails to do that so we do the border ourselves */
         text-decoration: none !important;
     }
 
-    .item {
+    .entity {
         background-color: #fff;
         font-size: 14px;
         line-height: normal;

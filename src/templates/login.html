@@ -47,6 +47,7 @@
       <div class='form-group mx-auto col-md-4'>
         <label for='init_team_select'>{{ 'Select a team'|trans }}</label>
         <select required name='team_id' class='form-control' id='init_team_select' autocomplete='off'>
+          <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
           {% for team in teamsArr|filter(v => v.visible == 1) %}
             <option value='{{ team.id }}'>{{ team.name }}</option>
           {% endfor %}

@@ -70,7 +70,7 @@ class MakeReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        $allUsers = $this->Teams->Users->readFromQuery('');
+        $allUsers = $this->Teams->Users->readFromQuery('', includeArchived: true);
         foreach ($allUsers as $key => $user) {
             $UsersHelper = new UsersHelper((int) $user['userid']);
             // get the teams of user

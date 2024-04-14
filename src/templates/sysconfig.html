@@ -207,6 +207,7 @@
       </div>
     </div>
 
+    {% include 'filter-input-snippet.html' with {'target': 'teamsTableBody'} %}
     <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
       <thead>
         <tr>
@@ -217,7 +218,7 @@
           <th scope='col'>{{ 'Actions'|trans }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id='teamsTableBody'>
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
@@ -1044,6 +1045,7 @@
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='auditLogsTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     {# Logs are presented in a sortable table #}
+    {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
     <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
       <thead>
         <tr>

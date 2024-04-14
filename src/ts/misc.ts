@@ -553,8 +553,8 @@ export function replaceWithTitle(): void {
   });
 }
 
-export function saveStringAsFile(filename: string, content: string, contentType: string = 'text/plain;charset=utf-8'): void {
-  const blob = new Blob([content], {type: contentType});
+export async function saveStringAsFile(filename: string, content: string|Promise<string>, contentType: string = 'text/plain;charset=utf-8'): Promise<void> {
+  const blob = new Blob([await content], {type: contentType});
   const url = URL.createObjectURL(blob);
   // we create a link and click it
   const link = document.createElement('a');

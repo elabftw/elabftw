@@ -49,6 +49,14 @@ enum Method {
   DELETE = 'DELETE',
 }
 
+enum ProcurementState {
+  Pending = 1,
+  Validated = 2,
+  PartiallyReceived = 3,
+  Received = 4,
+  Archived = 5,
+}
+
 enum Action {
   Create = 'create',
   CreateFromString = 'createfromstring',
@@ -133,6 +141,7 @@ enum Target {
   Rating = 'rating',
   RealName = 'real_name',
   Sigkey = 'sigkeys',
+  State = 'state',
   Title = 'title',
   UserId = 'userid',
 }
@@ -150,6 +159,7 @@ export {
   EntityType,
   Method,
   Model,
+  ProcurementState,
   ResponseMsg,
   Target,
   Todoitem,

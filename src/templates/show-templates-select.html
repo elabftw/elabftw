@@ -10,14 +10,7 @@
       <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
     </div>
   </div>
-  <div class='input-group'>
-    <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' id='templatesFilterInput' class='form-control form-inline' />
-    <div class='input-group-append'>
-      <button data-action='clear-templates-search' class='btn btn-outline-secondary' type='button' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'>
-        <i class='fas fa-times fa-fw'></i>
-      </button>
-    </div>
-  </div>
+  {% include 'filter-input-snippet.html' with {'target': 'tplTableBody'} %}
 
   {# TODO: add aria-describedby #}
   <table id='tplTable' class='table' data-table-sort='true'>

@@ -34,6 +34,7 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
@@ -293,6 +294,7 @@ class Apiv2Controller extends AbstractApiController
                 'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
                 'items_status' => new ItemsStatus($this->Model, $this->subId),
                 'items_categories' => new ItemsTypes($this->Users, $this->subId),
+                'procurement_requests' => new ProcurementRequests($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
             };

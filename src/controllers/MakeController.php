@@ -24,6 +24,7 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
+use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
 use Elabftw\Make\MakeReport;
@@ -32,6 +33,7 @@ use Elabftw\Make\MakeStreamZip;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -67,6 +69,10 @@ class MakeController implements ControllerInterface
     {
         switch ($this->Request->query->get('format')) {
             case 'csv':
+                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
+                    $ProcurementRequests = new ProcurementRequests(new Teams($this->Users), 1);
+                    return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
+                }
                 $this->populateIdArr();
                 return $this->makeCsv();
 

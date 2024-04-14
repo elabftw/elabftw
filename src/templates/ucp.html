@@ -142,23 +142,23 @@
       <tbody class='bgnd-transparent'>
       <tr>
         <th scope='row' class='align-middle' style='font-weight:500;'>{{ 'Shortcut'|trans }}</td>
-        <td>
+        <td data-label='{{ 'Create'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_create' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Edit'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_edit' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Favorite tags'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_favorite' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_favorite }}' data-trigger='blur' data-model='users/me' data-target='sc_favorite' />
         </td>
 
-        <td>
+        <td data-label='{{ 'TODO list'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_todo' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Search'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_search' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_search }}' data-trigger='blur' data-model='users/me' data-target='sc_search' />
         </td>
       </tr>
@@ -455,11 +455,11 @@
     <tbody>
       {% for key in apiKeysArr %}
         <tr>
-          <td>{{ key.name }}</td>
-          <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
-          <td><span class='relative-moment' title='{{ key.created_at }}'></span></td>
-          <td><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
+          <td data-label='{{ 'Name'|trans }}'>{{ key.name }}</td>
+          <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
+          <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>
+          <td data-label='{{ 'Last used'|trans }}'><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
+          <td data-label='{{ 'Action'|trans }}'><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

@@ -547,6 +547,7 @@
 
     <button type='button' class='btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
+      {% include 'filter-input-snippet.html' with {'target': 'tagManagerTable'} %}
       <table class='table' aria-label='{{ 'Tags of the team'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
@@ -557,22 +558,22 @@
             <th scope='col'>{{ 'Delete'|trans }}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id='tagManagerTable'>
           {% for tag in tagsArr %}
             <tr>
-              <th scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
-              <td class='align-middle'>{{ tag.item_count }}</td>
-              <td>
+              <th data-label='{{ 'Tag'|trans }}' scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
+              <td data-label='{{ 'Occurence'|trans }}' class='align-middle'>{{ tag.item_count }}</td>
+              <td data-label='{{ 'Show tagged experiments'|trans }}'>
                 <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
-              <td>
+              <td data-label='{{ 'Show tagged items'|trans }}'>
                 <a title='{{ 'Show tagged items'|trans }}' aria-label='{{ 'Show tagged items'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}' class='btn hl-hover-gray lh-normal p-1 my-n1'>
                   <i class='fas fa-external-link-square-alt'></i>
                 </a>
               </td>
-              <td>
+              <td data-label='{{ 'Delete'|trans }}'>
                 <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
               </td>
             </tr>

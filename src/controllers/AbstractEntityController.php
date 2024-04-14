@@ -14,6 +14,7 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Currency;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\SearchType;
@@ -24,6 +25,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -50,6 +52,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $requestableActionArr = array();
 
+    protected array $currencyArr = array();
+
     protected array $templatesArr = array();
 
     protected array $teamGroupsFromUser = array();
@@ -63,6 +67,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
+        $this->currencyArr = Currency::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
@@ -186,13 +191,16 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $Teams = new Teams($this->Entity->Users);
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
+        $ProcurementRequests = new ProcurementRequests($Teams);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
@@ -245,12 +253,15 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamTags = new TeamTags($this->App->Users);
 
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
+        $ProcurementRequests = new ProcurementRequests($Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
+            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => $Metadata->getDisplayMainText(),

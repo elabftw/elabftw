@@ -66,6 +66,7 @@ trait TwigTrait
         $isInJsonArray = new TwigFilter('isInJsonArray', '\Elabftw\Elabftw\TwigFunctions::isInJsonArray', $filterOptions);
         $canToHuman = new TwigFilter('canToHuman', '\Elabftw\Elabftw\TwigFunctions::canToHuman', $filterOptions);
         $decrypt = new TwigFilter('decrypt', '\Elabftw\Elabftw\TwigFilters::decrypt', $filterOptions);
+        $toSymbol = new TwigFilter('toSymbol', '\Elabftw\Elabftw\TwigFilters::toSymbol', $filterOptions);
 
         // custom twig functions
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
@@ -101,6 +102,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($isInJsonArray);
         $TwigEnvironment->addFilter($canToHuman);
         $TwigEnvironment->addFilter($decrypt);
+        $TwigEnvironment->addFilter($toSymbol);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

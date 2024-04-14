@@ -5,12 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement, reloadElements, relativeMoment } from './misc';
+import { getEntity, reloadElement, reloadElements, relativeMoment, notifError } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
 import $ from 'jquery';
-import { Action } from './interfaces';
+import { Action, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -121,6 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="show-action"]')) {
       const btn = document.getElementById(`actionButton-${el.dataset.target}`);
       btn.classList.add('border-danger');
+    // CREATE PROCUREMENT REQUEST
+    } else if (el.matches('[data-action="create-procurement-request"]')) {
+      const input = (document.getElementById('procurementRequestQtyInput') as HTMLInputElement);
+      const qty = parseInt(input.value, 10);
+      // sanity check
+      if (qty < 1) {
+        notifError(new Error('Invalid quantity!'));
+        return;
+      }
+      ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
 
     // DO REQUEST ACTION
     } else if (el.matches('[data-action="do-requestable-action"]')) {

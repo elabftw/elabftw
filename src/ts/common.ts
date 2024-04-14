@@ -148,6 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
         original.classList.remove('font-italic');
       }
+      if (original.dataset.inputType === 'number') {
+        input.setAttribute('type', 'number');
+      }
       return true;
     },
     cancel : i18next.t('cancel'),
@@ -182,6 +185,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       (event.currentTarget as HTMLElement).closest('form').submit();
+    });
+  });
+
+  /**
+   * Add listeners for filter bar on top of a table
+   * The "filter" data attribute value is the id of the tbody element with rows to filter
+   */
+  document.querySelectorAll('input[data-filter]').forEach((input: HTMLInputElement) => {
+    const target = document.getElementById(input.dataset.filter);
+    let targetType = 'tr';
+    if (input.dataset.targetType === 'li') {
+      targetType = 'li';
+    }
+    // FIRST LISTENER is to filter the rows
+    input.addEventListener('keyup', () => {
+      target.querySelectorAll(`#${input.dataset.filter} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {
+        // show or hide the row if it matches the query
+        if (row.innerText.toLowerCase().includes(input.value)) {
+          row.removeAttribute('hidden');
+        } else {
+          row.setAttribute('hidden', '');
+        }
+      });
+    });
+    // SECOND LISTENER on the clear input button
+    input.nextElementSibling.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      target.querySelectorAll(`#${input.dataset.filter} ${targetType}`).forEach((row: HTMLTableRowElement) => {
+        row.removeAttribute('hidden');
+      });
     });
   });
 

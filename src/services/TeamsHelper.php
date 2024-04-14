@@ -72,18 +72,9 @@ class TeamsHelper
         return $this->getUserInTeam($userid)['groups_id'] <= Usergroup::Admin->value;
     }
 
-    /**
-     * @deprecated
-     */
     public function isUserInTeam(int $userid): bool
     {
-        $sql = 'SELECT `users_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return (bool) $req->fetchColumn();
+        return !empty($this->getUserInTeam($userid));
     }
 
     /**

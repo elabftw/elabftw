@@ -1168,6 +1168,10 @@ paths:
                     type: string
                     description: Current eLabFTW version
                     example: 4.8.0
+                  elabftw_version_int:
+                    type: integer
+                    description: Current eLabFTW version as an integer
+                    example: 50102
                   ts_balance:
                     type: integer
                     description: Number of timestamp tokens left

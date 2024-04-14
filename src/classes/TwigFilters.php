@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Enums\Currency;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -153,6 +154,11 @@ class TwigFilters
             $final .= '</div>';
         }
         return $final . $Metadata->getAnyContent();
+    }
+
+    public static function toSymbol(int $currency): string
+    {
+        return Currency::from($currency)->toSymbol();
     }
 
     public static function decrypt(?string $encrypted): string

@@ -124,6 +124,30 @@
     </div>
   </div>
 </div>
+{% if Entity.entityData.is_procurable %}
+{# Modal for procurement request #}
+<div class='modal fade' id='procurementRequestModal' tabindex='-1' role='dialog' aria-labelledby='procurementRequestModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='procurementRequestModalLabel'>{{ 'Create procurement request'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <p>{{ 'This resource can be purchased. It costs %.2f %s for %d units.'|format(Entity.entityData.proc_price_tax, Entity.entityData.proc_currency|toSymbol, Entity.entityData.proc_pack_qty_ordered)|trans }}</p>
+        <label for='procurementRequestQtyInput'>{{ 'Enter a quantity to purchase'|trans }}</label>
+        <input class='form-control' type='number' min='0' value='1' id='procurementRequestQtyInput' />
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='create-procurement-request' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <hr>
 
@@ -199,6 +223,13 @@
     </button>
   {% endif %}
 
+  {# PROCUREMENT REQUEST #}
+  {% if Entity.entityData.is_procurable %}
+    <button type='button' title='{{ 'Place order'|trans }}' aria-label='{{ 'Place order'|trans }}' data-action='toggle-modal' data-target='procurementRequestModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+      <i class='fas fa-cart-shopping fa-fw'></i>
+    </button>
+  {% endif %}
+
   {% if not App.Session.has('is_anon') %}
     <div class='vertical-separator'></div>
   {% endif %}
@@ -239,9 +270,11 @@
       </button>
 
       <div class='dropdown-menu dropdown-menu-right'>
-        {# BOOKING PARAMS #}
         {% if Entity.type == 'items' %}
+          {# BOOKING PARAMS #}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
+          {# PROCUREMENT #}
+          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
         {% endif %}
         {# TRANSFER OWNERSHIP #}
         {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}

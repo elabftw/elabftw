@@ -2311,9 +2311,9 @@ paths:
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
-      summary: Create a new experiments status.
+      summary: Create a new category for experiments.
       requestBody:
-        description: Parameters for creating a status.
+        description: Parameters for creating a category.
         content:
           application/json:
             schema:
@@ -2321,20 +2321,20 @@ paths:
               properties:
                 name:
                   type: string
-                  description: Status name
+                  description: Category name
                 color:
                   type: string
                   description: |
                     Hex color without leading \#.
                 default:
                   type: integer
-                  description: Is it the default status for the team?
+                  description: Is it the default category for the team?
       responses:
         '201':
-          description: Create a status.
+          description: Create a category.
           headers:
             location:
-              description: An URL to the status that was created.
+              description: An URL to the category that was created.
               schema:
                 type: string
   # ONE EXPERIMENTS CATEGORY
@@ -2348,7 +2348,7 @@ paths:
           type: integer
       - name: subid
         in: path
-        description: ID of the category
+        description: ID of the category.
         required: true
         schema:
           type: integer
@@ -2520,7 +2520,7 @@ paths:
     post:
       tags: ['Resources status']
       operationId: post-team-one-resstat
-      summary: Create a new experiments status.
+      summary: Create a new status for resources.
       requestBody:
         description: Parameters for creating a resources status.
         content:

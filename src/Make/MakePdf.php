@@ -265,27 +265,30 @@ class MakePdf extends AbstractMakePdf
         // see https://mpdf.github.io/what-else-can-i-do/images.html
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageProcessor.php ImageProcessor::getImage() around line 218
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageTypeGuesser.php
+        // the slash (/) in the f parameter might be url encoded (%2F), see https://github.com/elabftw/elabftw/issues/4961
+        // a generic regex that asserts that the f parameter is present and well formatted but ignores the order of parameters
         $matches = array();
-        // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
-        preg_match_all('/app\/download.php\?(?:name=[^&]+&amp;)?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/i', $body, $matches);
+        preg_match_all('/app\/download\.php\?(?=.*?f=[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp))[^"]+/i', $body, $matches);
         foreach ($matches[0] as $src) {
-            // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
-            // so we parse it to get the file path and storage type
-            $query = parse_url($src, PHP_URL_QUERY);
+            // src will look similar to: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
+            // ampersand (&) in html attributes should be encoded (&amp;) so we decode first
+            // and parse it to get the file path and storage type
+            $query = parse_url(htmlspecialchars_decode($src), PHP_URL_QUERY);
             if (!$query) {
                 continue;
             }
             $res = array();
+            // parse_str will also do the url decoding (%2F -> /)
             parse_str($query, $res);
-            // @phpstan-ignore-next-line
-            $longname = (string) ($res['amp;f'] ?? $res['f']);
+            // @phpstan-ignore-next-line (f will be here because of the regex above)
+            $longname = (string) $res['f'];
             // there might be no storage value. In this case get it from the uploads table via the long name
-            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
+            $storage = (int) ($res['storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
             $storageFs = Storage::from($storage)->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$longname] = $storageFs->read($longname);
-            $body = str_replace($src, 'var:' . $longname, $body);
+            $body = str_replace($src, "var:$longname", $body);
         }
 
         return $this->fixLocalLinks($body);

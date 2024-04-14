@@ -114,18 +114,21 @@
     <div class='row mb-3'>
       <div class='col-md-3'>
         {# CATEGORY #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Filter by category'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
-          <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
+          <select
+            aria-label='Filter category'
+            class='autosubmit mr-1 form-control'
+            id='schedulerSelectCat'
+            name='cat'
+          >
             <option value=''>{{ 'Filter by type'|trans }}</option>
             {% for category in bookableItemsTypes %}
               <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-            {{ category.title }}</option>
+                {{ category.title }}
+              </option>
             {% endfor %}
           </select>
         </form>
@@ -133,19 +136,22 @@
 
       <div class='col-md-3'>
         {# ITEM LIST #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Select a resource'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
-          <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
+          <select
+            aria-label='Filter item'
+            class='autosubmit mr-1 form-control'
+            id='itemSelect'
+            name='item'
+          >
             <option value=''>{{ 'Select an equipment'|trans }}</option>
             {% for item in itemsArr %}
               {# data-color is used to set the background during initial drag #}
               <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-              {{ item.category_title }} - {{ item.title }}</option>
+                {{ item.category_title }} - {{ item.title }}
+              </option>
             {% endfor %}
           </select>
         </form>

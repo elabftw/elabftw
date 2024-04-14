@@ -6,7 +6,7 @@
     <hr>
     <ul id='favtagsTagsDiv' class='list-group d-flex flex-column'>
       {% if favTagsArr|length == 0 %}
-        <p>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</p>
+        <li class='list-group-item side-panel-item'>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</li>
       {% else %}
         {% for favtag in favTagsArr %}
         <li data-action='add-tag-filter' data-tag='{{ favtag.tag|e('html_attr') }}' class='list-group-item side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>

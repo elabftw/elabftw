@@ -185,7 +185,7 @@
           <hr>
           <div class='d-flex flex-wrap'>
             {% for user in teamGroup.users %}
-            <div class='user-badge rounded px-2 py-1 mr-2 mt-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='clickable rmUserFromGroup m-1' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'><i class='fas fa-xmark' style='color:#29AEB9' ></i></span></div>
+            <div class='user-badge mr-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='clickable rmUserFromGroup m-1' data-user='{{ user.userid }}' data-group='{{ teamGroup.id }}'><i class='fas fa-xmark' style='color:#29AEB9' ></i></span></div>
             {% endfor %}
           </div>
           {# ADD USER #}

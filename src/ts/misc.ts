@@ -81,7 +81,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
           if (toreload === 'reloadEntitiesShow') {
             reloadEntitiesShow();
           } else {
-            reloadElement(toreload);
+            reloadElement(toreload).then(() => relativeMoment());
           }
         });
       }

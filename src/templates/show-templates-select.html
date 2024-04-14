@@ -41,7 +41,7 @@
             <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title }}</span>
           </td>
           <td data-label='{{ 'Owner' }}'><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname }}</span></td>
-          <td data-label='{{ 'Last modification date' }}'>{{ template.modified_at }}</td>
+          <td data-label='{{ 'Last modification date' }}'><span title='{{ template.modified_at }}' class='relative-moment text-nowrap'></span></td>
         </tr>
       {% endfor %}
     </tbody>

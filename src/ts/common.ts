@@ -203,15 +203,15 @@ document.addEventListener('DOMContentLoaded', () => {
    * Add listeners for filter bar on top of a table
    * The "filter" data attribute value is the id of the tbody element with rows to filter
    */
-  document.querySelectorAll('input[data-filter]').forEach((input: HTMLInputElement) => {
-    const target = document.getElementById(input.dataset.filter);
+  document.querySelectorAll('input[data-filter-target]').forEach((input: HTMLInputElement) => {
+    const target = document.getElementById(input.dataset.filterTarget);
     let targetType = 'tr';
     if (input.dataset.targetType === 'li') {
       targetType = 'li';
     }
     // FIRST LISTENER is to filter the rows
     input.addEventListener('keyup', () => {
-      target.querySelectorAll(`#${input.dataset.filter} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {
+      target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {
         // show or hide the row if it matches the query
         if (row.innerText.toLowerCase().includes(input.value)) {
           row.removeAttribute('hidden');
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     input.nextElementSibling.addEventListener('click', () => {
       input.value = '';
       input.focus();
-      target.querySelectorAll(`#${input.dataset.filter} ${targetType}`).forEach((row: HTMLTableRowElement) => {
+      target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement) => {
         row.removeAttribute('hidden');
       });
     });

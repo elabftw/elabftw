@@ -32,7 +32,7 @@ class AccessKeyHelper
     {
         $sql = 'SELECT id FROM ' . $this->entity->type . ' WHERE access_key = :ak';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':ak', $ak, PDO::PARAM_STR);
+        $req->bindParam(':ak', $ak);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

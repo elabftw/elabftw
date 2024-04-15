@@ -36,7 +36,7 @@ class MakeEln extends MakeStreamZip
     // name of the folder containing everything
     private string $root;
 
-    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
+    public function __construct(ZipStream $Zip, AbstractEntity $entity, array $idArr)
     {
         parent::__construct(
             Zip: $Zip,
@@ -94,7 +94,7 @@ class MakeEln extends MakeStreamZip
         foreach ($this->idArr as $id) {
             $hasPart = array();
             try {
-                $this->Entity->setId((int) $id);
+                $this->Entity->setId($id);
             } catch (IllegalActionException $e) {
                 continue;
             }
@@ -121,7 +121,7 @@ class MakeEln extends MakeStreamZip
             }
 
             // JSON
-            $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
+            $MakeJson = new MakeJson($this->Entity, array($e['id']));
             $json = $MakeJson->getFileContent();
             $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
             $jsonAtId = './' . $currentDatasetFolder . '/' . $MakeJson->getFileName();

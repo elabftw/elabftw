@@ -22,6 +22,7 @@ use Elabftw\Services\Check;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
+use function array_map;
 use function implode;
 use function sprintf;
 use function trim;
@@ -98,7 +99,7 @@ class DisplayParams
         // same with an extended search: we show all
         if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
-            $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
+            $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
         }
         if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
             $this->appendFilterSql(FilterableColumn::Team, $this->Users->team);
@@ -120,9 +121,9 @@ class DisplayParams
             $req = $Db->prepare($sql);
             // bind the tags in IN clause
             foreach ($tags as $key => $tag) {
-                $req->bindValue(":tag$key", $tag, PDO::PARAM_STR);
+                $req->bindValue(":tag$key", $tag);
             }
-            $req->bindValue(':type', $this->entityType->value, PDO::PARAM_STR);
+            $req->bindValue(':type', $this->entityType->value);
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));

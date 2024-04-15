@@ -48,8 +48,8 @@ class SigKeys implements RestInterface
         $this->destroy();
         $sql = 'INSERT INTO sig_keys (pubkey, privkey, userid) VALUES (:pubkey, :privkey, :userid)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':pubkey', $key->serializePk(), PDO::PARAM_STR);
-        $req->bindValue(':privkey', $key->serializeSk(), PDO::PARAM_STR);
+        $req->bindValue(':pubkey', $key->serializePk());
+        $req->bindValue(':privkey', $key->serializeSk());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $res = $req->execute();
         $keyId = $this->Db->lastInsertId();

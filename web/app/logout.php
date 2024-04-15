@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthenticatedUser;
@@ -60,7 +61,7 @@ $destroySession = function () use ($App): void {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
+if ((int) ($App->Users->userData['auth_service'] ?? 0) === LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '/login.php';

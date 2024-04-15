@@ -13,15 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-
 use Elabftw\Elabftw\App;
-
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
-
 use ZipStream\ZipStream;
 
+use function array_walk;
 use function count;
 use function json_encode;
 
@@ -39,6 +37,9 @@ class MakeStreamZip extends AbstractMakeZip
             entity: $entity,
             includeChangelog: $includeChangelog
         );
+        array_walk($this->idArr, function (&$id) {
+            $id = (int) $id;
+        });
     }
 
     /**
@@ -47,7 +48,7 @@ class MakeStreamZip extends AbstractMakeZip
     public function getFileName(): string
     {
         if (count($this->idArr) === 1) {
-            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->setId($this->idArr[0]);
             $this->Entity->canOrExplode('read');
             return $this->getBaseFileName() . $this->extension;
         }

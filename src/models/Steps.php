@@ -109,7 +109,7 @@ class Steps implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         while ($steps = $stepreq->fetch()) {
-            $req->bindParam(':body', $steps['body'], PDO::PARAM_STR);
+            $req->bindParam(':body', $steps['body']);
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
@@ -165,7 +165,7 @@ class Steps implements RestInterface
     {
         $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getColumn() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);

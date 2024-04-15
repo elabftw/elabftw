@@ -139,7 +139,7 @@ class MakePdf extends AbstractMakePdf
     {
         $entriesCount = count($this->entityIdArr);
         foreach ($this->entityIdArr as $key => $id) {
-            $this->Entity->setId((int) $id);
+            $this->Entity->setId($id);
 
             try {
                 $permissions = $this->Entity->getPermissions();
@@ -209,7 +209,7 @@ class MakePdf extends AbstractMakePdf
 
         if ($locked) {
             // get info about the locker
-            $Locker = new Users((int) $this->Entity->entityData['lockedby']);
+            $Locker = new Users($this->Entity->entityData['lockedby']);
             $lockerName = $Locker->userData['fullname'];
 
             // separate the date and time
@@ -219,7 +219,7 @@ class MakePdf extends AbstractMakePdf
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
-            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
@@ -333,7 +333,7 @@ class MakePdf extends AbstractMakePdf
         }
 
         foreach ($uploadsArr as $upload) {
-            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
             if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 // the real_name is used in case of error appending it
                 // the content is stored in a temporary file so it can be read with appendPdfs()

@@ -66,7 +66,7 @@ try {
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
-        'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
+        'teamsStats' => $Teams->getStats($App->Users->userData['team']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

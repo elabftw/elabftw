@@ -25,6 +25,7 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 
+use function array_walk;
 use function preg_replace;
 use function strlen;
 use function substr;
@@ -222,12 +223,12 @@ class Scheduler implements RestInterface
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
         $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
         $admins = $TeamsHelper->getAllAdminsUserid();
-        array_map(function ($userid) use ($Notif) {
+        array_walk($admins, function ($userid) use ($Notif) {
             if ($userid === $this->Items->Users->userData['userid']) {
                 return;
             }
             $Notif->create($userid);
-        }, $admins);
+        });
         return $this->Db->execute($req);
     }
 
@@ -379,7 +380,7 @@ class Scheduler implements RestInterface
         $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
         return $this->Db->execute($req);
     }
 
@@ -448,8 +449,8 @@ class Scheduler implements RestInterface
             $sql .= ' AND id != :id';
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':start', $start, PDO::PARAM_STR);
-        $req->bindParam(':end', $end, PDO::PARAM_STR);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         if ($this->id !== null) {
             $req->bindParam(':id', $this->id, PDO::PARAM_INT);

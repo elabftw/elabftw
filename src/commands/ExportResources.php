@@ -48,7 +48,7 @@ class ExportResources extends Command
     {
         $categoryId = (int) $input->getArgument('category_id');
         $userid = (int) $input->getArgument('userid');
-        $teamid = (int) (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
+        $teamid = (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
         $absolutePath = $this->Fs->getPath(sprintf(
             'export-%s-category_id-%d.eln',
             date('Y-m-d_H-i-s'),

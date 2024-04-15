@@ -95,7 +95,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $realNamesSoFar[] = $realName;
             // modify the real_name in place
             $file['real_name'] = $realName;
-            $storageFs = Storage::from((int) $file['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
 
             // make sure we have a hash
             if (empty($file['hash'])) {

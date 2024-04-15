@@ -46,10 +46,10 @@ class EmailNotifications
     {
         $toSend = $this->getNotificationsToSend();
         foreach ($toSend as $notif) {
-            $targetUser = new Users((int) $notif['userid']);
+            $targetUser = new Users($notif['userid']);
             $this->setLang($targetUser->userData['lang']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $Factory = new NotificationsFactory((int) $notif['category'], $notif['body']);
+            $Factory = new NotificationsFactory($notif['category'], $notif['body']);
             $email = $Factory->getMailable()->getEmail();
             $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
             $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
@@ -61,9 +61,9 @@ class EmailNotifications
                 $htmlBody,
             );
             if ($isEmailSent) {
-                $this->setEmailSent((int) $notif['id']);
+                $this->setEmailSent($notif['id']);
                 if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
-                    AuditLogs::create(new OnboardingEmailSent($email['team'], (int) $notif['userid'], $email['forAdmin']));
+                    AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
                 }
             }
         }

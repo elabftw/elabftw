@@ -59,7 +59,7 @@ enum PasswordComplexity: int
     {
         $cases = self::cases();
         $values = array_column($cases, 'value');
-        $descriptions = array_map(function ($case) {
+        $descriptions = array_map(function (self $case) {
             return $case->toHuman();
         }, $cases);
 

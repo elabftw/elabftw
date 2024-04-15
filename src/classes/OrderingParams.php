@@ -15,6 +15,8 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\ImproperActionException;
 
+use function array_map;
+
 /**
  * Parameters passed for ordering stuff
  */
@@ -35,7 +37,7 @@ class OrderingParams
      */
     protected function cleanup(array $ordering): array
     {
-        return array_map(function ($el) {
+        return array_map(function (string $el) {
             return (int) explode('_', $el)[1];
         }, $ordering);
     }

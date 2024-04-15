@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function array_map;
+
 class EnumsTest extends \PHPUnit\Framework\TestCase
 {
     public function testApiEndpoint(): void
@@ -20,7 +22,7 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
 
     public function testEntrypoint(): void
     {
-        array_map(fn($case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
+        array_map(fn(Entrypoint $case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
     }
 
     public function testLanguage(): void

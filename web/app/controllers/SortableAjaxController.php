@@ -86,7 +86,7 @@ try {
             $Entity = $model->Steps;
             break;
         case Orderable::Todolist:
-            $Entity = new Todolist((int) $App->Users->userData['userid']);
+            $Entity = new Todolist($App->Users->userData['userid']);
             break;
         case Orderable::ExperimentsTemplates:
             $Entity = new Templates($App->Users);

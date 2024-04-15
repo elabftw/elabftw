@@ -53,7 +53,7 @@ abstract class AbstractNotifications
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
-        $req->bindParam(':body', $jsonBody, PDO::PARAM_STR);
+        $req->bindParam(':body', $jsonBody);
         $req->bindParam(':is_ack', $isAck, PDO::PARAM_INT);
         $this->Db->execute($req);
 

@@ -295,7 +295,7 @@ class LoginController implements ControllerInterface
                 // we are already authenticated
             case 'team':
                 return new Team(
-                    (int) $this->App->Session->get('auth_userid'),
+                    $this->App->Session->get('auth_userid'),
                     $this->App->Request->request->getInt('selected_team'),
                 );
 
@@ -303,7 +303,7 @@ class LoginController implements ControllerInterface
             case 'mfa':
                 return new Mfa(
                     new MfaHelper(
-                        (int) $this->App->Session->get('auth_userid'),
+                        $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),
                     ),
                     $this->App->Request->request->getAlnum('mfa_code'),
@@ -361,9 +361,7 @@ class LoginController implements ControllerInterface
             return '/login.php';
         }
 
-        $userid = isset($this->App->Users->userData['userid'])
-            ? (int) $this->App->Users->userData['userid']
-            : $this->App->Session->get('auth_userid');
+        $userid = $this->App->Users->userData['userid'] ?? $this->App->Session->get('auth_userid');
         $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
 
         // check the input code against the secret stored in session

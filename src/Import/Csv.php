@@ -19,6 +19,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
+use PDO;
 
 /**
  * Import entries from a csv file.
@@ -77,10 +78,10 @@ class Csv extends AbstractImport
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':canbook', $this->canread);
             }
-            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->Users->userData['userid']);
+            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindParam(':category', $this->targetNumber);
             $req->bindParam(':status', $status);
             $req->bindParam(':custom_id', $customId);

@@ -57,7 +57,7 @@ class TeamTags implements RestInterface
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+        $req->bindValue(':tag', $tag);
         $this->Db->execute($req);
         $res = $req->fetch();
         // insert the tag if it doesn't exist
@@ -65,7 +65,7 @@ class TeamTags implements RestInterface
             $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+            $req->bindValue(':tag', $tag);
             $this->Db->execute($req);
             return $this->Db->lastInsertId();
         }
@@ -100,7 +100,7 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $req->bindValue(':query', '%' . $query . '%');
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -213,7 +213,7 @@ class TeamTags implements RestInterface
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':tag', $params->getContent());
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         $this->Db->execute($req);

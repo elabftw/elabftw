@@ -86,7 +86,7 @@ try {
             $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $UsersHelper = new UsersHelper($user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
         }
     }

@@ -368,7 +368,7 @@ class EntitySqlBuilder
      */
     private function canTeams(string $can): string
     {
-        $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
+        $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays

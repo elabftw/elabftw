@@ -76,11 +76,11 @@ class MakeReport extends AbstractMakeCsv
     {
         $allUsers = $this->Teams->Users->readFromQuery('', includeArchived: true);
         foreach ($allUsers as $key => $user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
-            $diskUsage = $this->getDiskUsage((int) $user['userid']);
+            $diskUsage = $this->getDiskUsage($user['userid']);
 
             // remove unused columns as they will mess up the csv
             // these columns can be null

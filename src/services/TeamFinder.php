@@ -14,7 +14,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
-use PDO;
 
 /**
  * Find a team from an access_key
@@ -46,7 +45,7 @@ class TeamFinder
             CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
             WHERE entity.access_key = :ak';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':ak', $this->ak, PDO::PARAM_STR);
+        $req->bindParam(':ak', $this->ak);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

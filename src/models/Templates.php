@@ -113,9 +113,9 @@ class Templates extends AbstractTemplateEntity
 
         // copy links and steps too
         $ItemsLinks = new ItemsLinks($this);
-        $ItemsLinks->duplicate((int) $template['id'], $newId, true);
+        $ItemsLinks->duplicate($template['id'], $newId, true);
         $Steps = new Steps($this);
-        $Steps->duplicate((int) $template['id'], $newId, true);
+        $Steps->duplicate($template['id'], $newId, true);
 
         // now pin the newly created template so it directly appears in Create menu
         $this->setId($newId);
@@ -199,7 +199,7 @@ class Templates extends AbstractTemplateEntity
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid) OR
                     (JSON_EXTRACT(experiments_templates.canread, '$.base') = %d AND experiments_templates.userid = :userid)", BasePermissions::Full->value, BasePermissions::Organization->value, BasePermissions::Team->value, BasePermissions::User->value, BasePermissions::UserOnly->value);
         // look for teams
-        $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+        $UsersHelper = new UsersHelper($this->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         foreach ($teamsOfUser as $team) {
             $sql .= sprintf(' OR (%d MEMBER OF (experiments_templates.canread->>"$.teams"))', $team);

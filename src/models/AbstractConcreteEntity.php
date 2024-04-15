@@ -36,6 +36,7 @@ use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
+use PDO;
 use ZipArchive;
 
 /**
@@ -70,8 +71,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $Maker->timestamp();
         return $this->readOne();
     }
-
-    abstract protected function getNextCustomId(int $category): ?int;
 
     protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
     {
@@ -153,5 +152,31 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
         return $this->readOne();
+    }
+
+    protected function getNextCustomId(?int $category): ?int
+    {
+        if ($category === null) {
+            return $category;
+        }
+        $sql = sprintf(
+            'SELECT custom_id FROM experiments
+                WHERE custom_id IS NOT NULL AND category = :category %s
+                ORDER BY custom_id DESC LIMIT 1',
+            $this instanceof Items
+                ? 'AND team = :team'
+                : '',
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        if ($this instanceof Items) {
+            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res === false || $res['custom_id'] === null) {
+            return null;
+        }
+        return ++$res['custom_id'];
     }
 }

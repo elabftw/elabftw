@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function array_map;
+
 enum ApiEndpoint: string
 {
     case ApiKeys = 'apikeys';
@@ -35,6 +37,6 @@ enum ApiEndpoint: string
 
     public static function getCases(): array
     {
-        return array_map(fn($case) => $case->value, ApiEndpoint::cases());
+        return array_map(fn(self $case) => $case->value, ApiEndpoint::cases());
     }
 }

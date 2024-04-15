@@ -44,7 +44,7 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $id = $Tags->postAction(Action::Create, array('tag' => 'tag2222'));
         $this->assertIsInt($id);
         // now with no rights
-        $Teams = new Teams($this->Users, (int) $this->Users->userData['team']);
+        $Teams = new Teams($this->Users, $this->Users->userData['team']);
         $Teams->patch(Action::Update, array('user_create_tag' => 0));
         $this->expectException(ImproperActionException::class);
         $Tags->postAction(Action::Create, array('tag' => 'tag2i222'));

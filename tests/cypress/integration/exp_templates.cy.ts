@@ -12,8 +12,8 @@ describe('Experiments templates', () => {
       cy.stub(win, 'prompt').returns('Cypress created template');
       // create and destroy
       cy.get('button[data-action="create-template"]').click();
-      // destroy
-      cy.get('button[title="More options"]').should('be.visible').click();
+      // destroy. use last() because Account tab also has the same button
+      cy.get('button[title="More options"]').should('be.visible').click().last();
       cy.get('button[data-action="destroy-template"]').click();
     });
   });

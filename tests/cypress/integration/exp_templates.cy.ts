@@ -13,7 +13,8 @@ describe('Experiments templates', () => {
       // create and destroy
       cy.get('button[data-action="create-template"]').click();
       // destroy
-      cy.get('button[title="More options"]').should('be.visible').click().get('button[data-action="destroy-template"]').click();
+      cy.get('button[title="More options"]').should('be.visible').click();
+      cy.get('button[data-action="destroy-template"]').click();
     });
   });
 });

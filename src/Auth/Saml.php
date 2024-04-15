@@ -280,7 +280,7 @@ class Saml implements AuthInterface
         } catch (ResourceNotFoundException) {
             // try finding the user with the orgid because email didn't work
             // but only if we explicitly want to
-            if ($this->configArr['saml_fallback_orgid'] === '1' && !empty($this->settings['idp']['orgidAttr'])) {
+            if ($this->configArr['saml_fallback_orgid'] === '1' && $orgid) {
                 try {
                     $Users = ExistingUser::fromOrgid($orgid);
                     // ok we found our user thanks to the orgid, maybe we want to update our stored email?
@@ -318,13 +318,13 @@ class Saml implements AuthInterface
                 return $teams;
             }
 
-            // if orgidAttr is set try and get orgid
             if ($orgid) {
-                return $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), null, false, true, $orgid);
-                }
-            
-            // CREATE USER (and force validation of user, with user permissions)
-            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true));
+                // if orgidAttr is set create User with orgid set
+                $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), null, false, true, $orgid);
+            } else {
+                // CREATE USER (and force validation of user, with user permissions)
+                $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true));
+            }
         }
         return $Users;
     }

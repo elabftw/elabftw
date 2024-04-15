@@ -24,7 +24,6 @@
     "@yarnpkg/libzip": "^3.0.0",
     "bootstrap": "^4.6.2",
     "bootstrap-markdown-fa5": "^2.10.2",
-    "bootstrap-select": "^1.13.18",
     "css-loader": "^6.9.1",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "diff-match-patch": "^1.0.5",

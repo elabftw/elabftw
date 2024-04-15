@@ -38,7 +38,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
 import { Action, EntityType } from './interfaces';
 import { Api } from './Apiv2.class';
-import { notif } from './misc';
+import { notif, TomSelect } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -331,5 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
           .catch((e) => notif({'res': false, 'msg': e.message}));
       }
     }
+  });
+
+  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
+    new TomSelect(`#${id}`, {
+      plugins: [
+        'dropdown_input',
+        'remove_button',
+      ],
+    });
   });
 });

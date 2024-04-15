@@ -7,6 +7,7 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
+import { TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/search.php') {
@@ -191,6 +192,15 @@ document.addEventListener('DOMContentLoaded', () => {
         extendedArea.value = extendedArea.value + addSpace + filter;
       }
       SearchSyntaxHighlighting.update(extendedArea.value);
+    });
+  });
+
+  ['metakey', 'searchonly'].forEach(id => {
+    new TomSelect(`#${id}`, {
+      plugins: [
+        'dropdown_input',
+        'remove_button',
+      ],
     });
   });
 });

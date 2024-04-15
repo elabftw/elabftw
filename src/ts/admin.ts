@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement, updateCatStat } from './misc';
+import { notif, notifError, reloadElement, TomSelect, updateCatStat } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
@@ -15,18 +15,11 @@ import { EntityType, Model, Action } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
-import TomSelect from 'tom-select/dist/js/tom-select.base';
-import TomSelectRemoveButton from 'tom-select/dist/js/plugins/remove_button';
-import TomSelectNoActiveItems from 'tom-select/dist/js/plugins/no_active_items';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
-
-  // bind plugins to TomSelect
-  TomSelect.define('remove_button', TomSelectRemoveButton);
-  TomSelect.define('no_active_items', TomSelectNoActiveItems);
 
   const ApiC = new Api();
 
@@ -221,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reloadElement('sendOnboardingEmailModal')
         .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
         .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
-          plugins: ['remove_button', 'no_active_items'],
+          plugins: ['dropdown_input', 'no_active_items', 'remove_button'],
         }));
     } else if (el.matches('[data-action="send-onboarding-emails"]')) {
       ApiC.notifOnSaved = false;

@@ -165,6 +165,7 @@
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
+        <td>
           {# cannot use ternary here as it is an expression and filters are applied after evaluation #}
           {%- if change.target == 'body' -%}
             {# use of raw to make the link to revisions page work #}

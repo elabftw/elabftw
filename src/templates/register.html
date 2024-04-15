@@ -37,11 +37,11 @@
       <div class='form-group mx-auto col-md-4'>
         {# TEAM #}
         <div class='row'>
-          <label for='team'>{{ 'Team'|trans }}</label>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
-          <select name='team' class='form-control selectpicker' id='team' required data-show-subtext='true' data-live-search='true'>
+          <label for='team'>{{ 'Team'|trans }}</label>
+          <select name='team' class='form-control' id='team' required autocomplete='off' placeholder='{{ 'Select a team'|trans }}' aria-label='{{ 'Team'|trans }}'>
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
             {# on this page, only show the visible teams #}
             {% for team in teamsArr|filter(v => v.visible == 1) %}

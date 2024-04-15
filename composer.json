@@ -106,9 +106,7 @@
         "src/models/notifications"
       ],
       "Elabftw\\Services\\": [
-        "src/services",
-        "src/services/import",
-        "src/services/make"
+        "src/services"
       ],
       "Elabftw\\Storage\\": [
         "src/Storage"

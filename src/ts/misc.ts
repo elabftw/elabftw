@@ -559,6 +559,10 @@ export function replaceWithTitle(): void {
   });
 }
 
+export function getPageName(): string {
+  return (new URL(window.location.href)).pathname.split('/').pop();
+}
+
 export async function saveStringAsFile(filename: string, content: string|Promise<string>, contentType: string = 'text/plain;charset=utf-8'): Promise<void> {
   const blob = new Blob([await content], {type: contentType});
   const url = URL.createObjectURL(blob);

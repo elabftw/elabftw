@@ -13,6 +13,7 @@ use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
@@ -129,7 +130,8 @@ class Users implements RestInterface
             `orgid`,
             `is_sysadmin`,
             `default_read`,
-            `default_write`
+            `default_write`,
+            `last_seen_version`
         ) VALUES (
             :email,
             :password_hash,
@@ -142,7 +144,8 @@ class Users implements RestInterface
             :orgid,
             :is_sysadmin,
             :default_read,
-            :default_write);';
+            :default_write,
+            :last_seen_version);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -157,6 +160,7 @@ class Users implements RestInterface
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
+        $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 

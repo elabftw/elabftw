@@ -28,7 +28,13 @@ class AuditLogs
         if (Config::getConfig()->configArr['emit_audit_logs'] === '1') {
             $Logger = new Logger('elabftw');
             $Logger->pushHandler(new ErrorLogHandler());
-            $message = sprintf('%s %s', AuditCategory::from($event->getCategory())->name, $event->getBody());
+            $message = sprintf(
+                '%s %s requester_userid: %d, target_userid: %d',
+                AuditCategory::from($event->getCategory())->name,
+                $event->getBody(),
+                $event->getRequesterUserid(),
+                $event->getTargetUserid(),
+            );
             $Logger->notice($message);
         }
 

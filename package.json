@@ -117,7 +117,7 @@
     "twigcs": "php vendor/bin/twigcs",
     "unit": "tests/run.sh unit",
     "unit-ci": "php vendor/bin/codecept run unit",
-    "watchcss": "sass --quiet-deps --watch src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css",
+    "watchpdfcss": "sass --quiet-deps --watch src/scss/pdf.scss:web/assets/pdf.min.css",
     "watchjs": "webpack-cli --config builder.js --mode=development --watch --progress",
     "watchnode": "webpack-cli --config node-builder.js --mode=development --watch --progress"
   },

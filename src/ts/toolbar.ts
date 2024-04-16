@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TIMESTAMP button in modal
     } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
-      EntityC.timestamp(entity.id).then(() => {
+      EntityC.patchAction(entity.id, Action.Timestamp).then(() => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       });
 
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case Action.Lock:
         // reload the page to change the icon and make the edit button disappear (#1897)
-        EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        EntityC.patchAction(entity.id, Action.Lock).then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Timestamp:
         $('#timestampModal').modal('toggle');

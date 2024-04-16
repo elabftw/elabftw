@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // loop over it and lock entities
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.lock(chk.id));
+        results.push(EntityC.patchAction(chk.id, Action.Lock));
       });
 
       Promise.all(results).then(() => {
@@ -372,7 +372,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and timestamp it
       checked.forEach(chk => {
-        EntityC.timestamp(chk.id).then(() => reloadEntitiesShow());
+        EntityC.patchAction(chk.id, Action.Timestamp).then(() => reloadEntitiesShow());
+      });
+
+    // THE ARCHIVE BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="archive-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+
+      // loop over it and lock entities
+      const results = [];
+      checked.forEach(chk => {
+        results.push(EntityC.patchAction(chk.id, Action.Archive));
+      });
+
+      Promise.all(results).then(() => {
+        reloadEntitiesShow();
       });
 
     // THE DELETE BUTTON FOR CHECKED BOXES

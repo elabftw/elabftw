@@ -1022,6 +1022,20 @@ paths:
             first:
               summary: Look for entries linked to item with id 42.
               value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         - name: cat
           in: query
           schema:
@@ -1259,6 +1273,30 @@ paths:
             first:
               summary: Search for all items with a rating of 2.
               value: "rating:2"
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         # This one is not exactly copy paste
         - name: cat
           in: query

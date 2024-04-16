@@ -144,11 +144,7 @@ class Saml implements AuthInterface
         $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
         // GET ORGID
-        if (!empty($this->settings['idp']['orgidAttr'])) {
-            $orgid = $this->extractAttribute($this->settings['idp']['orgidAttr']);
-        } else {
-            $orgid = null;
-        }
+        $orgid = $this->getorgid();
 
         // GET POPULATED USERS OBJECT
         $Users = $this->getUsers($email, $orgid);
@@ -204,6 +200,15 @@ class Saml implements AuthInterface
             throw new ImproperActionException($err);
         }
         return $attr;
+    }
+
+    private function getOrgid(): ?string
+    {
+        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? 'Unknown'] ?? null;
+        if (is_array($orgid)) {
+            return $orgid[0];
+        }
+        return $orgid;
     }
 
     /**
@@ -318,13 +323,8 @@ class Saml implements AuthInterface
                 return $teams;
             }
 
-            if ($orgid) {
-                // if orgidAttr is set create User with orgid set
-                $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), null, false, true, $orgid);
-            } else {
-                // CREATE USER (and force validation of user, with user permissions)
-                $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true));
-            }
+            // CREATE USER (and force validation of user, with user permissions)
+            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid);
         }
         return $Users;
     }

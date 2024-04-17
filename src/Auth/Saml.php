@@ -144,7 +144,7 @@ class Saml implements AuthInterface
         $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
         // GET ORGID
-        $orgid = $this->getorgid();
+        $orgid = $this->getOrgid();
 
         // GET POPULATED USERS OBJECT
         $Users = $this->getUsers($email, $orgid);

@@ -25,7 +25,10 @@ class Metadata
         if ($json === null || $json === 'null') {
             return;
         }
-        $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        if (is_array($decoded)) {
+            $this->metadata = $decoded;
+        }
     }
 
     public function getRaw(): string

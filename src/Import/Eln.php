@@ -323,10 +323,9 @@ class Eln extends AbstractZip
                 }
             }
             if ($json['metadata'] !== null) {
-                $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
                 $this->Entity->patch(
                     Action::Update,
-                    array('metadata' => $this->transformIfNecessary($metadata, isMetadata: true)),
+                    array('metadata' => $this->transformIfNecessary($json['metadata'], isMetadata: true)),
                 );
             }
             // add steps

@@ -9,6 +9,7 @@
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
@@ -147,6 +148,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
+        AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
         return $this->readOne();
     }
 }

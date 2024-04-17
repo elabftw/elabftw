@@ -17,5 +17,7 @@ interface AuditEventInterface
 
     public function getBody(): string;
 
+    public function getJsonBody(): string;
+
     public function getCategory(): int;
 }

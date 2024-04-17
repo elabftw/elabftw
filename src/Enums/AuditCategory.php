@@ -28,4 +28,5 @@ enum AuditCategory: int
     case Import = 80;
     case OnboardingEmailSent = 90;
     case SignatureKeysCreated = 100;
+    case SignatureCreated = 101;
 }

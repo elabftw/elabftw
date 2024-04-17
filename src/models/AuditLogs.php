@@ -29,11 +29,9 @@ class AuditLogs
             $Logger = new Logger('elabftw');
             $Logger->pushHandler(new ErrorLogHandler());
             $message = sprintf(
-                '%s %s requester_userid: %d, target_userid: %d',
+                '%s: %s',
                 AuditCategory::from($event->getCategory())->name,
-                $event->getBody(),
-                $event->getRequesterUserid(),
-                $event->getTargetUserid(),
+                $event->getJsonBody(),
             );
             $Logger->notice($message);
         }

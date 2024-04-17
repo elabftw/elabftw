@@ -220,6 +220,8 @@ class Eln extends AbstractZip
         foreach ($dataset as $attributeName => $value) {
             switch($attributeName) {
                 case 'author':
+                    $html .= $this->authorToHtml($value);
+                    break;
                 case 'funder':
                     $html .= $this->attrToHtml($value, _(ucfirst($attributeName)));
                     break;
@@ -245,6 +247,19 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+    }
+
+    private function authorToHtml(array $node): string
+    {
+        $html = sprintf('<h1>%s</h1><ul>', _('Author'));
+        $fullNode = $this->getNodeFromId($node['@id']);
+        $html .= sprintf(
+            '<li>%s %s %s</li>',
+            $this->transformIfNecessary($fullNode['givenName'] ?? ''),
+            $this->transformIfNecessary($fullNode['familyName'] ?? ''),
+            $this->transformIfNecessary($fullNode['identifier'] ?? ''),
+        );
+        return $html . '</ul>';
     }
 
     private function attrToHtml(array $attr, string $title): string

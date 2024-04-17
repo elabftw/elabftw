@@ -9,6 +9,7 @@
 
 namespace Elabftw\AuditEvent;
 
+use function array_merge;
 use Elabftw\Enums\AuditCategory;
 
 class SignatureKeysCreated extends AbstractAuditEvent
@@ -21,6 +22,12 @@ class SignatureKeysCreated extends AbstractAuditEvent
     public function getBody(): string
     {
         return sprintf('Cryptographic keypair with id %s was created and associated with the user account', $this->keyId);
+    }
+
+    public function getJsonBody(): string
+    {
+        $info = array_merge($this->getBaseInfo(), array('key_id' => $this->keyId));
+        return json_encode($info, JSON_THROW_ON_ERROR);
     }
 
     public function getCategory(): int

@@ -31,14 +31,18 @@ abstract class AbstractAuditEvent implements AuditEventInterface
 
     public function getJsonBody(): string
     {
-        $info = array(
+        return json_encode($this->getBaseInfo(), JSON_THROW_ON_ERROR);
+    }
+
+    abstract public function getCategory(): int;
+
+    protected function getBaseInfo(): array
+    {
+        return array(
             'category' => $this->getCategory(),
             'message' => $this->getBody(),
             'requester_userid' => $this->getRequesterUserid(),
             'target_userid' => $this->getTargetUserid(),
         );
-        return json_encode($info, JSON_THROW_ON_ERROR);
     }
-
-    abstract public function getCategory(): int;
 }

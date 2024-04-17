@@ -26,14 +26,10 @@ class SignatureCreated extends AbstractAuditEvent
 
     public function getJsonBody(): string
     {
-        $info = array(
-            'category' => $this->getCategory(),
+        $info = array_merge($this->getBaseInfo(), array(
             'entity_id' => $this->entityId,
             'entity_type' => $this->entityType->value,
-            'message' => $this->getBody(),
-            'requester_userid' => $this->getRequesterUserid(),
-            'target_userid' => $this->getTargetUserid(),
-        );
+        ));
         return json_encode($info, JSON_THROW_ON_ERROR);
     }
 

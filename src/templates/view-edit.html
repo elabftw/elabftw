@@ -34,7 +34,7 @@
     <ul class='list-group mt-2'>
       {% for req in entityProcurementRequestsArr %}
         <li class='list-group-item'>
-          <i class='fas fa-cart-shopping fa-2x mr-2'></i>
+          <i class='fas fa-cart-shopping mr-2'></i>
           {{ 'A procurement request has been made by %s for a quantity of %d'|format(req.requester_fullname, req.qty_ordered)|trans }}<span title='{{ req.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
         </li>
       {% endfor %}

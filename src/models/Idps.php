@@ -70,7 +70,7 @@ class Idps implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM idps';
+        $sql = 'SELECT * FROM idps ORDER BY name';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

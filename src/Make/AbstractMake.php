@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;

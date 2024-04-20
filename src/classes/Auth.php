@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Anon;
-
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -23,7 +22,6 @@ use Elabftw\Services\TeamFinder;
 use Symfony\Component\HttpFoundation\Request;
 
 use function basename;
-
 use function in_array;
 
 /**

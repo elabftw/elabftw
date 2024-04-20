@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Enums\Storage;
 use League\Flysystem\FilesystemOperator;
 use PDO;

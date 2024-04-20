@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;

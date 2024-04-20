@@ -15,7 +15,6 @@ namespace Elabftw\Services;
 use Elabftw\AuditEvent\OnboardingEmailSent;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
-
 use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
@@ -24,12 +23,9 @@ use Symfony\Component\Mime\Address;
 
 use function bindtextdomain;
 use function count;
-
 use function dirname;
 use function putenv;
-
 use function setlocale;
-
 use function textdomain;
 
 /**

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Enums\State;
 use Elabftw\Models\Users;
 use PDO;

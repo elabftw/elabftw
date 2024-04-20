@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
-
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
@@ -32,9 +31,7 @@ use League\Flysystem\UnableToReadFile;
 
 use function basename;
 use function hash_file;
-
 use function json_decode;
-
 use function sprintf;
 
 /**

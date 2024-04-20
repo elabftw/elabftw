@@ -21,11 +21,9 @@ use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
-
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function preg_match_all;

@@ -14,18 +14,14 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Services\Filter;
-
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
-
 use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function fopen;
-
 use function in_array;
 use function stream_copy_to_stream;
 use function substr;

@@ -22,7 +22,6 @@ use Elabftw\Traits\ProcessTrait;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
-
 use League\Flysystem\FilesystemOperator;
 
 use function is_readable;

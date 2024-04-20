@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
-
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Db;
@@ -25,7 +24,6 @@ use Elabftw\Interfaces\RestInterface;
 use PDO;
 
 use function array_map;
-
 use function urlencode;
 
 /**

@@ -12,12 +12,10 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
-
 use League\Flysystem\FilesystemOperator;
 
 use function basename;
 use function count;
-
 use function substr;
 
 /**

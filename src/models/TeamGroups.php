@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -26,7 +25,6 @@ use PDO;
 
 use function array_map;
 use function explode;
-
 use function json_decode;
 
 /**

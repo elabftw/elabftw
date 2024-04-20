@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -39,24 +38,19 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
-
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_merge;
 use function explode;
 use function implode;
-
 use function is_bool;
 use function json_decode;
-
 use function json_encode;
-
 use function ksort;
 use function sprintf;
 
 use const JSON_HEX_APOS;
-
 use const JSON_THROW_ON_ERROR;
 
 /**

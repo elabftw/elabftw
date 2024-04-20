@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ApiKeyCreated;
-
 use Elabftw\AuditEvent\ApiKeyDeleted;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
@@ -25,9 +24,7 @@ use PDO;
 
 use function bin2hex;
 use function password_hash;
-
 use function password_verify;
-
 use function random_bytes;
 
 /**

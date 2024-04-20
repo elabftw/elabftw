@@ -14,17 +14,13 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
 use Elabftw\Models\ExperimentsStatus;
-
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use PDO;
 
 use function array_key_first;
-
 use function array_key_last;
-
 use function implode;
-
 use function round;
 use function sprintf;
 

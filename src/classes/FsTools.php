@@ -13,17 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Storage\ParentCache;
-
 use League\Flysystem\Filesystem;
-
 use League\Flysystem\FilesystemOperator;
-
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Visibility;
 
 use function bin2hex;
 use function hash;
-
 use function random_bytes;
 
 /**

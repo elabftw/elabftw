@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\FsTools;
-
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\StorageAttributes;
 

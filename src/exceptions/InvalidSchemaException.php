@@ -15,7 +15,6 @@ namespace Elabftw\Exceptions;
 use Exception;
 
 use function dirname;
-
 use function file_get_contents;
 
 /**

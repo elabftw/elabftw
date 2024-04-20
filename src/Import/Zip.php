@@ -13,29 +13,23 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\CreateUpload;
-
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
-use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Services\Filter;
 use League\Flysystem\UnableToReadFile;
-
 use PDO;
 
 use function basename;
-
 use function is_readable;
-
 use function json_decode;
-
 use function mb_strlen;
 
 /**

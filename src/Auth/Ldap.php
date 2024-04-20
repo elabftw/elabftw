@@ -19,10 +19,8 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
-
 use LdapRecord\Connection;
 use LdapRecord\Container;
-
 use LdapRecord\Models\Entry;
 use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;

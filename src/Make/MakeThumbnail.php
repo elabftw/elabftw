@@ -15,15 +15,11 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
-
 use Imagick;
-
 use League\Flysystem\Filesystem;
 
 use function exif_read_data;
-
 use function in_array;
-
 use function strtolower;
 
 /**

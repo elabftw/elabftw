@@ -13,14 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\UploadTrait;
 
 use function date;
-
 use function implode;
 
 /**

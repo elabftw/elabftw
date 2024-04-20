@@ -818,6 +818,9 @@ components:
           type: integer
         entrypoint:
           type: integer
+        sig_pubkey:
+          type: string
+          description: Public signature key (minisign format)
         teams:
           type: array
           items:

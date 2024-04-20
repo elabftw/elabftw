@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\App;
-
 use Elabftw\Elabftw\FsTools;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;

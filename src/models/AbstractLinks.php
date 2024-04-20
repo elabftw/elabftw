@@ -19,11 +19,9 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
-
 use PDO;
 
 use function intval;
-
 use function json_encode;
 
 /**

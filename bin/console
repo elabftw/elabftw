@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
-
 use Elabftw\Elabftw\FsTools;
-
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Storage\Cache;

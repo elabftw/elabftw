@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
@@ -23,7 +22,6 @@ use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function array_unique;
-
 use function implode;
 
 class EntitySqlBuilder

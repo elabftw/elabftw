@@ -17,13 +17,10 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
-
 use JsonException;
 
 use function filter_var;
-
 use function intval;
-
 use function mb_strlen;
 
 /**

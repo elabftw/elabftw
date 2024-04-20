@@ -30,9 +30,7 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Traits\UploadTrait;
-
 use ImagickException;
-
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;

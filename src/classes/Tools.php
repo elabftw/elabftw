@@ -17,10 +17,8 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 use function bin2hex;
 use function date;
-
 use function htmlspecialchars;
 use function implode;
-
 use function mb_strlen;
 use function pathinfo;
 use function random_bytes;

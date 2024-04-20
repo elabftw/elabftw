@@ -20,15 +20,11 @@ use Elabftw\Enums\SearchType;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-
 use PDO;
-
 use Symfony\Component\HttpFoundation\Request;
 
 use function implode;
-
 use function sprintf;
-
 use function trim;
 
 /**

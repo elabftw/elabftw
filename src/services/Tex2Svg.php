@@ -13,29 +13,20 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\FsTools;
-
 use Imagick;
-
 use Mpdf\Mpdf;
-
 use Mpdf\SizeConverter;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
-
 use Symfony\Component\Process\Process;
 
 use function dirname;
-
 use function file_put_contents;
 use function preg_match;
-
 use function preg_match_all;
-
 use function preg_replace;
 use function str_replace;
-
 use function unlink;
 
 /**

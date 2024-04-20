@@ -74,7 +74,7 @@ class UserRequestActions implements RestInterface
 
     public function getPage(): string
     {
-        return 'users/me/request_actions/';
+        return 'api/v2/users/me/request_actions/';
     }
 
     public function destroy(): bool

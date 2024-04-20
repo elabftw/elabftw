@@ -22,7 +22,7 @@ use Elabftw\Models\Config;
 class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 {
     /** default hash algo for file */
-    private const TS_HASH = 'sha256';
+    private const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp

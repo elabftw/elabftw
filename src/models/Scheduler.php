@@ -36,9 +36,9 @@ class Scheduler implements RestInterface
 {
     use EntityTrait;
 
-    public const EVENT_START = '2012-31-12T00:00:00+00:00';
+    public const string EVENT_START = '2012-31-12T00:00:00+00:00';
 
-    public const EVENT_END = '2037-31-12T00:00:00+00:00';
+    public const string EVENT_END = '2037-31-12T00:00:00+00:00';
 
     private string $start = self::EVENT_START;
 

@@ -23,9 +23,9 @@ use Elabftw\Models\Config;
  */
 class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'https://zeitstempel.dgn.de/tss';
+    protected const string TS_URL = 'https://zeitstempel.dgn.de/tss';
 
-    protected const TS_HASH = 'sha512';
+    protected const string TS_HASH = 'sha512';
 
     /**
      * Return the needed parameters to request/verify a timestamp

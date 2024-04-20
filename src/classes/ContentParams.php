@@ -20,7 +20,7 @@ use function mb_strlen;
 
 class ContentParams implements ContentParamsInterface
 {
-    protected const MIN_CONTENT_SIZE = 1;
+    protected const int MIN_CONTENT_SIZE = 1;
 
     public function __construct(protected string $target, protected string $content) {}
 

@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'notifications:tsbalance')]
 class CheckTsBalance extends Command
 {
-    private const THRESHOLD = 20;
+    private const int THRESHOLD = 20;
 
     public function __construct(private int $currentBalance, private Email $Email)
     {

@@ -27,11 +27,11 @@ use function strlen;
  */
 class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
-    private const DEFAULT_IMAGE_SIZE_PX = 250;
+    private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
-    private const LINE_HEIGHT_PX = 20;
+    private const int LINE_HEIGHT_PX = 20;
 
-    private const SPLIT_FACTOR = 8;
+    private const int SPLIT_FACTOR = 8;
 
     protected string $contentType = 'image/png';
 

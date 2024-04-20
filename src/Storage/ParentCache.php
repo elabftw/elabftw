@@ -17,7 +17,7 @@ namespace Elabftw\Storage;
  */
 class ParentCache extends Local
 {
-    protected const FOLDER = 'cache';
+    protected const string FOLDER = 'cache';
 
     public function destroy(): bool
     {

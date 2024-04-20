@@ -20,13 +20,13 @@ use function dirname;
  */
 class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'http://zeitstempel.dfn.de';
+    protected const string TS_URL = 'http://zeitstempel.dfn.de';
 
-    protected const TS_CERT = 'dfn.pem';
+    protected const string TS_CERT = 'dfn.pem';
 
-    protected const TS_CHAIN = 'dfn-chain.pem';
+    protected const string TS_CHAIN = 'dfn-chain.pem';
 
-    protected const TS_HASH = 'sha256';
+    protected const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp

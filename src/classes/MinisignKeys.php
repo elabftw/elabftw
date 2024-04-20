@@ -36,17 +36,17 @@ use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
 readonly class MinisignKeys
 {
     // ed25519
-    private const SIGNATURE_ALGO = 'Ed';
+    private const string SIGNATURE_ALGO = 'Ed';
 
-    private const KEYID_BYTES = 8;
+    private const int KEYID_BYTES = 8;
 
-    private const KDF_LENGTH = 104;
+    private const int KDF_LENGTH = 104;
 
     // our key derivation algo: scrypt
-    private const KDF_ALGO = 'Sc';
+    private const string KDF_ALGO = 'Sc';
 
     // our checksum algo: blake2
-    private const CKSUM_ALGO = 'B2';
+    private const string CKSUM_ALGO = 'B2';
 
     public function __construct(
         public string $signatureAlgo,

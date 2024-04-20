@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 abstract class AbstractImport implements ImportInterface
 {
-    protected const TAGS_SEPARATOR = '|';
+    protected const string TAGS_SEPARATOR = '|';
 
     protected Db $Db;
 

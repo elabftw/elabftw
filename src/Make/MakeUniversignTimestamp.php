@@ -24,9 +24,9 @@ use Elabftw\Models\Config;
  */
 class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'https://ws.universign.eu/tsa';
+    protected const string TS_URL = 'https://ws.universign.eu/tsa';
 
-    protected const TS_HASH = 'sha256';
+    protected const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp

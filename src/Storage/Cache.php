@@ -17,5 +17,5 @@ namespace Elabftw\Storage;
  */
 class Cache extends Local
 {
-    protected const FOLDER = 'cache/elab';
+    protected const string FOLDER = 'cache/elab';
 }

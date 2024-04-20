@@ -28,13 +28,13 @@ abstract class AbstractStatus extends AbstractCategory
 {
     use SetIdTrait;
 
-    private const DEFAULT_BLUE = '29AEB9';
+    private const string DEFAULT_BLUE = '29AEB9';
 
-    private const DEFAULT_GREEN = '54AA08';
+    private const string DEFAULT_GREEN = '54AA08';
 
-    private const DEFAULT_GRAY = 'C0C0C0';
+    private const string DEFAULT_GRAY = 'C0C0C0';
 
-    private const DEFAULT_RED = 'C24F3D';
+    private const string DEFAULT_RED = 'C24F3D';
 
     protected string $table;
 

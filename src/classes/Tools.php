@@ -32,8 +32,8 @@ use function trim;
  */
 class Tools
 {
-    /** @var int DEFAULT_UPLOAD_SIZE max size of uploaded file if we cannot find in in ini file */
-    private const DEFAULT_UPLOAD_SIZE = 2;
+    // max size of uploaded file if we cannot find it in ini file
+    private const int DEFAULT_UPLOAD_SIZE = 2;
 
     /**
      * Convert markdown to html

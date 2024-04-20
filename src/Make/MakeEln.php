@@ -25,7 +25,7 @@ use ZipStream\ZipStream;
  */
 class MakeEln extends MakeStreamZip
 {
-    private const HASH_ALGO = 'sha256';
+    private const string HASH_ALGO = 'sha256';
 
     protected string $extension = '.eln';
 

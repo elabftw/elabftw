@@ -18,9 +18,9 @@ namespace Elabftw\Make;
  */
 class MakeSectigoTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'http://timestamp.sectigo.com/';
+    protected const string TS_URL = 'http://timestamp.sectigo.com/';
 
-    protected const TS_HASH = 'sha256';
+    protected const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp

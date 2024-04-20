@@ -24,7 +24,7 @@ use GuzzleHttp\Psr7;
  */
 class MakeKeeex
 {
-    private const REQUEST_TIMEOUT_SECONDS = 5;
+    private const int REQUEST_TIMEOUT_SECONDS = 5;
 
     private string $url;
 

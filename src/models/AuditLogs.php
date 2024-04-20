@@ -23,7 +23,7 @@ use PDO;
  */
 class AuditLogs
 {
-    public const DEFAULT_LIMIT = 50;
+    public const int DEFAULT_LIMIT = 50;
 
     public static function create(AuditEventInterface $event): int
     {

@@ -26,7 +26,7 @@ use League\Flysystem\Visibility;
  */
 class S3 extends AbstractStorage
 {
-    private const S3_VERSION = '2006-03-01';
+    private const string S3_VERSION = '2006-03-01';
 
     public function __construct(private Config $config, private CredentialsInterface $credentials) {}
 

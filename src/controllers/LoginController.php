@@ -41,9 +41,7 @@ use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Symfony\Component\HttpFoundation\Response;
 
 use function setcookie;
@@ -53,15 +51,15 @@ use function setcookie;
  */
 class LoginController implements ControllerInterface
 {
-    public const AUTH_LOCAL = 10;
+    public const int AUTH_LOCAL = 10;
 
-    public const AUTH_SAML = 20;
+    public const int AUTH_SAML = 20;
 
-    public const AUTH_LDAP = 30;
+    public const int AUTH_LDAP = 30;
 
-    public const AUTH_EXTERNAL = 40;
+    public const int AUTH_EXTERNAL = 40;
 
-    public const AUTH_ANON = 50;
+    public const int AUTH_ANON = 50;
 
     public function __construct(private App $App) {}
 

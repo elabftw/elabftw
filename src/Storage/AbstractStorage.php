@@ -21,7 +21,7 @@ use League\Flysystem\FilesystemAdapter;
  */
 abstract class AbstractStorage implements StorageInterface
 {
-    protected const FOLDER = '';
+    protected const string FOLDER = '';
 
     public function getFs(): Filesystem
     {

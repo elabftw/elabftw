@@ -26,10 +26,8 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
-
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
-
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
@@ -47,7 +45,7 @@ use function is_int;
  */
 class Saml implements AuthInterface
 {
-    private const TEAM_SELECTION_REQUIRED = 1;
+    private const int TEAM_SELECTION_REQUIRED = 1;
 
     private AuthResponse $AuthResponse;
 

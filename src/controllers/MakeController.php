@@ -56,7 +56,7 @@ use function count;
  */
 class MakeController implements ControllerInterface
 {
-    private const AUDIT_THRESHOLD = 12;
+    private const int AUDIT_THRESHOLD = 12;
 
     private AbstractEntity $Entity;
 

@@ -17,7 +17,7 @@ use Elabftw\Interfaces\ParamInterface;
 
 final class TagParam implements ParamInterface
 {
-    protected const MIN_CONTENT_SIZE = 1;
+    protected const int MIN_CONTENT_SIZE = 1;
 
     public function __construct(private string $content) {}
 

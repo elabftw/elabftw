@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DashboardController implements ControllerInterface
 {
-    private const SHOWN_NUMBER = 5;
+    private const int SHOWN_NUMBER = 5;
 
     public function __construct(private App $App) {}
 

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;

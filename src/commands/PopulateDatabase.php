@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -31,15 +30,11 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use League\Flysystem\Filesystem as Fs;
-
 use League\Flysystem\Local\LocalFilesystemAdapter;
-
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -58,8 +53,8 @@ use function str_repeat;
 #[AsCommand(name: 'db:populate')]
 class PopulateDatabase extends Command
 {
-    /** @var int DEFAULT_ITERATIONS number of things to create */
-    private const DEFAULT_ITERATIONS = 50;
+    // number of things to create
+    private const int DEFAULT_ITERATIONS = 50;
 
     protected function configure(): void
     {

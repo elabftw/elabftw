@@ -20,7 +20,7 @@ use function json_encode;
 
 class Metadata
 {
-    private const JSON_MAX_DEPTH = 42;
+    private const int JSON_MAX_DEPTH = 42;
 
     private array $metadata = array();
 

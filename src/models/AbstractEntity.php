@@ -66,9 +66,9 @@ abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
 
-    public const CONTENT_HTML = 1;
+    public const int CONTENT_HTML = 1;
 
-    public const CONTENT_MD = 2;
+    public const int CONTENT_MD = 2;
 
     public Comments $Comments;
 

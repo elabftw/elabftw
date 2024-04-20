@@ -20,7 +20,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
  */
 class Local extends AbstractStorage
 {
-    protected const FOLDER = 'uploads';
+    protected const string FOLDER = 'uploads';
 
     protected function getAdapter(): FilesystemAdapter
     {

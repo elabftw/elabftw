@@ -17,5 +17,5 @@ namespace Elabftw\Storage;
  */
 class Fixtures extends Local
 {
-    protected const FOLDER = 'tests/_data';
+    protected const string FOLDER = 'tests/_data';
 }

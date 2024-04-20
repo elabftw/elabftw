@@ -47,10 +47,10 @@ class Uploads implements RestInterface
 {
     use UploadTrait;
 
-    public const HASH_ALGORITHM = 'sha256';
+    public const string HASH_ALGORITHM = 'sha256';
 
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
-    private const BIG_FILE_THRESHOLD = 50000000;
+    // size of a file in bytes above which we don't process it (50 Mb)
+    private const int BIG_FILE_THRESHOLD = 50000000;
 
     public array $uploadData = array();
 

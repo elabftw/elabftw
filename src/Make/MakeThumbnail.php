@@ -33,8 +33,7 @@ use function strtolower;
  */
 class MakeThumbnail implements MakeThumbnailInterface
 {
-    /** @var int WIDTH the width for the thumbnail */
-    private const WIDTH = 100;
+    private const int THUMB_WIDTH = 100;
 
     public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs) {}
 
@@ -65,7 +64,7 @@ class MakeThumbnail implements MakeThumbnailInterface
             $image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
         }
         // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
-        $image->thumbnailImage(self::WIDTH, 0);
+        $image->thumbnailImage(self::THUMB_WIDTH, 0);
         // set the thumbnail quality to 85% (default is 75%)
         $image->setCompressionQuality(85);
         // check if we need to rotate the image based on the orientation in exif of original file

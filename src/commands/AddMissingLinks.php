@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
@@ -18,9 +21,11 @@ use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
+
 use function preg_match_all;
 use function printf;
 use function str_replace;
+
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

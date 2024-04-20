@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -7,11 +8,14 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
 use function bindtextdomain;
 use function count;
 use function dirname;
+
 use Elabftw\AuditEvent\OnboardingEmailSent;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
@@ -19,9 +23,12 @@ use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
 use PDO;
+
 use function putenv;
 use function setlocale;
+
 use Symfony\Component\Mime\Address;
+
 use function textdomain;
 
 /**

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -15,6 +17,7 @@ use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
+
 use function time;
 
 /**

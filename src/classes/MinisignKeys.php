@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -7,19 +8,25 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\SignatureHelper;
+
 use function hash_equals;
+
 use ParagonIE\ConstantTime\Base64;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\ConstantTime\Hex;
 
 use function preg_match;
 use function sodium_crypto_generichash;
+
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
+
 use function sodium_memzero;
 use function unpack;
 

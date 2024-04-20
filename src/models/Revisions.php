@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use function count;
+
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -18,7 +19,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
+
 use function mb_strlen;
+
 use PDO;
 
 /**

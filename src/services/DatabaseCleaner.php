@@ -11,8 +11,10 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use function count;
+
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
+
 use function sprintf;
 
 /**

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -45,7 +48,7 @@ enum Language: string
             $this::Catalan => 'ca',
             $this::Czech => 'cs',
             $this::German => 'de',
-            $this::EnglishGB=> 'en-gb',
+            $this::EnglishGB => 'en-gb',
             $this::EnglishUS => 'en-us',
             $this::Spanish => 'es',
             $this::French => 'fr',

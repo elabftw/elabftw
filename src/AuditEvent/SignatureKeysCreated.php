@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -7,9 +8,12 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\AuditEvent;
 
 use function array_merge;
+
 use Elabftw\Enums\AuditCategory;
 
 class SignatureKeysCreated extends AbstractAuditEvent

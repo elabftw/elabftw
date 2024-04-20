@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,23 +8,33 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
 use function dirname;
+
 use Elabftw\Elabftw\FsTools;
+
 use function file_put_contents;
+
 use Imagick;
 use Mpdf\Mpdf;
 use Mpdf\SizeConverter;
+
 use function preg_match;
 
 use function preg_match_all;
 use function preg_replace;
+
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
 use function str_replace;
+
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
+
 use function unlink;
 
 /**

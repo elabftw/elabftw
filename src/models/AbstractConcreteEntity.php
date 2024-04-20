@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -128,7 +131,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         $Sigkeys = new SignatureHelper($this->Users);
         $Maker = new MakeFullJson($this, array($this->id));
-        $message= $Maker->getFileContent();
+        $message = $Maker->getFileContent();
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         $SigKeys = new SigKeys($this->Users);
         $SigKeys->touch();

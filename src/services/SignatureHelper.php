@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -17,6 +20,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
 use ParagonIE\ConstantTime\Base64;
+
 use function sodium_crypto_generichash;
 
 /**

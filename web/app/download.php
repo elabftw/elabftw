@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -13,8 +15,11 @@ use Elabftw\Controllers\DownloadController;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
+
 use function error_reporting;
+
 use Exception;
+
 use function set_time_limit;
 use function strpos;
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,9 +8,12 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Import;
 
 use function basename;
+
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -23,10 +27,14 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Services\Filter;
+
 use function is_readable;
 use function json_decode;
+
 use League\Flysystem\UnableToReadFile;
+
 use function mb_strlen;
+
 use PDO;
 
 /**

@@ -28,7 +28,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Db = Db::getConnection();
-        $this->CookieToken = new CookieToken();
+        $this->CookieToken = CookieToken::fromScratch();
         $this->CookieToken->saveToken($this->userid);
     }
 
@@ -38,7 +38,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $CookieAuth = new Cookie(1, 0, $this->CookieToken, 1);
         // create a token but 4 minutes in the past
         $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
-        $req->bindParam(':token', $this->CookieToken->token);
+        $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindParam(':userid', $this->userid);
         $req->execute();
         // now try login but our cookie isn't valid anymore
@@ -67,7 +67,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     {
         $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 2);
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
-        $req->bindParam(':token', $this->CookieToken->token);
+        $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindParam(':userid', $this->userid);
         $req->execute();
         $this->expectException(UnauthorizedException::class);
@@ -78,7 +78,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     {
         $CookieAuth = new Cookie(220330, 1, $this->CookieToken, 1);
         $req = $this->Db->prepare('UPDATE users SET token = :token, auth_service = :auth_service WHERE userid = :userid');
-        $req->bindParam(':token', $this->CookieToken->token);
+        $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindValue(':auth_service', LoginController::AUTH_LOCAL);
         $req->bindParam(':userid', $this->userid);
         $req->execute();

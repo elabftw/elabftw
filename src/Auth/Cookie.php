@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Services\TeamsHelper;
+use PDO;
 
 /**
  * Authenticate with the cookie
@@ -44,7 +45,7 @@ class Cookie implements AuthInterface
             $this->validityMinutes
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $this->Token->token);
+        $req->bindValue(':token', $this->Token->getToken(), PDO::PARAM_STR);
         $this->Db->execute($req);
         if ($req->rowCount() !== 1) {
             throw new UnauthorizedException();

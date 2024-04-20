@@ -153,7 +153,7 @@ class LoginHelper
      */
     private function setToken(): void
     {
-        $CookieToken = new CookieToken();
+        $CookieToken = CookieToken::fromScratch();
         $CookieToken->saveToken($this->AuthResponse->userid);
 
         $expirationSeconds = time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
@@ -167,7 +167,7 @@ class LoginHelper
             'httponly' => true,
             'samesite' => 'Lax',
         );
-        setcookie('token', $CookieToken->token, $cookieOptions);
+        setcookie('token', $CookieToken->getToken(), $cookieOptions);
         setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 }

@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use function basename;
-
 use Elabftw\Elabftw\CreateUpload;
+
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -27,15 +26,17 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
 use Elabftw\Services\Filter;
-
-use function is_readable;
-use function json_decode;
-
 use League\Flysystem\UnableToReadFile;
 
-use function mb_strlen;
-
 use PDO;
+
+use function basename;
+
+use function is_readable;
+
+use function json_decode;
+
+use function mb_strlen;
 
 /**
  * Import a .elabftw.zip file into the database.

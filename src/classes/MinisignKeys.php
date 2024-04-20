@@ -14,21 +14,19 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\SignatureHelper;
-
-use function hash_equals;
-
 use ParagonIE\ConstantTime\Base64;
 use ParagonIE\ConstantTime\Binary;
 use ParagonIE\ConstantTime\Hex;
+use SensitiveParameter;
 
+use function hash_equals;
 use function preg_match;
 use function sodium_crypto_generichash;
+use function sodium_memzero;
+use function unpack;
 
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
-
-use function sodium_memzero;
-use function unpack;
 
 /**
  * This class is a representation of a minisign key
@@ -65,7 +63,7 @@ readonly class MinisignKeys
         return Hex::encode($this->id);
     }
 
-    public static function generate(string $passphrase): self
+    public static function generate(#[SensitiveParameter] string $passphrase): self
     {
         // Generate a salt for key derivation
         // SCRYPT_SALSA208SHA256 salt should be crypto_pwhash_scryptsalsa208sha256_SALTBYTES bytes
@@ -96,7 +94,7 @@ readonly class MinisignKeys
      * untrusted comment: <arbitrary text>
      * base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> || <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
      */
-    public static function deserialize(string $secretKey, string $passphrase): self
+    public static function deserialize(string $secretKey, #[SensitiveParameter] string $passphrase): self
     {
         $sk = array();
         if (!preg_match(SignatureHelper::REGEX, $secretKey, $sk)) {
@@ -178,7 +176,7 @@ readonly class MinisignKeys
      * This function is responsible for generating a key derived from a passphrase.
      * It allows encrypting the private key with a passphrase.
      */
-    private static function kdf(string $passphrase, string $salt, int $kdfOpsLimit, int $kdfMemLimit): string
+    private static function kdf(#[SensitiveParameter] string $passphrase, string $salt, int $kdfOpsLimit, int $kdfMemLimit): string
     {
         // derive a key from the passphrase
         $derivedKey = sodium_crypto_pwhash_scryptsalsa208sha256(

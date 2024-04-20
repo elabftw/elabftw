@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function date;
-
 use DateTimeImmutable;
+
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
@@ -31,12 +30,14 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
-
-use function implode;
-
 use League\Flysystem\Filesystem;
+
 use Psr\Log\LoggerInterface;
+
 use setasign\Fpdi\FpdiException;
+
+use function date;
+use function implode;
 
 use function str_replace;
 use function strlen;

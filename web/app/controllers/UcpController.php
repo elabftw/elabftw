@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Auth\Local;
+
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -24,6 +23,8 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 /**
  * Deal with requests sent from the user control panel

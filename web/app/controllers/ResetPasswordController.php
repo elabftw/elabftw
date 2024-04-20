@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\AuditEvent\PasswordResetRequested;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -26,16 +25,18 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
-
-use function nl2br;
-use function random_int;
-use function sleep;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
+
 use Symfony\Component\Mime\Email as Memail;
+
+use function dirname;
+use function nl2br;
+use function random_int;
+use function sleep;
 
 use function time;
 

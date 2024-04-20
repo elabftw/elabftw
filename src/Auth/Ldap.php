@@ -20,14 +20,16 @@ use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
 
-use function explode;
-use function is_array;
-
 use LdapRecord\Connection;
 use LdapRecord\Container;
+
 use LdapRecord\Models\Entry;
 use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;
+use SensitiveParameter;
+
+use function explode;
+use function is_array;
 
 /**
  * LDAP auth service
@@ -36,7 +38,7 @@ class Ldap implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
-    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, private string $password)
+    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, #[SensitiveParameter] private string $password)
     {
         // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
         $connection->connect();

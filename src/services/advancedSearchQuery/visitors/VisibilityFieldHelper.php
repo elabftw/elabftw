@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
+use Elabftw\Elabftw\PermissionsHelper;
+
 use function array_intersect_key;
 use function array_keys;
 use function array_unique;
-use function array_values;
 
-use Elabftw\Elabftw\PermissionsHelper;
+use function array_values;
 
 use function implode;
 use function preg_grep;

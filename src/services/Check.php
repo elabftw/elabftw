@@ -18,10 +18,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
-use function filter_var;
-use function intval;
-
 use JsonException;
+
+use function filter_var;
+
+use function intval;
 
 use function mb_strlen;
 

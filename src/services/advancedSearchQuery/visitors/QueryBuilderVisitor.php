@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
-use function array_merge;
-use function bin2hex;
-
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
+
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
@@ -31,6 +29,9 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use PDO;
+
+use function array_merge;
+use function bin2hex;
 
 use function random_bytes;
 use function ucfirst;

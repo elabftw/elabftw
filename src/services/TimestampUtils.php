@@ -23,9 +23,9 @@ use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 
-use function is_readable;
-
 use League\Flysystem\FilesystemOperator;
+
+use function is_readable;
 
 /**
  * Trusted Timestamping (RFC3161) utility class

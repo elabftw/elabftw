@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use function count;
-
 use Elabftw\AuditEvent\Export;
+
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -49,6 +48,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
+
+use function count;
 
 /**
  * Create zip, csv, pdf or report

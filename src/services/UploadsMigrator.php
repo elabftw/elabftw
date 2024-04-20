@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function count;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Enums\Storage;
 use League\Flysystem\FilesystemOperator;
 use PDO;
+
+use function count;
 
 /**
  * Migrate uploads to S3

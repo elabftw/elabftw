@@ -25,11 +25,12 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 
+use PDO;
+use SensitiveParameter;
+
 use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
-
-use PDO;
 
 /**
  * Local auth service
@@ -44,7 +45,7 @@ class Local implements AuthInterface
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $email, private string $password)
+    public function __construct(string $email, #[SensitiveParameter] private readonly string $password)
     {
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));

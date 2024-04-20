@@ -12,14 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function date;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\UploadTrait;
 use PDO;
+
+use function date;
 
 /**
  * Create a report of usage for all users

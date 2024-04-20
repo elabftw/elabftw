@@ -20,11 +20,12 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use function memory_get_usage;
 use function microtime;
-use function round;
 
-use Symfony\Component\HttpFoundation\Request;
+use function round;
 
 /**
  * Functions used by Twig in templates

@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\AuditEvent;
 
-use function array_merge;
-
 use Elabftw\Enums\AuditCategory;
+
+use function array_merge;
 
 class SignatureKeysCreated extends AbstractAuditEvent
 {

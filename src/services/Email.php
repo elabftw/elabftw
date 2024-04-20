@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function count;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
@@ -27,6 +26,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use Symfony\Component\Mime\RawMessage;
+
+use function count;
 
 /**
  * Email service

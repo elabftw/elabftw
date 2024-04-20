@@ -19,9 +19,9 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Users;
 use Elabftw\Traits\SetIdTrait;
 
-use function json_decode;
-
 use PDO;
+
+use function json_decode;
 
 /**
  * Notifications for a user

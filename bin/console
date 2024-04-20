@@ -15,9 +15,8 @@ namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 
-use function dirname;
-
 use Elabftw\Elabftw\FsTools;
+
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Storage\Cache;
@@ -28,6 +27,8 @@ use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Exception\RfcComplianceException;
+
+use function dirname;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 

@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use function basename;
-
 use DateTimeImmutable;
+
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
@@ -29,11 +28,12 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
-
-use function hash_file;
-use function json_decode;
-
 use League\Flysystem\UnableToReadFile;
+
+use function basename;
+use function hash_file;
+
+use function json_decode;
 
 use function sprintf;
 

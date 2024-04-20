@@ -12,13 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function basename;
-use function bindtextdomain;
-use function dirname;
-
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
@@ -27,23 +24,26 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
-
-use function in_array;
-
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Handler\ErrorLogHandler;
+
 use Monolog\Logger;
 
-use function putenv;
-
 use RuntimeException;
-
-use function setlocale;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+
+use function basename;
+
+use function bindtextdomain;
+
+use function dirname;
+
+use function in_array;
+use function putenv;
+use function setlocale;
 
 use function textdomain;
 

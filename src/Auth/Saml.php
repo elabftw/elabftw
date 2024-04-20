@@ -27,11 +27,9 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
 
-use function is_array;
-use function is_int;
-
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
+
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
@@ -40,6 +38,9 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+
+use function is_array;
+use function is_int;
 
 /**
  * SAML auth service

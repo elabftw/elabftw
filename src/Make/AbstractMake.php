@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function dirname;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
+
+use function dirname;
 
 /**
  * Mother class of the Make* services

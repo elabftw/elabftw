@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Enums\EmailTarget;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -26,6 +25,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
+
+use function dirname;
 
 /**
  * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php

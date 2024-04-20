@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use function bin2hex;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Filter;
+use PDO;
+
+use function bin2hex;
 
 use function hash;
-
-use PDO;
 
 use function random_bytes;
 

@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Controllers\Apiv1Controller;
+
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -23,6 +22,8 @@ use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use function dirname;
 
 /**
  * Entrypoint for API requests. Nginx redirects all the /api/vN requests here.

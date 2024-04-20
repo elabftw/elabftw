@@ -23,10 +23,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 
-use function json_decode;
-use function json_encode;
-
 use ZipArchive;
+
+use function json_decode;
+
+use function json_encode;
 
 /**
  * Send data to Bloxberg server

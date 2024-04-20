@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use function dirname;
-
 use Exception;
+
+use function dirname;
 
 use function file_get_contents;
 

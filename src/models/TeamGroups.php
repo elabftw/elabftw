@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function array_map;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -23,11 +22,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
-
-use function explode;
-use function json_decode;
-
 use PDO;
+
+use function array_map;
+use function explode;
+
+use function json_decode;
 
 /**
  * Everything related to the team groups

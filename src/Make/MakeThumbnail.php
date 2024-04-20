@@ -16,13 +16,13 @@ use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
 
-use function exif_read_data;
-
 use Imagick;
 
-use function in_array;
-
 use League\Flysystem\Filesystem;
+
+use function exif_read_data;
+
+use function in_array;
 
 use function strtolower;
 

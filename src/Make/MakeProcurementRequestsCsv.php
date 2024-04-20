@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function date;
-
 use Elabftw\Exceptions\ImproperActionException;
+
 use Elabftw\Models\ProcurementRequests;
+
+use function date;
 
 /**
  * Make a CSV file from the team's procurement requests

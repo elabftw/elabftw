@@ -42,10 +42,11 @@ use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
-use function setcookie;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Symfony\Component\HttpFoundation\Response;
+
+use function setcookie;
 
 /**
  * For all your authentication/login needs

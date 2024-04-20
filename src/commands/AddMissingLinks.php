@@ -22,14 +22,15 @@ use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
 
-use function preg_match_all;
-use function printf;
-use function str_replace;
-
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function preg_match_all;
+use function printf;
+use function str_replace;
 
 /**
  * Find links to items and experiments in entity bodies and add to 'linked items'

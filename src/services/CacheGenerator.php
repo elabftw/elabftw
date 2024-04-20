@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function dirname;
-
 use Elabftw\Elabftw\FsTools;
+
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\StorageAttributes;
+
+use function dirname;
 
 /**
  * Generate Twig cache

@@ -31,7 +31,6 @@ return $config->setRules(array(
     'no_unused_imports' => true,
     'no_useless_else' => true,
     'non_printable_character' => true,
-    'ordered_imports' => true,
     'ordered_class_elements' => true,
     'php_unit_construct' => true,
     'pow_to_exponentiation' => true,

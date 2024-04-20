@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function date;
-
 use Elabftw\Exceptions\IllegalActionException;
+
 use Elabftw\Models\AbstractEntity;
+
+use function date;
 
 /**
  * Make a CSV file from a list of id and a type

@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function array_map;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Exceptions\ImproperActionException;
+
+use function array_map;
 
 use function filter_var;
 use function in_array;

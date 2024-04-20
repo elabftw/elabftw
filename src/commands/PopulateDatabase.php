@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use function array_key_exists;
-
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -31,24 +30,26 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
-
-use function is_string;
-
 use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 
-use function mb_strlen;
-use function str_repeat;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
+
+use function array_key_exists;
+use function is_string;
+use function mb_strlen;
+use function str_repeat;
 
 /**
  * Populate the database with example data. Useful to get a fresh dev env.

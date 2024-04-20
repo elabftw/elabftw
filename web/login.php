@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -8,6 +7,8 @@ declare(strict_types=1);
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -22,11 +23,11 @@ use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
 
-use function implode;
-use function str_split;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function implode;
+use function str_split;
 
 /**
  * Login page

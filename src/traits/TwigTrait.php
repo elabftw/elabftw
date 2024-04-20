@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use function dirname;
-
 use Elabftw\Elabftw\App;
+
 use Elabftw\Elabftw\FsTools;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
@@ -23,6 +22,8 @@ use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+
+use function dirname;
 
 /**
  * To get Twig

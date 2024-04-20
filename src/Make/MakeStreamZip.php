@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use function count;
-
 use DateTimeImmutable;
 
 use Elabftw\Elabftw\App;
+
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
-
-use function json_encode;
-
 use League\Flysystem\UnableToReadFile;
+
 use ZipStream\ZipStream;
+
+use function count;
+use function json_encode;
 
 /**
  * Make a zip archive from experiment or db item

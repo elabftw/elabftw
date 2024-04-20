@@ -12,22 +12,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function bindtextdomain;
-use function count;
-use function dirname;
-
 use Elabftw\AuditEvent\OnboardingEmailSent;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
+
 use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
 use PDO;
-
-use function putenv;
-use function setlocale;
-
 use Symfony\Component\Mime\Address;
+
+use function bindtextdomain;
+use function count;
+
+use function dirname;
+use function putenv;
+
+use function setlocale;
 
 use function textdomain;
 

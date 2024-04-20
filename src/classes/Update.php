@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function bin2hex;
-
 use Elabftw\Exceptions\ImproperActionException;
+
 use Elabftw\Exceptions\InvalidSchemaException;
 use PDO;
+
+use function bin2hex;
 
 use function random_bytes;
 use function sha1;

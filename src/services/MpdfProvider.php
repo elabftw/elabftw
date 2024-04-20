@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function dirname;
-
 use Elabftw\Elabftw\FsTools;
+
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Mpdf;
+
+use function dirname;
 
 /**
  * Get an instance of mpdf

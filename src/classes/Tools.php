@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function bin2hex;
-use function date;
-use function htmlspecialchars;
-use function implode;
-
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
+
+use function bin2hex;
+use function date;
+
+use function htmlspecialchars;
+use function implode;
 
 use function mb_strlen;
 use function pathinfo;

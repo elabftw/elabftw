@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use function dirname;
-
 use Symfony\Component\Console\Application;
+
+use function dirname;
 
 /**
  * This file is separated from bin/console because Config doesn't exist yet

@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Enums\Language;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
+
+use function dirname;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

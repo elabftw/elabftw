@@ -11,19 +11,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Controllers\ImportController;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use League\Csv\SyntaxError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 use function set_time_limit;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Import a zip, eln or a csv

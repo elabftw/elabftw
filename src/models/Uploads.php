@@ -31,13 +31,14 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Traits\UploadTrait;
 
-use function hash_file;
-
 use ImagickException;
+
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
+
+use function hash_file;
 
 /**
  * All about the file uploads

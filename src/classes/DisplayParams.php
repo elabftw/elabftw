@@ -21,13 +21,13 @@ use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 
-use function implode;
-
 use PDO;
 
-use function sprintf;
-
 use Symfony\Component\HttpFoundation\Request;
+
+use function implode;
+
+use function sprintf;
 
 use function trim;
 

@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function date;
-
 use Elabftw\Enums\Action;
+
 use Elabftw\Services\Check;
+
+use function date;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {

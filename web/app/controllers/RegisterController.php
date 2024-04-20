@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Exceptions\IllegalActionException;
+
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

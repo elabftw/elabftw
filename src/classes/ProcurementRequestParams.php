@@ -14,9 +14,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
 
 final class ProcurementRequestParams extends ContentParams
 {
+    #[Override]
     public function getContent(): mixed
     {
         return match ($this->target) {

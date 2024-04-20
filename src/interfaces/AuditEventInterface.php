@@ -9,6 +9,8 @@
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\AuditCategory;
+
 interface AuditEventInterface
 {
     public function getRequesterUserid(): int;
@@ -19,5 +21,5 @@ interface AuditEventInterface
 
     public function getJsonBody(): string;
 
-    public function getCategory(): int;
+    public function getCategory(): AuditCategory;
 }

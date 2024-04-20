@@ -33,8 +33,8 @@ class SignatureCreated extends AbstractAuditEvent
         return json_encode($info, JSON_THROW_ON_ERROR);
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::SignatureCreated->value;
+        return AuditCategory::SignatureCreated;
     }
 }

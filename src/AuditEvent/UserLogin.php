@@ -18,8 +18,8 @@ class UserLogin extends AbstractAuditEvent
         return 'User logged in';
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::Login->value;
+        return AuditCategory::Login;
     }
 }

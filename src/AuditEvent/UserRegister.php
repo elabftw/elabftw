@@ -18,8 +18,8 @@ class UserRegister extends AbstractAuditEvent
         return 'New account created';
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::AccountCreated->value;
+        return AuditCategory::AccountCreated;
     }
 }

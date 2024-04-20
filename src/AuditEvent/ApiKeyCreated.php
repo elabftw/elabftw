@@ -18,8 +18,8 @@ class ApiKeyCreated extends AbstractAuditEvent
         return 'An API key was created';
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::ApiKeyCreated->value;
+        return AuditCategory::ApiKeyCreated;
     }
 }

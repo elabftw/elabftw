@@ -42,8 +42,8 @@ class OnboardingEmailSent extends AbstractAuditEvent
         );
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::OnboardingEmailSent->value;
+        return AuditCategory::OnboardingEmailSent;
     }
 }

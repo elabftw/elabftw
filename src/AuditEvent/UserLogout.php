@@ -18,8 +18,8 @@ class UserLogout extends AbstractAuditEvent
         return 'User logged out';
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::Logout->value;
+        return AuditCategory::Logout;
     }
 }

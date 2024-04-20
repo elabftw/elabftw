@@ -9,6 +9,7 @@
 
 namespace Elabftw\AuditEvent;
 
+use Elabftw\Enums\AuditCategory;
 use Elabftw\Interfaces\AuditEventInterface;
 
 abstract class AbstractAuditEvent implements AuditEventInterface
@@ -34,12 +35,13 @@ abstract class AbstractAuditEvent implements AuditEventInterface
         return json_encode($this->getBaseInfo(), JSON_THROW_ON_ERROR);
     }
 
-    abstract public function getCategory(): int;
+    abstract public function getCategory(): AuditCategory;
 
     protected function getBaseInfo(): array
     {
         return array(
-            'category' => $this->getCategory(),
+            'category_value' => $this->getCategory()->value,
+            'category_name' => $this->getCategory()->name,
             'message' => $this->getBody(),
             'requester_userid' => $this->getRequesterUserid(),
             'target_userid' => $this->getTargetUserid(),

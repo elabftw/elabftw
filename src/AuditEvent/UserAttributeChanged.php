@@ -33,8 +33,8 @@ class UserAttributeChanged extends AbstractAuditEvent
         );
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::AccountModified->value;
+        return AuditCategory::AccountModified;
     }
 }

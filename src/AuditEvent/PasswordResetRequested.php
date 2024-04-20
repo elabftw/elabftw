@@ -23,8 +23,8 @@ class PasswordResetRequested extends AbstractAuditEvent
         return sprintf('Password reset was requested for account associated with: %s', $this->email);
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::PasswordResetRequested->value;
+        return AuditCategory::PasswordResetRequested;
     }
 }

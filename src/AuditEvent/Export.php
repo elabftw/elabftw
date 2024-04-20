@@ -23,8 +23,8 @@ class Export extends AbstractAuditEvent
         return sprintf('User exported %d entries', $this->count);
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::Export->value;
+        return AuditCategory::Export;
     }
 }

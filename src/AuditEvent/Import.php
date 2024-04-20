@@ -23,8 +23,8 @@ class Import extends AbstractAuditEvent
         return sprintf('User imported %d entries', $this->count);
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::Import->value;
+        return AuditCategory::Import;
     }
 }

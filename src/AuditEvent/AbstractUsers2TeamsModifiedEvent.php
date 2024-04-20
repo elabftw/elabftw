@@ -13,8 +13,8 @@ use Elabftw\Enums\AuditCategory;
 
 abstract class AbstractUsers2TeamsModifiedEvent extends AbstractAuditEvent
 {
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::Users2TeamsModified->value;
+        return AuditCategory::Users2TeamsModified;
     }
 }

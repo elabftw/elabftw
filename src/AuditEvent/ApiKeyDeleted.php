@@ -18,8 +18,8 @@ class ApiKeyDeleted extends AbstractAuditEvent
         return 'An API key was deleted';
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::ApiKeyDeleted->value;
+        return AuditCategory::ApiKeyDeleted;
     }
 }

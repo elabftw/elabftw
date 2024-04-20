@@ -13,8 +13,8 @@ use Elabftw\Enums\AuditCategory;
 
 class PasswordChanged extends UserAttributeChanged
 {
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::PasswordChanged->value;
+        return AuditCategory::PasswordChanged;
     }
 }

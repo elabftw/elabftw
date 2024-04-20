@@ -476,9 +476,9 @@ class SamlTest extends \PHPUnit\Framework\TestCase
      */
     private function getAuthResponse(?array $samlUserdata = null, ?array $config = null, ?array $settings = null): AuthResponse
     {
-        $samlUserdata = $samlUserdata ?? $this->samlUserdata;
-        $config = $config ?? $this->configArr;
-        $settings = $settings ?? $this->settings;
+        $samlUserdata ??= $this->samlUserdata;
+        $config ??= $this->configArr;
+        $settings ??= $this->settings;
 
         $SamlAuthLib = $this->createMock(SamlAuthLib::class);
         $SamlAuthLib->method('login')->willReturn(null);

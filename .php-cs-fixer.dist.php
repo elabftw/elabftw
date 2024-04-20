@@ -19,7 +19,7 @@ $config = new PhpCsFixer\Config();
 
 return $config->setRules(array(
     '@PSR2' => true,
-    '@PHP71Migration' => true,
+    '@PHP83Migration' => true,
     'array_syntax' => ['syntax' => 'long'],
     'class_attributes_separation' => true,
     'declare_strict_types' => true,

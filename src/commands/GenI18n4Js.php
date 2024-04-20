@@ -9,6 +9,7 @@
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\i18n4Js;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -29,7 +30,8 @@ class GenI18n4Js extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $i18n4Js = new i18n4Js();
+        $fs = FsTools::getFs(dirname(__DIR__) . '/ts/langs');
+        $i18n4Js = new i18n4Js($fs);
         $i18n4Js->generate();
         return Command::SUCCESS;
     }

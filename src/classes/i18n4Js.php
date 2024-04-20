@@ -11,6 +11,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
 use Elabftw\Traits\TwigTrait;
+use League\Flysystem\FilesystemOperator;
 
 /**
  * This class is used to generate the translations files for i18next (javascript)
@@ -19,6 +20,10 @@ use Elabftw\Traits\TwigTrait;
 class i18n4Js
 {
     use TwigTrait;
+
+    public function __construct(private FilesystemOperator $fs)
+    {
+    }
 
     public function generate(): void
     {
@@ -83,7 +88,6 @@ class i18n4Js
 
         $Twig = $this->getTwig(true);
         $out = $Twig->render('ts-lang.ts.twig', array('terms' => $this->getTerms()));
-        $fs = FsTools::getFs(dirname(__DIR__, 2) . '/src/ts/langs');
-        $fs->write($language->value . '.ts', $out);
+        $this->fs->write($language->value . '.ts', $out);
     }
 }

@@ -20,9 +20,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class SimpleValueWrapper implements Term, Visitable
 {
-    public function __construct(private string $value)
-    {
-    }
+    public function __construct(private string $value) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

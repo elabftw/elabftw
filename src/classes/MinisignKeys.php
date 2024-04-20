@@ -58,8 +58,7 @@ readonly class MinisignKeys
         public string $pub,
         public string $salt,
         public string $derivedKey,
-    ) {
-    }
+    ) {}
 
     public function getIdHex(): string
     {

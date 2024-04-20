@@ -33,9 +33,7 @@ class ImportController implements ControllerInterface
 {
     private const AUDIT_THRESHOLD = 12;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {

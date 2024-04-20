@@ -36,6 +36,6 @@ class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
             'ts_hash' => self::TS_HASH,
             'ts_cert' => '',
             'ts_chain' => '',
-            );
+        );
     }
 }

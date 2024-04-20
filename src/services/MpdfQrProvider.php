@@ -30,9 +30,7 @@ class MpdfQrProvider implements IQRCodeProvider
      * @param array<int> $foreground RGB foreground and border color. Default [0, 0, 0].
      * @param int $compression Compression level: from 0 (default, no compression) to 9.
      */
-    public function __construct(public array $background = array(255, 255, 255), public array $foreground = array(0, 0, 0), public int $compression = 0)
-    {
-    }
+    public function __construct(public array $background = array(255, 255, 255), public array $foreground = array(0, 0, 0), public int $compression = 0) {}
 
     public function getMimeType(): string
     {

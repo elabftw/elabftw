@@ -15,9 +15,7 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 class VisitorParameters
 {
-    public function __construct(private string $entityType, private array $teamGroups)
-    {
-    }
+    public function __construct(private string $entityType, private array $teamGroups) {}
 
     public function getEntityType(): string
     {

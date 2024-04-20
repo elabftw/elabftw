@@ -25,9 +25,7 @@ use function substr;
  */
 class UploadsCleaner implements CleanerInterface
 {
-    public function __construct(private FilesystemOperator $filesystem)
-    {
-    }
+    public function __construct(private FilesystemOperator $filesystem) {}
 
     /**
      * Remove orphan files from filesystem

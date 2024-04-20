@@ -42,6 +42,6 @@ class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
             'ts_cert' => dirname(__DIR__) . '/certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
             'ts_chain' => dirname(__DIR__) . '/certs/' . self::TS_CHAIN,
-            );
+        );
     }
 }

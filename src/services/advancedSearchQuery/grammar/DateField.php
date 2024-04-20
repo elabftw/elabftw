@@ -20,9 +20,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class DateField implements Term, Visitable
 {
-    public function __construct(private array $dateArr)
-    {
-    }
+    public function __construct(private array $dateArr) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

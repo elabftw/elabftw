@@ -24,9 +24,7 @@ class i18n4Js
 {
     use TwigTrait;
 
-    public function __construct(private FilesystemOperator $fs)
-    {
-    }
+    public function __construct(private FilesystemOperator $fs) {}
 
     public function generate(): void
     {

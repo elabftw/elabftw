@@ -28,9 +28,7 @@ class S3 extends AbstractStorage
 {
     private const S3_VERSION = '2006-03-01';
 
-    public function __construct(private Config $config, private CredentialsInterface $credentials)
-    {
-    }
+    public function __construct(private Config $config, private CredentialsInterface $credentials) {}
 
     protected function getAdapter(): FilesystemAdapter
     {

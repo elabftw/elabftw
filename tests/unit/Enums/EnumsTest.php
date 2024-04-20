@@ -20,7 +20,7 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
 
     public function testEntrypoint(): void
     {
-        array_map(fn ($case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
+        array_map(fn($case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
     }
 
     public function testLanguage(): void

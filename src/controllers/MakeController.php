@@ -64,9 +64,7 @@ class MakeController implements ControllerInterface
 
     private bool $pdfa = false;
 
-    public function __construct(private Users $Users, private Request $Request)
-    {
-    }
+    public function __construct(private Users $Users, private Request $Request) {}
 
     public function getResponse(): Response
     {

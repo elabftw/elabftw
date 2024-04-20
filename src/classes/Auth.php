@@ -31,9 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Auth implements AuthInterface
 {
-    public function __construct(private Config $Config, private Request $Request)
-    {
-    }
+    public function __construct(private Config $Config, private Request $Request) {}
 
     /**
      * Try to authenticate with session and cookie

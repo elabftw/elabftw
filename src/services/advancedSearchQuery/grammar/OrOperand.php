@@ -19,9 +19,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class OrOperand implements Visitable
 {
-    public function __construct(private AndExpression $operand, private ?self $tail = null)
-    {
-    }
+    public function __construct(private AndExpression $operand, private ?self $tail = null) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

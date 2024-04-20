@@ -17,9 +17,7 @@ use Elabftw\Interfaces\ParamInterface;
 
 final class CommentParam implements ParamInterface
 {
-    public function __construct(private string $content)
-    {
-    }
+    public function __construct(private string $content) {}
 
     public function getContent(): string
     {

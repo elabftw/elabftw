@@ -55,7 +55,7 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
             // no need to verify for this provider
             'ts_cert' => '',
             'ts_chain' => '',
-            );
+        );
     }
 
     /**

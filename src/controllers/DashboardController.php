@@ -38,9 +38,7 @@ class DashboardController implements ControllerInterface
 {
     private const SHOWN_NUMBER = 5;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {

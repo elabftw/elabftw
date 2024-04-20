@@ -40,9 +40,7 @@ class ResetPasswordKey
      * $now is the time in epoch
      * $secretKey is the instance's key from config file
      */
-    public function __construct(private int $now, private string $secretKey)
-    {
-    }
+    public function __construct(private int $now, private string $secretKey) {}
 
     public function generate(string $email): string
     {

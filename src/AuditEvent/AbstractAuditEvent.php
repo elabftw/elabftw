@@ -17,9 +17,7 @@ use Elabftw\Interfaces\AuditEventInterface;
 
 abstract class AbstractAuditEvent implements AuditEventInterface
 {
-    public function __construct(private int $requesterUserid = 0, private int $targetUserid = 0)
-    {
-    }
+    public function __construct(private int $requesterUserid = 0, private int $targetUserid = 0) {}
 
     public function getTargetUserid(): int
     {

@@ -23,9 +23,7 @@ use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
  */
 class DeviceTokenValidator
 {
-    public function __construct(private Configuration $config, private string $deviceToken)
-    {
-    }
+    public function __construct(private Configuration $config, private string $deviceToken) {}
 
     public function validate(): bool
     {

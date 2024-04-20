@@ -15,6 +15,4 @@ namespace Elabftw\Exceptions;
 /**
  * For errors related to the filesystem (read/write files)
  */
-final class FilesystemErrorException extends WithMessageException
-{
-}
+final class FilesystemErrorException extends WithMessageException {}

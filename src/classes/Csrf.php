@@ -28,9 +28,7 @@ class Csrf
 {
     private string $token = '';
 
-    public function __construct(private Request $Request)
-    {
-    }
+    public function __construct(private Request $Request) {}
 
     /**
      * Get the token and generate one if needed

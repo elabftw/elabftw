@@ -29,9 +29,7 @@ class AdvancedSearchQuery
     protected OrExpression $parsedQuery;
 
     // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
-    public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null)
-    {
-    }
+    public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null) {}
 
     public function getWhereClause(): array
     {

@@ -36,9 +36,7 @@ class MakeThumbnail implements MakeThumbnailInterface
     /** @var int WIDTH the width for the thumbnail */
     private const WIDTH = 100;
 
-    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs)
-    {
-    }
+    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs) {}
 
     public function saveThumb(): void
     {

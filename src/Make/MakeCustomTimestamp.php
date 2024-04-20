@@ -51,6 +51,6 @@ class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
             'ts_cert' => $config['ts_cert'],
             'ts_hash' => $hash,
             'ts_chain' => '/etc/ssl/cert.pem',
-            );
+        );
     }
 }

@@ -20,9 +20,7 @@ use Elabftw\Models\Users;
 
 class UserCreator
 {
-    public function __construct(private Users $requester, private array $reqBody)
-    {
-    }
+    public function __construct(private Users $requester, private array $reqBody) {}
 
     /**
      * Create a user from admin/sysadmin panels

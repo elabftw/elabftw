@@ -29,9 +29,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 
 class DepthValidatorVisitor implements Visitor
 {
-    public function __construct(private ?int $limit = null)
-    {
-    }
+    public function __construct(private ?int $limit = null) {}
 
     public function checkDepthOfTree(Visitable $parsedQuery, VisitorParameters $parameters): void
     {

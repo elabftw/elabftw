@@ -19,9 +19,7 @@ final class TagParam implements ParamInterface
 {
     protected const MIN_CONTENT_SIZE = 1;
 
-    public function __construct(private string $content)
-    {
-    }
+    public function __construct(private string $content) {}
 
     /**
      * Sanitize tag, we remove '\' because it messes up the javascript if you have this in the tags

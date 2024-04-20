@@ -39,9 +39,7 @@ class SignatureHelper
     // hashed DSA: we use Ed25519ph from https://datatracker.ietf.org/doc/html/rfc8032#section-5.1
     private const HASHED_DSA = 'ED';
 
-    public function __construct(private Users $Users)
-    {
-    }
+    public function __construct(private Users $Users) {}
 
     public function serializeSignature(string $privkey, string $passphrase, string $message, Meaning $meaning): string
     {

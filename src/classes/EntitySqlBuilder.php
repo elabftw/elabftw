@@ -31,9 +31,7 @@ class EntitySqlBuilder
 
     private array $joinsSql = array();
 
-    public function __construct(private AbstractEntity $entity)
-    {
-    }
+    public function __construct(private AbstractEntity $entity) {}
 
     /**
      * Get the SQL string for read before the WHERE

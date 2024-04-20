@@ -24,9 +24,7 @@ use function sprintf;
  */
 class PasswordValidator
 {
-    public function __construct(private readonly int $minLength, private readonly PasswordComplexity $passwordComplexity)
-    {
-    }
+    public function __construct(private readonly int $minLength, private readonly PasswordComplexity $passwordComplexity) {}
 
     public function validate(string $password): bool
     {

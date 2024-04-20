@@ -20,9 +20,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class MetadataField implements Term, Visitable
 {
-    public function __construct(private SimpleValueWrapper $keyWrapper, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null)
-    {
-    }
+    public function __construct(private SimpleValueWrapper $keyWrapper, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

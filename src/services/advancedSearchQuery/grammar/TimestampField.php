@@ -22,9 +22,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class TimestampField implements Term, Visitable, TimestampFieldType
 {
-    public function __construct(private string $field, private array $dateArr)
-    {
-    }
+    public function __construct(private string $field, private array $dateArr) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

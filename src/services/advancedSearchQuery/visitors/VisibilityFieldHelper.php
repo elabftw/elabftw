@@ -29,9 +29,7 @@ class VisibilityFieldHelper
 {
     public string $possibleInput = '';
 
-    public function __construct(private string $userInput)
-    {
-    }
+    public function __construct(private string $userInput) {}
 
     public function getArr(): array
     {

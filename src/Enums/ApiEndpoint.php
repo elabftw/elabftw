@@ -35,6 +35,6 @@ enum ApiEndpoint: string
 
     public static function getCases(): array
     {
-        return array_map(fn ($case) => $case->value, ApiEndpoint::cases());
+        return array_map(fn($case) => $case->value, ApiEndpoint::cases());
     }
 }

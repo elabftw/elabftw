@@ -52,9 +52,7 @@ class Tex2Svg
 
     private string $contentWithMathJaxSVG = '';
 
-    public function __construct(private LoggerInterface $log, private Mpdf $mpdf, private string $source)
-    {
-    }
+    public function __construct(private LoggerInterface $log, private Mpdf $mpdf, private string $source) {}
 
     public function getContent(): string
     {

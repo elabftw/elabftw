@@ -19,9 +19,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class NotExpression implements Visitable
 {
-    public function __construct(private SimpleValueWrapper | DateField | TimestampField | MetadataField | Field | OrExpression $expression)
-    {
-    }
+    public function __construct(private SimpleValueWrapper | DateField | TimestampField | MetadataField | Field | OrExpression $expression) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

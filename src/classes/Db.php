@@ -63,16 +63,12 @@ final class Db
     /**
      * Disallow cloning the class
      */
-    private function __clone()
-    {
-    }
+    private function __clone() {}
 
     /**
      * Disallow wakeup also
      */
-    public function __wakeup()
-    {
-    }
+    public function __wakeup() {}
 
     /**
      * Return the instance of the class

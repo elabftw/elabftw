@@ -15,9 +15,7 @@ namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
 class WhereCollector
 {
-    public function __construct(private string $where, private array $bindValues)
-    {
-    }
+    public function __construct(private string $where, private array $bindValues) {}
 
     public function getWhere(): string
     {

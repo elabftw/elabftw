@@ -15,6 +15,4 @@ namespace Elabftw\Exceptions;
 /**
  * For errors related to the filesystem (read/write files)
  */
-final class ProcessFailedException extends WithMessageException
-{
-}
+final class ProcessFailedException extends WithMessageException {}

@@ -41,6 +41,6 @@ class MakeDigicertTimestamp extends AbstractMakeTrustedTimestamp
             'ts_hash' => self::TS_HASH,
             // digicert root cert is already in the trusted certs list provided by ca-certificates package
             'ts_chain' => '/etc/ssl/cert.pem',
-            );
+        );
     }
 }

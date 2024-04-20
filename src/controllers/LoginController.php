@@ -62,9 +62,7 @@ class LoginController implements ControllerInterface
 
     public const AUTH_ANON = 50;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {

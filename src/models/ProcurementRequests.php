@@ -101,7 +101,7 @@ class ProcurementRequests implements RestInterface
         // TODO hooks: received state set qty_recievde to qty_ordered
         unset($params['action']);
         foreach ($params as $key => $value) {
-            $this->update(new ProcurementRequestParams($key, $value));
+            $this->update(new ProcurementRequestParams($key, (string) $value));
         }
         return $this->readOne();
     }

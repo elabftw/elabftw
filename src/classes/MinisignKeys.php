@@ -28,7 +28,7 @@ use function unpack;
  * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
  * Inspired by the code from https://github.com/soatok/minisign-php by Soatok Dreamseeker
  */
-class MinisignKeys
+readonly class MinisignKeys
 {
     // ed25519
     private const SIGNATURE_ALGO = 'Ed';
@@ -44,13 +44,13 @@ class MinisignKeys
     private const CKSUM_ALGO = 'B2';
 
     public function __construct(
-        public readonly string $signatureAlgo,
-        public readonly string $id,
+        public string $signatureAlgo,
+        public string $id,
         /** @var non-empty-string */
-        public readonly string $priv,
-        public readonly string $pub,
-        public readonly string $salt,
-        public readonly string $derivedKey,
+        public string $priv,
+        public string $pub,
+        public string $salt,
+        public string $derivedKey,
     ) {
     }
 

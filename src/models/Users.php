@@ -304,7 +304,10 @@ class Users implements RestInterface
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token']);
-        unset($userData['sig_privkey']);
+        // keep sig_privkey in response if requester is target
+        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+            unset($userData['sig_privkey']);
+        }
         return $userData;
     }
 

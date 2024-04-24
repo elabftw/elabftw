@@ -50,11 +50,11 @@ enum Method {
 }
 
 enum ProcurementState {
-  Pending = 1,
-  Validated = 2,
-  PartiallyReceived = 3,
-  Received = 4,
-  Archived = 5,
+  Pending = 10,
+  Validated = 20,
+  PartiallyReceived = 30,
+  Received = 40,
+  Archived = 50,
 }
 
 enum Action {

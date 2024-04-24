@@ -29,6 +29,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
         $this->Db = Db::getConnection();
+        $this->ExperimentsLinks = new ExperimentsLinks($this);
         $this->ItemsLinks = new ItemsLinks($this);
         $this->Steps = new Steps($this);
         $this->setId($id);

@@ -656,7 +656,7 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
 
-        // Either ExperimentsLinks or ItmesLinks could be used here
+        // Either ExperimentsLinks or ItemsLinks could be used here
         if ($this->ExperimentsLinks->isSelfLinkViaMetadata($key, $valueAsString)) {
             throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
         }

@@ -22,7 +22,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
-use Elabftw\Enums\SearchType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -236,7 +235,7 @@ abstract class AbstractEntity implements RestInterface
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,
-            $displayParams->searchType === SearchType::Related ? $displayParams->relatedOrigin : null,
+            $displayParams->relatedOrigin,
         );
 
         // first WHERE is the state, possibly including archived

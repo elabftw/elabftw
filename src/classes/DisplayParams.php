@@ -48,7 +48,7 @@ class DisplayParams
     // if this variable is not Undefined the error message shown will be different if there are no results
     public SearchType $searchType = SearchType::Undefined;
 
-    public EntityType $relatedOrigin;
+    public ?EntityType $relatedOrigin = null;
 
     public bool $includeArchived = false;
 

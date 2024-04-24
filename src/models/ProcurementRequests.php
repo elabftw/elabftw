@@ -41,7 +41,12 @@ class ProcurementRequests implements RestInterface
 
     public function readAll(): array
     {
-        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.qty_received, pr.body, pr.quote, pr.email_sent, pr.state, items.title AS entity_title, pr.qty_ordered * items.proc_price_tax AS total, items.proc_currency
+        $sql = "SELECT
+            CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname,
+            pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.qty_received,
+            pr.body, pr.quote, pr.email_sent, pr.state, items.title AS entity_title,
+            pr.qty_ordered * items.proc_price_tax AS total,
+            items.proc_currency
             FROM procurement_requests AS pr
             LEFT JOIN users ON (pr.requester_userid = users.userid)
             LEFT JOIN items ON (pr.entity_id = items.id)

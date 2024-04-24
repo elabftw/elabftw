@@ -43,7 +43,7 @@ class SigKeys implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException('No passphrase provided!'));
+        $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException(_('The mandatory "passphrase" parameter was not provided!')));
 
         $this->destroy();
         $sql = 'INSERT INTO sig_keys (pubkey, privkey, userid) VALUES (:pubkey, :privkey, :userid)';

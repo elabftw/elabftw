@@ -115,8 +115,7 @@ readonly class MinisignKeys
         $kdfOpsLimit = (int) $unpackedOpsLimit[1];
         $kdfMemLimit = (int) $unpackedMemLimit[1];
         $derivedKey = self::kdf($passphrase, $salt, $kdfOpsLimit, $kdfMemLimit);
-        /** @psalm-suppress RedundantCast */
-        $remainder = (string) (Binary::safeSubstr($decoded, 54, 136) ^ $derivedKey);
+        $remainder = Binary::safeSubstr($decoded, 54, 136) ^ $derivedKey;
         // Note: had to change second arg from 2 to 0 here to make checksum work! (from php impl)
         $id = Binary::safeSubstr($remainder, 0, self::KEYID_BYTES);
         /** @var non-empty-string */

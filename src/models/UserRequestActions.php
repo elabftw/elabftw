@@ -34,20 +34,25 @@ class UserRequestActions implements RestInterface
 
     public function readAll(): array
     {
-        $sql = sprintf('SELECT "experiments" AS entity_page, entity.title AS entity_title, experiments_request_actions.id, experiments_request_actions.created_at, requester_userid, target_userid, entity_id, action, experiments_request_actions.state
-            FROM experiments_request_actions LEFT JOIN experiments AS entity ON (entity.id = experiments_request_actions.entity_id) WHERE target_userid = :userid AND experiments_request_actions.state = %d ORDER BY created_at DESC LIMIT 100', State::Normal->value);
+        $sql = '(
+            SELECT "experiments" AS entity_page, entity.title AS entity_title, experiments_request_actions.id,
+                experiments_request_actions.created_at, requester_userid, target_userid, entity_id, action,
+                experiments_request_actions.state
+            FROM experiments_request_actions LEFT JOIN experiments AS entity ON entity.id = experiments_request_actions.entity_id
+            WHERE target_userid = :userid AND experiments_request_actions.state = :state
+            ) UNION (
+            SELECT "database" AS entity_page, entity.title AS entity_title, items_request_actions.id,
+                items_request_actions.created_at, requester_userid, target_userid, entity_id, action,
+                items_request_actions.state
+            FROM items_request_actions LEFT JOIN items AS entity ON entity.id = items_request_actions.entity_id
+            WHERE target_userid = :userid AND items_request_actions.state = :state
+            )
+            ORDER BY created_at DESC LIMIT 100';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $experiments = $req->fetchAll();
-        $sql = sprintf('SELECT "items" AS entity_page, entity.title AS entity_title, items_request_actions.id, items_request_actions.created_at, requester_userid, target_userid, entity_id, action, items_request_actions.state
-            FROM items_request_actions LEFT JOIN items AS entity ON (entity.id = items_request_actions.entity_id) WHERE target_userid = :userid AND items_request_actions.state = %d ORDER BY created_at DESC LIMIT 100', State::Normal->value);
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $experiments + $req->fetchAll();
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll();
     }
 
     public function readAllFull(): array

@@ -110,7 +110,7 @@ readonly class MinisignKeys
         $unpackedMemLimit = unpack('V', $packedMemLimit);
         if ($unpackedOpsLimit === false || $unpackedMemLimit === false) {
             // Note: this error message is not translated because unless you're a cryptogeek, this means nothing in any language
-            throw new ImproperActionException('Error unpacking ops or mem limits for key derivation function');
+            throw new ImproperActionException('Something went wrong while decrypting your private key: error unpacking ops or mem limits for key derivation function');
         }
         $kdfOpsLimit = (int) $unpackedOpsLimit[1];
         $kdfMemLimit = (int) $unpackedMemLimit[1];

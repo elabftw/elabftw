@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -34,20 +35,33 @@ class UserRequestActions implements RestInterface
 
     public function readAll(): array
     {
-        $sql = '(
-            SELECT "experiments" AS entity_page, entity.title AS entity_title, experiments_request_actions.id,
-                experiments_request_actions.created_at, requester_userid, target_userid, entity_id, action,
-                experiments_request_actions.state
-            FROM experiments_request_actions LEFT JOIN experiments AS entity ON entity.id = experiments_request_actions.entity_id
-            WHERE target_userid = :userid AND experiments_request_actions.state = :state
-            ) UNION (
-            SELECT "database" AS entity_page, entity.title AS entity_title, items_request_actions.id,
-                items_request_actions.created_at, requester_userid, target_userid, entity_id, action,
-                items_request_actions.state
-            FROM items_request_actions LEFT JOIN items AS entity ON entity.id = items_request_actions.entity_id
-            WHERE target_userid = :userid AND items_request_actions.state = :state
-            )
-            ORDER BY created_at DESC LIMIT 100';
+        $tables = array(
+            array(
+                'page' => EntityType::Experiments->value,
+                'entity_type' => EntityType::Experiments->value,
+            ),
+            array(
+                // Note: this should probably not be hardcoded here
+                'page' => 'database',
+                'entity_type' => EntityType::Items->value,
+            ),
+        );
+        $sql = array();
+        foreach($tables as $table) {
+            $sql[] = sprintf(
+                '(SELECT "%1$s" AS entity_page, entity.title AS entity_title, %2$s_request_actions.id,
+                %2$s_request_actions.created_at, requester_userid, target_userid, entity_id, action,
+                %2$s_request_actions.state
+              FROM %2$s_request_actions
+              LEFT JOIN %2$s AS entity
+                ON entity.id = %2$s_request_actions.entity_id
+              WHERE target_userid = :userid
+                AND %2$s_request_actions.state = :state)',
+                $table['page'],
+                $table['entity_type'],
+            );
+        }
+        $sql = implode(' UNION ', $sql) . ' ORDER BY created_at DESC LIMIT 100';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);

@@ -23,6 +23,9 @@ use ParagonIE\ConstantTime\Base64;
 
 use function sodium_crypto_generichash;
 
+use const SODIUM_CRYPTO_GENERICHASH_BYTES_MAX;
+use const JSON_THROW_ON_ERROR;
+
 /**
  * Helper class for minisign compatible signatures
  * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
@@ -32,7 +35,7 @@ class SignatureHelper
 {
     public const UNTRUSTED_COMMENT_PREFIX = 'untrusted comment: ';
 
-    public const REGEX = '#^' . self::UNTRUSTED_COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
+    public const KEY_REGEX = '#^' . self::UNTRUSTED_COMMENT_PREFIX . '(.+?)[\r\n\s]+([A-Za-z0-9+/=]+)[\s]+?$#';
 
     private const TRUSTED_COMMENT_PREFIX = 'trusted comment: ';
 

@@ -27,6 +27,9 @@ use function unpack;
 
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
+use const SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES;
+use const SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE;
+use const SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE;
 
 /**
  * This class is a representation of a minisign key
@@ -97,7 +100,7 @@ readonly class MinisignKeys
     public static function deserialize(string $secretKey, #[SensitiveParameter] string $passphrase): self
     {
         $sk = array();
-        if (!preg_match(SignatureHelper::REGEX, $secretKey, $sk)) {
+        if (!preg_match(SignatureHelper::KEY_REGEX, $secretKey, $sk)) {
             throw new ImproperActionException(_('Invalid secret key format!'));
         }
         $decoded = Base64::decode($sk[2]);

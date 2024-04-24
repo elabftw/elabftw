@@ -14,7 +14,6 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\SearchType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -126,7 +125,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsArr' => $itemsArr,
             // generate light show page
             'searchPage' => $isSearchPage,
-            'searchType' => $isSearchPage ? SearchType::SearchPage : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readFull(),

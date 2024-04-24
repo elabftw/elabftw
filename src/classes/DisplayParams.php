@@ -13,7 +13,6 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
-use Elabftw\Enums\SearchType;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
@@ -44,9 +43,6 @@ class DisplayParams
 
     // the extended search query
     public string $extendedQuery = '';
-
-    // if this variable is not Undefined the error message shown will be different if there are no results
-    public SearchType $searchType = SearchType::Undefined;
 
     public ?EntityType $relatedOrigin = null;
 
@@ -81,11 +77,9 @@ class DisplayParams
         }
         if (!empty($this->Request->query->get('q'))) {
             $this->query = trim($this->Request->query->getString('q'));
-            $this->searchType = SearchType::Query;
         }
         if (!empty($this->Request->query->get('extended'))) {
             $this->extendedQuery = trim($this->Request->query->getString('extended'));
-            $this->searchType = SearchType::Extended;
         }
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
@@ -120,7 +114,6 @@ class DisplayParams
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
-            $this->searchType = SearchType::Tags;
         }
         // now get ordering/sorting parameters from the query string
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
@@ -129,24 +122,20 @@ class DisplayParams
         // RELATED FILTER
         if (Check::id($this->Request->query->getInt('related')) !== false) {
             $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
-            $this->searchType = SearchType::Related;
             $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
         if (Check::id($this->Request->query->getInt('cat')) !== false) {
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
-            $this->searchType = SearchType::Category;
         }
         // STATUS FILTER
         if (Check::id($this->Request->query->getInt('status')) !== false) {
             $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
-            $this->searchType = SearchType::Status;
         }
 
         // OWNER (USERID) FILTER
         if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
-            $this->searchType = SearchType::Owner;
         }
     }
 }

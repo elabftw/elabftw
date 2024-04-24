@@ -27,6 +27,7 @@ import {
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
+import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -549,6 +550,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // prevent the form from being submitted
         event.preventDefault();
       }
+    // CLICK the NOW button of a time or date extra field
+    } else if (el.matches('[data-action="update-to-now"]')) {
+      const input = el.closest('.input-group').querySelector('input');
+      // use Luxon lib here
+      const now = DateTime.local();
+      // date format
+      let format = 'yyyy-MM-dd';
+      if (input.type === 'time') {
+        format = 'HH:mm';
+      }
+      if (input.type === 'datetime-local') {
+        /* eslint-disable-next-line quotes */
+        format = "yyyy-MM-dd'T'HH:mm";
+      }
+      input.value = now.toFormat(format);
+      // trigger change event so it is saved
+      input.dispatchEvent(new Event('change'));
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

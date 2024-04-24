@@ -20,5 +20,6 @@ class i18n4JsTest extends \PHPUnit\Framework\TestCase
         $fs = Storage::MEMORY->getStorage()->getFs();
         $i18n4Js = new i18n4Js($fs);
         $i18n4Js->generate();
+        $this->assertTrue($fs->fileExists('fr_FR.ts'));
     }
 }

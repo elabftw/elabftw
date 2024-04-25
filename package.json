@@ -53,7 +53,6 @@
     "@types/bootstrap": "^5.2.10",
     "@types/dropzone": "^5.7.8",
     "@types/fancybox": "^3.5.6",
-    "@types/file-saver": "^2.0.7",
     "@types/jquery": "^3.5.29",
     "@types/jqueryui": "^1.12.21",
     "@types/luxon": "^3.4.2",
@@ -118,7 +117,7 @@
     "twigcs": "php vendor/bin/twigcs",
     "unit": "tests/run.sh unit",
     "unit-ci": "php vendor/bin/codecept run unit",
-    "watchcss": "sass --quiet-deps --watch src/scss/main.scss:web/assets/elabftw.min.css src/scss/pdf.scss:web/assets/pdf.min.css",
+    "watchpdfcss": "sass --quiet-deps --watch src/scss/pdf.scss:web/assets/pdf.min.css",
     "watchjs": "webpack-cli --config builder.js --mode=development --watch --progress",
     "watchnode": "webpack-cli --config node-builder.js --mode=development --watch --progress"
   },

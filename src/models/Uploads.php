@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,9 +8,12 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
@@ -26,12 +30,13 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
 use Elabftw\Traits\UploadTrait;
-use function hash_file;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
+
+use function hash_file;
 
 /**
  * All about the file uploads
@@ -40,10 +45,10 @@ class Uploads implements RestInterface
 {
     use UploadTrait;
 
-    public const HASH_ALGORITHM = 'sha256';
+    public const string HASH_ALGORITHM = 'sha256';
 
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
-    private const BIG_FILE_THRESHOLD = 50000000;
+    // size of a file in bytes above which we don't process it (50 Mb)
+    private const int BIG_FILE_THRESHOLD = 50000000;
 
     public array $uploadData = array();
 
@@ -65,7 +70,13 @@ class Uploads implements RestInterface
      */
     public function create(CreateUploadParamsInterface $params): int
     {
-        $this->Entity->canOrExplode('write');
+        // by default we need write access to an entity to upload files
+        $rw = 'write';
+        // but timestamping/sign only needs read access
+        if ($params instanceof CreateImmutableArchivedUpload) {
+            $rw = 'read';
+        }
+        $this->Entity->canOrExplode($rw);
 
         // original file name
         $realName = $params->getFilename();

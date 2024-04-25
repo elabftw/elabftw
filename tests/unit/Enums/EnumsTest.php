@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -18,6 +20,33 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
 
     public function testEntrypoint(): void
     {
-        array_map(fn ($case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
+        array_map(fn($case) => $this->assertStringEndsWith('.php', $case->toPage()), Entrypoint::cases());
+    }
+
+    public function testLanguage(): void
+    {
+        $this->assertIsArray(Language::getAllHuman());
+        $this->assertEquals('ca', Language::Catalan->toCalendar());
+    }
+
+    public function testMeaning(): void
+    {
+        $this->assertIsArray(Meaning::getAssociativeArray());
+    }
+
+    public function testScope(): void
+    {
+        $this->assertIsString(Scope::toIcon(Scope::User));
+    }
+
+    public function testSort(): void
+    {
+        $this->assertIsString(Sort::Asc->toFa());
+    }
+
+    public function testEnforeMfa(): void
+    {
+        $this->assertIsString(EnforceMfa::toHuman(EnforceMfa::Admins));
+        $this->assertIsArray(EnforceMfa::getAssociativeArray());
     }
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -16,10 +19,11 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use function implode;
 use PDO;
-use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
+
+use function implode;
+use function sprintf;
 use function trim;
 
 /**

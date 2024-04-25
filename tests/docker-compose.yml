@@ -1,7 +1,6 @@
 # this file is used by the tests/run.sh script
 # it will spawn temporary containers to test things out
 # https://www.elabftw.net
-version: '3'
 
 services:
     web:

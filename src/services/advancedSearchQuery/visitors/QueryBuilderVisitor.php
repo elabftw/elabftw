@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -8,10 +9,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
-use function array_merge;
-use function bin2hex;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Services\AdvancedSearchQuery\Collectors\WhereCollector;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
@@ -27,6 +28,9 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use PDO;
+
+use function array_merge;
+use function bin2hex;
 use function random_bytes;
 use function ucfirst;
 
@@ -87,7 +91,7 @@ class QueryBuilderVisitor implements Visitor
             $pathParam,
             $valueParam,
         );
-        
+
         $bindValues = array();
         // value path
         $bindValues[] = array(

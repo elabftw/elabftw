@@ -129,7 +129,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
     {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
 
@@ -207,6 +207,7 @@
       </div>
     </div>
 
+    {% include 'filter-input-snippet.html' with {'target': 'teamsTableBody'} %}
     <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
       <thead>
         <tr>
@@ -217,7 +218,7 @@
           <th scope='col'>{{ 'Actions'|trans }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id='teamsTableBody'>
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
@@ -599,7 +600,7 @@
 <div data-tabcontent='10' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
-    <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
     {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
@@ -852,7 +853,7 @@
 
 {# TAB 11 LDAP #}
 <div data-tabcontent='11' id='ldapSettings' hidden>
-  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
@@ -1044,6 +1045,7 @@
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='auditLogsTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     {# Logs are presented in a sortable table #}
+    {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
     <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
       <thead>
         <tr>

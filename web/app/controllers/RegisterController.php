@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,13 +11,14 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Exceptions\IllegalActionException;
+
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

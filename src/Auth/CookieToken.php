@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,14 +8,17 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
-use function bin2hex;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Filter;
-use function hash;
 use PDO;
+
+use function bin2hex;
+use function hash;
 use function random_bytes;
 
 /**
@@ -23,16 +27,16 @@ use function random_bytes;
 class CookieToken
 {
     /** cookie is a sha256 sum: 64 chars */
-    private const COOKIE_LENGTH = 64;
+    private const int COOKIE_LENGTH = 64;
 
-    public string $token;
+    private readonly string $token;
 
     private Db $Db;
 
-    public function __construct(string $token = '')
+    public function __construct(string $token)
     {
         $this->Db = Db::getConnection();
-        $this->token = $this->setToken($token);
+        $this->token = self::check($token);
     }
 
     /**
@@ -42,30 +46,34 @@ class CookieToken
     {
         $sql = 'UPDATE users SET token = :token, token_created_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $this->token, PDO::PARAM_STR);
+        $req->bindValue(':token', $this->token, PDO::PARAM_STR);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
-    private function setToken(string $token): string
+    public function getToken(): string
     {
-        if (empty($token)) {
-            return $this->generateToken();
-        }
-        return self::check($token);
+        return $this->token;
     }
 
-    private function generateToken(): string
+    public static function generate(): string
     {
         return hash('sha256', bin2hex(random_bytes(self::COOKIE_LENGTH / 4)));
     }
 
+    public static function fromScratch(): self
+    {
+        return new self(self::generate());
+    }
+
     private static function check(string $token): string
     {
-        if (mb_strlen($token) !== self::COOKIE_LENGTH) {
-            throw new IllegalActionException('Invalid cookie!');
-        }
         // filter out any non hexit
-        return Filter::hexits($token);
+        $token = Filter::hexits($token);
+        // and check length
+        if (mb_strlen($token) !== self::COOKIE_LENGTH) {
+            throw new IllegalActionException('Cookie token has invalid length!');
+        }
+        return $token;
     }
 }

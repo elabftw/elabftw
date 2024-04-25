@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -39,28 +42,28 @@ enum Language: string
         return array_map(array(__CLASS__, 'toHuman'), $all);
     }
 
-    public static function toCalendar(self $value): string
+    public function toCalendar(): string
     {
-        return match ($value) {
-            Language::Catalan => 'ca',
-            Language::Czech => 'cs',
-            Language::German => 'de',
-            Language::EnglishGB=> 'en-gb',
-            Language::EnglishUS => 'en-us',
-            Language::Spanish => 'es',
-            Language::French => 'fr',
-            Language::Indonesian => 'id',
-            Language::Italian => 'it',
-            Language::Japanese => 'ja',
-            Language::Korean => 'ko',
-            Language::Dutch => 'nl',
-            Language::Polish => 'pl',
-            Language::PortugueseBrazilian => 'pt-br',
-            Language::Portuguese => 'pt',
-            Language::Russian => 'ru',
-            Language::Slovenian => 'sl',
-            Language::Slovak => 'sk',
-            Language::Chinese => 'zh-cn',
+        return match ($this) {
+            $this::Catalan => 'ca',
+            $this::Czech => 'cs',
+            $this::German => 'de',
+            $this::EnglishGB => 'en-gb',
+            $this::EnglishUS => 'en-us',
+            $this::Spanish => 'es',
+            $this::French => 'fr',
+            $this::Indonesian => 'id',
+            $this::Italian => 'it',
+            $this::Japanese => 'ja',
+            $this::Korean => 'ko',
+            $this::Dutch => 'nl',
+            $this::Polish => 'pl',
+            $this::PortugueseBrazilian => 'pt-br',
+            $this::Portuguese => 'pt',
+            $this::Russian => 'ru',
+            $this::Slovenian => 'sl',
+            $this::Slovak => 'sk',
+            $this::Chinese => 'zh-cn',
         };
     }
 

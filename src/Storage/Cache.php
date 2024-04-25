@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Storage;
 
 /**
@@ -14,5 +17,5 @@ namespace Elabftw\Storage;
  */
 class Cache extends Local
 {
-    protected const FOLDER = 'cache/elab';
+    protected const string FOLDER = 'cache/elab';
 }

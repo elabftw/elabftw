@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -22,7 +25,7 @@ use ZipStream\ZipStream;
  */
 class MakeEln extends MakeStreamZip
 {
-    private const HASH_ALGO = 'sha256';
+    private const string HASH_ALGO = 'sha256';
 
     protected string $extension = '.eln';
 
@@ -55,11 +58,11 @@ class MakeEln extends MakeStreamZip
                         'slogan' => 'A free and open source electronic lab notebook.',
                         'url' => 'https://www.elabftw.net',
                         'parentOrganization' => array(
-                          '@type' => 'Organization',
-                          'name' => 'Deltablot',
-                          'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
-                          'slogan' => 'Open Source software for research labs.',
-                          'url' => 'https://www.deltablot.com',
+                            '@type' => 'Organization',
+                            'name' => 'Deltablot',
+                            'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
+                            'slogan' => 'Open Source software for research labs.',
+                            'url' => 'https://www.deltablot.com',
                         ),
                     ),
                     'version' => '1.0',

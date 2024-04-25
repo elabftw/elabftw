@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,14 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Services\TeamsHelper;
+use PDO;
 
 /**
  * Authenticate with the cookie
@@ -40,7 +45,7 @@ class Cookie implements AuthInterface
             $this->validityMinutes
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':token', $this->Token->token);
+        $req->bindValue(':token', $this->Token->getToken(), PDO::PARAM_STR);
         $this->Db->execute($req);
         if ($req->rowCount() !== 1) {
             throw new UnauthorizedException();
@@ -51,7 +56,9 @@ class Cookie implements AuthInterface
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
         $TeamsHelper = new TeamsHelper($this->team);
-        if (!$TeamsHelper->isUserInTeam($userid)) {
+        try {
+            $TeamsHelper->isUserInTeam($userid);
+        } catch (ResourceNotFoundException) {
             throw new UnauthorizedException();
         }
 

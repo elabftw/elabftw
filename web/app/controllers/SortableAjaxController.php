@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,8 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Enums\Orderable;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -28,6 +30,8 @@ use Elabftw\Models\Todolist;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+
+use function dirname;
 
 /**
  * Update ordering of various things

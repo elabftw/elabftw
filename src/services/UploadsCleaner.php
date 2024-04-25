@@ -10,11 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function basename;
-use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
 use League\Flysystem\FilesystemOperator;
+
+use function basename;
+use function count;
 use function substr;
 
 /**
@@ -23,9 +24,7 @@ use function substr;
  */
 class UploadsCleaner implements CleanerInterface
 {
-    public function __construct(private FilesystemOperator $filesystem)
-    {
-    }
+    public function __construct(private FilesystemOperator $filesystem) {}
 
     /**
      * Remove orphan files from filesystem

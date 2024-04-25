@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,10 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function array_column;
-use function array_unique;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,6 +19,9 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Services\UsersHelper;
+
+use function array_column;
+use function array_unique;
 use function implode;
 
 class EntitySqlBuilder
@@ -26,9 +30,7 @@ class EntitySqlBuilder
 
     private array $joinsSql = array();
 
-    public function __construct(private AbstractEntity $entity)
-    {
-    }
+    public function __construct(private AbstractEntity $entity) {}
 
     /**
      * Get the SQL string for read before the WHERE

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 
 /**
@@ -31,6 +31,8 @@ class AuthResponse
 
     // when user needs to request access to a team
     public bool $initTeamRequired = false;
+
+    public bool $teamSelectionRequired = false;
 
     public bool $isValidated = false;
 
@@ -55,7 +57,11 @@ class AuthResponse
         if ($teamCount === 1) {
             $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
         } elseif ($teamCount === 0) {
-            throw new ImproperActionException('Could not find a team!');
+            $Users = new Users($this->userid);
+            $this->teamSelectionRequired = true;
+            $this->initTeamUserInfo = array(
+                'userid' => $Users->userData['userid'],
+            );
         } else {
             $this->isInSeveralTeams = true;
         }

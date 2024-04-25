@@ -22,14 +22,16 @@ class MakeBackupZipTest extends \PHPUnit\Framework\TestCase
 
     private MakeBackupZip $MakeDb;
 
+    private bool $includeChangelog = false;
+
     protected function setUp(): void
     {
         // we will export things changed in this time period
         $period = '19991231-20000102';
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->MakeExp = new MakeBackupZip($Zip, new Experiments($Users), $period);
-        $this->MakeDb = new MakeBackupZip($Zip, new Items($Users), $period);
+        $this->MakeExp = new MakeBackupZip($Zip, new Experiments($Users), $period, $this->includeChangelog);
+        $this->MakeDb = new MakeBackupZip($Zip, new Items($Users), $period, $this->includeChangelog);
     }
 
     public function testGetFileName(): void

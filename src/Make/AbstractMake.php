@@ -32,7 +32,7 @@ abstract class AbstractMake
 
     protected string $contentType = 'application/octet-stream';
 
-    public function __construct(protected AbstractEntity $Entity)
+    public function __construct(protected AbstractEntity $Entity, protected bool $includeChangelog = false)
     {
         $this->Db = Db::getConnection();
     }

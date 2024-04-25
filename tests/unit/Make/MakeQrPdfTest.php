@@ -21,7 +21,8 @@ class MakeQrPdfTest extends \PHPUnit\Framework\TestCase
     {
         $Entity = new Experiments(new Users(1, 1), 1);
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakeQrPdf($MpdfProvider, $Entity, array('1', '2', '3'));
+	$includeChangelog = false;
+        $this->MakePdf = new MakeQrPdf($MpdfProvider, $Entity, array('1', '2', '3'), $includeChangelog);
     }
 
     public function testGetFileContent(): void

@@ -35,7 +35,11 @@ class MakeEln extends MakeStreamZip
 
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
-        parent::__construct($Zip, $entity, $idArr);
+        // changelog setting only used in PDF
+	$usePdfa = false;
+	$includeChangelog = false;
+
+        parent::__construct($Zip, $entity, $idArr, $usePdfa, $includeChangelog);
         $this->creationDateTime = new DateTimeImmutable();
         $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
         $this->dataArr = array(

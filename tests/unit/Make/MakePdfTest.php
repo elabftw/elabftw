@@ -58,7 +58,8 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $Entity, array($new, 2));
+	$includeChangelog = false;
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $Entity, array($new, 2), $includeChangelog);
     }
 
     public function testGetFileContent(): void

@@ -21,12 +21,15 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 
     private MakeStreamZip $MakeDb;
 
+    private bool $usePdfa = false;
+    private bool $includeChangelog = false;
+
     protected function setUp(): void
     {
         $idArr = array('1', '2', '3');
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->MakeExp = new MakeStreamZip($Zip, new Experiments($Users), $idArr);
+        $this->MakeExp = new MakeStreamZip($Zip, new Experiments($Users), $idArr, $this->usePdfa, $this->includeChangelog);
         $this->MakeDb = new MakeStreamZip($Zip, new Items($Users), $idArr);
     }
 
@@ -49,7 +52,7 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Zip = $this->createMock(ZipStream::class);
-        $MakeExp = new MakeStreamZip($Zip, $Experiments, array('1'));
+        $MakeExp = new MakeStreamZip($Zip, $Experiments, array('1'), $this->usePdfa, $this->includeChangelog);
         $MakeExp->getStreamZip();
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} - .*.zip$/', $MakeExp->getFileName());
     }

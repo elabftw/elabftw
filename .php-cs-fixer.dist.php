@@ -18,8 +18,8 @@ $finder = PhpCsFixer\Finder::create()
 $config = new PhpCsFixer\Config();
 
 return $config->setRules(array(
-    '@PSR2' => true,
-    '@PHP71Migration' => true,
+    '@PER-CS2.0' => true,
+    '@PHP83Migration' => true,
     'array_syntax' => ['syntax' => 'long'],
     'class_attributes_separation' => true,
     'declare_strict_types' => true,
@@ -31,7 +31,6 @@ return $config->setRules(array(
     'no_unused_imports' => true,
     'no_useless_else' => true,
     'non_printable_character' => true,
-    'ordered_imports' => true,
     'ordered_class_elements' => true,
     'php_unit_construct' => true,
     'pow_to_exponentiation' => true,

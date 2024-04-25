@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
@@ -14,11 +17,9 @@ use Elabftw\Interfaces\ParamInterface;
 
 final class TagParam implements ParamInterface
 {
-    protected const MIN_CONTENT_SIZE = 1;
+    protected const int MIN_CONTENT_SIZE = 1;
 
-    public function __construct(private string $content)
-    {
-    }
+    public function __construct(private string $content) {}
 
     /**
      * Sanitize tag, we remove '\' because it messes up the javascript if you have this in the tags

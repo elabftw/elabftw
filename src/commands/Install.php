@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,10 +8,12 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Commands;
 
-use function dirname;
 use Elabftw\Elabftw\Db;
+
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
@@ -22,6 +25,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function dirname;
 
 /**
  * Import database structure

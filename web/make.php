@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
@@ -21,7 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Create a csv, zip or pdf file
- *
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Export');

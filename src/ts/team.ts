@@ -7,7 +7,7 @@
  */
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
-import { Malle } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
@@ -36,9 +36,9 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
-import { Action, EntityType } from './interfaces';
+import { Action, EntityType, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { notif, TomSelect } from './misc';
+import { notif, reloadElement, TomSelect } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -267,6 +267,33 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // transform the enum into the kind of object we want
+  const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)
+    .filter(key => !isNaN(Number(key)))
+    .map(key => ({
+      selected: false,
+      text: ProcurementState[key],
+      value: key,
+    }));
+
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value: string, original: HTMLElement) => {
+      return ApiC.patch(`teams/current/procurement_requests/${original.dataset.id}`, {state: value}).then(res => res.json()).then(json => json.state);
+    },
+    inputType: InputType.Select,
+    selectOptions: procurementStateArr,
+    listenOn: '.malleableState',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+
+
   // add on change event listener on datetime inputs
   [startInput, endInput].forEach(input => {
     input.addEventListener('change', event => {
@@ -296,6 +323,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
       TemplateC.duplicate(parseInt(el.dataset.id));
+
+    // RECEIVE PROCUREMENT REQUEST
+    } else if (el.matches('[data-action="receive-procurement-request"]')) {
+      ApiC.patch(`teams/current/procurement_requests/${el.dataset.id}`);
+
+    // CANCEL PROCUREMENT REQUEST
+    } else if (el.matches('[data-action="cancel-procurement-request"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElement('procurementRequestsTable'));
+      }
 
     // CANCEL EVENT ACTION
     } else if (el.matches('[data-action="cancel-event"]')) {

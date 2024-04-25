@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,15 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
-use function exif_read_data;
 use Imagick;
-use function in_array;
 use League\Flysystem\Filesystem;
+
+use function exif_read_data;
+use function in_array;
 use function strtolower;
 
 /**
@@ -25,12 +29,9 @@ use function strtolower;
  */
 class MakeThumbnail implements MakeThumbnailInterface
 {
-    /** @var int WIDTH the width for the thumbnail */
-    private const WIDTH = 100;
+    private const int THUMB_WIDTH = 100;
 
-    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs)
-    {
-    }
+    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs) {}
 
     public function saveThumb(): void
     {
@@ -59,7 +60,7 @@ class MakeThumbnail implements MakeThumbnailInterface
             $image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
         }
         // create thumbnail of width 100px; height is calculated automatically to keep the aspect ratio
-        $image->thumbnailImage(self::WIDTH, 0);
+        $image->thumbnailImage(self::THUMB_WIDTH, 0);
         // set the thumbnail quality to 85% (default is 75%)
         $image->setCompressionQuality(85);
         // check if we need to rotate the image based on the orientation in exif of original file

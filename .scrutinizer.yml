@@ -24,7 +24,7 @@ build:
     docker:
       remote_engine: true
     php:
-      version: 8.1
+      version: 8.3.3
   nodes:
     analysis:
       dependencies:

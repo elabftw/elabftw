@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Models;
+declare(strict_types=1);
 
-use function bin2hex;
+namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
@@ -19,9 +20,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
+use PDO;
+
+use function bin2hex;
 use function password_hash;
 use function password_verify;
-use PDO;
 use function random_bytes;
 
 /**

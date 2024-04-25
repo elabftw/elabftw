@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
-use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Usergroup;
@@ -23,6 +25,8 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use Symfony\Component\Mime\RawMessage;
+
+use function count;
 
 /**
  * Email service

@@ -5,11 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement } from './misc';
+import { getEntity, reloadElement, reloadElements, relativeMoment, notifError } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
-import { Action } from './interfaces';
+import $ from 'jquery';
+import { Action, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -44,11 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       EntityC.duplicate(entity.id).then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
 
-    // TOGGLE LOCK
-    } else if (el.matches('[data-action="lock-entity"]')) {
-      // reload the page to change the icon and make the edit button disappear (#1897)
-      EntityC.lock(entity.id).then(() => window.location.href = `?mode=view&id=${entity.id}`);
-
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
       EntityC.read(entity.id).then(json => {
@@ -73,13 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     // TIMESTAMP button in modal
-    } else if (el.matches('[data-action="timestamp"]')) {
-      EntityC.timestamp(entity.id).then(() => {
-        reloadElement('isTimestampedByInfoDiv');
+    } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
+      EntityC.patchAction(entity.id, Action.Timestamp).then(() => {
+        reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       });
 
     // BLOXBERG
-    } else if (el.matches('[data-action="bloxberg"]')) {
+    } else if (el.matches(`[data-action="${Action.Bloxberg}"]`)) {
       const overlay = document.createElement('div');
       overlay.id = 'loadingOverlay';
       const loading = document.createElement('p');
@@ -100,9 +96,62 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElement('uploadsDiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
-    // ARCHIVE ENTITY
-    } else if (el.matches('[data-action="archive-entity"]')) {
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
+
+    // SIGN ENTITY
+    } else if (el.matches('[data-action="sign-entity"]')) {
+      const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
+      const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
+        // using reloadElements here doesn't work for relativeMoment
+        reloadElement('commentsDiv').then(() => {
+          relativeMoment();
+          reloadElement('requestActionsDiv');
+        });
+      });
+    // REQUEST ACTION
+    } else if (el.matches('[data-action="request-action"]')) {
+      const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
+      const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
+      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
+        action: Action.Create,
+        target_action: actionSelect.value,
+        target_userid: userSelect.value,
+      }).then(() => reloadElement('requestActionsDiv'));
+    // SHOW ACTION
+    } else if (el.matches('[data-action="show-action"]')) {
+      const btn = document.getElementById(`actionButton-${el.dataset.target}`);
+      btn.classList.add('border-danger');
+    // CREATE PROCUREMENT REQUEST
+    } else if (el.matches('[data-action="create-procurement-request"]')) {
+      const input = (document.getElementById('procurementRequestQtyInput') as HTMLInputElement);
+      const qty = parseInt(input.value, 10);
+      // sanity check
+      if (qty < 1) {
+        notifError(new Error('Invalid quantity!'));
+        return;
+      }
+      ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
+
+    // DO REQUEST ACTION
+    } else if (el.matches('[data-action="do-requestable-action"]')) {
+      switch (el.dataset.target.toLowerCase()) {
+      case Action.Archive:
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
+        break;
+      case Action.Lock:
+        // reload the page to change the icon and make the edit button disappear (#1897)
+        EntityC.patchAction(entity.id, Action.Lock).then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        break;
+      case Action.Timestamp:
+        $('#timestampModal').modal('toggle');
+        break;
+      case Action.Sign:
+        $('#addSignatureModal').modal('toggle');
+        break;
+      }
+      reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
+        relativeMoment();
+      });
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

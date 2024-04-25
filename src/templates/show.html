@@ -15,6 +15,7 @@
 
   {% if not searchPage %}
     {% include 'show-view-edit.html' %}
+    {% include 'request-actions-show.html' %}
   {% endif %}
 
   <hr>
@@ -276,6 +277,7 @@
 
           <button data-action='lock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
           <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='archive-selected-entities' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
           <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         </div>
       </div>
@@ -300,7 +302,7 @@
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' -%}
         <table id='itemList' class='table item-table mt-2' aria-describedby='pageTitle'>
-          <thead>
+          <thead class='with-top'>
             <tr>
               <th>
                 <div class='d-flex justify-content-between'>

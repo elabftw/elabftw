@@ -153,6 +153,16 @@ a:hover,
     text-decoration: none;
 }
 
+/* add arrow going out of square icon after external links */
+.external-link::after {
+    content: '\f08e'; // arrow-up-right-from-square
+    font-family: 'Font Awesome 6 Free';
+    font-size: 0.6em;
+    font-weight: 700;
+    padding-left: 3px;
+    vertical-align: text-top;
+}
+
 .underlined {
     text-decoration: underline !important;
 }
@@ -396,6 +406,12 @@ button:disabled {
     thead {
         position: sticky;
         top: 0;
+
+        /* thead with no filter on top need to have this class to have a top border */
+        /* stylelint-disable-next-line selector-no-qualifying-type */
+        &.with-top {
+          border-top: 1px solid $firstlevel;
+        }
     }
 
     tbody {
@@ -408,11 +424,16 @@ button:disabled {
     }
 
     th {
+        border-top: 0;
         white-space: nowrap;
 
         &:not(:last-child) {
             border-right: $firstlevel 1px solid;
         }
+    }
+
+    .no-wrap {
+        white-space: nowrap;
     }
 }
 
@@ -424,6 +445,42 @@ tr:nth-child(even) {
 tr:nth-child(odd) {
     background-color: $mainbackground;
 }
+
+/* responsive tables, with a threshold width pretty high */
+@media screen and (max-width: 800px) {
+    .table {
+        /** hide the header completely */
+        thead {
+            display: none;
+        }
+
+        tr {
+            display: block;
+        }
+
+        td,
+        th {
+            border-bottom: 1px solid $firstlevel;
+            display: block;
+            font-size: .8em;
+            /** ensure an empty value won't mess the rows */
+            min-height: 50px;
+            text-align: right;
+
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            &:last-child {
+                border-bottom: 3px solid $secondlevel;
+            }
+        }
+    }
+}
+
 
 
 /* TABLE SHOW MODE */
@@ -703,6 +760,11 @@ tr:nth-child(odd) {
 
     .side-panel-item {
         padding: 5px 0 5px 10px;
+
+        &.list-group-item {
+            background-color: $mediumstrong;
+            border: 0;
+        }
 
         /* Favtags will show up as selected */
         &.selected {
@@ -1188,11 +1250,16 @@ input[type='color'] {
 
 .user-badge {
     background-color: $lightblue;
+    border: 1px solid $firstlevel;
+    border-radius: .25rem;
+    padding: 4px 8px;
 }
 
 .admin-badge {
     background-color: $lightblue;
     border: 1px solid $gold;
+    border-radius: .25rem;
+    padding: 4px 8px;
     position: relative;
 
     &::before {

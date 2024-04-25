@@ -87,7 +87,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
           if (toreload === 'reloadEntitiesShow') {
             reloadEntitiesShow();
           } else {
-            reloadElement(toreload);
+            reloadElement(toreload).then(() => relativeMoment());
           }
         });
       }
@@ -557,6 +557,24 @@ export function replaceWithTitle(): void {
       el.classList.add('color-warning');
     });
   });
+}
+
+export function getPageName(): string {
+  return (new URL(window.location.href)).pathname.split('/').pop();
+}
+
+export async function saveStringAsFile(filename: string, content: string|Promise<string>, contentType: string = 'text/plain;charset=utf-8'): Promise<void> {
+  const blob = new Blob([await content], {type: contentType});
+  const url = URL.createObjectURL(blob);
+  // we create a link and click it
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  // cleanup by revoking the URL object
+  URL.revokeObjectURL(url);
+  link.remove();
 }
 
 // bind used plugins to TomSelect

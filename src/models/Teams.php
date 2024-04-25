@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
@@ -25,6 +27,8 @@ use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use RuntimeException;
+
+use function array_diff;
 
 /**
  * All about the teams

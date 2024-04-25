@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\AuditEvent;
 
@@ -42,8 +45,8 @@ class OnboardingEmailSent extends AbstractAuditEvent
         );
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::OnboardingEmailSent->value;
+        return AuditCategory::OnboardingEmailSent;
     }
 }

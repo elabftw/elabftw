@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,10 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_column;
-use function array_merge;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -22,6 +23,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\SearchType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -34,18 +36,22 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
+use PDO;
+use PDOStatement;
+use Symfony\Component\HttpFoundation\Request;
+
+use function array_column;
+use function array_merge;
 use function explode;
 use function implode;
 use function is_bool;
 use function json_decode;
 use function json_encode;
+use function ksort;
+use function sprintf;
+
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
-use function ksort;
-use PDO;
-use PDOStatement;
-use function sprintf;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
@@ -54,9 +60,9 @@ abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
 
-    public const CONTENT_HTML = 1;
+    public const int CONTENT_HTML = 1;
 
-    public const CONTENT_MD = 2;
+    public const int CONTENT_MD = 2;
 
     public Comments $Comments;
 
@@ -194,6 +200,10 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
 
+        // clear any request action
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Lock);
+
         return $this->readOne();
     }
 
@@ -325,6 +335,9 @@ abstract class AbstractEntity implements RestInterface
                         }
                     }
                     $this->update(new EntityParams('state', (string) $targetState->value));
+                    // clear any request action
+                    $RequestActions = new RequestActions($this->Users, $this);
+                    $RequestActions->remove(RequestableAction::Archive);
                 }
             )(),
             Action::Lock => $this->toggleLock(),
@@ -353,6 +366,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function readOneFull(): array
     {
+        $this->Uploads->includeArchived = true;
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
         $base['changelog'] = (new Changelog($this))->readAll();

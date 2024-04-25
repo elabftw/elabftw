@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -9,9 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Auth\Local;
+
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -22,6 +23,8 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 /**
  * Deal with requests sent from the user control panel

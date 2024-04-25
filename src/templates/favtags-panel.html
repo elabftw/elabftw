@@ -2,25 +2,19 @@
   <button type='button' data-action='toggle-favtags' aria-label='{{ 'Close'|trans }}' title='{{ 'Close'|trans }}' class='btn float-right mr-2'><i class='fas fa-xmark fa-2x'></i></button>
   <div class='p-3'>
     <h3 class='mb-3'>{{ 'Favorite tags'|trans }}</h3>
-    <div class='input-group'>
-      <input data-action='favtags-search' class='form-control form-inline' type='text' placeholder='{{ 'Filter'|trans }}' />
-      <div class='input-group-append'>
-        <button data-action='clear-favtags-search' class='btn btn-outline-secondary' type='button' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'>
-          <i class='fas fa-times fa-fw'></i>
-        </button>
-      </div>
-    </div>
+    {% include 'filter-input-snippet.html' with {'target': 'favtagsTagsDiv', 'targetType': 'li'} %}
     <hr>
-    <div id='favtagsTagsDiv' class='d-flex flex-column'>
+    <ul id='favtagsTagsDiv' class='list-group d-flex flex-column'>
       {% if favTagsArr|length == 0 %}
-        <p>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</p>
+        <li class='list-group-item side-panel-item'>{{ 'No favorite tags are present. Add an existing tag with the form below.'|trans }}</li>
+      {% else %}
+        {% for favtag in favTagsArr %}
+        <li data-action='add-tag-filter' data-tag='{{ favtag.tag|e('html_attr') }}' class='list-group-item side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
+          {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
+        </li>
+        {% endfor %}
       {% endif %}
-      {% for favtag in favTagsArr %}
-      <div data-action='add-tag-filter' data-tag='{{ favtag.tag|e('html_attr') }}' class='side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
-        {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
-      </div>
-      {% endfor %}
-    </div>
+    </ul>
     <hr>
     {# ADD TAG AS FAVORITE INPUT #}
     <div class='input-group mt-2 mb-3'>

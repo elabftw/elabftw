@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,9 +11,11 @@
 
 namespace Elabftw\Models;
 
-use function date;
 use Elabftw\Enums\Action;
+
 use Elabftw\Services\Check;
+
+use function date;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +23,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Items= new Items(new Users(1, 1));
+        $this->Items = new Items(new Users(1, 1));
     }
 
     public function testCreateAndDestroy(): void
@@ -83,7 +87,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->setId($new);
 
         // lock
-        $item =$this->Items->toggleLock();
+        $item = $this->Items->toggleLock();
         $this->assertTrue((bool) $item['locked']);
         // unlock
         $item = $this->Items->toggleLock();

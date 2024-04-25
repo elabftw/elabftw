@@ -154,14 +154,14 @@
               {% if comment.created_at != comment.modified_at %}
                 ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
               {% endif %}
-              {% if comment.userid == Entity.Users.userData.userid %}
+              {% if comment.userid == Entity.Users.userData.userid and comment.immutable == 0 %}
                 <button type='button' class='btn float-right lh-normal border-0 m-0 p-2 my-n2 hl-hover-gray' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
                   <i class='fas fa-fw fa-trash-alt fa-lg'></i>
                 </button>
               {% endif %}
             </div>
             {# the comment itself is only editable by the owner #}
-            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|nl2br }}</p>
+            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid and comment.immutable == 0 ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|nl2br }}</p>
           </div>
         {% endfor %}
 

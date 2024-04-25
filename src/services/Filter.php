@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,15 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
-use function checkdate;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use function filter_var;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+
+use function checkdate;
+use function filter_var;
 use function htmlspecialchars_decode;
 use function mb_convert_encoding;
 use function mb_strlen;

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -38,28 +41,27 @@ use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
-use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function setcookie;
 
 /**
  * For all your authentication/login needs
  */
 class LoginController implements ControllerInterface
 {
-    public const AUTH_LOCAL = 10;
+    public const int AUTH_LOCAL = 10;
 
-    public const AUTH_SAML = 20;
+    public const int AUTH_SAML = 20;
 
-    public const AUTH_LDAP = 30;
+    public const int AUTH_LDAP = 30;
 
-    public const AUTH_EXTERNAL = 40;
+    public const int AUTH_EXTERNAL = 40;
 
-    public const AUTH_ANON = 50;
+    public const int AUTH_ANON = 50;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {

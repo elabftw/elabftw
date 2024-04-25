@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,7 +8,11 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Interfaces;
+
+use Elabftw\Enums\AuditCategory;
 
 interface AuditEventInterface
 {
@@ -17,5 +22,7 @@ interface AuditEventInterface
 
     public function getBody(): string;
 
-    public function getCategory(): int;
+    public function getJsonBody(): string;
+
+    public function getCategory(): AuditCategory;
 }

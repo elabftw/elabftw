@@ -47,10 +47,9 @@ class AuthResponse
 
     public bool $mustRenewPassword = false;
 
-    public function setTeams(): void
+    public function setTeams(UsersHelper $usersHelper): void
     {
-        $UsersHelper = new UsersHelper($this->userid);
-        $this->selectableTeams = $UsersHelper->getTeamsFromUserid();
+        $this->selectableTeams = $usersHelper->getTeamsFromUserid();
 
         // if the user only has access to one team, use this one directly
         $teamCount = count($this->selectableTeams);

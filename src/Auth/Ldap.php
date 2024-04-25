@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
+use Elabftw\Services\UsersHelper;
 use LdapRecord\Connection;
 use LdapRecord\Container;
 use LdapRecord\Models\Entry;
@@ -113,7 +114,8 @@ class Ldap implements AuthInterface
         $this->AuthResponse->userid = (int) $Users->userData['userid'];
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;
     }

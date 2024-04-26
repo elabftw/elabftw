@@ -444,7 +444,7 @@
   </div>
 
   <h2 class='p-2 pl-3 section-title mb-3' id='existingKeys'>{{ 'Existing keys'|trans }}</h2>
-  <table id='apiTable' class='table' aria-describedby='existingKeys' data-table-sort='true'>
+  <table class='table' aria-describedby='existingKeys' data-table-sort='true'>
     <thead>
       <tr>
         <th scope='col'>{{ 'Team'|trans }}</th>
@@ -455,7 +455,7 @@
         <th scope='col'>{{ 'Action'|trans }}</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='apiTable'>
       {% for key in apiKeysArr %}
         <tr>
           <td data-label='{{ 'Team'|trans }}'><span class='user-badge'>{{ key.team_name }}</span></td>

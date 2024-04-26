@@ -14,6 +14,9 @@
               {% if link.category_title %}
                 <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title }}</span>
               {% endif %}
+              {% if link.custom_id %}
+                <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+              {% endif %}
               <a href='experiments.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title }}</a>
             {# delete link #}
             <button data-action='destroy-related-link' type='button' data-endpoint='experiments_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>

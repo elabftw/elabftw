@@ -40,6 +40,9 @@
           <i class='fas fa-link fa-fw mr-2'></i>
           {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
           <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span>
+          {% if link.custom_id %}
+            <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+          {% endif %}
           <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title }}</a>
           {# toggle body #}
           <button type='button' data-type='experiments' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>

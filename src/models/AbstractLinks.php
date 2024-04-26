@@ -58,6 +58,7 @@ abstract class AbstractLinks implements RestInterface
         // main category table
         $sql = 'SELECT entity.id AS itemid,
             entity.title,
+            entity.custom_id,
             entity.elabid,
             categoryt.title AS category_title,
             categoryt.color AS category_color,
@@ -88,7 +89,7 @@ abstract class AbstractLinks implements RestInterface
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, categoryt.title AS category_title, categoryt.color AS category_color, entity.state AS link_state';
+        $sql = 'SELECT entity.id AS entityid, entity.title, entity.custom_id, categoryt.title AS category_title, categoryt.color AS category_color, entity.state AS link_state';
 
         if ($this instanceof ItemsLinks) {
             $sql .= ', entity.is_bookable';

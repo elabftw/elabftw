@@ -85,10 +85,18 @@ class DisplayParams
         if (!empty($this->Request->query->get('extended'))) {
             $this->extendedQuery = trim($this->Request->query->getString('extended'));
         }
+
+        // SCOPE FILTER
+        // default scope is the user setting, but can be overridden by query param
+        $scope = $this->Users->userData['scope_' . $this->entityType->value];
+        if (Check::id($this->Request->query->getInt('scope')) !== false) {
+            $scope = $this->Request->query->getInt('scope');
+        }
+
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
+        if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
         }
@@ -141,5 +149,6 @@ class DisplayParams
         if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
         }
+
     }
 }

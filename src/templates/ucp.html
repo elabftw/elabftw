@@ -282,6 +282,7 @@
 {# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
   <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
+    <input type='hidden' name='origin' value='ucp_tab_2' />
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
     {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}
@@ -443,9 +444,10 @@
   </div>
 
   <h2 class='p-2 pl-3 section-title mb-3' id='existingKeys'>{{ 'Existing keys'|trans }}</h2>
-  <table id='apiTable' class='table' aria-describedby='existingKeys' data-table-sort='true'>
+  <table class='table' aria-describedby='existingKeys' data-table-sort='true'>
     <thead>
       <tr>
+        <th scope='col'>{{ 'Team'|trans }}</th>
         <th scope='col'>{{ 'Name'|trans }}</th>
         <th scope='col'>{{ 'Permissions'|trans }}</th>
         <th scope='col'>{{ 'Creation date'|trans }}</th>
@@ -453,9 +455,10 @@
         <th scope='col'>{{ 'Action'|trans }}</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='apiTable'>
       {% for key in apiKeysArr %}
         <tr>
+          <td data-label='{{ 'Team'|trans }}'><span class='user-badge'>{{ key.team_name }}</span></td>
           <td data-label='{{ 'Name'|trans }}'>{{ key.name }}</td>
           <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>

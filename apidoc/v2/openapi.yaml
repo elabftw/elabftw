@@ -31,6 +31,10 @@ components:
           type: string
         can_write:
           type: integer
+        team:
+          type: integer
+        team_name:
+          type: string
     comment:
       type: object
       properties:
@@ -580,6 +584,8 @@ components:
           type: string
         category_title:
           type: string
+        custom_id:
+          type: integer
     notification:
       type: object
       properties:
@@ -1085,6 +1091,13 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
       responses:
         '200':
           description: A list of experiments
@@ -1347,6 +1360,13 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
       # end duplicate from GET /experiments
       responses:
         '200':

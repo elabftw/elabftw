@@ -36,7 +36,7 @@ $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 $postData = $App->Request->request->all();
 try {
     // TAB 2 : ACCOUNT
-    if ($App->Request->request->has('use_mfa')) {
+    if ($App->Request->request->getString('origin') === 'ucp_tab_2') {
         $tab = 2;
         // if user is authenticated through external service we skip the password verification
         if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {

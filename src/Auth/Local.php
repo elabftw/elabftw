@@ -24,7 +24,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
-
+use Elabftw\Services\UsersHelper;
 use PDO;
 use SensitiveParameter;
 
@@ -90,7 +90,8 @@ class Local implements AuthInterface
         $this->AuthResponse->userid = $this->userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $res['validated'];
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
         return $this->AuthResponse;
     }
 

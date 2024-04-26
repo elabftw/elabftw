@@ -26,6 +26,8 @@ interface CreateUploadParamsInterface
 
     public function getFilePath(): string;
 
+    public function getTmpFilePath(): string;
+
     public function getSourceFs(): Filesystem;
 
     public function getSourcePath(): string;

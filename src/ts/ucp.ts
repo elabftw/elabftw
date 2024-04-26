@@ -16,6 +16,7 @@ import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
+import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -29,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const EntityC = new Templates();
   const ApiC = new Api();
+  // initialize the file uploader
+  (new Uploader()).init();
 
   const entity = getEntity();
   const TabMenu = new Tab();

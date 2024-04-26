@@ -12,7 +12,7 @@
         {# SELECT ACTION #}
         <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
         <select id='requestActionActionSelect' class='form-control'>
-          {% for value, text in requestableActionArr|sort %}
+          {% for value, text in requestableActionArr|default([])|sort %}
             <option value='{{ value }}'>{{ text }}</option>
           {% endfor %}
         </select>
@@ -99,7 +99,7 @@
         {% else %}
           <label for='sigMeaningSelect'>{{ 'Select a meaning for this signature'|trans }}</label>
           <select id='sigMeaningSelect' class='form-control'>
-            {% for meaning, text in meaningArr|sort %}
+            {% for meaning, text in meaningArr|default([])|sort %}
               <option value='{{ meaning }}'>{{ text }}</option>
             {% endfor %}
           </select>

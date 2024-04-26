@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
@@ -93,7 +94,7 @@ class Uploads implements RestInterface
         $storage = (int) $Config->configArr['uploads_storage'];
         $storageFs = Storage::from($storage)->getStorage()->getFs();
 
-        $tmpFilename = basename($params->getFilePath());
+        $tmpFilename = $params->getTmpFilePath();
         $filesize = $sourceFs->filesize($tmpFilename);
         $hash = '';
         // we don't hash big files as this could take too much time/resources
@@ -168,6 +169,24 @@ class Uploads implements RestInterface
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    public function duplicate(AbstractEntity $entity): void
+    {
+        $uploads = $this->readAll();
+        foreach ($uploads as $upload) {
+            // only consider non deleted uploads
+            if ($upload['state'] !== State::Normal->value) {
+                return;
+            }
+            if ($upload['storage'] === Storage::LOCAL->value) {
+                $prefix = '/elabftw/uploads/';
+                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], $upload['comment']);
+            } else {
+                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], $upload['comment']);
+            }
+            $entity->Uploads->create($param);
+        }
     }
 
     /**

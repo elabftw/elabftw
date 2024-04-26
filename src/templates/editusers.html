@@ -69,7 +69,7 @@
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
                       {% set currentTeam = user.teams|filter(t => t.id == team.id)|first %}
-                      <div class='user-badge mr-2'>{{ team.name }}
+                      <div class='user-badge'>{{ team.name }}
                         {# prevent deleting association of the team we are currently logged in, allow it for other users #}
                         {% if team.id != App.Users.userData.team or user.userid != App.Users.userData.userid %}
                           <span title='{{ 'Delete'|trans }}' class='hl-hover-gray p-1 rounded clickable m-1' data-action='destroy-user2team' data-userid='{{ user.userid }}' data-teamid='{{ team.id }}'><i class='fas fa-xmark' style='color:#29AEB9'></i></span>

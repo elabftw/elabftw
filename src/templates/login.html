@@ -61,7 +61,7 @@
       </div>
     </form>
   {# Allow existing user to request access to a team #}
-  {% elseif App.Session.has('team_selection_required') %}
+  {% elseif App.Session.has('team_request_selection_required') %}
     <div class='separator col-md-4 mx-auto'></div>
     <h2>{{ 'Request access to a team'|trans }}</h2>
     <br>

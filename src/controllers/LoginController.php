@@ -176,8 +176,8 @@ class LoginController implements ControllerInterface
         }
 
         // user exists but no team was found so user must select one
-        if ($AuthResponse->teamSelectionRequired) {
-            $this->App->Session->set('team_selection_required', true);
+        if ($AuthResponse->teamRequestSelectionRequired) {
+            $this->App->Session->set('team_request_selection_required', true);
             $this->App->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
             return new RedirectResponse('/login.php');
         }

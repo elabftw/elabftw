@@ -31,6 +31,10 @@ components:
           type: string
         can_write:
           type: integer
+        team:
+          type: integer
+        team_name:
+          type: string
     comment:
       type: object
       properties:

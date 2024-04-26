@@ -76,7 +76,7 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
-        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_switch_required', true);
         $App->Session->set('team_selection', $App->Users->userData['teams']);
         $App->Session->set('auth_userid', $App->Users->userData['userid']);
         $App->Session->remove('is_auth');

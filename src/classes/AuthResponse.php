@@ -34,6 +34,8 @@ class AuthResponse
 
     public bool $teamSelectionRequired = false;
 
+    public bool $teamRequestSelectionRequired = false;
+
     public bool $isValidated = false;
 
     // info (email/name) about user that needs to request a team
@@ -58,6 +60,7 @@ class AuthResponse
         } elseif ($teamCount === 0) {
             $Users = new Users($this->userid);
             $this->teamSelectionRequired = true;
+            $this->teamRequestSelectionRequired = true;
             $this->initTeamUserInfo = array(
                 'userid' => $Users->userData['userid'],
             );

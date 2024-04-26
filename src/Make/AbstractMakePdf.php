@@ -31,7 +31,6 @@ abstract class AbstractMakePdf extends AbstractMake implements PdfMakerInterface
     {
         parent::__construct($entity);
         $this->mpdf = $mpdfProvider->getInstance();
-	$this->includeChangelog = $includeChangelog;
     }
 
     public function setNotifications(bool $state): void

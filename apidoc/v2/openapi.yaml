@@ -1341,6 +1341,23 @@ paths:
             second:
               summary: Generate a csv
               value: csv
+        - name: includechangelog
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: |
+            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Defaults to true if the export provides PDF/A, false otherwise. Truthy values (such as 0, 1) also work.
+          examples:
+            first:
+              summary: Generate PDF exports that always includes the changelog
+              value: true
+            first:
+              summary: Generate PDF exports that always includes the changelog.
+              value: 1
+            second:
+              summary: Generate PDF exports that do not include the changelog.
+              value: false
       responses:
         '200':
           description: An item

@@ -6,6 +6,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Procurement requests'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -176,7 +177,7 @@
 <div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
   {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
@@ -241,6 +242,72 @@
       <button type='submit' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </form>
+</div>
+
+{# TAB 5 PROCUREMENT REQUESTS #}
+<div data-tabcontent='5' hidden>
+  <div class='mb-2'>
+    {% if teamProcurementRequestsArr %}
+      {# DOWNLOAD as CSV #}
+      <div class='mb-4 d-flex flex-row-reverse'>
+        <a href='/api/v2/teams/current/procurement_requests?format=csv'><button type='button' class='btn btn-secondary'>{{ 'Download'|trans }} (.csv)</button></a>
+      </div>
+      {% include 'filter-input-snippet.html' with {'target': 'procurementRequestsTable'} %}
+
+      {# MAIN TABLE #}
+      <table class='table' aria-label='{{ 'Procurement requests'|trans }}' data-table-sort='true'>
+        <thead>
+          <tr>
+            <th scope='col'>{{ 'Resource'|trans }}</th>
+            <th scope='col'>{{ 'Requester'|trans }}</th>
+            <th scope='col'>{{ 'Ordered'|trans }}</th>
+            <th scope='col'>{{ 'Quantity ordered'|trans }}</th>
+            <th scope='col'>{{ 'Total'|trans }}</th>
+            <th scope='col'>{{ 'Quantity received'|trans }}</th>
+            <th scope='col'>{{ 'Comment'|trans }}</th>
+            <th scope='col'>{{ 'Quote'|trans }}</th>
+            <th scope='col'>{{ 'State'|trans }}</th>
+            <th scope='col'>{{ 'Actions'|trans }}</th>
+          </tr>
+        </thead>
+        {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
+        <tbody id='procurementRequestsTable'>
+          {% for req in teamProcurementRequestsArr %}
+            <tr>
+              <td class='no-wrap' data-label='{{ 'Resource'|trans }}'>
+                <a href='/database.php?mode=view&id={{ req.entity_id }}'>
+                  <span class='hl-hover-gray p-2 mr-2 rounded'><i class='fas fa-eye'></i></span>
+                </a>{{ req.entity_title }}</td>
+              {# REQUESTER #}
+              <td data-label='{{ 'Requester'|trans }}'>{{ req.requester_fullname }}</td>
+              {# CREATED AT #}
+              <td data-label='{{ 'Ordered'|trans }}'><span title='{{ req.created_at }}' class='relative-moment text-nowrap'></span></td>
+              {# QTY ORDERED #}
+              <td data-label='{{ 'Quantity ordered'|trans }}'>{{ req.qty_ordered }}</td>
+              {# TOTAL #}
+              <td data-label='{{ 'Total'|trans }}'>{{ req.total }} {{ req.symbol }}</td>
+              <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
+              <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
+              <td data-label='{{ 'Quote'|trans }}'>
+                <a target='_blank' href='/api/v2/uploads/{{ req.quote }}?format=binary'>
+                  <span class='hl-hover-gray p-1 mr-2 rounded'>{{ req.quote ? "<i class='fas fa-download'></i>" }}</span>
+                </a>
+              </td>
+              <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+              <td data-label='{{ 'Actions'|trans }}'>
+                <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                  <i class='fas fa-trash-alt'></i>
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %} {# no requests #}
+      {# TODO add documentation link #}
+        <p>{{ 'No procurement requests have been made yet.'|trans }}</p>
+      {% endif %}
+  </div>
 </div>
 
 {% endblock body %}

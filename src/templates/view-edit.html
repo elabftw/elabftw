@@ -6,9 +6,38 @@
 
 {# BOOKING PARAMS #}
 {% include('booking-params-modal.html') %}
+{# PROCUREMENT PARAMS #}
+{% include('procurement-params-modal.html') %}
 
 <div id='isArchivedDiv'>
 {% if Entity.entityData.state == constant('Elabftw\\Enums\\State::Archived').value %}
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}
 {% endif %}
+</div>
+
+{# REQUEST ACTIONS #}
+<div id='requestActionsDiv'>
+  {% if entityRequestActionsArr %}
+    <ul class='list-group mt-2'>
+      {% for action in entityRequestActionsArr %}
+      <li class='list-group-item'>
+        <i class='fas fa-person-circle-exclamation fa-2x mr-2'></i>
+        {% if action.target_userid == App.Users.userData.userid %}
+        <button type='button' class='btn btn-primary' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>{% else %}{{ action.action }}{% endif %} has been requested by {{ action.requester_fullname }} for {{ action.target_fullname }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+{# PROCUREMENT REQUESTS #}
+<div id='procurementRequestsDiv'>
+  {% if entityProcurementRequestsArr %}
+    <ul class='list-group mt-2'>
+      {% for req in entityProcurementRequestsArr %}
+        <li class='list-group-item'>
+          <i class='fas fa-cart-shopping mr-2'></i>
+          {{ 'A procurement request has been made by %s for a quantity of %d'|format(req.requester_fullname, req.qty_ordered)|trans }}<span title='{{ req.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 </div>

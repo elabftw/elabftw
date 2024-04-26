@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,6 +7,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -150,7 +153,7 @@ class LoginHelper
      */
     private function setToken(): void
     {
-        $CookieToken = new CookieToken();
+        $CookieToken = CookieToken::fromScratch();
         $CookieToken->saveToken($this->AuthResponse->userid);
 
         $expirationSeconds = time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
@@ -164,7 +167,7 @@ class LoginHelper
             'httponly' => true,
             'samesite' => 'Lax',
         );
-        setcookie('token', $CookieToken->token, $cookieOptions);
+        setcookie('token', $CookieToken->getToken(), $cookieOptions);
         setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 }

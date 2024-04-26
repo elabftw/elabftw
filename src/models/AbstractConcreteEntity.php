@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,13 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Meaning;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
@@ -22,12 +28,15 @@ use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
+use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
+use ZipArchive;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -45,9 +54,11 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode('write');
+        // was "write" previously, but let's make timestamping/signing only require read access
+        $this->canOrExplode('read');
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
+            Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
@@ -109,6 +120,38 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         // decrement the balance
         $Config->decrementTsBalance();
 
+        // clear any request action
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Timestamp);
+
+        return $this->readOne();
+    }
+
+    protected function sign(string $passphrase, Meaning $meaning): array
+    {
+        $Sigkeys = new SignatureHelper($this->Users);
+        $Maker = new MakeFullJson($this, array($this->id));
+        $message = $Maker->getFileContent();
+        $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        $SigKeys = new SigKeys($this->Users);
+        $SigKeys->touch();
+        $Comments = new ImmutableComments($this);
+        $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $Comments->postAction(Action::Create, array('comment' => $comment));
+        // save the signature and data in a zip archive
+        $zipPath = FsTools::getCacheFile() . '.zip';
+        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $ZipArchive = new ZipArchive();
+        $ZipArchive->open($zipPath, ZipArchive::CREATE);
+        $ZipArchive->addFromString('data.json.minisig', $signature);
+        $ZipArchive->addFromString('data.json', $message);
+        $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
+        $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
+        $ZipArchive->close();
+        $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Sign);
+        AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
         return $this->readOne();
     }
 }

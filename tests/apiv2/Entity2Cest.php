@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,7 +9,7 @@
  * @see       https://www.elabftw.net Official website
  */
 
-use \Codeception\Util\HttpCode;
+use Codeception\Util\HttpCode;
 
 class Entity2Cest
 {

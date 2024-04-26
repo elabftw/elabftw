@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,17 +8,21 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -38,6 +43,7 @@ use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+
 use function time;
 use function trim;
 
@@ -128,7 +134,8 @@ class Users implements RestInterface
             `orgid`,
             `is_sysadmin`,
             `default_read`,
-            `default_write`
+            `default_write`,
+            `last_seen_version`
         ) VALUES (
             :email,
             :password_hash,
@@ -141,7 +148,8 @@ class Users implements RestInterface
             :orgid,
             :is_sysadmin,
             :default_read,
-            :default_write);';
+            :default_write,
+            :last_seen_version);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -156,6 +164,7 @@ class Users implements RestInterface
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
+        $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -236,14 +245,16 @@ class Users implements RestInterface
             users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.orcid, users.auth_service
+            users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
             FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             AND (users.archived = 0' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         if ($teamId > 0) {
             $req->bindValue(':team', $teamId);
         }
@@ -293,6 +304,10 @@ class Users implements RestInterface
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token']);
+        // keep sig_privkey in response if requester is target
+        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+            unset($userData['sig_privkey']);
+        }
         return $userData;
     }
 
@@ -517,7 +532,9 @@ class Users implements RestInterface
     private function canReadOrExplode(): void
     {
         // it's ourself or we are sysadmin
-        if ($this->requester->userid === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
+
+        // FIXME To investigate: $this->requester->userid is a string here!!!
+        if ($this->requester->userData['userid'] === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
         if (!$this->requester->isAdmin && $this->userid !== $this->userData['userid']) {
@@ -637,11 +654,14 @@ class Users implements RestInterface
      */
     private function readOneFull(): array
     {
-        $sql = "SELECT users.*,
+        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users WHERE users.userid = :userid";
+            FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
+            WHERE users.userid = :userid";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->userData = $this->Db->fetch($req);

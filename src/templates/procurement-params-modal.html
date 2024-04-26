@@ -1,0 +1,51 @@
+{# Modal for procurement parameters #}
+<div class='modal fade' id='procurementParamsModal' tabindex='-1' role='dialog' aria-labelledby='procurementParamsModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='procurementParamsModalLabel'><i class='fas fa-fw fa-cart-shopping'></i> {{ 'Modify procurement parameters'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# Is procurable? #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label class='d-inline mr-1' for='isprocurableSwitch'>{{ 'Allow procurement of this resource'|trans }}</label>
+          <label class='switch' title='{{ 'Allow procurement of this resource'|trans }}'>
+            <input type='checkbox' autocomplete='off' id='isprocurableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_procurable' {{ Entity.entityData.is_procurable == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
+        {# PACKAGING QTY #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='proc_pack_qty' class='col-form-label'>{{ 'Packaging quantity'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_pack_qty' type='number' value='{{ Entity.entityData.proc_pack_qty }}' id='proc_pack_qty' />
+        </div>
+        {# PRICE NO TAXES #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='proc_price_notax' class='col-form-label'>{{ 'Price without taxes'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_notax' type='number' value='{{ Entity.entityData.proc_price_notax }}' id='proc_price_notax' />
+        </div>
+        {# PRICE WITH TAXES #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='proc_price_tax' class='col-form-label'>{{ 'Price with taxes'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_tax' type='number' value='{{ Entity.entityData.proc_price_tax }}' id='proc_price_tax' />
+        </div>
+        {# CURRENCY #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='proc_currency' class='col-form-label'>{{ 'Currency'|trans }}</label>
+          <select id='proc_currency' class='form-control col-md-4' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='proc_currency'>
+            {% for value, text in currencyArr %}
+              <option value='{{ value }}' {{ value == Entity.entityData.proc_currency ? 'selected' }}>{{ text }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

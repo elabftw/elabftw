@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -28,11 +31,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ImportController implements ControllerInterface
 {
-    private const AUDIT_THRESHOLD = 12;
+    private const int AUDIT_THRESHOLD = 12;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {

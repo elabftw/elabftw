@@ -247,15 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
 
-    // clear the filter input for favtags
-    } else if (el.matches('[data-action="clear-favtags-search"]')) {
-      const searchInput = el.parentElement.parentElement.querySelector('input');
-      searchInput.value = '';
-      searchInput.focus();
-      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
-        el.removeAttribute('hidden');
-      });
-
     // TOGGLE PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
       ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.entity').remove());
@@ -364,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // loop over it and lock entities
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.lock(chk.id));
+        results.push(EntityC.patchAction(chk.id, Action.Lock));
       });
 
       Promise.all(results).then(() => {
@@ -381,7 +372,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // loop on it and timestamp it
       checked.forEach(chk => {
-        EntityC.timestamp(chk.id).then(() => reloadEntitiesShow());
+        EntityC.patchAction(chk.id, Action.Timestamp).then(() => reloadEntitiesShow());
+      });
+
+    // THE ARCHIVE BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="archive-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+
+      // loop over it and lock entities
+      const results = [];
+      checked.forEach(chk => {
+        results.push(EntityC.patchAction(chk.id, Action.Archive));
+      });
+
+      Promise.all(results).then(() => {
+        reloadEntitiesShow();
       });
 
     // THE DELETE BUTTON FOR CHECKED BOXES

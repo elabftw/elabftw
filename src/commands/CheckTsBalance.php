@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
@@ -21,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'notifications:tsbalance')]
 class CheckTsBalance extends Command
 {
-    private const THRESHOLD = 20;
+    private const int THRESHOLD = 20;
 
     public function __construct(private int $currentBalance, private Email $Email)
     {

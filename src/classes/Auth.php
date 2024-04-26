@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,9 +8,10 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function basename;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
@@ -17,17 +19,17 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\TeamFinder;
-use function in_array;
 use Symfony\Component\HttpFoundation\Request;
+
+use function basename;
+use function in_array;
 
 /**
  * Provide methods to authenticate a user
  */
 class Auth implements AuthInterface
 {
-    public function __construct(private Config $Config, private Request $Request)
-    {
-    }
+    public function __construct(private Config $Config, private Request $Request) {}
 
     /**
      * Try to authenticate with session and cookie

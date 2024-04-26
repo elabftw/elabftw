@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,11 +8,11 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 /**
  * An authenticated user
  */
-final class AuthenticatedUser extends ExistingUser
-{
-}
+final class AuthenticatedUser extends ExistingUser {}

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
 use Elabftw\Enums\BasePermissions;
@@ -14,9 +17,10 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use JsonException;
+
 use function filter_var;
 use function intval;
-use JsonException;
 use function mb_strlen;
 
 /**
@@ -98,7 +102,7 @@ class Check
             throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
         // Note: if we want to server-side check for useronly disabled, it would be here, by removing 10
-        $allowedBase = array_map(fn ($case) => $case->value, BasePermissions::cases());
+        $allowedBase = array_map(fn($case) => $case->value, BasePermissions::cases());
         if (!in_array($decoded['base'], $allowedBase, true)) {
             throw new ImproperActionException('The base visibility parameter is wrong.');
         }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2015, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -19,9 +22,10 @@ use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use ZipArchive;
+
 use function json_decode;
 use function json_encode;
-use ZipArchive;
 
 /**
  * Send data to Bloxberg server
@@ -35,13 +39,13 @@ class MakeBloxberg extends AbstractMakeTimestamp
      * This pubkey is currently the same for everyone
      * Information about the user/institution is stored in the metadataJson field
      */
-    private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
+    private const string PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
-    private const CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
+    private const string CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
 
-    private const PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
+    private const string PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
 
-    private const API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
+    private const string API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
 
     private string $apiKey;
 

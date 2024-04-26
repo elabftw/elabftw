@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -9,16 +11,19 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Controllers\ImportController;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use League\Csv\SyntaxError;
-use function set_time_limit;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
+
+use function set_time_limit;
 
 /**
  * Import a zip, eln or a csv

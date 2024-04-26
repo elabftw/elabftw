@@ -10,14 +10,7 @@
       <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
     </div>
   </div>
-  <div class='input-group'>
-    <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' id='templatesFilterInput' class='form-control form-inline' />
-    <div class='input-group-append'>
-      <button data-action='clear-templates-search' class='btn btn-outline-secondary' type='button' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'>
-        <i class='fas fa-times fa-fw'></i>
-      </button>
-    </div>
-  </div>
+  {% include 'filter-input-snippet.html' with {'target': 'tplTableBody'} %}
 
   {# TODO: add aria-describedby #}
   <table id='tplTable' class='table' data-table-sort='true'>
@@ -33,8 +26,8 @@
     <tbody id='tplTableBody'>
       {% for template in templatesArr %}
         <tr>
-          <td><div class='user-badge text-center px-2 py-1 rounded mt-1'>{{ template.team_name }}</div></td>
-          <td>
+          <td data-label='{{ 'Team' }}' style='vertical-align: middle'><span class='user-badge'>{{ template.team_name }}</span></td>
+          <td data-label='{{ 'Title' }}'>
             <a href='?tab=3&amp;mode=view&amp;templateid={{ template.id }}' class='btn p-2 hl-hover-gray lh-normal border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'><i class='fas fa-eye fa-fw'></i></a>
             {# we only show the edit button for templates that we own, because here we don't really have information if it's readonly or not #}
             {% if App.Users.userid == template.userid %}
@@ -44,11 +37,11 @@
               <button title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' type='button' data-action='toggle-pin' data-id='{{ template.id }}' class='btn lh-normal border-0 p-2 {{- template.is_pinned ? ' bgnd-gray' : ' hl-hover-gray' }}'>
                 <i class='fas fa-thumbtack {{ not template.is_pinned ? 'color-weak' }} fa-fw'></i></button>
               {{ template.title }}</td>
-          <td>
+          <td data-label='{{ 'Category' }}'>
             <span class='catstat-btn category-btn' style='--bg:#{{ template.category_color }}'>{{ template.category_title }}</span>
           </td>
-          <td><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname }}</span></td>
-          <td>{{ template.modified_at }}</td>
+          <td data-label='{{ 'Owner' }}'><span class='{{ template.fullname == App.Users.userData.fullname ? 'font-weight-bold' }}'>{{ template.fullname }}</span></td>
+          <td data-label='{{ 'Last modification date' }}'><span title='{{ template.modified_at }}' class='relative-moment text-nowrap'></span></td>
         </tr>
       {% endfor %}
     </tbody>

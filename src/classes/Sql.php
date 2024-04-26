@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,20 +8,21 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function array_filter;
 use Elabftw\Exceptions\DatabaseErrorException;
-
-use function explode;
 use League\Flysystem\FilesystemOperator;
 use PDOException;
+use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_filter;
+use function explode;
 use function str_ends_with;
 use function str_repeat;
 use function strlen;
 use function strtoupper;
-use Symfony\Component\Console\Output\OutputInterface;
 use function trim;
 
 /**

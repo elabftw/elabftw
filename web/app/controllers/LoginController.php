@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,8 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Controllers\LoginController;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,6 +24,8 @@ use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\AuthFail;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use function dirname;
 
 // This page is all about getting authenticated and then logged in
 require_once dirname(__DIR__) . '/init.inc.php';

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,14 +8,16 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 
 class PasswordChanged extends UserAttributeChanged
 {
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::PasswordChanged->value;
+        return AuditCategory::PasswordChanged;
     }
 }

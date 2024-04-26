@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -15,9 +18,9 @@ namespace Elabftw\Make;
  */
 class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'http://timestamp.globalsign.com/tsa/r6advanced1';
+    protected const string TS_URL = 'http://timestamp.globalsign.com/tsa/r6advanced1';
 
-    protected const TS_HASH = 'sha384';
+    protected const string TS_HASH = 'sha384';
 
     /**
      * Return the needed parameters to request/verify a timestamp
@@ -33,6 +36,6 @@ class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
             'ts_hash' => self::TS_HASH,
             'ts_cert' => '',
             'ts_chain' => '',
-            );
+        );
     }
 }

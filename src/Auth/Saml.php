@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
@@ -23,8 +26,6 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
-use function is_array;
-use function is_int;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -36,12 +37,15 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
+use function is_array;
+use function is_int;
+
 /**
  * SAML auth service
  */
 class Saml implements AuthInterface
 {
-    private const TEAM_SELECTION_REQUIRED = 1;
+    private const int TEAM_SELECTION_REQUIRED = 1;
 
     private AuthResponse $AuthResponse;
 

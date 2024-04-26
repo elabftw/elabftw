@@ -1,0 +1,76 @@
+{# RELATED ITEMS/EXPERIMENTS #}
+{% if Entity.type == 'items' or Entity.type == 'experiments' %}
+
+  {# RELATED EXPERIMENTS #}
+  {% if Entity.entityData.related_experiments_links %}
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
+    <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
+      {% for link in Entity.entityData.related_experiments_links %}
+        <div class='ml-3 mt-3 col-md-12'>
+          {% set randomId = random() %}
+          <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
+              <i class='fas fa-link fa-fw mr-2'></i>
+              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+              {% if link.category_title %}
+                <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title }}</span>
+              {% endif %}
+              <a href='experiments.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title }}</a>
+            {# delete link #}
+            <button data-action='destroy-related-link' type='button' data-endpoint='experiments_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+              <i class='fas fa-fw fa-trash-alt'></i>
+            </button>
+            {# toggle body #}
+            <button type='button' data-type='experiments' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
+              <i class='fas fa-fw fa-square-plus'></i>
+            </button>
+          </div>
+          <div hidden id='{{ randomId }}'>
+            <div></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class='ml-3 mt-3'>
+      <i class='fas fa-list mr-1 fa-fw'></i>
+      <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related experiments'|trans }}</a>
+    </div>
+    <hr>
+  {% endif %}
+
+  {# RELATED ITEMS #}
+  {% if Entity.entityData.related_items_links %}
+    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
+    <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
+      {% for link in Entity.entityData.related_items_links %}
+        <div class='ml-3 mt-3 col-md-12'>
+          {% set randomId = random() %}
+          <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
+            <i class='fas fa-link fa-fw mr-2'></i>
+            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
+            <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span>
+            <a href='database.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title }}</a>
+            {# delete link #}
+            <button data-action='destroy-related-link' type='button' data-endpoint='items_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 ny-n2'>
+              <i class='fas fa-trash-alt'></i>
+            </button>
+            {# toggle body #}
+            <button type='button' data-type='items' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 ny-n2'>
+              <i class='fas fa-square-plus'></i>
+            </button>
+          </div>
+          <div hidden id='{{ randomId }}'>
+            <div></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class='ml-3 mt-3'>
+      <i class='fas fa-list mr-1 fa-fw'></i>
+      <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related items'|trans }}</a>
+    </div>
+    <hr>
+  {% endif %}
+
+{% endif %}

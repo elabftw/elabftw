@@ -1230,6 +1230,14 @@ paths:
                     type: integer
                     description: Total count of experiments with timestamps
                     example: 1601
+                  uploads_filesize_sum:
+                    type: integer
+                    description: Sum of stored filesize in MySQL for all uploads of the instance.
+                    example: 25681672
+                  uploads_filesize_sum_formatted:
+                    type: string
+                    description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
+                    example: "24.49 MiB"
 
   # ITEMS
   /items:

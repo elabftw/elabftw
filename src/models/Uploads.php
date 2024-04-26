@@ -184,6 +184,14 @@ class Uploads implements RestInterface
         return $this->uploadData;
     }
 
+    public function readFilesizeSum(): int
+    {
+        $sql = 'SELECT SUM(filesize) FROM uploads';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     /**
      * Read an upload in binary format, so the actual file uploaded
      */

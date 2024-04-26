@@ -38,6 +38,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->Entity->Uploads->create(new CreateUpload($fileName, $fixturesFs->getPath() . '/' . $fileName));
     }
 
+    public function testReadFilesizeSum(): void
+    {
+        $this->assertIsInt($this->Entity->Uploads->readFilesizeSum());
+    }
+
     // same as above, but this file will fail mime type detection
     public function testCreateMimeFail(): void
     {

@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -50,11 +51,15 @@ class Info implements RestInterface
     public function readAll(): array
     {
         $Config = Config::getConfig();
+        $Uploads = new Uploads(new Experiments(new Users()));
+        $Uploads->readFilesizeSum();
         $base = array(
             'elabftw_version' => App::INSTALLED_VERSION,
             'elabftw_version_int' => App::INSTALLED_VERSION_INT,
             'ts_balance' => (int) $Config->configArr['ts_balance'],
             'ts_limit' => (int) $Config->configArr['ts_limit'],
+            'uploads_filesize_sum' => $Uploads->readFilesizeSum(),
+            'uploads_filesize_sum_formatted' => Tools::formatBytes($Uploads->readFilesizeSum()),
         );
         return array_merge($base, $this->getAllStats());
     }

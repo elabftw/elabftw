@@ -1046,12 +1046,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fancybox@npm:^3.5.6":
-  version: 3.5.6
-  resolution: "@types/fancybox@npm:3.5.6"
+"@types/fancybox@npm:^3.5.7":
+  version: 3.5.7
+  resolution: "@types/fancybox@npm:3.5.7"
   dependencies:
     "@types/jquery": "npm:*"
-  checksum: 5f9d4e3181dca029214477689851b508d77b1ad6d77d776776b441db997cb72f2ead95c2377ab04b28911f85d8feb78f2d4b6c33e3fd74b31ca42c12906f6e80
+  checksum: 3686c69d618034227ba9ff87c6a918c53d75ca00e6067f773180002f11dd70cea08efe4d1b415204f2f900ac8f7443f0b20dd9e2861452f995d121a4e4f92bff
   languageName: node
   linkType: hard
 
@@ -1115,12 +1115,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jqueryui@npm:^1.12.21":
-  version: 1.12.21
-  resolution: "@types/jqueryui@npm:1.12.21"
+"@types/jqueryui@npm:^1.12.22":
+  version: 1.12.22
+  resolution: "@types/jqueryui@npm:1.12.22"
   dependencies:
     "@types/jquery": "npm:*"
-  checksum: 51f45ab7de3c2ebe73235bc4653948b26645f963345c7fe6106ab66b1942e0004ba046187ed5b216f301bb287d30ed30b4c5d4cafb8f70f399059d87968bcaf5
+  checksum: beca7f6a4ae64bfc56af38b6d8baa6810400f1172fa347e169f6c4062b20ece536d8dceb02396105721e5278993d8a6feaabc17833d77b2a92b94a4f64293cbb
   languageName: node
   linkType: hard
 
@@ -3436,9 +3436,9 @@ __metadata:
     "@teselagen/ove": "npm:^0.4.10"
     "@types/bootstrap": "npm:^5.2.10"
     "@types/dropzone": "npm:^5.7.8"
-    "@types/fancybox": "npm:^3.5.6"
+    "@types/fancybox": "npm:^3.5.7"
     "@types/jquery": "npm:^3.5.29"
-    "@types/jqueryui": "npm:^1.12.21"
+    "@types/jqueryui": "npm:^1.12.22"
     "@types/luxon": "npm:^3.4.2"
     "@types/marked": "npm:^6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^6.20.0"

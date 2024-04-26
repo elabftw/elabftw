@@ -31,10 +31,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * User Control Panel
+ * Settings for user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('User Control Panel');
+$App->pageTitle = _('Settings');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();

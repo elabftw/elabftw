@@ -496,6 +496,10 @@ components:
         tags_id:
           type: string
           nullable: true
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/upload'
     idp:
       type: object
       properties:

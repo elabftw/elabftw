@@ -40,16 +40,15 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 
     protected string $hashAlgorithm = 'sha256';
 
-     /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity Experiments or Database
-     */
+    /**
+    * Constructor
+    *
+    * @param AbstractEntity $entity Experiments or Database
+    */
     public function __construct(AbstractEntity $entity, protected bool $includeChangelog)
     {
         parent::__construct($entity);
     }
-
 
     /**
      * Folder and zip file name begins with date for experiments

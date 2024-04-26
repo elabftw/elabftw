@@ -22,6 +22,7 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
     private MakeStreamZip $MakeDb;
 
     private bool $usePdfa = false;
+
     private bool $includeChangelog = false;
 
     protected function setUp(): void

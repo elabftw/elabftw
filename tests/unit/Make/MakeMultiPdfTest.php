@@ -24,7 +24,7 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1), null);
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-	$includeChangelog = false;
+        $includeChangelog = false;
         $this->MakePdf = new MakeMultiPdf($log, $MpdfProvider, $Entity, array(3, 4), $includeChangelog);
     }
 

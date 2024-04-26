@@ -3822,8 +3822,9 @@ paths:
         description: |
           Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
         schema:
-          type: int
+          type: integer
           default: 0
+
     get:
       tags: ['Extra Fields Keys']
       summary: Read extra fields keys.

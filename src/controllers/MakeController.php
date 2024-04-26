@@ -66,7 +66,10 @@ class MakeController implements ControllerInterface
     private function shouldIncludeChangelog() : bool {
         $includeChangelog =  $this->pdfa;
         if ($this->Request->query->has('includechangelog')) {
-            $includeChangelog = $this->Request->query->getBoolean('includechangelog');
+          // Allow ?format=pdf&includechangelog to behave as ?format=pdf&includechangelog=1
+          // ParameterBag::getBoolean will convert the empty string to false, and not use the default parameter.
+          $emptyQuery = $this->Request->query->get('includechangelog') == '';
+          $includeChangelog = $this->Request->query->getBoolean('includechangelog') || $emptyQuery;
         }
         return $includeChangelog;
     }

@@ -33,6 +33,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
@@ -90,9 +91,6 @@ class LoginController implements ControllerInterface
             'samesite' => 'Lax',
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
-
-        // INITIAL TEAM SELECTION
-        $this->initTeamSelection($authType);
 
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
@@ -168,12 +166,19 @@ class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
 
-        // no team was found so user must select one
+        // user does not exist and no team was found so user must select one
         if ($AuthResponse->initTeamRequired) {
             $this->App->Session->set('initial_team_selection_required', true);
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            return new RedirectResponse('/login.php');
+        }
+
+        // user exists but no team was found so user must select one
+        if ($AuthResponse->teamSelectionRequired) {
+            $this->App->Session->set('team_selection_required', true);
+            $this->App->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
             return new RedirectResponse('/login.php');
         }
 
@@ -303,32 +308,47 @@ class LoginController implements ControllerInterface
                     ),
                     $this->App->Request->request->getAlnum('mfa_code'),
                 );
+            case 'teaminit':
+                $this->initTeamSelection();
+                exit;
+            case 'teamselection':
+                $this->teamSelection($this->App->Session->get('teaminit_userid'), $this->App->Request->request->getInt('team_id'));
+                exit;
 
             default:
                 throw new ImproperActionException('Could not determine which authentication service to use.');
         }
     }
 
-    private function initTeamSelection(string $authType): void
+    /**
+     * For when a user already exists but has no associated team
+     */
+    private function teamSelection(int $userid, int $teamId): void
     {
-        if ($authType === 'teaminit'
-            && $this->App->Session->get('initial_team_selection_required')
-        ) {
-            // create a user in the requested team
-            $newUser = ExistingUser::fromScratch(
-                $this->App->Session->get('teaminit_email'),
-                array($this->App->Request->request->getInt('team_id')),
-                $this->App->Request->request->getString('teaminit_firstname'),
-                $this->App->Request->request->getString('teaminit_lastname'),
-            );
-            $this->App->Session->set('teaminit_done', true);
-            // will display the appropriate message to user
-            $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
-            $this->App->Session->remove('initial_team_selection_required');
-            $location = '/login.php';
-            echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
-            exit;
-        }
+        $this->App->Session->remove('team_selection_required');
+        $Users2Teams = new Users2Teams(new Users($userid));
+        $Users2Teams->create($userid, $teamId);
+        // TODO avoid re-login
+        $this->App->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
+        $location = '/login.php';
+        echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+    }
+
+    private function initTeamSelection(): void
+    {
+        // create a user in the requested team
+        $newUser = ExistingUser::fromScratch(
+            $this->App->Session->get('teaminit_email'),
+            array($this->App->Request->request->getInt('team_id')),
+            $this->App->Request->request->getString('teaminit_firstname'),
+            $this->App->Request->request->getString('teaminit_lastname'),
+        );
+        $this->App->Session->set('teaminit_done', true);
+        // will display the appropriate message to user
+        $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
+        $this->App->Session->remove('initial_team_selection_required');
+        $location = '/login.php';
+        echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
     }
 
     private function enableMFA(): string

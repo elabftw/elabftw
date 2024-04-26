@@ -36,7 +36,7 @@
 <section class='text-center'>
   <img src='/assets/images/logo.png' alt='logo elabftw' class='col-md-3' />
 
-  {# Allow user to request access to a team #}
+  {# Allow non existing user to request access to a team #}
   {% if App.Session.has('initial_team_selection_required') %}
     <div class='separator col-md-4 mx-auto'></div>
     <h2>{{ 'Request access to a team'|trans }}</h2>
@@ -57,6 +57,25 @@
 
         <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
         <input required class='form-control' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
+        <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
+      </div>
+    </form>
+  {# Allow existing user to request access to a team #}
+  {% elseif App.Session.has('team_selection_required') %}
+    <div class='separator col-md-4 mx-auto'></div>
+    <h2>{{ 'Request access to a team'|trans }}</h2>
+    <br>
+    <form method='post' class='form-group' id='team-select' action='app/controllers/LoginController.php' autocomplete='off'>
+      <input type='hidden' name='auth_type' value='teamselection'>
+      {{ App.Session.get('csrf')|csrf }}
+      <div class='form-group mx-auto col-md-4'>
+        <label for='existing_user_team_select'>{{ 'Select a team'|trans }}</label>
+        <select required name='team_id' class='form-control selectpicker' id='existing_user_team_select' data-show-subtext='true' data-live-search='true'>
+          <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
+          {% for team in teamsArr|filter(v => v.visible == 1) %}
+            <option value='{{ team.id }}'>{{ team.name }}</option>
+          {% endfor %}
+        </select>
         <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
       </div>
     </form>

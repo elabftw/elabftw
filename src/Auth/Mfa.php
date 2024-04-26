@@ -17,6 +17,7 @@ use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
+use Elabftw\Services\UsersHelper;
 
 /**
  * Multi Factor Auth service
@@ -42,7 +43,8 @@ class Mfa implements AuthInterface
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->userid = $this->MfaHelper->userid;
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;
     }

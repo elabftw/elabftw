@@ -9,12 +9,15 @@ import 'jquery-ui/ui/widgets/sortable';
 import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import tinymce from 'tinymce/tinymce';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
+import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
+import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/dist/esm/tom-select';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin';
@@ -577,6 +580,32 @@ export async function saveStringAsFile(filename: string, content: string|Promise
   URL.revokeObjectURL(url);
   link.remove();
 }
+
+// Shared function to UPDATE ENTITY BODY via save shortcut and/or save button, or autosave
+export async function updateEntityBody(): Promise<void> {
+  const editor = getEditor();
+  const entity = getEntity();
+  const EntityC = new EntityClass(entity.type);
+  return EntityC.update(entity.id, Target.Body, editor.getContent()).then(response => response.json()).then(json => {
+    if (editor.type === 'tiny') {
+      // set the editor as non dirty so we can navigate out without a warning to clear
+      tinymce.activeEditor.setDirty(false);
+    }
+    const lastSavedAt = document.getElementById('lastSavedAt');
+    lastSavedAt.title = json.modified_at;
+    reloadElement('lastSavedAt').then(() => relativeMoment());
+  }).catch(() => {
+    // detect if the session timedout (Session expired error is thrown)
+    // store the modifications in local storage to prevent any data loss
+    localStorage.setItem('body', editor.getContent());
+    localStorage.setItem('id', String(entity.id));
+    localStorage.setItem('type', entity.type);
+    localStorage.setItem('date', new Date().toLocaleString());
+    // reload the page so user gets redirected to the login page
+    location.reload();
+  });
+}
+
 
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);

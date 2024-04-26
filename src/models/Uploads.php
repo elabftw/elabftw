@@ -175,10 +175,6 @@ class Uploads implements RestInterface
     {
         $uploads = $this->readAll();
         foreach ($uploads as $upload) {
-            // only consider non deleted uploads
-            if ($upload['state'] !== State::Normal->value) {
-                return;
-            }
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
                 $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], $upload['comment']);

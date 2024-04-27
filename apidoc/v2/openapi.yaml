@@ -1102,6 +1102,27 @@ paths:
             enum: [1, 2, 3]
           description: |
             Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+          description: |
+            Change the ordering of the results.
+          examples:
+            first:
+              summary: Order by category
+              value: cat
+            second:
+              summary: Order by custom ID
+              value: customid
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+          description: |
+            Change the sorting of results: ascending or descending.
       responses:
         '200':
           description: A list of experiments
@@ -1379,6 +1400,27 @@ paths:
             enum: [1, 2, 3]
           description: |
             Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+          description: |
+            Change the ordering of the results.
+          examples:
+            first:
+              summary: Order by category
+              value: cat
+            second:
+              summary: Order by custom ID
+              value: customid
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+          description: |
+            Change the sorting of results: ascending or descending.
       # end duplicate from GET /experiments
       responses:
         '200':

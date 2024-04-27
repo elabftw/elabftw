@@ -36,6 +36,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.png';
         $this->Entity->Uploads->create(new CreateUpload($fileName, $fixturesFs->getPath() . '/' . $fileName));
+        $this->Entity->Uploads->duplicate($this->Entity);
     }
 
     public function testReadFilesizeSum(): void

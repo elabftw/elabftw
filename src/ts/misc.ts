@@ -592,8 +592,10 @@ export async function updateEntityBody(): Promise<void> {
       tinymce.activeEditor.setDirty(false);
     }
     const lastSavedAt = document.getElementById('lastSavedAt');
-    lastSavedAt.title = json.modified_at;
-    reloadElement('lastSavedAt').then(() => relativeMoment());
+    if (lastSavedAt) {
+      lastSavedAt.title = json.modified_at;
+      reloadElement('lastSavedAt').then(() => relativeMoment());
+    }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
     // store the modifications in local storage to prevent any data loss

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const pages = ['edit', 'view'];
+  const pages = ['edit', 'view', 'template-edit'];
   if (!pages.includes(about.page)) {
     return;
   }

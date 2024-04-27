@@ -159,6 +159,7 @@ class Templates extends AbstractTemplateEntity
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
+        $this->entityData['uploads'] = $this->Uploads->readAll();
         return $this->entityData;
     }
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-27 21:24+0200\n"
+"POT-Creation-Date: 2024-04-27 21:30+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -651,11 +651,11 @@ msgstr ""
 
 #: src/models/notifications/StepDeadline.php:62
 msgid "Hello. A step deadline is approaching: "
-msgstr "Bonjour. La dernière limite d'une étape est proche : "
+msgstr "Bonjour. La date butoir d'une étape est proche : "
 
-#: src/models/notifications/StepDeadline.php:71
-msgid "A step deadline is approaching"
-msgstr "La dernière limite d'une étape est proche"
+#: src/models/notifications/StepDeadline.php:71 src/services/Transform.php:104
+msgid "A step deadline is approaching."
+msgstr "La date butoir d'une étape est proche."
 
 #: src/models/notifications/UserCreated.php:34
 #: src/models/notifications/UserNeedValidation.php:36
@@ -782,10 +782,6 @@ msgstr ""
 #: src/services/Transform.php:94
 msgid "Some attached PDFs could not be appended."
 msgstr "Certains PDFs n'ont pas pu être annexés."
-
-#: src/services/Transform.php:104
-msgid "A step deadline is approaching."
-msgstr "La dernière limite d'une étape est proche."
 
 #: src/services/Transform.php:111
 #, php-format
@@ -971,7 +967,7 @@ msgstr "Notification de nouveau commentaire"
 
 #: web/ucp.php:84
 msgid "Step deadline"
-msgstr "Dernière limite d'étape"
+msgstr "Date butoir de l'étape"
 
 #: web/ucp.php:92
 msgid "New user created"
@@ -3353,7 +3349,7 @@ msgstr "Non terminé"
 #: src/templates/steps-links-edit.html:47
 #: src/templates/steps-links-view.html:17
 msgid "Deadline:"
-msgstr "Dernière limite :"
+msgstr "Date butoir :"
 
 #: src/templates/steps-links-edit.html:52
 msgid "Toggle notifications"
@@ -3361,15 +3357,15 @@ msgstr "Basculer les notifications"
 
 #: src/templates/steps-links-edit.html:56
 msgid "Clear deadline"
-msgstr "Effacer la dernière limite"
+msgstr "Effacer la date butoir"
 
 #: src/templates/steps-links-edit.html:60
 msgid "Add a deadline"
-msgstr "Ajouter une dernière limite"
+msgstr "Ajouter une date butoir"
 
 #: src/templates/steps-links-edit.html:63
 msgid "Set deadline in"
-msgstr "Fixer une dernière limite dans"
+msgstr "Fixer une date butoir dans"
 
 #: src/templates/steps-links-edit.html:64
 msgid "%d hour"
@@ -5011,6 +5007,9 @@ msgstr "a laissé un commentaire"
 #: src/templates/view.html:155
 msgid "edited"
 msgstr "édité"
+
+#~ msgid "A step deadline is approaching"
+#~ msgstr "La date butoir d'une étape est proche"
 
 #~ msgid "Regenerate"
 #~ msgstr "Regénérer"

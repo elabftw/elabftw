@@ -118,7 +118,7 @@
         {% if App.Users.userData.sig_privkey %}
           <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
         {% else %}
-          <a class='btn btn-primary' href='/ucp.php?tab=2#ucp-sigkeys'>{{ 'Go to User Control Panel'|trans }}</a>
+          <a class='btn btn-primary' href='/ucp.php?tab=2#ucp-sigkeys'>{{ 'Go to Settings'|trans }}</a>
         {% endif %}
       </div>
     </div>

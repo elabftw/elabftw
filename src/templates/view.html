@@ -141,10 +141,9 @@
 
 {% include 'uploads.html' %}
 
-<div id='commentsDiv'>
-  {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsInnerDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>
-  <div class='mt-2' id='commentsInnerDiv' data-count-for='commentsCount' data-save-hidden='commentsInnerDiv'>
+{% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>
+  <div class='mt-2' id='commentsDiv' data-count-for='commentsCount' data-save-hidden='commentsDiv'>
       {% for comment in Entity.entityData.comments %}
         <div class='box countable'>
           <div class='comment-header text-muted p-2'>
@@ -172,8 +171,7 @@
         </div>
       </div>
     </div>
-  {% endif %}
-</div>
+{% endif %}
 
 <div id='info'
     data-page='view'

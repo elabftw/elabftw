@@ -3,7 +3,7 @@
 {% block body %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Members'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Procurement requests'|trans }}</button></li>
@@ -183,7 +183,8 @@
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Members'|trans }}</h3>
-  <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
+  {% include 'filter-input-snippet.html' with {'target': 'teamTable'} %}
+  <table class='table' aria-describedby='pageTitle' data-table-sort='true'>
     <thead>
       <tr>
           <th scope='col'>{{ 'Name'|trans }}</th>
@@ -191,7 +192,7 @@
           <th scope='col'>ORCID</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='teamTable'>
       {# archived users are hidden on this page #}
       {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
       <tr>

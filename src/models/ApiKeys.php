@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Models;
+declare(strict_types=1);
 
-use function bin2hex;
+namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
@@ -19,9 +20,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
+use PDO;
+
+use function bin2hex;
 use function password_hash;
 use function password_verify;
-use PDO;
 use function random_bytes;
 
 /**
@@ -73,10 +76,12 @@ class ApiKeys implements RestInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, name, created_at, last_used_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team ORDER BY last_used_at DESC';
+        $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.hash, ak.can_write, ak.team, teams.name AS team_name
+            FROM api_keys AS ak
+            LEFT JOIN teams ON teams.id = ak.team
+            WHERE ak.userid = :userid ORDER BY last_used_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

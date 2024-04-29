@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -31,10 +34,14 @@ use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\ProcurementRequests;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\SigKeys;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -43,6 +50,7 @@ use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Exception;
 use JsonException;
@@ -247,6 +255,7 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->Users, $this->id),
+            ApiEndpoint::SigKeys => new SigKeys($this->Users, $this->id),
             ApiEndpoint::TeamTags => new TeamTags($this->Users, $this->id),
             ApiEndpoint::Teams => new Teams($this->Users, $this->id),
             ApiEndpoint::Todolist => new Todolist($this->Users->userData['userid'], $this->id),
@@ -266,6 +275,7 @@ class Apiv2Controller extends AbstractApiController
                 'comments' => new Comments($this->Model, $this->subId),
                 'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
                 'items_links' => new ItemsLinks($this->Model, $this->subId),
+                'request_actions' => new RequestActions($this->Users, $this->Model, $this->subId),
                 'revisions' => new Revisions(
                     $this->Model,
                     (int) $Config->configArr['max_revisions'],
@@ -276,7 +286,7 @@ class Apiv2Controller extends AbstractApiController
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, request_actions, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {
@@ -286,13 +296,16 @@ class Apiv2Controller extends AbstractApiController
                 'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
                 'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
                 'items_status' => new ItemsStatus($this->Model, $this->subId),
+                'items_categories' => new ItemsTypes($this->Users, $this->subId),
+                'procurement_requests' => new ProcurementRequests($this->Model, $this->subId),
                 'teamgroups' => new TeamGroups($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
+                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
             };
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
+                'request_actions' => new UserRequestActions($this->Model),
                 default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
             };
         }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,16 +8,19 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function array_key_first;
-use function array_key_last;
 use Elabftw\Enums\State;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use function implode;
 use PDO;
+
+use function array_key_first;
+use function array_key_last;
+use function implode;
 use function round;
 use function sprintf;
 

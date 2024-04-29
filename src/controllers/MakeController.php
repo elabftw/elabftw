@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Controllers;
+declare(strict_types=1);
 
-use function count;
+namespace Elabftw\Controllers;
 
 use Elabftw\AuditEvent\Export;
 use Elabftw\Enums\EntityType;
@@ -24,6 +25,7 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
+use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
 use Elabftw\Make\MakeReport;
@@ -32,6 +34,7 @@ use Elabftw\Make\MakeStreamZip;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
@@ -45,12 +48,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
 
+use function count;
+
 /**
  * Create zip, csv, pdf or report
  */
 class MakeController implements ControllerInterface
 {
-    private const AUDIT_THRESHOLD = 12;
+    private const int AUDIT_THRESHOLD = 12;
 
     private AbstractEntity $Entity;
 
@@ -59,14 +64,16 @@ class MakeController implements ControllerInterface
 
     private bool $pdfa = false;
 
-    public function __construct(private Users $Users, private Request $Request)
-    {
-    }
+    public function __construct(private Users $Users, private Request $Request) {}
 
     public function getResponse(): Response
     {
         switch ($this->Request->query->get('format')) {
             case 'csv':
+                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
+                    $ProcurementRequests = new ProcurementRequests(new Teams($this->Users), 1);
+                    return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
+                }
                 $this->populateIdArr();
                 return $this->makeCsv();
 

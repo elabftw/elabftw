@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,22 +8,23 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
-use function dirname;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Mpdf;
+
+use function dirname;
 
 /**
  * Get an instance of mpdf
  */
 class MpdfProvider implements MpdfProviderInterface
 {
-    public function __construct(private string $author, private string $format = 'A4', private bool $pdfa = false)
-    {
-    }
+    public function __construct(private string $author, private string $format = 'A4', private bool $pdfa = false) {}
 
     public function isPdfa(): bool
     {

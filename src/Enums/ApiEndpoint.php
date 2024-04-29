@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -23,6 +26,7 @@ enum ApiEndpoint: string
     case Events = 'events';
     case ExtraFieldsKeys = 'extra_fields_keys';
     case FavTags = 'favtags';
+    case SigKeys = 'sig_keys';
     case TeamTags = 'team_tags';
     case Teams = 'teams';
     case Todolist = 'todolist';
@@ -31,6 +35,6 @@ enum ApiEndpoint: string
 
     public static function getCases(): array
     {
-        return array_map(fn ($case) => $case->value, ApiEndpoint::cases());
+        return array_map(fn($case) => $case->value, ApiEndpoint::cases());
     }
 }

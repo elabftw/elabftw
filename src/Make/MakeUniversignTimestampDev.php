@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Alexander Minges <alexander.minges@gmail.com>
@@ -9,6 +10,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
 /**
@@ -16,5 +19,5 @@ namespace Elabftw\Make;
  */
 class MakeUniversignTimestampDev extends MakeUniversignTimestamp
 {
-    protected const TS_URL = 'https://sign.test.cryptolog.com/tsa';
+    protected const string TS_URL = 'https://sign.test.cryptolog.com/tsa';
 }

@@ -8,7 +8,6 @@
 import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement } from './misc';
 import { getTinymceBaseConfig, quickSave } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
-import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -172,24 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // unlock the button
         button.disabled = false;
       });
-
-    // CLICK the NOW button of a time or date extra field
-    } else if (el.matches('[data-action="update-to-now"]')) {
-      const input = el.closest('.input-group').querySelector('input');
-      // use Luxon lib here
-      const now = DateTime.local();
-      // date format
-      let format = 'yyyy-MM-dd';
-      if (input.type === 'time') {
-        format = 'HH:mm';
-      }
-      if (input.type === 'datetime-local') {
-        /* eslint-disable-next-line quotes */
-        format = "yyyy-MM-dd'T'HH:mm";
-      }
-      input.value = now.toFormat(format);
-      // trigger change event so it is saved
-      input.dispatchEvent(new Event('change'));
 
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {

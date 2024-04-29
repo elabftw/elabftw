@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -19,8 +22,9 @@ use Elabftw\Traits\ProcessTrait;
 use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
-use function is_readable;
 use League\Flysystem\FilesystemOperator;
+
+use function is_readable;
 
 /**
  * Trusted Timestamping (RFC3161) utility class

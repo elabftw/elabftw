@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
@@ -16,13 +19,16 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
-use function explode;
-use function is_array;
+use Elabftw\Services\UsersHelper;
 use LdapRecord\Connection;
 use LdapRecord\Container;
 use LdapRecord\Models\Entry;
 use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;
+use SensitiveParameter;
+
+use function explode;
+use function is_array;
 
 /**
  * LDAP auth service
@@ -31,7 +37,7 @@ class Ldap implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
-    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, private string $password)
+    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, #[SensitiveParameter] private string $password)
     {
         // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
         $connection->connect();
@@ -108,7 +114,8 @@ class Ldap implements AuthInterface
         $this->AuthResponse->userid = (int) $Users->userData['userid'];
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;
     }

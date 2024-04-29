@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Import;
 
@@ -61,8 +64,8 @@ abstract class AbstractZip extends AbstractImport
      */
     protected function transformIfNecessary(
         string $subject,
-        bool $isComment=false,
-        bool $isMetadata=false,
+        bool $isComment = false,
+        bool $isMetadata = false,
     ): string {
         // skip transformation
         if (!$this->switchToEscapeOutput || $subject === '') {

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -20,9 +23,9 @@ use Elabftw\Models\Config;
  */
 class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'https://zeitstempel.dgn.de/tss';
+    protected const string TS_URL = 'https://zeitstempel.dgn.de/tss';
 
-    protected const TS_HASH = 'sha512';
+    protected const string TS_HASH = 'sha512';
 
     /**
      * Return the needed parameters to request/verify a timestamp
@@ -51,6 +54,6 @@ class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
             // no need to verify for this provider
             'ts_cert' => '',
             'ts_chain' => '',
-            );
+        );
     }
 }

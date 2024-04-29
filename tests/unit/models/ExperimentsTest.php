@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -13,6 +15,7 @@ use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -94,6 +97,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
+    }
+
+    public function testSign(): void
+    {
+        $this->Experiments->setId(1);
+        // we need to generate a key
+        $passphrase = 'correct horse battery staple';
+        $SigKeys = new SigKeys($this->Users);
+        $SigKeys->postAction(Action::Create, array('passphrase' => $passphrase));
+        // reload the Users object because we now have a key
+        $this->Users->readOne();
+        $this->assertIsArray($this->Experiments->patch(Action::Sign, array(
+            'passphrase' => $passphrase,
+            'meaning' => (string) Meaning::Responsibility->value,
+        )));
     }
 
     public function testDuplicate(): void

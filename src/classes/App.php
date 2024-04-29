@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,11 +8,10 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function basename;
-use function bindtextdomain;
-use function dirname;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -23,17 +23,21 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use Elabftw\Traits\UploadTrait;
-use function in_array;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
-use function putenv;
 use RuntimeException;
-use function setlocale;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+
+use function basename;
+use function bindtextdomain;
+use function dirname;
+use function in_array;
+use function putenv;
+use function setlocale;
 use function textdomain;
 
 /**
@@ -44,12 +48,12 @@ class App
     use UploadTrait;
     use TwigTrait;
 
-    public const INSTALLED_VERSION = '5.0.4';
+    public const string INSTALLED_VERSION = '5.1.0';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const INSTALLED_VERSION_INT = 50004;
+    public const int INSTALLED_VERSION_INT = 50100;
 
     public Users $Users;
 
@@ -185,7 +189,8 @@ class App
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
-        return Language::toCalendar(Language::tryFrom($this->getLang()) ?? Language::EnglishGB);
+        $Language = Language::tryFrom($this->getLang()) ?? Language::EnglishGB;
+        return $Language->toCalendar();
     }
 
     public static function getWhatsnewLink(): string

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,9 +8,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Import;
+declare(strict_types=1);
 
-use function basename;
+namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
@@ -26,9 +27,11 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
+use League\Flysystem\UnableToReadFile;
+
+use function basename;
 use function hash_file;
 use function json_decode;
-use League\Flysystem\UnableToReadFile;
 use function sprintf;
 
 /**
@@ -220,6 +223,8 @@ class Eln extends AbstractZip
         foreach ($dataset as $attributeName => $value) {
             switch($attributeName) {
                 case 'author':
+                    $html .= $this->authorToHtml($value);
+                    break;
                 case 'funder':
                     $html .= $this->attrToHtml($value, _(ucfirst($attributeName)));
                     break;
@@ -245,6 +250,19 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+    }
+
+    private function authorToHtml(array $node): string
+    {
+        $html = sprintf('<h1>%s</h1><ul>', _('Author'));
+        $fullNode = $this->getNodeFromId($node['@id']);
+        $html .= sprintf(
+            '<li>%s %s %s</li>',
+            $this->transformIfNecessary($fullNode['givenName'] ?? ''),
+            $this->transformIfNecessary($fullNode['familyName'] ?? ''),
+            $this->transformIfNecessary($fullNode['identifier'] ?? ''),
+        );
+        return $html . '</ul>';
     }
 
     private function attrToHtml(array $attr, string $title): string
@@ -322,11 +340,12 @@ class Eln extends AbstractZip
                     $this->Entity->patch(Action::Update, array('date' => $json['date']));
                 }
             }
-            if ($json['metadata'] !== null) {
-                $metadata = json_encode($json['metadata'], JSON_THROW_ON_ERROR, 512);
+            if (!empty($json['metadata_decoded'])) {
+                $metadataStr = json_encode($json['metadata_decoded'], JSON_THROW_ON_ERROR, 512);
+                $cleanMetadata = $this->transformIfNecessary($metadataStr, isMetadata: true);
                 $this->Entity->patch(
                     Action::Update,
-                    array('metadata' => $this->transformIfNecessary($metadata, isMetadata: true)),
+                    array('metadata' => $cleanMetadata),
                 );
             }
             // add steps

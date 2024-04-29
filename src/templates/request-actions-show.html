@@ -1,0 +1,9 @@
+{# this is the block displaying actions for current user #}
+{% if requestActionsArr %}
+  <ul class='list-group'>
+    {% for action in requestActionsArr %}
+      <a class='list-group-item hl-hover-gray p-2 rounded' href='/{{ action.entity_page }}.php?mode=view&id={{ action.entity_id }}'>
+        <i class='fas fa-person-circle-exclamation fa-2x mr-2'></i>{{ action.requester_firstname }} is requesting {{ action.action }} on {{ action.entity_title }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></a>
+    {% endfor %}
+  </ul>
+{% endif %}

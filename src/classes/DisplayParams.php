@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,20 +8,22 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
-use Elabftw\Enums\SearchType;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
-use function implode;
 use PDO;
-use function sprintf;
 use Symfony\Component\HttpFoundation\Request;
+
+use function implode;
+use function sprintf;
 use function trim;
 
 /**
@@ -45,10 +48,7 @@ class DisplayParams
     // the extended search query
     public string $extendedQuery = '';
 
-    // if this variable is not Undefined the error message shown will be different if there are no results
-    public SearchType $searchType = SearchType::Undefined;
-
-    public EntityType $relatedOrigin;
+    public ?EntityType $relatedOrigin = null;
 
     public bool $includeArchived = false;
 
@@ -81,16 +81,22 @@ class DisplayParams
         }
         if (!empty($this->Request->query->get('q'))) {
             $this->query = trim($this->Request->query->getString('q'));
-            $this->searchType = SearchType::Query;
         }
         if (!empty($this->Request->query->get('extended'))) {
             $this->extendedQuery = trim($this->Request->query->getString('extended'));
-            $this->searchType = SearchType::Extended;
         }
+
+        // SCOPE FILTER
+        // default scope is the user setting, but can be overridden by query param
+        $scope = $this->Users->userData['scope_' . $this->entityType->value];
+        if (Check::id($this->Request->query->getInt('scope')) !== false) {
+            $scope = $this->Request->query->getInt('scope');
+        }
+
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
+        if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, (int) $this->Users->userData['userid']);
         }
@@ -120,7 +126,6 @@ class DisplayParams
             $req->bindValue(':count', count($tags), PDO::PARAM_INT);
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
-            $this->searchType = SearchType::Tags;
         }
         // now get ordering/sorting parameters from the query string
         $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
@@ -129,24 +134,21 @@ class DisplayParams
         // RELATED FILTER
         if (Check::id($this->Request->query->getInt('related')) !== false) {
             $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
-            $this->searchType = SearchType::Related;
             $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
         if (Check::id($this->Request->query->getInt('cat')) !== false) {
             $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
-            $this->searchType = SearchType::Category;
         }
         // STATUS FILTER
         if (Check::id($this->Request->query->getInt('status')) !== false) {
             $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
-            $this->searchType = SearchType::Status;
         }
 
         // OWNER (USERID) FILTER
         if (Check::id($this->Request->query->getInt('owner')) !== false) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
-            $this->searchType = SearchType::Owner;
         }
+
     }
 }

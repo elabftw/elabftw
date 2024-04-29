@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -9,8 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Controllers\Apiv1Controller;
+
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -20,6 +22,8 @@ use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use function dirname;
 
 /**
  * Entrypoint for API requests. Nginx redirects all the /api/vN requests here.

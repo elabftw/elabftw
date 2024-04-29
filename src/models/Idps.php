@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -70,7 +73,7 @@ class Idps implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM idps';
+        $sql = 'SELECT * FROM idps ORDER BY name';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

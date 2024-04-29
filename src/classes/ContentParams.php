@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,20 +8,21 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
+
 use function mb_strlen;
 
 class ContentParams implements ContentParamsInterface
 {
-    protected const MIN_CONTENT_SIZE = 1;
+    protected const int MIN_CONTENT_SIZE = 1;
 
-    public function __construct(protected string $target, protected string $content)
-    {
-    }
+    public function __construct(protected string $target, protected string $content) {}
 
     public function getUnfilteredContent(): string
     {

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Storage;
 
 /**
@@ -14,7 +17,7 @@ namespace Elabftw\Storage;
  */
 class ParentCache extends Local
 {
-    protected const FOLDER = 'cache';
+    protected const string FOLDER = 'cache';
 
     public function destroy(): bool
     {

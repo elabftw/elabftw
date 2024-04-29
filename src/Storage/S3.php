@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Storage;
 
@@ -23,11 +26,9 @@ use League\Flysystem\Visibility;
  */
 class S3 extends AbstractStorage
 {
-    private const S3_VERSION = '2006-03-01';
+    private const string S3_VERSION = '2006-03-01';
 
-    public function __construct(private Config $config, private CredentialsInterface $credentials)
-    {
-    }
+    public function __construct(private Config $config, private CredentialsInterface $credentials) {}
 
     protected function getAdapter(): FilesystemAdapter
     {

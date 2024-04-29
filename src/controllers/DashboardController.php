@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -25,6 +28,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Models\UserRequestActions;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,11 +36,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DashboardController implements ControllerInterface
 {
-    private const SHOWN_NUMBER = 5;
+    private const int SHOWN_NUMBER = 5;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {
@@ -59,6 +61,8 @@ class DashboardController implements ControllerInterface
         $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
         $ExperimentsStatus = new ExperimentsStatus(new Teams($this->App->Users));
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
+        $UserRequestActions = new UserRequestActions($this->App->Users);
+
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
             'itemsCategoryArr' => $ItemsTypes->readAll(),
@@ -67,6 +71,7 @@ class DashboardController implements ControllerInterface
             'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
             'experimentsStatusArr' => $ExperimentsStatus->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
+            'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $PermissionsHelper->getAssociativeArray(),

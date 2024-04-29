@@ -111,6 +111,9 @@
                 <div class='d-flex align-items-center'>
                   <i class='fas fa-link mr-1'></i>
                   <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span> <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
+                  {% if link.custom_id %}
+                    <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+                  {% endif %}
                   {{ link.title }}</a>
                   {# toggle body #}
                   <button type='button' data-type='experiments' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
@@ -168,6 +171,9 @@
               <div class='d-flex align-items-center'>
                 <i class='fas fa-link mr-1'></i>
                 <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span> <a href='database.php?mode=view&amp;id={{ link.itemid }}' class='mr-auto'>
+                {% if link.custom_id %}
+                  <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+                {% endif %}
                 {{ link.title }}</a>
                 {# toggle body #}
                 <button type='button' data-type='items' data-id='{{ link.itemid }}' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
@@ -211,3 +217,4 @@
   </div>
 </div>
 
+{% include 'related-snippet.html' %}

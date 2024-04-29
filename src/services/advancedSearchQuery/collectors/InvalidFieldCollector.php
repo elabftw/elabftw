@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -8,13 +9,13 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
 class InvalidFieldCollector
 {
-    public function __construct(private array $fieldErrors = array())
-    {
-    }
+    public function __construct(private array $fieldErrors = array()) {}
 
     public function getfieldErrors(): array
     {

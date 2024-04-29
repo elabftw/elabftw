@@ -60,6 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
           .then(() => el.parentElement.parentElement.remove());
       }
+    } else if (el.matches('[data-action="destroy-step"]')) {
+      if (confirm(i18next.t('step-delete-warning'))) {
+        StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
+          el.parentElement.parentElement.remove();
+          // keep to do list in sync
+          const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
+          if (todoStep) {
+            todoStep.parentElement.remove();
+          }
+        });
+      }
     }
   });
 
@@ -140,20 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
-
-  // DESTROY
-  $(document).on('click', '.stepDestroy', function(e) {
-    if (confirm(i18next.t('step-delete-warning'))) {
-      const stepId = e.currentTarget.dataset.stepid;
-      StepC.destroy(stepId).then(() => {
-        reloadElement('stepsDiv').then(() => {
-          // keep to do list in sync
-          $('#todo_step_' + stepId).parent().hide();
-        });
-      });
-    }
-  });
-
   // END STEPS
 
   // CREATE LINK

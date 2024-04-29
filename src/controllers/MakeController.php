@@ -124,7 +124,7 @@ class MakeController implements ControllerInterface
         }
     }
 
-    private function shouldIncludeChangelog() : bool
+    private function shouldIncludeChangelog(): bool
     {
         $includeChangelog =  $this->pdfa;
         if ($this->Request->query->has('changelog')) {

@@ -94,7 +94,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             log: $log,
             mpdfProvider: $MpdfProvider,
             entity: $this->Entity,
-            idArr: array($this->Entity->id),
+            entityIdArr: array($this->Entity->id),
             includeChangelog: true
         );
         if ($this->configArr['keeex_enabled'] === '1') {

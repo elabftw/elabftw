@@ -26,9 +26,11 @@ class MakeQrPdf extends AbstractMakePdf
 
     public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
-        // A QR PDF never includes a changelog.
-        $includeChangelog = false;
-        parent::__construct($mpdfProvider, $entity, $includeChangelog);
+        parent::__construct(
+                mpdfProvider: $mpdfProvider,
+                entity: $entity,
+                includeChangelog: false
+        );
     }
 
     /**

@@ -45,7 +45,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
     *
     * @param AbstractEntity $entity Experiments or Database
     */
-    public function __construct(AbstractEntity $entity, protected bool $includeChangelog)
+    public function __construct(AbstractEntity $entity, protected bool $includeChangelog = false)
     {
         parent::__construct($entity);
     }

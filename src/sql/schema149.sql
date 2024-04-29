@@ -12,7 +12,7 @@ ALTER TABLE `experiments_templates2experiments`
 -- Constraints for table `experiments_templates2experiments`
 ALTER TABLE `experiments_templates2experiments`
   ADD CONSTRAINT `fk_experiments_templates2experiments_item_id`
-    FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`)
+    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_templates2experiments_link_id`
     FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)

@@ -38,7 +38,14 @@ class MakeEln extends MakeStreamZip
 
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
     {
-        parent::__construct($Zip, $entity, $idArr);
+        parent::__construct(
+            Zip: $Zip,
+            entity: $entity,
+            idArr: $idArr,
+            usePdfa: false,
+            includeChangelog: false
+        );
+
         $this->creationDateTime = new DateTimeImmutable();
         $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
         $this->dataArr = array(

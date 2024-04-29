@@ -63,9 +63,13 @@ class MakePdf extends AbstractMakePdf
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr)
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr, bool $includeChangelog = false)
     {
-        parent::__construct($mpdfProvider, $entity);
+        parent::__construct(
+            mpdfProvider: $mpdfProvider,
+            entity: $entity,
+            includeChangelog: $includeChangelog
+        );
 
         $this->pdfa = $mpdfProvider->isPdfa();
         $this->mpdf->SetTitle($this->getTitle());
@@ -231,7 +235,7 @@ class MakePdf extends AbstractMakePdf
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
-            'includeChangelog' => $this->pdfa,
+            'includeChangelog' => $this->includeChangelog,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate,

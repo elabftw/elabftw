@@ -63,7 +63,7 @@ class MakePdf extends AbstractMakePdf
      *
      * @param AbstractEntity $entity Experiments or Database
      */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr, bool $includeChangelog)
+    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr, bool $includeChangelog = false)
     {
         parent::__construct(
             mpdfProvider: $mpdfProvider,

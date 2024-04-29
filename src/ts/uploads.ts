@@ -194,10 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
-          .then(() => {
-            document.getElementById(`uploadDiv_${uploadid}`).remove();
-            reloadElement('uploadsDivTitle');
-          });
+          .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
       }
     }
   });
@@ -212,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $3Dmol.autoload();
       displayPlasmidViewer(about);
       malleableFilecomment.listen();
-      if ('edit' === about.page) {
+      if (['edit', 'template-edit'].includes(about.page)) {
         (new Uploader()).init();
       }
       relativeMoment();

@@ -124,6 +124,15 @@ class MakeController implements ControllerInterface
         }
     }
 
+    private function shouldIncludeChangelog() : bool
+    {
+        $includeChangelog =  $this->pdfa;
+        if ($this->Request->query->has('changelog')) {
+            $includeChangelog = $this->Request->query->getBoolean('changelog');
+        }
+        return $includeChangelog;
+    }
+
     private function populateIdArr(): void
     {
         $this->Entity = EntityType::from($this->Request->query->getString('type'))->toInstance($this->Users);
@@ -177,9 +186,9 @@ class MakeController implements ControllerInterface
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id)));
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id), $this->shouldIncludeChangelog()));
         }
-        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr, $this->shouldIncludeChangelog()));
     }
 
     private function makeQrPdf(): Response
@@ -217,7 +226,7 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr, $this->pdfa));
+        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr, $this->pdfa, $this->shouldIncludeChangelog()));
     }
 
     private function makeStreamZip(ZipMakerInterface $Maker): Response

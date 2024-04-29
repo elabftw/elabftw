@@ -90,7 +90,13 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             true, // PDF/A always for timestamp pdf
         );
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        $MakePdf = new MakeTimestampPdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
+        $MakePdf = new MakeTimestampPdf(
+            log: $log,
+            mpdfProvider: $MpdfProvider,
+            entity: $this->Entity,
+            idArr: array($this->Entity->id),
+            includeChangelog: true
+        );
         if ($this->configArr['keeex_enabled'] === '1') {
             $Keeex = new MakeKeeex(new Client());
             return $Keeex->fromString($MakePdf->getFileContent());

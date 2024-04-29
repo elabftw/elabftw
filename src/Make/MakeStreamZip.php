@@ -33,9 +33,12 @@ class MakeStreamZip extends AbstractMakeZip
     // data array (entries) that will be converted to json
     protected array $dataArr = array();
 
-    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr, protected bool $usePdfa = false)
+    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr, protected bool $usePdfa = false, bool $includeChangelog = false)
     {
-        parent::__construct($entity);
+        parent::__construct(
+            entity: $entity,
+            includeChangelog: $includeChangelog
+        );
     }
 
     /**

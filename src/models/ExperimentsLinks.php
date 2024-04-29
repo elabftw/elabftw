@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\ImproperActionException;
-
 /**
  * All about Experiments Links
  */
@@ -24,9 +22,19 @@ class ExperimentsLinks extends AbstractLinks
         return 'experiments';
     }
 
+    protected function getTargetPage(): string
+    {
+        return 'experiments';
+    }
+
     protected function getCatTable(): string
     {
         return 'experiments_categories';
+    }
+
+    protected function getStatusTable(): string
+    {
+        return 'experiments_status';
     }
 
     protected function getTable(): string
@@ -35,7 +43,7 @@ class ExperimentsLinks extends AbstractLinks
             return 'experiments2experiments';
         }
         if ($this->Entity instanceof Templates) {
-            throw new ImproperActionException('Templates cannot be linked to experiments.');
+            return 'experiments_templates2experiments';
         }
         return 'items2experiments';
     }

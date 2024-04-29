@@ -318,8 +318,15 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach(el => {
     const targetElement = (el as HTMLElement).dataset.saveHidden;
+    // failsafe
+    if (!targetElement) {
+      return;
+    }
     const localStorageKey = targetElement + '-isHidden';
     const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    if (!button) {
+      return;
+    }
     const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');

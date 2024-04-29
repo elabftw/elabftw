@@ -48,6 +48,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
 import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { Counter } from './Counter.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // HEARTBEAT
@@ -89,6 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     kbd.init();
   }
+
+  // ACTIVATE REACTIVE COUNT OF .COUNTABLE ITEMS
+  document.querySelectorAll('[data-count-for]').forEach((container: HTMLElement) => new Counter(container));
 
   // BACK TO TOP BUTTON
   const btn = document.createElement('button');

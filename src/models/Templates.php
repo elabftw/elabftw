@@ -154,6 +154,7 @@ class Templates extends AbstractTemplateEntity
         $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['sharelink'] = sprintf('%s/ucp.php?tab=3&mode=view&templateid=%d', Config::fromEnv('SITE_URL'), $this->id);
         if (!empty($this->entityData['metadata'])) {

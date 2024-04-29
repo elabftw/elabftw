@@ -1052,6 +1052,24 @@ CREATE TABLE `experiments2experiments` (
 --       `experiments` -> `id`
 --
 
+--
+-- Table structure for table `experiments_templates2experiments`
+--
+
+CREATE TABLE `experiments_templates2experiments` (
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`item_id`, `link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates2experiments`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `link_id`
+--       `experiments` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -1231,6 +1249,13 @@ ALTER TABLE `todolist`
 ALTER TABLE `experiments2experiments`
   ADD KEY `fk_experiments2experiments_item_id` (`item_id`),
   ADD KEY `fk_experiments2experiments_link_id` (`link_id`);
+
+--
+-- Indexes for table `experiments_templates2experiments`
+--
+ALTER TABLE `experiments_templates2experiments`
+  ADD KEY `fk_experiments_templates2experiments_item_id` (`item_id`),
+  ADD KEY `fk_experiments_templates2experiments_link_id` (`link_id`);
 
 --
 -- Indexes for table `items2experiments`
@@ -1486,6 +1511,17 @@ ALTER TABLE `experiments2experiments`
     FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments2experiments_link_id`
+    FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_templates2experiments`
+--
+ALTER TABLE `experiments_templates2experiments`
+  ADD CONSTRAINT `fk_experiments_templates2experiments_item_id`
+    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates2experiments_link_id`
     FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE;
 

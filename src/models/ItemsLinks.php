@@ -22,9 +22,19 @@ class ItemsLinks extends AbstractLinks
         return 'items';
     }
 
+    protected function getTargetPage(): string
+    {
+        return 'database';
+    }
+
     protected function getCatTable(): string
     {
         return 'items_types';
+    }
+
+    protected function getStatusTable(): string
+    {
+        return 'items_status';
     }
 
     protected function getTable(): string

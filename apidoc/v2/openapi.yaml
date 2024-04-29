@@ -1140,9 +1140,10 @@ paths:
           in: query
           required: false
           schema:
-            type: boolean
+            type: integer
+            enum: [0, 1]
           description: |
-            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Defaults to true if the export provides PDF/A, false otherwise. Truthy values (such as 0, 1) also work.
+            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
             first:
               summary: Generate PDF exports that always includes the changelog
@@ -1427,9 +1428,10 @@ paths:
           in: query
           required: false
           schema:
-            type: boolean
+            type: integer
+            enum: [0,1]
           description: |
-            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Defaults to true if the export provides PDF/A, false otherwise. Truthy values (such as 0, 1) also work.
+              Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
             first:
               summary: Generate PDF exports that always includes the changelog

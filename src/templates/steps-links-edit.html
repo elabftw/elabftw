@@ -1,12 +1,12 @@
 <div class='row mt-4'>
   {# STEPS #}
   <div class='col-md-12'>
-    <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv' id='stepsDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h4>
+    <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h4>
     {# ADD STEP #}
-    <div id='stepsDiv' class='mt-2' data-save-hidden='stepsDiv'>
+    <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
       <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types' }}_steps'>
         {% for step in Entity.entityData.steps %}
-          <div class='input-group mb-2' id='step_{{ step.id }}'>
+          <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
             <div class='input-group-prepend'>
               <button type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
                 <i class='fas fa-sort'></i>
@@ -99,13 +99,13 @@
     Linked experiment
     {% plural 2 %}
     Linked experiments
-    {% endtrans %} ({{ Entity.entityData.experiments_links|length }})</h4>
+    {% endtrans %} (<span id='experimentsLinksCount'>{{ Entity.entityData.experiments_links|length }}</span>)</h4>
     {# display experiments links #}
-    <div class='row mt-2' data-save-hidden='linksExpDiv' id='linksExpDiv'>
+    <div class='row mt-2' data-count-for='experimentsLinksCount' data-save-hidden='linksExpDiv' id='linksExpDiv'>
       {% if Entity.entityData.experiments_links %}
-          {% for link in Entity.entityData.experiments_links %}
-            {% include 'link-view-one.html' %}
-          {% endfor %}
+        {% for link in Entity.entityData.experiments_links %}
+          {% include 'link-view-one.html' %}
+        {% endfor %}
       {% endif %}
     </div>
     {# ADD LINK #}
@@ -131,15 +131,13 @@
 
   {# ITEMS LINKS #}
   <div class='col-md-12'>
-    <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Linked resources'|trans }} ({{ Entity.entityData.items_links|length }})</h4>
+    <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Linked resources'|trans }} (<span id='itemsLinksCount'>{{ Entity.entityData.items_links|length }}</span>)</h4>
     {# DISPLAY ITEMS LINKS #}
-    <div class='mt-2' data-save-hidden='linksDiv' id='linksDiv'>
+    <div class='row mt-2' data-count-for='itemsLinksCount' data-save-hidden='linksDiv' id='linksDiv'>
       {% if Entity.entityData.items_links %}
-        <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
-          {% for link in Entity.entityData.items_links %}
-            {% include 'link-view-one.html' %}
-          {% endfor %}
-        </div>
+        {% for link in Entity.entityData.items_links %}
+          {% include 'link-view-one.html' %}
+        {% endfor %}
       {% endif %}
     </div>
     {# ADD LINK #}

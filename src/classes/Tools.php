@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,14 +8,17 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
+
+use League\CommonMark\Exception\UnexpectedEncodingException;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 use function bin2hex;
 use function date;
 use function htmlspecialchars;
 use function implode;
-use League\CommonMark\Exception\UnexpectedEncodingException;
-use League\CommonMark\GithubFlavoredMarkdownConverter;
 use function mb_strlen;
 use function pathinfo;
 use function random_bytes;
@@ -26,8 +30,8 @@ use function trim;
  */
 class Tools
 {
-    /** @var int DEFAULT_UPLOAD_SIZE max size of uploaded file if we cannot find in in ini file */
-    private const DEFAULT_UPLOAD_SIZE = 2;
+    // max size of uploaded file if we cannot find it in ini file
+    private const int DEFAULT_UPLOAD_SIZE = 2;
 
     /**
      * Convert markdown to html
@@ -102,7 +106,7 @@ class Tools
     {
         $sizes = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
-        return sprintf('%.2f', $bytes / 1024** $factor) . ' ' . $sizes[$factor];
+        return sprintf('%.2f', $bytes / 1024 ** $factor) . ' ' . $sizes[$factor];
     }
 
     /**

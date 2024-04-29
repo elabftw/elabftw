@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
@@ -25,6 +28,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
+
 use function sprintf;
 use function ucfirst;
 

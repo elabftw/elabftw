@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -19,10 +22,12 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
-use function implode;
-use function str_split;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function implode;
+use function str_split;
 
 /**
  * Login page
@@ -71,7 +76,7 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
-        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_switch_required', true);
         $App->Session->set('team_selection', $App->Users->userData['teams']);
         $App->Session->set('auth_userid', $App->Users->userData['userid']);
         $App->Session->remove('is_auth');

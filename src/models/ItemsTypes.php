@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -29,6 +32,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
         $this->Db = Db::getConnection();
+        $this->ExperimentsLinks = new ExperimentsLinks($this);
         $this->ItemsLinks = new ItemsLinks($this);
         $this->Steps = new Steps($this);
         $this->setId($id);

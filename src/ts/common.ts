@@ -27,6 +27,7 @@ import {
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
+import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -148,6 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
         original.classList.remove('font-italic');
       }
+      if (original.dataset.inputType === 'number') {
+        input.setAttribute('type', 'number');
+      }
       return true;
     },
     cancel : i18next.t('cancel'),
@@ -193,6 +197,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       (event.currentTarget as HTMLElement).closest('form').submit();
+    });
+  });
+
+  /**
+   * Add listeners for filter bar on top of a table
+   * The "filter" data attribute value is the id of the tbody element with rows to filter
+   */
+  document.querySelectorAll('input[data-filter-target]').forEach((input: HTMLInputElement) => {
+    const target = document.getElementById(input.dataset.filterTarget);
+    let targetType = 'tr';
+    if (input.dataset.targetType === 'li') {
+      targetType = 'li';
+    }
+    // FIRST LISTENER is to filter the rows
+    input.addEventListener('keyup', () => {
+      target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {
+        // show or hide the row if it matches the query
+        if (row.innerText.toLowerCase().includes(input.value)) {
+          row.removeAttribute('hidden');
+        } else {
+          row.setAttribute('hidden', '');
+        }
+      });
+    });
+    // SECOND LISTENER on the clear input button
+    input.nextElementSibling.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement) => {
+        row.removeAttribute('hidden');
+      });
     });
   });
 
@@ -549,6 +584,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // prevent the form from being submitted
         event.preventDefault();
       }
+    // CLICK the NOW button of a time or date extra field
+    } else if (el.matches('[data-action="update-to-now"]')) {
+      const input = el.closest('.input-group').querySelector('input');
+      // use Luxon lib here
+      const now = DateTime.local();
+      // date format
+      let format = 'yyyy-MM-dd';
+      if (input.type === 'time') {
+        format = 'HH:mm';
+      }
+      if (input.type === 'datetime-local') {
+        /* eslint-disable-next-line quotes */
+        format = "yyyy-MM-dd'T'HH:mm";
+      }
+      input.value = now.toFormat(format);
+      // trigger change event so it is saved
+      input.dispatchEvent(new Event('change'));
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

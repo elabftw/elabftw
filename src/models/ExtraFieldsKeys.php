@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -24,7 +27,7 @@ class ExtraFieldsKeys implements RestInterface
 {
     private Db $Db;
 
-    public function __construct(private Users $Users, private string $searchTerm, private int $limit=0)
+    public function __construct(private Users $Users, private string $searchTerm, private int $limit = 0)
     {
         $this->Db = Db::getConnection();
         $this->limit = $this->limit < -1 || $this->limit === 0 ? $this->Users->userData['limit_nb'] : $this->limit;

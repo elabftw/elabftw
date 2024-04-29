@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -25,13 +28,13 @@ abstract class AbstractStatus extends AbstractCategory
 {
     use SetIdTrait;
 
-    private const DEFAULT_BLUE = '29AEB9';
+    private const string DEFAULT_BLUE = '29AEB9';
 
-    private const DEFAULT_GREEN = '54AA08';
+    private const string DEFAULT_GREEN = '54AA08';
 
-    private const DEFAULT_GRAY = 'C0C0C0';
+    private const string DEFAULT_GRAY = 'C0C0C0';
 
-    private const DEFAULT_RED = 'C24F3D';
+    private const string DEFAULT_RED = 'C24F3D';
 
     protected string $table;
 

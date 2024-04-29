@@ -40,22 +40,18 @@ export default class Entity {
     return this.api.getJson(`${this.model}/${id}`);
   }
 
+  patchAction(id: number, action: Action): Promise<Response> {
+    return this.api.patch(`${this.model}/${id}`, {action: action});
+  }
+
   update(id: number, target: Target, content: string): Promise<Response> {
     const params = {};
     params[target] = content;
     return this.api.patch(`${this.model}/${id}`, params);
   }
 
-  lock(id: number): Promise<Response> {
-    return this.api.patch(`${this.model}/${id}`, {'action': Action.Lock});
-  }
-
   duplicate(id: number): Promise<Response> {
     return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate});
-  }
-
-  timestamp(id: number): Promise<Response> {
-    return this.api.patch(`${this.model}/${id}`, {'action': Action.Timestamp});
   }
 
   destroy(id: number): Promise<Response> {

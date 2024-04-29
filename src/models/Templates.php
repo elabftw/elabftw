@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -26,14 +29,14 @@ class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
-    public const defaultBody = '<h1>Goal:</h1>
+    public const string defaultBody = '<h1>Goal:</h1>
     <p>&nbsp;</p>
     <h1>Procedure:</h1>
     <p>&nbsp;</p>
     <h1>Results:</h1>
     <p>&nbsp;</p>';
 
-    public const defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
+    public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
     public function __construct(Users $users, ?int $id = null)
     {
@@ -156,6 +159,7 @@ class Templates extends AbstractTemplateEntity
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
+        $this->entityData['uploads'] = $this->Uploads->readAll();
         return $this->entityData;
     }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -19,7 +21,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->ItemsTypes= new ItemsTypes(new Users(1, 1));
+        $this->ItemsTypes = new ItemsTypes(new Users(1, 1));
     }
 
     public function testCreateUpdateDestroy(): void

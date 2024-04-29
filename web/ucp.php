@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -28,10 +31,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * User Control Panel
+ * Settings for user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('User Control Panel');
+$App->pageTitle = _('Settings');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -117,6 +120,7 @@ try {
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
+        'maxUploadSize' => Tools::getMaxUploadSize(),
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -15,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -52,6 +56,8 @@ try {
         return in_array($a['id'], $categoriesOfBookableItems, true);
     });
 
+    $ProcurementRequests = new ProcurementRequests($Teams);
+
     $template = 'team.html';
     $renderArr = array(
         'bookableItemData' => $bookableItemData,
@@ -59,6 +65,7 @@ try {
         'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
+        'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
         'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
     );
 

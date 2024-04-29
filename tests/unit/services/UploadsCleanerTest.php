@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -22,7 +24,7 @@ class UploadsCleanerTest extends \PHPUnit\Framework\TestCase
         // also add a thumbnail file that should not be removed
         $fs->write('blah_th.jpg', 'blih');
 
-        $UploadsCleaner= new UploadsCleaner($fs);
+        $UploadsCleaner = new UploadsCleaner($fs);
         $this->assertEquals(1, $UploadsCleaner->cleanup());
     }
 }

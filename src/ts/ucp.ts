@@ -5,17 +5,18 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, collectForm, updateCatStat } from './misc';
+import { getEntity, notif, reloadElement, collectForm, updateCatStat, saveStringAsFile, makeSortableGreatAgain, relativeMoment } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Model, Target } from './interfaces';
+import { Action, Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
+import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -29,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const EntityC = new Templates();
   const ApiC = new Api();
+  // initialize the file uploader
+  (new Uploader()).init();
 
   const entity = getEntity();
   const TabMenu = new Tab();
@@ -42,23 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $(document).on('change', '.catstatSelect', function() {
     updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
-
-  // FILTER TEMPLATES
-  if (document.getElementById('templatesFilterInput')) {
-    document.getElementById('templatesFilterInput').addEventListener('keyup', event => {
-      const el = (event.target as HTMLInputElement);
-      const query = el.value;
-      // find all links that are endpoints
-      document.querySelectorAll('#tplTable tr').forEach(el => {
-        // begin by showing all so they don't stay hidden
-        el.removeAttribute('hidden');
-        // now simply hide the ones that don't match the query
-        if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-          el.setAttribute('hidden', '');
-        }
-      });
-    });
-  }
 
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -79,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('lockTemplateButton'));
+      EntityC.patchAction(parseInt(el.dataset.id), Action.Lock).then(() => reloadElement('lockTemplateButton'));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());
@@ -102,14 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.patch(`${Model.User}/me`, params);
 
-    // CLEAR THE FILTER INPUT FOR TEMPLATES
-    } else if (el.matches('[data-action="clear-templates-search"]')) {
-      const searchInput = el.parentElement.parentElement.querySelector('input');
-      searchInput.value = '';
-      searchInput.focus();
-      document.querySelectorAll('#tplTable tr').forEach(el => {
-        el.removeAttribute('hidden');
+    // GENERATE SIGKEY
+    } else if (el.matches('[data-action="create-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
+      ApiC.post(`${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
+    // REGENERATE SIGKEY
+    } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
+      ApiC.patch(`${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value}).then(() => reloadElement('ucp-sigkeys'));
+    // DOWNLOAD SIG KEY (pub or priv)
+    } else if (el.matches('[data-action="download-sigkey"]')) {
+      ApiC.getJson(`${Model.User}/me`).then(user => {
+        saveStringAsFile(`elabftw-signature-key.${el.dataset.target.split('_')[1]}`, user[el.dataset.target]);
       });
+
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message
@@ -147,7 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const id = parseInt(el.dataset.apikeyid, 10);
-        ApiC.delete(`${Model.Apikey}/${id}`).then(() => reloadElement('apiTable'));
+        ApiC.delete(`${Model.Apikey}/${id}`)
+          .then(() => reloadElement('apiTable'))
+          .then(() => {
+            makeSortableGreatAgain();
+            relativeMoment();
+          });
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');

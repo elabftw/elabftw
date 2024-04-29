@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Marcel Bolten <github@marcelbolten.de>
  * @author Nicolas CARPi <nico-git@deltablot.email>

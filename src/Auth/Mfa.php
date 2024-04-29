@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
@@ -14,6 +17,7 @@ use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
+use Elabftw\Services\UsersHelper;
 
 /**
  * Multi Factor Auth service
@@ -39,7 +43,8 @@ class Mfa implements AuthInterface
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->userid = $this->MfaHelper->userid;
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;
     }

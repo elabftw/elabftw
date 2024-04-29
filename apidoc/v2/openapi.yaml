@@ -31,6 +31,10 @@ components:
           type: string
         can_write:
           type: integer
+        team:
+          type: integer
+        team_name:
+          type: string
     comment:
       type: object
       properties:
@@ -492,6 +496,10 @@ components:
         tags_id:
           type: string
           nullable: true
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/upload'
     idp:
       type: object
       properties:
@@ -580,6 +588,8 @@ components:
           type: string
         category_title:
           type: string
+        custom_id:
+          type: integer
     notification:
       type: object
       properties:
@@ -818,6 +828,9 @@ components:
           type: integer
         entrypoint:
           type: integer
+        sig_pubkey:
+          type: string
+          description: Public signature key (minisign format)
         teams:
           type: array
           items:
@@ -1022,6 +1035,20 @@ paths:
             first:
               summary: Look for entries linked to item with id 42.
               value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         - name: cat
           in: query
           schema:
@@ -1068,6 +1095,13 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
       responses:
         '200':
           description: A list of experiments
@@ -1168,6 +1202,10 @@ paths:
                     type: string
                     description: Current eLabFTW version
                     example: 4.8.0
+                  elabftw_version_int:
+                    type: integer
+                    description: Current eLabFTW version as an integer
+                    example: 50102
                   ts_balance:
                     type: integer
                     description: Number of timestamp tokens left
@@ -1196,6 +1234,14 @@ paths:
                     type: integer
                     description: Total count of experiments with timestamps
                     example: 1601
+                  uploads_filesize_sum:
+                    type: integer
+                    description: Sum of stored filesize in MySQL for all uploads of the instance.
+                    example: 25681672
+                  uploads_filesize_sum_formatted:
+                    type: string
+                    description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
+                    example: "24.49 MiB"
 
   # ITEMS
   /items:
@@ -1255,6 +1301,30 @@ paths:
             first:
               summary: Search for all items with a rating of 2.
               value: "rating:2"
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         # This one is not exactly copy paste
         - name: cat
           in: query
@@ -1302,6 +1372,13 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
       # end duplicate from GET /experiments
       responses:
         '200':

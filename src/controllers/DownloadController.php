@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,20 +8,23 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Controllers;
 
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Services\Filter;
-use function fopen;
-use function in_array;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
-use function stream_copy_to_stream;
-use function substr;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use function fopen;
+use function in_array;
+use function stream_copy_to_stream;
+use function substr;
 
 /**
  * To download uploaded files

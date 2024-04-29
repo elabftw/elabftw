@@ -49,6 +49,14 @@ enum Method {
   DELETE = 'DELETE',
 }
 
+enum ProcurementState {
+  Pending = 10,
+  Validated = 20,
+  PartiallyReceived = 30,
+  Received = 40,
+  Archived = 50,
+}
+
 enum Action {
   Create = 'create',
   CreateFromString = 'createfromstring',
@@ -69,6 +77,8 @@ enum Action {
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   Replace = 'replace',
+  RequestAction = 'requestaction',
+  Sign = 'sign',
   SendOnboardingEmails = 'sendonboardingemails',
   Timestamp = 'timestamp',
   Unreference = 'unreference',
@@ -90,6 +100,7 @@ enum Model {
   ExperimentsCategories = 'experiments_categories',
   ExperimentsStatus = 'experiments_status',
   ExtraFieldsKeys = 'extra_fields_keys',
+  Sigkeys = 'sig_keys',
   Step = 'steps',
   Tag = 'tags',
   Team = 'teams',
@@ -126,8 +137,11 @@ enum Target {
   Member = 'member',
   Metadata = 'metadata',
   MetadataField = 'metadatafield',
+  Passphrase = 'passphrase',
   Rating = 'rating',
   RealName = 'real_name',
+  Sigkey = 'sigkeys',
+  State = 'state',
   Title = 'title',
   UserId = 'userid',
 }
@@ -145,6 +159,7 @@ export {
   EntityType,
   Method,
   Model,
+  ProcurementState,
   ResponseMsg,
   Target,
   Todoitem,

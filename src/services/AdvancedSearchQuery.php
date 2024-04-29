@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -26,9 +29,7 @@ class AdvancedSearchQuery
     protected OrExpression $parsedQuery;
 
     // $depthLimit can be used to limit the depth of the abstract syntax tree. In other words the complexity of the query.
-    public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null)
-    {
-    }
+    public function __construct(private string $expertQuery, private VisitorParameters $parameters, private ?int $depthLimit = null) {}
 
     public function getWhereClause(): array
     {

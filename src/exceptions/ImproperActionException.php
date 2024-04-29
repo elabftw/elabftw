@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,11 +8,11 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Exceptions;
 
 /**
  * For errors that make the execution halt but can happen and are not malicious
  */
-class ImproperActionException extends WithMessageException
-{
-}
+class ImproperActionException extends WithMessageException {}

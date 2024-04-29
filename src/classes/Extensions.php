@@ -15,8 +15,7 @@ namespace Elabftw\Elabftw;
  */
 final class Extensions
 {
-    /** @var array ARCHIVE archive files */
-    public const ARCHIVE = array(
+    public const array ARCHIVE = array(
         'zip',
         'rar',
         'xz',
@@ -27,8 +26,7 @@ final class Extensions
         'tar',
     );
 
-    /** @var array CODE source files */
-    public const CODE = array(
+    public const array CODE = array(
         'py',
         'jupyter',
         'js',
@@ -37,15 +35,13 @@ final class Extensions
         'R',
     );
 
-    /** @var array DOCUMENT document files */
-    public const DOCUMENT = array(
+    public const array DOCUMENT = array(
         'doc',
         'docx',
         'odt',
     );
 
-    /** @var array IMAGE image files */
-    public const IMAGE = array(
+    public const array IMAGE = array(
         'gif',
         'heic',
         'jpeg',
@@ -56,16 +52,13 @@ final class Extensions
         'webp',
     );
 
-    /** @var array HAS_EXIF images with exif metadata */
-    public const HAS_EXIF = array(
+    public const array HAS_EXIF = array(
         'jpeg',
         'jpg',
     );
 
-    /**
-     * @var array 3DMOL list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html
-     */
-    public const MOLECULE = array(
+    // list of extensions understood by 3Dmol.js see http://3dmol.csb.pitt.edu/doc/types.html
+    public const array MOLECULE = array(
         'cdjson',
         'cif',
         'cube',
@@ -81,8 +74,7 @@ final class Extensions
         'xyz',
     );
 
-    /** @var array PRESENTATION presentation files */
-    public const PRESENTATION = array(
+    public const array PRESENTATION = array(
         'ppt',
         'pptx',
         'pps',
@@ -90,16 +82,14 @@ final class Extensions
         'odp',
     );
 
-    /** @var array SPREADSHEET spreadsheet files */
-    public const SPREADSHEET = array(
+    public const array SPREADSHEET = array(
         'xls',
         'xlsx',
         'ods',
         'csv',
     );
 
-    /** @var array VIDEO video files */
-    public const VIDEO = array(
+    public const array VIDEO = array(
         'mov',
         'avi',
         'wmv',
@@ -107,8 +97,7 @@ final class Extensions
         'flv',
     );
 
-    /** @var array DNA dna files */
-    public const DNA = array(
+    public const array DNA = array(
         // DNA FASTA files
         // this is problematic because of protein fasta files and the multi-fasta format
         // only the first entry is shown for dna multi-fasta files

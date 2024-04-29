@@ -22,6 +22,34 @@
   <div class='lds-dual-ring'></div>
 </div>
 
+{# Modal for regenerating sigkeys #}
+<div class='modal fade' id='regenerateSigkeysModal' tabindex='-1' role='dialog' aria-labelledby='regenerateSigkeysModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='regenerateSigkeysModalLabel'>{{ 'Regenerate signature keys'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <p>{{ 'Warning: regenerating your signature keys means the current key will be archived and will not be available anymore.'|trans }}</p>
+        <label for='regen_sigPassphraseInput'>{{ 'Enter a passphrase:'|trans }}</label>
+        <div class='input-group'>
+          <input type='password' class='form-control' autocomplete='new-password' id='regen_sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
+          <div class='input-group-append'>
+            <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='regen_sigPassphraseInput'><i class='fas fa-eye' aria-hidden='true'></i></span>
+          </div>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='regenerate-sigkeys' data-dismiss='modal'>{{ 'Regenerate signature keys'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {# TAB 1 - USER PREFERENCES #}
 <div data-tabcontent='1' hidden>
   {# LANGUAGE #}
@@ -37,7 +65,7 @@
         {% endfor %}
       </select>
     </div>
-    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }}</a></p>
   </div>
 
   {# DISPLAY #}
@@ -114,23 +142,23 @@
       <tbody class='bgnd-transparent'>
       <tr>
         <th scope='row' class='align-middle' style='font-weight:500;'>{{ 'Shortcut'|trans }}</td>
-        <td>
+        <td data-label='{{ 'Create'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_create' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_create }}' data-trigger='blur' data-model='users/me' data-target='sc_create' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Edit'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_edit' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_edit }}' data-trigger='blur' data-model='users/me' data-target='sc_edit' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Favorite tags'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_favorite' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_favorite }}' data-trigger='blur' data-model='users/me' data-target='sc_favorite' />
         </td>
 
-        <td>
+        <td data-label='{{ 'TODO list'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_todo' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_todo }}' data-trigger='blur' data-model='users/me' data-target='sc_todo' />
         </td>
 
-        <td>
+        <td data-label='{{ 'Search'|trans }}'>
           <input class='form-control col-md-2 p-1 text-center' id='sc_input_search' type='text' pattern='[a-z]' size='1' maxlength='1' value='{{ App.Users.userData.sc_search }}' data-trigger='blur' data-model='users/me' data-target='sc_search' />
         </td>
       </tr>
@@ -254,6 +282,7 @@
 {# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
   <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
+    <input type='hidden' name='origin' value='ucp_tab_2' />
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
     {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}
@@ -334,6 +363,45 @@
   <div class='mt-4 text-center'>
     <button type='button' data-action='patch-account' class='btn btn-primary'>{{ 'Save'|trans }}</button>
   </div>
+
+  <h2 class='p-2 pl-3 section-title mt-4'>{{ 'Signature keys'|trans }}</h2>
+  <div class='pl-3 mt-2 mb-5' id='ucp-sigkeys'>
+    <div class='dropdown float-right'>
+      <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
+        <i class='fas fa-ellipsis-v fa-fw'></i>
+      </button>
+      <div class='dropdown-menu dropdown-menu-right'>
+        <button type='button' data-action='download-sigkey' data-target='sig_privkey' class='btn btn-dropdown-item dropdown-item'>
+          <i class='mr-1 fas fa-download fa-fw'></i>{{ 'Download private key'|trans }}
+        </button>
+        <button type='button' data-action='download-sigkey' data-target='sig_pubkey' class='btn btn-dropdown-item dropdown-item'>
+          <i class='mr-1 fas fa-download fa-fw'></i>{{ 'Download public key'|trans }}
+        </button>
+        <div class='dropdown-divider'></div>
+        <button type='button' data-action='toggle-modal' data-target='regenerateSigkeysModal' class='btn btn-dropdown-item hover-danger dropdown-item'>
+          <i class='mr-1 fas fa-recycle fa-fw'></i>{{ 'Regenerate signature keys'|trans }}
+        </button>
+      </div>
+    </div>
+    <p>{{ 'Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive.'|trans }}</p>
+    <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
+    {% if not App.Users.userData.sig_privkey %}
+      <p>{{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}<p>
+    <label for='sigPassphraseInput'>{{ 'To generate a key pair, enter a passphrase below and click the button:'|trans }}</label>
+    <div class='input-group'>
+      <input type='password' class='form-control' autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
+      <div class='input-group-append'>
+        <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>
+      </div>
+    </div>
+      <span class='smallgray'>{{ 'Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s.'|trans|format("<a target='_blank' rel='noopener' class='external-link' href='https://xkcd.com/936/'>", "</a>")|raw }}</span>
+    {% else %}
+      <p>{{ 'Your account is already associated with a keypair.'|trans|msg('ok', false) }}<p>
+      <p>{{ 'Here is your public key. You can share it with the world:'|trans }}<p>
+      <textarea class='form-control' disabled>{{ App.Users.userData.sig_pubkey }}</textarea>
+    {% endif %}
+
+  </div>
 </div>
 
 {# TAB 3 - USER TEMPLATES #}
@@ -349,7 +417,7 @@
 
 {# TAB 4 - API KEYS #}
 <div data-tabcontent='4' hidden>
-  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
   <div id='newKeyPlaceholder'></div>{# the newly created key will be displayed here #}
   <div class='pl-3 mt-2 mb-5'>
@@ -376,9 +444,10 @@
   </div>
 
   <h2 class='p-2 pl-3 section-title mb-3' id='existingKeys'>{{ 'Existing keys'|trans }}</h2>
-  <table id='apiTable' class='table' aria-describedby='existingKeys' data-table-sort='true'>
+  <table class='table' aria-describedby='existingKeys' data-table-sort='true'>
     <thead>
       <tr>
+        <th scope='col'>{{ 'Team'|trans }}</th>
         <th scope='col'>{{ 'Name'|trans }}</th>
         <th scope='col'>{{ 'Permissions'|trans }}</th>
         <th scope='col'>{{ 'Creation date'|trans }}</th>
@@ -386,14 +455,15 @@
         <th scope='col'>{{ 'Action'|trans }}</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='apiTable'>
       {% for key in apiKeysArr %}
         <tr>
-          <td>{{ key.name }}</td>
-          <td>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
-          <td><span class='relative-moment' title='{{ key.created_at }}'></span></td>
-          <td><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
+          <td data-label='{{ 'Team'|trans }}'><span class='user-badge'>{{ key.team_name }}</span></td>
+          <td data-label='{{ 'Name'|trans }}'>{{ key.name }}</td>
+          <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
+          <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>
+          <td data-label='{{ 'Last used'|trans }}'><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
+          <td data-label='{{ 'Action'|trans }}'><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

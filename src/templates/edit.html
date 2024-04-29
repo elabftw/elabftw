@@ -83,7 +83,7 @@
 
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>
-    <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+    <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3><span class='ml-4 smallgray'>{{ 'Last saved:'|trans }}</span><span id='lastSavedAt' class='ml-2 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
     <div data-save-hidden='mainTextDiv'>
       <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {% if editor == 'md' %}
@@ -119,8 +119,6 @@
   <hr>
 </div>
 
-
-{# STEPS #}
 {% include 'steps-links-edit.html' %}
 
 {% include 'uploads.html' %}

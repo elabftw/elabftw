@@ -5,10 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement } from './misc';
-import { getTinymceBaseConfig, quickSave } from './tinymce';
+import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement, updateEntityBody } from './misc';
+import { getTinymceBaseConfig } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
-import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -116,20 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END GET MOL FILES
 
-  // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
-  function updateEntityBody(el?: HTMLElement): void {
-    EntityC.update(entity.id, Target.Body, editor.getContent()).then(() => {
-      if (editor.type === 'tiny') {
-        // set the editor as non dirty so we can navigate out without a warning to clear
-        tinymce.activeEditor.setDirty(false);
-      }
-    }).then(() => {
-      if (el && el.matches('[data-redirect="view"]')) {
-        window.location.replace('?mode=view&id=' + entity.id);
-      }
-    });
-  }
-
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
   const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
@@ -139,9 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // UPDATE ENTITY BODY
+    // UPDATE ENTITY BODY (SAVE BUTTON)
     if (el.matches('[data-action="update-entity-body"]')) {
-      updateEntityBody(el);
+      updateEntityBody().then(() => {
+        // SAVE AND GO BACK BUTTON
+        if (el.matches('[data-redirect="view"]')) {
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
+      });
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
@@ -172,24 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // unlock the button
         button.disabled = false;
       });
-
-    // CLICK the NOW button of a time or date extra field
-    } else if (el.matches('[data-action="update-to-now"]')) {
-      const input = el.closest('.input-group').querySelector('input');
-      // use Luxon lib here
-      const now = DateTime.local();
-      // date format
-      let format = 'yyyy-MM-dd';
-      if (input.type === 'time') {
-        format = 'HH:mm';
-      }
-      if (input.type === 'datetime-local') {
-        /* eslint-disable-next-line quotes */
-        format = "yyyy-MM-dd'T'HH:mm";
-      }
-      input.value = now.toFormat(format);
-      // trigger change event so it is saved
-      input.dispatchEvent(new Event('change'));
 
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
@@ -405,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       },
       // use a custom function for the save button in toolbar
-      save_onsavecallback: (): void => quickSave(),
+      save_onsavecallback: (): Promise<void> => updateEntityBody(),
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));

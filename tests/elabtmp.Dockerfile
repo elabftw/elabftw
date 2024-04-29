@@ -5,15 +5,15 @@ ARG BASE_IMAGE_VERSION=hypernext
 FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # install phpcov
-ADD --chmod=755 https://phar.phpunit.de/phpcov-9.0.2.phar /usr/bin/phpcov
+ADD --chmod=755 https://phar.phpunit.de/phpcov-10.0.0.phar /usr/bin/phpcov
 
 RUN yarn install
 # Install xdebug for coverage
-RUN apk add --update php81-pecl-xdebug
-RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php81/conf.d/42_xdebug.ini
+RUN apk add --update php83-pecl-xdebug
+RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php83/conf.d/42_xdebug.ini
 
 # add routes used by c3.php (codecoverage) into nginx config
 RUN sed -i '/# REST API v1/i #c3 codecoverage routes\nlocation ~ ^/c3/report/(clear|serialized|html|clover)/?$ {\n    rewrite /c3/report/.*$ /login.php last;\n}\n' /etc/nginx/common.conf
 
 # add c3_wrapper.php as auto_prepend_file; See c3_wrapper.php for details
-RUN sed -i 's|^auto_prepend_file =|& /elabftw/tests/c3_wrapper.php|' /etc/php81/php.ini
+RUN sed -i 's|^auto_prepend_file =|& /elabftw/tests/c3_wrapper.php|' /etc/php83/php.ini

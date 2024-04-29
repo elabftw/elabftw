@@ -11,7 +11,7 @@
         </button>
       </div>
       <div class='modal-body'>
-        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' rel='noopener'>", "<i class='fas fa-arrow-up-right-from-square'></i>", '</a>')|raw }}</p>
+        <p>{{ 'You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}</p>
         <form class='form-group' enctype='multipart/form-data' action='app/controllers/ImportController.php' method='post' aria-label='{{ 'Import file'|trans }}'>
           {{ App.Session.get('csrf')|csrf }}
           <label for='import_modal_target'>{{ '1. Select where to import:'|trans }}</label>

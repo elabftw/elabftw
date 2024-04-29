@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -112,6 +115,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
+        $this->setId($newId);
 
         // insert the tags, steps and links from the template
         if ($template > 0) {
@@ -119,6 +123,7 @@ class Experiments extends AbstractConcreteEntity
             $Tags->copyTags($newId, true);
             $this->Steps->duplicate($template, $newId, true);
             $this->ItemsLinks->duplicate($template, $newId, true);
+            $Templates->Uploads->duplicate($this);
         }
 
         $this->insertTags($tags, $newId);

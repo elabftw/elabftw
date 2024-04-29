@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -21,9 +24,9 @@ use Elabftw\Models\Config;
  */
 class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'https://ws.universign.eu/tsa';
+    protected const string TS_URL = 'https://ws.universign.eu/tsa';
 
-    protected const TS_HASH = 'sha256';
+    protected const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp
@@ -52,7 +55,7 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
             // no need to verify for this provider
             'ts_cert' => '',
             'ts_chain' => '',
-            );
+        );
     }
 
     /**

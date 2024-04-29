@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,10 +8,13 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CommentParam;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -26,6 +30,8 @@ class Comments implements RestInterface
     use SetIdTrait;
 
     protected Db $Db;
+
+    protected int $immutable = 0;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
@@ -81,6 +87,7 @@ class Comments implements RestInterface
     public function update(CommentParam $params): bool
     {
         $this->Entity->canOrExplode('read');
+        $this->canWriteOrExplode();
         $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
             comment = :content
             WHERE id = :id AND userid = :userid AND item_id = :item_id';
@@ -95,6 +102,7 @@ class Comments implements RestInterface
 
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
         $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -104,14 +112,23 @@ class Comments implements RestInterface
         return $this->Db->execute($req);
     }
 
-    private function create(CommentParam $params): int
+    protected function canWriteOrExplode(): void
     {
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(item_id, comment, userid)
-            VALUES(:item_id, :content, :userid)';
+        $comment = $this->readOne();
+        if ($comment['immutable'] === 1) {
+            throw new ImproperActionException(Tools::error(true));
+        }
+    }
+
+    protected function create(CommentParam $params): int
+    {
+        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(item_id, comment, userid, immutable)
+            VALUES(:item_id, :content, :userid, :immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':immutable', $this->immutable, PDO::PARAM_INT);
 
         $this->Db->execute($req);
         $this->createNotification();
@@ -123,7 +140,7 @@ class Comments implements RestInterface
      * Create a notification to the experiment owner to alert a comment was posted
      * (issue #160). Only for an experiment we don't own.
      */
-    private function createNotification(): void
+    protected function createNotification(): void
     {
         if ($this->Entity->entityData['userid'] === $this->Entity->Users->userData['userid']) {
             return;

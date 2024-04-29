@@ -66,9 +66,9 @@ class MakePdf extends AbstractMakePdf
     public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr, bool $includeChangelog)
     {
         parent::__construct(
-                mpdfProvider: $mpdfProvider,
-		entity: $entity,
-		includeChangelog: $includeChangelog
+            mpdfProvider: $mpdfProvider,
+            entity: $entity,
+            includeChangelog: $includeChangelog
         );
 
         $this->pdfa = $mpdfProvider->isPdfa();

@@ -30,9 +30,9 @@ class MakeQrPdf extends AbstractMakePdf
     public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
     {
         parent::__construct(
-                mpdfProvider: $mpdfProvider,
-                entity: $entity,
-                includeChangelog: false
+            mpdfProvider: $mpdfProvider,
+            entity: $entity,
+            includeChangelog: false
         );
     }
 

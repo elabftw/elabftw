@@ -36,9 +36,9 @@ class MakeStreamZip extends AbstractMakeZip
     public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr, protected bool $usePdfa = false, bool $includeChangelog = false)
     {
         parent::__construct(
-                entity: $entity,
-		includeChangelog: $includeChangelog
-	);
+            entity: $entity,
+            includeChangelog: $includeChangelog
+        );
     }
 
     /**

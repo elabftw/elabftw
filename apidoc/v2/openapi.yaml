@@ -1136,7 +1136,7 @@ paths:
             second:
               summary: Generate a csv
               value: csv
-        - name: includechangelog
+        - name: changelog
           in: query
           required: false
           schema:
@@ -1424,7 +1424,7 @@ paths:
             second:
               summary: Generate a csv
               value: csv
-        - name: includechangelog
+        - name: changelog
           in: query
           required: false
           schema:

@@ -99,25 +99,18 @@ class MakeEln extends MakeStreamZip
             // LINKS (mentions)
             // this array will be added to the "mentions" attribute of the main dataset
             $mentions = array();
-            foreach ($e['items_links'] as $link) {
-                $id = Config::fromEnv('SITE_URL') . '/database.php?mode=view&id=' . $link['itemid'];
-                $mentions[] = array('@id' => $id);
-                $dataEntities[] = array(
-                    '@id' => $id,
-                    '@type' => 'Dataset',
-                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
-                    'identifier' => $link['elabid'],
-                );
-            }
-            foreach ($e['experiments_links'] as $link) {
-                $id = Config::fromEnv('SITE_URL') . '/experiments.php?mode=view&id=' . $link['itemid'];
-                $mentions[] = array('@id' => $id);
-                $dataEntities[] = array(
-                    '@id' => $id,
-                    '@type' => 'Dataset',
-                    'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
-                    'identifier' => $link['elabid'],
-                );
+            $linkTypes = array('experiments', 'items');
+            foreach($linkTypes as $type) {
+                foreach ($e[$type . '_links'] as $link) {
+                    $id = Config::fromEnv('SITE_URL') . '/' . $link['page'] . '.php?mode=view&id=' . $link['entityid'];
+                    $mentions[] = array('@id' => $id);
+                    $dataEntities[] = array(
+                        '@id' => $id,
+                        '@type' => 'Dataset',
+                        'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
+                        'identifier' => $link['elabid'],
+                    );
+                }
             }
 
             // JSON

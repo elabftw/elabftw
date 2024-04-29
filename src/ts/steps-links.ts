@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv', 'linksExpDivTitle', 'linksDivTitle']));
       }
     } else if (el.matches('[data-action="destroy-related-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = input.value;
     if (content.length > 0) {
       StepC.create(content).then(() => {
-        reloadElement('stepsDiv').then(() => {
+        reloadElements(['stepsDiv', 'stepsDivTitle']).then(() => {
           // clear input field
           input.value = '';
           input.focus();
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirm(i18next.t('step-delete-warning'))) {
       const stepId = e.currentTarget.dataset.stepid;
       StepC.destroy(stepId).then(() => {
-        reloadElement('stepsDiv').then(() => {
+        reloadElements(['stepsDiv', 'stepsDivTitle']).then(() => {
           // keep to do list in sync
           $('#todo_step_' + stepId).parent().hide();
         });

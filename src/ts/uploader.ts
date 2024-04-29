@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElement } from './misc';
+import { reloadElements } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
@@ -27,7 +27,7 @@ export class Uploader
         // once upload is finished
         this.on('complete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            reloadElement('uploadsDiv').then(() => {
+            reloadElements(['uploadsDiv', 'uploadsDivTitle']).then(() => {
               // Now grab the url of the image to give it to tinymce if needed
               // first make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
               if (typeof that.tinyImageSuccess !== 'undefined' && that.tinyImageSuccess !== null) {

@@ -588,8 +588,16 @@ components:
           type: string
         category_title:
           type: string
+        status_color:
+          type: string
+        status_title:
+          type: string
         custom_id:
           type: integer
+        page:
+          type: string
+        type:
+          type: string
     notification:
       type: object
       properties:

@@ -24,11 +24,11 @@
   {% if (mode == 'view' and Entity.entityData.uploads) or mode == 'edit' %}
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button' id='uploadsDivTitle'>
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
-        {% endtrans %}
+        {% endtrans %} ({{ Entity.entityData.uploads|length }})
       </h3>
     </div>
 

@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $3Dmol.autoload();
       displayPlasmidViewer(about);
       malleableFilecomment.listen();
-      if ('edit' === about.page) {
+      if (['edit', 'template-edit'].includes(about.page)) {
         (new Uploader()).init();
       }
       relativeMoment();

@@ -36,12 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // CREATE COMMENT
     if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => reloadElement('commentsDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => {
+        reloadElement('commentsDiv').then(() => {
+          malleableComments.listen();
+          relativeMoment();
+        });
+      });
 
     // DESTROY COMMENT
     } else if (el.matches('[data-action="destroy-comment"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => reloadElement('commentsDiv'));
+        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
       }
     }
   });

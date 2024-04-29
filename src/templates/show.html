@@ -37,7 +37,7 @@
 
       {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.type} %}
 
-      <button class='btn btn-secondary btn-sm mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
+      <button class='btn btn-secondary btn-sm ml-2 mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
         <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
       </button>
 

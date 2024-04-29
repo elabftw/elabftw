@@ -68,7 +68,7 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         );
 
         return array(
-            'subject' => _('A step deadline is approaching'),
+            'subject' => _('A step deadline is approaching.'),
             'body' => $body,
         );
     }

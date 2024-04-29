@@ -21,9 +21,12 @@ use ZipStream\ZipStream;
  */
 class MakeBackupZip extends AbstractMakeZip
 {
-    public function __construct(protected ZipStream $Zip, AbstractConcreteEntity $entity, private string $period)
+    public function __construct(protected ZipStream $Zip, AbstractConcreteEntity $entity, private string $period, bool $includeChangelog = false)
     {
-        parent::__construct($entity);
+        parent::__construct(
+            entity: $entity,
+            includeChangelog: $includeChangelog
+        );
     }
 
     /**

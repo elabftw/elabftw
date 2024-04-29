@@ -102,15 +102,17 @@
 
 {# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
-  <div class='mb-2'>
-    {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+  <div class='d-flex mb-2'>
+    <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+    <div class='ml-auto'>
+      {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+    </div>
   </div>
 
   <div id='mainSchedulerContent'>
     {% if itemsArr|length == 0 %}
       {{ 'No bookable items.'|trans|msg('warning', false) }}
     {% else %}
-    <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
     <div class='row mb-3'>
       <div class='col-md-3'>
         {# CATEGORY #}
@@ -119,12 +121,12 @@
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
           <select
-            aria-label='Filter category'
+            aria-label='{{ 'Filter by category'|trans }}'
             class='autosubmit mr-1 form-control'
             id='schedulerSelectCat'
             name='cat'
           >
-            <option value=''>{{ 'Filter by type'|trans }}</option>
+            <option value=''>{{ 'Filter by category'|trans }}</option>
             {% for category in bookableItemsTypes %}
               <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
                 {{ category.title }}
@@ -141,12 +143,12 @@
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
           <select
-            aria-label='Filter item'
+            aria-label='{{ 'Select a resource'|trans }}'
             class='autosubmit mr-1 form-control'
             id='itemSelect'
             name='item'
           >
-            <option value=''>{{ 'Select an equipment'|trans }}</option>
+            <option value=''>{{ 'Select a resource'|trans }}</option>
             {% for item in itemsArr %}
               {# data-color is used to set the background during initial drag #}
               <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>

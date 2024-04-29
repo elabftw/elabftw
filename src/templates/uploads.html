@@ -28,7 +28,7 @@
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
-        {% endtrans %}
+        {% endtrans %} (<span id='uploadsCount'>{{ Entity.entityData.uploads|length }}</span>)
       </h3>
     </div>
 
@@ -44,7 +44,7 @@
     </div>
   </div>
 
-  <div class='row mt-2 mx-0' id='uploadsDiv' data-save-hidden='uploadsDiv'>
+  <div class='row mt-2 mx-0' id='uploadsDiv' data-count-for='uploadsCount' data-save-hidden='uploadsDiv'>
     {# ADD NEW FILE #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
@@ -69,7 +69,7 @@
         </thead>
         <tbody>
           {% for upload in Entity.entityData.uploads %}
-            <tr id='uploadDiv_{{ upload.id }}'>
+            <tr class='countable' id='uploadDiv_{{ upload.id }}'>
               <td>
                 <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
@@ -129,7 +129,7 @@
     {% else %}
       {% for upload in Entity.entityData.uploads %}
         {% set ext = upload.real_name|getExt %}
-        <div class='col-md-4 col-sm-6' id='uploadDiv_{{ upload.id }}'>
+        <div class='col-md-4 col-sm-6 countable' id='uploadDiv_{{ upload.id }}'>
           {% if loop.first %}
             <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
           {% endif %}

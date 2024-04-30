@@ -701,6 +701,15 @@ tr:nth-child(odd) {
     line-height: normal;
 }
 
+.btn-ghost {
+    border : 1px solid $firstlevel;
+
+    &:hover {
+        background-color: $firstlevel;
+        border-color: $secondlevel;
+    }
+}
+
 /* SIDE PANEL */
 .sidepanel-btn {
     border-radius: 0 5px 5px 0;

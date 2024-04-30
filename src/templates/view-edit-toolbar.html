@@ -49,7 +49,7 @@
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='timestamp' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
@@ -73,7 +73,7 @@
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='bloxberg' data-dismiss='modal' class='btn btn-primary'>{{ 'Timestamp'|trans }}</button>
       </div>
     </div>
@@ -114,7 +114,7 @@
         {% endif %}
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         {% if App.Users.userData.sig_privkey %}
           <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
         {% else %}
@@ -141,7 +141,7 @@
         <input class='form-control' type='number' min='0' value='1' id='procurementRequestQtyInput' />
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='create-procurement-request' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
       </div>
     </div>

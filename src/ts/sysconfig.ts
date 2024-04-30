@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': Action.Archive});
     // DESTROY TEAM
     } else if (el.matches('[data-action="destroy-team"]')) {
-      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => reloadElement('teamsDiv'));
+      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);

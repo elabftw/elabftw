@@ -36,7 +36,7 @@ describe('Experiments', () => {
     cy.htmlvalidate();
 
     // delete step
-    cy.get('.stepDestroy').click();
+    cy.get('[data-action="destroy-step"]').click();
     cy.contains('some step').should('not.exist');
   };
 

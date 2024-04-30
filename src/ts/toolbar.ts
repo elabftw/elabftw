@@ -152,6 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
       reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
         relativeMoment();
       });
+    // CANCEL REQUEST ACTION
+    } else if (el.matches('[data-action="cancel-requestable-action"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`${entity.type}/${entity.id}/request_actions/${el.dataset.id}`).then(() => el.parentElement.parentElement.parentElement.parentElement.remove());
+      }
 
     // DESTROY ENTITY
     } else if (el.matches('[data-action="destroy"]')) {

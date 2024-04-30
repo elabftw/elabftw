@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, collectForm, updateCatStat, saveStringAsFile, makeSortableGreatAgain, relativeMoment } from './misc';
+import { getEntity, notif, reloadElement, collectForm, updateCatStat, saveStringAsFile } from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -138,13 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY API KEY
     } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        const id = parseInt(el.dataset.apikeyid, 10);
-        ApiC.delete(`${Model.Apikey}/${id}`)
-          .then(() => reloadElement('apiTable'))
-          .then(() => {
-            makeSortableGreatAgain();
-            relativeMoment();
-          });
+        ApiC.delete(`${Model.Apikey}/${el.dataset.apikeyid}`)
+          .then(() => el.parentElement.parentElement.remove());
       }
     } else if (el.matches('[data-action="show-import-tpl"]')) {
       document.getElementById('import_tpl').toggleAttribute('hidden');

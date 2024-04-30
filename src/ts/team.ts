@@ -38,7 +38,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import EntityClass from './Entity.class';
 import { Action, EntityType, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { notif, reloadElement, TomSelect } from './misc';
+import { notif, TomSelect } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -331,24 +331,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // CANCEL PROCUREMENT REQUEST
     } else if (el.matches('[data-action="cancel-procurement-request"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElement('procurementRequestsTable'));
+        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
       }
 
     // CANCEL EVENT ACTION
     } else if (el.matches('[data-action="cancel-event"]')) {
-      ApiC.delete(`event/${el.dataset.id}`).then(() => {
-        calendar.refetchEvents();
-        $('#eventModal').modal('toggle');
-      }).catch();
+      ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
     // CANCEL EVENT ACTION WITH MESSAGE
     } else if (el.matches('[data-action="cancel-event-with-message"]')) {
       const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
       const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => {
-          calendar.refetchEvents();
-          $('#eventModal').modal('toggle');
-        }).catch();
+        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
 
     } else if (el.matches('[data-action="scheduler-rm-bind"]')) {

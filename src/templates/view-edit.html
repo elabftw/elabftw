@@ -21,9 +21,21 @@
     <ul class='list-group mt-2'>
       {% for action in entityRequestActionsArr %}
       <li class='list-group-item'>
-        <i class='fas fa-person-circle-exclamation fa-2x mr-2'></i>
-        {% if action.target_userid == App.Users.userData.userid %}
-        <button type='button' class='btn btn-primary' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>{% else %}{{ action.action }}{% endif %} has been requested by {{ action.requester_fullname }} for {{ action.target_fullname }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></li>
+        <div class='d-flex'>
+          <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+          <div>
+            {{ action.action }} has been requested by {{ action.requester_fullname }} for {{ action.target_fullname }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
+              <div class='mt-2'>
+            {% if action.target_userid == App.Users.userData.userid %}
+                <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>
+            {% endif %}
+            {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
+                <button type='button' class='btn btn-sm btn-ghost' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+            {% endif %}
+              </div>
+          </div>
+        </div>
+      </li>
       {% endfor %}
     </ul>
   {% endif %}

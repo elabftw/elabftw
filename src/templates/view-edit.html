@@ -27,9 +27,11 @@
             {{ action.action }} has been requested by {{ action.requester_fullname }} for {{ action.target_fullname }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
               <div class='mt-2'>
             {% if action.target_userid == App.Users.userData.userid %}
-                <button type='button' class='btn btn-primary btn-sm' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>
+                <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>
             {% endif %}
-                <button type='button' class='btn btn-secondary btn-sm' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+            {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
+                <button type='button' class='btn btn-sm hl-hover-gray border' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+            {% endif %}
               </div>
           </div>
         </div>

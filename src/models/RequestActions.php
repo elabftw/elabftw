@@ -110,9 +110,15 @@ class RequestActions implements RestInterface
 
     public function destroy(): bool
     {
-        $sql = sprintf('DELETE FROM %s_request_actions WHERE id = :id', $this->entity->entityType->value);
+        $sql = sprintf(
+            'DELETE FROM %s_request_actions WHERE id = :id
+            AND (target_userid = :target_userid OR requester_userid = :requester_userid)',
+            $this->entity->entityType->value
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':target_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

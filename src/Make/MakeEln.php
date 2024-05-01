@@ -14,9 +14,14 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
+use Elabftw\Services\Filter;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 
@@ -30,6 +35,12 @@ class MakeEln extends MakeStreamZip
     protected string $extension = '.eln';
 
     private array $authors = array();
+
+    private array $rootParts = array();
+
+    private array $dataEntities = array();
+
+    private array $processedEntities = array();
 
     private DateTimeImmutable $creationDateTime;
 
@@ -88,142 +99,40 @@ class MakeEln extends MakeStreamZip
      */
     public function getStreamZip(): void
     {
-        $dataEntities = array();
-        // an array of "@id" for main datasets
-        $rootParts = array();
+        // currently this->idArr is the list of ID of things we want to export
+        // go over every id, add the links and normalize them
+        $targetList = array();
         foreach ($this->idArr as $id) {
-            $hasPart = array();
+            $id = (int) $id;
             try {
-                $this->Entity->setId((int) $id);
-            } catch (IllegalActionException $e) {
+                $this->Entity->setId($id);
+            } catch (IllegalActionException) {
                 continue;
             }
-            $e = $this->Entity->entityData;
-            $currentDatasetFolder = $this->getBaseFileName();
-            $this->folder = $this->root . '/' . $currentDatasetFolder;
-            $rootParts[] = array('@id' => './' . $currentDatasetFolder);
-
-            // LINKS (mentions)
-            // this array will be added to the "mentions" attribute of the main dataset
-            $mentions = array();
-            $linkTypes = array('experiments', 'items');
-            foreach($linkTypes as $type) {
-                foreach ($e[$type . '_links'] as $link) {
-                    $id = Config::fromEnv('SITE_URL') . '/' . $link['page'] . '.php?mode=view&id=' . $link['entityid'];
-                    $mentions[] = array('@id' => $id);
-                    $dataEntities[] = array(
-                        '@id' => $id,
-                        '@type' => 'Dataset',
-                        'name' => ($link['category'] ?? '') . ' - ' . $link['title'],
-                        'identifier' => $link['elabid'],
-                    );
-                }
+            $targetList[] = self::toSlug($this->Entity);
+            foreach ($this->Entity->entityData['experiments_links'] as $link) {
+                $targetList[] = sprintf('experiments:%d', $link['entityid']);
             }
-
-            // JSON
-            $MakeJson = new MakeJson($this->Entity, array((int) $e['id']));
-            $json = $MakeJson->getFileContent();
-            $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
-            $jsonAtId = './' . $currentDatasetFolder . '/' . $MakeJson->getFileName();
-            // add the json in the hasPart of the entry
-            $hasPart[] = array('@id' => $jsonAtId);
-            $dataEntities[] = array(
-                '@id' => $jsonAtId,
-                '@type' => 'File',
-                'description' => 'JSON export',
-                'name' => $MakeJson->getFileName(),
-                'encodingFormat' => $MakeJson->getContentType(),
-                'contentSize' => (string) $MakeJson->getContentSize(),
-                'sha256' => hash('sha256', $json),
-            );
-
-            // COMMENTS
-            $comments = array();
-            foreach ($e['comments'] as $comment) {
-                // the comment creation date will be used as part of the id
-                $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
-                $id = 'comment://' . urlencode($dateCreated);
-                // we add the reference to the comment in hasPart
-                $comments[] = array('@id' => $id);
-                // now we build a root node for the comment, with the same id as the one referenced in the main entity
-                $firstname = $comment['firstname'] ?? '';
-                $lastname = $comment['lastname'] ?? '';
-                $dataEntities[] = array(
-                    '@id' => $id,
-                    '@type' => 'Comment',
-                    'dateCreated' => $dateCreated,
-                    'text' => $comment['comment'],
-                    'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),
-                );
+            foreach ($this->Entity->entityData['items_links'] as $link) {
+                $targetList[] = sprintf('items:%d', $link['entityid']);
             }
-
-            // UPLOADS
-            $uploadedFilesArr = $e['uploads'];
-            if (!empty($uploadedFilesArr)) {
-                try {
-                    // this gets modified by the function so we have the correct real_names
-                    $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
-                } catch (UnableToReadFile $e) {
-                    continue;
-                }
-                foreach ($uploadedFilesArr as $file) {
-                    $uploadAtId = './' . $currentDatasetFolder . '/' . $file['real_name'];
-                    $hasPart[] = array('@id' => $uploadAtId);
-                    $fileNode = array(
-                        '@id' => $uploadAtId,
-                        '@type' => 'File',
-                        'name' => $file['real_name'],
-                        'alternateName' => $file['long_name'],
-                        'contentSize' => $file['filesize'],
-                        'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
-                    );
-                    // add the file comment as description but only if it's present
-                    if (!empty($file['comment'])) {
-                        $fileNode['description'] = $file['comment'];
-                    }
-                    $dataEntities[] = $fileNode;
-                }
+        }
+        // then we import everything flattened, but use the "mentions" to add the links
+        foreach ($targetList as $target) {
+            $explodedTarget = explode(':', $target);
+            $type = EntityType::from($explodedTarget[0]);
+            try {
+                $entity = $type->toInstance($this->Entity->Users, (int) $explodedTarget[1]);
+            } catch (IllegalActionException) {
+                continue;
             }
-
-            // TAGS
-            $keywords = array();
-            if ($this->Entity->entityData['tags']) {
-                // the keywords value is a comma separated list
-                // let's hope no one has a comma in their tags...
-                $keywords = implode(',', explode('|', (string) $this->Entity->entityData['tags']));
-            }
-
-            // MAIN ENTRY
-            $firstname = $e['firstname'] ?? '';
-            $lastname = $e['lastname'] ?? '';
-            $datasetNode = array(
-                '@id' => './' . $currentDatasetFolder,
-                '@type' => 'Dataset',
-                'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
-                'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
-                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
-                'identifier' => $e['elabid'] ?? '',
-                'comment' => $comments,
-                'keywords' => $keywords,
-                'name' => $e['title'],
-                'text' => $e['body'] ?? '',
-                'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
-                'hasPart' => $hasPart,
-                'mentions' => $mentions,
-            );
-            if ($e['category_title'] !== null) {
-                $datasetNode['category'] = $e['category_title'];
-            }
-            if ($e['status_title'] !== null) {
-                $datasetNode['status'] = $e['status_title'];
-            }
-            $dataEntities[] = $datasetNode;
+            $this->processEntity($entity);
         }
         // add the description of root with hasPart property
-        $dataEntities[] = array(
+        $this->dataEntities[] = array(
             '@id' => './',
             '@type' => 'Dataset',
-            'hasPart' => $rootParts,
+            'hasPart' => $this->rootParts,
         );
 
         // add a create action https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
@@ -248,11 +157,139 @@ class MakeEln extends MakeStreamZip
         );
 
         // merge all, including authors
-        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $createAction, $dataEntities, $this->authors);
+        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $createAction, $this->dataEntities, $this->authors);
 
         // add the metadata json file containing references to all the content of our crate
         $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512));
         $this->Zip->finish();
+    }
+
+    private static function toSlug(AbstractEntity $entity): string
+    {
+        return sprintf('%s:%d', $entity->entityType->value, $entity->id ?? 0);
+    }
+
+    private static function getDatasetFolderName(array $entityData): string
+    {
+        $prefix = Filter::forFilesystem($entityData['category_title'] ?? '');
+        return sprintf(
+            '%s - %s - %s',
+            $prefix,
+            // prevent a zip name with too much characters from the title, see #3966
+            substr(Filter::forFilesystem($entityData['title']), 0, 100),
+            Tools::getShortElabid($entityData['elabid'] ?? ''),
+        );
+    }
+
+    private function processEntity(AbstractEntity $entity): bool
+    {
+        // experiments:123 or items:123
+        $slug = self::toSlug($entity);
+        // only process an entity once
+        if (in_array($slug, $this->processedEntities, true)) {
+            return false;
+        }
+        $e = $entity->entityData;
+        $hasPart = array();
+        $currentDatasetFolder = self::getDatasetFolderName($e);
+        $this->processedEntities[] = $slug;
+        $this->folder = $this->root . '/' . $currentDatasetFolder;
+        $this->rootParts[] = array('@id' => './' . $currentDatasetFolder);
+        // COMMENTS
+        $comments = array();
+        foreach ($e['comments'] as $comment) {
+            // the comment creation date will be used as part of the id
+            $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
+            $id = 'comment://' . urlencode($dateCreated);
+            // we add the reference to the comment in hasPart
+            $comments[] = array('@id' => $id);
+            // now we build a root node for the comment, with the same id as the one referenced in the main entity
+            $firstname = $comment['firstname'] ?? '';
+            $lastname = $comment['lastname'] ?? '';
+            $this->dataEntities[] = array(
+                '@id' => $id,
+                '@type' => 'Comment',
+                'dateCreated' => $dateCreated,
+                'text' => $comment['comment'],
+                'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),
+            );
+        }
+        // TAGS
+        $keywords = array();
+        if ($e['tags']) {
+            // the keywords value is a comma separated list
+            // let's hope no one has a comma in their tags...
+            $keywords = implode(',', explode('|', (string) $e['tags']));
+        }
+
+        // UPLOADS
+        $uploadedFilesArr = $e['uploads'];
+        if (!empty($uploadedFilesArr)) {
+            try {
+                // this gets modified by the function so we have the correct real_names
+                $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
+            } catch (UnableToReadFile) {
+            }
+            foreach ($uploadedFilesArr as $file) {
+                $uploadAtId = './' . $currentDatasetFolder . '/' . $file['real_name'];
+                $hasPart[] = array('@id' => $uploadAtId);
+                $fileNode = array(
+                    '@id' => $uploadAtId,
+                    '@type' => 'File',
+                    'name' => $file['real_name'],
+                    'alternateName' => $file['long_name'],
+                    'contentSize' => $file['filesize'],
+                    'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
+                );
+                // add the file comment as description but only if it's present
+                if (!empty($file['comment'])) {
+                    $fileNode['description'] = $file['comment'];
+                }
+                $this->dataEntities[] = $fileNode;
+            }
+        }
+        // LINKS (mentions)
+        // this array will be added to the "mentions" attribute of the main dataset
+        $mentions = array();
+        $linkTypes = array('experiments', 'items');
+        foreach($linkTypes as $type) {
+            foreach ($e[$type . '_links'] as $link) {
+                if ($type === 'items') {
+                    $link = new Items($this->Entity->Users, $link['entityid']);
+                } else {
+                    $link = new Experiments($this->Entity->Users, $link['entityid']);
+                }
+                $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
+                // WARNING: recursion!
+                $this->processEntity($link);
+            }
+        }
+        $firstname = $e['firstname'] ?? '';
+        $lastname = $e['lastname'] ?? '';
+        $datasetNode = array(
+            '@id' => './' . $currentDatasetFolder,
+            '@type' => 'Dataset',
+            'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
+            'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
+            'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
+            'identifier' => $e['elabid'] ?? '',
+            'comment' => $comments,
+            'keywords' => $keywords,
+            'name' => $e['title'],
+            'text' => $e['body'] ?? '',
+            'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+            'hasPart' => $hasPart,
+            'mentions' => $mentions,
+            'additionalType' => $entity->entityType->value,
+        );
+        if ($e['category_title'] !== null) {
+            $datasetNode['category'] = $e['category_title'];
+        }
+        if ($e['status_title'] !== null) {
+            $datasetNode['status'] = $e['status_title'];
+        }
+        $this->dataEntities[] = $datasetNode;
+        return true;
     }
 
     /**

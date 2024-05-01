@@ -73,8 +73,10 @@ if ($App->Request->cookies->has('saml_token')) {
         $samlToken = $App->Request->cookies->getString('saml_token');
         $sessionIndex = null;
         $idpId = null;
+        $nameid = null;
+        $nameidFormat = null;
         if (!empty($samlToken)) {
-            [$sessionIndex, $idpId] = SamlAuth::decodeToken($samlToken);
+            [$sessionIndex, $idpId, $nameid, $nameidFormat] = SamlAuth::decodeToken($samlToken);
         }
     } catch (Exception $e) {
         // log error and show general error message
@@ -155,8 +157,8 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         // do not attempt SLO if no SLO is configured/supported
         if (!empty($settings['idp']['singleLogoutService']['url'])) {
             // initiate SAML SLO
-            $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex ?? null);
-            exit;
+            // src: https://github.com/SAML-Toolkits/php-saml/blob/master/lib/Saml2/Auth.php#L549
+            $samlAuthLib->logout($redirectUrl, array(), $nameid, $sessionIndex, false, $nameidFormat);
         }
     } catch (Exception $e) {
         // log error and show general error message

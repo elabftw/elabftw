@@ -93,7 +93,7 @@
                 {% if loop.first %}
                   <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
                 {% endif %}
-                <a href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
                   <i class='fas fa-download fa-fw'></i>
                 </a>
                 {% if not upload.immutable %}
@@ -144,7 +144,7 @@
               {# don't make the thumbnail clickable if it's a tif #}
               {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                 <div class='text-center'>
-                  <a class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                  <a class='text-break' target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
                     {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name|e('html_attr') }}'{% endif %}
                     {% if upload.comment %}title='{{ upload.comment|e('html_attr') }}' data-caption='{{ upload.comment|e('html_attr') }}'{% endif %}
                   >
@@ -241,7 +241,7 @@
             <div class='caption'>
               <i class='fas fa-fw fa-download mr-1'></i>
               <p class='d-inline'>
-                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
+                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' target='_blank' rel='noopener'>{{ upload.real_name }}</a>
                 <span class='smallgray' style='display:inline'>
                   {% if upload.filesize %}
                     {{ upload.filesize|formatBytes }} -

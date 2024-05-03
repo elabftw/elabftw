@@ -37,8 +37,9 @@ class OrderingParams
      */
     protected function cleanup(array $ordering): array
     {
-        return array_map(function (string $el) {
-            return (int) explode('_', $el)[1];
-        }, $ordering);
+        return array_map(
+            fn(string $el): int => (int) explode('_', $el)[1],
+            $ordering,
+        );
     }
 }

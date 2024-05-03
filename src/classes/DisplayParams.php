@@ -112,9 +112,10 @@ class DisplayParams
             // the HAVING COUNT is necessary to make an AND search between tags
             // Note: we cannot use a placeholder for the IN of the tags because we need the quotes
             $Db = Db::getConnection();
-            $inPlaceholders = implode(' , ', array_map(function ($key) {
-                return ":tag$key";
-            }, array_keys($tags)));
+            $inPlaceholders = implode(', ', array_map(
+                fn($key): string => ":tag$key",
+                array_keys($tags),
+            ));
             $sql = 'SELECT tags2entity.item_id FROM `tags2entity`
                 INNER JOIN (SELECT id FROM tags WHERE tags.tag IN ( ' . $inPlaceholders . ' )) tg ON tags2entity.tag_id = tg.id
                 WHERE tags2entity.item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tags2entity.tag_id) = :count';

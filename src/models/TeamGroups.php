@@ -84,12 +84,10 @@ class TeamGroups implements RestInterface
                 'name' => $group['name'],
                 'users' => isset($group['userids'])
                     ? array_map(
-                        function (string $userid, ?string $fullname): array {
-                            return array(
-                                'userid' => (int) $userid,
-                                'fullname' => $fullname,
-                            );
-                        },
+                        fn(string $userid, ?string $fullname): array => array(
+                            'userid' => (int) $userid,
+                            'fullname' => $fullname,
+                        ),
                         explode(',', $group['userids']),
                         explode(',', $group['fullnames'])
                     )

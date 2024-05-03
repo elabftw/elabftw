@@ -74,9 +74,10 @@ try {
         }
         // further filter if userid is present
         if ($App->Request->query->has('userid')) {
-            $usersArr = array_filter($usersArr, function ($u) use ($App) {
-                return $u['userid'] === $App->Request->query->getInt('userid');
-            });
+            $usersArr = array_filter(
+                $usersArr,
+                fn($u): bool => $u['userid'] === $App->Request->query->getInt('userid'),
+            );
         }
     }
 

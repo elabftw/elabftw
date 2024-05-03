@@ -154,9 +154,7 @@ class MakeController implements ControllerInterface
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {
             $this->idArr = array_map(
-                function (string $id) {
-                    return (int) $id;
-                },
+                fn(string $id): int => (int) $id,
                 explode(' ', $this->Request->query->getString('id')),
             );
         }

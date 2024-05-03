@@ -95,8 +95,9 @@ class Sql
         $content = $this->filesystem->read($filename);
         $linesArr = explode(PHP_EOL, $content);
         // now filter out the uninteresting lines
-        return array_filter($linesArr, function ($v) {
-            return !empty($v) && !preg_match('/^\s*(?:--|#|\/\*(?!!).*\*\/)/', $v);
-        });
+        return array_filter(
+            $linesArr,
+            fn(string $v): bool => !empty($v) && !preg_match('/^\s*(?:--|#|\/\*(?!!).*\*\/)/', $v),
+        );
     }
 }

@@ -272,9 +272,10 @@ class Users implements RestInterface
 
     public function readAllActiveFromTeam(): array
     {
-        return array_filter($this->readAllFromTeam(), function ($u) {
-            return $u['archived'] === 0;
-        });
+        return array_filter(
+            $this->readAllFromTeam(),
+            fn($u): bool => $u['archived'] === 0,
+        );
     }
 
     /**

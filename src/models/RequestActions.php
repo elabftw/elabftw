@@ -29,6 +29,10 @@ class RequestActions implements RestInterface
 {
     use SetIdTrait;
 
+    /** timeout in minutes before an active action can be requested again */
+    // ToDo?: make it a configuration on team/instance level
+    public const int RE_REQUEST_TIMEOUT = 15;
+
     protected Db $Db;
 
     public function __construct(protected Users $requester, protected AbstractEntity $entity, ?int $id = null)
@@ -39,10 +43,19 @@ class RequestActions implements RestInterface
 
     public function readAll(): array
     {
-        $sql = sprintf('SELECT "%s" AS entity_page, id, created_at, requester_userid, target_userid, entity_id, action
-            FROM %s_request_actions WHERE entity_id = :entity_id AND state = %d ORDER BY created_at DESC LIMIT 100', $this->entity->page, $this->entity->entityType->value, State::Normal->value);
+        $sql = sprintf(
+            'SELECT "%s" AS entity_page, id, created_at, requester_userid, target_userid, entity_id, action
+                FROM %s_request_actions
+                WHERE entity_id = :entity_id
+                    AND state = :state
+                ORDER BY created_at DESC
+                LIMIT 100',
+            $this->entity->page,
+            $this->entity->entityType->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -62,8 +75,12 @@ class RequestActions implements RestInterface
 
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, created_at, requester_userid, target_userid, entity_id, action, state
-            FROM %s_request_actions WHERE id = :id', $this->entity->entityType->value);
+        $sql = sprintf(
+            'SELECT id, created_at, requester_userid, target_userid, entity_id, action, state
+                FROM %s_request_actions
+                WHERE id = :id',
+            $this->entity->entityType->value
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -73,8 +90,37 @@ class RequestActions implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        $sql = sprintf('INSERT INTO %s_request_actions (requester_userid, target_userid, entity_id, action)
-            VALUES (:requester_userid, :target_userid, :entity_id, :action)', $this->entity->entityType->value);
+        $sql = sprintf(
+            'SELECT count(*)
+                FROM  %s_request_actions
+                WHERE DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()
+                    AND requester_userid = :requester_userid
+                    AND target_userid = :target_userid
+                    AND entity_id = :entity_id
+                    AND action = :action
+                    AND state = :state',
+            $this->entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':timeout', self::RE_REQUEST_TIMEOUT, PDO::PARAM_INT);
+        $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':target_userid', $reqBody['target_userid'], PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
+        $req->bindParam(':action', $reqBody['target_action'], PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if ($req->fetchColumn() !== 0) {
+            throw new ImproperActionException(sprintf(
+                _('This action has been requested already within the last %d minutes.'),
+                self::RE_REQUEST_TIMEOUT,
+            ));
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %s_request_actions (requester_userid, target_userid, entity_id, action)
+                VALUES (:requester_userid, :target_userid, :entity_id, :action)',
+            $this->entity->entityType->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':target_userid', $reqBody['target_userid'], PDO::PARAM_INT);
@@ -98,11 +144,14 @@ class RequestActions implements RestInterface
     public function remove(RequestableAction $action): bool
     {
         $sql = sprintf(
-            'UPDATE %s_request_actions SET state = %d WHERE action = :action AND target_userid = :userid',
+            'UPDATE %s_request_actions
+                SET state = :state
+                WHERE action = :action
+                    AND target_userid = :userid',
             $this->entity->entityType->value,
-            State::Archived->value,
         );
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':state', State::Archived->value, PDO::PARAM_INT);
         $req->bindValue(':action', $action->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);

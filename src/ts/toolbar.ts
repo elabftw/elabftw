@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElement, reloadElements, relativeMoment, notifError } from './misc';
+import { getEntity, reloadElements, relativeMoment, notifError } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('container').append(overlay);
       ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
-        .then(() => reloadElement('uploadsDiv'))
+        .then(() => reloadElements('uploadsDiv'))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
 
@@ -102,11 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
-        // using reloadElements here doesn't work for relativeMoment
-        reloadElement('commentsDiv').then(() => {
-          relativeMoment();
-          reloadElement('requestActionsDiv');
-        });
+        reloadElements(['commentsDiv', 'requestActionsDiv'])
+          .then(() => relativeMoment());
       });
     // REQUEST ACTION
     } else if (el.matches('[data-action="request-action"]')) {
@@ -116,7 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Create,
         target_action: actionSelect.value,
         target_userid: userSelect.value,
-      }).then(() => reloadElement('requestActionsDiv'));
+      }).then(() => reloadElements('requestActionsDiv'))
+        .then(() => relativeMoment());
     // SHOW ACTION
     } else if (el.matches('[data-action="show-action"]')) {
       const btn = document.getElementById(`actionButton-${el.dataset.target}`);
@@ -136,11 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="do-requestable-action"]')) {
       switch (el.dataset.target.toLowerCase()) {
       case Action.Archive:
-        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive}).then(() => reloadElement('isArchivedDiv'));
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
+          .then(() => reloadElements(['isArchivedDiv', 'requestActionsDiv']))
+          .then(() => relativeMoment());
         break;
       case Action.Lock:
         // reload the page to change the icon and make the edit button disappear (#1897)
-        EntityC.patchAction(entity.id, Action.Lock).then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        EntityC.patchAction(entity.id, Action.Lock)
+          .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Timestamp:
         $('#timestampModal').modal('toggle');
@@ -149,13 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#addSignatureModal').modal('toggle');
         break;
       }
-      reloadElements(['commentsDiv', 'requestActionsDiv']).then(() => {
-        relativeMoment();
-      });
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/request_actions/${el.dataset.id}`).then(() => el.parentElement.parentElement.parentElement.parentElement.remove());
+        ApiC.delete(`${entity.type}/${entity.id}/request_actions/${el.dataset.id}`)
+          .then(() => el.parentElement.parentElement.parentElement.parentElement.remove());
       }
 
     // DESTROY ENTITY

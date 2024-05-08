@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement, updateEntityBody } from './misc';
+import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElements, updateEntityBody } from './misc';
 import { getTinymceBaseConfig } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': realName,
         'content': content,
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements('uploadsDiv'));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
               resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
               // save here because using the old real_name will not return anything from the db (status is archived now)
               updateEntityBody();
-              reloadElement('uploadsDiv');
+              reloadElements('uploadsDiv');
             });
           });
         } else {
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData,
       }).then(resp => {
-        reloadElement('uploadsDiv');
+        reloadElements('uploadsDiv');
         // return early if longName is not found in body
         if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
           && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)

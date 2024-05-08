@@ -9,7 +9,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import i18next from 'i18next';
-import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, reloadElements } from './misc';
+import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     (new FavTag()).create(el.value).then(() => {
-      reloadElement('favtagsTagsDiv');
+      reloadElements('favtagsTagsDiv');
       el.value = '';
     });
   };
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DEDUPLICATE (from admin panel/tag manager)
     if (el.matches('[data-action="deduplicate-tag"]')) {
-      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElement('tagMgrDiv'));
+      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElements('tagMgrDiv'));
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {

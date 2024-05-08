@@ -270,6 +270,7 @@ class MakeEln extends MakeStreamZip
             '@id' => './' . $currentDatasetFolder,
             '@type' => 'Dataset',
             'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
+            'alternateName' => $e['custom_id'] ?? '',
             'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
             'identifier' => $e['elabid'] ?? '',

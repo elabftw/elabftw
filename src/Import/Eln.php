@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -45,9 +46,10 @@ class Eln extends AbstractZip
     // complete graph: all nodes from metadata json
     private array $graph;
 
-    /**
-     * Do the import
-     */
+    private array $linksToCreate = array();
+
+    private array $insertedEntities = array();
+
     public function import(): void
     {
         // figure out the path to the root of the eln (where the metadata file lives)
@@ -91,6 +93,29 @@ class Eln extends AbstractZip
             $this->importRootDataset($this->getNodeFromId($part['@id']));
         }
 
+        // NOW CREATE THE LINKS
+        // TODO avoid having 2 foreach loops...
+        $result = array();
+        foreach ($this->linksToCreate as $link) {
+            foreach ($this->insertedEntities as $entity) {
+                if ($link['link_@id'] === $entity['item_@id']) {
+                    $result[] = array('origin_entity_type' => $link['origin_entity_type'], 'origin_id' => $link['origin_id'], 'link_id' => $entity['id'], 'link_entity_type' => $entity['entity_type']);
+                    break;
+                }
+            }
+        }
+
+        foreach ($result as $linkToCreate) {
+            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users);
+            $entity->setId($linkToCreate['origin_id']);
+            if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
+                $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
+                $entity->ExperimentsLinks->postAction(Action::Create, array());
+            } else {
+                $entity->ItemsLinks->setId($linkToCreate['link_id']);
+                $entity->ItemsLinks->postAction(Action::Create, array());
+            }
+        }
     }
 
     private function getNodeFromId(string $id): array
@@ -104,12 +129,37 @@ class Eln extends AbstractZip
     }
 
     /**
-     * This is the main Dataset `@type` node.
+     * This is one of the main Dataset `@type` node.
      */
     private function importRootDataset(array $dataset): void
     {
-        $createTarget = $this->targetNumber;
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
+        $entityType = EntityType::tryFrom($dataset['additionalType']);
+        if ($entityType === null) {
+            $this->Entity = clone $this->Entity;
+        } else {
+            $this->Entity = $entityType->toInstance($this->Entity->Users);
+        }
+        $categoryId = $this->targetNumber;
+
+        // CATEGORY: must be right after createTarget definition and before usage
+        // let's see if we can find a category like this in target instance
+        $Teams = new Teams($this->Users, $this->Users->userData['team']);
+        // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
+        $Teams->bypassWritePermission = true;
+        if (isset($dataset['category'])) {
+            // let's see if we can find a category like this in target instance
+            if ($this->Entity instanceof Experiments) {
+                $Category = new ExperimentsCategories($Teams);
+            } else { // items
+                $Category = new ItemsTypes($this->Users, $this->Users->userData['team']);
+                // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
+                $Category->bypassWritePermission = true;
+            }
+            $categoryId = $Category->getIdempotentIdFromTitle($dataset['category']);
+        }
+        // items use the category id for create target
+        $createTarget = $categoryId;
 
         if ($this->Entity instanceof AbstractConcreteEntity) {
             if ($this->Entity instanceof Experiments) {
@@ -127,6 +177,8 @@ class Eln extends AbstractZip
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
             $this->Entity->setId($this->Entity->create($title));
         }
+        // keep a reference between the `@id` and the fresh id to resolve links later
+        $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
         // here we use "text" or "description" attribute as main text
         $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
 
@@ -148,40 +200,30 @@ class Eln extends AbstractZip
 
         // LINKS
         if (!empty($dataset['mentions'])) {
-            $linkHtml = sprintf('<h1>%s</h1><ul>', _('Links'));
             foreach($dataset['mentions'] as $mention) {
                 // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
                 // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
+                // after 5.1 the "mention" will point to a Dataset contained in the .eln
                 if (count($mention) === 1) {
-                    // resolve the id to get the full node content
-                    $mention = $this->getNodeFromId($mention['@id']);
+                    // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
+                    $this->linksToCreate[] = array('origin_entity_type' => $this->Entity->entityType, 'origin_id' => $this->Entity->id, 'link_@id' => $mention['@id']);
                 }
-                $linkHtml .= sprintf(
-                    "<li><a href='%s'>%s</a></li>",
-                    $mention['@id'],
-                    $this->transformIfNecessary($mention['name']),
-                );
             }
-            $linkHtml .= '</ul>';
-            $this->Entity->patch(Action::Update, array('bodyappend' => $linkHtml));
         }
 
-        // let's see if we can find a category like this in target instance
-        $Teams = new Teams($this->Users, $this->Users->userData['team']);
-        // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
-        $Teams->bypassWritePermission = true;
-
+        // CUSTOM ID
+        /*
+        if (isset($dataset['alternateName'])) {
+            // if custom_id exists already for that category, catch mysql exception and do nothing
+            try {
+                $this->Entity->patch(Action::Update, array('custom_id' => (int) $dataset['alternateName']));
+            } catch (ImproperActionException $e)  {
+                var_dump($e);die;
+            }
+        }
+         */
         // CATEGORY
         if (isset($dataset['category'])) {
-            // let's see if we can find a category like this in target instance
-            if ($this->Entity instanceof Experiments) {
-                $Category = new ExperimentsCategories($Teams);
-            } else { // items
-                $Category = new ItemsTypes($this->Users, $this->Users->userData['team']);
-                // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
-                $Category->bypassWritePermission = true;
-            }
-            $categoryId = $Category->getIdempotentIdFromTitle($dataset['category']);
             $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
         }
 

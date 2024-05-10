@@ -554,12 +554,16 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = $this->page;
-        // add a share link
-        $ak = '';
-        if (!empty($this->entityData['access_key'])) {
-            $ak = sprintf('&access_key=%s', $this->entityData['access_key']);
-        }
-        $this->entityData['sharelink'] = sprintf('%s/%s.php?mode=view&id=%d%s', Config::fromEnv('SITE_URL'), $this->page, $this->id, $ak);
+        $this->entityData['sharelink'] = sprintf(
+            '%s/%s.php?mode=view&id=%d%s',
+            Config::fromEnv('SITE_URL'),
+            $this->page,
+            $this->id,
+            // add a share link
+            !empty($this->entityData['access_key'])
+                ? sprintf('&access_key=%s', $this->entityData['access_key'])
+                : '',
+        );
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary

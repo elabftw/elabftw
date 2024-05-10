@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="create-comment"]')) {
       const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
       ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => {
-        reloadElements('commentsDiv').then(() => {
+        reloadElements(['commentsDiv']).then(() => {
           malleableComments.listen();
           relativeMoment();
         });
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await ApiC.patch(`${entity.type}/${entity.id}/${Model.Comment}/${original.dataset.id}`, {'comment': value});
       const json = await resp.json();
       // we reload all so the edition date is also reloaded
-      reloadElements('commentsDiv').then(() => {
+      reloadElements(['commentsDiv']).then(() => {
         malleableComments.listen();
         relativeMoment();
       });

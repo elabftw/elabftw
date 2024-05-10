@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements('favtagsTagsDiv'));
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {

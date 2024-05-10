@@ -49,7 +49,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
           'real_name': realName + '.png',
           'content': reader.result,
         };
-        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElements('uploadsDiv'));
+        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
       };
     }
 
@@ -132,7 +132,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
         generatePng: true,
         handleFullscreenClose: function(): void { // event could be used as parameter
           editor[viewerID].close();
-          reloadElements('uploadsDiv');
+          reloadElements(['uploadsDiv']);
         },
         onCopy: function(event, copiedSequenceData, editorState): void {
           // the copiedSequenceData is the subset of the sequence that has been copied in the teselagen sequence format

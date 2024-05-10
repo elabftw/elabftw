@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'real_name': realName,
       'content': image,
     };
-    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements('uploadsDiv'));
+    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
   });
 
 

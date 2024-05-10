@@ -34,9 +34,9 @@ class CacheGenerator
         $TwigEnvironment = $this->getTwig(false);
         $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
         // iterate over all the templates
-        $templates = $tplFs->listContents('.')->filter(function (StorageAttributes $attributes) {
-            return $attributes->isFile();
-        });
+        $templates = $tplFs
+            ->listContents('.')
+            ->filter(fn(StorageAttributes $attributes): bool => $attributes->isFile());
 
         foreach ($templates as $template) {
             // force compilation of the template into cache php file

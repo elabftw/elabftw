@@ -97,7 +97,7 @@ class ExtraFieldsKeys implements RestInterface
         );
 
         $req = $this->Db->prepare($finalSql);
-        $req->bindValue(':search_term', '%' . $this->searchTerm . '%', PDO::PARAM_STR);
+        $req->bindValue(':search_term', '%' . $this->searchTerm . '%');
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($this->limit > 0) {
             $req->bindParam(':limit', $this->limit, PDO::PARAM_INT);

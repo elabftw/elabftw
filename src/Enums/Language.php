@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function array_map;
+
 enum Language: string
 {
     case Catalan = 'ca_ES';

@@ -111,7 +111,7 @@ class Ldap implements AuthInterface
             $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname);
         }
 
-        $this->AuthResponse->userid = (int) $Users->userData['userid'];
+        $this->AuthResponse->userid = $Users->userData['userid'];
         $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $UsersHelper = new UsersHelper($this->AuthResponse->userid);

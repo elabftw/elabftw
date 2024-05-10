@@ -56,14 +56,14 @@ class Items extends AbstractConcreteEntity
             VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':title', _('Untitled'), PDO::PARAM_STR);
-        $req->bindParam(':status', $itemTemplate['status'], PDO::PARAM_STR);
-        $req->bindParam(':body', $itemTemplate['body'], PDO::PARAM_STR);
+        $req->bindValue(':title', _('Untitled'));
+        $req->bindParam(':status', $itemTemplate['status']);
+        $req->bindParam(':body', $itemTemplate['body']);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $itemTemplate['canread_target'], PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $itemTemplate['canwrite_target'], PDO::PARAM_STR);
-        $req->bindParam(':metadata', $itemTemplate['metadata'], PDO::PARAM_STR);
+        $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindParam(':canread', $itemTemplate['canread_target']);
+        $req->bindParam(':canwrite', $itemTemplate['canwrite_target']);
+        $req->bindParam(':metadata', $itemTemplate['metadata']);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -113,7 +113,7 @@ class Items extends AbstractConcreteEntity
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
         // figure out the custom id
-        $customId = $this->getNextCustomId((int) $this->entityData['category']);
+        $customId = $this->getNextCustomId($this->entityData['category']);
 
         $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, canbook, category, elabid, metadata, custom_id, content_type)
             VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :canbook, :category, :elabid, :metadata, :custom_id, :content_type)';
@@ -152,6 +152,7 @@ class Items extends AbstractConcreteEntity
     {
         parent::destroy();
 
+        // Todo: should this be remove from here as we do soft delete?
         // delete links of this item in experiments with this item linked
         $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
@@ -165,19 +166,5 @@ class Items extends AbstractConcreteEntity
 
         // delete from pinned
         return $this->Pins->cleanup();
-    }
-
-    protected function getNextCustomId(int $category): ?int
-    {
-        $sql = 'SELECT custom_id FROM items WHERE custom_id IS NOT NULL AND team = :team AND category = :category ORDER BY custom_id DESC LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false || $res['custom_id'] === null) {
-            return null;
-        }
-        return ++$res['custom_id'];
     }
 }

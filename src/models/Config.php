@@ -242,9 +242,7 @@ final class Config implements RestInterface
             $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
         }
 
-        return array_map(function ($v): mixed {
-            return $v[0];
-        }, $config);
+        return array_map(fn($v): mixed => $v[0], $config);
     }
 
     /**

@@ -36,7 +36,7 @@ class AuditLogs
         $Db = Db::getConnection();
         $sql = 'INSERT INTO audit_logs(body, category, requester_userid, target_userid) VALUES(:body, :category, :requester, :target)';
         $req = $Db->prepare($sql);
-        $req->bindValue(':body', $event->getBody(), PDO::PARAM_STR);
+        $req->bindValue(':body', $event->getBody());
         $req->bindValue(':category', $event->getCategory()->value, PDO::PARAM_INT);
         $req->bindValue(':requester', $event->getRequesterUserid(), PDO::PARAM_INT);
         $req->bindValue(':target', $event->getTargetUserid(), PDO::PARAM_INT);

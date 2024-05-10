@@ -125,14 +125,14 @@ class Tags implements RestInterface
         $req->bindValue(':tag', $params->getContent());
         $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
-        $tagId = (int) $req->fetchColumn();
+        $tagId = $req->fetchColumn();
 
         // tag doesn't exist already
-        if ($req->rowCount() === 0) {
+        if (!$tagId) {
             // check if we can actually create tags (for non-admins)
-            $Teams = new Teams($this->Entity->Users, (int) $this->Entity->Users->userData['team']);
+            $Teams = new Teams($this->Entity->Users, $this->Entity->Users->userData['team']);
             $teamConfigArr = $Teams->readOne();
-            $TeamsHelper = new TeamsHelper((int) $this->Entity->Users->userData['team']);
+            $TeamsHelper = new TeamsHelper($this->Entity->Users->userData['team']);
             if ($teamConfigArr['user_create_tag'] === 0 && $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']) === false) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }

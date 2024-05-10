@@ -66,7 +66,7 @@ try {
             if ($App->Session->get('enforce_mfa')) {
                 $App->Users = new Users($App->Session->get('auth_userid'));
             }
-            $MfaHelper = new MfaHelper((int) $App->Users->userData['userid'], $App->Session->get('mfa_secret'));
+            $MfaHelper = new MfaHelper($App->Users->userData['userid'], $App->Session->get('mfa_secret'));
             $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
             $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
         }

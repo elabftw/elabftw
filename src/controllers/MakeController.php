@@ -48,6 +48,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
 
+use function array_map;
 use function count;
 
 /**
@@ -152,7 +153,10 @@ class MakeController implements ControllerInterface
             }
             $this->idArr = $this->Entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {
-            $this->idArr = explode(' ', $this->Request->query->getString('id'));
+            $this->idArr = array_map(
+                fn(string $id): int => (int) $id,
+                explode(' ', $this->Request->query->getString('id')),
+            );
         }
         // generate audit log event if exporting more than $threshold entries
         $count = count($this->idArr);
@@ -185,7 +189,7 @@ class MakeController implements ControllerInterface
     {
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         if (count($this->idArr) === 1) {
-            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->setId($this->idArr[0]);
             return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id), $this->shouldIncludeChangelog()));
         }
         return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr, $this->shouldIncludeChangelog()));
@@ -202,7 +206,7 @@ class MakeController implements ControllerInterface
         if (count($this->idArr) !== 1) {
             throw new ImproperActionException('QR PNG format is only suitable for one ID.');
         }
-        return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
+        return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->Entity, $this->idArr[0], $this->Request->query->getInt('size')));
     }
 
     private function makeReport(): Response

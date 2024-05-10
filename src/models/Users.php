@@ -70,8 +70,7 @@ class Users implements RestInterface
         if ($team !== null && $userid !== null) {
             $this->team = $team;
             $TeamsHelper = new TeamsHelper($team);
-            $permissions = $TeamsHelper->getPermissions($userid);
-            $this->isAdmin = (bool) $permissions['is_admin'];
+            $this->isAdmin = $TeamsHelper->isAdmin($userid);
         }
         if ($userid !== null) {
             $this->readOneFull();
@@ -100,7 +99,7 @@ class Users implements RestInterface
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
-        $TeamsHelper = new TeamsHelper((int) $teams[0]['id']);
+        $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
@@ -273,9 +272,10 @@ class Users implements RestInterface
 
     public function readAllActiveFromTeam(): array
     {
-        return array_filter($this->readAllFromTeam(), function ($u) {
-            return $u['archived'] === 0;
-        });
+        return array_filter(
+            $this->readAllFromTeam(),
+            fn($u): bool => $u['archived'] === 0,
+        );
     }
 
     /**
@@ -330,7 +330,7 @@ class Users implements RestInterface
             Usergroup::Admin->value,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid']);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->rowCount() >= 1;
     }
@@ -355,8 +355,8 @@ class Users implements RestInterface
                     // need to be admin to "import" a user in a team
                     $team = (int) $params['team'];
                     $TeamsHelper = new TeamsHelper($team);
-                    $permissions = $TeamsHelper->getPermissions($this->requester->userData['userid']);
-                    if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
+                    $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
+                    if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     $Users2Teams = new Users2Teams($this->requester);
@@ -499,24 +499,24 @@ class Users implements RestInterface
 
     protected static function search(string $column, string $term, bool $validated = false): self
     {
-        $searchColumn = 'email';
-        if ($column === 'orgid') {
-            $searchColumn = 'orgid';
-        }
-        $validatedFilter = '';
-        if ($validated) {
-            $validatedFilter = ' AND validated = 1 ';
-        }
         $Db = Db::getConnection();
-        $sql = sprintf('SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1', $searchColumn, $validatedFilter);
+        $sql = sprintf(
+            'SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1',
+            $column === 'orgid'
+                ? 'orgid'
+                : 'email',
+            $validated
+                ? 'AND validated = 1'
+                : '',
+        );
         $req = $Db->prepare($sql);
         $req->bindParam(':term', $term);
         $Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
+        $res = (int) $req->fetchColumn();
+        if ($res === 0) {
             throw new ResourceNotFoundException();
         }
-        return new self((int) $res);
+        return new self($res);
     }
 
     private function disable2fa(): array
@@ -678,7 +678,7 @@ class Users implements RestInterface
             $Notifications = new UserNeedValidation($userid, $team);
         }
         foreach ($admins as $admin) {
-            $Notifications->create((int) $admin);
+            $Notifications->create($admin);
         }
     }
 

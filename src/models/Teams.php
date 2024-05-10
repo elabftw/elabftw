@@ -47,7 +47,7 @@ class Teams implements RestInterface
     {
         $this->Db = Db::getConnection();
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
-            $id = (int) $Users->userData['team'];
+            $id = $Users->userData['team'];
         }
         $this->setId($id);
     }
@@ -257,7 +257,7 @@ class Teams implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
-        if ($TeamsHelper->isAdminInTeam((int) $this->Users->userData['userid'])) {
+        if ($TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
@@ -326,7 +326,7 @@ class Teams implements RestInterface
         if ($this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {
+        if ($this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id)) {
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');

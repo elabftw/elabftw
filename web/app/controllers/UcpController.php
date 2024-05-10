@@ -49,7 +49,7 @@ try {
 
         // CHANGE PASSWORD (only for local accounts)
         if (!empty($App->Request->request->getString('password'))
-            && (int) $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL
+            && $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL
         ) {
             $App->Users->patch(Action::UpdatePassword, $postData);
         }

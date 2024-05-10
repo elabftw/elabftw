@@ -503,7 +503,7 @@ abstract class AbstractEntity implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->execute();
 
         return array_column($req->fetchAll(), 'id');
@@ -717,7 +717,7 @@ abstract class AbstractEntity implements RestInterface
     private function bindExtendedValues(PDOStatement $req): void
     {
         foreach ($this->extendedValues as $bindValue) {
-            $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type']);
+            $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type'] ?? PDO::PARAM_STR);
         }
     }
 

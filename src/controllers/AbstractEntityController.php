@@ -242,7 +242,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // last modifier name
         $lastModifierFullname = '';
         if ($this->Entity->entityData['lastchangeby'] !== null) {
-            $lastModifier = new Users((int) $this->Entity->entityData['lastchangeby']);
+            $lastModifier = new Users($this->Entity->entityData['lastchangeby']);
             $lastModifierFullname = $lastModifier->userData['fullname'];
         }
 

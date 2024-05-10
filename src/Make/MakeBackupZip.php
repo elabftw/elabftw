@@ -46,9 +46,9 @@ class MakeBackupZip extends AbstractMakeZip
         // loop on every user
         $usersArr = $this->Entity->Users->readFromQuery('');
         foreach ($usersArr as $user) {
-            $idArr = $this->Entity->getIdFromLastchange((int) $user['userid'], $this->period);
+            $idArr = $this->Entity->getIdFromLastchange($user['userid'], $this->period);
             foreach ($idArr as $id) {
-                $this->addToZip((int) $id, $user['fullname']);
+                $this->addToZip($id, $user['fullname']);
             }
         }
         $this->Zip->finish();

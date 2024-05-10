@@ -69,7 +69,7 @@ class MakeQrPdf extends AbstractMakePdf
         $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
         $entityArr = $this->Entity->readShow($DisplayParams, true);
         foreach ($entityArr as &$entity) {
-            $entity['url'] = $this->getUrl((int) $entity['id']);
+            $entity['url'] = $this->getUrl($entity['id']);
         }
         return $entityArr;
     }

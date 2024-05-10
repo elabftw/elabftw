@@ -90,7 +90,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
           if (toreload === 'reloadEntitiesShow') {
             reloadEntitiesShow();
           } else {
-            reloadElement(toreload).then(() => relativeMoment());
+            reloadElements([toreload]).then(() => relativeMoment());
           }
         });
       }
@@ -295,20 +295,25 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   listenTrigger();
 }
 
-export async function reloadElement(elementId: string): Promise<void> {
-  if (!document.getElementById(elementId)) {
-    console.error(`Could not find element with id ${elementId} to reload!`);
+export async function reloadElements(elementIds: string[]): Promise<void> {
+  elementIds = elementIds.filter((elementId: string): boolean => {
+    if (!document.getElementById(elementId)) {
+      console.error(`Could not find element with id ${elementId} to reload!`);
+      return false;
+    }
+    return true;
+  });
+
+  if (elementIds.length === 0) {
     return;
   }
+
   const html = await fetchCurrentPage();
-  document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
-
+  elementIds.forEach(elementId => {
+    document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+    listenTrigger(elementId);
+  });
   (new TableSorting()).init();
-  listenTrigger(elementId);
-}
-
-export async function reloadElements(elementIds: string[]): Promise<void> {
-  elementIds.forEach(id => reloadElement(id));
 }
 
 /**
@@ -601,7 +606,7 @@ export async function updateEntityBody(): Promise<void> {
     const lastSavedAt = document.getElementById('lastSavedAt');
     if (lastSavedAt) {
       lastSavedAt.title = json.modified_at;
-      reloadElement('lastSavedAt').then(() => relativeMoment());
+      reloadElements(['lastSavedAt']).then(() => relativeMoment());
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)

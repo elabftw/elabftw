@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { reloadElement } from './misc';
+import { reloadElements } from './misc';
 import i18next from 'i18next';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'real_name': realName,
       'content': image,
     };
-    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
+    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
   });
 
 

@@ -88,6 +88,8 @@ class Saml implements AuthInterface
                 // Configures a new claim, called "uid"
                 ->withClaim('sid', $this->getSessionIndex())
                 ->withClaim('idp_id', $idpId)
+                ->withClaim('nameid', $this->SamlAuthLib->getNameId())
+                ->withClaim('nameid_format', $this->SamlAuthLib->getNameIdFormat())
                 // Builds a new token
                 ->getToken($config->signer(), $config->signingKey());
         return $token->toString();
@@ -107,7 +109,12 @@ class Saml implements AuthInterface
             }
             $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
 
-            return array($parsedToken->claims()->get('sid'), $parsedToken->claims()->get('idp_id'));
+            return array(
+                $parsedToken->claims()->get('sid'),
+                $parsedToken->claims()->get('idp_id'),
+                $parsedToken->claims()->get('nameid'),
+                $parsedToken->claims()->get('nameid_format'),
+            );
         } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
             throw new UnauthorizedException('Decoding JWT Token failed');
         }

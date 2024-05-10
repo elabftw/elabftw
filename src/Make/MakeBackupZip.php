@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Services\Filter;
+use Elabftw\Services\MpdfProvider;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use ZipStream\ZipStream;
 
 /**
@@ -21,12 +25,13 @@ use ZipStream\ZipStream;
  */
 class MakeBackupZip extends AbstractMakeZip
 {
-    public function __construct(protected ZipStream $Zip, AbstractConcreteEntity $entity, private string $period, bool $includeChangelog = false)
-    {
-        parent::__construct(
-            entity: $entity,
-            includeChangelog: $includeChangelog
-        );
+    public function __construct(
+        protected ZipStream $Zip,
+        protected AbstractConcreteEntity $Entity,
+        private string $period,
+        protected bool $includeChangelog = false,
+    ) {
+        parent::__construct($Zip);
     }
 
     /**
@@ -54,6 +59,38 @@ class MakeBackupZip extends AbstractMakeZip
         $this->Zip->finish();
     }
 
+    // TODO factorize with makestreamzip
+    protected function getPdf(): PdfMakerInterface
+    {
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            $this->usePdfa,
+        );
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        return new MakePdf(
+            log: $log,
+            mpdfProvider: $MpdfProvider,
+            requester: $this->Entity->Users,
+            entityType: $this->Entity->entityType,
+            entityIdArr: array($this->Entity->id),
+            includeChangelog: $this->includeChangelog,
+        );
+    }
+
+    /**
+     * Add a PDF file to the ZIP archive
+     */
+    protected function addPdf(): void
+    {
+        $MakePdf = $this->getPdf();
+        // disable makepdf notifications because they are handled by calling class
+        $MakePdf->setNotifications(false);
+        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
+    }
+    // END duplication
+
     /**
      * This is where the magic happens
      *
@@ -65,7 +102,7 @@ class MakeBackupZip extends AbstractMakeZip
         $this->Entity->bypassReadPermission = true;
         $this->Entity->setId($id);
         $uploadedFilesArr = $this->Entity->entityData['uploads'];
-        $this->folder = Filter::forFilesystem($fullname) . '/' . $this->getBaseFileName();
+        $this->folder = Filter::forFilesystem($fullname) . '/' . $this->Entity->toFsTitle();
 
         if (!empty($uploadedFilesArr)) {
             $this->addAttachedFiles($uploadedFilesArr);

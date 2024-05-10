@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
@@ -24,13 +23,14 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $idArr = array('1', '2', '3');
-        $this->MakeExp = new MakeCsv(new Experiments(new Users(1, 1)), $idArr);
-        $this->MakeDb = new MakeCsv(new Items(new Users(1, 1)), $idArr);
+        $requester = new Users(1, 1);
+        $this->MakeExp = new MakeCsv($requester, EntityType::Experiments, $idArr);
+        $this->MakeDb = new MakeCsv($requester, EntityType::Items, $idArr);
     }
 
     public function testGetFileName(): void
     {
-        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}-export.elabftw.csv/', $this->MakeExp->getFileName());
+        $this->assertTrue(str_ends_with($this->MakeExp->getFileName(), 'export.elabftw.csv'));
     }
 
     public function testGetCsvExp(): void

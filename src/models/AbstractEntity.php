@@ -34,6 +34,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
@@ -592,6 +593,20 @@ abstract class AbstractEntity implements RestInterface
             $this->Db->execute($req);
         }
         return $this->readOne();
+    }
+
+    // generate a title useful for zip folder name for instance: shortened, with category and short elabid
+    public function toFsTitle(): string
+    {
+        $prefix = Filter::forFilesystem($this->entityData['category_title'] ?? '');
+
+        return sprintf(
+            '%s - %s - %s',
+            $prefix,
+            // prevent a zip name with too much characters from the title, see #3966
+            substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            Tools::getShortElabid($this->entityData['elabid'] ?? ''),
+        );
     }
 
     /**

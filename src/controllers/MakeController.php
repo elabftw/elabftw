@@ -163,7 +163,7 @@ class MakeController implements ControllerInterface
 
     private function makeCsv(): Response
     {
-        return $this->getFileResponse(new MakeCsv($this->Entity, $this->idArr));
+        return $this->getFileResponse(new MakeCsv($this->Users, EntityType::from($this->Request->query->getString('type')), $this->idArr));
     }
 
     private function getZipStreamLib(): ZipStream
@@ -173,7 +173,12 @@ class MakeController implements ControllerInterface
 
     private function makeEln(): Response
     {
-        return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->Entity, $this->idArr));
+        $entityType = EntityType::from($this->Request->query->getString('type'));
+        $slugs = array_map(function ($id) use ($entityType) {
+            return sprintf('%s:%d', $entityType->value, $id);
+        }, $this->idArr);
+        $targets = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
+        return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->Users, $targets));
     }
 
     private function makeJson(): Response
@@ -186,14 +191,14 @@ class MakeController implements ControllerInterface
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id), $this->shouldIncludeChangelog()));
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Users, $this->Entity->entityType, array($this->Entity->id), $this->shouldIncludeChangelog()));
         }
-        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr, $this->shouldIncludeChangelog()));
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Users, $this->Entity->entityType, $this->idArr, $this->shouldIncludeChangelog()));
     }
 
     private function makeQrPdf(): Response
     {
-        return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
+        return $this->getFileResponse(new MakeQrPdf($this->Users, $this->getMpdfProvider(), $this->Entity->entityType, $this->idArr));
     }
 
     private function makeQrPng(): Response

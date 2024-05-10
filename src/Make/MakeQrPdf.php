@@ -14,9 +14,10 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,11 +28,10 @@ class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
+    public function __construct(protected Users $requester, MpdfProviderInterface $mpdfProvider, protected EntityType $entityType, private array $idArr)
     {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
-            entity: $entity,
             includeChangelog: false
         );
     }
@@ -49,7 +49,7 @@ class MakeQrPdf extends AbstractMakePdf
         $renderArr = array(
             'css' => $this->getCss(),
             'entityArr' => $this->readAll(),
-            'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
+            'useCjk' => $this->requester->userData['cjk_fonts'],
         );
         $Config = Config::getConfig();
         $html = $this->getTwig((bool) $Config->configArr['debug'])->render('qr-pdf.html', $renderArr);
@@ -64,12 +64,14 @@ class MakeQrPdf extends AbstractMakePdf
      */
     private function readAll(): array
     {
-        $DisplayParams = new DisplayParams($this->Entity->Users, Request::createFromGlobals(), $this->Entity->entityType);
+        $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $this->entityType);
         $DisplayParams->limit = 9001;
-        $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
-        $entityArr = $this->Entity->readShow($DisplayParams, true);
+        $entity = $this->entityType->toInstance($this->requester);
+        $entity->idFilter = Tools::getIdFilterSql($this->idArr);
+        $entityArr = $entity->readShow($DisplayParams, true);
+        $siteUrl = Config::fromEnv('SITE_URL');
         foreach ($entityArr as &$entity) {
-            $entity['url'] = $this->getUrl((int) $entity['id']);
+            $entity['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity['page'], $entity['id']);
         }
         return $entityArr;
     }

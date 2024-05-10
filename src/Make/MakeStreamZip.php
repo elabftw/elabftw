@@ -15,11 +15,13 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 
 use Elabftw\Elabftw\App;
-
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
-
+use Elabftw\Services\MpdfProvider;
+use Elabftw\Interfaces\PdfMakerInterface;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use ZipStream\ZipStream;
 
 use function count;
@@ -33,12 +35,14 @@ class MakeStreamZip extends AbstractMakeZip
     // data array (entries) that will be converted to json
     protected array $dataArr = array();
 
-    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr, protected bool $usePdfa = false, bool $includeChangelog = false)
-    {
-        parent::__construct(
-            entity: $entity,
-            includeChangelog: $includeChangelog
-        );
+    public function __construct(
+        protected ZipStream $Zip,
+        protected AbstractEntity $Entity,
+        protected array $idArr,
+        protected bool $usePdfa = false,
+        protected bool $includeChangelog = false,
+    ) {
+        parent::__construct($Zip);
     }
 
     /**
@@ -49,7 +53,7 @@ class MakeStreamZip extends AbstractMakeZip
         if (count($this->idArr) === 1) {
             $this->Entity->setId((int) $this->idArr[0]);
             $this->Entity->canOrExplode('read');
-            return $this->getBaseFileName() . $this->extension;
+            return $this->Entity->toFsTitle() . $this->extension;
         }
         return 'export.elabftw' . $this->extension;
     }
@@ -72,6 +76,36 @@ class MakeStreamZip extends AbstractMakeZip
         $this->Zip->addFile('.elabftw.json', json_encode(array('data' => $this->dataArr, 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512));
 
         $this->Zip->finish();
+    }
+
+    protected function getPdf(): PdfMakerInterface
+    {
+        $userData = $this->Entity->Users->userData;
+        $MpdfProvider = new MpdfProvider(
+            $userData['fullname'],
+            $userData['pdf_format'],
+            $this->usePdfa,
+        );
+        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        return new MakePdf(
+            log: $log,
+            mpdfProvider: $MpdfProvider,
+            requester: $this->Entity->Users,
+            entityType: $this->Entity->entityType,
+            entityIdArr: array($this->Entity->id),
+            includeChangelog: $this->includeChangelog,
+        );
+    }
+
+    /**
+     * Add a PDF file to the ZIP archive
+     */
+    protected function addPdf(): void
+    {
+        $MakePdf = $this->getPdf();
+        // disable makepdf notifications because they are handled by calling class
+        $MakePdf->setNotifications(false);
+        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 
     /**
@@ -105,7 +139,7 @@ class MakeStreamZip extends AbstractMakeZip
         if ($permissions['read']) {
             $entityArr = $this->Entity->entityData;
             $uploadedFilesArr = $entityArr['uploads'];
-            $this->folder = $this->getBaseFileName();
+            $this->folder = $this->Entity->toFsTitle();
 
             if (!empty($uploadedFilesArr)) {
                 try {

@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
@@ -28,70 +28,11 @@ use ZipStream\ZipStream;
 /**
  * Make an ELN archive
  */
-class MakeEln extends MakeStreamZip
+class MakeEln extends AbstractMakeEln
 {
-    private const string HASH_ALGO = 'sha256';
-
-    protected string $extension = '.eln';
-
-    private array $authors = array();
-
-    private array $rootParts = array();
-
-    private array $dataEntities = array();
-
-    private array $processedEntities = array();
-
-    private DateTimeImmutable $creationDateTime;
-
-    // name of the folder containing everything
-    private string $root;
-
-    public function __construct(protected ZipStream $Zip, AbstractEntity $entity, protected array $idArr)
+    public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entitySlugs)
     {
-        parent::__construct(
-            Zip: $Zip,
-            entity: $entity,
-            idArr: $idArr,
-            usePdfa: false,
-            includeChangelog: false
-        );
-
-        $this->creationDateTime = new DateTimeImmutable();
-        $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
-        $this->dataArr = array(
-            '@context' => 'https://w3id.org/ro/crate/1.1/context',
-            '@graph' => array(
-                array(
-                    '@id' => 'ro-crate-metadata.json',
-                    '@type' => 'CreativeWork',
-                    'about' => array('@id' => './'),
-                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
-                    'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
-                    'sdPublisher' => array(
-                        '@type' => 'Organization',
-                        'areaServed' => 'Laniakea Supercluster',
-                        'name' => 'eLabFTW',
-                        'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
-                        'slogan' => 'A free and open source electronic lab notebook.',
-                        'url' => 'https://www.elabftw.net',
-                        'parentOrganization' => array(
-                            '@type' => 'Organization',
-                            'name' => 'Deltablot',
-                            'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
-                            'slogan' => 'Open Source software for research labs.',
-                            'url' => 'https://www.deltablot.com',
-                        ),
-                    ),
-                    'version' => '1.0',
-                ),
-            ),
-        );
-    }
-
-    public function getFileName(): string
-    {
-        return $this->root . $this->extension;
+        parent::__construct($Zip);
     }
 
     /**
@@ -99,31 +40,10 @@ class MakeEln extends MakeStreamZip
      */
     public function getStreamZip(): void
     {
-        // currently this->idArr is the list of ID of things we want to export
-        // go over every id, add the links and normalize them
-        $targetList = array();
-        foreach ($this->idArr as $id) {
-            $id = (int) $id;
+        foreach ($this->entitySlugs as $slug) {
             try {
-                $this->Entity->setId($id);
-            } catch (IllegalActionException) {
-                continue;
-            }
-            $targetList[] = self::toSlug($this->Entity);
-            foreach ($this->Entity->entityData['experiments_links'] as $link) {
-                $targetList[] = sprintf('experiments:%d', $link['entityid']);
-            }
-            foreach ($this->Entity->entityData['items_links'] as $link) {
-                $targetList[] = sprintf('items:%d', $link['entityid']);
-            }
-        }
-        // then we import everything flattened, but use the "mentions" to add the links
-        foreach ($targetList as $target) {
-            $explodedTarget = explode(':', $target);
-            $type = EntityType::from($explodedTarget[0]);
-            try {
-                $entity = $type->toInstance($this->Entity->Users, (int) $explodedTarget[1]);
-            } catch (IllegalActionException) {
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
             $this->processEntity($entity);
@@ -135,29 +55,8 @@ class MakeEln extends MakeStreamZip
             'hasPart' => $this->rootParts,
         );
 
-        // add a create action https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
-        $createAction = array(
-            array(
-                '@id' => '#ro-crate_created',
-                '@type' => 'CreateAction',
-                'object' => array('@id' => './'),
-                'name' => 'RO-Crate created',
-                'endTime' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
-                'instrument' => array(
-                    '@id' => 'https://www.elabftw.net',
-                    '@type' => 'SoftwareApplication',
-                    'name' => 'eLabFTW',
-                    'version' => App::INSTALLED_VERSION,
-                    'identifier' => 'https://www.elabftw.net',
-                ),
-                'actionStatus' =>  array(
-                    '@id' => 'http://schema.org/CompletedActionStatus',
-                ),
-            ),
-        );
-
         // merge all, including authors
-        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $createAction, $this->dataEntities, $this->authors);
+        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $this->getCreateActionNode(), $this->dataEntities, $this->authors);
 
         // add the metadata json file containing references to all the content of our crate
         $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512));
@@ -171,14 +70,13 @@ class MakeEln extends MakeStreamZip
 
     private static function getDatasetFolderName(array $entityData): string
     {
-        $prefix = Filter::forFilesystem($entityData['category_title'] ?? '');
-        return sprintf(
-            '%s - %s - %s',
-            $prefix,
-            // prevent a zip name with too much characters from the title, see #3966
-            substr(Filter::forFilesystem($entityData['title']), 0, 100),
-            Tools::getShortElabid($entityData['elabid'] ?? ''),
-        );
+        $prefix = '';
+        if (!empty($entityData['category_title'])) {
+            $prefix = Filter::forFilesystem($entityData['category_title']) . ' - ';
+        }
+        // prevent a zip name with too many characters, see #3966
+        $prefixedTitle = substr($prefix . Filter::forFilesystem($entityData['title']), 0, 100);
+        return sprintf('%s - %s', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
     }
 
     private function processEntity(AbstractEntity $entity): bool
@@ -255,9 +153,9 @@ class MakeEln extends MakeStreamZip
         foreach($linkTypes as $type) {
             foreach ($e[$type . '_links'] as $link) {
                 if ($type === 'items') {
-                    $link = new Items($this->Entity->Users, $link['entityid']);
+                    $link = new Items($this->requester, $link['entityid']);
                 } else {
-                    $link = new Experiments($this->Entity->Users, $link['entityid']);
+                    $link = new Experiments($this->requester, $link['entityid']);
                 }
                 $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
                 // WARNING: recursion!
@@ -278,7 +176,7 @@ class MakeEln extends MakeStreamZip
             'keywords' => $keywords,
             'name' => $e['title'],
             'text' => $e['body'] ?? '',
-            'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->page . '.php?mode=view&id=' . $e['id'],
             'hasPart' => $hasPart,
             'mentions' => $mentions,
             'additionalType' => $entity->entityType->value,

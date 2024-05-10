@@ -28,9 +28,9 @@ use PDO;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, protected ExportFormat $dataFormat)
+    public function __construct(protected array $configArr, protected AbstractConcreteEntity $Entity, protected ExportFormat $dataFormat)
     {
-        parent::__construct($entity);
+        parent::__construct();
         $this->checkMonthlyLimit();
     }
 
@@ -93,7 +93,8 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $MakePdf = new MakeTimestampPdf(
             log: $log,
             mpdfProvider: $MpdfProvider,
-            entity: $this->Entity,
+            requester: $this->Entity->Users,
+            entityType: $this->Entity->entityType,
             entityIdArr: array($this->Entity->id),
             includeChangelog: true
         );

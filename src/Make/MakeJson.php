@@ -25,9 +25,9 @@ use function ksort;
  */
 class MakeJson extends AbstractMake implements StringMakerInterface
 {
-    public function __construct(AbstractEntity $entity, private array $idArr)
+    public function __construct(protected AbstractEntity $Entity, private array $idArr)
     {
-        parent::__construct($entity);
+        parent::__construct();
         $this->contentType = 'application/json';
     }
 

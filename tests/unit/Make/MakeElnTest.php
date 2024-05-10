@@ -11,38 +11,29 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use ZipStream\ZipStream;
 
 class MakeElnTest extends \PHPUnit\Framework\TestCase
 {
-    private MakeEln $MakeExp;
-
-    private MakeEln $MakeDb;
+    private MakeEln $Make;
 
     protected function setUp(): void
     {
-        $idArr = array('1', '2', '3');
+        $slugs = array('experiments:1', 'items:2', 'experiments:3');
+        $slugsArr = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->MakeExp = new MakeEln($Zip, new Experiments($Users), $idArr);
-        $this->MakeDb = new MakeEln($Zip, new Items($Users), $idArr);
+        $this->Make = new MakeEln($Zip, $Users, $slugsArr);
     }
 
     public function testGetFileName(): void
     {
-        $this->assertStringEndsWith('-export.eln', $this->MakeExp->getFileName());
+        $this->assertStringEndsWith('-export.eln', $this->Make->getFileName());
     }
 
     public function testGetElnExp(): void
     {
-        $this->MakeExp->getStreamZip();
-    }
-
-    public function testGetZipDb(): void
-    {
-        $this->MakeDb->getStreamZip();
+        $this->Make->getStreamZip();
     }
 }

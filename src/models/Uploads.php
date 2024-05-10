@@ -30,7 +30,6 @@ use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
-use Elabftw\Traits\UploadTrait;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
@@ -44,8 +43,6 @@ use function hash_file;
  */
 class Uploads implements RestInterface
 {
-    use UploadTrait;
-
     public const string HASH_ALGORITHM = 'sha256';
 
     // size of a file in bytes above which we don't process it (50 Mb)
@@ -84,8 +81,9 @@ class Uploads implements RestInterface
         $ext = $this->getExtensionOrExplode($realName);
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
-        $longName = $this->getLongName() . '.' . $ext;
-        $folder = substr($longName, 0, 2);
+        $someRandomString = FsTools::getUniqueString();
+        $folder = substr($someRandomString, 0, 2);
+        $longName = sprintf('%s/%s.%s', $folder, $someRandomString, $ext);
 
         // where our uploaded file lives
         $sourceFs = $params->getSourceFs();

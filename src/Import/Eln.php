@@ -134,10 +134,12 @@ class Eln extends AbstractZip
     private function importRootDataset(array $dataset): void
     {
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
-        $entityType = EntityType::tryFrom($dataset['additionalType']);
-        if ($entityType === null) {
-            $this->Entity = clone $this->Entity;
-        } else {
+        // try and figure out if we are importing an experiment or a resource by looking at the additionalType
+        $entityType = null;
+        if (!empty($dataset['additionalType'])) {
+            $entityType = $dataset['additionalType'] === 'http://semanticscience.org/resource/SIO_000994' ? EntityType::Experiments : EntityType::Items;
+        }
+        if ($entityType !== null) {
             $this->Entity = $entityType->toInstance($this->Entity->Users);
         }
         $categoryId = $this->targetNumber;

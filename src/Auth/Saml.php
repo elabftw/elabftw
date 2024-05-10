@@ -155,8 +155,11 @@ class Saml implements AuthInterface
         // GET EMAIL
         $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
+        // GET ORGID
+        $orgid = $this->getOrgid();
+
         // GET POPULATED USERS OBJECT
-        $Users = $this->getUsers($email);
+        $Users = $this->getUsers($email, $orgid);
         if (!$Users instanceof Users) {
             $this->AuthResponse->userid = 0;
             $this->AuthResponse->initTeamRequired = true;
@@ -164,6 +167,7 @@ class Saml implements AuthInterface
                 'email' => $email,
                 'firstname' => $this->getName(),
                 'lastname' => $this->getName(true),
+                'orgid' => $orgid,
             );
             return $this->AuthResponse;
         }
@@ -209,6 +213,15 @@ class Saml implements AuthInterface
             throw new ImproperActionException($err);
         }
         return $attr;
+    }
+
+    private function getOrgid(): ?string
+    {
+        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? 'Unknown'] ?? null;
+        if (is_array($orgid)) {
+            return $orgid[0];
+        }
+        return $orgid;
     }
 
     /**
@@ -277,7 +290,7 @@ class Saml implements AuthInterface
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
-    private function getExistingUser(string $email): Users | false
+    private function getExistingUser(string $email, ?string $orgid = null): Users | false
     {
         try {
             // we first try to match a local user with the email
@@ -285,8 +298,7 @@ class Saml implements AuthInterface
         } catch (ResourceNotFoundException) {
             // try finding the user with the orgid because email didn't work
             // but only if we explicitly want to
-            if ($this->configArr['saml_fallback_orgid'] === '1' && !empty($this->settings['idp']['orgidAttr'])) {
-                $orgid = $this->extractAttribute($this->settings['idp']['orgidAttr']);
+            if ($this->configArr['saml_fallback_orgid'] === '1' && $orgid) {
                 try {
                     $Users = ExistingUser::fromOrgid($orgid);
                     // ok we found our user thanks to the orgid, maybe we want to update our stored email?
@@ -302,9 +314,9 @@ class Saml implements AuthInterface
         }
     }
 
-    private function getUsers(string $email): Users | int
+    private function getUsers(string $email, ?string $orgid = null): Users | int
     {
-        $Users = $this->getExistingUser($email);
+        $Users = $this->getExistingUser($email, $orgid);
         if ($Users === false) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -325,7 +337,7 @@ class Saml implements AuthInterface
             }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true));
+            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid);
         }
         return $Users;
     }

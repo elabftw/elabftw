@@ -191,6 +191,18 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Idp sends an array of orgIDs
+     */
+    public function testAssertIdpResponseOrgidArrayResponse(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['internal_id'] = array('internal_id_1');
+
+        $authResponse = $this->getAuthResponse($samlUserdata);
+        $this->assertEquals(1, $authResponse->selectedTeam);
+    }
+
+    /**
      * Idp doesn't send back an email
      */
     public function testAssertIdpResponseNoEmail(): void

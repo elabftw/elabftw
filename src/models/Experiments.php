@@ -102,14 +102,14 @@ class Experiments extends AbstractConcreteEntity
             VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':body', $body, PDO::PARAM_STR);
-        $req->bindValue(':category', $category, PDO::PARAM_INT);
-        $req->bindValue(':status', $status, PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $canread, PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
-        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':body', $body);
+        $req->bindValue(':category', $category);
+        $req->bindValue(':status', $status);
+        $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindParam(':canread', $canread);
+        $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
@@ -150,20 +150,20 @@ class Experiments extends AbstractConcreteEntity
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
         // figure out the custom id
-        $customId = $this->getNextCustomId((int) $this->entityData['category']);
+        $customId = $this->getNextCustomId($this->entityData['category']);
 
         $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
             VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':body', $this->entityData['body']);
         $req->bindValue(':category', $this->entityData['category']);
         $req->bindValue(':status', $Status->getDefault(), PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
-        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindParam(':canread', $this->entityData['canread']);
+        $req->bindParam(':canwrite', $this->entityData['canwrite']);
+        $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
@@ -190,18 +190,5 @@ class Experiments extends AbstractConcreteEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    protected function getNextCustomId(int $category): ?int
-    {
-        $sql = 'SELECT custom_id FROM experiments WHERE custom_id IS NOT NULL AND category = :category ORDER BY custom_id DESC LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false || $res['custom_id'] === null) {
-            return null;
-        }
-        return ++$res['custom_id'];
     }
 }

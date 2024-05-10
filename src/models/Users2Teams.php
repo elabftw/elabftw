@@ -88,7 +88,7 @@ class Users2Teams
     public function addUserToTeams(int $userid, array $teamIdArr, Usergroup $group = Usergroup::User): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->create($userid, (int) $teamId, $group);
+            $this->create($userid, $teamId, $group);
         }
     }
 
@@ -100,7 +100,7 @@ class Users2Teams
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->destroy($userid, (int) $teamId);
+            $this->destroy($userid, $teamId);
         }
     }
 

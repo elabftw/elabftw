@@ -57,9 +57,10 @@ class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
-        uasort($extraFields, function (array $a, array $b): int {
-            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
-        });
+        uasort(
+            $extraFields,
+            fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),
+        );
         return $extraFields;
     }
 

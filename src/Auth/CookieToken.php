@@ -46,7 +46,7 @@ class CookieToken
     {
         $sql = 'UPDATE users SET token = :token, token_created_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':token', $this->token, PDO::PARAM_STR);
+        $req->bindValue(':token', $this->getToken());
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

@@ -73,7 +73,7 @@ abstract class AbstractImport implements ImportInterface
                 return;
             case EntityType::Experiments->value:
                 // check that we can import stuff in experiments of target user
-                if ($this->targetNumber !== (int) $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
+                if ($this->targetNumber !== $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
                     throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
                 }
                 // set the Users object to the target user

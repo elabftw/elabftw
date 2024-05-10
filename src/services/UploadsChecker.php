@@ -70,8 +70,8 @@ class UploadsChecker
             }
             $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':hash', $hash, PDO::PARAM_STR);
-            $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM, PDO::PARAM_STR);
+            $req->bindParam(':hash', $hash);
+            $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM);
             $req->bindParam(':id', $upload['id'], PDO::PARAM_INT);
             $this->Db->execute($req);
             $fixedCount += 1;

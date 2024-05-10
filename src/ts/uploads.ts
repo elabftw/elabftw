@@ -10,7 +10,7 @@ import { Action as MalleAction, Malle } from '@deltablot/malle';
 import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, getEntity, relativeMoment, reloadElement, reloadElements } from './misc';
+import { displayMolFiles, getEntity, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
-        .then(() => reloadElement('uploadsDiv'));
+        .then(() => reloadElements(['uploadsDiv']));
 
     // CHANGE 3DMOL FILES VISUALIZATION STYLE
     } else if (el.matches('[data-action="set-3dmol-style"]')) {
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-        .then(() => reloadElement('uploadsDiv'));
+        .then(() => reloadElements(['uploadsDiv']));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

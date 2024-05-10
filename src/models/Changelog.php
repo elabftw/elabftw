@@ -48,8 +48,8 @@ class Changelog
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $req->bindParam(':users_id', $this->entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':target', $params->getTarget(), PDO::PARAM_STR);
-        $req->bindParam(':content', $content, PDO::PARAM_STR);
+        $req->bindValue(':target', $params->getTarget());
+        $req->bindParam(':content', $content);
         return $this->Db->execute($req);
     }
 

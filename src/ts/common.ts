@@ -19,7 +19,7 @@ import {
   notifError,
   permissionsToJson,
   relativeMoment,
-  reloadElement,
+  reloadElements,
   replaceWithTitle,
   togglePlusIcon,
   TomSelect,
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#policiesModal').modal('toggle');
       });
     } else if (el.matches('[data-reload-on-click]')) {
-      reloadElement(el.dataset.reloadOnClick).then(() => relativeMoment());
+      reloadElements([el.dataset.reloadOnClick]).then(() => relativeMoment());
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
@@ -420,10 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // create a new key and delete the old one
         params[paramKey] = params[el.dataset.rw];
         delete params[el.dataset.rw];
-        ApiC.patch(`${Model.User}/me`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+        ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
       } else {
         const entity = getEntity();
-        ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElement(el.dataset.identifier + 'Div'));
+        ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
       }
 
     } else if (el.matches('[data-action="select-lang"]')) {
@@ -509,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (el.dataset.href) {
             window.location.href = el.dataset.href;
           } else {
-            reloadElement('navbarNotifDiv');
+            reloadElements(['navbarNotifDiv']);
           }
         });
       } else {
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DESTROY (clear all) NOTIF
     } else if (el.matches('[data-action="destroy-notif"]')) {
-      ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElement('navbarNotifDiv'));
+      ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv']));
 
     } else if (el.matches('[data-action="export-user"]')) {
       let source: string;

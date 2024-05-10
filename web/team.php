@@ -52,9 +52,10 @@ try {
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allItemsTypes = $ItemsTypes->readAll();
-    $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
-        return in_array($a['id'], $categoriesOfBookableItems, true);
-    });
+    $bookableItemsTypes = array_filter(
+        $allItemsTypes,
+        fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),
+    );
 
     $ProcurementRequests = new ProcurementRequests($Teams);
 
@@ -66,7 +67,7 @@ try {
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
-        'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
+        'teamsStats' => $Teams->getStats($App->Users->userData['team']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

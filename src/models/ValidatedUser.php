@@ -29,9 +29,9 @@ class ValidatedUser extends ExistingUser
         return self::search('orgid', $orgid, true);
     }
 
-    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname): Users
+    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname, ?string $orgid = null): Users
     {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, null, true);
+        return parent::fromScratch($email, $teams, $firstname, $lastname, automaticValidationEnabled: true, orgid: $orgid);
     }
 
     public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup): Users

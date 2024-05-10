@@ -62,14 +62,12 @@ class QueryBuilderVisitor implements Visitor
         $bindValues[] = array(
             'param' => $param,
             'value' => '%' . $simpleValueWrapper->getValue() . '%',
-            'type' => PDO::PARAM_STR,
         );
         // body is stored as html after htmlPurifier worked on it
         // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $bindValues[] = array(
             'param' => $paramBody,
             'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
-            'type' => PDO::PARAM_STR,
         );
         $bindValues[] = array(
             'param' => $paramCustomId,
@@ -106,14 +104,12 @@ class QueryBuilderVisitor implements Visitor
                     : '.' . json_encode($metadataField->getKey(), JSON_HEX_APOS | JSON_THROW_ON_ERROR),
                 MetadataEnum::Value->value,
             ),
-            'type' => PDO::PARAM_STR,
             'additional_columns' => $column,
         );
         // value
         $bindValues[] = array(
             'param' => $valueParam,
             'value' => $metadataField->getAffix() . $metadataField->getValue() . $metadataField->getAffix(),
-            'type' => PDO::PARAM_STR,
             'additional_columns' => $column,
         );
 
@@ -341,7 +337,7 @@ class QueryBuilderVisitor implements Visitor
         return ':' . bin2hex(random_bytes(5));
     }
 
-    private function getWhereCollector(string $sql, string $searchTerm, int $PdoParamConst): WhereCollector
+    private function getWhereCollector(string $sql, string $searchTerm, int $PdoParamConst = PDO::PARAM_STR): WhereCollector
     {
         $param = $this->getUniqueID();
         return new WhereCollector(
@@ -373,7 +369,6 @@ class QueryBuilderVisitor implements Visitor
             array(array(
                 'param' => $param,
                 'value' => $affix . $searchTerm . $affix,
-                'type' => PDO::PARAM_STR,
                 'searchAttachments' => true,
             )),
         );
@@ -384,7 +379,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             "CONCAT(users.firstname, ' ', users.lastname) LIKE ",
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 
@@ -393,7 +387,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             'entity.body LIKE ',
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 
@@ -402,7 +395,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             'categoryt.title LIKE ',
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 
@@ -420,7 +412,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             'entity.elabid LIKE ',
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 
@@ -480,7 +471,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             'statust.title LIKE ',
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 
@@ -498,7 +488,6 @@ class QueryBuilderVisitor implements Visitor
         return $this->getWhereCollector(
             'entity.title LIKE ',
             $affix . $searchTerm . $affix,
-            PDO::PARAM_STR,
         );
     }
 

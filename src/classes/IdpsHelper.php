@@ -76,7 +76,7 @@ class IdpsHelper
             'baseurl' => $this->Config->configArr['saml_baseurl'],
 
             // Save IdP id
-            'idp_id' => (int) $idp['id'],
+            'idp_id' => $idp['id'],
 
             // Service Provider Data that we are deploying
             'sp' => array(

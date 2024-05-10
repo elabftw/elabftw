@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement, TomSelect, updateCatStat } from './misc';
+import { notif, notifError, reloadElements, TomSelect, updateCatStat } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
       ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {
-        reloadElement('team_groups_div');
+        reloadElements(['team_groups_div']);
         input.value = '';
       });
     // ADD USER TO TEAM GROUP
@@ -118,7 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
         notifError(new Error('Use the autocompletion menu to add users.'));
         return;
       }
-      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
+      ApiC.patch(
+        `${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`,
+        {'how': Action.Add, 'userid': user},
+      ).then(() => reloadElements(['team_groups_div']));
     // RM USER FROM TEAM GROUP
     } else if (el.matches('[data-action="rmuser-teamgroup"]')) {
       ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Unreference, 'userid': el.dataset.userid})
@@ -147,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // assign a new random color
         colorInput.value = getRandomColor();
         // display newly added entry
-        reloadElement(`${el.dataset.target}Div`);
+        reloadElements([`${el.dataset.target}Div`]);
       });
     // UPDATE STATUSLIKE
     } else if (el.matches('[data-action="update-status"]')) {
@@ -185,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.post(`${Model.TeamTags}`, {'tag': tagInput.value}).then(() => {
         tagInput.value = '';
-        reloadElement('tagMgrDiv');
+        reloadElements(['tagMgrDiv']);
       });
     } else if (el.matches('[data-action="patch-team-common-template"]')) {
       const params = {};
@@ -208,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
       // reload the modal in case the users of the team have changed
-      reloadElement('sendOnboardingEmailModal')
+      reloadElements(['sendOnboardingEmailModal'])
         .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
         .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
           plugins: ['dropdown_input', 'no_active_items', 'remove_button'],

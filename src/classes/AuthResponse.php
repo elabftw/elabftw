@@ -56,7 +56,7 @@ class AuthResponse
         // if the user only has access to one team, use this one directly
         $teamCount = count($this->selectableTeams);
         if ($teamCount === 1) {
-            $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
+            $this->selectedTeam = $this->selectableTeams[0]['id'];
         } elseif ($teamCount === 0) {
             $Users = new Users($this->userid);
             $this->teamSelectionRequired = true;

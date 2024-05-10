@@ -316,7 +316,7 @@ class Uploads implements RestInterface
     {
         $sql = 'SELECT storage FROM uploads WHERE long_name = :long_name LIMIT 1';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $req->bindParam(':long_name', $longname);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

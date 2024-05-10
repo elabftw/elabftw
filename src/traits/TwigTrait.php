@@ -59,9 +59,7 @@ trait TwigTrait
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
-            function (array $context, string $string): string {
-                return Translation::transGetText($string, $context);
-            },
+            fn(array $context, string $string): string => Translation::transGetText($string, $context),
             array('needs_context' => true)
         );
         $toDatetimeFilter = new TwigFilter('toDatetime', '\Elabftw\Elabftw\TwigFunctions::toDatetime', $filterOptions);

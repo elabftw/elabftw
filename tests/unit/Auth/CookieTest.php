@@ -16,6 +16,7 @@ use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use PDO;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
 {
@@ -39,7 +40,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         // create a token but 4 minutes in the past
         $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->execute();
         // now try login but our cookie isn't valid anymore
         $this->expectException(UnauthorizedException::class);
@@ -68,7 +69,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 2);
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->execute();
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
@@ -80,7 +81,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $req = $this->Db->prepare('UPDATE users SET token = :token, auth_service = :auth_service WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindValue(':auth_service', LoginController::AUTH_LOCAL);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->execute();
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();

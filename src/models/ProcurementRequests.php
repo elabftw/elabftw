@@ -95,7 +95,7 @@ class ProcurementRequests implements RestInterface
         $req->bindParam(':requester_userid', $this->Teams->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $reqBody['entity_id'], PDO::PARAM_INT);
         $req->bindParam(':qty_ordered', $reqBody['qty_ordered'], PDO::PARAM_INT);
-        $req->bindParam(':body', $reqBody['body'], PDO::PARAM_STR);
+        $req->bindParam(':body', $reqBody['body']);
         $req->bindParam(':quote', $reqBody['quote'], PDO::PARAM_INT);
         $req->bindValue(':state', ProcurementState::Pending->value, PDO::PARAM_INT);
         $this->Db->execute($req);

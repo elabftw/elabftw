@@ -10,7 +10,7 @@ import {
   getEntity,
   notif,
   permissionsToJson,
-  reloadElement,
+  reloadElements,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsTagsDiv'));
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {

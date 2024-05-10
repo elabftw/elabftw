@@ -172,6 +172,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
             return new RedirectResponse('/login.php');
         }
 
@@ -295,7 +296,7 @@ class LoginController implements ControllerInterface
                 // we are already authenticated
             case 'team':
                 return new Team(
-                    (int) $this->App->Session->get('auth_userid'),
+                    $this->App->Session->get('auth_userid'),
                     $this->App->Request->request->getInt('selected_team'),
                 );
 
@@ -303,7 +304,7 @@ class LoginController implements ControllerInterface
             case 'mfa':
                 return new Mfa(
                     new MfaHelper(
-                        (int) $this->App->Session->get('auth_userid'),
+                        $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),
                     ),
                     $this->App->Request->request->getAlnum('mfa_code'),
@@ -342,6 +343,7 @@ class LoginController implements ControllerInterface
             array($this->App->Request->request->getInt('team_id')),
             $this->App->Request->request->getString('teaminit_firstname'),
             $this->App->Request->request->getString('teaminit_lastname'),
+            orgid: $this->App->Session->get('teaminit_orgid'),
         );
         $this->App->Session->set('teaminit_done', true);
         // will display the appropriate message to user
@@ -361,9 +363,7 @@ class LoginController implements ControllerInterface
             return '/login.php';
         }
 
-        $userid = isset($this->App->Users->userData['userid'])
-            ? (int) $this->App->Users->userData['userid']
-            : $this->App->Session->get('auth_userid');
+        $userid = $this->App->Users->userData['userid'] ?? $this->App->Session->get('auth_userid');
         $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
 
         // check the input code against the secret stored in session

@@ -197,7 +197,7 @@ class Populate
         $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Requester = new Users(1, 1);
-        $Users = new Users($userid, (int) $team[0]['id'], $Requester);
+        $Users = new Users($userid, $team[0]['id'], $Requester);
 
         if ($user['is_sysadmin'] ?? false) {
             $Users->patch(Action::Update, array('is_sysadmin' => 1));

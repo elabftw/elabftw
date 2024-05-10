@@ -68,6 +68,7 @@ try {
             $App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            $App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
             $location = '/login.php';
 
             // if the user is in several teams, we need to redirect to the team selection

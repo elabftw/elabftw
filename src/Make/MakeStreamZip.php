@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
@@ -51,7 +50,7 @@ class MakeStreamZip extends AbstractMakeZip
     public function getFileName(): string
     {
         if (count($this->idArr) === 1) {
-            $this->Entity->setId((int) $this->idArr[0]);
+            $this->Entity->setId($this->idArr[0]);
             $this->Entity->canOrExplode('read');
             return $this->Entity->toFsTitle() . $this->extension;
         }

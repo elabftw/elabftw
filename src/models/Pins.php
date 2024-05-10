@@ -35,7 +35,7 @@ class Pins
     {
         $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -61,7 +61,7 @@ class Pins
             $this->Entity->type
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
 
@@ -77,7 +77,7 @@ class Pins
     {
         $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
 
@@ -107,7 +107,7 @@ class Pins
 
         $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -122,7 +122,7 @@ class Pins
 
         $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->type . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);

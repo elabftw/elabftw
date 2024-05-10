@@ -63,7 +63,7 @@ class RequestActions implements RestInterface
 
     public function readAllFull(): array
     {
-        return array_map(function ($action) {
+        return array_map(function (array $action): array {
             $Requester = new Users($action['requester_userid']);
             $action['requester_fullname'] = $Requester->userData['fullname'];
             $Target = new Users($action['target_userid']);
@@ -147,13 +147,15 @@ class RequestActions implements RestInterface
             'UPDATE %s_request_actions
                 SET state = :state
                 WHERE action = :action
-                    AND target_userid = :userid',
+                    AND target_userid = :userid
+                    AND entity_id = :entity_id',
             $this->entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Archived->value, PDO::PARAM_INT);
         $req->bindValue(':action', $action->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

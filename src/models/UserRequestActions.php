@@ -71,7 +71,7 @@ class UserRequestActions implements RestInterface
 
     public function readAllFull(): array
     {
-        return array_map(function ($action) {
+        return array_map(function (array $action): array {
             $Requester = new Users($action['requester_userid']);
             $action['requester_firstname'] = $Requester->userData['firstname'];
             $action['action'] = RequestableAction::from($action['action'])->name;

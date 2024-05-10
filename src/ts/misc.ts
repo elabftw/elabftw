@@ -296,19 +296,16 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
 }
 
 export async function reloadElements(elementIds: string[]|string): Promise<void> {
-  const elementExists = (elementId: string): boolean => {
+  elementIds = Array.isArray(elementIds) ? elementIds : [elementIds];
+
+  elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
       console.error(`Could not find element with id ${elementId} to reload!`);
       return false;
     }
     return true;
-  };
+  });
 
-  if (typeof elementIds === 'string') {
-    elementIds = [elementIds];
-  }
-
-  elementIds = elementIds.filter(elementExists);
   if (elementIds.length === 0) {
     return;
   }

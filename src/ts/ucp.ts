@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.patchAction(parseInt(el.dataset.id), Action.Lock).then(() => reloadElements('lockTemplateButton'));
+      EntityC.patchAction(parseInt(el.dataset.id), Action.Lock).then(() => reloadElements(['lockTemplateButton']));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());
@@ -92,12 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="create-sigkeys"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
       ApiC.post(`${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
-        .then(() => reloadElements('ucp-sigkeys'));
+        .then(() => reloadElements(['ucp-sigkeys']));
     // REGENERATE SIGKEY
     } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
       const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
       ApiC.patch(`${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
-        .then(() => reloadElements('ucp-sigkeys'));
+        .then(() => reloadElements(['ucp-sigkeys']));
     // DOWNLOAD SIG KEY (pub or priv)
     } else if (el.matches('[data-action="download-sigkey"]')) {
       ApiC.getJson(`${Model.User}/me`).then(user => {
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
       ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
         const location = resp.headers.get('location').split('/');
-        reloadElements('apiTable');
+        reloadElements(['apiTable']);
         const warningDiv = document.createElement('div');
         warningDiv.classList.add('alert', 'alert-warning');
         const chevron = document.createElement('i');

@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
-        .then(() => reloadElements('uploadsDiv'));
+        .then(() => reloadElements(['uploadsDiv']));
 
     // CHANGE 3DMOL FILES VISUALIZATION STYLE
     } else if (el.matches('[data-action="set-3dmol-style"]')) {
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-        .then(() => reloadElements('uploadsDiv'));
+        .then(() => reloadElements(['uploadsDiv']));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

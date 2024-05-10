@@ -90,7 +90,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
           if (toreload === 'reloadEntitiesShow') {
             reloadEntitiesShow();
           } else {
-            reloadElements(toreload).then(() => relativeMoment());
+            reloadElements([toreload]).then(() => relativeMoment());
           }
         });
       }
@@ -295,9 +295,7 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   listenTrigger();
 }
 
-export async function reloadElements(elementIds: string[]|string): Promise<void> {
-  elementIds = Array.isArray(elementIds) ? elementIds : [elementIds];
-
+export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
       console.error(`Could not find element with id ${elementId} to reload!`);
@@ -608,7 +606,7 @@ export async function updateEntityBody(): Promise<void> {
     const lastSavedAt = document.getElementById('lastSavedAt');
     if (lastSavedAt) {
       lastSavedAt.title = json.modified_at;
-      reloadElements('lastSavedAt').then(() => relativeMoment());
+      reloadElements(['lastSavedAt']).then(() => relativeMoment());
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)

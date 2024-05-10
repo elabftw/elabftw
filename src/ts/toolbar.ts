@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('container').append(overlay);
       ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.Bloxberg})
         // reload uploaded files on success
-        .then(() => reloadElements('uploadsDiv'))
+        .then(() => reloadElements(['uploadsDiv']))
         // remove overlay in all cases
         .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
 
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         action: Action.Create,
         target_action: actionSelect.value,
         target_userid: userSelect.value,
-      }).then(() => reloadElements('requestActionsDiv'))
+      }).then(() => reloadElements(['requestActionsDiv']))
         .then(() => relativeMoment());
     // SHOW ACTION
     } else if (el.matches('[data-action="show-action"]')) {

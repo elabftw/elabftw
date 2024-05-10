@@ -200,10 +200,10 @@ export function getTinymceBaseConfig(page: string): object {
           return `<span><a href='${entity.page}.php?mode=view&id=${entity.id}'>${category}${selected.title}</a></span>`;
         };
         if (selected.type === 'items') {
-          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElements('linksDiv'));
+          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElements(['linksDiv']));
         }
         if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
-          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElements('linksExpDiv'));
+          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElements(['linksExpDiv']));
         }
         return format(selected);
       },

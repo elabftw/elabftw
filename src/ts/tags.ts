@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     (new FavTag()).create(el.value).then(() => {
-      reloadElements('favtagsTagsDiv');
+      reloadElements(['favtagsTagsDiv']);
       el.value = '';
     });
   };
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DEDUPLICATE (from admin panel/tag manager)
     if (el.matches('[data-action="deduplicate-tag"]')) {
-      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElements('tagMgrDiv'));
+      ApiC.patch(`${Model.TeamTags}`, {'action': Action.Deduplicate}).then(() => reloadElements(['tagMgrDiv']));
     // UNREFERENCE (remove link between tag and entity)
     } else if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {

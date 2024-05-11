@@ -29,10 +29,6 @@ class RequestActions implements RestInterface
 {
     use SetIdTrait;
 
-    /** timeout in minutes before an active action can be requested again */
-    // ToDo?: make it a configuration on team/instance level
-    public const int RE_REQUEST_TIMEOUT = 15;
-
     protected Db $Db;
 
     public function __construct(protected Users $requester, protected AbstractEntity $entity, ?int $id = null)
@@ -93,8 +89,7 @@ class RequestActions implements RestInterface
         $sql = sprintf(
             'SELECT count(*)
                 FROM  %s_request_actions
-                WHERE DATE_ADD(created_at, INTERVAL :timeout MINUTE) >= NOW()
-                    AND requester_userid = :requester_userid
+                WHERE requester_userid = :requester_userid
                     AND target_userid = :target_userid
                     AND entity_id = :entity_id
                     AND action = :action
@@ -102,7 +97,6 @@ class RequestActions implements RestInterface
             $this->entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':timeout', self::RE_REQUEST_TIMEOUT, PDO::PARAM_INT);
         $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':target_userid', $reqBody['target_userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
@@ -110,10 +104,7 @@ class RequestActions implements RestInterface
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         if ($req->fetchColumn() !== 0) {
-            throw new ImproperActionException(sprintf(
-                _('This action has been requested already within the last %d minutes.'),
-                self::RE_REQUEST_TIMEOUT,
-            ));
+            throw new ImproperActionException(_('This action has been requested already.'));
         }
 
         $sql = sprintf(

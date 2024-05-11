@@ -538,7 +538,7 @@ CREATE TABLE IF NOT EXISTS `items_request_actions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `items_request_actions`:
---   `iteentity_idm_id`
+--   `entity_id`
 --       `items` -> `id`
 --   `requester_userid`
 --       `users` -> `userid`

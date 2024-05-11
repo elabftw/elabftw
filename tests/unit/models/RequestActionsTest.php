@@ -40,7 +40,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
             $reqBody,
         );
         $this->assertIsInt($newRequestActionId);
-        // request the same again to trigger timeout
+        // request the same again to trigger rejection
         $this->expectException(ImproperActionException::class);
         $this->RequestActions->postAction(
             Action::Create, // this action is irrelevant

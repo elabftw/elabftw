@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         target_userid: userSelect.value,
       }).then(() => reloadElements(['requestActionsDiv']))
         .then(() => relativeMoment())
-        // the request might be rejected during the timeout period
+        // the request gets rejected if repeated
         .catch(error => console.error(error.message));
     // SHOW ACTION
     } else if (el.matches('[data-action="show-action"]')) {

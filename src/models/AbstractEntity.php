@@ -351,13 +351,7 @@ abstract class AbstractEntity implements RestInterface
                     }
                 }
             )(),
-            Action::ExclusiveEditMode => (
-                function () {
-                    if ($this instanceof AbstractConcreteEntity) {
-                        $this->ExclusiveEditMode->toggle();
-                    }
-                }
-            )(),
+            Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();

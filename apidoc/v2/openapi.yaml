@@ -265,161 +265,151 @@ components:
         uploads_storage:
           type: string
     entity:
-      type: object
-      properties:
-        access_key:
-          type: string
-          nullable: true
-        body:
-          type: string
-          nullable: true
-        body_html:
-          type: string
-          nullable: true
-        canread:
-          type: string
-          description: JSON string for read permissions.
-        canwrite:
-          type: string
-          description: JSON string for write permissions.
-        category:
-          type: integer
-          nullable: true
-        category_color:
-          type: string
-          nullable: true
-        category_title:
-          type: string
-          nullable: true
-        comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/comment'
-        content_type:
-          type: integer
-          description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
-        created_at:
-          type: string
-        custom_id:
-          type: integer
-        date:
-          type: string
-        elabid:
-          type: string
-        exclusive_edit_mode:
-          oneOf:
-            - type: object
-              properties:
-                locked_by:
-                  type: integer
-                fullname:
-                  type: string
-                locked_at:
-                  type: string
-            - type: object
-              properties:
-        experiments_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        firstname:
-          type: string
-        fullname:
-          type: string
-        has_attachement:
-          type: integer
-        has_comment:
-          type: integer
-        id:
-          type: integer
-        items_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        lastchangeby:
-          type: integer
-        lastname:
-          type: string
-        locked:
-          type: integer
-        lockedby:
-          type: integer
-          nullable: true
-        locked_at:
-          type: string
-          nullable: true
-        metadata:
-          type: string
-          nullable: true
-        modified_at:
-          type: string
-        next_step:
-          type: string
-          nullable: true
-        orcid:
-          type: string
-          nullable: true
-        page:
-          type: string
-        rating:
-          type: integer
-        recent_comment:
-          type: string
-          nullable: true
-        related_experiments_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        related_items_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        sharelink:
-          type: string
-        state:
-          type: integer
-        status:
-          type: integer
-          nullable: true
-        status_color:
-          type: string
-          nullable: true
-        status_title:
-          type: string
-          nullable: true
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/step'
-        tags:
-          type: string
-          nullable: true
-        tags_id:
-          type: string
-          nullable: true
-        team:
-          type: integer
-        timestamped:
-          type: integer
-        timestampedby:
-          type: integer
-          nullable: true
-        timestamped_at:
-          type: string
-          nullable: true
-        title:
-          type: string
-        type:
-          type: string
-        up_item_id:
-          type: integer
-          nullable: true
-        uploads:
-          type: array
-          items:
-            $ref: '#/components/schemas/upload'
-        userid:
-          type: integer
+      allOf:
+        - type: object
+          properties:
+            access_key:
+              type: string
+              nullable: true
+            body:
+              type: string
+              nullable: true
+            body_html:
+              type: string
+              nullable: true
+            canread:
+              type: string
+              description: JSON string for read permissions.
+            canwrite:
+              type: string
+              description: JSON string for write permissions.
+            category:
+              type: integer
+              nullable: true
+            category_color:
+              type: string
+              nullable: true
+            category_title:
+              type: string
+              nullable: true
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/comment'
+            content_type:
+              type: integer
+              description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
+            created_at:
+              type: string
+            custom_id:
+              type: integer
+            date:
+              type: string
+            elabid:
+              type: string
+            experiments_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            firstname:
+              type: string
+            fullname:
+              type: string
+            has_attachement:
+              type: integer
+            has_comment:
+              type: integer
+            id:
+              type: integer
+            items_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            lastchangeby:
+              type: integer
+            lastname:
+              type: string
+            locked:
+              type: integer
+            lockedby:
+              type: integer
+              nullable: true
+            locked_at:
+              type: string
+              nullable: true
+            metadata:
+              type: string
+              nullable: true
+            modified_at:
+              type: string
+            next_step:
+              type: string
+              nullable: true
+            orcid:
+              type: string
+              nullable: true
+            page:
+              type: string
+            rating:
+              type: integer
+            recent_comment:
+              type: string
+              nullable: true
+            related_experiments_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            related_items_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            sharelink:
+              type: string
+            state:
+              type: integer
+            status:
+              type: integer
+              nullable: true
+            status_color:
+              type: string
+              nullable: true
+            status_title:
+              type: string
+              nullable: true
+            steps:
+              type: array
+              items:
+                $ref: '#/components/schemas/step'
+            tags:
+              type: string
+              nullable: true
+            tags_id:
+              type: string
+              nullable: true
+            team:
+              type: integer
+            timestamped:
+              type: integer
+            timestampedby:
+              type: integer
+              nullable: true
+            timestamped_at:
+              type: string
+              nullable: true
+            title:
+              type: string
+            type:
+              type: string
+            up_item_id:
+              type: integer
+              nullable: true
+            uploads:
+              type: array
+              items:
+                $ref: '#/components/schemas/upload'
+            userid:
+              type: integer
+        - $ref: '#/components/schemas/exclusive_edit_mode'
     event:
       type: object
       properties:
@@ -451,67 +441,69 @@ components:
       allOf:
         - $ref: '#/components/schemas/entity'
     experiment_template:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        body:
-          type: string
-          nullable: true
-        category:
-          type: integer
-          nullable: true
-        category_title:
-          type: string
-          nullable: true
-        category_color:
-          type: string
-          nullable: true
-        userid:
-          type: integer
-        canread:
-          type: string
-        canwrite:
-          type: string
-        locked:
-          type: integer
-        lockedby:
-          type: integer
-          nullable: true
-        locked_at:
-          type: string
-        fullname:
-          type: string
-        metadata:
-          type: string
-          nullable: true
-        teams_id:
-          type: integer
-        is_pinned:
-          type: integer
-        sharelink:
-          type: string
-        status:
-          type: integer
-          nullable: true
-        status_title:
-          type: string
-          nullable: true
-        status_color:
-          type: string
-          nullable: true
-        tags:
-          type: string
-          nullable: true
-        tags_id:
-          type: string
-          nullable: true
-        uploads:
-          type: array
-          items:
-            $ref: '#/components/schemas/upload'
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            body:
+              type: string
+              nullable: true
+            category:
+              type: integer
+              nullable: true
+            category_title:
+              type: string
+              nullable: true
+            category_color:
+              type: string
+              nullable: true
+            userid:
+              type: integer
+            canread:
+              type: string
+            canwrite:
+              type: string
+            locked:
+              type: integer
+            lockedby:
+              type: integer
+              nullable: true
+            locked_at:
+              type: string
+            fullname:
+              type: string
+            metadata:
+              type: string
+              nullable: true
+            teams_id:
+              type: integer
+            is_pinned:
+              type: integer
+            sharelink:
+              type: string
+            status:
+              type: integer
+              nullable: true
+            status_title:
+              type: string
+              nullable: true
+            status_color:
+              type: string
+              nullable: true
+            tags:
+              type: string
+              nullable: true
+            tags_id:
+              type: string
+              nullable: true
+            uploads:
+              type: array
+              items:
+                $ref: '#/components/schemas/upload'
+        - $ref: '#/components/schemas/exclusive_edit_mode'
     idp:
       type: object
       properties:
@@ -564,6 +556,7 @@ components:
               type: integer
             book_cancel_minutes:
               type: integer
+        - $ref: '#/components/schemas/exclusive_edit_mode'
     items_type:
       type: object
       properties:
@@ -871,6 +864,18 @@ components:
           type: string
         frequency:
           type: integer
+    exclusive_edit_mode:
+      oneOf:
+        - type: object
+          properties:
+            locked_by:
+              type: integer
+            fullname:
+              type: string
+            locked_at:
+              type: string
+        - type: object
+              properties:
 
 security:
   - token:

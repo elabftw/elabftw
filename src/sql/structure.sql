@@ -395,6 +395,37 @@ CREATE TABLE `experiments_templates_edit_mode` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_templates_request_actions`
+--
+CREATE TABLE IF NOT EXISTS `experiments_templates_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_templates_request_actions_experiments_id` (`entity_id`),
+    CONSTRAINT `fk_experiments_templates_request_actions_experiments_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_experiments_templates_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_experiments_templates_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_request_actions`:
+--   `entity_id`
+--       `experiments_templates` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `favtags2users`
 --
 
@@ -729,6 +760,36 @@ CREATE TABLE `items_types_edit_mode` (
 --   `items_types_id`
 --       `items_types` -> `id`
 --   `locked_by`
+--       `users` -> `userid`
+--
+
+--
+-- Table structure for table `items_types_request_actions`
+--
+
+CREATE TABLE IF NOT EXISTS `items_types_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_types_request_actions_items_id` (`entity_id`),
+    CONSTRAINT `fk_items_types_request_actions_items_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_items_types_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_items_types_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `items_types_request_actions`:
+--   `entity_id`
+--       `items_types` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
 --       `users` -> `userid`
 --
 
@@ -1456,12 +1517,12 @@ ALTER TABLE `experiments_comments`
 -- Constraints for table `experiments_request_actions`
 --
 ALTER TABLE `experiments_request_actions`
-    ADD CONSTRAINT `fk_experiments_request_actions_requester_users_userid`
-      FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
-      ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_experiments_request_actions_target_users_userid`
-      FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
-      ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_experiments_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_links`
@@ -1513,6 +1574,17 @@ ALTER TABLE `experiments_templates_revisions`
     ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_templates_request_actions`
+--
+ALTER TABLE `experiments_templates_request_actions`
+  ADD CONSTRAINT `fk_experiments_templates_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `favtags2users`
 --
 ALTER TABLE `favtags2users`
@@ -1539,11 +1611,11 @@ ALTER TABLE `items_comments`
 --
 ALTER TABLE `items_request_actions`
   ADD CONSTRAINT `fk_items_request_actions_requester_users_userid`
-      FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
-      ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_request_actions_target_users_userid`
-      FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
-      ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items_revisions`
@@ -1591,6 +1663,17 @@ ALTER TABLE `items_types_edit_mode`
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_request_actions`
+--
+ALTER TABLE `items_types_request_actions`
+  ADD CONSTRAINT `fk_items_types_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
     ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

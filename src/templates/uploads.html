@@ -51,7 +51,7 @@
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
+        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 
@@ -133,7 +133,7 @@
           {% if loop.first %}
             <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
           {% endif %}
-          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
             {% include('upload-dropdown-menu.html') %}
             {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
             <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>

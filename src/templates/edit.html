@@ -15,7 +15,7 @@
   {% block createnew %}
     <div class='d-flex'>
       {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
+      <div class='align-self-center'><h3>{{ Entity.entityType.getPage|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>
@@ -42,13 +42,13 @@
     <div class='form-inline'>
       <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
       {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
-      <input id='date_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
+      <input id='date_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
     </div>
     {# RATING #}
     <div class='ml-auto rating' id='editRatingDiv'>
-      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
+      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
       {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
+        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
       {% endfor %}
     </div>
   </div>
@@ -60,9 +60,9 @@
     <label for='custom_id_input' class='col-form-label mx-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
     <div class='input-group justify-content-end flex-nowrap'>
       <div class='input-group-prepend'>
-        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
+        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.entityType.value }}'>{{ 'Get next'|trans }}</button>
       </div>
-      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
+      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
   </div>
 
@@ -162,7 +162,7 @@
       <hr>
       <div>
         <button type='button' id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -191,7 +191,7 @@
 <div id='info'
     data-page='edit'
     data-maxsize='{{ maxUploadSize }}'
-    data-type='{{ Entity.type }}'
+    data-type='{{ Entity.entityType.value }}'
     data-id='{{ Entity.id }}'
 >
 </div>

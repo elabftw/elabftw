@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<a href='{{ Entity.page }}.php?mode=view&amp;id={{ Entity.id }}'>
+<a href='{{ Entity.entityType.getPage }}.php?mode=view&amp;id={{ Entity.id }}'>
   <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 

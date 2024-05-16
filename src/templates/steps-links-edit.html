@@ -4,7 +4,7 @@
     <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h4>
     {# ADD STEP #}
     <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
-      <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.type ? Entity.type : 'items_types' }}_steps'>
+      <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value ? Entity.entityType.value : 'items_types' }}_steps'>
         {% for step in Entity.entityData.steps %}
           <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
             <div class='input-group-prepend'>

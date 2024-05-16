@@ -187,7 +187,7 @@
       <i class='fas fa-copy fa-fw'></i>
     </button>
 
-    {% if Entity.type == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
+    {% if Entity.entityType.value == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
       <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&amp;item={{ Entity.id }}'>
         <i class='fas fa-calendar-plus fa-fw'></i>
       </a>
@@ -270,7 +270,7 @@
       </button>
 
       <div class='dropdown-menu dropdown-menu-right'>
-        {% if Entity.type == 'items' %}
+        {% if Entity.entityType.value == 'items' %}
           {# BOOKING PARAMS #}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
           {# PROCUREMENT #}
@@ -285,7 +285,7 @@
           <button type='button' class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
         {% endif %}
         {# REVISIONS #}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+        <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
         <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
 

@@ -76,7 +76,7 @@
           <button class='dropdown-item' type='button' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
         {% endif %}
         {# REVISIONS #}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.type }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+      <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
         <a class='dropdown-item' href='?templateid={{ Entity.id }}&amp;mode=changelog&amp;tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
         {# TRANSFER OWNERSHIP #}
@@ -109,7 +109,7 @@
     {# TITLE #}
     <div class='d-flex mb-2 justify-content-between align-items-center'>
       <label for='title_input' maxlength='255' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-      <input id='title_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
+      <input id='title_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='title' class='form-control' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
     </div>
     {# CATEGORY / STATUS #}
     {% include('catstat-edit.html') %}

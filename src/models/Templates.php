@@ -38,7 +38,7 @@ class Templates extends AbstractTemplateEntity
 
     public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(Users $users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->type = EntityType::Templates->value;
         $this->entityType = EntityType::Templates;

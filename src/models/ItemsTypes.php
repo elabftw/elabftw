@@ -27,7 +27,7 @@ use PDO;
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;

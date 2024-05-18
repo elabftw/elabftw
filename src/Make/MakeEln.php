@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractEntity;
@@ -42,7 +43,7 @@ class MakeEln extends AbstractMakeEln
     {
         foreach ($this->entitySlugs as $slug) {
             try {
-                $entity = $slug->type->toInstance($this->requester, $slug->id);
+                $entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
             } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
@@ -102,14 +103,12 @@ class MakeEln extends AbstractMakeEln
             // we add the reference to the comment in hasPart
             $comments[] = array('@id' => $id);
             // now we build a root node for the comment, with the same id as the one referenced in the main entity
-            $firstname = $comment['firstname'] ?? '';
-            $lastname = $comment['lastname'] ?? '';
             $this->dataEntities[] = array(
                 '@id' => $id,
                 '@type' => 'Comment',
                 'dateCreated' => $dateCreated,
                 'text' => $comment['comment'],
-                'author' => array('@id' => $this->getAuthorId($comment['userid'], $firstname, $lastname, $comment['orcid'])),
+                'author' => array('@id' => $this->getAuthorId(new Users((int) $comment['userid']))),
             );
         }
         // TAGS
@@ -153,21 +152,20 @@ class MakeEln extends AbstractMakeEln
         foreach($linkTypes as $type) {
             foreach ($e[$type . '_links'] as $link) {
                 if ($type === 'items') {
-                    $link = new Items($this->requester, $link['entityid']);
+                    $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
                 } else {
-                    $link = new Experiments($this->requester, $link['entityid']);
+                    $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
                 }
                 $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
                 // WARNING: recursion!
                 $this->processEntity($link);
             }
         }
-        $firstname = $e['firstname'] ?? '';
-        $lastname = $e['lastname'] ?? '';
+
         $datasetNode = array(
             '@id' => './' . $currentDatasetFolder,
             '@type' => 'Dataset',
-            'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
+            'author' => array('@id' => $this->getAuthorId(new Users((int) $e['userid']))),
             'alternateName' => $e['custom_id'] ?? '',
             'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
@@ -179,7 +177,7 @@ class MakeEln extends AbstractMakeEln
             'url' => Config::fromEnv('SITE_URL') . '/' . $entity->page . '.php?mode=view&id=' . $e['id'],
             'hasPart' => $hasPart,
             'mentions' => $mentions,
-            'additionalType' => $entity->entityType->value,
+            'genre' => $entity->entityType->toGenre(),
         );
         if ($e['category_title'] !== null) {
             $datasetNode['category'] = $e['category_title'];
@@ -187,26 +185,69 @@ class MakeEln extends AbstractMakeEln
         if ($e['status_title'] !== null) {
             $datasetNode['status'] = $e['status_title'];
         }
+        // METADATA (extra fields)
+        if ($e['metadata']) {
+            $datasetNode['variableMeasured'] = $this->metadataToJsonLd($e['metadata']);
+        }
+
         $this->dataEntities[] = $datasetNode;
         return true;
+    }
+
+    private function metadataToJsonLd(string $strMetadata): ?array
+    {
+        $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
+        $res = array();
+        // add one that contains all the original metadata as string
+        $pv = array();
+        $pv['propertyID'] = 'elabftw_metadata';
+        $pv['description'] = 'eLabFTW metadata JSON as string';
+        $pv['value'] = $strMetadata;
+        $res[] = $pv;
+
+        // stop here if there are no extra fields
+        if (empty($metadata[Metadata::ExtraFields->value])) {
+            return null;
+        }
+        // now add one for all the extra fields
+        foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
+            // https://schema.org/PropertyValue
+            $pv = array();
+            $pv['propertyID'] = $name;
+            $pv['valueReference'] = $props['type'];
+            $pv['value'] = $props['value'] ?? '';
+            if (!empty($props['description'])) {
+                $pv['description'] = $props['description'];
+            }
+            if (!empty($props['unit'])) {
+                $pv['unitText'] = $props['unit'];
+            }
+            $res[] = $pv;
+        }
+        return $res;
     }
 
     /**
      * Generate an author node unless it exists already
      */
-    private function getAuthorId(int $userid, string $firstname, string $lastname, ?string $orcid): string
+    private function getAuthorId(Users $author): string
     {
         // add firstname and lastname to the hash to get more entropy. Use the userid too so similar names won't collide.
-        $id = sprintf('person://%s?hash_algo=%s', hash(self::HASH_ALGO, (string) $userid . $firstname . $lastname), self::HASH_ALGO);
+        $hash = hash(
+            self::HASH_ALGO,
+            (string) $author->userid . $author->userData['firstname'] . $author->userData['lastname'] . $author->userData['email'],
+        );
+        $id = sprintf('person://%s?hash_algo=%s', $hash, self::HASH_ALGO);
         $node = array(
             '@id' => $id,
             '@type' => 'Person',
-            'familyName' => $lastname,
-            'givenName' => $firstname,
+            'givenName' => $author->userData['firstname'],
+            'familyName' => $author->userData['lastname'],
+            'email' => $author->userData['email'],
         );
         // only add an identifier property if there is an orcid
-        if ($orcid !== null) {
-            $node['identifier'] = 'https://orcid.org/' . $orcid;
+        if ($author->userData['orcid'] !== null) {
+            $node['identifier'] = 'https://orcid.org/' . $author->userData['orcid'];
         }
         // only add it if it doesn't exist yet in our list of authors
         if (!in_array($id, array_column($this->authors, '@id'), true)) {

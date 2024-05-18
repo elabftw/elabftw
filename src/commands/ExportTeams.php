@@ -14,7 +14,6 @@ namespace Elabftw\Commands;
 
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeTeamEln;
-use Elabftw\Models\Users;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -38,14 +37,12 @@ class ExportTeams extends Command
     {
         $this->setDescription('Export all experiments and resources from a team')
             ->setHelp('This command will generate a ELN archive with all the experiments and resources bound to a particular team.')
-            ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
-            ->addArgument('userid', InputArgument::REQUIRED, 'User executing the request');
+            ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $teamid = (int) $input->getArgument('teamid');
-        $userid = (int) $input->getArgument('userid');
         $absolutePath = $this->Fs->getPath(sprintf(
             'export-%s-teamid-%d.eln',
             date('Y-m-d_H-i-s'),
@@ -57,8 +54,7 @@ class ExportTeams extends Command
         }
 
         $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
-        $user = new Users($userid, $teamid);
-        $Maker = new MakeTeamEln($ZipStream, $user, $teamid);
+        $Maker = new MakeTeamEln($ZipStream, $teamid);
         $Maker->getStreamZip();
 
         fclose($fileStream);

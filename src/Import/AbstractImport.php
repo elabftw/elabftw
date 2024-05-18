@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -65,6 +66,9 @@ abstract class AbstractImport implements ImportInterface
 
     protected function setTargetUsers(string $type): void
     {
+        if ($this->Users instanceof UltraAdmin) {
+            return;
+        }
         switch ($type) {
             case EntityType::Templates->value:
                 // for templates we can only import for our user, so there is no target and nothing to check

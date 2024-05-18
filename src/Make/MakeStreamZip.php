@@ -15,15 +15,16 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
+use Elabftw\Models\Users;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use ZipStream\ZipStream;
 
-use function count;
 use function json_encode;
 
 /**
@@ -31,13 +32,10 @@ use function json_encode;
  */
 class MakeStreamZip extends AbstractMakeZip
 {
-    // data array (entries) that will be converted to json
-    protected array $dataArr = array();
-
     public function __construct(
         protected ZipStream $Zip,
-        protected AbstractEntity $Entity,
-        protected array $idArr,
+        protected Users $requester,
+        protected array $entitySlugs,
         protected bool $usePdfa = false,
         protected bool $includeChangelog = false,
     ) {
@@ -49,11 +47,6 @@ class MakeStreamZip extends AbstractMakeZip
      */
     public function getFileName(): string
     {
-        if (count($this->idArr) === 1) {
-            $this->Entity->setId($this->idArr[0]);
-            $this->Entity->canOrExplode('read');
-            return $this->Entity->toFsTitle() . $this->extension;
-        }
         return 'export.elabftw' . $this->extension;
     }
 
@@ -63,23 +56,20 @@ class MakeStreamZip extends AbstractMakeZip
      */
     public function getStreamZip(): void
     {
-        foreach ($this->idArr as $id) {
+        foreach ($this->entitySlugs as $slug) {
             try {
-                $this->addToZip((int) $id);
-            } catch (IllegalActionException) {
+                $entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+            } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
+            $this->addToZip($entity);
         }
-
-        // add the (hidden) .elabftw.json file useful for reimport
-        $this->Zip->addFile('.elabftw.json', json_encode(array('data' => $this->dataArr, 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512));
-
         $this->Zip->finish();
     }
 
-    protected function getPdf(): PdfMakerInterface
+    protected function getPdf(AbstractEntity $entity): PdfMakerInterface
     {
-        $userData = $this->Entity->Users->userData;
+        $userData = $this->requester->userData;
         $MpdfProvider = new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],
@@ -89,9 +79,9 @@ class MakeStreamZip extends AbstractMakeZip
         return new MakePdf(
             log: $log,
             mpdfProvider: $MpdfProvider,
-            requester: $this->Entity->Users,
-            entityType: $this->Entity->entityType,
-            entityIdArr: array($this->Entity->id),
+            requester: $this->requester,
+            entityType: $entity->entityType,
+            entityIdArr: array($entity->id),
             includeChangelog: $this->includeChangelog,
         );
     }
@@ -99,9 +89,9 @@ class MakeStreamZip extends AbstractMakeZip
     /**
      * Add a PDF file to the ZIP archive
      */
-    protected function addPdf(): void
+    protected function addPdf(AbstractEntity $entity): void
     {
-        $MakePdf = $this->getPdf();
+        $MakePdf = $this->getPdf($entity);
         // disable makepdf notifications because they are handled by calling class
         $MakePdf->setNotifications(false);
         $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
@@ -117,40 +107,29 @@ class MakeStreamZip extends AbstractMakeZip
             'elabftw_producer_version' => App::INSTALLED_VERSION,
             'elabftw_producer_version_int' => App::INSTALLED_VERSION_INT,
             'dateCreated' => $creationDateTime->format(DateTimeImmutable::ATOM),
-            'count' => count($this->dataArr),
         );
     }
 
-    /**
-     * This is where the magic happens
-     * Note the different try catch blocks to skip issues that would stop the zip generation
-     *
-     * @param int $id The id of the item we are zipping
-     */
-    private function addToZip(int $id): void
+    private function addToZip(AbstractEntity $entity): void
     {
-        $this->Entity->setId($id);
-        try {
-            $permissions = $this->Entity->getPermissions();
-        } catch (IllegalActionException) {
-            return;
-        }
-        if ($permissions['read']) {
-            $entityArr = $this->Entity->entityData;
-            $uploadedFilesArr = $entityArr['uploads'];
-            $this->folder = $this->Entity->toFsTitle();
+        $entityArr = $entity->entityData;
+        $uploadedFilesArr = $entityArr['uploads'];
+        $this->folder = $entity->toFsTitle();
 
-            if (!empty($uploadedFilesArr)) {
-                try {
-                    // we overwrite the uploads array with what the function returns so we have correct real_names
-                    $entityArr['uploads'] = $this->addAttachedFiles($uploadedFilesArr);
-                } catch (UnableToReadFile) {
-                    return;
-                }
+        if (!empty($uploadedFilesArr)) {
+            try {
+                // we overwrite the uploads array with what the function returns so we have correct real_names
+                $entityArr['uploads'] = $this->addAttachedFiles($uploadedFilesArr);
+            } catch (UnableToReadFile) {
+                return;
             }
-            $this->addPdf();
-            // add an entry to the json file
-            $this->dataArr[] = $entityArr;
         }
+        $this->addPdf($entity);
+        // add a full json export too
+        $JsonMaker = new MakeFullJson($entity, array($entity->id));
+        $this->Zip->addFile(
+            $this->folder . '/' . $JsonMaker->getFileName(),
+            json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),
+        );
     }
 }

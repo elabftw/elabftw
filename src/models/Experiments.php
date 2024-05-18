@@ -28,18 +28,18 @@ class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
     {
         $this->page = EntityType::Experiments->value;
         $this->type = EntityType::Experiments->value;
         $this->entityType = EntityType::Experiments;
-        parent::__construct($users, $id);
+        parent::__construct($users, $id, $bypassReadPermission);
     }
 
     public function create(int $template = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
-        $Teams = new Teams($this->Users);
+        $Teams = new Teams($this->Users, $this->Users->team);
         $teamConfigArr = $Teams->readOne();
         $Status = new ExperimentsStatus($Teams);
 

@@ -20,7 +20,7 @@ use Elabftw\Enums\Scope;
  */
 final class AnonymousUser extends Users
 {
-    public function __construct(public int $team, private string $lang)
+    public function __construct(public ?int $team, private string $lang)
     {
         parent::__construct(null, $team);
         $this->fillUserData();

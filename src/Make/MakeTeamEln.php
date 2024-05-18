@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Users;
+use Elabftw\Models\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
 
@@ -21,7 +21,7 @@ use ZipStream\ZipStream;
  */
 class MakeTeamEln extends AbstractMakeEln
 {
-    public function __construct(ZipStream $Zip, protected Users $requester, protected int $teamId)
+    public function __construct(ZipStream $Zip, protected int $teamId)
     {
         parent::__construct($Zip);
     }
@@ -32,7 +32,9 @@ class MakeTeamEln extends AbstractMakeEln
     public function getStreamZip(): void
     {
         $targets = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $this->gatherSlugs());
-        $Maker = new MakeEln($this->Zip, $this->requester, $targets);
+        // we use an empty user object here because we must not care about permissions
+        $Maker = new MakeEln($this->Zip, new UltraAdmin(team: $this->teamId), $targets);
+        $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }
 

@@ -102,7 +102,7 @@ class DisplayParams
             $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
         }
         if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
-            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team);
+            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team ?? 0);
         }
         // TAGS SEARCH
         if (!empty(($this->Request->query->all('tags'))[0])) {

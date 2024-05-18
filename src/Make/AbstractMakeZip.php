@@ -31,6 +31,8 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 
     protected string $hashAlgorithm = 'sha256';
 
+    protected bool $bypassReadPermission = false;
+
     public function __construct(protected ZipStream $Zip)
     {
         parent::__construct();

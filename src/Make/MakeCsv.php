@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users;
 
 use function date;
@@ -54,31 +55,28 @@ class MakeCsv extends AbstractMakeCsv
         foreach ($this->idArr as $id) {
             try {
                 $entity->setId((int) $id);
-                $permissions = $entity->getPermissions();
-            } catch (IllegalActionException) {
+            } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
-            if ($permissions['read']) {
-                $row = array(
-                    $entity->entityData['id'],
-                    $entity->entityData['date'],
-                    htmlspecialchars_decode((string) $entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
-                    html_entity_decode(strip_tags(htmlspecialchars_decode((string) $entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
-                    (string) $entity->entityData['category'],
-                    htmlspecialchars_decode((string) $entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),
-                    (string) $entity->entityData['category_color'],
-                    (string) $entity->entityData['status'],
-                    htmlspecialchars_decode((string) $entity->entityData['status_title'], ENT_QUOTES | ENT_COMPAT),
-                    (string) $entity->entityData['status_color'],
-                    $entity->entityData['custom_id'] ?? '',
-                    $entity->entityData['elabid'] ?? '',
-                    $entity->entityData['rating'],
-                    $entity->entityData['sharelink'],
-                    $entity->entityData['metadata'] ?? '',
-                    $entity->entityData['tags'] ?? '',
-                );
-                $rows[] = $row;
-            }
+            $row = array(
+                $entity->entityData['id'],
+                $entity->entityData['date'],
+                htmlspecialchars_decode((string) $entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
+                html_entity_decode(strip_tags(htmlspecialchars_decode((string) $entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
+                (string) $entity->entityData['category'],
+                htmlspecialchars_decode((string) $entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),
+                (string) $entity->entityData['category_color'],
+                (string) $entity->entityData['status'],
+                htmlspecialchars_decode((string) $entity->entityData['status_title'], ENT_QUOTES | ENT_COMPAT),
+                (string) $entity->entityData['status_color'],
+                $entity->entityData['custom_id'] ?? '',
+                $entity->entityData['elabid'] ?? '',
+                $entity->entityData['rating'],
+                $entity->entityData['sharelink'],
+                $entity->entityData['metadata'] ?? '',
+                $entity->entityData['tags'] ?? '',
+            );
+            $rows[] = $row;
         }
         return $rows;
     }

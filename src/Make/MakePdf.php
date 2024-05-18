@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -141,22 +142,18 @@ class MakePdf extends AbstractMakePdf
     {
         $entriesCount = count($this->entityIdArr);
         foreach ($this->entityIdArr as $key => $id) {
-            $this->Entity->setId($id);
-
             try {
-                $permissions = $this->Entity->getPermissions();
-            } catch (IllegalActionException) {
-                return;
+                $this->Entity->setId($id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
             }
 
-            if ($permissions['read']) {
-                $this->addEntry();
+            $this->addEntry();
 
-                if ($key !== $entriesCount - 1) {
-                    $this->mpdf->AddPageByArray(array(
-                        'sheet-size' => $this->requester->userData['pdf_format'],
-                    ));
-                }
+            if ($key !== $entriesCount - 1) {
+                $this->mpdf->AddPageByArray(array(
+                    'sheet-size' => $this->requester->userData['pdf_format'],
+                ));
             }
         }
     }

@@ -85,9 +85,6 @@ abstract class AbstractEntity implements RestInterface
     public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
-    public bool $bypassReadPermission = false;
-
-    // use that to ignore the canOrExplode calls
     public bool $bypassWritePermission = false;
 
     // will be defined in children classes
@@ -113,7 +110,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @param int|null $id the id of the entity
      */
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->Db = Db::getConnection();
 
@@ -382,6 +379,12 @@ abstract class AbstractEntity implements RestInterface
      */
     public function canOrExplode(string $rw): void
     {
+        if ($this->bypassWritePermission && $rw === 'write') {
+            return;
+        }
+        if ($this->bypassReadPermission && $rw === 'read') {
+            return;
+        }
         $permissions = $this->getPermissions();
 
         // READ ONLY?
@@ -392,45 +395,6 @@ abstract class AbstractEntity implements RestInterface
         if (!$permissions[$rw]) {
             throw new IllegalActionException('User tried to access entity without permission.');
         }
-    }
-
-    /**
-     * Verify we can read/write an item
-     * Here be dragons! Cognitive load > 9000
-     *
-     * @param array<string, mixed>|null $item one item array
-     */
-    public function getPermissions(?array $item = null): array
-    {
-        if ($this->bypassWritePermission) {
-            return array('read' => true, 'write' => true);
-        }
-        if ($this->bypassReadPermission) {
-            return array('read' => true, 'write' => false);
-        }
-        if (empty($this->entityData) && !isset($item)) {
-            $this->readOne();
-        }
-        // don't try to read() again if we have the item (for show where there are several items to check)
-        if (!isset($item)) {
-            $item = $this->entityData;
-        }
-
-        // if it has the deleted state, don't show it.
-        if ($item['state'] === State::Deleted->value) {
-            return array('read' => false, 'write' => false);
-        }
-
-        $Permissions = new Permissions($this->Users, $item);
-
-        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
-            return $Permissions->forEntity();
-        }
-        if ($this instanceof ItemsTypes) {
-            return $Permissions->forItemType();
-        }
-
-        return array('read' => false, 'write' => false);
     }
 
     /**
@@ -607,6 +571,45 @@ abstract class AbstractEntity implements RestInterface
             substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
             Tools::getShortElabid($this->entityData['elabid'] ?? ''),
         );
+    }
+
+    /**
+     * Verify we can read/write an item
+     * Here be dragons! Cognitive load > 9000
+     *
+     * @param array<string, mixed>|null $item one item array
+     */
+    protected function getPermissions(?array $item = null): array
+    {
+        if ($this->bypassWritePermission) {
+            return array('read' => true, 'write' => true);
+        }
+        if ($this->bypassReadPermission) {
+            return array('read' => true, 'write' => false);
+        }
+        if (empty($this->entityData) && !isset($item)) {
+            $this->readOne();
+        }
+        // don't try to read() again if we have the item (for show where there are several items to check)
+        if (!isset($item)) {
+            $item = $this->entityData;
+        }
+
+        // if it has the deleted state, don't show it.
+        if ($item['state'] === State::Deleted->value) {
+            return array('read' => false, 'write' => false);
+        }
+
+        $Permissions = new Permissions($this->Users, $item);
+
+        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
+            return $Permissions->forEntity();
+        }
+        if ($this instanceof ItemsTypes) {
+            return $Permissions->forItemType();
+        }
+
+        return array('read' => false, 'write' => false);
     }
 
     /**

@@ -27,7 +27,7 @@ abstract class AbstractZip extends AbstractImport
     protected string $tmpPath;
 
     // the folder name where we extract the archive
-    protected string $tmpDir;
+    protected string $tmpDir = '';
 
     protected array $allowedMimes = array(
         'application/zip',

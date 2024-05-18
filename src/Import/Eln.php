@@ -19,8 +19,10 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractTemplateEntity;
+use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
@@ -28,6 +30,8 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\Users;
+use JsonException;
 use League\Flysystem\UnableToReadFile;
 
 use function basename;
@@ -40,6 +44,8 @@ use function sprintf;
  */
 class Eln extends AbstractZip
 {
+    public bool $importAuthorsAsUsers = true;
+
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
@@ -50,46 +56,23 @@ class Eln extends AbstractZip
 
     private array $insertedEntities = array();
 
+    private array $crateNodeHasPart = array();
+
+    public function processOnly(): array
+    {
+        $this->preProcess();
+        return array(
+            'parts' => count($this->crateNodeHasPart),
+        );
+    }
+
     public function import(): void
     {
-        // figure out the path to the root of the eln (where the metadata file lives)
-        // the name of the folder is not fixed, so list folders and pick the first one found (there should be only one)
-        $listing = $this->fs->listContents($this->tmpDir);
-        foreach ($listing as $item) {
-            if ($item instanceof \League\Flysystem\DirectoryAttributes) {
-                $this->root = $item->path();
-                break;
-            }
-        }
-
-        // now read the metadata json file
-        $file = '/ro-crate-metadata.json';
-        try {
-            $content = $this->fs->read($this->root . $file);
-        } catch (UnableToReadFile) {
-            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $file));
-        }
-        $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        $this->graph = $json['@graph'];
-
-        $root_node_has_part = array();
-        foreach ($this->graph as $node) {
-            // find the node describing the crate
-            if ($node['@id'] === './') {
-                $root_node_has_part = $node['hasPart'];
-            }
-            // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
-            // only newer versions have the areaServed attribute
-            if ($node['@id'] === 'ro-crate-metadata.json' &&
-                array_key_exists('sdPublisher', $node) &&
-                $node['sdPublisher']['name'] === 'eLabFTW' &&
-                !array_key_exists('areaServed', $node['sdPublisher'])) {
-                $this->switchToEscapeOutput = true;
-            }
-        }
+        $this->preProcess();
 
         // loop over each hasPart of the root node
-        foreach ($root_node_has_part as $part) {
+        // this is the main import loop
+        foreach ($this->crateNodeHasPart as $part) {
             $this->importRootDataset($this->getNodeFromId($part['@id']));
         }
 
@@ -118,6 +101,54 @@ class Eln extends AbstractZip
         }
     }
 
+    private function preProcess(): void
+    {
+        $this->root = $this->getRootDirectory();
+        $this->graph = $this->getGraph();
+
+        foreach ($this->graph as $node) {
+            // find the node describing the crate
+            if ($node['@id'] === './') {
+                $this->crateNodeHasPart = $node['hasPart'];
+            }
+            // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
+            // only newer versions have the areaServed attribute
+            if ($node['@id'] === 'ro-crate-metadata.json' &&
+                array_key_exists('sdPublisher', $node) &&
+                $node['sdPublisher']['name'] === 'eLabFTW' &&
+                !array_key_exists('areaServed', $node['sdPublisher'])) {
+                $this->switchToEscapeOutput = true;
+            }
+        }
+    }
+
+    // figure out the path to the root of the eln (where the metadata file lives)
+    // folder name is variable, so list folders and pick the first one found (there should be only one)
+    private function getRootDirectory(): string
+    {
+        $listing = $this->fs->listContents($this->tmpDir);
+        foreach ($listing as $item) {
+            if ($item instanceof \League\Flysystem\DirectoryAttributes) {
+                return $item->path();
+            }
+        }
+        throw new ImproperActionException('Could not find a directory in the ELN archive!');
+    }
+
+    private function getGraph(): array
+    {
+        $metadataFile = 'ro-crate-metadata.json';
+        try {
+            $content = $this->fs->read($this->root . '/' . $metadataFile);
+            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        } catch (UnableToReadFile) {
+            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
+        } catch (JsonException $e) {
+            throw new ImproperActionException($e->getMessage());
+        }
+        return $json['@graph'];
+    }
+
     private function getNodeFromId(string $id): array
     {
         foreach ($this->graph as $node) {
@@ -133,20 +164,36 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
-        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
-        // try and figure out if we are importing an experiment or a resource by looking at the additionalType
+        $Author = $this->Users;
+        if ($this->importAuthorsAsUsers) {
+            // look for the Author node, and create the user if they do not exist
+            $author = $this->getNodeFromId($dataset['author']['@id']);
+            try {
+                $Author = ExistingUser::fromEmail($author['email'] ?? 'nope');
+                $Author->team = $this->Users->team;
+            } catch (ResourceNotFoundException) {
+                $Users = new Users();
+                $Author = $Users->createFromPerson($author, $this->Users->team ?? 0);
+            }
+        }
+
+        // try and figure out if we are importing an experiment or a resource by looking at the genre
         $entityType = null;
-        if (!empty($dataset['additionalType'])) {
-            $entityType = $dataset['additionalType'] === 'http://semanticscience.org/resource/SIO_000994' ? EntityType::Experiments : EntityType::Items;
+        if (!empty($dataset['genre'])) {
+            $entityType = $dataset['genre'] === 'experiment' ? EntityType::Experiments : EntityType::Items;
         }
         if ($entityType !== null) {
-            $this->Entity = $entityType->toInstance($this->Entity->Users);
+            $this->Entity = $entityType->toInstance($Author);
         }
         $categoryId = $this->targetNumber;
 
+        $this->Entity->Users = $Author;
+        $this->Entity->bypassWritePermission = true;
+        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
+
         // CATEGORY: must be right after createTarget definition and before usage
         // let's see if we can find a category like this in target instance
-        $Teams = new Teams($this->Users, $this->Users->userData['team']);
+        $Teams = new Teams($this->Users, $this->Users->team);
         // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
         $Teams->bypassWritePermission = true;
         if (isset($dataset['category'])) {
@@ -154,7 +201,7 @@ class Eln extends AbstractZip
             if ($this->Entity instanceof Experiments) {
                 $Category = new ExperimentsCategories($Teams);
             } else { // items
-                $Category = new ItemsTypes($this->Users, $this->Users->userData['team']);
+                $Category = new ItemsTypes($this->Users, $this->Users->team);
                 // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
                 $Category->bypassWritePermission = true;
             }
@@ -213,20 +260,18 @@ class Eln extends AbstractZip
             }
         }
 
-        // CUSTOM ID
-        /*
-        if (isset($dataset['alternateName'])) {
-            // if custom_id exists already for that category, catch mysql exception and do nothing
-            try {
-                $this->Entity->patch(Action::Update, array('custom_id' => (int) $dataset['alternateName']));
-            } catch (ImproperActionException $e)  {
-                var_dump($e);die;
-            }
-        }
-         */
         // CATEGORY
         if (isset($dataset['category'])) {
             $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+        }
+        // METADATA
+        if (!empty($dataset['variableMeasured'])) {
+            foreach ($dataset['variableMeasured'] as $propval) {
+                if ($propval['propertyID'] === 'elabftw_metadata') {
+                    $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));
+                }
+                break;
+            }
         }
 
         // STATUS
@@ -401,7 +446,6 @@ class Eln extends AbstractZip
                     $this->Entity->Steps->import($step);
                 }
             }
-            // TODO handle links: linked items should be included as datasets in the .eln, with a relationship to the main entry, and they should be imported as links
         }
     }
 

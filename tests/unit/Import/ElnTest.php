@@ -91,6 +91,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
     }
@@ -113,6 +114,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());
     }
@@ -135,6 +137,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
     }
@@ -157,6 +160,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $this->expectException(ImproperActionException::class);
         $Import->import();
     }
@@ -201,6 +205,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());
     }

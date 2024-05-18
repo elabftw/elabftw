@@ -235,7 +235,12 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr, $this->pdfa, $this->shouldIncludeChangelog()));
+        $entityType = EntityType::from($this->Request->query->getString('type'));
+        $slugs = array_map(function ($id) use ($entityType) {
+            return sprintf('%s:%d', $entityType->value, $id);
+        }, $this->idArr);
+        $targets = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
+        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Users, $targets, $this->pdfa, $this->shouldIncludeChangelog()));
     }
 
     private function makeStreamZip(ZipMakerInterface $Maker): Response

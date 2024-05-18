@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
 
@@ -45,6 +46,13 @@ class MakeJson extends AbstractMake implements StringMakerInterface
      */
     public function getFileContent(): string
     {
+        $json = json_encode($this->getJsonContent(), JSON_THROW_ON_ERROR);
+        $this->contentSize = mb_strlen($json);
+        return $json;
+    }
+
+    public function getJsonContent(): array
+    {
         $res = array();
         foreach ($this->idArr as $id) {
             $this->Entity->setId((int) $id);
@@ -54,15 +62,12 @@ class MakeJson extends AbstractMake implements StringMakerInterface
                 $all['elabftw_version'] = App::INSTALLED_VERSION;
                 $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
                 ksort($all);
-            } catch (IllegalActionException) {
+            } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
             $res[] = $all;
         }
-
-        $json = json_encode($res, JSON_THROW_ON_ERROR);
-        $this->contentSize = mb_strlen($json);
-        return $json;
+        return $res;
     }
 
     protected function getEntityData(): array

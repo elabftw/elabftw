@@ -14,6 +14,8 @@ namespace Elabftw\Make;
 
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
 use Monolog\Handler\ErrorLogHandler;
@@ -25,9 +27,11 @@ use ZipStream\ZipStream;
  */
 class MakeBackupZip extends AbstractMakeZip
 {
+    protected AbstractConcreteEntity $Entity;
+
     public function __construct(
         protected ZipStream $Zip,
-        protected AbstractConcreteEntity $Entity,
+        protected Users $requester,
         private string $period,
         protected bool $includeChangelog = false,
     ) {
@@ -49,8 +53,9 @@ class MakeBackupZip extends AbstractMakeZip
     public function getStreamZip(): void
     {
         // loop on every user
-        $usersArr = $this->Entity->Users->readFromQuery('');
+        $usersArr = $this->requester->readFromQuery('');
         foreach ($usersArr as $user) {
+            $this->Entity = new Experiments(new Users($user['userid']));
             $idArr = $this->Entity->getIdFromLastchange($user['userid'], $this->period);
             foreach ($idArr as $id) {
                 $this->addToZip($id, $user['fullname']);
@@ -62,7 +67,7 @@ class MakeBackupZip extends AbstractMakeZip
     // TODO factorize with makestreamzip
     protected function getPdf(): PdfMakerInterface
     {
-        $userData = $this->Entity->Users->userData;
+        $userData = $this->requester->userData;
         $MpdfProvider = new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],
@@ -73,8 +78,7 @@ class MakeBackupZip extends AbstractMakeZip
             log: $log,
             mpdfProvider: $MpdfProvider,
             requester: $this->Entity->Users,
-            entityType: $this->Entity->entityType,
-            entityIdArr: array($this->Entity->id),
+            entitySlugs: array(),
             includeChangelog: $this->includeChangelog,
         );
     }

@@ -14,9 +14,9 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\AbstractEntity;
 use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
@@ -57,17 +57,12 @@ class MakeStreamZip extends AbstractMakeZip
     public function getStreamZip(): void
     {
         foreach ($this->entitySlugs as $slug) {
-            try {
-                $entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
-            $this->addToZip($entity);
+            $this->addToZip($slug);
         }
         $this->Zip->finish();
     }
 
-    protected function getPdf(AbstractEntity $entity): PdfMakerInterface
+    protected function getPdf(EntitySlug $entitySlug): PdfMakerInterface
     {
         $userData = $this->requester->userData;
         $MpdfProvider = new MpdfProvider(
@@ -80,8 +75,7 @@ class MakeStreamZip extends AbstractMakeZip
             log: $log,
             mpdfProvider: $MpdfProvider,
             requester: $this->requester,
-            entityType: $entity->entityType,
-            entityIdArr: array($entity->id),
+            entitySlugs: array($entitySlug),
             includeChangelog: $this->includeChangelog,
         );
     }
@@ -89,9 +83,9 @@ class MakeStreamZip extends AbstractMakeZip
     /**
      * Add a PDF file to the ZIP archive
      */
-    protected function addPdf(AbstractEntity $entity): void
+    protected function addPdf(EntitySlug $entitySlug): void
     {
-        $MakePdf = $this->getPdf($entity);
+        $MakePdf = $this->getPdf($entitySlug);
         // disable makepdf notifications because they are handled by calling class
         $MakePdf->setNotifications(false);
         $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
@@ -110,8 +104,13 @@ class MakeStreamZip extends AbstractMakeZip
         );
     }
 
-    private function addToZip(AbstractEntity $entity): void
+    private function addToZip(EntitySlug $slug): void
     {
+        try {
+            $entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+        } catch (IllegalActionException | ResourceNotFoundException) {
+            return;
+        }
         $entityArr = $entity->entityData;
         $uploadedFilesArr = $entityArr['uploads'];
         $this->folder = $entity->toFsTitle();
@@ -124,9 +123,9 @@ class MakeStreamZip extends AbstractMakeZip
                 return;
             }
         }
-        $this->addPdf($entity);
+        $this->addPdf($slug);
         // add a full json export too
-        $JsonMaker = new MakeFullJson($entity, array($entity->id));
+        $JsonMaker = new MakeFullJson($this->requester, array($slug));
         $this->Zip->addFile(
             $this->folder . '/' . $JsonMaker->getFileName(),
             json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),

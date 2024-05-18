@@ -64,8 +64,9 @@ class MakePdf extends AbstractMakePdf
         private LoggerInterface $log,
         MpdfProviderInterface $mpdfProvider,
         protected Users $requester,
-        EntityType $entityType,
-        protected array $entityIdArr,
+        protected array $entitySlugs,
+        //EntityType $entityType,
+        //protected array $entityIdArr,
         bool $includeChangelog = false,
     ) {
         parent::__construct(
@@ -76,8 +77,8 @@ class MakePdf extends AbstractMakePdf
         $this->pdfa = $mpdfProvider->isPdfa();
         $this->mpdf->SetTitle($this->getTitle());
         $this->mpdf->SetKeywords($this->getKeywords());
-        $this->Entity = $entityType->toInstance($this->requester);
-        $this->Entity->setId($this->entityIdArr[0]);
+        //$this->Entity = $entityType->toInstance($this->requester);
+        //$this->Entity->setId($this->entityIdArr[0]);
 
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit
@@ -140,14 +141,14 @@ class MakePdf extends AbstractMakePdf
      */
     private function loopOverEntries(): void
     {
-        $entriesCount = count($this->entityIdArr);
-        foreach ($this->entityIdArr as $key => $id) {
+        $entriesCount = count($this->entitySlugs);
+        foreach ($this->entitySlugs as $key => $slug) {
             try {
-                $this->Entity->setId($id);
+                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+                $this->Entity = $slug->type->toInstance($this->requester, $slug->id);
             } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
-
             $this->addEntry();
 
             if ($key !== $entriesCount - 1) {

@@ -152,7 +152,9 @@ class Apiv2Controller extends AbstractApiController
             try {
                 $this->format = ExportFormat::from($this->Request->query->getAlpha('format'));
             } catch (ValueError) {
-                throw new ImproperActionException('Incorrect format value.');
+                throw new ImproperActionException(
+                    sprintf('Incorrect value for format parameter. Available values are: %s.', ExportFormat::toCsList())
+                );
             }
             // fit the request with what makecontroller expects
             if ($this->Model instanceof AbstractEntity) {

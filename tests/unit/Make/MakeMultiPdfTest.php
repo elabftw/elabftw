@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
@@ -26,7 +27,7 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
         $requester = new Users(1, 1);
-        $this->MakePdf = new MakeMultiPdf($log, $MpdfProvider, $requester, EntityType::Experiments, array(3, 4));
+        $this->MakePdf = new MakeMultiPdf($log, $MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, 3), new EntitySlug(EntityType::Experiments, 4)));
     }
 
     public function testGetFileName(): void

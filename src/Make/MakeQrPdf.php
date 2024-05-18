@@ -12,14 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
@@ -28,7 +26,7 @@ class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 
-    public function __construct(protected Users $requester, MpdfProviderInterface $mpdfProvider, protected EntityType $entityType, private array $idArr)
+    public function __construct(MpdfProviderInterface $mpdfProvider, protected Users $requester, private array $entitySlugs)
     {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
@@ -64,14 +62,16 @@ class MakeQrPdf extends AbstractMakePdf
      */
     private function readAll(): array
     {
-        $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $this->entityType);
-        $DisplayParams->limit = 9001;
-        $entity = $this->entityType->toInstance($this->requester);
-        $entity->idFilter = Tools::getIdFilterSql($this->idArr);
-        $entityArr = $entity->readShow($DisplayParams, true);
+        $entityArr = array();
         $siteUrl = Config::fromEnv('SITE_URL');
-        foreach ($entityArr as &$entity) {
-            $entity['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity['page'], $entity['id']);
+        foreach ($this->entitySlugs as $slug) {
+            try {
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+                $entity->entityData['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity->page, $entity->id);
+                $entityArr[] = $entity;
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
+            }
         }
         return $entityArr;
     }

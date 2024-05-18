@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 
 use function json_encode;
 use function ksort;
@@ -26,7 +27,7 @@ use function ksort;
  */
 class MakeJson extends AbstractMake implements StringMakerInterface
 {
-    public function __construct(protected AbstractEntity $Entity, private array $idArr)
+    public function __construct(private Users $requester, private array $entitySlugs)
     {
         parent::__construct();
         $this->contentType = 'application/json';
@@ -54,10 +55,15 @@ class MakeJson extends AbstractMake implements StringMakerInterface
     public function getJsonContent(): array
     {
         $res = array();
-        foreach ($this->idArr as $id) {
-            $this->Entity->setId((int) $id);
+        foreach ($this->entitySlugs as $slug) {
             try {
-                $all = $this->getEntityData();
+                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
+            }
+            try {
+                $all = $this->getEntityData($entity);
                 // add eLabFTW version number
                 $all['elabftw_version'] = App::INSTALLED_VERSION;
                 $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
@@ -70,8 +76,8 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         return $res;
     }
 
-    protected function getEntityData(): array
+    protected function getEntityData(AbstractEntity $entity): array
     {
-        return $this->Entity->readOne();
+        return $entity->readOne();
     }
 }

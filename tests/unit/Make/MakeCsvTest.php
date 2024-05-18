@@ -11,40 +11,35 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
 {
-    private MakeCsv $MakeExp;
-
-    private MakeCsv $MakeDb;
+    private MakeCsv $Make;
 
     protected function setUp(): void
     {
-        $idArr = array('1', '2', '3');
         $requester = new Users(1, 1);
-        $this->MakeExp = new MakeCsv($requester, EntityType::Experiments, $idArr);
-        $this->MakeDb = new MakeCsv($requester, EntityType::Items, $idArr);
+        $this->Make = new MakeCsv(
+            $requester,
+            array(new EntitySlug(EntityType::Experiments, 1), new EntitySlug(EntityType::Items, 2))
+        );
     }
 
     public function testGetFileName(): void
     {
-        $this->assertTrue(str_ends_with($this->MakeExp->getFileName(), 'export.elabftw.csv'));
+        $this->assertTrue(str_ends_with($this->Make->getFileName(), 'export.elabftw.csv'));
     }
 
-    public function testGetCsvExp(): void
+    public function testGetCsv(): void
     {
-        $this->assertIsString($this->MakeExp->getFileContent());
-    }
-
-    public function testGetCsvDb(): void
-    {
-        $this->assertIsString($this->MakeDb->getFileContent());
+        $this->assertIsString($this->Make->getFileContent());
     }
 
     public function testGetContentType(): void
     {
-        $this->assertEquals('text/csv; charset=UTF-8', $this->MakeDb->getContentType());
+        $this->assertEquals('text/csv; charset=UTF-8', $this->Make->getContentType());
     }
 }

@@ -14,7 +14,6 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use ZipStream\ZipStream;
 
@@ -30,8 +29,8 @@ class MakeBackupZipTest extends \PHPUnit\Framework\TestCase
         $period = '19991231-20000102';
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->MakeExp = new MakeBackupZip($Zip, new Experiments($Users), $period);
-        $this->MakeDb = new MakeBackupZip($Zip, new Items($Users), $period);
+        $this->MakeExp = new MakeBackupZip($Zip, $Users, $period);
+        $this->MakeDb = new MakeBackupZip($Zip, $Users, $period);
     }
 
     public function testGetFileName(): void

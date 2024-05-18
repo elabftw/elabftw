@@ -17,7 +17,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\Users;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -46,9 +46,9 @@ class MakeBloxberg extends AbstractMakeTimestamp
 
     private string $apiKey;
 
-    public function __construct(protected array $configArr, protected AbstractConcreteEntity $Entity, private Client $client)
+    public function __construct(protected Users $requester, protected array $entitySlugs, protected array $configArr, private Client $client)
     {
-        parent::__construct($configArr, $Entity, ExportFormat::Json);
+        parent::__construct($requester, $entitySlugs, $configArr, ExportFormat::Json);
         if ($configArr['blox_enabled'] !== '1') {
             throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
         }

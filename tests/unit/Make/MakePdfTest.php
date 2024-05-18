@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
@@ -62,7 +63,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, EntityType::Experiments, array($new, 2));
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, $new), new EntitySlug(EntityType::Experiments, 2)));
     }
 
     public function testGetFileContent(): void

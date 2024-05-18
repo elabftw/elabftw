@@ -32,12 +32,18 @@ require_once dirname(__DIR__) . '/init.inc.php';
 
 // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
 set_time_limit(0);
-$Controller = new ImportController($App);
+$Controller = new ImportController($App->Users, $App->Request);
 // default response
 $Response = new RedirectResponse('/database.php');
 
 try {
     $Response = $Controller->getResponse();
+    $msg = sprintf(
+        '%d %s',
+        $Controller->inserted,
+        ngettext('item imported successfully.', 'items imported successfully.', $Controller->inserted),
+    );
+    $App->Session->getFlashBag()->add('ok', $msg);
 } catch (ImproperActionException | SyntaxError $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());

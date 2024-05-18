@@ -16,7 +16,6 @@ use Elabftw\AuditEvent\Export;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -36,12 +35,10 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -54,7 +51,7 @@ use function count;
 /**
  * Create zip, csv, pdf or report
  */
-class MakeController implements ControllerInterface
+class MakeController extends AbstractController
 {
     private const int AUDIT_THRESHOLD = 12;
 
@@ -62,8 +59,6 @@ class MakeController implements ControllerInterface
 
     // array of EntitySlug
     private array $entitySlugs = array();
-
-    public function __construct(private Users $requester, private Request $Request) {}
 
     public function getResponse(): Response
     {

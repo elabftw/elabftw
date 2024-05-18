@@ -528,6 +528,28 @@ class Users implements RestInterface
         return new self($res);
     }
 
+    /**
+     * Read all the columns (including sensitive ones) of the current user
+     */
+    protected function readOneFull(): array
+    {
+        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
+            WHERE users.userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->userData = $this->Db->fetch($req);
+        $this->userData['team'] = $this->team;
+        $UsersHelper = new UsersHelper($this->userData['userid']);
+        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
+        return $this->userData;
+    }
+
     private function disable2fa(): array
     {
         // only sysadmin or same user can disable 2fa
@@ -656,28 +678,6 @@ class Users implements RestInterface
         $Notifications->create($this->userData['userid']);
         $this->sendOnboardingEmailsAfterValidation();
         return $this->readOne();
-    }
-
-    /**
-     * Read all the columns (including sensitive ones) of the current user
-     */
-    private function readOneFull(): array
-    {
-        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users
-            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
-            WHERE users.userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $this->userData = $this->Db->fetch($req);
-        $this->userData['team'] = $this->team;
-        $UsersHelper = new UsersHelper($this->userData['userid']);
-        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
-        return $this->userData;
     }
 
     private function notifyAdmins(array $admins, int $userid, bool $isValidated, string $team): void

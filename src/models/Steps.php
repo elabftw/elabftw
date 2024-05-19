@@ -85,8 +85,8 @@ class Steps implements RestInterface
         $stepArr = array();
         $stepArr['body'] = $step['itemListElement'][0]['text'];
         $stepArr['finished'] = $step['creativeWorkStatus'] === 'finished' ? 1 : 0;
-        $stepArr['finished_time'] = $step['temporal'];
-        $stepArr['ordering'] = $step['position'];
+        $stepArr['finished_time'] = $step['temporal'] ?? null;
+        $stepArr['ordering'] = $step['position'] ?? null;
         $this->import($stepArr);
     }
 

@@ -88,8 +88,7 @@ class Eln extends AbstractZip
         }
 
         foreach ($result as $linkToCreate) {
-            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users);
-            $entity->setId($linkToCreate['origin_id']);
+            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true);
             if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
                 $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
                 $entity->ExperimentsLinks->postAction(Action::Create, array());
@@ -285,7 +284,7 @@ class Eln extends AbstractZip
 
                     // METADATA
                 case 'variableMeasured':
-                    foreach ($value as $propval) {
+                    foreach ($value ?? array() as $propval) {
                         // we look for the special elabftw_metadata property and that's what we import
                         if ($propval['propertyID'] === 'elabftw_metadata') {
                             $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));

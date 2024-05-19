@@ -18,14 +18,13 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Import\Csv;
 use Elabftw\Import\Eln;
-use Elabftw\Import\Zip;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AuditLogs;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Import csv, zip or eln
+ * Import csv or eln
  */
 class ImportController extends AbstractController
 {
@@ -50,7 +49,7 @@ class ImportController extends AbstractController
     private function getImporter(): ImportInterface
     {
         $uploadedFile = $this->Request->files->get('file');
-        $allowedExtensions = array('.eln', '.zip', '.csv');
+        $allowedExtensions = array('.eln', '.csv');
 
         // the import menu only allows basic permission to be set, so translate this in proper json
         $canread = BasePermissions::tryFrom($this->Request->request->getInt('canread')) ?? BasePermissions::Team;
@@ -60,15 +59,6 @@ class ImportController extends AbstractController
         switch ($uploadedFile->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
-                    $this->requester,
-                    $this->Request->request->getString('target'),
-                    $canread->toJson(),
-                    $canwrite->toJson(),
-                    $uploadedFile,
-                    Storage::CACHE->getStorage()->getFs(),
-                );
-            case 'zip':
-                return new Zip(
                     $this->requester,
                     $this->Request->request->getString('target'),
                     $canread->toJson(),

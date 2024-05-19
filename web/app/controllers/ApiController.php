@@ -30,7 +30,8 @@ use function dirname;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$canWrite = false;
+// use true by default so no key (php session) = we can write
+$canWrite = true;
 // switch between a web request and an api request for auth
 try {
     if ($App->Request->getMethod() === Request::METHOD_OPTIONS) {

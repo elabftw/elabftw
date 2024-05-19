@@ -171,7 +171,10 @@ class Eln extends AbstractZip
                 $Author->team = $this->Users->team;
             } catch (ResourceNotFoundException) {
                 $Users = new Users();
-                $Author = $Users->createFromPerson($author, $this->Users->team ?? 0);
+                try {
+                    $Author = $Users->createFromPerson($author, $this->Users->team ?? 0);
+                } catch (ImproperActionException) {
+                }
             }
         }
 

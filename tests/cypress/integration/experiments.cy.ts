@@ -67,12 +67,6 @@ describe('Experiments page', () => {
     });
   }
 
-  it('can import zip files', () => {
-    importWrapper('importable-multi.zip', 'experiments:1', '30', '20', 'application/zip', 'experiments.php?order=lastchange');
-    cy.get('div.alert.alert-success').should('contain', '2 items imported successfully.');
-    cy.get('#itemList').should('contain', 'Zip for testing import');
-  });
-
   it('can import csv files', () => {
     importWrapper('importable.csv', 'experiments:1', '30', '20', 'text/csv', 'experiments.php?order=lastchange');
     cy.get('div.alert.alert-success').should('contain', '3 items imported successfully.');

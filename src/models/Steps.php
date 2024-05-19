@@ -61,10 +61,33 @@ class Steps implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
-        $req->bindParam(':ordering', $step['ordering']);
-        $req->bindParam(':finished', $step['finished']);
+        $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
+        $req->bindParam(':finished', $step['finished'], PDO::PARAM_INT);
         $req->bindParam(':finished_time', $step['finished_time']);
         $this->Db->execute($req);
+    }
+
+    /**
+     * Create a step from https://schema.org/HowToStep
+     * Example:
+     *   "@type": "HowToStep",
+     *   "position": 4,
+     *   "creativeWorkStatus": "finished",
+     *   "expires": "2024-05-19T04:24:54+02:00",
+     *   "temporal": "2024-05-19T03:24:54+02:00",
+     *   "itemListElement": {
+     *     "@type":"HowToDirection",
+     *     "text": "finished with deadline"
+     *   }
+     */
+    public function importFromHowToStep(array $step): void
+    {
+        $stepArr = array();
+        $stepArr['body'] = $step['itemListElement'][0]['text'];
+        $stepArr['finished'] = $step['creativeWorkStatus'] === 'finished' ? 1 : 0;
+        $stepArr['finished_time'] = $step['temporal'];
+        $stepArr['ordering'] = $step['position'];
+        $this->import($stepArr);
     }
 
     public function readAll(): array

@@ -189,9 +189,40 @@ class MakeEln extends AbstractMakeEln
         if ($e['metadata']) {
             $datasetNode['variableMeasured'] = $this->metadataToJsonLd($e['metadata']);
         }
+        // RATING
+        if ($e['rating']) {
+            $datasetNode['aggregateRating'] = array(
+                '@type' => 'AggregateRating',
+                'ratingValue' => $e['rating'],
+                'reviewCount' => 1,
+            );
+        }
+        if (!empty($e['steps'])) {
+            $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
+        }
 
         $this->dataEntities[] = $datasetNode;
         return true;
+    }
+
+    private function stepsToJsonLd(array $steps): array
+    {
+        $res = array();
+        foreach ($steps as $step) {
+            $howToStep = array();
+            $howToStep['@type'] = 'HowToStep';
+            $howToStep['position'] = $step['ordering'];
+            $howToStep['creativeWorkStatus'] = $step['finished'] === 1 ? 'finished' : 'unfinished';
+            if ($step['deadline']) {
+                $howToStep['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
+            }
+            if ($step['finished_time']) {
+                $howToStep['temporal'] = (new DateTimeImmutable($step['finished_time']))->format(DateTimeImmutable::ATOM);
+            }
+            $howToStep['itemListElement'] = array(array('@type' => 'HowToDirection', 'text' => $step['body']));
+            $res[] = $howToStep;
+        }
+        return $res;
     }
 
     private function metadataToJsonLd(string $strMetadata): ?array

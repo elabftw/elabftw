@@ -14,7 +14,6 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -274,6 +273,11 @@ class Eln extends AbstractZip
             }
         }
 
+        // RATING
+        if (isset($dataset['aggregateRating'])) {
+            $this->Entity->patch(Action::Update, array('rating' => $dataset['aggregateRating']['ratingValue'] ?? '0'));
+        }
+
         // STATUS
         if (isset($dataset['status'])) {
             if ($this->Entity instanceof Experiments) {
@@ -283,6 +287,13 @@ class Eln extends AbstractZip
             }
             $statusId = $Status->getIdempotentIdFromTitle($dataset['status']);
             $this->Entity->patch(Action::Update, array('status' => (string) $statusId));
+        }
+
+        // STEPS
+        if (!empty($dataset['step'])) {
+            foreach ($dataset['step'] as $step) {
+                $this->Entity->Steps->importFromHowToStep($step);
+            }
         }
 
         // COMMENTS
@@ -377,7 +388,6 @@ class Eln extends AbstractZip
         switch ($part['@type']) {
             case 'Dataset':
                 $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
-                // TODO here handle sub datasets as linked entries
                 foreach ($part['hasPart'] as $subpart) {
                     if ($subpart['@type'] === 'File') {
                         $this->importFile($subpart);
@@ -416,36 +426,6 @@ class Eln extends AbstractZip
             $currentBody = $this->Entity->readOne()['body'];
             $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
             $this->Entity->patch(Action::Update, array('body' => $newBody));
-        }
-        // special case for export-elabftw.json
-        if (basename($filepath) === 'export-elabftw.json') {
-            $fs = FsTools::getFs(dirname($filepath));
-            $json = json_decode($fs->read(basename($filepath)), true, 512, JSON_THROW_ON_ERROR)[0];
-            if ($this->Entity instanceof AbstractConcreteEntity) {
-                // RATING
-                $this->Entity->patch(Action::Update, array('rating' => $json['rating'] ?? ''));
-                // ADJUST THE DATE - TEMPLATES WON'T HAVE A DATE
-                if ($json['date']) {
-                    $this->Entity->patch(Action::Update, array('date' => $json['date']));
-                }
-            }
-            if (!empty($json['metadata_decoded'])) {
-                $metadataStr = json_encode($json['metadata_decoded'], JSON_THROW_ON_ERROR, 512);
-                $cleanMetadata = $this->transformIfNecessary($metadataStr, isMetadata: true);
-                $this->Entity->patch(
-                    Action::Update,
-                    array('metadata' => $cleanMetadata),
-                );
-            }
-            // add steps
-            if (!empty($json['steps'])) {
-                foreach ($json['steps'] as $step) {
-                    if (!empty($step['body'])) {
-                        $step['body'] = $this->transformIfNecessary($step['body']);
-                    }
-                    $this->Entity->Steps->import($step);
-                }
-            }
         }
     }
 

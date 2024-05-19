@@ -65,7 +65,6 @@ abstract class AbstractZip extends AbstractImport
     protected function transformIfNecessary(
         string $subject,
         bool $isComment = false,
-        bool $isMetadata = false,
     ): string {
         // skip transformation
         if (!$this->switchToEscapeOutput || $subject === '') {
@@ -75,9 +74,7 @@ abstract class AbstractZip extends AbstractImport
         $search = array('&#34;', '&#39;');
         $replace = array('"', '\'');
 
-        if ($isMetadata) {
-            $replace = array('\\"', '\'');
-        } elseif ($isComment) {
+        if ($isComment) {
             $search[] = '<br />';
             $replace[] = '';
         }

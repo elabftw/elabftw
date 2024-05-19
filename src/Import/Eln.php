@@ -230,112 +230,110 @@ class Eln extends AbstractZip
         // here we use "text" or "description" attribute as main text
         $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
 
-        // TAGS: should normally be a comma separated string, but we allow array for BC
-        if (!empty($dataset['keywords'])) {
-            $tags = $dataset['keywords'];
-            if (is_string($tags)) {
-                $tags = explode(',', $tags);
-            }
-            foreach ($tags as $tag) {
-                if (!empty($tag)) {
-                    $this->Entity->Tags->postAction(
-                        Action::Create,
-                        array('tag' => $this->transformIfNecessary($tag)),
-                    );
-                }
-            }
-        }
-
-        // LINKS
-        if (!empty($dataset['mentions'])) {
-            foreach($dataset['mentions'] as $mention) {
-                // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
-                // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
-                // after 5.1 the "mention" will point to a Dataset contained in the .eln
-                if (count($mention) === 1) {
-                    // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
-                    $this->linksToCreate[] = array('origin_entity_type' => $this->Entity->entityType, 'origin_id' => $this->Entity->id, 'link_@id' => $mention['@id']);
-                }
-            }
-        }
-
-        // CATEGORY
-        if (isset($dataset['category'])) {
-            $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
-        }
-        // METADATA
-        if (!empty($dataset['variableMeasured'])) {
-            foreach ($dataset['variableMeasured'] as $propval) {
-                if ($propval['propertyID'] === 'elabftw_metadata') {
-                    $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));
-                }
-                break;
-            }
-        }
-
-        // RATING
-        if (isset($dataset['aggregateRating'])) {
-            $this->Entity->patch(Action::Update, array('rating' => $dataset['aggregateRating']['ratingValue'] ?? '0'));
-        }
-
-        // STATUS
-        if (isset($dataset['status'])) {
-            if ($this->Entity instanceof Experiments) {
-                $Status = new ExperimentsStatus($Teams);
-            } else { // items
-                $Status = new ItemsStatus($Teams);
-            }
-            $statusId = $Status->getIdempotentIdFromTitle($dataset['status']);
-            $this->Entity->patch(Action::Update, array('status' => (string) $statusId));
-        }
-
-        // STEPS
-        if (!empty($dataset['step'])) {
-            foreach ($dataset['step'] as $step) {
-                $this->Entity->Steps->importFromHowToStep($step);
-            }
-        }
-
-        // COMMENTS
-        if (!empty($dataset['comment'])) {
-            foreach ($dataset['comment'] as $comment) {
-                // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
-                // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
-                if (count($comment) === 1) {
-                    // resolve the id to get the full node content
-                    $comment = $this->getNodeFromId($comment['@id']);
-                }
-                $author = $this->getNodeFromId($comment['author']['@id']);
-                $content = sprintf(
-                    "Imported comment from %s %s (%s)\n\n%s",
-                    $this->transformIfNecessary($author['givenName'] ?? ''),
-                    $this->transformIfNecessary($author['familyName'] ?? '') ?: $author['name'] ?? 'Unknown',
-                    $comment['dateCreated'],
-                    $this->transformIfNecessary($comment['text'] ?? '', true),
-                );
-                $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
-            }
-        }
-
         // now we import all the remaining attributes as text/links in the main text
         // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected
-        $html = '';
+        $bodyAppend = '';
         foreach ($dataset as $attributeName => $value) {
             switch($attributeName) {
                 case 'author':
-                    $html .= $this->authorToHtml($value);
+                    $bodyAppend .= $this->authorToHtml($value);
                     break;
-                case 'funder':
-                    $html .= $this->attrToHtml($value, _(ucfirst($attributeName)));
+                    // CATEGORY
+                case 'category':
+                    $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
                     break;
+                    // COMMENTS
+                case 'comment':
+                    foreach ($value as $comment) {
+                        // for backward compatibility with elabftw's .eln from before 4.9, the "comment" attribute MAY contain all, instead of just being a link with an @id
+                        // after 4.9 the "comment" attribute contains only a link to an @type: Comment node
+                        if (count($comment) === 1) {
+                            // resolve the id to get the full node content
+                            $comment = $this->getNodeFromId($comment['@id']);
+                        }
+                        $author = $this->getNodeFromId($comment['author']['@id']);
+                        $content = sprintf(
+                            "Imported comment from %s %s (%s)\n\n%s",
+                            $this->transformIfNecessary($author['givenName'] ?? ''),
+                            $this->transformIfNecessary($author['familyName'] ?? '') ?: $author['name'] ?? 'Unknown',
+                            $comment['dateCreated'],
+                            $this->transformIfNecessary($comment['text'] ?? '', true),
+                        );
+                        $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
+                    }
+                    break;
+
                 case 'citation':
                 case 'license':
-                    $html .= sprintf('<h1>%s</h1><ul><li><a href="%s">%s</a></li></ul>', _(ucfirst($attributeName)), $value['@id'], $value['@id']);
+                    $bodyAppend .= sprintf('<h1>%s</h1><ul><li><a href="%s">%s</a></li></ul>', _(ucfirst($attributeName)), $value['@id'], $value['@id']);
                     break;
+                case 'funder':
+                    $bodyAppend .= $this->attrToHtml($value, _(ucfirst($attributeName)));
+                    break;
+                    // LINKS
+                case 'mentions':
+                    foreach($value as $mention) {
+                        // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
+                        // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
+                        // after 5.1 the "mention" will point to a Dataset contained in the .eln
+                        if (count($mention) === 1) {
+                            // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
+                            $this->linksToCreate[] = array('origin_entity_type' => $this->Entity->entityType, 'origin_id' => $this->Entity->id, 'link_@id' => $mention['@id']);
+                        }
+                    }
+                    break;
+
+                    // METADATA
+                case 'variableMeasured':
+                    foreach ($value as $propval) {
+                        // we look for the special elabftw_metadata property and that's what we import
+                        if ($propval['propertyID'] === 'elabftw_metadata') {
+                            $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));
+                        }
+                        break;
+                    }
+                    break;
+
+                    // RATING
+                case 'aggregateRating':
+                    $this->Entity->patch(Action::Update, array('rating' => $value['ratingValue'] ?? '0'));
+                    break;
+                    // STATUS
+                case 'status':
+                    if ($this->Entity instanceof Experiments) {
+                        $Status = new ExperimentsStatus($Teams);
+                    } else { // items
+                        $Status = new ItemsStatus($Teams);
+                    }
+                    $statusId = $Status->getIdempotentIdFromTitle($value);
+                    $this->Entity->patch(Action::Update, array('status' => (string) $statusId));
+                    break;
+                    // STEPS
+                case 'step':
+                    foreach ($value as $step) {
+                        $this->Entity->Steps->importFromHowToStep($step);
+                    }
+                    break;
+                    // TAGS: should normally be a comma separated string, but we allow array for BC
+                case 'keywords':
+                    $tags = $value;
+                    if (is_string($tags)) {
+                        $tags = explode(',', $tags);
+                    }
+                    foreach ($tags as $tag) {
+                        if (!empty($tag)) {
+                            $this->Entity->Tags->postAction(
+                                Action::Create,
+                                array('tag' => $this->transformIfNecessary($tag)),
+                            );
+                        }
+                    }
+                    break;
+
                 default:
             }
         }
-        $this->Entity->patch(Action::Update, array('bodyappend' => $html));
+        $this->Entity->patch(Action::Update, array('bodyappend' => $bodyAppend));
 
         // also save the Dataset node as a .json file so we don't lose information with things not imported
         $this->Entity->Uploads->postAction(Action::CreateFromString, array(

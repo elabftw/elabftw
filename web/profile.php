@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Storage;
+use Elabftw\Make\Exports;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Services\UsersHelper;
 use Exception;
@@ -42,9 +44,13 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
 
+    // get the exported files
+    $Export = new Exports($App->Users, Storage::CACHE->getStorage());
+
     $template = 'profile.html';
     $renderArr = array(
         'count' => $count,
+        'exportedFiles' => $Export->readAll(),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,

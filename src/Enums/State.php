@@ -18,4 +18,5 @@ enum State: int
     case Archived = 2;
     case Deleted = 3;
     case Pending = 4;
+    case Processing = 5;
 }

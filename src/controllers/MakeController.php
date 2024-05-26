@@ -201,6 +201,7 @@ class MakeController extends AbstractController
             $this->entitySlugs,
             $this->pdfa,
             $this->shouldIncludeChangelog(),
+            $this->Request->query->getBoolean('json'),
         ));
     }
 

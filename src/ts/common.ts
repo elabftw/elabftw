@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
       }
       const iconEl = el.querySelector('i');
-      if (iconEl) {
+      if (iconEl && !el.dataset.keepIcon) {
         if (el.dataset.togglePlusIcon) {
           togglePlusIcon(iconEl);
         } else {

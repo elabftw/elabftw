@@ -1,100 +1,152 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<hr>
-{# PROFILE PAGE #}
-<h4>{{ App.Users.userData.fullname }}</h4>
-<p class='smallgray'>{{ App.Users.userData.email }}</p>
+{% include 'export-modal.html' %}
+<ul class='tabbed-menu'>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Import'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Export'|trans }}</button></li>
+</ul>
 
-<div class='d-flex mb-4'>
-
-  {# TEAMS #}
-  <div class='col-md-6 mr-2 box bg-white'>
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
-    </div>
-    {% for team in teamsArr %}
-      <span class=''>{{ team.name }}</span>
-      <hr>
-    {% endfor %}
-  </div>
-
-  {# GROUPS #}
-  <div class='col-md-6 box bg-white'>
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
-    </div>
-    {% for teamGroup in teamGroupsArr %}
-      <details>
-        <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team }}</span> {{ teamGroup.name }}</summary>
-        <ul>
-      {% for user in teamGroup.users %}
-        <li class='list-unstyled text-muted'>{{ user.fullname }}</li>
-      {% endfor %}
-        </ul>
-      </details>
-      <hr>
-    {% endfor %}
-  </div>
+{# loading spinner #}
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
 </div>
 
-{# STATUS STAT #}
-<div class='mb-4 box'>
-  {% if count == 0 %}
-    {{ 'No statistics available yet.'|trans }}
-  {% else %}
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{% trans %}
-          Experiment
-          {% plural 2 %}
-          Experiments
-          {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
-    </div>
 
-    {# TODO show register date back #}
-    <div class='d-flex'>
-      <div class='col-md-6 mr-2'>
-        <div class='pie-chart-container'>
-          <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+{# TAB 1 INFORMATION #}
+<div data-tabcontent='1' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Profile'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <h4>{{ App.Users.userData.fullname }}</h4>
+    <p class='smallgray'>{{ App.Users.userData.email }}</p>
+
+    <div class='d-flex mb-4'>
+
+      {# TEAMS #}
+      <div class='col-md-6 mr-2 box bg-white'>
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
         </div>
+        {% for team in teamsArr %}
+          <span class=''>{{ team.name }}</span>
+          <hr>
+        {% endfor %}
       </div>
-      <div class='col-md-6 flex-column'>
-        {% for status in pieData %}
-          <div class='d-flex font-weight-bold'>
-            <span class='pie-percent mr-3' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>
-            <span class='align-self-center'>{{ status.name }}</span>
-            <span class='align-self-center ml-auto'>{{ status.count }}</span>
-          </div>
-          {% if not loop.last %}
-            <hr>
-          {% endif %}
+
+      {# GROUPS #}
+      <div class='col-md-6 box bg-white'>
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
+        </div>
+        {% for teamGroup in teamGroupsArr %}
+          <details>
+            <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team }}</span> {{ teamGroup.name }}</summary>
+            <ul>
+          {% for user in teamGroup.users %}
+            <li class='list-unstyled text-muted'>{{ user.fullname }}</li>
+          {% endfor %}
+            </ul>
+          </details>
+          <hr>
         {% endfor %}
       </div>
     </div>
-  {% endif %}
 
-  <hr class='mt-5'>
+    {# STATUS STAT #}
+    <div class='mb-4 box'>
+      {% if count == 0 %}
+        {{ 'No statistics available yet.'|trans }}
+      {% else %}
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{% trans %}
+              Experiment
+              {% plural 2 %}
+              Experiments
+              {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
+        </div>
 
-  {# EXPORT EXPERIMENTS #}
-  <h4>{{ 'Export all your experiments'|trans }}</h4>
-  <label for='userExportFormat' class='smallgray mb-4'>{{ 'Select an export format'|trans }}</label>
-
-  <div class='input-group mb-4'>
-    <select class='form-control' id='userExportFormat' autocomplete='off'>
-      <option value='eln'>{{ 'Make an ELN'|trans }}</option>
-      <option value='zip'>{{ 'Make Zip'|trans }}</option>
-      <option value='csv'>{{ 'Make Csv'|trans }}</option>
-      <option value='pdf'>{{ 'Make PDF'|trans }}</option>
-      <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
-      <option value='json'>{{ 'Make JSON'|trans }}</option>
-    </select>
-    <div class='input-group-append'>
-      <button type='button' class='btn btn-light input-border' data-action='export-user' data-userid='{{ App.Users.userData.userid }}' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
-        <i class='fas fa-download'></i>
-      </button>
+        {# TODO show register date back #}
+        <div class='d-flex'>
+          <div class='col-md-6 mr-2'>
+            <div class='pie-chart-container'>
+              <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+            </div>
+          </div>
+          <div class='col-md-6 flex-column'>
+            {% for status in pieData %}
+              <div class='d-flex font-weight-bold'>
+                <span class='pie-percent mr-3' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>
+                <span class='align-self-center'>{{ status.name }}</span>
+                <span class='align-self-center ml-auto'>{{ status.count }}</span>
+              </div>
+              {% if not loop.last %}
+                <hr>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
-<div id='info' data-page='profile'></div>
+{# TAB 2 IMPORT #}
+<div data-tabcontent='2' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
+</div>
+
+{# TAB 3 EXPORT #}
+<div data-tabcontent='3' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Export'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>{{ 'This page allows you to export your data in different formats.'|trans }}</p>
+    <div class='mb-4 d-flex flex-row'>
+      <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='exportModal'>{{ 'Create new export'|trans }}</button>
+    </div>
+
+    <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
+    <table class='table' aria-describedby='exportedFiles' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'File'|trans }}</th>
+          <th scope='col'>{{ 'Creation date'|trans }}</th>
+          <th scope='col'>{{ 'Actions'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody id='exportedFilesTable'>
+        {% for file in exportedFiles %}
+          <tr>
+            <td data-label='{{ 'File'|trans }}'>
+              <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
+              {% if file.real_name %}
+                <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' href='/api/v2/exports/{{ file.id }}?format=binary'>
+                  {{ file.real_name }} <span class='smallgray'>{{ file.filesize|default(0)|formatBytes }}</span>
+                </a>
+              {% else %}
+                {{ 'File is not ready'|trans }}
+              {% endif %}
+              <span class='ml-2'>
+              {% if file.changelog %}<span class='p-1 rounded smallgray border'>{{ 'Changelog'|trans|upper }}</span>{% endif %}
+              {% if file.pdfa %}<span class='p-1 rounded smallgray border'>{{ 'PDF/A'|trans }}</span>{% endif %}
+              {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
+              </span>
+            </td>
+            <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
+            <td data-label='{{ 'Actions'|trans }}'>
+                <button type='button' data-action='toggle-next' data-keep-icon='1' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'View fingerprint'|trans }}' aria-label='{{ 'View fingerprint'|trans }}'><i class='fas fa-fingerprint fa-fw'></i></button>
+                <span hidden>{{ file.hash_algo }}:{{ file.hash }}</span>
+              {% if file.filepath %}
+                <a href='/api/v2/export/{{ file.id }}?format=binary'>
+                <button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'><i class='fas fa-download fa-fw'></i></button>
+                </a>
+              {% endif %}
+              <button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock body %}

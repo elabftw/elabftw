@@ -16,10 +16,12 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -202,7 +204,7 @@ class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads) {
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports) {
                         return $this->Model->readBinary();
                     }
                     throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
@@ -237,6 +239,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->id),
             ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,

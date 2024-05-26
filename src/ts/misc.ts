@@ -128,8 +128,12 @@ export function collectForm(form: HTMLElement): object {
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
       }
+      let value = el.value;
+      if (el.type === 'checkbox') {
+        value = el.checked ? 'on' : 'off';
+      }
       if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: input.value});
+        params = Object.assign(params, {[input.name]: value});
       }
       if (el.name === 'password') {
         // clear a password field once collected

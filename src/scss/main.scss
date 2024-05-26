@@ -1483,3 +1483,19 @@ input:checked + .slider::before {
 .counter {
     color: $secondlevel;
 }
+
+/* see Enums/State */
+.state-indicator {
+  /* processing */
+  &[data-state="5"] {
+    color: orange;
+  }
+  /* pending */
+  &[data-state="4"] {
+    color: gray;
+  }
+  /* normal */
+  &[data-state="1"] {
+    color: green;
+  }
+}

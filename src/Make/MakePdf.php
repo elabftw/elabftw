@@ -15,7 +15,6 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -65,8 +64,6 @@ class MakePdf extends AbstractMakePdf
         MpdfProviderInterface $mpdfProvider,
         protected Users $requester,
         protected array $entitySlugs,
-        //EntityType $entityType,
-        //protected array $entityIdArr,
         bool $includeChangelog = false,
     ) {
         parent::__construct(
@@ -77,8 +74,6 @@ class MakePdf extends AbstractMakePdf
         $this->pdfa = $mpdfProvider->isPdfa();
         $this->mpdf->SetTitle($this->getTitle());
         $this->mpdf->SetKeywords($this->getKeywords());
-        //$this->Entity = $entityType->toInstance($this->requester);
-        //$this->Entity->setId($this->entityIdArr[0]);
 
         // suppress the "A non-numeric value encountered" error from mpdf
         // see https://github.com/baselbers/mpdf/commit

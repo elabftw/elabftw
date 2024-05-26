@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -38,6 +39,7 @@ class MakeStreamZip extends AbstractMakeZip
         protected array $entitySlugs,
         protected bool $usePdfa = false,
         protected bool $includeChangelog = false,
+        protected bool $includeJson = false,
     ) {
         parent::__construct($Zip);
     }
@@ -104,6 +106,11 @@ class MakeStreamZip extends AbstractMakeZip
         );
     }
 
+    protected function getFolder(AbstractEntity $entity): string
+    {
+        return $entity->toFsTitle();
+    }
+
     private function addToZip(EntitySlug $slug): void
     {
         try {
@@ -113,7 +120,7 @@ class MakeStreamZip extends AbstractMakeZip
         }
         $entityArr = $entity->entityData;
         $uploadedFilesArr = $entityArr['uploads'];
-        $this->folder = $entity->toFsTitle();
+        $this->folder = $this->getFolder($entity);
 
         if (!empty($uploadedFilesArr)) {
             try {
@@ -124,11 +131,13 @@ class MakeStreamZip extends AbstractMakeZip
             }
         }
         $this->addPdf($slug);
-        // add a full json export too
-        $JsonMaker = new MakeFullJson($this->requester, array($slug));
-        $this->Zip->addFile(
-            $this->folder . '/' . $JsonMaker->getFileName(),
-            json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),
-        );
+        // add a full json export too, if requested
+        if ($this->includeJson) {
+            $JsonMaker = new MakeFullJson($this->requester, array($slug));
+            $this->Zip->addFile(
+                $this->folder . '/' . $JsonMaker->getFileName(),
+                json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),
+            );
+        }
     }
 }

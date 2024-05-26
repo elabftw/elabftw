@@ -42,7 +42,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_merge;
-use function explode;
 use function implode;
 use function is_bool;
 use function json_decode;
@@ -406,28 +405,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Get an array of id changed since the lastchange date supplied
-     *
-     * @param int $userid limit to this user
-     * @param string $period 20201206-20210101
-     */
-    public function getIdFromLastchange(int $userid, string $period): array
-    {
-        if ($period === '') {
-            $period = '15000101-30000101';
-        }
-        [$from, $to] = explode('-', $period);
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':from', $from);
-        $req->bindParam(':to', $to);
-        $this->Db->execute($req);
-
-        return array_column($req->fetchAll(), 'id');
-    }
-
-    /**
      * Get timestamper full name for display in view mode
      */
     public function getTimestamperFullname(): string
@@ -562,10 +539,13 @@ abstract class AbstractEntity implements RestInterface
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
-        $prefix = Filter::forFilesystem($this->entityData['category_title'] ?? '');
+        $prefix = '';
+        if ($this->entityData['category_title']) {
+            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
+        }
 
         return sprintf(
-            '%s - %s - %s',
+            '%s%s - %s',
             $prefix,
             // prevent a zip name with too much characters from the title, see #3966
             substr(Filter::forFilesystem($this->entityData['title']), 0, 100),

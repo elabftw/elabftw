@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateInterval;
+use DateTimeImmutable;
 use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
@@ -504,6 +506,28 @@ class Users implements RestInterface
             $person['familyName'] ?? 'Unknown',
         );
         return new self($userid, $team);
+    }
+
+    public function getAllEntitySlugs(?DateInterval $interval = null, bool $skipResources = false): array
+    {
+        $now = new DateTimeImmutable();
+        if ($interval === null) {
+            $interval = new DateInterval('P42Y');
+        }
+        $start = $now->sub($interval);
+
+        $sql = 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.userid = :id AND modified_at BETWEEN :start AND :end';
+        if ($skipResources === false) {
+            $sql .= ' UNION All
+            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.userid = :id AND modified_at BETWEEN :start AND :end';
+        }
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':start', $start->format('Y-m-d'));
+        $req->bindValue(':end', $now->format('Y-m-d'));
+        $this->Db->execute($req);
+        $slugs = array_column($req->fetchAll(), 'slug');
+        return array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
     }
 
     protected static function search(string $column, string $term, bool $validated = false): self

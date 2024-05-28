@@ -73,9 +73,10 @@ class Exports implements RestInterface
 
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM exports WHERE id = :id';
+        $sql = 'SELECT * FROM exports WHERE id = :id AND requester_userid = :requester_userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':requester_userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
@@ -165,9 +166,10 @@ class Exports implements RestInterface
             $this->fs->delete($request['long_name']);
         }
 
-        $sql = 'DELETE FROM exports WHERE id = :id';
+        $sql = 'DELETE FROM exports WHERE id = :id AND requester_userid = :requester_userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':requester_userid', $this->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -251,10 +253,11 @@ class Exports implements RestInterface
 
     private function update(string $column, string|int $value): bool
     {
-        $sql = 'UPDATE exports SET ' . $column . ' = :value WHERE id = :id';
+        $sql = 'UPDATE exports SET ' . $column . ' = :value WHERE id = :id AND requester_userid = :requester_userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':requester_userid', $this->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

@@ -17,7 +17,7 @@ use Elabftw\Enums\Orderby;
 /**
  * Default query params for UserUploads
  */
-class UserUploadsQueryParams extends BaseQueryParams
+final class UserUploadsQueryParams extends BaseQueryParams
 {
     public Orderby $orderby = Orderby::CreatedAt;
 }

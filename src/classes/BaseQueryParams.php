@@ -22,13 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BaseQueryParams
 {
-    public int $limit = 15;
-
-    public int $offset = 0;
-
     public Orderby $orderby = Orderby::Date;
 
     public Sort $sort = Sort::Desc;
+
+    public int $limit = 15;
+
+    public int $offset = 0;
 
     public bool $includeArchived = false;
 
@@ -36,7 +36,14 @@ class BaseQueryParams
     {
         // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
         $this->includeArchived = $this->Request->query->has('archived');
-        $this->adjust();
+        if ($this->Request->query->has('limit')) {
+            $this->limit = Check::limit($this->Request->query->getInt('limit'));
+        }
+        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
+            $this->offset = $this->Request->query->getInt('offset');
+        }
+        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
+        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
     }
 
     public function getSql(): string
@@ -48,20 +55,5 @@ class BaseQueryParams
             $this->limit,
             $this->offset,
         );
-    }
-
-    /**
-     * Adjust the settings based on the Request
-     */
-    private function adjust(): void
-    {
-        if ($this->Request->query->has('limit')) {
-            $this->limit = Check::limit($this->Request->query->getInt('limit'));
-        }
-        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
-            $this->offset = $this->Request->query->getInt('offset');
-        }
-        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
-        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
     }
 }

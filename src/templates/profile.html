@@ -111,7 +111,7 @@
       <tbody id='attachedFilesTable'>
         {% for file in attachedFiles %}
           <tr>
-            <td data-label='{{ 'File name'|trans }}'><a href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
+            <td data-label='{{ 'File name'|trans }}'><a target='_blank' href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
             <td data-label='{{ 'Created'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
             <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
             <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>

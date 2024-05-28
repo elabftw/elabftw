@@ -216,7 +216,7 @@ class Uploads implements RestInterface
             $storageFs,
             $this->uploadData['long_name'],
             $this->uploadData['real_name'],
-            true,
+            forceDownload: false,
         );
         return $DownloadController->getResponse();
     }

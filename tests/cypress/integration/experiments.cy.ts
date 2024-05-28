@@ -19,7 +19,7 @@ describe('Experiments page', () => {
     cy.get('#import_modal_canread').should('exist');
     cy.get('#import_modal_canwrite').should('exist');
     cy.get('#import_modal_file_input').should('exist').selectFile('tests/_data/multiple-experiments.eln');
-    cy.intercept('app/controllers/ImportController.php', req => {
+    cy.intercept('api/v2/import', req => {
       req.on('response', resp => {
         expect(resp.statusCode).to.equal(302);
         expect(resp.headers.location).to.include('experiments.php?order=lastchange');
@@ -53,7 +53,7 @@ describe('Experiments page', () => {
 
       cy.request({
         method: 'POST',
-        url: 'app/controllers/ImportController.php',
+        url: 'api/v2/import',
         body: formData,
         headers: {
           'content-type': 'multipart/form-data',

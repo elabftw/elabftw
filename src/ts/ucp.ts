@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'target': 'experiments_templates:0',
       };
       // TODO check for file size here too, like the other import modal
-      (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
+      (new Ajax()).postForm('api/v2/import', params).then(() => {
         window.location.reload();
       });
     });

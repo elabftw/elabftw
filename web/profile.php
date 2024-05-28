@@ -14,7 +14,10 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
 use Elabftw\Make\Exports;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,6 +46,8 @@ try {
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
+    $ItemsTypes = new ItemsTypes($App->Users);
+    $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
 
     // get the exported files
     $Export = new Exports($App->Users, Storage::CACHE->getStorage());
@@ -51,10 +56,13 @@ try {
     $renderArr = array(
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
+        'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
+        'itemsCategoryArr' => $ItemsTypes->readAll(),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 } catch (Exception $e) {
     $template = 'error.html';

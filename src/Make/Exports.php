@@ -35,6 +35,8 @@ use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 use ZipStream\ZipStream;
 
+use function hash_file;
+
 /**
  * Handle data exports
  */
@@ -102,11 +104,21 @@ class Exports implements RestInterface
                 )
             );
         }
-        $sql = 'INSERT INTO exports (requester_userid, source, changelog, json, pdfa, team)
-            VALUES (:requester_userid, :source, :changelog, :json, :pdfa, :team)';
+        try {
+            $format = ExportFormat::from($reqBody['format']);
+        } catch (ValueError $e) {
+            throw new ImproperActionException('Improper value for format: ' . $e->getMessage());
+        }
+        $sql = 'INSERT INTO exports (requester_userid, format, experiments, experiments_templates, items, items_types, changelog, json, pdfa, team)
+            VALUES (:requester_userid, :format, :experiments, :experiments_templates, :items, :items_types, :changelog, :json, :pdfa, :team)';
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester_userid', $this->requester->userid, PDO::PARAM_INT);
-        $req->bindParam(':source', $reqBody['source']);
+        $req->bindValue(':format', $format->value);
+        $req->bindValue(':experiments', Filter::onToBinary($reqBody['experiments']));
+        $req->bindValue(':experiments_templates', Filter::onToBinary($reqBody['experiments_templates']));
+        $req->bindValue(':items', Filter::onToBinary($reqBody['items']));
+        $req->bindValue(':items_types', Filter::onToBinary($reqBody['items_types']));
         $req->bindValue(':changelog', Filter::onToBinary($reqBody['changelog']));
         $req->bindValue(':json', Filter::onToBinary($reqBody['json']));
         $req->bindValue(':pdfa', Filter::onToBinary($reqBody['pdfa']));
@@ -173,12 +185,10 @@ class Exports implements RestInterface
         $this->setId($request['id']);
         $this->requester = new Users($request['requester_userid'], $request['team']);
         $this->update('state', State::Processing->value);
-        $source = array();
-        parse_str($request['source'], $source);
         $longName = FsTools::getUniqueString();
         $absolutePath = $this->storage->getPath($longName);
         try {
-            $format = ExportFormat::from((string) $source['format']);
+            $format = ExportFormat::from($request['format']);
         } catch (ValueError $e) {
             throw new ImproperActionException('Improper value for format: ' . $e->getMessage());
         }
@@ -231,6 +241,9 @@ class Exports implements RestInterface
         $this->update('real_name', $realName);
         $this->update('filesize', $this->fs->fileSize($longName));
         $hash = hash_file(self::HASH_ALGO, $absolutePath);
+        if ($hash === false) {
+            $hash = 'error computing hash';
+        }
         $this->update('hash', $hash);
         $this->update('hash_algo', self::HASH_ALGO);
         return $this->update('state', State::Normal->value);

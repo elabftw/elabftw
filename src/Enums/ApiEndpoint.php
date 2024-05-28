@@ -19,6 +19,7 @@ enum ApiEndpoint: string
     case ApiKeys = 'apikeys';
     case Config = 'config';
     case Idps = 'idps';
+    case Import = 'import';
     case Info = 'info';
     case Experiments = 'experiments';
     case Export = 'exports';

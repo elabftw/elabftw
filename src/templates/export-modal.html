@@ -9,19 +9,29 @@
         </button>
       </div>
       <div class='modal-body' id='exportForm'>
+        <h6 class='p-2 pl-3 section-title'>{{ 'Export source'|trans }}</h6>
+        <div class='pl-3 d-flex flex-row justify-content-between mb-2'>
+          {# SOURCE #}
+          <label class='pl-3'>
+          <input class='form-check-input me-1' type='checkbox' checked name='experiments'>
+          {{ 'Experiments'|trans }}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='experiments_templates'>
+          {{ 'Templates'|trans }}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='items'>
+          {{ 'Resources'|trans }}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='items_types'>
+          {{ 'Resources categories'|trans }}
+          </label>
+        </div>
+
         <h6 class='p-2 pl-3 section-title'>{{ 'Export format'|trans }}</h6>
         <div class='pl-3'>
-          {# SOURCE #
-          <div class='d-flex justify-content-between mb-2'>
-              <label for='exportSource' class='col-form-label'>{{ 'Select a source'|trans }}</label>
-              <select class='form-control col-md-3' name='source' id='exportSource'>
-                <option value='all'>{{ 'Everything'|trans }}</option>
-                <option value='experiments'>{{ 'Experiments'|trans }}</option>
-                <option value='items'>{{ 'Resources'|trans }}</option>
-                <option value='templates'>{{ 'Templates'|trans }}</option>
-              </select>
-          </div>
-          #}
           {# FORMAT #}
           <div class='d-flex justify-content-between mb-2'>
               <label for='exportFormat' class='col-form-label'>{{ 'Select a format'|trans }}</label>

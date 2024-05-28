@@ -1488,14 +1488,25 @@ input:checked + .slider::before {
 .state-indicator {
   /* processing */
   &[data-state="5"] {
-    color: orange;
+    animation: pulse 2s infinite;
+    color: $orange;
   }
   /* pending */
   &[data-state="4"] {
-    color: gray;
+    color: $mediumstrong;
   }
   /* normal */
   &[data-state="1"] {
-    color: green;
+    color: $green;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    color: #ffa500; /* Bright orange */
+  }
+
+  50% {
+    color: #ffe6b8; /* Less bright orange */
   }
 }

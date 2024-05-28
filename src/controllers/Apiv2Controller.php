@@ -20,6 +20,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
@@ -54,6 +55,7 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
+use Elabftw\Services\Import;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -182,8 +184,10 @@ class Apiv2Controller extends AbstractApiController
     private function handlePost(): Response
     {
         // special case for POST/uploads where we get the information from the "files" attribute
-        if ($this->Model instanceof Uploads && $this->action === Action::Create) {
+        if (($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) && $this->action === Action::Create) {
             $this->reqBody['real_name'] = $this->Request->files->get('file')->getClientOriginalName();
+            $this->reqBody['file'] = $this->Request->files->get('file');
+            $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
         }
@@ -238,6 +242,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->id),
+            ApiEndpoint::Import => new ImportHandler($this->requester),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
             ApiEndpoint::Experiments,
@@ -329,9 +334,10 @@ class Apiv2Controller extends AbstractApiController
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
-        // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
+        // allow multipart/form-data for the POST/uploads and POST/import endpoints only,
+        // use str_starts_with because the actual header will also contain the boundary
         if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
-            $this->Model instanceof Uploads &&
+            ($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) &&
             $this->Request->getMethod() === Request::METHOD_POST) {
             return;
         }

@@ -94,6 +94,68 @@
 {# TAB 2 IMPORT #}
 <div data-tabcontent='2' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>
+      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
+    </p>
+    <h4>{{ 'Import a CSV file'|trans }}</h4>
+    <form class='form-group' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import file'|trans }}'>
+      {{ App.Session.get('csrf')|csrf }}
+      <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
+      <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
+        <option disabled>{{ 'Resources categories'|trans }}</option>
+        {% for cat in itemsCategoryArr %}
+          <option value='{{ cat.id }}'>{{ cat.title }}</option>
+        {% endfor %}
+        <option disabled>{{ 'Experiments categories'|trans }}</option>
+        {% for cat in experimentsCategoryArr %}
+          <option value='{{ cat.id }}'>{{ cat.title }}</option>
+        {% endfor %}
+      </select>
+
+      {# if we are admin we can select the owner #}
+      {% if App.Users.isAdmin %}
+        <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
+        <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
+          {% for user in usersArr %}
+            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      <label for='import_modal_canread'>{{ '2. Select a visibility:'|trans }}</label>
+      <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ 30 == key ? ' selected' }}
+          >{{ value|trans }}</option>
+          {% endfor %}
+      </select>
+
+      <label for='import_modal_canwrite'>{{ '2b. Select write access:'|trans }}</label>
+      <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'
+          {{ 20 == key ? ' selected' }}
+          >{{ value|trans }}</option>
+        {% endfor %}
+      </select>
+
+      <label class='d-block' for='import_modal_file_input'>{{ '3. Select a file to import:'|trans }}</label>
+      <input id='import_modal_file_input' required name='file' type='file' accept='.eln,.csv' />
+      <input name='type' type='hidden' value='archive' />
+      <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
+      {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
+
+      <div class='mt-4 text-center'>
+        <div id='errorHolder' class='alert-danger m-2'></div>
+        <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+      </div>
+
+    </form>
+
+    <h4>{{ 'Import an ELN archive'|trans }}</h4>
+  </div>
 </div>
 
 {# TAB 3 EXPORT #}
@@ -106,47 +168,54 @@
     </div>
 
     <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
-    <table class='table' aria-describedby='exportedFiles' data-table-sort='true'>
-      <thead>
-        <tr>
-          <th scope='col'>{{ 'File'|trans }}</th>
-          <th scope='col'>{{ 'Creation date'|trans }}</th>
-          <th scope='col'>{{ 'Actions'|trans }}</th>
-        </tr>
-      </thead>
-      <tbody id='exportedFilesTable'>
-        {% for file in exportedFiles %}
-          <tr>
-            <td data-label='{{ 'File'|trans }}'>
+    {% if not exportedFiles %}
+      {{ 'Use the button above to create an export.'|trans }}
+    {% endif %}
+    {# Refresh button #}
+    <div class='text-center'>
+      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
+    </div>
+    <ul class='list-group' id='exportedFilesTable'>
+      {% for file in exportedFiles %}
+        <li class='list-group-item py-3 px-2 m-1'>
+          <span class='d-flex flew-wrap'>
+            <span>
+              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-plus-icon='1' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-keep-icon='1' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
                 <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' href='/api/v2/exports/{{ file.id }}?format=binary'>
                   {{ file.real_name }} <span class='smallgray'>{{ file.filesize|default(0)|formatBytes }}</span>
                 </a>
+                <span class='smallgray relative-moment ml-1' title='{{ file.created_at }}'></span>
               {% else %}
                 {{ 'File is not ready'|trans }}
               {% endif %}
               <span class='ml-2'>
+              <span class='p-1 rounded smallgray border'>{{ file.format|upper }}</span>
               {% if file.changelog %}<span class='p-1 rounded smallgray border'>{{ 'Changelog'|trans|upper }}</span>{% endif %}
               {% if file.pdfa %}<span class='p-1 rounded smallgray border'>{{ 'PDF/A'|trans }}</span>{% endif %}
               {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
               </span>
-            </td>
-            <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
-            <td data-label='{{ 'Actions'|trans }}'>
-                <button type='button' data-action='toggle-next' data-keep-icon='1' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'View fingerprint'|trans }}' aria-label='{{ 'View fingerprint'|trans }}'><i class='fas fa-fingerprint fa-fw'></i></button>
-                <span hidden>{{ file.hash_algo }}:{{ file.hash }}</span>
               {% if file.filepath %}
                 <a href='/api/v2/export/{{ file.id }}?format=binary'>
                 <button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'><i class='fas fa-download fa-fw'></i></button>
                 </a>
               {% endif %}
-              <button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+            </span>
+          <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 ml-auto' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
+          </span>
+          {# SHOW MORE #}
+          <div id='showMoreDiv_{{ file.id }}' class='mt-2' hidden>
+            <hr>
+            <span class='p-2 my-n2 mr-2'><i class='fas fa-fingerprint fa-fw'></i></span>
+            {%- if file.hash -%}
+              <span class='p-1 rounded smallgray border m-1'>{{ file.hash_algo|upper }}</span>{{- file.hash -}}
+            {%- else -%}
+              {{- 'File is not ready'|trans -}}
+            {%- endif -%}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
 </div>
 {% endblock body %}

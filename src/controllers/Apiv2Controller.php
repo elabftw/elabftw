@@ -190,6 +190,8 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
+            $this->reqBody['entity_type'] = $this->Request->request->getString('entity_type');
+            $this->reqBody['category'] = $this->Request->request->getInt('category');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getPage(), $id)));

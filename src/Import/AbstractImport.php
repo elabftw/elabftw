@@ -14,17 +14,21 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\UltraAdmin;
+use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Mother class of ImportCsv, ImportZip and ImportEln
+ * Import data from a file
  */
 abstract class AbstractImport implements ImportInterface
 {
@@ -32,25 +36,29 @@ abstract class AbstractImport implements ImportInterface
 
     protected Db $Db;
 
-    // final number of items imported
+    // final number of entries imported
     protected int $inserted = 0;
-
-    // userid for experiments, category for items, for templates we don't care about the id (0 is sent anyway)
-    protected int $targetNumber = 0;
 
     protected AbstractEntity $Entity;
 
+    protected Teams $Teams;
+
     protected array $allowedMimes = array();
 
-    public function __construct(protected Users $Users, string $target, protected string $canread, protected string $canwrite, protected UploadedFile $UploadedFile)
-    {
+    public function __construct(
+        protected Users $requester,
+        protected EntityType $entityType,
+        protected int $defaultCategory,
+        protected string $canread,
+        protected string $canwrite,
+        protected UploadedFile $UploadedFile,
+    ) {
         $this->Db = Db::getConnection();
-        // target will look like items:N or experiments:N or experiments_templates:0
-        // where N is the category for items, and userid for experiments
-        [$type, $id] = explode(':', $target);
-        $this->targetNumber = (int) $id;
-        $this->setTargetUsers($type);
-        $this->Entity = EntityType::from($type)->toInstance($this->Users);
+        $this->Entity = $this->entityType->toInstance($this->requester);
+        $this->Teams = new Teams($this->requester, $this->requester->team);
+        // yes, this opens it up to normal users that normally cannot create status and category,
+        // but user experience takes over this consideration here
+        $this->Teams->bypassWritePermission = true;
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
@@ -59,33 +67,33 @@ abstract class AbstractImport implements ImportInterface
         $this->checkMimeType();
     }
 
+    protected function getStatusId(string $status): int
+    {
+        if ($this->Entity instanceof Experiments) {
+            $Status = new ExperimentsStatus($this->Teams);
+        } else { // items
+            $Status = new ItemsStatus($this->Teams);
+        }
+        return $Status->getIdempotentIdFromTitle($status);
+    }
+
+    protected function getCategoryId(string $category): int
+    {
+        if ($this->Entity instanceof Experiments) {
+            $Category = new ExperimentsCategories($this->Teams);
+        } else { // items
+            $Category = new ItemsTypes($this->requester, $this->requester->team);
+            // yes, this opens it up to normal users that normally cannot create status and category,
+            // but user experience takes over this consideration here
+            $Category->bypassWritePermission = true;
+        }
+        return $Category->getIdempotentIdFromTitle($category);
+
+    }
+
     public function getInserted(): int
     {
         return $this->inserted;
-    }
-
-    protected function setTargetUsers(string $type): void
-    {
-        if ($this->Users instanceof UltraAdmin) {
-            return;
-        }
-        switch ($type) {
-            case EntityType::Templates->value:
-                // for templates we can only import for our user, so there is no target and nothing to check
-            case EntityType::Items->value:
-                // Note: here we don't check that the category belongs to our team as editing the request and setting an incorrect category number isn't really an issue
-                return;
-            case EntityType::Experiments->value:
-                // check that we can import stuff in experiments of target user
-                if ($this->targetNumber !== $this->Users->userData['userid'] && $this->Users->isAdminOf($this->targetNumber) === false) {
-                    throw new IllegalActionException('User tried to import archive in experiments of a user but they are not admin of that user');
-                }
-                // set the Users object to the target user
-                $this->Users = new Users($this->targetNumber, $this->Users->userData['team']);
-                break;
-            default:
-                throw new IllegalActionException('Incorrect target for import action.');
-        }
     }
 
     /**

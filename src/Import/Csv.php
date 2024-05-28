@@ -52,7 +52,7 @@ class Csv extends AbstractImport
         $csv->setHeaderOffset(0);
         $rows = $csv->getRecords();
 
-        // SQL for importing
+        // items have canbook
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
@@ -68,7 +68,7 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $status = empty($row['status']) ? null : $row['status'];
+            $status = empty($row['status']) ? null : $this->getStatusId($row['status']);
             $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
@@ -78,11 +78,11 @@ class Csv extends AbstractImport
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':canbook', $this->canread);
             }
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+            $req->bindParam(':team', $this->requester->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindParam(':category', $this->targetNumber);
+            $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+            $req->bindValue(':category', $this->getCategoryId($row['category'] ?? $this->defaultCategory));
             $req->bindParam(':status', $status);
             $req->bindParam(':custom_id', $customId);
             $req->bindParam(':canread', $this->canread);

@@ -1546,6 +1546,145 @@ paths:
         '204':
           description: The key was deleted
 
+  # IMPORT
+  /import:
+    summary: Import a file
+    get:
+      tags: ['Import']
+      summary: Get information about this endpoint
+      operationId: read-import
+      responses:
+        '200':
+          description: Information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  allowed_extensions:
+                    type: array
+                    items:
+                      type: string
+                    example: [".eln", ".csv"]
+                  max_filesize:
+                    type: integer
+                    example: 2147483648
+    post:
+      tags: ['Import']
+      summary: Send a file to import
+      operationId: post-import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: ['file']
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+                entity_type:
+                  type: string
+                  example: "experiments"
+                  enum: ["experiments", "items", "experiments_templates", "items_types"]
+                  description: The target entity type
+                category:
+                  type: integer
+                  example: 6
+                  description: The default category ID if no category is defined for a given entry
+                canread:
+                  type: string
+                  example: |
+                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
+                  description: A JSON string representing read permissions
+                canwrite:
+                  type: string
+                  example: |
+                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
+                  description: A JSON string representing write permissions
+      responses:
+        '201':
+          description: The import was successful
+          headers:
+            location:
+              description: The number at the end is the number of imported entries
+              schema:
+                type: string
+  # EXPORT
+  /exports:
+    summary: Exported files
+    get:
+      tags: ['Exports']
+      summary: List exports
+      operationId: readall-exports
+      responses:
+        '200':
+          description: A list of exports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 120
+                    created_at:
+                      type: string
+                      example: "2024-05-28 02:42:19"
+                    requester_userid:
+                      type: integer
+                      example: 2
+                    state:
+                      type: integer
+                      example: 1
+                    long_name:
+                      type: string
+                      example: "7dd6ef1e6093ab8861e425aeb1950e70e2a0bea9672bfff45f20a0cf26e49222c634c2fabf408bd6e9f3c447338edf3c4f11475c0472e00ab7ba5ea41319ec49"
+                    filesize:
+                      type: integer
+                      example: 268438
+                    modified_at:
+                      type: string
+                      example: "2024-05-28 02:42:31"
+                    real_name:
+                      type: string
+                      example: "export-2024-05-28_02-42-30.json"
+                    team:
+                      type: integer
+                      example: 1
+                    changelog:
+                      type: integer
+                      example: 0
+                    pdfa:
+                      type: integer
+                      example: 0
+                    json:
+                      type: integer
+                      example: 0
+                    hash:
+                      type: string
+                      example: "90651dd009d40b4d0fabc65395e9f3eba9b913a71b13bad94904c0cede7d8c24"
+                    hash_algo:
+                      type: string
+                      example: "sha256"
+                    experiments:
+                      type: integer
+                      example: 1
+                    items:
+                      type: integer
+                      example: 0
+                    experiments_templates:
+                      type: integer
+                      example: 0
+                    items_types:
+                      type: integer
+                      example: 0
+                    format:
+                      type: string
+                      example: "pdf"
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity

@@ -106,7 +106,7 @@ class Exports implements RestInterface
             );
         }
         try {
-            $format = ExportFormat::from($reqBody['format']);
+            $format = ExportFormat::from($reqBody['format'] ?? '');
         } catch (ValueError $e) {
             throw new ImproperActionException('Improper value for format: ' . $e->getMessage());
         }

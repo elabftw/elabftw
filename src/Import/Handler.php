@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use Elabftw\AuditEvent\Import as AuditEventImport;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
@@ -88,7 +89,8 @@ class Handler implements RestInterface
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    $reqBody['target'],
+                    EntityType::from($reqBody['entity_type']),
+                    $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],

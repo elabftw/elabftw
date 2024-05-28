@@ -162,17 +162,17 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
-        $Author = $this->Users;
+        $Author = $this->requester;
         if ($this->importAuthorsAsUsers) {
             // look for the Author node, and create the user if they do not exist
             $author = $this->getNodeFromId($dataset['author']['@id']);
             try {
                 $Author = ExistingUser::fromEmail($author['email'] ?? 'nope');
-                $Author->team = $this->Users->team;
+                $Author->team = $this->requester->team;
             } catch (ResourceNotFoundException) {
                 $Users = new Users();
                 try {
-                    $Author = $Users->createFromPerson($author, $this->Users->team ?? 0);
+                    $Author = $Users->createFromPerson($author, $this->requester->team ?? 0);
                 } catch (ImproperActionException) {
                 }
             }
@@ -186,27 +186,15 @@ class Eln extends AbstractZip
         if ($entityType !== null) {
             $this->Entity = $entityType->toInstance($Author);
         }
-        $categoryId = $this->targetNumber;
 
         $this->Entity->Users = $Author;
         $this->Entity->bypassWritePermission = true;
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
 
-        // CATEGORY: must be right after createTarget definition and before usage
-        // let's see if we can find a category like this in target instance
-        $Teams = new Teams($this->Users, $this->Users->team);
-        // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
-        $Teams->bypassWritePermission = true;
+        // CATEGORY
+        $categoryId = $this->defaultCategory;
         if (isset($dataset['category'])) {
-            // let's see if we can find a category like this in target instance
-            if ($this->Entity instanceof Experiments) {
-                $Category = new ExperimentsCategories($Teams);
-            } else { // items
-                $Category = new ItemsTypes($this->Users, $this->Users->team);
-                // yes, this opens it up to normal users that normally cannot create status and category, but user experience takes over this consideration here
-                $Category->bypassWritePermission = true;
-            }
-            $categoryId = $Category->getIdempotentIdFromTitle($dataset['category']);
+            $categoryId = $this->getCategoryId($dataset['category']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;
@@ -302,13 +290,7 @@ class Eln extends AbstractZip
                     break;
                     // STATUS
                 case 'status':
-                    if ($this->Entity instanceof Experiments) {
-                        $Status = new ExperimentsStatus($Teams);
-                    } else { // items
-                        $Status = new ItemsStatus($Teams);
-                    }
-                    $statusId = $Status->getIdempotentIdFromTitle($value);
-                    $this->Entity->patch(Action::Update, array('status' => (string) $statusId));
+                    $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($value)));
                     break;
                     // STEPS
                 case 'step':

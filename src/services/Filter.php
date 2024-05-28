@@ -47,7 +47,7 @@ class Filter
     /**
      * Return 0 or 1 if input is on. Used for UCP.
      */
-    public static function onToBinary(string $input): int
+    public static function onToBinary(?string $input): int
     {
         return $input === 'on' ? 1 : 0;
     }

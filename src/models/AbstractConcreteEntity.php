@@ -49,7 +49,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         return match ($action) {
             Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags'] ?? array()),
-            Action::Duplicate => $this->duplicate(),
+            Action::Duplicate => $this->duplicate((bool) $reqBody['copyFiles']),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }

@@ -136,7 +136,7 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
 
@@ -179,6 +179,9 @@ class Experiments extends AbstractConcreteEntity
         $ExperimentsLinks = new ExperimentsLinks(new self($this->Users, $newId));
         $ExperimentsLinks->setId($this->id);
         $ExperimentsLinks->postAction(Action::Create, array());
+        if ($copyFiles) {
+            $this->Uploads->duplicate(new self($this->Users, $newId));
+        }
 
         return $newId;
     }

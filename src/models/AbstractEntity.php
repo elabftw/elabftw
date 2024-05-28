@@ -129,7 +129,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @return int the new item id
      */
-    abstract public function duplicate(): int;
+    abstract public function duplicate(bool $copyFiles = false): int;
 
     public function getPage(): string
     {

@@ -86,7 +86,7 @@ class Templates extends AbstractTemplateEntity
     /**
      * Duplicate a template from someone else in the team
      */
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $template = $this->readOne();
 

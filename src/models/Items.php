@@ -106,7 +106,7 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
 

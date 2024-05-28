@@ -99,7 +99,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         throw new ImproperActionException('No duplicate action for resources categories.');
     }

@@ -19,6 +19,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
+use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -57,6 +58,19 @@ class DisplayParams extends BaseQueryParams
     public function appendFilterSql(FilterableColumn $column, int $value): void
     {
         $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
+    }
+
+    #[Override]
+    public function getSql(): string
+    {
+        return sprintf(
+            'ORDER BY %s %s, entity.id %s LIMIT %d OFFSET %d',
+            $this->orderby->toSql(),
+            $this->sort->value,
+            $this->sort->value,
+            $this->limit,
+            $this->offset,
+        );
     }
 
     /**

@@ -39,6 +39,17 @@ class BaseQueryParams
         $this->adjust();
     }
 
+    public function getSql(): string
+    {
+        return sprintf(
+            ' ORDER BY %s %s LIMIT %d OFFSET %d',
+            $this->orderby->toSql(),
+            $this->sort->value,
+            $this->limit,
+            $this->offset,
+        );
+    }
+
     /**
      * Adjust the settings based on the Request
      */

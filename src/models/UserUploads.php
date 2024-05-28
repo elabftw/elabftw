@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\UserUploadsQueryParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -57,7 +57,7 @@ class UserUploads implements RestInterface
 
     public function readAll(): array
     {
-        $queryParams = new BaseQueryParams(Request::createFromGlobals());
+        $queryParams = new UserUploadsQueryParams(Request::createFromGlobals());
         $idFilter = '';
         if ($this->id) {
             $idFilter = 'AND uploads.id = :id';
@@ -75,12 +75,12 @@ class UserUploads implements RestInterface
             LEFT JOIN experiments ON (uploads.item_id = experiments.id AND uploads.type = "experiments")
             LEFT JOIN items ON (uploads.item_id = items.id AND uploads.type = "items")
             LEFT JOIN experiments_templates ON (uploads.item_id = experiments_templates.id AND uploads.type = "experiments_templates")
-            WHERE uploads.userid = :userid AND (uploads.state = :state_normal OR uploads.state = :state_archived) ' . $idFilter . ' ORDER BY uploads.created_at DESC LIMIT :limit';
+            WHERE uploads.userid = :userid AND (uploads.state = :state_normal OR uploads.state = :state_archived) '
+            . $idFilter . $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
-        $req->bindValue(':limit', $queryParams->limit, PDO::PARAM_INT);
         if ($this->id) {
             $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         }

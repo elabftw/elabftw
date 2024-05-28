@@ -265,13 +265,7 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            'ORDER BY',
-            $displayParams->orderby::toSql($displayParams->orderby),
-            $displayParams->sort->value,
-            ', entity.id',
-            $displayParams->sort->value,
-            sprintf('LIMIT %d', $displayParams->limit),
-            sprintf('OFFSET %d', $displayParams->offset),
+            $displayParams->getSql(),
         );
 
         $sql .= implode(' ', $sqlArr);

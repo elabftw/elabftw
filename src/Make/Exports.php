@@ -127,15 +127,21 @@ class Exports implements RestInterface
         $this->Db->execute($req);
 
         $id = $this->Db->lastInsertId();
-        // launch an asynchronous task immediatly
+        // launch an asynchronous task immediately
         $Invoker = new Invoker();
         $Invoker->write(sprintf('export:process %d', $id));
         return $id;
     }
 
+    // use this to call something immediately
     public function process(): int
     {
-        $request = $this->readOne();
+        $sql = 'SELECT * FROM exports WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $request = $this->Db->fetch($req);
         $this->processRequest($request);
         return 0;
     }

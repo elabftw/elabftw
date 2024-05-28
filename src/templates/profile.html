@@ -183,7 +183,7 @@
               <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-plus-icon='1' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-keep-icon='1' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
-                <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' href='/api/v2/exports/{{ file.id }}?format=binary'>
+                <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary'>
                   {{ file.real_name }} <span class='smallgray'>{{ file.filesize|default(0)|formatBytes }}</span>
                 </a>
                 <span class='smallgray relative-moment ml-1' title='{{ file.created_at }}'></span>

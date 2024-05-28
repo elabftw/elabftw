@@ -60,7 +60,7 @@ class UserUploads implements RestInterface
         $queryParams = new UserUploadsQueryParams(Request::createFromGlobals());
         $idFilter = '';
         if ($this->id) {
-            $idFilter = 'AND uploads.id = :id';
+            $idFilter = 'AND uploads.id = ' . $this->id;
         }
         $sql = 'SELECT uploads.id, uploads.real_name, uploads.long_name, uploads.created_at, uploads.filesize, uploads.type, uploads.comment,
             COALESCE(experiments.id, items.id, experiments_templates.id) AS entity_id,
@@ -81,9 +81,6 @@ class UserUploads implements RestInterface
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
-        if ($this->id) {
-            $req->bindValue(':id', $this->id, PDO::PARAM_INT);
-        }
         $this->Db->execute($req);
 
         return $req->fetchAll();

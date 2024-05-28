@@ -55,6 +55,7 @@ use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
+use Elabftw\Models\UserUploads;
 use Elabftw\Services\Import;
 use Exception;
 use JsonException;
@@ -318,7 +319,8 @@ class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
                 'request_actions' => new UserRequestActions($this->Model),
-                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
+                'uploads' => new UserUploads($this->Model, $this->subId),
+                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications, request_actions, uploads.'),
             };
         }
         if ($this->Model instanceof Scheduler) {

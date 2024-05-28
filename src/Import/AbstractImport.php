@@ -67,6 +67,11 @@ abstract class AbstractImport implements ImportInterface
         $this->checkMimeType();
     }
 
+    public function getInserted(): int
+    {
+        return $this->inserted;
+    }
+
     protected function getStatusId(string $status): int
     {
         if ($this->Entity instanceof Experiments) {
@@ -89,11 +94,6 @@ abstract class AbstractImport implements ImportInterface
         }
         return $Category->getIdempotentIdFromTitle($category);
 
-    }
-
-    public function getInserted(): int
-    {
-        return $this->inserted;
     }
 
     /**

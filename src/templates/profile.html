@@ -4,8 +4,9 @@
 {% include 'export-modal.html' %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Information'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Import'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Export'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Attachments'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Import'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -91,8 +92,47 @@
   </div>
 </div>
 
-{# TAB 2 IMPORT #}
+{# TAB 2 ATTACHMENTS #}
 <div data-tabcontent='2' hidden>
+  <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    {% set currentLimit = App.Request.query.get('limit')|default(15) %}
+    <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}<a class='ml-3' href='?tab=2&limit={{ uploadsTotal }}'><button type='button' class='btn btn-sm btn-secondary' {{ currentLimit == uploadsTotal ? 'disabled' }}>{{ 'Show all'|trans }}</button></a></p>
+    {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
+    <table class='table' aria-describedby='attachedFiles' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'File name'|trans }}</th>
+          <th scope='col'>{{ 'Created'|trans }}</th>
+          <th scope='col'>{{ 'Parent entry'|trans }}</th>
+          <th scope='col'>{{ 'File size'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody id='attachedFilesTable'>
+        {% for file in attachedFiles %}
+          <tr>
+            <td data-label='{{ 'File name'|trans }}'><a href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
+            <td data-label='{{ 'Created'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
+            <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
+            <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {# LOAD MORE button #}
+    <a id='attachementsEnd'></a>
+    {% if currentLimit < uploadsTotal %}
+      <div class='text-center page-buttons mt-2'>
+        <a href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd'>
+          <button class='btn btn-primary ' type='button' id='loadMoreBtn'>{{ 'Load more'|trans }}</button>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{# TAB 3 IMPORT #}
+<div data-tabcontent='3' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>
@@ -158,8 +198,8 @@
   </div>
 </div>
 
-{# TAB 3 EXPORT #}
-<div data-tabcontent='3' hidden>
+{# TAB 4 EXPORT #}
+<div data-tabcontent='4' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Export'|trans }}</h3>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>{{ 'This page allows you to export your data in different formats.'|trans }}</p>
@@ -168,9 +208,6 @@
     </div>
 
     <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
-    {% if not exportedFiles %}
-      {{ 'Use the button above to create an export.'|trans }}
-    {% endif %}
     {# Refresh button #}
     <div class='text-center'>
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
@@ -217,5 +254,6 @@
         </li>
       {% endfor %}
     </ul>
+  </div>
 </div>
 {% endblock body %}

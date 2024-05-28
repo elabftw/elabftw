@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -39,9 +40,9 @@ abstract class AbstractZip extends AbstractImport
     // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
 
-    public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
+    public function __construct(Users $Users, int $defaultCategory, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
     {
-        parent::__construct($Users, $target, $canread, $canwrite, $UploadedFile);
+        parent::__construct($Users, EntityType::Experiments, $defaultCategory, $canread, $canwrite, $UploadedFile);
         // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
         $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;

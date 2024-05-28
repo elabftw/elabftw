@@ -31,17 +31,9 @@ use function trim;
  * This class holds the values for limit, offset, order and sort
  * It is based on user preferences, overridden by request parameters
  */
-class DisplayParams
+class DisplayParams extends BaseQueryParams
 {
-    public int $limit = 15;
-
-    public int $offset = 0;
-
     public string $filterSql = '';
-
-    public Orderby $orderby = Orderby::Date;
-
-    public Sort $sort = Sort::Desc;
 
     // the search from the top right search bar on experiments/database
     public string $query = '';
@@ -51,17 +43,15 @@ class DisplayParams
 
     public ?EntityType $relatedOrigin = null;
 
-    public bool $includeArchived = false;
-
-    public function __construct(private Users $Users, private Request $Request, public EntityType $entityType)
+    public function __construct(private Users $Users, Request $Request, public EntityType $entityType)
     {
         // load user's preferences first
         $this->limit = $Users->userData['limit_nb'] ?? $this->limit;
         $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
         $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
+        // then load from query
+        parent::__construct($Request);
         $this->adjust();
-        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
-        $this->includeArchived = $this->Request->query->has('archived');
     }
 
     public function appendFilterSql(FilterableColumn $column, int $value): void
@@ -74,12 +64,6 @@ class DisplayParams
      */
     private function adjust(): void
     {
-        if ($this->Request->query->has('limit')) {
-            $this->limit = Check::limit($this->Request->query->getInt('limit'));
-        }
-        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
-            $this->offset = $this->Request->query->getInt('offset');
-        }
         if (!empty($this->Request->query->get('q'))) {
             $this->query = trim($this->Request->query->getString('q'));
         }
@@ -129,9 +113,6 @@ class DisplayParams
             $req->execute();
             $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
         }
-        // now get ordering/sorting parameters from the query string
-        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
-        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
 
         // RELATED FILTER
         if (Check::id($this->Request->query->getInt('related')) !== false) {

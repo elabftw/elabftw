@@ -14,10 +14,12 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
 use Elabftw\Make\Exports;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\UserUploads;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,8 +54,11 @@ try {
     // get the exported files
     $Export = new Exports($App->Users, Storage::CACHE->getStorage());
 
+    $UserUploads = new UserUploads($App->Users);
+
     $template = 'profile.html';
     $renderArr = array(
+        'attachedFiles' => $UserUploads->readAll(),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
@@ -62,6 +67,7 @@ try {
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
+        'uploadsTotal' => $UserUploads->countAll(),
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 } catch (Exception $e) {

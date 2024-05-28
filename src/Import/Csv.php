@@ -68,7 +68,8 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $status = empty($row['status']) ? null : $this->getStatusId($row['status']);
+            $category = empty($row['category_title']) ? null : $this->getCategoryId($row['category_title']);
+            $status = empty($row['status_title']) ? null : $this->getStatusId($row['status_title']);
             $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
@@ -82,7 +83,7 @@ class Csv extends AbstractImport
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);
             $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-            $req->bindValue(':category', $this->getCategoryId($row['category'] ?? $this->defaultCategory));
+            $req->bindValue(':category', $category);
             $req->bindParam(':status', $status);
             $req->bindParam(':custom_id', $customId);
             $req->bindParam(':canread', $this->canread);

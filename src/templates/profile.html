@@ -96,7 +96,7 @@
 <div data-tabcontent='2' hidden>
   <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
   <div class='pl-3 mt-2'>
-    {% set currentLimit = App.Request.query.get('limit')|default(15) %}
+    {% set currentLimit = App.Request.query.get('limit')|default(42) %}
     <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
       <a class='ml-3' href='?tab=2&limit={{ uploadsTotal }}'>
         <button type='button' class='btn btn-sm btn-secondary' {{ currentLimit == uploadsTotal ? 'disabled' }}>{{ 'Show all'|trans }}</button>

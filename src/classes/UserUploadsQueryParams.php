@@ -20,4 +20,6 @@ use Elabftw\Enums\Orderby;
 final class UserUploadsQueryParams extends BaseQueryParams
 {
     public Orderby $orderby = Orderby::CreatedAt;
+
+    public int $limit = 42;
 }

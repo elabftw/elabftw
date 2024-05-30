@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const TemplateC = new EntityClass(EntityType.Template);
     // IMPORT TPL
     if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id));
+      TemplateC.duplicate(parseInt(el.dataset.id), false);
 
     // RECEIVE PROCUREMENT REQUEST
     } else if (el.matches('[data-action="receive-procurement-request"]')) {

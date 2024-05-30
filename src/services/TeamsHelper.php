@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Exceptions\IllegalActionException;
 use PDO;
 
 class TeamsHelper
@@ -23,6 +24,22 @@ class TeamsHelper
     public function __construct(private int $team)
     {
         $this->Db = Db::getConnection();
+    }
+
+    /**
+     * Make sure that a team to which a user tries to add themselves to
+     * exists and is currently one of those selected as visible by the sysadmin.
+     */
+    public function teamIsVisibleOrExplode(): void
+    {
+        $sql = 'SELECT id, visible FROM teams WHERE id = :team_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team_id', $this->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $team = $req->fetch();
+        if ($team == false || $team['visible'] !== 1) {
+            throw new IllegalActionException("There is no visible team with ID $this->team .");
+        }
     }
 
     /**
@@ -63,13 +80,13 @@ class TeamsHelper
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        $res = $req->fetch();
+        return $res ? $res : array();
     }
 
     public function isAdminInTeam(int $userid): bool
     {
-        return $this->getUserInTeam($userid)['groups_id'] <= Usergroup::Admin->value;
+        return $this->isUserInTeam($userid) && ($this->getUserInTeam($userid)['groups_id'] <= Usergroup::Admin->value);
     }
 
     public function isUserInTeam(int $userid): bool

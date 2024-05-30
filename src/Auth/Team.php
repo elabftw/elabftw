@@ -15,6 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
 
 /**
@@ -26,9 +27,10 @@ class Team implements AuthInterface
 
     public function __construct(int $userid, int $team)
     {
+        $Users = new Users($userid);
         $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->isValidated = true;
+        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->selectedTeam = $team;
     }
 

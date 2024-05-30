@@ -194,13 +194,28 @@ class Populate
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('elabuser-%d@yopmail.com', $this->faker->randomNumber(6));
 
-        $userid = $Teams->Users->createOne($email, array($user['team']), $firstname, $lastname, $passwordHash, null, true, false, null, $orgid);
+        $userid = $Teams->Users->createOne(
+            email: $email,
+            teams: array($user['team']),
+            firstname: $firstname,
+            lastname: $lastname,
+            passwordHash: $passwordHash,
+            usergroup: null,
+            automaticValidationEnabled: true,
+            alertAdmin: false,
+            validUntil: null,
+            orgid: $orgid
+        );
         $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
         $Requester = new Users(1, 1);
         $Users = new Users($userid, $team[0]['id'], $Requester);
 
         if ($user['is_sysadmin'] ?? false) {
             $Users->patch(Action::Update, array('is_sysadmin' => 1));
+        }
+
+        if (isset($user['validated']) && !$user['validated']) {
+            $Users->patch(Action::Update, array('validated' => 0));
         }
 
         if ($user['create_mfa_secret'] ?? false) {

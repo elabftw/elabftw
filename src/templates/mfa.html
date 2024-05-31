@@ -54,7 +54,7 @@
     <div class='input-group mb-4'>
       <div class='input-group-prepend'>
         <span class='input-group-text' id='mfaCodeLabel'>{{ 'Authentication code'|trans }}</span>
-        <input class='form-control brl-none' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' aria-describedby='mfaCodeLabel' data-focus='1' />
+        <input class='form-control brl-none' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
       </div>
     </div>
   </div>

@@ -56,7 +56,6 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Models\UserUploads;
-use Elabftw\Services\Import;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;

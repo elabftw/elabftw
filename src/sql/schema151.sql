@@ -23,6 +23,7 @@ CREATE TABLE `exports` (
   `experiments_templates` tinyint NOT NULL DEFAULT 0,
   `items_types` tinyint NOT NULL DEFAULT 0,
   `format` varchar(100) NOT NULL,
+  `error` text NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

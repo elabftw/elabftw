@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\EntitySlugsSqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Invoker;
 use Elabftw\Enums\Action;
@@ -26,6 +27,7 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Traits\SetIdTrait;
+use Exception;
 use League\Flysystem\Filesystem;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
@@ -142,7 +144,13 @@ class Exports implements RestInterface
         $this->Db->execute($req);
 
         $request = $this->Db->fetch($req);
-        $this->processRequest($request);
+        try {
+            $this->processRequest($request);
+        } catch (Exception $e) {
+            $this->update('state', State::Error->value);
+            $this->update('error', $e->getMessage());
+            return State::Error->value;
+        }
         return 0;
     }
 
@@ -150,7 +158,12 @@ class Exports implements RestInterface
     {
         $requests = $this->readPending();
         foreach ($requests as $request) {
-            $this->processRequest($request);
+            try {
+                $this->processRequest($request);
+            } catch (Exception $e) {
+                $this->update('state', State::Error->value);
+                $this->update('error', $e->getMessage());
+            }
         }
         return 0;
     }
@@ -188,7 +201,7 @@ class Exports implements RestInterface
         return $req->fetchAll();
     }
 
-    private function processRequest(array $request): bool
+    private function processRequest(array $request): State
     {
         $this->setId($request['id']);
         $this->requester = new Users($request['requester_userid'], $request['team']);
@@ -209,6 +222,18 @@ class Exports implements RestInterface
         $includeChangelog = (bool) $request['changelog'];
         $usePdfa = (bool) $request['pdfa'];
         $includeJson = (bool) $request['json'];
+        $withExperiments = (bool) $request['experiments'];
+        $withItems = (bool) $request['items'];
+        $withTemplates = (bool) $request['experiments_templates'];
+        $withItemsTypes = (bool) $request['items_types'];
+        $builder = new EntitySlugsSqlBuilder(
+            targetUser: $this->requester,
+            withExperiments: $withExperiments,
+            withItems: $withItems,
+            withTemplates: $withTemplates,
+            withItemsTypes: $withItemsTypes,
+        );
+        $entitySlugs = $builder->getAllEntitySlugs();
 
         switch ($format) {
             case ExportFormat::Eln:
@@ -219,9 +244,8 @@ class Exports implements RestInterface
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeUserEln($ZipStream, $this->requester);
+                    $Maker = new MakeEln($ZipStream, $this->requester, $entitySlugs);
                 } else {
-                    $entitySlugs = $this->requester->getAllEntitySlugs();
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entitySlugs, $usePdfa, $includeChangelog, $includeJson);
                 };
                 $Maker->getStreamZip();
@@ -234,12 +258,11 @@ class Exports implements RestInterface
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $entitySlugs = $this->requester->getAllEntitySlugs();
                 $Maker = new MakeMultiPdf($log, $mpdfProvider, $this->requester, $entitySlugs, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:
-                $Maker = new MakeFullJson($this->requester, $this->requester->getAllEntitySlugs());
+                $Maker = new MakeFullJson($this->requester, $entitySlugs);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             default:
@@ -254,7 +277,8 @@ class Exports implements RestInterface
         }
         $this->update('hash', $hash);
         $this->update('hash_algo', self::HASH_ALGO);
-        return $this->update('state', State::Normal->value);
+        $this->update('state', State::Normal->value);
+        return State::Normal;
     }
 
     private function update(string $column, string|int $value): bool

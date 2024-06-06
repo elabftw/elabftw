@@ -237,6 +237,7 @@ class MakePdf extends AbstractMakePdf
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
             'pdfSig' => $this->requester->userData['pdf_sig'],
+            // TODO fix for templates
             'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->page, $this->Entity->id ?? 0),
             'linkBaseUrl' => array(
                 'items' => $siteUrl . '/database.php',

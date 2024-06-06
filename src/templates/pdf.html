@@ -138,7 +138,9 @@
         <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
       </td>
       <td class='noborder'>
-        <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
+        {% if entityData.elabid %}
+          <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
+        {% endif %}
         {% if locked %}
           <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
         {% endif %}

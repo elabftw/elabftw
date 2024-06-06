@@ -60,7 +60,7 @@ class UserUploads implements RestInterface
         $queryParams = new UserUploadsQueryParams(Request::createFromGlobals());
         $idFilter = '';
         if ($this->id) {
-            $idFilter = 'AND uploads.id = ' . $this->id;
+            $idFilter = sprintf('AND uploads.id = %d', $this->id);
         }
         $sql = 'SELECT uploads.id, uploads.real_name, uploads.long_name, uploads.created_at, uploads.filesize, uploads.type, uploads.comment,
             COALESCE(experiments.id, items.id, experiments_templates.id) AS entity_id,

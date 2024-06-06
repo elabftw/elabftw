@@ -13,12 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Models\AbstractEntity;
+use Override;
 
 /**
  * Make a full JSON export, including all information from one or several entities
  */
 class MakeFullJson extends MakeJson
 {
+    #[Override]
     protected function getEntityData(AbstractEntity $entity): array
     {
         return $entity->readOneFull();

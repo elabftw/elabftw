@@ -358,8 +358,11 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->Uploads->includeArchived = true;
         $base = $this->readOne();
-        $base['revisions'] = (new Revisions($this))->readAll();
-        $base['changelog'] = (new Changelog($this))->readAll();
+        // items types don't have this yet
+        if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
+            $base['revisions'] = (new Revisions($this))->readAll();
+            $base['changelog'] = (new Changelog($this))->readAll();
+        }
         ksort($base);
         return $base;
     }

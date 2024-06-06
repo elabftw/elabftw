@@ -1486,6 +1486,10 @@ input:checked + .slider::before {
 
 /* see Enums/State */
 .state-indicator {
+  /* error */
+  &[data-state="6"] {
+    color: $darkred;
+  }
   /* processing */
   &[data-state="5"] {
     animation: pulse 2s infinite;

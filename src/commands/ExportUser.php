@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\EntitySlugsSqlBuilder;
 use Elabftw\Interfaces\StorageInterface;
-use Elabftw\Make\MakeUserEln;
+use Elabftw\Make\MakeEln;
+use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -59,10 +61,9 @@ class ExportUser extends Command
         }
 
         $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
-        $Maker = new MakeUserEln($ZipStream, new Users($userid, $teamid));
-        if ($input->getOption('skip-resources')) {
-            $Maker->skipResources = true;
-        }
+        $builder = new EntitySlugsSqlBuilder(targetUser: new Users($userid, $teamid), withItems: !$input->getOption('skip-resources'));
+        $entitySlugs = $builder->getAllEntitySlugs();
+        $Maker = new MakeEln($ZipStream, new UltraAdmin(), $entitySlugs);
         $Maker->getStreamZip();
 
         fclose($fileStream);

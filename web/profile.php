@@ -19,7 +19,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Make\Exports;
 use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
@@ -52,26 +51,27 @@ try {
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
-    $ItemsTypes = new ItemsTypes($App->Users);
     $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
 
     // get the exported files
     $Export = new Exports($App->Users, Storage::CACHE->getStorage());
 
     $UserUploads = new UserUploads($App->Users);
+    $PermissionsHelper = new PermissionsHelper();
 
     $renderArr = array(
         'attachedFiles' => $UserUploads->readAll(),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
-        'itemsCategoryArr' => $ItemsTypes->readAll(),
+        'maxUploadSizeRaw' => ini_get('post_max_size'),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
         'uploadsTotal' => $UserUploads->countAll(),
         'usersArr' => $App->Users->readAllActiveFromTeam(),
+        'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     );
     $Response->setContent($App->render($template, $renderArr));
 } catch (ImproperActionException $e) {

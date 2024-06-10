@@ -196,9 +196,11 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
 
-        // clear any request action
-        $RequestActions = new RequestActions($this->Users, $this);
-        $RequestActions->remove(RequestableAction::Lock);
+        // clear any request action - skip for templates
+        if ($this instanceof AbstractConcreteEntity) {
+            $RequestActions = new RequestActions($this->Users, $this);
+            $RequestActions->remove(RequestableAction::Lock);
+        }
 
         return $this->readOne();
     }

@@ -35,10 +35,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import EntityClass from './Entity.class';
-import { Action, EntityType, ProcurementState } from './interfaces';
+import { Action, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { notif, TomSelect } from './misc';
+import { TomSelect } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -319,13 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    const TemplateC = new EntityClass(EntityType.Template);
-    // IMPORT TPL
-    if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id), false);
-
     // RECEIVE PROCUREMENT REQUEST
-    } else if (el.matches('[data-action="receive-procurement-request"]')) {
+    if (el.matches('[data-action="receive-procurement-request"]')) {
       ApiC.patch(`teams/current/procurement_requests/${el.dataset.id}`);
 
     // CANCEL PROCUREMENT REQUEST
@@ -353,14 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();
       });
-
-    // DESTROY TEMPLATE
-    } else if (el.matches('[data-action="destroy-template"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        TemplateC.destroy(parseInt(el.dataset.id))
-          .then(() => window.location.replace('team.php?tab=3'))
-          .catch((e) => notif({'res': false, 'msg': e.message}));
-      }
     }
   });
 

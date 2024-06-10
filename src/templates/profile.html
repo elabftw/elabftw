@@ -144,16 +144,38 @@
     <p class='smallgrey'>
       {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
     </p>
-    <h4>{{ 'Import a CSV file'|trans }}</h4>
-    <form class='form-group' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import file'|trans }}'>
+    <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
+      <label class='d-block' for='importFileInput'>{{ 'Select a file to import'|trans }}</label>
+      <div class='d-flex'>
+        <div>
+          <input id='importFileInput' required name='file' type='file' accept='.eln,.csv' />
+          <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
+          {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
+        </div>
+      </div>
+
+      <hr>
+      <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
+      <div id='importRadioEntityType'>
+        <div class='form-check form-check-inline'>
+          <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
+          <label class='form-check-label' for='entityTypeRadioExperiments'>{{ 'Experiments'|trans }}</label>
+        </div>
+        <div class='form-check form-check-inline'>
+          <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
+          <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
+        </div>
+        <div class='form-check form-check-inline'>
+          <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
+          <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
+        </div>
+      </div>
+
+      <hr>
       <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
       <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
-        <option disabled>{{ 'Resources categories'|trans }}</option>
-        {% for cat in itemsCategoryArr %}
-          <option value='{{ cat.id }}'>{{ cat.title }}</option>
-        {% endfor %}
-        <option disabled>{{ 'Experiments categories'|trans }}</option>
+        <option selected value='null'>{{ 'None'|trans }}</option>
         {% for cat in experimentsCategoryArr %}
           <option value='{{ cat.id }}'>{{ cat.title }}</option>
         {% endfor %}
@@ -161,6 +183,7 @@
 
       {# if we are admin we can select the owner #}
       {% if App.Users.isAdmin %}
+        <hr>
         <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
         <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
           {% for user in usersArr %}
@@ -169,7 +192,8 @@
         </select>
       {% endif %}
 
-      <label for='import_modal_canread'>{{ '2. Select a visibility:'|trans }}</label>
+      <hr>
+      <label for='import_modal_canread'>{{ 'Select read permissions'|trans }}</label>
       <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
@@ -178,7 +202,8 @@
           {% endfor %}
       </select>
 
-      <label for='import_modal_canwrite'>{{ '2b. Select write access:'|trans }}</label>
+      <hr>
+      <label for='import_modal_canwrite'>{{ 'Select write permissions'|trans }}</label>
       <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
@@ -187,20 +212,12 @@
         {% endfor %}
       </select>
 
-      <label class='d-block' for='import_modal_file_input'>{{ '3. Select a file to import:'|trans }}</label>
-      <input id='import_modal_file_input' required name='file' type='file' accept='.eln,.csv' />
-      <input name='type' type='hidden' value='archive' />
-      <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
-      {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
-
-      <div class='mt-4 text-center'>
-        <div id='errorHolder' class='alert-danger m-2'></div>
-        <button type='submit' data-action='check-max-size' data-maxsize='{{ maxUploadSize }}' data-input='import_modal_file_input' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+      <hr>
+      <div class='mt-2'>
+        <button type='submit' id='importFileBtn' class='btn btn-primary'>{{ 'Import'|trans }}</button>
       </div>
-
     </form>
-
-    <h4>{{ 'Import an ELN archive'|trans }}</h4>
+    <div id='importResultDiv'></div>
   </div>
 </div>
 

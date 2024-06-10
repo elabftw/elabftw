@@ -80,7 +80,7 @@ class Handler implements RestInterface
             case 'eln':
                 return new Eln(
                     $this->requester,
-                    $reqBody['target'],
+                    $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],

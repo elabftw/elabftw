@@ -74,6 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(form);
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
+    // for templates, we need to force the entity_type
+    if (formData.get('entity_type') === 'experiments_templates') {
+      formData.set('force_entity_type', '1');
+    }
     fetch(form.action, {
       method: 'POST',
       body: formData,

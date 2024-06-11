@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use League\Flysystem\Filesystem;
@@ -45,6 +46,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -65,6 +68,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -85,6 +90,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -108,6 +115,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -131,6 +140,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Items,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -154,6 +165,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -177,6 +190,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
@@ -199,6 +214,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            EntityType::Experiments,
+            false,
             1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),

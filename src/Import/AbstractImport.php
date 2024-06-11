@@ -48,6 +48,7 @@ abstract class AbstractImport implements ImportInterface
     public function __construct(
         protected Users $requester,
         protected EntityType $entityType,
+        protected bool $forceEntityType,
         protected int $defaultCategory,
         protected string $canread,
         protected string $canwrite,

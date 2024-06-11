@@ -174,13 +174,15 @@ class Eln extends AbstractZip
         }
 
         // try and figure out if we are importing an experiment or a resource by looking at the genre
-        $entityType = null;
+        $entityType = $this->entityType;
+        // genre will override the entityType, unless we force it
         if (!empty($dataset['genre'])) {
             $entityType = $dataset['genre'] === 'experiment' ? EntityType::Experiments : EntityType::Items;
         }
-        if ($entityType !== null) {
-            $this->Entity = $entityType->toInstance($Author);
+        if ($this->forceEntityType) {
+            $entityType = $this->entityType;
         }
+        $this->Entity = $entityType->toInstance($Author);
 
         $this->Entity->Users = $Author;
         $this->Entity->bypassWritePermission = true;

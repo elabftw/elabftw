@@ -80,6 +80,8 @@ class Handler implements RestInterface
             case 'eln':
                 return new Eln(
                     $this->requester,
+                    EntityType::from($reqBody['entity_type']),
+                    $reqBody['force_entity_type'],
                     $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
@@ -90,6 +92,7 @@ class Handler implements RestInterface
                 return new Csv(
                     $this->requester,
                     EntityType::from($reqBody['entity_type']),
+                    $reqBody['force_entity_type'],
                     $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),

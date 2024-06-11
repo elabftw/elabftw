@@ -1578,7 +1578,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              required: ['file']
+              required: ['file', 'entity_type']
               properties:
                 file:
                   type: string

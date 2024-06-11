@@ -264,7 +264,7 @@ CREATE TABLE `experiments_steps` (
 
 CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `team` int(10) UNSIGNED DEFAULT NULL,
+  `team` int(10) UNSIGNED NOT NULL,
   `body` text,
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,

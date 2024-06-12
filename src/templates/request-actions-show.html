@@ -6,7 +6,15 @@
         <div class='d-flex'>
           <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
           <div>
-            {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }} <a href='/{{ action.entity_page }}.php?mode=view&amp;id={{ action.entity_id }}'>{{ action.entity_title }}</a><span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></a>
+            {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }}
+            {% set url = '/%s?mode=%s&id=%d' %}
+            {% if action.entity_page == 'ucp.php?tab=3' %}
+              {% set url = '/%s&mode=%s&templateid=%d' %}
+            {% elseif action.entity_page == 'admin.php?tab=4' %}
+              {% set url = '/%s%s&templateid=%d#itemsCategoriesAnchor' %}
+            {% endif %}
+            <a href='{{ url|format(action.entity_page, action.mode, action.entity_id) }}'>{{ action.entity_title }}</a>
+            <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-1'></span>
           </div>
         </div>
       </li>

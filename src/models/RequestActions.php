@@ -90,7 +90,7 @@ class RequestActions implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         $sql = sprintf(
-            'SELECT count(*)
+            'SELECT CAST(count(*) AS UNSIGNED) AS `count`
                 FROM  %s_request_actions
                 WHERE requester_userid = :requester_userid
                     AND target_userid = :target_userid

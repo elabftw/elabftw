@@ -875,7 +875,7 @@ components:
             locked_at:
               type: string
         - type: object
-              properties:
+          properties:
 
 security:
   - token:

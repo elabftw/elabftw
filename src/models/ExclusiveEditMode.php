@@ -74,19 +74,14 @@ class ExclusiveEditMode
                 || !$this->Entity->Users->userData['is_sysadmin'])
         ) {
             /** @psalm-suppress PossiblyNullArgument */
-            $url = sprintf(
-                '%s.php?mode=view&id=%d&openedInExclusiveEditMode',
-                $this->Entity->entityType->getPage(),
+            return new RedirectResponse(sprintf(
+                '%s%sid=%d&openedInExclusiveEditMode',
+                $this->Entity->entityType->toPage(),
+                $this->Entity->entityType === EntityType::Templates
+                    ? '&mode=view&template'
+                    : '?mode=view&',
                 $this->Entity->id,
-            );
-            if ($this->Entity->entityType === EntityType::Templates) {
-                /** @psalm-suppress PossiblyNullArgument */
-                $url = sprintf(
-                    'ucp.php?tab=3&mode=view&templateid=%d&openedInExclusiveEditMode',
-                    $this->Entity->id,
-                );
-            }
-            return new RedirectResponse($url, Response::HTTP_SEE_OTHER);
+            ), Response::HTTP_SEE_OTHER);
         }
         return null;
     }

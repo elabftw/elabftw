@@ -1,6 +1,63 @@
 {% set mode = App.Request.query.get('mode')|default('view') %}
 {% include('ownership-transfer-modal.html') %}
 
+{# REQUEST ACTIONS #}
+<div id='requestActionsDiv'>
+  {% if entityRequestActionsArr %}
+    <ul class='list-group mt-2'>
+      {% for action in entityRequestActionsArr %}
+      <li class='list-group-item'>
+        <div class='d-flex'>
+          <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+          <div>
+            {{- '%s has requested %s for this entity from %s'|trans|format(
+              action.requester_fullname,
+              action.description,
+              action.target_fullname
+            ) }} <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
+              <div class='mt-2'>
+            {% if action.target_userid == App.Users.userData.userid %}
+                <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
+            {% endif %}
+            {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
+                <button type='button' class='btn btn-sm btn-ghost' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+            {% endif %}
+              </div>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+
+{# Exclusive edit mode notification #}
+<div id='exclusiveEditModeInfo'>
+  {% if Entity.ExclusiveEditMode.isActive %}
+    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
+        Entity.ExclusiveEditMode.dataArr.locked_at,
+      )|msg('warning', false) %}
+    {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
+      {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s'|trans|format(
+          Entity.ExclusiveEditMode.dataArr.fullname,
+          Entity.ExclusiveEditMode.dataArr.locked_at,
+          '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+          '</button>'
+      )|msg('warning', false) %}
+      {% if mode == 'edit' %}
+        {# here user can only be (sys)admin of user who locked entry all others are redirected to view mode in controller #}
+        {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock in the toolbar below or %sRequest exclusive edit mode removal%s.'|trans|format(
+          Entity.ExclusiveEditMode.dataArr.fullname,
+          Entity.ExclusiveEditMode.dataArr.locked_at,
+          '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+          '</button>'
+        )|msg('ko', false) %}
+      {% endif %}
+    {% endif %}
+    {{ writeLockNotice|raw }}
+  {% endif %}
+</div>
+
 {# TOP TOOLBAR #}
 <hr>
 <div class='d-flex align-items-center'>
@@ -10,19 +67,13 @@
 
   <div class='vertical-separator'></div>
 
+  {% set icon, title, otherMode = 'fa-pencil', 'Edit'|trans, 'edit' %}
   {% if mode == 'edit' %}
-    {# VIEW #}
-    <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'View mode'|trans }}' href='?tab=3&amp;mode=view&amp;templateid={{ Entity.id }}'>
-      <i class='fas fa-eye fa-fw'></i>
-    </a>
-  {% else %}
-    {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-      {# EDIT #}
-      <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ 'Edit'|trans }}' href='?tab=3&amp;mode=edit&amp;templateid={{ Entity.id }}'>
-        <i class='fas fa-pencil fa-fw'></i>
-      </a>
-    {% endif %}
+    {% set icon, title, otherMode = 'fa-eye', 'View mode'|trans, 'view' %}
   {% endif %}
+  <a class='btn hl-hover-gray p-2 main-action-button mr-2 lh-normal border-0' title='{{ title }}' href='?tab=3&amp;mode={{ otherMode }}&amp;templateid={{ Entity.id }}'>
+    <i class='fas {{ icon }} fa-fw'></i>
+  </a>
 
   {# CREATE EXPERIMENT #}
   <button type='button' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}' data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
@@ -50,73 +101,71 @@
     <i class='fas fa-thumbtack fa-fw {{- not Entity.Pins.isPinned ? ' color-weak' }}'></i>
   </button>
 
-  {% if App.Request.getScriptName|split('/')|last == 'ucp.php' %}
-    {# LOCK #}
+  {# LOCK #}
+  {% set lockIcon = 'fa-lock-open' %}
+  {% set alt = 'Lock/Unlock item'|trans %}
+  {% if Entity.entityData.locked %}
+      {% set lockIcon = 'fa-lock' %}
+      {% set alt = Entity.entityData.locked_at %}
+  {% endif %}
+  <button type='button' id='lockTemplateButton' title='{{ alt }}' data-action='toggle-lock' data-id='{{ Entity.id }}' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 lh-normal border-0'>
+    <i class='fas {{ lockIcon }} fa-fw'></i>
+  </button>
+
+  {# EXCLUSIVE EDIT MODE #}
+  {% if mode == 'edit' %}
     {% set lockIcon = 'fa-lock-open' %}
-    {% set alt = 'Lock/Unlock item'|trans %}
-    {% if Entity.entityData.locked %}
+    {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
+    {% if Entity.ExclusiveEditMode.isActive %}
         {% set lockIcon = 'fa-lock' %}
-        {% set alt = Entity.entityData.locked_at %}
     {% endif %}
-    <button type='button' id='lockTemplateButton' title='{{ alt }}' data-action='toggle-lock' data-id='{{ Entity.id }}' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 lh-normal border-0'>
-      <i class='fas {{ lockIcon }} fa-fw'></i>
+    <button
+      aria-label='{{ alt }}'
+      class='btn {{ Entity.ExclusiveEditMode.isActive ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'
+      data-action='toggle-exclusive-edit-mode'
+      id='exclusiveEditModeBtn'
+      title='{{ alt }}'
+      type='button'
+    >
+      <span class='fa-stack'>
+        <i class='fas {{ lockIcon }} fa-stack-1x fa-fw'></i>
+        <i class='fas fa-pen-nib fa-stack-1x fa-fw fa-rotate-by'></i>
+      </span>
+    </button>
+  {% endif %}
+
+  <div class='vertical-separator'></div>
+
+  {# MORE OPTIONS #}
+  <div class='dropdown'>
+    <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' title='{{ 'Toggle pin'|trans }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <i class='fas fa-ellipsis-v fa-fw'></i>
     </button>
 
-    {# EXCLUSIVE EDIT MODE #}
-    {% if mode == 'edit' %}
-      {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
-      {% if Entity.ExclusiveEditMode.isActive %}
-          {% set lockIcon = 'fa-lock' %}
+    <div class='dropdown-menu dropdown-menu-right'>
+      {% if mode == 'edit' %}
+        {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
+        <button class='dropdown-item' type='button' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
       {% endif %}
-      <button
-        aria-label='{{ alt }}'
-        class='btn {{ Entity.ExclusiveEditMode.isActive ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'
-        data-action='toggle-exclusive-edit-mode'
-        id='exclusiveEditModeBtn'
-        title='{{ alt }}'
-        type='button'
-      >
-        <span class='fa-stack'>
-          <i class='fas {{ lockIcon }} fa-stack-1x fa-fw'></i>
-          <i class='fas fa-pen-nib fa-stack-1x fa-fw fa-rotate-by'></i>
-        </span>
-      </button>
-    {% endif %}
-
-    <div class='vertical-separator'></div>
-
-    {# MORE OPTIONS #}
-    <div class='dropdown'>
-      <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' title='{{ 'Toggle pin'|trans }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
-        <i class='fas fa-ellipsis-v fa-fw'></i>
-      </button>
-
-      <div class='dropdown-menu dropdown-menu-right'>
-        {% if mode == 'edit' %}
-          {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
-          <button class='dropdown-item' type='button' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-        {% endif %}
-        {# REVISIONS #}
+      {# REVISIONS #}
       <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
-        {# CHANGELOG #}
-        <a class='dropdown-item' href='?templateid={{ Entity.id }}&amp;mode=changelog&amp;tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
-        {# TRANSFER OWNERSHIP #}
-        {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
-          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
-        {% endif %}
+      {# CHANGELOG #}
+      <a class='dropdown-item' href='?templateid={{ Entity.id }}&amp;mode=changelog&amp;tab=3'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+      {# TRANSFER OWNERSHIP #}
+      {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
+        <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Manage Permissions'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
+      {% endif %}
 
-        {# DELETE #}
-        {% if not Entity.entityData.locked %}
-          {# DESTROY #}
-          <div class='dropdown-divider'></div>
-          <button type='button' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
-            <i class='fas fa-trash-alt fa-fw'></i> {{ 'Destroy template'|trans }}
-          </button>
-        {% endif %}
-      </div>
+      {# DELETE #}
+      {% if not Entity.entityData.locked %}
+        {# DESTROY #}
+        <div class='dropdown-divider'></div>
+        <button type='button' data-action='destroy-template' class='dropdown-item hover-danger' data-id='{{ Entity.id }}'>
+          <i class='fas fa-trash-alt fa-fw'></i> {{ 'Destroy template'|trans }}
+        </button>
+      {% endif %}
     </div>
-  {% endif %}
+  </div>
 </div>
 <hr>
 

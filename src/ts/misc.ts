@@ -629,6 +629,11 @@ TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);
 export { TomSelect };
 
+// toggle appearance of button
+export function toggleGrayClasses(classList: DOMTokenList): void {
+  ['bgnd-gray', 'hl-hover-gray'].forEach(btnClass => classList.toggle(btnClass, !classList.contains(btnClass)));
+}
+
 export function getNewIdFromPostRequest(response: Response): number {
   const location = response.headers.get('location').split('/');
   return parseInt(location[location.length -1], 10);

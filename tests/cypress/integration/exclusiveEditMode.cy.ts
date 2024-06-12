@@ -14,22 +14,22 @@ describe('Exclusive edit mode', () => {
     cy.wait('@get');
     cy.intercept('PATCH', '/api/v2/experiments/**').as('api');
     cy.get('#title_input').type(title).blur();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.wait('@api');
+    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.get('#exclusiveEditModeBtn').click();
+    cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock').should('not.have.class', 'fa-lock-open');
     cy.get('#exclusiveEditModeInfo').should('be.visible');
-    cy.wait('@api');
     cy.get('#date_input').type('2024-04-20').blur();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.wait('@api');
+    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('[title="Select who can edit this entry"]').click();
-    cy.get('#canwrite_select_base').select('Only members of the team');
+    cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
     cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').click();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.wait('@api');
+    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     // log out Toto
     cy.request('/app/logout.php');
   };
@@ -38,7 +38,7 @@ describe('Exclusive edit mode', () => {
     // login as Titi
     cy.login('titi@yopmail.com');
     cy.visit('/experiments.php');
-    cy.contains(title).click();
+    cy.get('#showModeContent').contains(title).click();
     cy.url().should('include', 'mode=view');
     cy.intercept('experiments.php?mode=edit&id=*', req => {
       req.on('response', resp => {
@@ -57,23 +57,24 @@ describe('Exclusive edit mode', () => {
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     // request twice to test request rejection
     cy.get('[data-action="request-exclusive-edit-mode-removal"]').click();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    cy.get('#overlay').should('be.visible').should('contain', 'Error: This action has been requested already');
     // silence 303 redirect intercept
     cy.intercept('experiments.php?mode=edit&id=*', req => req.continue());
     // log out Titi
     cy.request('/app/logout.php');
   };
 
-  const checkReleaseWriteLockRequestNotificatio = () => {
+  const checkReleaseWriteLockRequestNotification = () => {
     // login again as Toto
     cy.login();
     cy.visit('/experiments.php');
-    cy.contains(title).should('exist').should('be.visible').click();
+    cy.contains('is requesting removal of exclusive edit mode for').should('be.visible');
+    cy.get('#showModeContent').contains(title).should('be.visible').click();
     cy.get('[aria-label="Edit"]').click();
-    cy.contains('You opened this entry in exclusive edit mode at').should('exist').should('be.visible');
+    cy.contains('You opened this entry in exclusive edit mode at').should('be.visible');
     cy.get('#exclusiveEditModeBtn').click();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.wait('@api');
+    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.contains('You opened this entry in exclusive edit mode at').should('not.exist');
   };
@@ -81,6 +82,6 @@ describe('Exclusive edit mode', () => {
   it('Try to open entity with exclusive edit mode', () => {
     setupEntityWithExclusiveEditMode();
     accessEntityAsTiti();
-    checkReleaseWriteLockRequestNotificatio();
+    checkReleaseWriteLockRequestNotification();
   });
 });

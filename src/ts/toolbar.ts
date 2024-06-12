@@ -5,7 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, getNewIdFromPostRequest, reloadElements, relativeMoment, notifError } from './misc';
+import {
+  getEntity,
+  getNewIdFromPostRequest,
+  notifError,
+  relativeMoment,
+  reloadElements,
+  toggleGrayClasses,
+} from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
@@ -30,12 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
-
-  const changeExclusiveEditModeBtnClasses = (): void => {
-    const btnCl = document.getElementById('exclusiveEditModeBtn').classList;
-    btnCl.toggle('hl-hover-gray', !btnCl.contains('hl-hover-gray'));
-    btnCl.toggle('bgnd-gray', btnCl.contains('hl-hover-gray'));
-  };
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
         // toggle appearance of button and icon
-        ['bgnd-gray', 'hl-hover-gray'].forEach(cl => el.classList.toggle(cl));
+        toggleGrayClasses(el.classList);
         el.querySelector('i').classList.toggle('color-weak');
       });
 
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       case Action.RemoveExclusiveEditMode:
         EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
           .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-          .then(() => changeExclusiveEditModeBtnClasses());
+          .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
         break;
       }
     // CANCEL REQUEST ACTION
@@ -187,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ) {
       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
         .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-        .then(() => changeExclusiveEditModeBtnClasses());
+        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
     }
   });
 });

@@ -32,9 +32,6 @@
   {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
 {% endif %}
 
-
-{% include('view-edit-toolbar.html') %}
-
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
   {% if Entity.ExclusiveEditMode.isActive %}
@@ -53,6 +50,8 @@
     {{ writeLockNotice|raw }}
   {% endif %}
 </div>
+
+{% include('view-edit-toolbar.html') %}
 
 <section id='main_section' aria-label='main section'>
 

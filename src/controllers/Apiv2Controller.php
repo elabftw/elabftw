@@ -14,11 +14,13 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
+use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
@@ -143,7 +145,7 @@ class Apiv2Controller extends AbstractApiController
         if (!empty($req[5])) {
             $subId = (int) ($req[6] ?? '');
             $this->subId = $subId > 0 ? $subId : null;
-            $this->Model = $this->getSubModel($req[5]);
+            $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));
             $this->hasSubmodel = true;
         }
 
@@ -267,52 +269,52 @@ class Apiv2Controller extends AbstractApiController
         };
     }
 
-    private function getSubModel(string $submodel): RestInterface
+    private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
             $Config = Config::getConfig();
             return match ($submodel) {
-                'comments' => new Comments($this->Model, $this->subId),
-                'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
-                'items_links' => new ItemsLinks($this->Model, $this->subId),
-                'request_actions' => new RequestActions($this->Users, $this->Model, $this->subId),
-                'revisions' => new Revisions(
+                ApiSubModels::Comments => new Comments($this->Model, $this->subId),
+                ApiSubModels::ExperimentsLinks => new ExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::ItemsLinks => new ItemsLinks($this->Model, $this->subId),
+                ApiSubModels::RequestActions => new RequestActions($this->Users, $this->Model, $this->subId),
+                ApiSubModels::Revisions => new Revisions(
                     $this->Model,
                     (int) $Config->configArr['max_revisions'],
                     (int) $Config->configArr['min_delta_revisions'],
                     (int) $Config->configArr['min_days_revisions'],
                     $this->subId
                 ),
-                'steps' => new Steps($this->Model, $this->subId),
-                'tags' => new Tags($this->Model, $this->subId),
-                'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->entityType->value . ': available models are: comments, experiments_links, items_links, request_actions, revisions, steps, tags, uploads.'),
+                ApiSubModels::Steps => new Steps($this->Model, $this->subId),
+                ApiSubModels::Tags => new Tags($this->Model, $this->subId),
+                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };
         }
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
-                // backward compatibility: status == experiments_status
-                'status' => new ExperimentsStatus($this->Model, $this->subId),
-                'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
-                'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
-                'items_status' => new ItemsStatus($this->Model, $this->subId),
-                'items_categories' => new ItemsTypes($this->Users, $this->subId),
-                'procurement_requests' => new ProcurementRequests($this->Model, $this->subId),
-                'teamgroups' => new TeamGroups($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
+                // backward compatibility: Status == ExperimentsStatus
+                ApiSubModels::Status => new ExperimentsStatus($this->Model, $this->subId),
+                ApiSubModels::ExperimentsStatus => new ExperimentsStatus($this->Model, $this->subId),
+                ApiSubModels::ExperimentsCategories => new ExperimentsCategories($this->Model, $this->subId),
+                ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
+                ApiSubModels::ItemsCategories => new ItemsTypes($this->Users, $this->subId),
+                ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
+                ApiSubModels::Teamgroups => new TeamGroups($this->Users, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),
             };
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
-                'notifications' => new UserNotifications($this->Model, $this->subId),
-                'request_actions' => new UserRequestActions($this->Model),
-                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
+                ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
+                ApiSubModels::RequestActions => new UserRequestActions($this->Model),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Users),
             };
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                'notifications' => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
-                default => throw new ImproperActionException('Incorrect submodel for event: available models are: notifications.'),
+                ApiSubModels::Notifications => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

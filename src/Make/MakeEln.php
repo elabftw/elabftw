@@ -174,6 +174,7 @@ class MakeEln extends AbstractMakeEln
             'keywords' => $keywords,
             'name' => $e['title'],
             'text' => $e['body'] ?? '',
+            'encodingFormat' => $e['content_type'] === 1 ? 'text/html' : 'text/markdown',
             'url' => Config::fromEnv('SITE_URL') . '/' . $entity->page . '.php?mode=view&id=' . $e['id'],
             'hasPart' => $hasPart,
             'mentions' => $mentions,

@@ -70,6 +70,11 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         // was "write" previously, but let's make timestamping/signing only require read access
         $this->canOrExplode('read');
+        // if there is an active exclusive edit mode, entity cannot be modified
+        // only user who locked can do everything
+        // (sys)admin can remove locks
+        // everyone can Pin, AccessKey, Bloxberg, Sign, Timestamp
+        $this->ExclusiveEditMode->canPatchOrExplode($action);
         return match ($action) {
             Action::Bloxberg => $this->bloxberg(),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
@@ -126,6 +131,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
+        $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         ksort($this->entityData);
         return $this->entityData;
     }

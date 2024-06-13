@@ -24,14 +24,14 @@
         <div class='d-flex'>
           <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
           <div>
-            {{- '%s has been requested by %s for %s'|trans|format(
-              action.action,
+            {{- '%s has requested %s for this entity from %s'|trans|format(
               action.requester_fullname,
+              action.description,
               action.target_fullname
-            ) }}<span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
+            ) }} <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
               <div class='mt-2'>
             {% if action.target_userid == App.Users.userData.userid %}
-                <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.action }}'>{{ action.action }}</button>
+                <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
             {% endif %}
             {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
                 <button type='button' class='btn btn-sm btn-ghost' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>

@@ -306,6 +306,18 @@ components:
           type: string
         elabid:
           type: string
+        exclusive_edit_mode:
+          oneOf:
+            - type: object
+              properties:
+                locked_by:
+                  type: integer
+                fullname:
+                  type: string
+                locked_at:
+                  type: string
+            - type: object
+              properties:
         experiments_links:
           type: array
           items:
@@ -1208,7 +1220,15 @@ paths:
                   properties:
                     action:
                       type: string
-                      enum: ['lock', 'pin', 'updatemetadatafield', 'update', 'bloxberg', 'timestamp']
+                      enum: [
+                        'bloxberg',
+                        'exclusiveeditmode',
+                        'lock',
+                        'pin',
+                        'timestamp',
+                        'updatemetadatafield',
+                        'update',
+                      ]
                 - $ref: '#/components/schemas/experiment'
       responses:
         '200':
@@ -1525,7 +1545,13 @@ paths:
                   properties:
                     action:
                       type: string
-                      enum: ['lock', 'pin', 'updatemetadatafield', 'update']
+                      enum: [
+                        'exclusiveeditmode',
+                        'lock',
+                        'pin',
+                        'updatemetadatafield',
+                        'update',
+                      ]
                 - $ref: '#/components/schemas/item'
       responses:
         '200':

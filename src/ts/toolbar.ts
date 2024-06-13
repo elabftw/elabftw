@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
 
+  const changeExclusiveEditModeBtnClasses = (): void => {
+    const btnCl = document.getElementById('exclusiveEditModeBtn').classList;
+    btnCl.toggle('hl-hover-gray', !btnCl.contains('hl-hover-gray'));
+    btnCl.toggle('bgnd-gray', btnCl.contains('hl-hover-gray'));
+  };
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -138,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DO REQUEST ACTION
     } else if (el.matches('[data-action="do-requestable-action"]')) {
-      switch (el.dataset.target.toLowerCase()) {
+      switch (el.dataset.target) {
       case Action.Archive:
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
           .then(() => reloadElements(['isArchivedDiv', 'requestActionsDiv']))
@@ -155,6 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
       case Action.Sign:
         $('#addSignatureModal').modal('toggle');
         break;
+      case Action.RemoveExclusiveEditMode:
+        EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+          .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+          .then(() => changeExclusiveEditModeBtnClasses());
+        break;
       }
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
@@ -169,6 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname;
         EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
       }
+
+    // TOGGLE EXCLUSIVE EDIT MODE
+    } else if (el.matches('[data-action="toggle-exclusive-edit-mode"]')
+      || el.parentElement.matches('[data-action="toggle-exclusive-edit-mode"]')
+    ) {
+      EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+        .then(() => changeExclusiveEditModeBtnClasses());
     }
   });
 });

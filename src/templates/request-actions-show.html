@@ -6,7 +6,7 @@
         <div class='d-flex'>
           <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
           <div>
-            {{ '%s is requesting %s on'|trans|format(action.requester_firstname, action.action) }} <a href='/{{ action.entity_page }}.php?mode=view&amp;id={{ action.entity_id }}'>{{ action.entity_title }}</a><span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></a>
+            {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }} <a href='/{{ action.entity_page }}.php?mode=view&amp;id={{ action.entity_id }}'>{{ action.entity_title }}</a><span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span></a>
           </div>
         </div>
       </li>

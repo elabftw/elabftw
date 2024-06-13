@@ -35,6 +35,25 @@
 
 {% include('view-edit-toolbar.html') %}
 
+{# Exclusive edit mode notification #}
+<div id='exclusiveEditModeInfo'>
+  {% if Entity.ExclusiveEditMode.isActive %}
+    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
+        Entity.ExclusiveEditMode.dataArr.locked_at,
+      )|msg('warning', false) %}
+    {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
+      {# here user can only be (sys)admin of user who locked entry all others are redirected to view mode in controller #}
+      {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock in the toolbar below or %sRequest exclusive edit mode removal%s.'|trans|format(
+        Entity.ExclusiveEditMode.dataArr.fullname,
+        Entity.ExclusiveEditMode.dataArr.locked_at,
+        '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+        '</button>'
+      )|msg('ko', false) %}
+    {% endif %}
+    {{ writeLockNotice|raw }}
+  {% endif %}
+</div>
+
 <section id='main_section' aria-label='main section'>
 
   {# DATE and RATING #}

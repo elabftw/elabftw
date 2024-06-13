@@ -39,6 +39,10 @@ use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_filter;
+
+use const ARRAY_FILTER_USE_KEY;
+
 /**
  * For displaying an entity in show, view or edit mode
  */
@@ -68,7 +72,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
-        $this->requestableActionArr = RequestableAction::getAssociativeArray();
+        // exclude exclusive edit mode removal action
+        $this->requestableActionArr = array_filter(
+            RequestableAction::getAssociativeArray(),
+            fn(int $key): bool => $key !== RequestableAction::RemoveExclusiveEditMode->value,
+            ARRAY_FILTER_USE_KEY,
+        );
         $this->currencyArr = Currency::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
@@ -243,6 +252,14 @@ abstract class AbstractEntityController implements ControllerInterface
         // a locked entity cannot be edited
         if ($this->Entity->entityData['locked']) {
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));
+        }
+
+        // exclusive edit mode
+        if ($this->Entity instanceof AbstractConcreteEntity) {
+            $redirectResponse = $this->Entity->ExclusiveEditMode->gatekeeper();
+            if ($redirectResponse instanceof RedirectResponse) {
+                return ($redirectResponse);
+            }
         }
 
         // last modifier name

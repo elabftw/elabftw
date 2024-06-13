@@ -64,7 +64,10 @@ class RequestActions implements RestInterface
             $action['requester_fullname'] = $Requester->userData['fullname'];
             $Target = new Users($action['target_userid']);
             $action['target_fullname'] = $Target->userData['fullname'];
-            $action['action'] = RequestableAction::from($action['action'])->name;
+            $action['description'] = RequestableAction::from($action['action'])->toHuman();
+            $action['target'] = strtolower(RequestableAction::from($action['action'])->name);
+            /** @psalm-suppress PossiblyNullArgument */
+            $action['action'] = _(preg_replace('/([a-z])([A-Z])/', '${1} ${2}', RequestableAction::from($action['action'])->name));
             return $action;
         }, $this->readAll());
     }

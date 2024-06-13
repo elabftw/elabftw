@@ -173,7 +173,7 @@ class MakePdf extends AbstractMakePdf
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
                     $this->Entity->id,
-                    $this->Entity->page,
+                    $this->Entity->entityType->getPage(),
                     implode(', ', $this->failedAppendPdfs)
                 );
             }
@@ -191,7 +191,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->page);
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->getPage());
         }
         return $content;
     }

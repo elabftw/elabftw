@@ -77,10 +77,6 @@ abstract class AbstractEntity implements RestInterface
 
     public Pins $Pins;
 
-    // string representation of EntityType
-    public string $type = '';
-
-    // replaces $type string above
     public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
@@ -88,9 +84,6 @@ abstract class AbstractEntity implements RestInterface
 
     // use that to ignore the canOrExplode calls
     public bool $bypassWritePermission = false;
-
-    // will be defined in children classes
-    public string $page = '';
 
     // sql of ids to include
     public string $idFilter = '';
@@ -136,7 +129,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/', $this->page);
+        return sprintf('api/v2/%s/', $this->entityType->getPage());
     }
 
     /**
@@ -189,7 +182,7 @@ abstract class AbstractEntity implements RestInterface
             );
         }
 
-        $sql = 'UPDATE ' . $this->type . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -299,14 +292,21 @@ abstract class AbstractEntity implements RestInterface
      */
     public function getTags(array $items): array
     {
-        $sqlid = 'tags2entity.item_id IN (' . implode(',', array_column($items, 'id')) . ')';
-        $sql = 'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag, (tags_id IS NOT NULL) AS is_favorite
-            FROM tags2entity
-            LEFT JOIN tags ON (tags2entity.tag_id = tags.id)
-            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE tags2entity.item_type = :type AND ' . $sqlid . ' ORDER by tag';
+        $sql = sprintf(
+            'SELECT DISTINCT tags2entity.tag_id, tags2entity.item_id, tags.tag, (tags_id IS NOT NULL) AS is_favorite
+                FROM tags2entity
+                LEFT JOIN tags
+                    ON (tags2entity.tag_id = tags.id)
+                LEFT JOIN favtags2users
+                    ON (favtags2users.users_id = :userid
+                        AND favtags2users.tags_id = tags.id)
+                WHERE tags2entity.item_type = :type
+                    AND tags2entity.item_id IN (%s)
+                ORDER by tag',
+            implode(',', array_column($items, 'id'))
+        );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':type', $this->type);
+        $req->bindValue(':type', $this->entityType->value);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $allTags = array();
@@ -452,7 +452,7 @@ abstract class AbstractEntity implements RestInterface
             $period = '15000101-30000101';
         }
         [$from, $to] = explode('-', $period);
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':from', $from);
@@ -486,7 +486,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromCategory(int $category): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
@@ -499,7 +499,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function getIdFromUser(int $userid): array
     {
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND (state = :statenormal OR state = :statearchived)';
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE userid = :userid AND (state = :statenormal OR state = :statearchived)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
@@ -517,7 +517,7 @@ abstract class AbstractEntity implements RestInterface
             $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-            $req->bindValue(':type', $this->type);
+            $req->bindValue(':type', $this->entityType->value);
             $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
@@ -553,11 +553,11 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
-        $this->entityData['page'] = $this->page;
+        $this->entityData['page'] = $this->entityType->getPage();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s.php?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),
-            $this->page,
+            $this->entityType->getPage(),
             $this->id,
             // add a share link
             !empty($this->entityData['access_key'])
@@ -580,7 +580,7 @@ abstract class AbstractEntity implements RestInterface
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
     {
         $this->canOrExplode('write');
-        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach($params->ordering as $ordering => $name) {
             // build jsonPath to field
@@ -631,7 +631,7 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create($params);
         // getColumn cannot be malicious here because of the previous switch
-        $sql = 'UPDATE ' . $this->type . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -689,7 +689,7 @@ abstract class AbstractEntity implements RestInterface
         );
 
         // the CAST as json is necessary to avoid double encoding
-        $sql = 'UPDATE ' . $this->type . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $value);
@@ -728,7 +728,7 @@ abstract class AbstractEntity implements RestInterface
     private function processExtendedQuery(string $extendedQuery): void
     {
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
-            $this->type,
+            $this->entityType->value,
             $this->TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();

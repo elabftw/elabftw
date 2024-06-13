@@ -15,14 +15,16 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\TeamFinder;
 use Symfony\Component\HttpFoundation\Request;
 
-use function basename;
 use function in_array;
+
+use const PATHINFO_FILENAME;
 
 /**
  * Provide methods to authenticate a user
@@ -49,9 +51,9 @@ class Auth implements AuthInterface
     private function getAuthType(): string
     {
         // try to login with the elabid for an entity in view mode
-        $page = basename($this->Request->getScriptName());
+        $page = pathinfo($this->Request->getScriptName(), PATHINFO_FILENAME);
         if ($this->Request->query->has('access_key')
-            && ($page === 'experiments.php' || $page === 'database.php')
+            && ($page === EntityType::Experiments->getPage() || $page === EntityType::Items->getPage())
             && $this->Request->query->get('mode') === 'view') {
             return 'access_key';
         }
@@ -81,7 +83,7 @@ class Auth implements AuthInterface
                 );
             case 'access_key':
                 // now we need to know in which team we autologin the user
-                $TeamFinder = new TeamFinder($this->Request->getScriptName(), $this->Request->query->getString('access_key'));
+                $TeamFinder = new TeamFinder(pathinfo($this->Request->getScriptName(), PATHINFO_FILENAME), $this->Request->query->getString('access_key'));
                 $team = $TeamFinder->findTeam();
 
                 if ($team === 0) {
@@ -91,8 +93,12 @@ class Auth implements AuthInterface
             case 'open':
                 // don't do it if we have elabid in url
                 // only autologin on selected pages and if we are not authenticated with an account
-                $autoAnon = array('experiments.php', 'database.php', 'search.php');
-                if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
+                $autoAnon = array(
+                    EntityType::Experiments->getPage(),
+                    EntityType::Items->getPage(),
+                    'search',
+                );
+                if (in_array(pathinfo($this->Request->getScriptName(), PATHINFO_FILENAME), $autoAnon, true)) {
                     return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
                 }
                 // no break

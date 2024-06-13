@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Enums\Currency;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -33,21 +34,21 @@ class TwigFilters
      * For displaying messages using bootstrap alerts
      *
      * @param string $message The message to display
-     * @param string $type Can be 'ok', 'ko' or 'warning'
+     * @param string $msgType Can be 'ok', 'ko' or 'warning'
      * @param bool $cross do we display a cross or not?
      * @return string the HTML of the message
      */
-    public static function displayMessage(string $message, string $type, bool $cross = true): string
+    public static function displayMessage(string $message, string $msgType, bool $cross = true): string
     {
         $icon = 'fa-info-circle';
         $alert = 'success';
 
-        if ($type === 'ko') {
+        if ($msgType === 'ko') {
             $icon = 'fa-exclamation-triangle';
             $alert = 'danger';
-        } elseif ($type === 'warning') {
+        } elseif ($msgType === 'warning') {
             $icon = 'fa-chevron-right';
-            $alert = $type;
+            $alert = $msgType;
         }
 
         $crossLink = '';
@@ -92,14 +93,14 @@ class TwigFilters
                     ? sprintf('<span class="smallgray">%s</span>', Tools::eLabHtmlspecialchars($field[MetadataEnum::Description->value]))
                     : '';
                 $value = $field[MetadataEnum::Value->value] ?? '';
-                $type = $field[MetadataEnum::Type->value] ?? 'text';
+                $metadataType = $field[MetadataEnum::Type->value] ?? 'text';
                 // type:checkbox is a special case
-                if ($type === 'checkbox') {
+                if ($metadataType === 'checkbox') {
                     $checked = $field[MetadataEnum::Value->value] === 'on' ? ' checked="checked"' : '';
                     $value = '<input class="d-block" disabled type="checkbox"' . $checked . '>';
                 }
                 // type:url is another special case
-                elseif ($type === 'url') {
+                elseif ($metadataType === 'url') {
                     $value = sprintf(
                         '<a href="%1$s"%2$s>%1$s</a>',
                         Tools::eLabHtmlspecialchars($value),
@@ -107,9 +108,11 @@ class TwigFilters
                     );
                 }
                 // type:exp/items is another special case
-                elseif (in_array($type, array('experiments', 'items'), true)) {
+                elseif (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
                     $id = isset($field[MetadataEnum::Value->value]) ? (int) $field[MetadataEnum::Value->value] : 0;
-                    $page = $type === 'items' ? 'database' : 'experiments';
+                    $page = $metadataType === EntityType::Items->value
+                        ? EntityType::Items->getPage()
+                        : EntityType::Experiments->getPage();
                     $value = sprintf(
                         '<a href="/%s.php?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
                         $page,
@@ -117,12 +120,12 @@ class TwigFilters
                         $newTab,
                         $id !== 0 ? 'data-replace-with-title="true"' : '',
                         $id,
-                        $type,
+                        $metadataType,
                         Tools::eLabHtmlspecialchars($value),
                     );
                 }
                 // type:users is also a special case where we go fetch the name of the user
-                elseif ($type === 'users' && !empty($value)) {
+                elseif ($metadataType === 'users' && !empty($value)) {
                     try {
                         $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
                         $value = $linkedUser->userData['fullname'];

@@ -46,7 +46,7 @@ class RequestActions implements RestInterface
                     AND state = :state
                 ORDER BY created_at DESC
                 LIMIT 100',
-            $this->entity->page,
+            $this->entity->entityType->getPage(),
             $this->entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
@@ -129,7 +129,7 @@ class RequestActions implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('%s/%d/request_actions/', $this->entity->type, $this->entity->id ?? '');
+        return sprintf('%s/%d/request_actions/', $this->entity->entityType->value, $this->entity->id ?? '');
     }
 
     public function remove(RequestableAction $action): bool

@@ -156,7 +156,7 @@ class Apiv2Controller extends AbstractApiController
             }
             // fit the request with what makecontroller expects
             if ($this->Model instanceof AbstractEntity) {
-                $this->Request->query->set('type', $this->Model->type);
+                $this->Request->query->set('type', $this->Model->entityType->value);
                 $this->Request->query->set('id', $this->id);
             }
         }
@@ -286,7 +286,7 @@ class Apiv2Controller extends AbstractApiController
                 'steps' => new Steps($this->Model, $this->subId),
                 'tags' => new Tags($this->Model, $this->subId),
                 'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, request_actions, revisions, steps, tags, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->entityType->value . ': available models are: comments, experiments_links, items_links, request_actions, revisions, steps, tags, uploads.'),
             };
         }
         if ($this->Model instanceof Teams) {

@@ -62,7 +62,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             timestamped = 1,
             timestampedby = :userid,
             timestamped_at = :when
-            WHERE id = :id', $this->Entity->type);
+            WHERE id = :id', $this->Entity->entityType->value);
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);

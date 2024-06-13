@@ -46,10 +46,10 @@ abstract class AbstractImport implements ImportInterface
         $this->Db = Db::getConnection();
         // target will look like items:N or experiments:N or experiments_templates:0
         // where N is the category for items, and userid for experiments
-        [$type, $id] = explode(':', $target);
+        [$entityType, $id] = explode(':', $target);
         $this->targetNumber = (int) $id;
-        $this->setTargetUsers($type);
-        $this->Entity = EntityType::from($type)->toInstance($this->Users);
+        $this->setTargetUsers($entityType);
+        $this->Entity = EntityType::from($entityType)->toInstance($this->Users);
         $this->canread = Check::visibility($canread);
         $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
@@ -63,9 +63,9 @@ abstract class AbstractImport implements ImportInterface
         return $this->inserted;
     }
 
-    protected function setTargetUsers(string $type): void
+    protected function setTargetUsers(string $entityType): void
     {
-        switch ($type) {
+        switch ($entityType) {
             case EntityType::Templates->value:
                 // for templates we can only import for our user, so there is no target and nothing to check
             case EntityType::Items->value:

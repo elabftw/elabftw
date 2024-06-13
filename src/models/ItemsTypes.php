@@ -29,7 +29,6 @@ class ItemsTypes extends AbstractTemplateEntity
 {
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
         $this->Db = Db::getConnection();
         $this->ExperimentsLinks = new ExperimentsLinks($this);

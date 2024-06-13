@@ -35,4 +35,14 @@ enum EntityType: string
             $this::ItemsTypes => new ItemsTypes($users, $entityId),
         };
     }
+
+    public function getPage(): string
+    {
+        return match ($this) {
+            $this::Experiments => $this::Experiments->value,
+            $this::Items => 'database',
+            $this::Templates => $this::Templates->value,
+            $this::ItemsTypes => $this::ItemsTypes->value,
+        };
+    }
 }

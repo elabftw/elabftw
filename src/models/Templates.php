@@ -40,7 +40,6 @@ class Templates extends AbstractTemplateEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->type = EntityType::Templates->value;
         $this->entityType = EntityType::Templates;
         parent::__construct($users, $id);
     }

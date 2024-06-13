@@ -75,7 +75,7 @@ abstract class AbstractMake
         return sprintf(
             '%s/%s.php?mode=view&id=%d',
             Config::fromEnv('SITE_URL'),
-            $this->Entity->page,
+            $this->Entity->entityType->getPage(),
             $entityId ?? $this->Entity->id ?? 0,
         );
     }

@@ -30,8 +30,6 @@ class Experiments extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null)
     {
-        $this->page = EntityType::Experiments->value;
-        $this->type = EntityType::Experiments->value;
         $this->entityType = EntityType::Experiments;
         parent::__construct($users, $id);
     }

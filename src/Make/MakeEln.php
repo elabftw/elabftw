@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
@@ -98,7 +99,7 @@ class MakeEln extends MakeStreamZip
             } catch (IllegalActionException $e) {
                 continue;
             }
-            $e = $this->Entity->entityData;
+            $entityData = $this->Entity->entityData;
             $currentDatasetFolder = $this->getBaseFileName();
             $this->folder = $this->root . '/' . $currentDatasetFolder;
             $rootParts[] = array('@id' => './' . $currentDatasetFolder);
@@ -106,9 +107,9 @@ class MakeEln extends MakeStreamZip
             // LINKS (mentions)
             // this array will be added to the "mentions" attribute of the main dataset
             $mentions = array();
-            $linkTypes = array('experiments', 'items');
-            foreach($linkTypes as $type) {
-                foreach ($e[$type . '_links'] as $link) {
+            $linkTypes = array(EntityType::Experiments, EntityType::Items);
+            foreach($linkTypes as $entityType) {
+                foreach ($entityData[$entityType->value . '_links'] as $link) {
                     $id = Config::fromEnv('SITE_URL') . '/' . $link['page'] . '.php?mode=view&id=' . $link['entityid'];
                     $mentions[] = array('@id' => $id);
                     $dataEntities[] = array(
@@ -121,7 +122,7 @@ class MakeEln extends MakeStreamZip
             }
 
             // JSON
-            $MakeJson = new MakeJson($this->Entity, array($e['id']));
+            $MakeJson = new MakeJson($this->Entity, array($entityData['id']));
             $json = $MakeJson->getFileContent();
             $this->Zip->addFile($this->folder . '/' . $MakeJson->getFileName(), $json);
             $jsonAtId = './' . $currentDatasetFolder . '/' . $MakeJson->getFileName();
@@ -139,7 +140,7 @@ class MakeEln extends MakeStreamZip
 
             // COMMENTS
             $comments = array();
-            foreach ($e['comments'] as $comment) {
+            foreach ($entityData['comments'] as $comment) {
                 // the comment creation date will be used as part of the id
                 $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
                 $id = 'comment://' . urlencode($dateCreated);
@@ -158,7 +159,7 @@ class MakeEln extends MakeStreamZip
             }
 
             // UPLOADS
-            $uploadedFilesArr = $e['uploads'];
+            $uploadedFilesArr = $entityData['uploads'];
             if (!empty($uploadedFilesArr)) {
                 try {
                     // this gets modified by the function so we have the correct real_names
@@ -194,28 +195,28 @@ class MakeEln extends MakeStreamZip
             }
 
             // MAIN ENTRY
-            $firstname = $e['firstname'] ?? '';
-            $lastname = $e['lastname'] ?? '';
+            $firstname = $entityData['firstname'] ?? '';
+            $lastname = $entityData['lastname'] ?? '';
             $datasetNode = array(
                 '@id' => './' . $currentDatasetFolder,
                 '@type' => 'Dataset',
-                'author' => array('@id' => $this->getAuthorId($e['userid'], $firstname, $lastname, $e['orcid'])),
-                'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
-                'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
-                'identifier' => $e['elabid'] ?? '',
+                'author' => array('@id' => $this->getAuthorId($entityData['userid'], $firstname, $lastname, $entityData['orcid'])),
+                'dateCreated' => (new DateTimeImmutable($entityData['created_at']))->format(DateTimeImmutable::ATOM),
+                'dateModified' => (new DateTimeImmutable($entityData['modified_at']))->format(DateTimeImmutable::ATOM),
+                'identifier' => $entityData['elabid'] ?? '',
                 'comment' => $comments,
                 'keywords' => $keywords,
-                'name' => $e['title'],
-                'text' => $e['body'] ?? '',
-                'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->page . '.php?mode=view&id=' . $e['id'],
+                'name' => $entityData['title'],
+                'text' => $entityData['body'] ?? '',
+                'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->entityType->getPage() . '.php?mode=view&id=' . $entityData['id'],
                 'hasPart' => $hasPart,
                 'mentions' => $mentions,
             );
-            if ($e['category_title'] !== null) {
-                $datasetNode['category'] = $e['category_title'];
+            if ($entityData['category_title'] !== null) {
+                $datasetNode['category'] = $entityData['category_title'];
             }
-            if ($e['status_title'] !== null) {
-                $datasetNode['status'] = $e['status_title'];
+            if ($entityData['status_title'] !== null) {
+                $datasetNode['status'] = $entityData['status_title'];
             }
             $dataEntities[] = $datasetNode;
         }

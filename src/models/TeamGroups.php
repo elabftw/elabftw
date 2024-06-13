@@ -165,8 +165,8 @@ class TeamGroups implements RestInterface
     {
         $this->canWriteOrExplode();
 
-        $res1 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Experiments->value);
-        $res2 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Items->value);
+        $res1 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Experiments);
+        $res2 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Items);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -308,7 +308,7 @@ class TeamGroups implements RestInterface
         }
     }
 
-    private function updateTeamgroupPermissionsOnDestroy(string $type): bool
+    private function updateTeamgroupPermissionsOnDestroy(EntityType $entityType): bool
     {
         // the complicated SQL could be avoided if we could use JSON_SEARCH with integers but it only works with strings :(
         // https://bugs.mysql.com/bug.php?id=90085
@@ -361,7 +361,7 @@ class TeamGroups implements RestInterface
             SET entity.canwrite = COALESCE(t_canwrite.new, entity.canwrite),
                 entity.canread = COALESCE(t_canread.new, entity.canread)';
 
-        $req = $this->Db->prepare(sprintf($sql, $type));
+        $req = $this->Db->prepare(sprintf($sql, $entityType->value));
         $req->bindValue(':id', $this->id);
         return $this->Db->execute($req);
     }

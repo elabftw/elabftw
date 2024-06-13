@@ -255,11 +255,9 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // exclusive edit mode
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            $redirectResponse = $this->Entity->ExclusiveEditMode->gatekeeper();
-            if ($redirectResponse instanceof RedirectResponse) {
-                return ($redirectResponse);
-            }
+        $redirectResponse = $this->Entity->ExclusiveEditMode->gatekeeper();
+        if ($redirectResponse instanceof RedirectResponse) {
+            return ($redirectResponse);
         }
 
         // last modifier name

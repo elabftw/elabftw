@@ -74,6 +74,8 @@ abstract class AbstractEntity implements RestInterface
 
     public Pins $Pins;
 
+    public ExclusiveEditMode $ExclusiveEditMode;
+
     public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
@@ -114,7 +116,9 @@ abstract class AbstractEntity implements RestInterface
         $this->Comments = new Comments($this);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
+        $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         $this->setId($id);
+        $this->ExclusiveEditMode->manage();
     }
 
     /**
@@ -306,6 +310,11 @@ abstract class AbstractEntity implements RestInterface
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
         }
+        // if there is an active exclusive edit mode, entity cannot be modified
+        // only user who locked can do everything
+        // (sys)admin can remove locks
+        // everyone can Pin, AccessKey, Bloxberg, Sign, Timestamp
+        $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
             Action::Archive => (

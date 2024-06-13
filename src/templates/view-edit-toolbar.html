@@ -257,7 +257,7 @@
       </button>
     {% endif %}
 
-    {% if mode == 'edit' and (Entity.type == 'experiments' or Entity.type == 'items') %}
+    {% if mode == 'edit' %}
       {% set lockIcon = 'fa-lock-open' %}
       {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
       {% if Entity.ExclusiveEditMode.isActive %}

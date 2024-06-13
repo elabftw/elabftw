@@ -40,7 +40,7 @@ class ExclusiveEditMode
 
     private Db $Db;
 
-    public function __construct(private AbstractConcreteEntity $Entity)
+    public function __construct(private AbstractEntity $Entity)
     {
         $this->Db = Db::getConnection();
     }
@@ -109,9 +109,6 @@ class ExclusiveEditMode
             // everyone can ...
             if ($action === Action::Pin
                 || $action === Action::AccessKey
-                || $action === Action::Bloxberg
-                || $action === Action::Sign
-                || $action === Action::Timestamp
             ) {
                 return;
             }

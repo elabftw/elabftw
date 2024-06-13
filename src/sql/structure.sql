@@ -287,10 +287,10 @@ CREATE TABLE `experiments_edit_mode` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
---   `locked_by`
---       `users` -> `userid`
 --   `experiments_id`
 --       `experiments` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -368,6 +368,27 @@ CREATE TABLE `experiments_templates_revisions` (
 --   `item_id`
 --       `experiments_templates` -> `id`
 --   `userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_edit_mode`
+--
+
+CREATE TABLE `experiments_templates_edit_mode` (
+  `experiments_templates_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`experiments_templates_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
+--   `experiments_templates_id`
+--       `experiments_templates` -> `id`
+--   `locked_by`
 --       `users` -> `userid`
 --
 
@@ -605,10 +626,10 @@ CREATE TABLE `items_edit_mode` (
 
 --
 -- RELATIONSHIPS FOR TABLE `items_edit_mode`:
---   `locked_by`
---       `users` -> `userid`
 --   `items_id`
 --       `items` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -691,6 +712,28 @@ CREATE TABLE `items_types_steps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `items_types_edit_mode`
+--
+
+CREATE TABLE `items_types_edit_mode` (
+  `items_types_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`items_types_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `items_edit_mode`:
+--   `items_types_id`
+--       `items_types` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `lockout_devices`
 --
@@ -1299,6 +1342,11 @@ ALTER TABLE `items_types_steps`
   ADD KEY `fk_items_types_steps_items_id` (`item_id`);
 
 --
+-- Indexes for table `items_types_edit_mode`
+--
+ALTER TABLE `items_types_edit_mode`
+  ADD KEY `idx_items_types_edit_mode_all_columns` (`items_types_id`, `locked_by`, `locked_at`);
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -1535,6 +1583,17 @@ ALTER TABLE `items_types_steps`
   ADD CONSTRAINT `fk_items_types_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `items_types_edit_mode`
+--
+ALTER TABLE `items_types_edit_mode`
+  ADD CONSTRAINT `fk_items_types_edit_mode_items_types_id`
+    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -1638,6 +1697,19 @@ CREATE TABLE `experiments_templates_links` (
     CONSTRAINT `fk_experiments_templates_links_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+
+--
+-- Indexes and Constraints for table `experiments_templates_edit_mode`
+--
+ALTER TABLE `experiments_templates_edit_mode`
+  ADD KEY `idx_experiments_templates_edit_mode_all_columns` (`experiments_templates_id`, `locked_by`, `locked_at`),
+  ADD CONSTRAINT `fk_experiments_templates_edit_mode_experiments_templates_id`
+    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `users2teams`

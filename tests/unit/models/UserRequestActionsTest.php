@@ -20,7 +20,8 @@ class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->ura = new UserRequestActions(new Users(1, 1));
+        // use user 2 as it was used to setup the db entries in testRequestActions
+        $this->ura = new UserRequestActions(new Users(2, 1));
     }
 
     public function testRead(): void

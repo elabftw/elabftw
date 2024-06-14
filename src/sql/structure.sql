@@ -208,7 +208,23 @@ CREATE TABLE IF NOT EXISTS `experiments_request_actions` (
     `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_request_actions_experiments_id` (`entity_id`),
-    CONSTRAINT `fk_experiments_request_actions_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
+    CONSTRAINT `fk_experiments_request_actions_experiments_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_experiments_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_experiments_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_request_actions`:
+--   `entity_id`
+--       `experiments` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `experiments_revisions`
@@ -514,7 +530,23 @@ CREATE TABLE IF NOT EXISTS `items_request_actions` (
     `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     PRIMARY KEY (`id`),
     KEY `fk_items_request_actions_items_id` (`entity_id`),
-    CONSTRAINT `fk_items_request_actions_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE);
+    CONSTRAINT `fk_items_request_actions_items_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_items_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_items_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `items_request_actions`:
+--   `entity_id`
+--       `items` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `items_revisions`
@@ -1295,6 +1327,17 @@ ALTER TABLE `experiments_comments`
   ADD CONSTRAINT `fk_experiments_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_request_actions`
+--
+ALTER TABLE `experiments_request_actions`
+    ADD CONSTRAINT `fk_experiments_request_actions_requester_users_userid`
+      FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_experiments_request_actions_target_users_userid`
+      FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+      ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_links`
 --
 ALTER TABLE `experiments_links`
@@ -1349,6 +1392,17 @@ ALTER TABLE `items`
 ALTER TABLE `items_comments`
   ADD CONSTRAINT `fk_items_comments_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_request_actions`
+--
+ALTER TABLE `items_request_actions`
+  ADD CONSTRAINT `fk_items_request_actions_requester_users_userid`
+      FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_request_actions_target_users_userid`
+      FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+      ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items_revisions`

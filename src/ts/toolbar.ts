@@ -114,7 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
         target_action: actionSelect.value,
         target_userid: userSelect.value,
       }).then(() => reloadElements(['requestActionsDiv']))
-        .then(() => relativeMoment());
+        .then(() => relativeMoment())
+        // the request gets rejected if repeated
+        .catch(error => console.error(error.message));
     // SHOW ACTION
     } else if (el.matches('[data-action="show-action"]')) {
       const btn = document.getElementById(`actionButton-${el.dataset.target}`);

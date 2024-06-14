@@ -93,6 +93,13 @@ users:
     create_experiments: false
     orgid: internal_id_42
 
+  - email: notyetvalidateduser@yopmail.com
+    team: Bravo
+    validated: false
+    create_experiments: true
+    create_items: true
+    create_templates: true
+
   - team: Charlie
 
   - team: Delta

@@ -37,6 +37,7 @@ use Elabftw\Models\Users2Teams;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
@@ -326,9 +327,14 @@ class LoginController implements ControllerInterface
      */
     private function teamSelection(int $userid, int $teamId): void
     {
+        // Ensure that the team is actually one that users should be able to select.
+        $TeamsHelper = new TeamsHelper($teamId);
+        $TeamsHelper->teamIsVisibleOrExplode();
+
         $this->App->Session->remove('team_selection_required');
         $Users2Teams = new Users2Teams(new Users($userid));
         $Users2Teams->create($userid, $teamId);
+        $this->App->Session->remove('teaminit_userid');
         // TODO avoid re-login
         $this->App->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
         $location = '/login.php';
@@ -337,6 +343,10 @@ class LoginController implements ControllerInterface
 
     private function initTeamSelection(): void
     {
+        // Ensure that the team is actually one that users should be able to select.
+        $TeamsHelper = new TeamsHelper($this->App->Request->request->getInt('team_id'));
+        $TeamsHelper->teamIsVisibleOrExplode();
+
         // create a user in the requested team
         $newUser = ExistingUser::fromScratch(
             $this->App->Session->get('teaminit_email'),

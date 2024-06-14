@@ -15,6 +15,7 @@ use Elabftw\Exceptions\IllegalActionException;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
+use Elabftw\Services\TeamsHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -44,6 +45,10 @@ try {
     ) {
         throw new ImproperActionException(_('A mandatory field is missing!'));
     }
+
+    // Check that the user is being added to a team available in team addition dropdowns.
+    $teamsHelper = new TeamsHelper($App->Request->request->getInt('team'));
+    $teamsHelper->teamIsVisibleOrExplode();
 
     // Create user
     $App->Users->createOne(

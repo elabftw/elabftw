@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Check;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Services\TeamsHelper;
 use PDO;
 
 /**
@@ -130,6 +131,11 @@ class Users2Teams
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
+        }
+
+        $TeamsHelper = new TeamsHelper($teamid);
+        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('User tried to patch team group of a team where they are not admin');
         }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);

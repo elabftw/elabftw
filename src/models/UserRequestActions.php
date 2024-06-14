@@ -50,13 +50,13 @@ class UserRequestActions implements RestInterface
         foreach($tables as $table) {
             $sql[] = sprintf(
                 '(SELECT "%1$s" AS entity_page, entity.title AS entity_title, %2$s_request_actions.id,
-                %2$s_request_actions.created_at, requester_userid, target_userid, entity_id, action,
-                %2$s_request_actions.state
-              FROM %2$s_request_actions
-              LEFT JOIN %2$s AS entity
-                ON entity.id = %2$s_request_actions.entity_id
-              WHERE target_userid = :userid
-                AND %2$s_request_actions.state = :state)',
+                        %2$s_request_actions.created_at, requester_userid, target_userid, entity_id, action,
+                        %2$s_request_actions.state
+                    FROM %2$s_request_actions
+                    LEFT JOIN %2$s AS entity
+                        ON entity.id = %2$s_request_actions.entity_id
+                    WHERE target_userid = :userid
+                        AND %2$s_request_actions.state = :state)',
                 $table['page'],
                 $table['entity_type'],
             );
@@ -71,7 +71,7 @@ class UserRequestActions implements RestInterface
 
     public function readAllFull(): array
     {
-        return array_map(function ($action) {
+        return array_map(function (array $action): array {
             $Requester = new Users($action['requester_userid']);
             $action['requester_firstname'] = $Requester->userData['firstname'];
             $action['action'] = RequestableAction::from($action['action'])->name;

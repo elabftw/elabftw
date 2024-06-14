@@ -129,7 +129,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
-        $RequestActions = new UserRequestActions($this->App->Users);
+        $UserRequestActions = new UserRequestActions($this->App->Users);
 
         $renderArr = array(
             'DisplayParams' => $DisplayParams,
@@ -142,7 +142,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
-            'requestActionsArr' => $RequestActions->readAllFull(),
+            'requestActionsArr' => $UserRequestActions->readAllFull(),
             // generate light show page
             'searchPage' => $isSearchPage,
             'tagsArr' => $tagsArr,

@@ -85,7 +85,8 @@ class TeamsHelper
 
     public function isAdminInTeam(int $userid): bool
     {
-        return $this->isUserInTeam($userid) && ($this->getUserInTeam($userid)['groups_id'] <= Usergroup::Admin->value);
+        $userInTeam = $this->getUserInTeam($userid);
+        return !empty($userInTeam) && ($userInTeam['groups_id'] <= Usergroup::Admin->value);
     }
 
     public function isUserInTeam(int $userid): bool

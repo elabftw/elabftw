@@ -80,8 +80,7 @@ class TeamsHelper
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetch();
-        return $res ? $res : array();
+        return $req->fetch() ?: array();
     }
 
     public function isAdminInTeam(int $userid): bool

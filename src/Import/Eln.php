@@ -190,8 +190,8 @@ class Eln extends AbstractZip
 
         // CATEGORY
         $categoryId = $this->defaultCategory;
-        if (isset($dataset['category'])) {
-            $categoryId = $this->getCategoryId($dataset['category']);
+        if (isset($dataset['about'])) {
+            $categoryId = $this->getCategoryId($this->getNodeFromId($dataset['about']['@id'])['name']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;
@@ -226,7 +226,7 @@ class Eln extends AbstractZip
                     $bodyAppend .= $this->authorToHtml($value);
                     break;
                     // CATEGORY
-                case 'category':
+                case 'about':
                     $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
                     break;
                     // COMMENTS
@@ -286,7 +286,7 @@ class Eln extends AbstractZip
                     $this->Entity->patch(Action::Update, array('rating' => $value['ratingValue'] ?? '0'));
                     break;
                     // STATUS
-                case 'status':
+                case 'creativeWorkStatus':
                     $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($value)));
                     break;
                     // STEPS

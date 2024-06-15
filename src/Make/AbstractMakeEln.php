@@ -57,23 +57,25 @@ abstract class AbstractMakeEln extends AbstractMakeZip
                     'about' => array('@id' => './'),
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
                     'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
-                    'sdPublisher' => array(
-                        '@type' => 'Organization',
-                        'areaServed' => 'Laniakea Supercluster',
-                        'name' => 'eLabFTW',
-                        'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
-                        'slogan' => 'A free and open source electronic lab notebook.',
-                        'url' => 'https://www.elabftw.net',
-                        'parentOrganization' => array(
-                            '@type' => 'Organization',
-                            'name' => 'Deltablot',
-                            'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
-                            'slogan' => 'Open Source software for research labs.',
-                            'url' => 'https://www.deltablot.com',
-                        ),
-                    ),
+                    'sdPublisher' => array('@id' => '#publisher'),
                     'version' => '1.0',
                 ),
+            ),
+        );
+        $this->dataArr['@graph'][] = array(
+            '@id' => '#publisher',
+            '@type' => 'Organization',
+            'areaServed' => 'Laniakea Supercluster',
+            'name' => 'eLabFTW',
+            'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
+            'slogan' => 'A free and open source electronic lab notebook.',
+            'url' => 'https://www.elabftw.net',
+            'parentOrganization' => array(
+                '@type' => 'Organization',
+                'name' => 'Deltablot',
+                'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
+                'slogan' => 'Open Source software for research labs.',
+                'url' => 'https://www.deltablot.com',
             ),
         );
     }
@@ -93,16 +95,17 @@ abstract class AbstractMakeEln extends AbstractMakeZip
                 'object' => array('@id' => './'),
                 'name' => 'RO-Crate created',
                 'endTime' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
-                'instrument' => array(
-                    '@id' => 'https://www.elabftw.net',
-                    '@type' => 'SoftwareApplication',
-                    'name' => 'eLabFTW',
-                    'version' => App::INSTALLED_VERSION,
-                    'identifier' => 'https://www.elabftw.net',
-                ),
+                'instrument' => array('@id' => 'https://www.elabftw.net'),
                 'actionStatus' =>  array(
                     '@id' => 'http://schema.org/CompletedActionStatus',
                 ),
+            ),
+            array(
+                '@id' => 'https://www.elabftw.net',
+                '@type' => 'SoftwareApplication',
+                'name' => 'eLabFTW',
+                'version' => App::INSTALLED_VERSION,
+                'identifier' => 'https://www.elabftw.net',
             ),
         );
     }

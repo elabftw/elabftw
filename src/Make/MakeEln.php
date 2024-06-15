@@ -52,7 +52,7 @@ class MakeEln extends AbstractMakeEln
         // add the description of root with hasPart property
         $this->dataEntities[] = array(
             '@id' => './',
-            '@type' => 'Dataset',
+            '@type' => array('Dataset'),
             'hasPart' => $this->rootParts,
         );
 
@@ -77,7 +77,8 @@ class MakeEln extends AbstractMakeEln
         }
         // prevent a zip name with too many characters, see #3966
         $prefixedTitle = substr($prefix . Filter::forFilesystem($entityData['title']), 0, 100);
-        return sprintf('%s - %s', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
+        // SHOULD end with /
+        return sprintf('%s - %s/', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
     }
 
     private function processEntity(AbstractEntity $entity): bool
@@ -128,7 +129,7 @@ class MakeEln extends AbstractMakeEln
             } catch (UnableToReadFile) {
             }
             foreach ($uploadedFilesArr as $file) {
-                $uploadAtId = './' . $currentDatasetFolder . '/' . $file['real_name'];
+                $uploadAtId = './' . $currentDatasetFolder . $file['real_name'];
                 $hasPart[] = array('@id' => $uploadAtId);
                 $fileNode = array(
                     '@id' => $uploadAtId,
@@ -166,25 +167,32 @@ class MakeEln extends AbstractMakeEln
             '@id' => './' . $currentDatasetFolder,
             '@type' => 'Dataset',
             'author' => array('@id' => $this->getAuthorId(new Users((int) $e['userid']))),
-            'alternateName' => $e['custom_id'] ?? '',
             'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
-            'identifier' => $e['elabid'] ?? '',
-            'comment' => $comments,
-            'keywords' => $keywords,
             'name' => $e['title'],
-            'text' => $e['body'] ?? '',
             'encodingFormat' => $e['content_type'] === 1 ? 'text/html' : 'text/markdown',
             'url' => Config::fromEnv('SITE_URL') . '/' . $entity->page . '.php?mode=view&id=' . $e['id'],
-            'hasPart' => $hasPart,
-            'mentions' => $mentions,
             'genre' => $entity->entityType->toGenre(),
         );
+        $datasetNode = self::addIfNotEmpty(
+            $datasetNode,
+            array('alternateName' => $e['custom_id']),
+            array('comment' => $comments),
+            array('creativeWorkStatus' => $e['status_title']),
+            array('hasPart' => $hasPart),
+            array('identifier' => $e['elabid']),
+            array('keywords' => $keywords),
+            array('mentions' => $mentions),
+            array('text' => $e['body']),
+        );
         if ($e['category_title'] !== null) {
-            $datasetNode['category'] = $e['category_title'];
-        }
-        if ($e['status_title'] !== null) {
-            $datasetNode['status'] = $e['status_title'];
+            $categoryAtId = '#category-' . $e['category_title'];
+            $this->dataEntities[] =  array(
+                '@id' => $categoryAtId,
+                '@type' => 'Thing',
+                'name' => $e['category_title'],
+            );
+            $datasetNode['about'] = array('@id' => $categoryAtId);
         }
         // METADATA (extra fields)
         if ($e['metadata']) {
@@ -198,12 +206,27 @@ class MakeEln extends AbstractMakeEln
                 'reviewCount' => 1,
             );
         }
+        // STEPS
         if (!empty($e['steps'])) {
             $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
         }
 
         $this->dataEntities[] = $datasetNode;
         return true;
+    }
+
+    private static function addIfNotEmpty(array $datasetNode, array ...$nameValueArr): array
+    {
+        foreach ($nameValueArr as $nameValue) {
+            $key = array_key_first($nameValue);
+            if ($key === null) {
+                continue;
+            }
+            if (!empty($nameValue[$key])) {
+                $datasetNode[$key] = $nameValue[$key];
+            }
+        }
+        return $datasetNode;
     }
 
     private function stepsToJsonLd(array $steps): array
@@ -245,6 +268,7 @@ class MakeEln extends AbstractMakeEln
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
             // https://schema.org/PropertyValue
             $pv = array();
+            $pv['@type'] = 'PropertyValue';
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';

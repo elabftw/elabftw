@@ -56,8 +56,11 @@ class Cookie implements AuthInterface
         // make sure user is in team because we can't trust it
         $TeamsHelper = new TeamsHelper($this->team);
         try {
-            $TeamsHelper->isUserInTeam($userid);
+            $isUserInTeam = $TeamsHelper->isUserInTeam($userid);
         } catch (ResourceNotFoundException) {
+            throw new UnauthorizedException();
+        }
+        if ($isUserInTeam === false) {
             throw new UnauthorizedException();
         }
 

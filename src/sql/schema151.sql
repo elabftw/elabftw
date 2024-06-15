@@ -27,6 +27,6 @@ CREATE TABLE `exports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-ALTER TABLE `experiments_templates` CHANGE `team` `team` INT UNSIGNED NOT NULL;
+-- ALTER TABLE `experiments_templates` CHANGE `team` `team` INT UNSIGNED NOT NULL;
 
 UPDATE config SET conf_value = 151 WHERE conf_name = 'schema';

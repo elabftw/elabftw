@@ -9,7 +9,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import i18next from 'i18next';
-import { addAutocompleteToTagInputs, getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElements } from './misc';
+import { addAutocompleteToTagInputs, getEntity, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -43,45 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // END CREATE TAG
 
-  // CREATE TAG MULTIPLE
-  const createTagMultiple = (el: HTMLInputElement): void => {
-    if (!el.value) {
-      return;
-    }
-    // get the ids of selected entities
-    const checked = getCheckedBoxes();
-    if (checked.length === 0) {
-      const json = {
-        'msg': 'Nothing selected!',
-        'res': false,
-      };
-      notif(json);
-      return;
-    }
-
-    // loop over it and add tags
-    const results = [];
-    checked.forEach(checkBox => {
-      results.push(ApiC.post(`${entity.type}/${checkBox['id']}/${Model.Tag}`, {tag: el.value}));
-    });
-
-    Promise.all(results).then(() => {
-      reloadEntitiesShow();
-      el.value = '';
-    });
-  };
-
-  if (document.querySelector('.createTagInputMultiple')) {
-    document.querySelector('.createTagInputMultiple').addEventListener('blur', event => {
-      createTagMultiple(event.target as HTMLInputElement);
-    });
-
-    document.querySelector('.createTagInputMultiple').addEventListener('keyup', event => {
-      if ((event as KeyboardEvent).code === 'Enter') {
-        createTagMultiple(event.target as HTMLInputElement);
-      }
-    });
-  }
   // END CREATE TAG MULTIPLE
 
   // CREATE FAVORITE TAG

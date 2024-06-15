@@ -10,7 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, getEntity, adjustHiddenState } from './misc';
 import { Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -173,32 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-  // CREATE FOR MULTIPLE ENTITIES
-  $(document).on('keypress blur', '.linkInputMultiple', function(e) {
-    if ($(this).val() === '') {
-      return;
-    }
-    const el = $(this);
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      // get the ids of selected entities
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        const json = {
-          'msg': 'Nothing selected!',
-          'res': false,
-        };
-        notif(json);
-        return;
-      }
-      $.each(checked, function(index) {
-        ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
-      });
-      $(this).val('');
-      addAutocompleteToLinkInputs();
-    }
-  });
-
   // AUTOCOMPLETE
   addAutocompleteToLinkInputs();
 });

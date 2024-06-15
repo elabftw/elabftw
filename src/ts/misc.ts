@@ -135,17 +135,21 @@ export function collectForm(form: HTMLElement): object {
       if (el.dataset.ignore !== '1' && el.disabled === false) {
         params = Object.assign(params, {[input.name]: value});
       }
-      if (el.name === 'password') {
-        // clear a password field once collected
-        el.value = '';
+      el.value = '';
+    });
+  });
+  return removeEmpty(params);
+}
+
+export function clearForm(form: HTMLElement): void {
+  ['input', 'select', 'textarea'].forEach(inp => {
+    form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
+      input.value = '';
+      if (input.type === 'checkbox') {
+        input.checked = false;
       }
     });
   });
-  // don't send an empty password
-  if (params['password'] === '') {
-    delete params['password'];
-  }
-  return params;
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
@@ -459,7 +463,7 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export function removeEmpty(params: object): object {
+function removeEmpty(params: object): object {
   for (const [key, value] of Object.entries(params)) {
     if (value === '') {
       delete params[key];
@@ -623,7 +627,6 @@ export async function updateEntityBody(): Promise<void> {
     location.reload();
   });
 }
-
 
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);

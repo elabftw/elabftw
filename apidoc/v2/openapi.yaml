@@ -3141,8 +3141,16 @@ paths:
     get:
       tags: ['Users']
       summary: Read users from instance.
-      description: If Sysadmin all users will be shown. If Admin only the users from the team. Normal users will be shown an error.
+      description: Get a list of users with an active account on the instance.
       operationId: read-users
+      parameters:
+        - name: includeArchived
+          in: query
+          description: Include archived users in the response
+          required: false
+          schema:
+            type: string
+            enum: ['0', '1']
       responses:
         '200':
           description: A list of users

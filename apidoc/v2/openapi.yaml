@@ -500,6 +500,66 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/upload'
+    export:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 120
+        created_at:
+          type: string
+          example: "2024-05-28 02:42:19"
+        requester_userid:
+          type: integer
+          example: 2
+        state:
+          type: integer
+          example: 1
+        long_name:
+          type: string
+          example: "7dd6ef1e6093ab8861e425aeb1950e70e2a0bea9672bfff45f20a0cf26e49222c634c2fabf408bd6e9f3c447338edf3c4f11475c0472e00ab7ba5ea41319ec49"
+        filesize:
+          type: integer
+          example: 268438
+        modified_at:
+          type: string
+          example: "2024-05-28 02:42:31"
+        real_name:
+          type: string
+          example: "export-2024-05-28_02-42-30.json"
+        team:
+          type: integer
+          example: 1
+        changelog:
+          type: integer
+          example: 0
+        pdfa:
+          type: integer
+          example: 0
+        json:
+          type: integer
+          example: 0
+        hash:
+          type: string
+          example: "90651dd009d40b4d0fabc65395e9f3eba9b913a71b13bad94904c0cede7d8c24"
+        hash_algo:
+          type: string
+          example: "sha256"
+        experiments:
+          type: integer
+          example: 1
+        items:
+          type: integer
+          example: 0
+        experiments_templates:
+          type: integer
+          example: 0
+        items_types:
+          type: integer
+          example: 0
+        format:
+          type: string
+          example: "pdf"
     idp:
       type: object
       properties:
@@ -1626,65 +1686,84 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      example: 120
-                    created_at:
-                      type: string
-                      example: "2024-05-28 02:42:19"
-                    requester_userid:
-                      type: integer
-                      example: 2
-                    state:
-                      type: integer
-                      example: 1
-                    long_name:
-                      type: string
-                      example: "7dd6ef1e6093ab8861e425aeb1950e70e2a0bea9672bfff45f20a0cf26e49222c634c2fabf408bd6e9f3c447338edf3c4f11475c0472e00ab7ba5ea41319ec49"
-                    filesize:
-                      type: integer
-                      example: 268438
-                    modified_at:
-                      type: string
-                      example: "2024-05-28 02:42:31"
-                    real_name:
-                      type: string
-                      example: "export-2024-05-28_02-42-30.json"
-                    team:
-                      type: integer
-                      example: 1
-                    changelog:
-                      type: integer
-                      example: 0
-                    pdfa:
-                      type: integer
-                      example: 0
-                    json:
-                      type: integer
-                      example: 0
-                    hash:
-                      type: string
-                      example: "90651dd009d40b4d0fabc65395e9f3eba9b913a71b13bad94904c0cede7d8c24"
-                    hash_algo:
-                      type: string
-                      example: "sha256"
-                    experiments:
-                      type: integer
-                      example: 1
-                    items:
-                      type: integer
-                      example: 0
-                    experiments_templates:
-                      type: integer
-                      example: 0
-                    items_types:
-                      type: integer
-                      example: 0
-                    format:
-                      type: string
-                      example: "pdf"
+                  $ref: '#/components/schemas/export'
+    post:
+      tags: ['Exports']
+      summary: Register an export request
+      operationId: post-export
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['format']
+              properties:
+                format:
+                  type: string
+                  example: "pdf"
+                  enum: ["csv", "eln", "json", "pdf", "zip"]
+                  description: File format for the export
+                experiments:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include experiments in the export
+                items:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include resources in the export
+                experiments_templates:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include experiments templates in the export
+                items_types:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include resources categories in the export
+                changelog:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include the changelog in PDF files
+                json:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include a full JSON export in the ZIP archives
+                pdfa:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to create PDF files with the PDF/A specification
+  /exports/{id}:
+    summary: An export request
+    parameters:
+      - name: id
+        in: path
+        description: ID of the export request
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Exports']
+      summary: Get export
+      operationId: read-export
+      responses:
+        '200':
+          description: An export request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/export'
+    delete:
+      tags: ['Exports']
+      summary: Remove an export request and its associated file
+      description: This method will remove the file from the server temporary storage and clear the export request.
+      operationId: delete-export
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The file was deleted
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity
@@ -3370,6 +3449,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/users'
 
+  # USERS UPLOADS
+  /users/{id}/uploads:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['User Uploads']
+      summary: Read attached files from a user
+      operationId: read-user-uploads
+      responses:
+        '200':
+          description: Attachments from a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                   type: object
+                   properties:
+                     id:
+                      type: integer
+                      example: 113
+                     real_name:
+                       type: string
+                       example: example.png
+                     long_name:
+                       type: string
+                       example: 25/2509b6547bcc40c7c56df0fca0930357b7c5e90c1ee59c8040091b956bbbde3cc1726169488d6d485be5b5fed3240939083d8ea708b9a153a2d57d7be1931e43.png
+                     created_at:
+                       type: string
+                       format: date-time
+                       example: 2024-06-16 12:34:51
+                     filesize:
+                       type: integer
+                       example: 40959
+                     type:
+                       type: string
+                       example: experiments
+                     comment:
+                       type: string
+                       nullable: true
+                       example: null
+                     entity_id:
+                       type: integer
+                       example: 311
+                     entity_title:
+                       type: string
+                       example: image in body I
+                     page:
+                       type: string
+                       example: experiments
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:

@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('importRadioEntityType').addEventListener('change', event => {
     const el = (event.target as HTMLInputElement);
     const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    // Remove all options except the first one
-    while (categorySelect.options.length > 1) {
+    // Remove all options
+    while (categorySelect.options.length > 0) {
       categorySelect.remove(1);
     }
     let entityType = el.value;

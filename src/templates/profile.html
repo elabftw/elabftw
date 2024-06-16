@@ -98,10 +98,10 @@
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
     <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
-      <a class='ml-3' href='?tab=2&limit={{ uploadsTotal }}'>
-        <button type='button' class='btn btn-sm btn-secondary' {{ currentLimit == uploadsTotal ? 'disabled' }}>{{ 'Show all'|trans }}</button>
+      <a href='?tab=2&limit={{ uploadsTotal }}' class='ml-3 btn btn-sm btn-secondary {{ currentLimit == uploadsTotal ? 'disabled' }}'>
+        {{ 'Show all'|trans }}
       </a>
-      <a class='ml-3' href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc'><button type='button' class='btn btn-sm btn-secondary' {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}>{{ 'List biggest files first'|trans }}</button>
+      <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
       </a>
     </p>
     {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
@@ -175,7 +175,6 @@
       <hr>
       <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
       <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
-        <option selected value='null'>{{ 'None'|trans }}</option>
         {% for cat in experimentsCategoryArr %}
           <option value='{{ cat.id }}'>{{ cat.title }}</option>
         {% endfor %}
@@ -257,8 +256,8 @@
               {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
               </span>
               {% if file.filepath %}
-                <a href='/api/v2/export/{{ file.id }}?format=binary'>
-                <button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'><i class='fas fa-download fa-fw'></i></button>
+                <a href='/api/v2/export/{{ file.id }}?format=binary' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
+                  <i class='fas fa-download fa-fw'></i>
                 </a>
               {% endif %}
             </span>

@@ -4,7 +4,7 @@
     {# reload the tbody to avoid issue with data-sort arrows needing reload #}
     {% include 'scope-button.html' with {'reload': 'tplTableBody,scopeBtn', 'target': 'scope_experiments_templates'} %}
     <div>
-      <a href='/profile.php?tab=3'><button type='button' class='btn btn-secondary'>{{ 'Import from file'|trans }}</button></a>
+      <a href='/profile.php?tab=3' class='btn btn-secondary'>{{ 'Import from file'|trans }}</a>
       <div class='vertical-separator d-inline'></div>
       <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
     </div>

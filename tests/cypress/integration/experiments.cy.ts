@@ -17,7 +17,7 @@ describe('Import tab on profile page', () => {
         expect(resp.statusCode).to.equal(201);
       });
     }).as('importController');
-    cy.get('#importFileButton').should('exist').click();
+    cy.get('#importFileBtn').should('exist').click();
     cy.wait('@importController');
     cy.get('div.alert.alert-success').should('contain', 'File imported successfully');
     // now CSV
@@ -27,7 +27,7 @@ describe('Import tab on profile page', () => {
         expect(resp.statusCode).to.equal(201);
       });
     }).as('importController');
-    cy.get('#importFileButton').should('exist').click();
+    cy.get('#importFileBtn').should('exist').click();
     cy.wait('@importController');
     cy.get('div.alert.alert-success').should('contain', 'File imported successfully');
   });

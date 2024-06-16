@@ -96,12 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-      ApiC.post(`${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
+      ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
         .then(() => reloadElements(['ucp-sigkeys']));
     // REGENERATE SIGKEY
     } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
       const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
-      ApiC.patch(`${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
+      ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
         .then(() => reloadElements(['ucp-sigkeys']));
     // DOWNLOAD SIG KEY (pub or priv)
     } else if (el.matches('[data-action="download-sigkey"]')) {

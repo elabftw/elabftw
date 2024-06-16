@@ -16,7 +16,6 @@ use Elabftw\AuditEvent\SignatureKeysCreated;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -70,7 +69,7 @@ class SigKeys implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/', ApiEndpoint::SigKeys->value);
+        return sprintf('api/v2/users/%d/sig_keys/%d', $this->Users->userData['userid'], $this->id ?? '');
     }
 
     /**

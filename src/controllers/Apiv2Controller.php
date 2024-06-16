@@ -268,7 +268,6 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
-            ApiEndpoint::SigKeys => new SigKeys($this->requester, $this->id),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),
@@ -314,15 +313,16 @@ class Apiv2Controller extends AbstractApiController
                 'procurement_requests' => new ProcurementRequests($this->Model, $this->subId),
                 'tags' => new TeamTags($this->requester, $this->id),
                 'teamgroups' => new TeamGroups($this->requester, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
+                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, tags, teamgroups.'),
             };
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
                 'notifications' => new UserNotifications($this->Model, $this->subId),
                 'request_actions' => new UserRequestActions($this->Model),
+                'sig_keys' => new SigKeys($this->requester, $this->id),
                 'uploads' => new UserUploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications, request_actions, uploads.'),
+                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications, request_actions, sig_keys, uploads.'),
             };
         }
         if ($this->Model instanceof Scheduler) {

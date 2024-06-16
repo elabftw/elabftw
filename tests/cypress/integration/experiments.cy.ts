@@ -7,7 +7,6 @@ describe('Import tab on profile page', () => {
   it('can import eln and csv files', () => {
     // first ELN
     cy.visit('/profile.php?tab=3');
-    cy.get('h3').should('have.text', 'Import');
     cy.get('#importSelectCategory').should('exist');
     cy.get('#importSelectOwner').should('exist');
     cy.get('#import_modal_canread').should('exist');

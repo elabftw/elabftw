@@ -31,7 +31,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/team_tags/', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getPage());
     }
 
     public function testCreate(): void

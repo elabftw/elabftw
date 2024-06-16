@@ -421,7 +421,7 @@ export function addAutocompleteToTagInputs(): void {
   const ApiC = new Api();
   $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
+      ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
         const res = [];
         json.forEach(tag => {
           res.push(tag.tag);

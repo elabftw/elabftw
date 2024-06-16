@@ -2358,8 +2358,15 @@ paths:
           description: The favorite tag was removed.
 
   # TEAM TAGS
-  /team_tags:
+  /teams/{id}/tags:
     summary: Manage tags at the team level.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
     get:
       tags: ['Team tags']
       summary: Read all tags for the team.
@@ -2425,10 +2432,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tag'
-  /team_tags/{id}:
+  /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
       - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
         in: path
         description: ID of the tag.
         required: true

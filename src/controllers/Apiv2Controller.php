@@ -269,7 +269,8 @@ class Apiv2Controller extends AbstractApiController
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
             ApiEndpoint::SigKeys => new SigKeys($this->requester, $this->id),
-            ApiEndpoint::TeamTags => new TeamTags($this->requester, $this->id),
+            // Temporary informational endpoint, can be removed in 5.2
+            ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),
             ApiEndpoint::Todolist => new Todolist($this->requester->userData['userid'], $this->id),
             ApiEndpoint::UnfinishedSteps => new UnfinishedSteps(
@@ -311,6 +312,7 @@ class Apiv2Controller extends AbstractApiController
                 'items_status' => new ItemsStatus($this->Model, $this->subId),
                 'items_categories' => new ItemsTypes($this->requester, $this->subId),
                 'procurement_requests' => new ProcurementRequests($this->Model, $this->subId),
+                'tags' => new TeamTags($this->requester, $this->id),
                 'teamgroups' => new TeamGroups($this->requester, $this->subId),
                 default => throw new ImproperActionException('Incorrect submodel for teams: available models are: experiments_status, experiments_categories, items_status, items_categories, teamgroups.'),
             };

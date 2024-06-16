@@ -179,7 +179,11 @@ class Uploads implements RestInterface
             } else {
                 $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], $upload['comment']);
             }
-            $entity->Uploads->create($param);
+            $id = $entity->Uploads->create($param);
+            $fresh = new self($entity, $id);
+            // replace links in body with the new long_name
+            $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
+            $entity->patch(Action::Update, array('body' => $newBody));
         }
     }
 

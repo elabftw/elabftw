@@ -120,7 +120,7 @@ export function listenTrigger(elementId: string = ''): void {
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  */
-export function collectForm(form: HTMLElement): object {
+export function collectForm(form: HTMLElement, blank = true): object {
   let params = {};
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
@@ -135,7 +135,9 @@ export function collectForm(form: HTMLElement): object {
       if (el.dataset.ignore !== '1' && el.disabled === false) {
         params = Object.assign(params, {[input.name]: value});
       }
-      el.value = '';
+      if (blank) {
+        el.value = '';
+      }
     });
   });
   return removeEmpty(params);

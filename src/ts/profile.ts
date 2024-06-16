@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CREATE EXPORT
     if (el.matches('[data-action="create-export"]')) {
-      const params = collectForm(document.getElementById('exportForm'));
+      const params = collectForm(document.getElementById('exportForm'), false);
       const urlParams = new URLSearchParams(params as URLSearchParams);
       ApiC.post('exports', {
         experiments: urlParams.get('experiments'),

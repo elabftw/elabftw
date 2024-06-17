@@ -46,7 +46,7 @@ class RequestActions implements RestInterface
                     AND state = :state
                 ORDER BY created_at DESC
                 LIMIT 100',
-            $this->entity->entityType->getPage(),
+            $this->entity->entityType->toPage(),
             $this->entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);

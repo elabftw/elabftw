@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ImportController;
-
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -34,7 +34,7 @@ require_once dirname(__DIR__) . '/init.inc.php';
 set_time_limit(0);
 $Controller = new ImportController($App);
 // default response
-$Response = new RedirectResponse('/database.php');
+$Response = new RedirectResponse('/' . Entrypoint::Database->toPage());
 
 try {
     $Response = $Controller->getResponse();

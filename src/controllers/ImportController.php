@@ -15,6 +15,7 @@ namespace Elabftw\Controllers;
 use Elabftw\AuditEvent\Import;
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Import\Csv;
@@ -49,10 +50,13 @@ class ImportController implements ControllerInterface
             AuditLogs::create(new Import($this->App->Users->userid ?? 0, $inserted));
         }
         $this->App->Session->getFlashBag()->add('ok', $msg);
-        if (str_starts_with($this->App->Request->request->getString('target'), 'items')) {
-            return new RedirectResponse('/database.php?order=lastchange');
-        }
-        return new RedirectResponse('/experiments.php?order=lastchange');
+
+        return new RedirectResponse(sprintf(
+            '/%s?order=lastchange',
+            str_starts_with($this->App->Request->request->getString('target'), EntityType::Items->value)
+                ? EntityType::Items->toPage()
+                : EntityType::Experiments->toPage(),
+        ));
     }
 
     private function getImporter(): ImportInterface

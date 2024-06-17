@@ -147,7 +147,7 @@ class Comments implements RestInterface
         }
 
         /** @psalm-suppress PossiblyNullArgument */
-        $Notif = new CommentCreated($this->Entity->entityType->getPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
+        $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
         // target user is the owner of the entry
         $Notif->create($this->Entity->entityData['userid']);
     }

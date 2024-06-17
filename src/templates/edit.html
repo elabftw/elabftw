@@ -15,7 +15,7 @@
   {% block createnew %}
     <div class='d-flex'>
       {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.entityType.getPage|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
+      <div class='align-self-center'><h3>{{ Entity.entityType.toPage[:-4]|capitalize|trans }} > {{ 'Editing an entry'|trans }}</h3></div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>

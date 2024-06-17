@@ -44,11 +44,6 @@ class Templates extends AbstractTemplateEntity
         parent::__construct($users, $id);
     }
 
-    public function getPage(): string
-    {
-        return 'api/v2/experiments_templates/';
-    }
-
     public function create(string $title): int
     {
         $title = Filter::title($title);
@@ -161,7 +156,12 @@ class Templates extends AbstractTemplateEntity
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
-        $this->entityData['sharelink'] = sprintf('%s/ucp.php?tab=3&mode=view&templateid=%d', Config::fromEnv('SITE_URL'), $this->id);
+        $this->entityData['sharelink'] = sprintf(
+            '%s/%s&mode=view&templateid=%d',
+            Config::fromEnv('SITE_URL'),
+            EntityType::Templates->toPage(),
+            $this->id
+        );
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }

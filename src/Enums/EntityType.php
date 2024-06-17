@@ -36,13 +36,13 @@ enum EntityType: string
         };
     }
 
-    public function getPage(): string
+    public function toPage(): string
     {
         return match ($this) {
-            $this::Experiments => $this::Experiments->value,
-            $this::Items => 'database',
-            $this::Templates => $this::Templates->value,
-            $this::ItemsTypes => $this::ItemsTypes->value,
+            $this::Experiments => 'experiments.php',
+            $this::Items => 'database.php',
+            $this::Templates => 'ucp.php?tab=3',
+            $this::ItemsTypes => 'admin.php?tab=4',
         };
     }
 }

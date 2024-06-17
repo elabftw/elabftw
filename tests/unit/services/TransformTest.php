@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Notifications;
 
 class TransformTest extends \PHPUnit\Framework\TestCase
@@ -37,7 +38,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifMathJaxFailed(): void
     {
-        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&amp;id=2">';
+        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiments.php?mode=view&amp;id=2">';
         $expected .= 'Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF.';
         $expected .= '</span><br><span class="relative-moment" title="test"></span>';
         $actual = Transform::notif(array(
@@ -45,7 +46,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
             'id' => 1,
             'created_at' => 'test',
             'body' => array(
-                'entity_page' => 'experiment',
+                'entity_page' => EntityType::Experiments->toPage(),
                 'entity_id' => 2,
             ),
         ));
@@ -54,7 +55,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
 
     public function testNotifPdfAppendmentFailed(): void
     {
-        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiment.php?mode=view&amp;id=2">';
+        $expected = '<span data-action="ack-notif" data-id="1" data-href="experiments.php?mode=view&amp;id=2">';
         $expected .= 'Some attached PDFs could not be appended. (file1.pdf, file2.pdf)';
         $expected .= '</span><br><span class="relative-moment" title="TIMESTAMP"></span>';
         $actual = Transform::notif(array(
@@ -62,7 +63,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
             'id' => 1,
             'created_at' => 'TIMESTAMP',
             'body' => array(
-                'entity_page' => 'experiment',
+                'entity_page' => EntityType::Experiments->toPage(),
                 'entity_id' => 2,
                 'file_names' => 'file1.pdf, file2.pdf',
             ),

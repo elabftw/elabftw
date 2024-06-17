@@ -109,8 +109,8 @@ abstract class AbstractEntityController implements ControllerInterface
         // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {
             return new RedirectResponse(sprintf(
-                '%s.php?mode=view&id=%d',
-                $this->Entity->entityType->getPage(),
+                '%s?mode=view&id=%d',
+                $this->Entity->entityType->toPage(),
                 $itemsArr[0]['id']
             ));
         }

@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Traits\UploadTrait;
@@ -73,9 +74,12 @@ abstract class AbstractMake
     protected function getUrl(?int $entityId = null): string
     {
         return sprintf(
-            '%s/%s.php?mode=view&id=%d',
+            '%s/%s%sid=%d',
             Config::fromEnv('SITE_URL'),
-            $this->Entity->entityType->getPage(),
+            $this->Entity->entityType->toPage(),
+            $this->Entity instanceof AbstractConcreteEntity
+                ? '?mode=view&'
+                : 'mode=view&template',
             $entityId ?? $this->Entity->id ?? 0,
         );
     }

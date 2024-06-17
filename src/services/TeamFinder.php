@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 
 /**
@@ -34,8 +35,8 @@ class TeamFinder
     public function findTeam(): int
     {
         return match ($this->page) {
-            EntityType::Experiments->getPage() => $this->searchIn(EntityType::Experiments),
-            EntityType::Items->getPage() => $this->searchIn(EntityType::Items),
+            Entrypoint::Experiments->toPage() => $this->searchIn(EntityType::Experiments),
+            Entrypoint::Database->toPage() => $this->searchIn(EntityType::Items),
             default => throw new ImproperActionException('Wrong page!'),
         };
     }

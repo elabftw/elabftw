@@ -111,10 +111,10 @@ class TwigFilters
                 elseif (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
                     $id = isset($field[MetadataEnum::Value->value]) ? (int) $field[MetadataEnum::Value->value] : 0;
                     $page = $metadataType === EntityType::Items->value
-                        ? EntityType::Items->getPage()
-                        : EntityType::Experiments->getPage();
+                        ? EntityType::Items->toPage()
+                        : EntityType::Experiments->toPage();
                     $value = sprintf(
-                        '<a href="/%s.php?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
+                        '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
                         $page,
                         $id,
                         $newTab,

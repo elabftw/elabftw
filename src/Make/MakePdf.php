@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
@@ -173,7 +174,7 @@ class MakePdf extends AbstractMakePdf
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
                     $this->Entity->id,
-                    $this->Entity->entityType->getPage(),
+                    $this->Entity->entityType->toPage(),
                     implode(', ', $this->failedAppendPdfs)
                 );
             }
@@ -191,7 +192,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->getPage());
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage());
         }
         return $content;
     }
@@ -229,6 +230,11 @@ class MakePdf extends AbstractMakePdf
 
         $Changelog = new Changelog($this->Entity);
 
+        $baseUrls = array();
+        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+            $baseUrls[$entityType->value] = sprintf('%s/%s', Config::fromEnv('SITE_URL'), $entityType->toPage());
+        }
+
         $renderArr = array(
             'body' => $this->getBody(),
             'changes' => $Changelog->readAllWithAbsoluteUrls(),
@@ -242,10 +248,7 @@ class MakePdf extends AbstractMakePdf
             'lockerName' => $lockerName,
             'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
             'url' => $this->getURL(),
-            'linkBaseUrl' => array(
-                'items' => Config::fromEnv('SITE_URL') . '/database.php',
-                'experiments' => Config::fromEnv('SITE_URL') . '/experiments.php',
-            ),
+            'linkBaseUrl' => $baseUrls,
             'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
         );
 

@@ -61,7 +61,7 @@ abstract class AbstractLinks implements RestInterface
             entity.title,
             entity.custom_id,
             entity.elabid,
-            "' . $this->getTargetType()->getPage() . '" AS page,
+            "' . $this->getTargetType()->toPage() . '" AS page,
             "' . $this->getTargetType()->value . '" AS type,
             categoryt.title AS category_title,
             categoryt.color AS category_color,
@@ -96,7 +96,7 @@ abstract class AbstractLinks implements RestInterface
     public function readRelated(): array
     {
         $sql = 'SELECT entity.id AS entityid, entity.title, entity.custom_id,
-            "' . $this->getTargetType()->getPage() . '" AS page,
+            "' . $this->getTargetType()->toPage() . '" AS page,
             "' . $this->getTargetType()->value . '" AS type,
             categoryt.title AS category_title, categoryt.color AS category_color,
             statust.title AS status_title, statust.color AS status_color, entity.state AS link_state';

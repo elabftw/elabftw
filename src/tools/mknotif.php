@@ -19,7 +19,7 @@ use Elabftw\Models\Notifications\UserNeedValidation;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
-$Notifications = new CommentCreated(EntityType::Experiments->getPage(), 32, 2);
+$Notifications = new CommentCreated(EntityType::Experiments->toPage(), 32, 2);
 $Notifications->create(1);
 $Notifications = new UserCreated(3, 'Some team name');
 $Notifications->create(1);

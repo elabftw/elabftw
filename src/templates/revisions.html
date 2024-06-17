@@ -5,12 +5,11 @@
 <p>{{ 'This server is configured to store %d revisions per entry maximum.'|trans|format(App.Config.configArr.max_revisions) }}
 {{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
 
+{% set query = '?mode=view&' %}
 {% if Entity.entityType.value == 'experiments_templates' %}
-  <a href='ucp.php?tab=3&amp;templateid={{ Entity.id }}'
-{% else %}
-  <a href='{{ Entity.entityType.getPage }}.php?mode=view&amp;id={{ Entity.id }}'
+  {% set query = '&mode=view&template' %}
 {% endif %}
-   class='btn hl-hover-gray'>
+<a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}' class='btn hl-hover-gray'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 <div id='compareRevisionsDiv' class='mt-3' hidden>

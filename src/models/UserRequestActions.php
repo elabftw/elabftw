@@ -37,11 +37,11 @@ class UserRequestActions implements RestInterface
     {
         $tables = array(
             array(
-                'page' => EntityType::Experiments->getPage(),
+                'page' => EntityType::Experiments->toPage(),
                 'entity_type' => EntityType::Experiments->value,
             ),
             array(
-                'page' => EntityType::Items->getPage(),
+                'page' => EntityType::Items->toPage(),
                 'entity_type' => EntityType::Items->value,
             ),
         );

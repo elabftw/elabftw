@@ -15,7 +15,7 @@
     {% if link.custom_id %}
       <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
     {% endif %}
-    <a href='{{ link.page }}.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto hl-hover-gray p-1 rounded'>{{ link.title }}</a>
+    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto hl-hover-gray p-1 rounded'>{{ link.title }}</a>
     {# toggle body #}
     <button type='button' data-type='{{ link.type }}' data-action='toggle-body' data-toggle-plus-icon='1' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
       <i class='fas fa-fw fa-square-plus'></i>

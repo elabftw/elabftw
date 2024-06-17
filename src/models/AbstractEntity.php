@@ -553,11 +553,11 @@ abstract class AbstractEntity implements RestInterface
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
-        $this->entityData['page'] = $this->entityType->getPage();
+        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
         $this->entityData['sharelink'] = sprintf(
-            '%s/%s.php?mode=view&id=%d%s',
+            '%s/%s?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),
-            $this->entityType->getPage(),
+            $this->entityType->toPage(),
             $this->id,
             // add a share link
             !empty($this->entityData['access_key'])

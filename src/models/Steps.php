@@ -211,7 +211,7 @@ class Steps implements RestInterface
         $Notifications = new StepDeadline(
             $this->id,
             $this->Entity->entityData['id'],
-            $this->Entity->entityType->getPage(),
+            $this->Entity->entityType->toPage(),
             $step['deadline'],
         );
         $Notifications->create($this->Entity->Users->userData['userid']);

@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use League\Flysystem\UnableToReadFile;
@@ -208,7 +209,15 @@ class MakeEln extends MakeStreamZip
                 'keywords' => $keywords,
                 'name' => $entityData['title'],
                 'text' => $entityData['body'] ?? '',
-                'url' => Config::fromEnv('SITE_URL') . '/' . $this->Entity->entityType->getPage() . '.php?mode=view&id=' . $entityData['id'],
+                'url' => sprintf(
+                    '%s/%s%sid=%d',
+                    Config::fromEnv('SITE_URL'),
+                    $this->Entity->entityType->toPage(),
+                    $this->Entity instanceof AbstractConcreteEntity
+                        ? '?mode=view&'
+                        : 'mode=view&template',
+                    $entityData['id'],
+                ),
                 'hasPart' => $hasPart,
                 'mentions' => $mentions,
             );

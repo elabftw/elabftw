@@ -104,7 +104,7 @@ class EntitySqlBuilder
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",
-                $this->entity->entityType->getPage(),
+                $this->entity->entityType->toPage(),
                 $this->entity->entityType->value,
             );
         } else {

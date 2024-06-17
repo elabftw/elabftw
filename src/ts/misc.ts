@@ -628,3 +628,8 @@ TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);
 export { TomSelect };
+
+export function getNewIdFromPostRequest(response: Response): number {
+  const location = response.headers.get('location').split('/');
+  return parseInt(location[location.length -1], 10);
+}

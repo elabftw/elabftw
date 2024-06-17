@@ -5,7 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElements, updateEntityBody } from './misc';
+import {
+  escapeRegExp,
+  getEntity,
+  getNewIdFromPostRequest,
+  notif,
+  notifError,
+  reloadElements,
+  updateCatStat,
+  updateEntityBody,
+} from './misc';
 import { getTinymceBaseConfig } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
 import './doodle';
@@ -326,15 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: formData,
           }).then(resp => {
-            const location = resp.headers.get('location').split('/');
-            const newId = location[location.length -1];
+            const newId = getNewIdFromPostRequest(resp);
             // fetch info about the newly created upload
-            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
-              resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
-              // save here because using the old real_name will not return anything from the db (status is archived now)
-              updateEntityBody();
-              reloadElements(['uploadsDiv']);
-            });
+            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
+          }).then(json => {
+            resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+            // save here because using the old real_name will not return anything from the db (status is archived now)
+            updateEntityBody();
+            reloadElements(['uploadsDiv']);
           });
         } else {
           // Revert changes if confirm is cancelled
@@ -440,26 +448,25 @@ document.addEventListener('DOMContentLoaded', () => {
           return true;
         }
         // now replace all occurrence of the old file in the body with the long_name of the new file
-        const location = resp.headers.get('location').split('/');
-        const newId = location[location.length -1];
+        const newId = getNewIdFromPostRequest(resp);
         // fetch info about the newly created upload
-        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
-          // use regExp in replace to find all occurrence
-          // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
-          // '.', '?', '[' and '(' need to be escaped in js regex
-          const editorNewContent = editorCurrentContent.replace(
-            new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
-            searchPrefixSrc + json.long_name,
-          ).replace(
-            new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
-            searchPrefixMd + json.long_name,
-          );
-          editor.replaceContent(editorNewContent);
+        return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
+      }).then(json => {
+        // use regExp in replace to find all occurrence
+        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+        // '.', '?', '[' and '(' need to be escaped in js regex
+        const editorNewContent = editorCurrentContent.replace(
+          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+          searchPrefixSrc + json.long_name,
+        ).replace(
+          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+          searchPrefixMd + json.long_name,
+        );
+        editor.replaceContent(editorNewContent);
 
-          // status of previous file is archived now
-          // save because using the old file will not return an id from the db
-          updateEntityBody();
-        });
+        // status of previous file is archived now
+        // save because using the old file will not return an id from the db
+        updateEntityBody();
       });
     }
   });

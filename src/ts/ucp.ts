@@ -5,7 +5,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElements, collectForm, updateCatStat, saveStringAsFile } from './misc';
+import {
+  collectForm,
+  getEntity,
+  getNewIdFromPostRequest,
+  notif,
+  reloadElements,
+  saveStringAsFile,
+  updateCatStat,
+} from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
@@ -55,12 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (title) {
         // no body on template creation
         // Note: here we create one and then patch it for the correct content_type but it would probably be better to allow setting the content_type directly on creation
-        EntityC.create(title).then(resp => {
-          const location = resp.headers.get('location').split('/');
-          const newId = parseInt(location[location.length -1], 10);
-          EntityC.update(newId, Target.ContentType, String(editor.typeAsInt)).then(() => {
-            window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
-          });
+        EntityC.create(title).then(async resp => {
+          const newId = getNewIdFromPostRequest(resp);
+          await EntityC.update(newId, Target.ContentType, String(editor.typeAsInt));
+          window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
         });
       }
     // LOCK TEMPLATE

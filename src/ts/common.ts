@@ -14,6 +14,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
+  getNewIdFromPostRequest,
   listenTrigger,
   makeSortableGreatAgain,
   notifError,
@@ -548,8 +549,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(document.location.search);
       const entityC = new EntityClass(el.dataset.type as EntityType);
       entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
-        const location = resp.headers.get('location').split('/');
-        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${location[location.length -1]}`;
+        const newId = getNewIdFromPostRequest(resp);
+        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${newId}`;
       });
 
     } else if (el.matches('[data-action="report-bug"]')) {

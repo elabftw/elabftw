@@ -5,7 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElements, TomSelect, updateCatStat } from './misc';
+import {
+  getNewIdFromPostRequest,
+  notif,
+  notifError,
+  reloadElements,
+  TomSelect,
+  updateCatStat,
+} from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
@@ -94,7 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location') + '#itemsCategoriesAnchor');
+        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => {
+          const newId = getNewIdFromPostRequest(resp);
+          window.location.href = `${window.location.href}&templateid=${newId}#itemsCategoriesAnchor`;
+        });
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {

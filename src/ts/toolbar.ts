@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, reloadElements, relativeMoment, notifError } from './misc';
+import { getEntity, getNewIdFromPostRequest, reloadElements, relativeMoment, notifError } from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
@@ -43,7 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
         page = '/ucp.php';
       }
 
-      EntityC.duplicate(entity.id).then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
+      EntityC.duplicate(entity.id)
+        .then(resp => {
+          const newId = getNewIdFromPostRequest(resp);
+          window.location.href = `${page}?mode=edit&${queryString}id=${newId}`;
+        });
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {

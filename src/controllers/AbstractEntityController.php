@@ -215,7 +215,9 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
-            'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            ...$this->Entity instanceof AbstractConcreteEntity
+                    ? array('timestamperFullname' => $this->Entity->getTimestamperFullname())
+                    : array(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,

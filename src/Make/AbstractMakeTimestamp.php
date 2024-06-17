@@ -111,7 +111,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         if ($limit === 0) {
             return;
         }
-        if ($this->Entity->getTimestampLastMonth() >= $limit) {
+        if ($this->Entity instanceof AbstractConcreteEntity && $this->Entity->getTimestampLastMonth() >= $limit) {
             throw new ImproperActionException(_('Number of timestamps this past month reached the limit!'));
         }
     }

@@ -14,13 +14,19 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
+use Elabftw\Enums\State;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
@@ -37,13 +43,20 @@ use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
 use PDO;
+use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+
+use function json_decode;
+use function ksort;
+use function sprintf;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
 abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFromTemplateInterface
 {
+    abstract public function create(int $template, array $tags): int;
+
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
@@ -63,6 +76,99 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
             Action::Timestamp => $this->timestamp(),
             default => parent::patch($action, $params),
         };
+    }
+
+    /**
+     * Read all from one entity
+     */
+    public function readOne(): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $EntitySqlBuilder = new EntitySqlBuilder($this);
+        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
+
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $this->entityData = $this->Db->fetch($req);
+        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
+        $this->canOrExplode('read');
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['comments'] = $this->Comments->readAll();
+        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $this->entityData['sharelink'] = sprintf(
+            '%s/%s?mode=view&id=%d%s',
+            Config::fromEnv('SITE_URL'),
+            $this->entityType->toPage(),
+            $this->id,
+            // add a share link
+            !empty($this->entityData['access_key'])
+                ? sprintf('&access_key=%s', $this->entityData['access_key'])
+                : '',
+        );
+        // add the body as html
+        $this->entityData['body_html'] = $this->entityData['body'];
+        // convert from markdown only if necessary
+        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
+        }
+        ksort($this->entityData);
+        return $this->entityData;
+    }
+
+    public function readAll(): array
+    {
+        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
+    }
+
+    public function destroy(): bool
+    {
+        $this->canOrExplode('write');
+        // mark all uploads related to that entity as deleted
+        $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':type', $this->entityType->value);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return parent::destroy();
+    }
+
+    /**
+     * Count the number of timestamp archives created during past month (sliding window)
+     * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart
+     */
+    public function getTimestampLastMonth(): int
+    {
+        $sql = "SELECT COUNT(id) FROM uploads WHERE comment LIKE 'Timestamp archive%' = 1 AND created_at > (NOW() - INTERVAL 1 MONTH)";
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Get timestamper full name for display in view mode
+     */
+    public function getTimestamperFullname(): string
+    {
+        if ($this->entityData['timestamped'] === 0) {
+            return 'Unknown';
+        }
+        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
     }
 
     protected function bloxberg(): array

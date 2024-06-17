@@ -19,7 +19,6 @@ use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
@@ -37,14 +36,12 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
-use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_merge;
 use function explode;
 use function implode;
 use function is_bool;
-use function json_decode;
 use function json_encode;
 use function ksort;
 use function sprintf;
@@ -127,21 +124,13 @@ abstract class AbstractEntity implements RestInterface
      */
     abstract public function duplicate(): int;
 
+    abstract public function readOne(): array;
+
+    abstract public function readAll(): array;
+
     public function getApiPath(): string
     {
         return sprintf('api/v2/%s/', $this->entityType->value);
-    }
-
-    /**
-     * Count the number of timestamp archives created during past month (sliding window)
-     * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart
-     */
-    public function getTimestampLastMonth(): int
-    {
-        $sql = "SELECT COUNT(id) FROM uploads WHERE comment LIKE 'Timestamp archive%'= 1 AND created_at > (NOW() - INTERVAL 1 MONTH)";
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
     }
 
     /**
@@ -197,11 +186,6 @@ abstract class AbstractEntity implements RestInterface
         $RequestActions->remove(RequestableAction::Lock);
 
         return $this->readOne();
-    }
-
-    public function readAll(): array
-    {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
     }
 
     /**
@@ -463,17 +447,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Get timestamper full name for display in view mode
-     */
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
-    /**
      * Get locker full name for display in view mode
      */
     public function getLockerFullname(): string
@@ -512,69 +485,8 @@ abstract class AbstractEntity implements RestInterface
     public function destroy(): bool
     {
         $this->canOrExplode('write');
-        if ($this instanceof AbstractConcreteEntity) {
-            // mark all uploads related to that entity as deleted
-            $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-            $req->bindValue(':type', $this->entityType->value);
-            $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
         // set state to deleted
         return $this->update(new EntityParams('state', (string) State::Deleted->value));
-    }
-
-    /**
-     * Read all from one entity
-     */
-    public function readOne(): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
-
-        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        $this->entityData = $this->Db->fetch($req);
-        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
-        if ($this->entityData['id'] === null) {
-            throw new ResourceNotFoundException();
-        }
-        $this->canOrExplode('read');
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
-        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
-        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
-        $this->entityData['uploads'] = $this->Uploads->readAll();
-        $this->entityData['comments'] = $this->Comments->readAll();
-        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
-        $this->entityData['sharelink'] = sprintf(
-            '%s/%s?mode=view&id=%d%s',
-            Config::fromEnv('SITE_URL'),
-            $this->entityType->toPage(),
-            $this->id,
-            // add a share link
-            !empty($this->entityData['access_key'])
-                ? sprintf('&access_key=%s', $this->entityData['access_key'])
-                : '',
-        );
-        // add the body as html
-        $this->entityData['body_html'] = $this->entityData['body'];
-        // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === self::CONTENT_MD) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
-        }
-        if (!empty($this->entityData['metadata'])) {
-            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
-        }
-        ksort($this->entityData);
-        return $this->entityData;
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
@@ -648,7 +560,7 @@ abstract class AbstractEntity implements RestInterface
         }
     }
 
-    private function getFullnameFromUserid(int $userid): string
+    protected function getFullnameFromUserid(int $userid): string
     {
         // maybe user was deleted!
         try {

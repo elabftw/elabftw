@@ -37,9 +37,9 @@ class Revisions implements RestInterface
         $this->id = $id;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s%d/revisions/', $this->Entity->getPage(), $this->Entity->id ?? 0);
+        return sprintf('%s%d/revisions/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int

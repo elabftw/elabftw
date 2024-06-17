@@ -33,9 +33,9 @@ class ExtraFieldsKeys implements RestInterface
         $this->limit = $this->limit < -1 || $this->limit === 0 ? $this->Users->userData['limit_nb'] : $this->limit;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return 'extra_fields_keys';
+        return 'api/v2/extra_fields_keys';
     }
 
     public function postAction(Action $action, array $reqBody): int

@@ -62,7 +62,7 @@ class Scheduler implements RestInterface
         }
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation
         return 'api/v2/event/';

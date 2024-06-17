@@ -35,7 +35,7 @@ class FavTags implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/favtags/';
     }

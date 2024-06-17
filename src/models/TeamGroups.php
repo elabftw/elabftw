@@ -48,7 +48,7 @@ class TeamGroups implements RestInterface
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/teamgroups/', $this->Users->userData['team']);
     }

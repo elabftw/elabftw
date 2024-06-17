@@ -66,7 +66,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
 
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/nah';
     }

@@ -127,7 +127,7 @@ abstract class AbstractEntity implements RestInterface
      */
     abstract public function duplicate(): int;
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/%s/', $this->entityType->value);
     }

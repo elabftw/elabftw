@@ -27,7 +27,7 @@ interface RestInterface
 
     public function patch(Action $action, array $params): array;
 
-    public function getPage(): string;
+    public function getApiPath(): string;
 
     public function destroy(): bool;
 }

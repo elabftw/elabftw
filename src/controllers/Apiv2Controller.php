@@ -186,7 +186,7 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['comment'] = $this->Request->request->get('comment');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getPage(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getApiPath(), $id)));
     }
 
     private function getArray(): array

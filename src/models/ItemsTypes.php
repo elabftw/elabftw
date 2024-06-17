@@ -37,11 +37,6 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->setId($id);
     }
 
-    public function getPage(): string
-    {
-        return 'admin.php?tab=4&templateid=';
-    }
-
     public function create(string $title): int
     {
         $this->isAdminOrExplode();

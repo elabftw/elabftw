@@ -41,9 +41,9 @@ abstract class AbstractLinks implements RestInterface
         $this->id = $id;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s%d/%s/', $this->Entity->getPage(), $this->Entity->id ?? '', $this->getTable());
+        return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
     }
 
     public function patch(Action $action, array $params): array

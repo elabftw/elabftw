@@ -40,9 +40,9 @@ class Steps implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s%d/steps/', $this->Entity->getPage(), $this->Entity->id ?? 0);
+        return sprintf('%s%d/steps/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     /**

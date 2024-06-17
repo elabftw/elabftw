@@ -58,7 +58,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(9, $targetCount);
         $this->assertIsArray($Notifications->readOne());
         $this->assertIsArray($Notifications->patch(Action::Update, array()));
-        $this->assertIsString($Notifications->getPage());
+        $this->assertIsString($Notifications->getApiPath());
         $this->assertFalse($Notifications->destroy());
 
         // create a deadline close to now

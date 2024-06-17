@@ -33,7 +33,7 @@ class Idps implements RestInterface
         $this->id = $id;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/idps/';
     }

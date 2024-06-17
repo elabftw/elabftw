@@ -22,9 +22,9 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->Idps = new Idps();
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/idps/', $this->Idps->getPage());
+        $this->assertEquals('api/v2/idps/', $this->Idps->getApiPath());
     }
 
     public function testCreate(): void

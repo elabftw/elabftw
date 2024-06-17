@@ -23,9 +23,9 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $this->Info = new Info();
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/info/', $this->Info->getPage());
+        $this->assertEquals('api/v2/info/', $this->Info->getApiPath());
     }
 
     public function testPost(): void

@@ -65,9 +65,9 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->RequestActions->readOne());
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->RequestActions->getPage());
+        $this->assertEquals('api/v2/experiments/1/request_actions/', $this->RequestActions->getApiPath());
     }
 
     public function testDestroy(): void

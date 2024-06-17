@@ -38,7 +38,7 @@ class TeamTags implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/team_tags/';
     }

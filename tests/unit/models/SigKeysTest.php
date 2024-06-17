@@ -42,8 +42,8 @@ class SigKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->SigKeys->patch(Action::Update, array('passphrase' => self::PASSPHRASE)));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->SigKeys->getPage());
+        $this->assertIsString($this->SigKeys->getApiPath());
     }
 }

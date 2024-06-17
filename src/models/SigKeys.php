@@ -68,7 +68,7 @@ class SigKeys implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/%s/', ApiEndpoint::SigKeys->value);
     }

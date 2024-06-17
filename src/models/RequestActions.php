@@ -127,9 +127,9 @@ class RequestActions implements RestInterface
         throw new ImproperActionException('No patch action for this endpoint.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s/%d/request_actions/', $this->entity->entityType->value, $this->entity->id ?? '');
+        return sprintf('%s%d/request_actions/', $this->entity->getApiPath(), $this->entity->id ?? '');
     }
 
     public function remove(RequestableAction $action): bool

@@ -29,9 +29,9 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getPage());
+        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getApiPath());
     }
 
     public function testCreate(): void

@@ -110,9 +110,9 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->Entity->Uploads->getPage());
+        $this->assertIsString($this->Entity->Uploads->getApiPath());
     }
 
     public function testEditAnImmutableFile(): void

@@ -270,9 +270,9 @@ class Uploads implements RestInterface
         };
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s%d/uploads/', $this->Entity->getPage(), $this->Entity->id ?? 0);
+        return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     /**

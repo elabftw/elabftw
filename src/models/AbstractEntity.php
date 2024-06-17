@@ -129,7 +129,7 @@ abstract class AbstractEntity implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/', $this->entityType->getPage());
+        return sprintf('api/v2/%s/', $this->entityType->value);
     }
 
     /**

@@ -42,7 +42,7 @@ class Steps implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/%d/steps/', $this->Entity->entityType->getPage(), $this->Entity->id ?? 0);
+        return sprintf('%s%d/steps/', $this->Entity->getPage(), $this->Entity->id ?? 0);
     }
 
     /**

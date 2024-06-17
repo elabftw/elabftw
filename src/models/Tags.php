@@ -39,7 +39,7 @@ class Tags implements RestInterface
 
     public function getPage(): string
     {
-        return sprintf('api/v2/%s/%d/tags/', $this->Entity->entityType->getPage(), $this->Entity->id ?? 0);
+        return sprintf('%s%d/tags/', $this->Entity->getPage(), $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int

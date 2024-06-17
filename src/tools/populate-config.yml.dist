@@ -162,6 +162,7 @@ templates:
     tags:
       - ants
       - pheromones
+      - generated from yml
     category: 3
 
   - title: High-Speed Insect Flight Analysis
@@ -226,15 +227,20 @@ templates:
         </ul>
     tags:
       - high-speed
+      - Project FLYMORR
+      - generated from yml
     category: 2
     status: 1
 
   - title: Western Blot
+    body: No category for this one.
     tags:
       - western blot
+      - generated from yml
 
   - title: Videomicroscopy
     tags:
+      - generated from yml
       - microscopy
     category: 1
     metadata: |
@@ -242,6 +248,7 @@ templates:
 
   - title: Electronic Microscopy
     tags:
+      - generated from yml
       - microscopy
     category: 4
 
@@ -300,6 +307,7 @@ experiments:
   - title: Test the grouped extra fields
     date: 20241231
     tags:
+      - generated from yml
       - dev
       - extra fields
     metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Group with id 1, first position"},{"id":2,"name":"Group with id 2, second position"},{"id":3,"name":"Group with id 3, third position"}],"display_main_text":false},"extra_fields":{"Has group_id 3 as number":{"type":"text","value":"","group_id":3},"Has group_id 3 as string":{"type":"text","value":"","group_id":"3"},"Has no group_id property":{"type":"text","value":""},"Group_id 1 and position 1":{"type":"checkbox","value":"","group_id":1,"position":1,"description":"This is a checkbox custom input"},"Group_id 2 and position 1":{"type":"url","value":"","group_id":2,"position":1},"Group_id 2 and position 2":{"type":"url","value":"https://datalake.example.com/experiments/3921","group_id":2,"position":2},"Group_id 2 and position 3":{"type":"url","value":"","group_id":2,"position":3},"Another one without group_id property":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"this element has no group property defined"},"Has group_id that is not in elabftw.groups":{"type":"text","value":"I am lost!","group_id":"19"}}}'
@@ -308,6 +316,7 @@ experiments:
     body: This is the content of the experiment
     date: 20250101
     tags:
+      - generated from yml
       - example
       - demo
     comments:
@@ -318,6 +327,7 @@ experiments:
     body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
     date: 20250102
     tags:
+      - generated from yml
       - transfection
       - biocell
       - RPE-1
@@ -327,6 +337,7 @@ experiments:
   - title: Gold master experiment
     date: 20250103
     tags:
+      - generated from yml
       - test-data
       - eln
       - tag with space
@@ -395,6 +406,7 @@ experiments:
     items_links:
       - 50
     tags:
+      - generated from yml
       - synthesis
       - antimicrobial
       - chemistry
@@ -412,6 +424,7 @@ experiments:
       <p>結論： フルーツフライは、バナナ、マンゴー、パイナップルを好んで食べることが明らかになりました。この結果は、果物生産業にとって重要な情報となります。</p>
     date: 20250102
     tags:
+      - generated from yml
       - CJK
       - ショウジョウバエ
 
@@ -445,6 +458,7 @@ experiments:
     date: 20250102
     status: 3
     tags:
+      - generated from yml
       - enzymology
       - test
       - Project ENZYTEMP
@@ -465,6 +479,7 @@ experiments:
       </p>
     date: 20250102
     tags:
+      - generated from yml
       - has-mathjax
       - physics
 
@@ -506,6 +521,7 @@ experiments:
       </p>
     date: 20250102
     tags:
+      - generated from yml
       - has-mathjax
       - chemistry
 
@@ -515,6 +531,7 @@ experiments:
     status: 1
     rating: 5
     tags:
+      - generated from yml
       - test
       - demo
     metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'

@@ -187,12 +187,15 @@ class MakeEln extends AbstractMakeEln
         );
         if ($e['category_title'] !== null) {
             $categoryAtId = '#category-' . $e['category_title'];
-            $this->dataEntities[] =  array(
-                '@id' => $categoryAtId,
-                '@type' => 'Thing',
-                'name' => $e['category_title'],
-            );
-            $datasetNode['about'] = array('@id' => $categoryAtId);
+            // only add it once
+            if (!in_array($categoryAtId, array_column($this->dataEntities, '@id'), true)) {
+                $this->dataEntities[] =  array(
+                    '@id' => $categoryAtId,
+                    '@type' => 'Thing',
+                    'name' => $e['category_title'],
+                );
+                $datasetNode['about'] = array('@id' => $categoryAtId);
+            }
         }
         // METADATA (extra fields)
         if ($e['metadata']) {

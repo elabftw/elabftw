@@ -15,7 +15,6 @@ namespace Elabftw\Auth;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Services\TeamsHelper;
@@ -55,9 +54,7 @@ class Cookie implements AuthInterface
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it
         $TeamsHelper = new TeamsHelper($this->team);
-        try {
-            $TeamsHelper->isUserInTeam($userid);
-        } catch (ResourceNotFoundException) {
+        if (!$TeamsHelper->isUserInTeam($userid)) {
             throw new UnauthorizedException();
         }
 

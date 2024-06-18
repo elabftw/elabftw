@@ -128,8 +128,6 @@ class DownloadController implements ControllerInterface
      * header as an extra layer of XSS protection. See
      * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      *
-     * @param mimeType A MIME type of the form type/subtype, assumed correctly formatted and in a comparable encoding.
-     *
      **/
     private function getMimeType(): string
     {
@@ -147,7 +145,7 @@ class DownloadController implements ControllerInterface
     /**
      * Return true if $mimeType is a JavaScript MIME type essence match, false otherwise.
      *
-     * @param mimeType A MIME type of the form type/subtype, assumed correctly formatted and in a comparable encoding.
+     * @param string $mimeType A MIME type of the form type/subtype, assumed correctly formatted and in a comparable encoding.
      *
      */
     private function isJavaScriptMimeType(string $mimeType): bool

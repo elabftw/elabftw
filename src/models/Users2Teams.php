@@ -134,7 +134,7 @@ class Users2Teams
         }
 
         $TeamsHelper = new TeamsHelper($teamid);
-        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1){
+        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('User tried to patch team group of a team where they are not admin');
         }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';

@@ -98,16 +98,16 @@ class MakeEln extends AbstractMakeEln
         // COMMENTS
         $comments = array();
         foreach ($e['comments'] as $comment) {
-            // the comment creation date will be used as part of the id
-            $dateCreated = (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM);
-            $id = 'comment://' . urlencode($dateCreated);
+            // simply use some random bytes here for the id
+            $hash = hash(self::HASH_ALGO, random_bytes(6));
+            $id = sprintf('comment://%s?hash_algo=%s', $hash, self::HASH_ALGO);
             // we add the reference to the comment in hasPart
             $comments[] = array('@id' => $id);
             // now we build a root node for the comment, with the same id as the one referenced in the main entity
             $this->dataEntities[] = array(
                 '@id' => $id,
                 '@type' => 'Comment',
-                'dateCreated' => $dateCreated,
+                'dateCreated' => (new DateTimeImmutable($comment['created_at']))->format(DateTimeImmutable::ATOM),
                 'text' => $comment['comment'],
                 'author' => array('@id' => $this->getAuthorId(new Users((int) $comment['userid']))),
             );

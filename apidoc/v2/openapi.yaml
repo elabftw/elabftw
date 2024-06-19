@@ -934,8 +934,6 @@ components:
               type: string
             locked_at:
               type: string
-        - type: object
-          properties:
 
 security:
   - token:

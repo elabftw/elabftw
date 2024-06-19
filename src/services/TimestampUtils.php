@@ -19,7 +19,6 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Traits\ProcessTrait;
-use Elabftw\Traits\UploadTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use League\Flysystem\FilesystemOperator;
@@ -32,7 +31,6 @@ use function is_readable;
 class TimestampUtils
 {
     use ProcessTrait;
-    use UploadTrait;
 
     private const TIMEOUT_SECONDS = 30;
 

@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
+      const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
       let queryString = '';
       let page = '';
       if (about.page.startsWith('template-')) {
@@ -43,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         page = '/ucp.php';
       }
 
-      EntityC.duplicate(entity.id).then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
+      EntityC.duplicate(entity.id, Boolean(copyFiles.checked))
+        .then(resp => window.location.href = `${page}?mode=edit&${queryString}id=${resp.headers.get('location').split('/').pop()}`);
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {

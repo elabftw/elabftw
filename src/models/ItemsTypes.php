@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -27,15 +26,11 @@ use PDO;
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
-        $this->Db = Db::getConnection();
-        $this->ExperimentsLinks = new ExperimentsLinks($this);
-        $this->ItemsLinks = new ItemsLinks($this);
-        $this->Steps = new Steps($this);
-        $this->setId($id);
+        parent::__construct($Users, $id);
     }
 
     public function getPage(): string
@@ -99,7 +94,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         throw new ImproperActionException('No duplicate action for resources categories.');
     }

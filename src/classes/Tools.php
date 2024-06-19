@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function bin2hex;
 use function date;
@@ -60,8 +61,9 @@ class Tools
      *
      * @return int maximum size in MB of files allowed for upload
      */
-    public static function getMaxUploadSize(): int
+    public static function getMaxUploadSize(): int|float
     {
+        //return UploadedFile::getMaxFilesize();
         $max_size = trim((string) ini_get('upload_max_filesize'));
         $post_max_size = trim((string) ini_get('post_max_size'));
 

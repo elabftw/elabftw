@@ -34,6 +34,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
@@ -41,7 +42,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_merge;
-use function explode;
 use function implode;
 use function is_bool;
 use function json_decode;
@@ -84,9 +84,6 @@ abstract class AbstractEntity implements RestInterface
     public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
-    public bool $bypassReadPermission = false;
-
-    // use that to ignore the canOrExplode calls
     public bool $bypassWritePermission = false;
 
     // will be defined in children classes
@@ -112,7 +109,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @param int|null $id the id of the entity
      */
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->Db = Db::getConnection();
 
@@ -132,7 +129,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @return int the new item id
      */
-    abstract public function duplicate(): int;
+    abstract public function duplicate(bool $copyFiles = false): int;
 
     public function getPage(): string
     {
@@ -199,9 +196,11 @@ abstract class AbstractEntity implements RestInterface
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
 
-        // clear any request action
-        $RequestActions = new RequestActions($this->Users, $this);
-        $RequestActions->remove(RequestableAction::Lock);
+        // clear any request action - skip for templates
+        if ($this instanceof AbstractConcreteEntity) {
+            $RequestActions = new RequestActions($this->Users, $this);
+            $RequestActions->remove(RequestableAction::Lock);
+        }
 
         return $this->readOne();
     }
@@ -268,13 +267,7 @@ abstract class AbstractEntity implements RestInterface
             $this->extendedFilter,
             $this->idFilter,
             'GROUP BY id',
-            'ORDER BY',
-            $displayParams->orderby::toSql($displayParams->orderby),
-            $displayParams->sort->value,
-            ', entity.id',
-            $displayParams->sort->value,
-            sprintf('LIMIT %d', $displayParams->limit),
-            sprintf('OFFSET %d', $displayParams->offset),
+            $displayParams->getSql(),
         );
 
         $sql .= implode(' ', $sqlArr);
@@ -367,8 +360,11 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->Uploads->includeArchived = true;
         $base = $this->readOne();
-        $base['revisions'] = (new Revisions($this))->readAll();
-        $base['changelog'] = (new Changelog($this))->readAll();
+        // items types don't have this yet
+        if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
+            $base['revisions'] = (new Revisions($this))->readAll();
+            $base['changelog'] = (new Changelog($this))->readAll();
+        }
         ksort($base);
         return $base;
     }
@@ -381,6 +377,12 @@ abstract class AbstractEntity implements RestInterface
      */
     public function canOrExplode(string $rw): void
     {
+        if ($this->bypassWritePermission && $rw === 'write') {
+            return;
+        }
+        if ($this->bypassReadPermission && $rw === 'read') {
+            return;
+        }
         $permissions = $this->getPermissions();
 
         // READ ONLY?
@@ -394,72 +396,11 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Verify we can read/write an item
-     * Here be dragons! Cognitive load > 9000
-     *
-     * @param array<string, mixed>|null $item one item array
-     */
-    public function getPermissions(?array $item = null): array
-    {
-        if ($this->bypassWritePermission) {
-            return array('read' => true, 'write' => true);
-        }
-        if ($this->bypassReadPermission) {
-            return array('read' => true, 'write' => false);
-        }
-        if (empty($this->entityData) && !isset($item)) {
-            $this->readOne();
-        }
-        // don't try to read() again if we have the item (for show where there are several items to check)
-        if (!isset($item)) {
-            $item = $this->entityData;
-        }
-
-        // if it has the deleted state, don't show it.
-        if ($item['state'] === State::Deleted->value) {
-            return array('read' => false, 'write' => false);
-        }
-
-        $Permissions = new Permissions($this->Users, $item);
-
-        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
-            return $Permissions->forEntity();
-        }
-        if ($this instanceof ItemsTypes) {
-            return $Permissions->forItemType();
-        }
-
-        return array('read' => false, 'write' => false);
-    }
-
-    /**
      * Add an arbitrary filter to the query, externally, not through DisplayParams
      */
     public function addFilter(string $column, string|int $value): void
     {
         $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
-    }
-
-    /**
-     * Get an array of id changed since the lastchange date supplied
-     *
-     * @param int $userid limit to this user
-     * @param string $period 20201206-20210101
-     */
-    public function getIdFromLastchange(int $userid, string $period): array
-    {
-        if ($period === '') {
-            $period = '15000101-30000101';
-        }
-        [$from, $to] = explode('-', $period);
-        $sql = 'SELECT id FROM ' . $this->type . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':from', $from);
-        $req->bindParam(':to', $to);
-        $this->Db->execute($req);
-
-        return array_column($req->fetchAll(), 'id');
     }
 
     /**
@@ -592,6 +533,62 @@ abstract class AbstractEntity implements RestInterface
             $this->Db->execute($req);
         }
         return $this->readOne();
+    }
+
+    // generate a title useful for zip folder name for instance: shortened, with category and short elabid
+    public function toFsTitle(): string
+    {
+        $prefix = '';
+        if ($this->entityData['category_title']) {
+            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
+        }
+
+        return sprintf(
+            '%s%s - %s',
+            $prefix,
+            // prevent a zip name with too much characters from the title, see #3966
+            substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            Tools::getShortElabid($this->entityData['elabid'] ?? ''),
+        );
+    }
+
+    /**
+     * Verify we can read/write an item
+     * Here be dragons! Cognitive load > 9000
+     *
+     * @param array<string, mixed>|null $item one item array
+     */
+    protected function getPermissions(?array $item = null): array
+    {
+        if ($this->bypassWritePermission) {
+            return array('read' => true, 'write' => true);
+        }
+        if ($this->bypassReadPermission) {
+            return array('read' => true, 'write' => false);
+        }
+        if (empty($this->entityData) && !isset($item)) {
+            $this->readOne();
+        }
+        // don't try to read() again if we have the item (for show where there are several items to check)
+        if (!isset($item)) {
+            $item = $this->entityData;
+        }
+
+        // if it has the deleted state, don't show it.
+        if ($item['state'] === State::Deleted->value) {
+            return array('read' => false, 'write' => false);
+        }
+
+        $Permissions = new Permissions($this->Users, $item);
+
+        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
+            return $Permissions->forEntity();
+        }
+        if ($this instanceof ItemsTypes) {
+            return $Permissions->forItemType();
+        }
+
+        return array('read' => false, 'write' => false);
     }
 
     /**

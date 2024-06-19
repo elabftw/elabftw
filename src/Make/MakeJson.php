@@ -14,8 +14,10 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 
 use function json_encode;
 use function ksort;
@@ -25,9 +27,9 @@ use function ksort;
  */
 class MakeJson extends AbstractMake implements StringMakerInterface
 {
-    public function __construct(AbstractEntity $entity, private array $idArr)
+    public function __construct(private Users $requester, private array $entitySlugs)
     {
-        parent::__construct($entity);
+        parent::__construct();
         $this->contentType = 'application/json';
     }
 
@@ -45,28 +47,37 @@ class MakeJson extends AbstractMake implements StringMakerInterface
      */
     public function getFileContent(): string
     {
-        $res = array();
-        foreach ($this->idArr as $id) {
-            $this->Entity->setId((int) $id);
-            try {
-                $all = $this->getEntityData();
-                // add eLabFTW version number
-                $all['elabftw_version'] = App::INSTALLED_VERSION;
-                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
-                ksort($all);
-            } catch (IllegalActionException) {
-                continue;
-            }
-            $res[] = $all;
-        }
-
-        $json = json_encode($res, JSON_THROW_ON_ERROR);
+        $json = json_encode($this->getJsonContent(), JSON_THROW_ON_ERROR);
         $this->contentSize = mb_strlen($json);
         return $json;
     }
 
-    protected function getEntityData(): array
+    public function getJsonContent(): array
     {
-        return $this->Entity->readOne();
+        $res = array();
+        foreach ($this->entitySlugs as $slug) {
+            try {
+                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
+            }
+            try {
+                $all = $this->getEntityData($entity);
+                // add eLabFTW version number
+                $all['elabftw_version'] = App::INSTALLED_VERSION;
+                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
+                ksort($all);
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
+            }
+            $res[] = $all;
+        }
+        return $res;
+    }
+
+    protected function getEntityData(AbstractEntity $entity): array
+    {
+        return $entity->readOne();
     }
 }

@@ -62,7 +62,7 @@ class Comments implements RestInterface
     {
         $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.firstname, users.lastname, users.orcid
+            users.firstname, users.lastname, users.orcid, users.email
             FROM " . $this->Entity->type . '_comments
             LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
             WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.created_at ASC';

@@ -28,18 +28,18 @@ class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
     {
         $this->page = EntityType::Experiments->value;
         $this->type = EntityType::Experiments->value;
         $this->entityType = EntityType::Experiments;
-        parent::__construct($users, $id);
+        parent::__construct($users, $id, $bypassReadPermission);
     }
 
     public function create(int $template = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
-        $Teams = new Teams($this->Users);
+        $Teams = new Teams($this->Users, $this->Users->team);
         $teamConfigArr = $Teams->readOne();
         $Status = new ExperimentsStatus($Teams);
 
@@ -136,7 +136,7 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
 
@@ -169,6 +169,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
+        $fresh = new self($this->Users, $newId);
         /** @psalm-suppress PossiblyNullArgument
          * this->id cannot be null here, checked during canOrExplode */
         $this->ExperimentsLinks->duplicate($this->id, $newId);
@@ -176,9 +177,12 @@ class Experiments extends AbstractConcreteEntity
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         // also add a link to the previous experiment
-        $ExperimentsLinks = new ExperimentsLinks(new self($this->Users, $newId));
+        $ExperimentsLinks = new ExperimentsLinks($fresh);
         $ExperimentsLinks->setId($this->id);
         $ExperimentsLinks->postAction(Action::Create, array());
+        if ($copyFiles) {
+            $this->Uploads->duplicate($fresh);
+        }
 
         return $newId;
     }

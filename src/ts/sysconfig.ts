@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, notifError, reloadElements, removeEmpty } from './misc';
+import { collectForm, notif, notifError, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'orgid': (document.getElementById('teamOrgid_' + id) as HTMLInputElement).value,
         'visible': (document.getElementById('teamVisible_' + id) as HTMLSelectElement).value,
       };
-      ApiC.patch(`${Model.Team}/${id}`, removeEmpty(params));
+      ApiC.patch(`${Model.Team}/${id}`, params);
     // ARCHIVE TEAM
     } else if (el.matches('[data-action="archive-team"]')) {
       ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': Action.Archive});

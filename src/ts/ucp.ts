@@ -9,11 +9,11 @@ import { getEntity, notif, reloadElements, collectForm, updateCatStat, saveStrin
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Action, Model, Target } from './interfaces';
+import { Action, Model, Target, EntityType } from './interfaces';
 import Templates from './Templates.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
-import { Ajax } from './Ajax.class';
+import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
 import { Uploader } from './uploader';
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    const TemplateC = new EntityClass(EntityType.Template);
     // CREATE TEMPLATE
     if (el.matches('[data-action="create-template"]')) {
       const title = prompt(i18next.t('template-title'));
@@ -88,15 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.patch(`${Model.User}/me`, params);
 
+    // IMPORT TPL
+    } else if (el.matches('[data-action="import-template"]')) {
+      TemplateC.duplicate(parseInt(el.dataset.id), false);
+
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {
       const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-      ApiC.post(`${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
+      ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
         .then(() => reloadElements(['ucp-sigkeys']));
     // REGENERATE SIGKEY
     } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
       const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
-      ApiC.patch(`${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
+      ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
         .then(() => reloadElements(['ucp-sigkeys']));
     // DOWNLOAD SIG KEY (pub or priv)
     } else if (el.matches('[data-action="download-sigkey"]')) {
@@ -143,26 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`${Model.Apikey}/${el.dataset.apikeyid}`)
           .then(() => el.parentElement.parentElement.remove());
       }
-    } else if (el.matches('[data-action="show-import-tpl"]')) {
-      document.getElementById('import_tpl').toggleAttribute('hidden');
     }
   });
-
-  // input to upload an ELN archive
-  const importTplInput = document.getElementById('import_tpl');
-  if (importTplInput) {
-    importTplInput.addEventListener('change', (event) => {
-      const params = {
-        'type': 'archive',
-        'file': (event.target as HTMLInputElement).files[0],
-        'target': 'experiments_templates:0',
-      };
-      // TODO check for file size here too, like the other import modal
-      (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
-        window.location.reload();
-      });
-    });
-  }
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));

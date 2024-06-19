@@ -208,34 +208,8 @@
 
       <div id='withSelected' class='d-none'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
-        <div class='row mx-0 form-inline'>
-          {# CHANGE CATEGORY #}
-          <select aria-label='{{ 'Change category'|trans }}' data-action='update-catstat-selected-entities' data-target='category' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled>
-              {{ 'Change category'|trans }}
-            </option>
-            {% for category in categoryArr %}
-                <option value='{{ category.id }}'>{{ category.title }}</option>
-            {% endfor %}
-          </select>
-          {# CHANGE STATUS #}
-          <select aria-label='{{ 'Change status'|trans }}' data-action='update-catstat-selected-entities' data-target='status' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled>
-              {{ 'Change status'|trans }}
-            </option>
-            {% for status in statusArr %}
-                <option value='{{ status.id }}'>{{ status.title }}</option>
-            {% endfor %}
-          </select>
-
-          {# Change visibility #}
-          <select aria-label='{{ 'Change visibility'|trans }}' data-action='update-visibility-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled>{{ 'Change visibility'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
-          </select>
-
+        {# First line #}
+        <div class='row mx-0 form-inline mb-3'>
           {# Export #}
           <select aria-label='{{ 'Export'|trans }}' data-action='export-selected-entities' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled>{{ 'Export'|trans }}</option>
@@ -246,13 +220,51 @@
             <option value='qrpdf'>{{ 'QR codes PDF'|trans }}</option>
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
+          {# Action buttons #}
+          <button data-action='lock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='archive-selected-entities' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
+          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+        </div>
 
-          {# Add a tag #}
-          <input type='text' aria-label='{{ 'Add a tag'|trans }}' id='createTagInputMultiple' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
-
-          {# Add a link #}
+        <form id='multiChangesForm' class='row mx-0 form-inline'>
+          {# CHANGE CATEGORY #}
+          <select aria-label='{{ 'Change category'|trans }}' name='category' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>
+              {{ 'Change category'|trans }}
+            </option>
+            {% for category in categoryArr %}
+                <option value='{{ category.id }}'>{{ category.title }}</option>
+            {% endfor %}
+          </select>
+          {# CHANGE STATUS #}
+          <select aria-label='{{ 'Change status'|trans }}' name='status' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>
+              {{ 'Change status'|trans }}
+            </option>
+            {% for status in statusArr %}
+                <option value='{{ status.id }}'>{{ status.title }}</option>
+            {% endfor %}
+          </select>
+          {# CANREAD #}
+          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+          </select>
+          {# CANWRITE #}
+          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+          </select>
+          {# ADD A TAG #}
+          <input type='text' aria-label='{{ 'Add a tag'|trans }}' id='createTagInputMultiple' name='tags' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
+          {# ADD A RESOURCE LINK #}
           <div class='input-group mb-2 mr-2'>
-            <input type='text' aria-label='{{ 'Add a link'|trans }}' id='addLinkItemsInput' data-endpoint='items_links' class='form-control linkInputMultiple' placeholder='{{ 'Add a link'|trans }}' />
+            <input type='text' aria-label='{{ 'Add a link'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Add a link'|trans }}' />
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
@@ -262,10 +274,9 @@
               </select>
             </div>
           </div>
-
-          {# Add an experiment link #}
+          {# ADD AN EXPERIMENT LINK #}
           <div class='input-group mb-2 mr-2'>
-            <input type='text' aria-label='{{ 'Link to an experiment'|trans }}' id='addLinkExpInput' data-endpoint='experiments_links' class='form-control linkInputMultiple' placeholder='{{ 'Link to an experiment'|trans }}' />
+            <input type='text' aria-label='{{ 'Link to an experiment'|trans }}' id='addLinkExpInput' name='experiments_links' class='form-control' placeholder='{{ 'Link to an experiment'|trans }}' />
             <div class='input-group-append'>
               <select id='addLinkOwnerFilter' class='brl-none form-control' aria-label='{{ 'Limit author'|trans }}'>
                 <option selected value=''>{{ 'Any author'|trans }}</option>
@@ -275,12 +286,10 @@
               </select>
             </div>
           </div>
-
-          <button data-action='lock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-          <button data-action='archive-selected-entities' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
-          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-        </div>
+          {# SAVE AND RESET BUTTONS #}
+          <button data-action='save-multi-changes' type='submit' class='btn btn-primary mr-1 mb-2'>{{ 'Save'|trans }}</button>
+          <button data-action='clear-form' data-target='multiChangesForm' type='button' class='btn btn-ghost mb-2'>{{ 'Reset'|trans }}</button>
+        </form>
       </div>
 
       {# PINNED ENTITIES #}
@@ -357,7 +366,7 @@
         </table>
       {% endif %}
 
-      {# PREVIOUS/NEXT PAGE buttons #}
+      {# LOAD MORE button #}
       <div class='text-center page-buttons mt-2'>
         <button class='btn btn-primary ' type='button' id='loadMoreBtn' data-action='load-more'>{{ 'Load more'|trans }}</button>
       </div>

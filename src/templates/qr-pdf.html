@@ -26,8 +26,8 @@
 {% for entity in entityArr %}
   <div class='row'>
     <div class='col col-md-3'>
-      <barcode code='{{ entity.url|raw }}' type='QR' class='barcode' size='1' error='M' />
-      {{ entity.date }} | {{ entity.title }} <span class='tags'>{{ entity.tags|replace({'|': ' '}) }}</span>
+      <barcode code='{{ entity.entityData.url|raw }}' type='QR' class='barcode' size='1' error='M' />
+      {{ entity.entityData.date }} | {{ entity.entityData.title }} <span class='tags'>{{ entity.entityData.tags|replace({'|': ' '}) }}</span>
     </div>
   </div>
 {% endfor %}

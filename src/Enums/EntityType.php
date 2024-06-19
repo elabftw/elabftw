@@ -26,13 +26,24 @@ enum EntityType: string
     case Items = 'items';
     case ItemsTypes = 'items_types';
 
-    public function toInstance(Users $users, ?int $entityId = null): AbstractEntity
+    public function toInstance(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null): AbstractEntity
     {
         return match ($this) {
-            $this::Experiments => new Experiments($users, $entityId),
-            $this::Items => new Items($users, $entityId),
-            $this::Templates => new Templates($users, $entityId),
-            $this::ItemsTypes => new ItemsTypes($users, $entityId),
+            $this::Experiments => new Experiments($users, $entityId, $bypassReadPermission),
+            $this::Items => new Items($users, $entityId, $bypassReadPermission),
+            $this::Templates => new Templates($users, $entityId, $bypassReadPermission),
+            $this::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission),
+        };
+    }
+
+    // for use in the "genre" attribute of .eln node
+    public function toGenre(): string
+    {
+        return match ($this) {
+            $this::Experiments => 'experiment',
+            $this::Items => 'resource',
+            $this::Templates => 'experiment template',
+            $this::ItemsTypes => 'resource template',
         };
     }
 }

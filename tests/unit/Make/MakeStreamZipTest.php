@@ -12,34 +12,33 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\EntitySlug;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use ZipStream\ZipStream;
 
 class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 {
-    private MakeStreamZip $MakeExp;
-
-    private MakeStreamZip $MakeDb;
+    private MakeStreamZip $Make;
 
     protected function setUp(): void
     {
-        $idArr = array('1', '2', '3');
+        $slugs = array('experiments:1', 'items:2', 'experiments:3');
+        $slugsArr = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->MakeExp = new MakeStreamZip($Zip, new Experiments($Users), $idArr);
-        $this->MakeDb = new MakeStreamZip($Zip, new Items($Users), $idArr);
+        $this->Make = new MakeStreamZip($Zip, $Users, $slugsArr);
     }
 
     public function testGetFileName(): void
     {
-        $this->assertEquals('export.elabftw.zip', $this->MakeExp->getFileName());
+        $this->assertEquals('export.elabftw.zip', $this->Make->getFileName());
     }
 
     public function testGetZipExp(): void
     {
-        $this->MakeExp->getStreamZip();
+        $this->Make->getStreamZip();
     }
 
     public function testGetZipOneExp(): void
@@ -51,13 +50,8 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Experiments->Uploads->create(new CreateUpload($filename, $filepath));
         $Zip = $this->createMock(ZipStream::class);
-        $MakeExp = new MakeStreamZip($Zip, $Experiments, array('1'));
+        $MakeExp = new MakeStreamZip($Zip, new Users(1, 1), array(new EntitySlug(EntityType::Experiments, 1)));
         $MakeExp->getStreamZip();
-        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} - .*.zip$/', $MakeExp->getFileName());
-    }
-
-    public function testGetZipDb(): void
-    {
-        $this->MakeDb->getStreamZip();
+        $this->assertTrue(str_ends_with($MakeExp->getFileName(), '.zip'));
     }
 }

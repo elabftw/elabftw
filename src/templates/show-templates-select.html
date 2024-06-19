@@ -4,10 +4,9 @@
     {# reload the tbody to avoid issue with data-sort arrows needing reload #}
     {% include 'scope-button.html' with {'reload': 'tplTableBody,scopeBtn', 'target': 'scope_experiments_templates'} %}
     <div>
-      <button type='button' class='btn btn-secondary' data-action='show-import-tpl'>{{ 'Import from file'|trans }} (.eln)</button>
+      <a href='/profile.php?tab=3' class='btn btn-secondary'>{{ 'Import from file'|trans }}</a>
       <div class='vertical-separator d-inline'></div>
       <button type='button' class='btn btn-primary' data-action='create-template'>{{ 'Create'|trans }}</button>
-      <input type='file' aria-hidden='true' hidden accept='.eln' id='import_tpl' class='form-control mt-2'>
     </div>
   </div>
   {% include 'filter-input-snippet.html' with {'target': 'tplTableBody'} %}

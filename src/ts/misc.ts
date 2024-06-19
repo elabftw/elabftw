@@ -120,7 +120,7 @@ export function listenTrigger(elementId: string = ''): void {
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  */
-export function collectForm(form: HTMLElement): object {
+export function collectForm(form: HTMLElement, blank = true): object {
   let params = {};
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
@@ -128,20 +128,30 @@ export function collectForm(form: HTMLElement): object {
       if (el.reportValidity() === false) {
         throw new Error('Invalid input found! Aborting.');
       }
-      if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: input.value});
+      let value = el.value;
+      if (el.type === 'checkbox') {
+        value = el.checked ? 'on' : 'off';
       }
-      if (el.name === 'password') {
-        // clear a password field once collected
+      if (el.dataset.ignore !== '1' && el.disabled === false) {
+        params = Object.assign(params, {[input.name]: value});
+      }
+      if (blank) {
         el.value = '';
       }
     });
   });
-  // don't send an empty password
-  if (params['password'] === '') {
-    delete params['password'];
-  }
-  return params;
+  return removeEmpty(params);
+}
+
+export function clearForm(form: HTMLElement): void {
+  ['input', 'select', 'textarea'].forEach(inp => {
+    form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
+      input.value = '';
+      if (input.type === 'checkbox') {
+        input.checked = false;
+      }
+    });
+  });
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
@@ -413,7 +423,7 @@ export function addAutocompleteToTagInputs(): void {
   const ApiC = new Api();
   $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.TeamTags}/?q=${request.term}`).then(json => {
+      ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
         const res = [];
         json.forEach(tag => {
           res.push(tag.tag);
@@ -455,7 +465,7 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export function removeEmpty(params: object): object {
+function removeEmpty(params: object): object {
   for (const [key, value] of Object.entries(params)) {
     if (value === '') {
       delete params[key];
@@ -619,7 +629,6 @@ export async function updateEntityBody(): Promise<void> {
     location.reload();
   });
 }
-
 
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);

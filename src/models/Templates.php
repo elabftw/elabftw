@@ -38,7 +38,9 @@ class Templates extends AbstractTemplateEntity
 
     public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
-    public function __construct(Users $users, ?int $id = null)
+    public string $page = 'ucp';
+
+    public function __construct(Users $users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
         $this->type = EntityType::Templates->value;
         $this->entityType = EntityType::Templates;
@@ -66,9 +68,9 @@ class Templates extends AbstractTemplateEntity
         $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target)
             VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_target', $canread);
@@ -86,7 +88,7 @@ class Templates extends AbstractTemplateEntity
     /**
      * Duplicate a template from someone else in the team
      */
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $template = $this->readOne();
 
@@ -225,7 +227,7 @@ class Templates extends AbstractTemplateEntity
 
         $sql .= str_replace('entity', 'experiments_templates', $this->idFilter) . ' ';
 
-        $sql .= 'GROUP BY id ORDER BY fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
+        $sql .= 'GROUP BY id ORDER BY experiments_templates.created_at DESC, fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

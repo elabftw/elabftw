@@ -56,20 +56,17 @@ class Users implements RestInterface
 
     public array $userData = array();
 
-    public int $team = 0;
-
     public self $requester;
 
     public bool $isAdmin = false;
 
     protected Db $Db;
 
-    public function __construct(public ?int $userid = null, ?int $team = null, ?self $requester = null)
+    public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         $this->Db = Db::getConnection();
         if ($team !== null && $userid !== null) {
-            $this->team = $team;
-            $TeamsHelper = new TeamsHelper($team);
+            $TeamsHelper = new TeamsHelper($this->team ?? 0);
             $this->isAdmin = $TeamsHelper->isAdmin($userid);
         }
         if ($userid !== null) {
@@ -497,6 +494,18 @@ class Users implements RestInterface
         }
     }
 
+    // create a user from the information provided in a node of type Person (.eln)
+    public function createFromPerson(array $person, int $team): self
+    {
+        $userid = $this->createOne(
+            $person['email'] ?? throw new ImproperActionException('Could not find an email to create the user!'),
+            array($team),
+            $person['givenName'] ?? 'Unknown',
+            $person['familyName'] ?? 'Unknown',
+        );
+        return new self($userid, $team);
+    }
+
     protected static function search(string $column, string $term, bool $validated = false): self
     {
         $Db = Db::getConnection();
@@ -517,6 +526,28 @@ class Users implements RestInterface
             throw new ResourceNotFoundException();
         }
         return new self($res);
+    }
+
+    /**
+     * Read all the columns (including sensitive ones) of the current user
+     */
+    protected function readOneFull(): array
+    {
+        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
+            WHERE users.userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->userData = $this->Db->fetch($req);
+        $this->userData['team'] = $this->team;
+        $UsersHelper = new UsersHelper($this->userData['userid']);
+        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
+        return $this->userData;
     }
 
     private function disable2fa(): array
@@ -647,28 +678,6 @@ class Users implements RestInterface
         $Notifications->create($this->userData['userid']);
         $this->sendOnboardingEmailsAfterValidation();
         return $this->readOne();
-    }
-
-    /**
-     * Read all the columns (including sensitive ones) of the current user
-     */
-    private function readOneFull(): array
-    {
-        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users
-            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
-            WHERE users.userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $this->userData = $this->Db->fetch($req);
-        $this->userData['team'] = $this->team;
-        $UsersHelper = new UsersHelper($this->userData['userid']);
-        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
-        return $this->userData;
     }
 
     private function notifyAdmins(array $admins, int $userid, bool $isValidated, string $team): void

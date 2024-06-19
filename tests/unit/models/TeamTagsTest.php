@@ -31,7 +31,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPage(): void
     {
-        $this->assertEquals('api/v2/team_tags/', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getPage());
     }
 
     public function testCreate(): void
@@ -68,6 +68,8 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDeduplicate(): void
     {
+        // start with a deduplicate action first
+        $this->TeamTags->patch(Action::Deduplicate, array());
         // we can't directly create two of the same, it needs to be edited from one with a typo first
         $this->Tags->postAction(Action::Create, array('tag' => 'duplicated'));
         $this->TeamTags->setId($this->Tags->postAction(Action::Create, array('tag' => 'duplikated')));

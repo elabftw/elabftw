@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Action;
@@ -48,7 +49,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         return match ($action) {
             Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags'] ?? array()),
-            Action::Duplicate => $this->duplicate(),
+            Action::Duplicate => $this->duplicate((bool) $reqBody['copyFiles']),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -67,21 +68,27 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     protected function bloxberg(): array
     {
-        $Maker = new MakeBloxberg(Config::getConfig()->configArr, $this, new Client());
+        $Maker = new MakeBloxberg(
+            $this->Users,
+            Config::getConfig()->configArr,
+            array(new EntitySlug($this->entityType, $this->id ?? 0)),
+            new Client()
+        );
         $Maker->timestamp();
         return $this->readOne();
     }
 
     protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
     {
+        $entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
         return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($config, $this, $dataFormat),
-            'dgn' => new MakeDgnTimestamp($config, $this, $dataFormat),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($config, $this, $dataFormat) : new MakeUniversignTimestamp($config, $this, $dataFormat),
-            'digicert' => new MakeDigicertTimestamp($config, $this, $dataFormat),
-            'sectigo' => new MakeSectigoTimestamp($config, $this, $dataFormat),
-            'globalsign' => new MakeGlobalSignTimestamp($config, $this, $dataFormat),
-            'custom' => new MakeCustomTimestamp($config, $this, $dataFormat),
+            'dfn' => new MakeDfnTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'dgn' => new MakeDgnTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $config, $entitySlugs, $dataFormat) : new MakeUniversignTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'digicert' => new MakeDigicertTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'sectigo' => new MakeSectigoTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'custom' => new MakeCustomTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
     }
@@ -129,7 +136,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     protected function sign(string $passphrase, Meaning $meaning): array
     {
         $Sigkeys = new SignatureHelper($this->Users);
-        $Maker = new MakeFullJson($this, array($this->id));
+        $Maker = new MakeFullJson($this->Users, array(new EntitySlug($this->entityType, $this->id ?? 0)));
         $message = $Maker->getFileContent();
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         $SigKeys = new SigKeys($this->Users);

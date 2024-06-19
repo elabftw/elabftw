@@ -26,6 +26,7 @@ module.exports = (env) => {
         './src/ts/steps-links.ts',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
+        './src/ts/profile.ts',
         './src/ts/edit.ts',
         './src/ts/team.ts',
         './src/ts/metadata.ts',

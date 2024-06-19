@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value;
+      const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
 
       let json = {};
       // get the current metadata
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
         if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
-          fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
+          fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
           document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field['value'] = fieldValue || '';
         // get the description
         if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
-          field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
+          field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value.trim();
         }
         // deal with the blank_on_value
         if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {

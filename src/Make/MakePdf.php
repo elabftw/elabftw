@@ -15,9 +15,9 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -29,7 +29,6 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;
-use Elabftw\Traits\UploadTrait;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
@@ -46,7 +45,6 @@ use function strtolower;
 class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
-    use UploadTrait;
 
     public array $failedAppendPdfs = array();
 
@@ -55,20 +53,21 @@ class MakePdf extends AbstractMakePdf
 
     protected bool $includeAttachments = false;
 
+    protected AbstractEntity $Entity;
+
     private FileSystem $cacheFs;
 
     private bool $pdfa;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity Experiments or Database
-     */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr, bool $includeChangelog = false)
-    {
+    public function __construct(
+        private LoggerInterface $log,
+        MpdfProviderInterface $mpdfProvider,
+        protected Users $requester,
+        protected array $entitySlugs,
+        bool $includeChangelog = false,
+    ) {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
-            entity: $entity,
             includeChangelog: $includeChangelog
         );
 
@@ -82,7 +81,7 @@ class MakePdf extends AbstractMakePdf
         error_reporting(E_ERROR);
 
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
-        if ($this->pdfa === true || $this->Entity->Users->userData['inc_files_pdf']) {
+        if ($this->pdfa === true || $this->requester->userData['inc_files_pdf']) {
             $this->includeAttachments = true;
         }
     }
@@ -106,7 +105,7 @@ class MakePdf extends AbstractMakePdf
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
             $Notifications = new PdfGenericError();
-            $Notifications->create($this->Entity->Users->userData['userid']);
+            $Notifications->create($this->requester->userData['userid']);
         }
         return $output;
     }
@@ -118,9 +117,8 @@ class MakePdf extends AbstractMakePdf
     {
         $now = (new DateTimeImmutable())->format('Y-m-d');
         $date = $this->Entity->entityData['date'] ?? $now;
-        $title = Filter::forFilesystem($this->Entity->entityData['title']);
 
-        return sprintf('%s-%s.pdf', $date, $title);
+        return sprintf('%s-%s.pdf', $date, Filter::forFilesystem($this->getTitle()));
     }
 
     protected function getTitle(): string
@@ -138,24 +136,20 @@ class MakePdf extends AbstractMakePdf
      */
     private function loopOverEntries(): void
     {
-        $entriesCount = count($this->entityIdArr);
-        foreach ($this->entityIdArr as $key => $id) {
-            $this->Entity->setId($id);
-
+        $entriesCount = count($this->entitySlugs);
+        foreach ($this->entitySlugs as $key => $slug) {
             try {
-                $permissions = $this->Entity->getPermissions();
-            } catch (IllegalActionException) {
-                return;
+                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
+                $this->Entity = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
             }
+            $this->addEntry();
 
-            if ($permissions['read']) {
-                $this->addEntry();
-
-                if ($key !== $entriesCount - 1) {
-                    $this->mpdf->AddPageByArray(array(
-                        'sheet-size' => $this->Entity->Users->userData['pdf_format'],
-                    ));
-                }
+            if ($key !== $entriesCount - 1) {
+                $this->mpdf->AddPageByArray(array(
+                    'sheet-size' => $this->requester->userData['pdf_format'],
+                ));
             }
         }
     }
@@ -168,7 +162,7 @@ class MakePdf extends AbstractMakePdf
         // write content
         $this->mpdf->WriteHTML($this->getContent());
 
-        if ($this->Entity->Users->userData['append_pdfs']) {
+        if ($this->requester->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
             if ($this->failedAppendPdfs) {
                 /** @psalm-suppress PossiblyNullArgument */
@@ -230,11 +224,7 @@ class MakePdf extends AbstractMakePdf
 
         $Changelog = new Changelog($this->Entity);
 
-        $baseUrls = array();
-        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
-            $baseUrls[$entityType->value] = sprintf('%s/%s', Config::fromEnv('SITE_URL'), $entityType->toPage());
-        }
-
+        $siteUrl = Config::fromEnv('SITE_URL');
         $renderArr = array(
             'body' => $this->getBody(),
             'changes' => $Changelog->readAllWithAbsoluteUrls(),
@@ -246,10 +236,14 @@ class MakePdf extends AbstractMakePdf
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
-            'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
-            'url' => $this->getURL(),
-            'linkBaseUrl' => $baseUrls,
-            'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
+            'pdfSig' => $this->requester->userData['pdf_sig'],
+            // TODO fix for templates
+            'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
+            'linkBaseUrl' => array(
+                'items' => $siteUrl . '/database.php',
+                'experiments' => $siteUrl . '/experiments.php',
+            ),
+            'useCjk' => $this->requester->userData['cjk_fonts'],
         );
 
         $Config = Config::getConfig();

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -32,7 +33,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            'items:1',
+            EntityType::Items,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -53,7 +56,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            'experiments:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -75,7 +80,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            'items:1',
+            EntityType::Items,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -96,7 +103,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            'items:1',
+            EntityType::Items,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,

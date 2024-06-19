@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\UploadTrait;
 
 use function date;
 use function implode;
@@ -26,8 +25,6 @@ use function implode;
  */
 class MakeSchedulerReport extends AbstractMakeCsv
 {
-    use UploadTrait;
-
     protected Db $Db;
 
     protected array $rows;

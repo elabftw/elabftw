@@ -111,6 +111,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 * Institut Curie – Centre de Recherche
 * Vrije Universiteit Brussel
 * Institute of Medical Biometry and Statistics, Faculty of Medicine and Medical Center – University of Freiburg, Germany
+* Georg-August-University Goettingen - Institute of Inorganic Chemistry
 
 # Related projects
 

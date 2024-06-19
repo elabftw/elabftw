@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!tagInput.value) {
         return;
       }
-      ApiC.post(`${Model.TeamTags}`, {'tag': tagInput.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${Model.Tag}`, {'tag': tagInput.value}).then(() => {
         tagInput.value = '';
         reloadElements(['tagMgrDiv']);
       });

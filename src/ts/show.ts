@@ -6,6 +6,8 @@
  * @package elabftw
  */
 import {
+  clearForm,
+  collectForm,
   getCheckedBoxes,
   getEntity,
   notif,
@@ -20,7 +22,6 @@ import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
-import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -40,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // THE CHECKBOXES
   const nothingSelectedError = {
-    'msg': i18next.t('nothing-selected'),
-    'res': false,
+    msg: i18next.t('nothing-selected'),
+    res: false,
   };
 
   // background color for selected entities
@@ -92,51 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = el.value;
       // reset selection so button can be used again with same format
       el.selectedIndex = 0;
-      window.location.href = `make.php?format=${format}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
-
-    // UPDATE CATEGORY OR STATUS
-    } else if (el.matches('[data-action="update-catstat-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        const params = {};
-        params[el.dataset.target] = el.value;
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, params));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
-
-    // UPDATE VISIBILITY
-    } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': permissionsToJson(parseInt(el.value, 10), [])}));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
+      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
     }
   });
 
@@ -217,6 +174,51 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('loadMoreBtn').remove();
         }
       });
+
+    // SAVE MULTI CHANGES
+    } else if (el.matches('[data-action="save-multi-changes"]')) {
+      (el as HTMLButtonElement).disabled = true;
+      ApiC.notifOnSaved = false;
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notif(nothingSelectedError);
+        return;
+      }
+      const ajaxs = [];
+      const params = collectForm(document.getElementById('multiChangesForm'));
+      ['canread', 'canwrite'].forEach(can => {
+        // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
+        if (Object.prototype.hasOwnProperty.call(params, can)) {
+          params[can] = permissionsToJson(parseInt(params[can], 10), []);
+        }
+      });
+      checked.forEach(chk => {
+        const paramsCopy = Object.assign({}, params);
+        // they do not have all the same endpoint: handle tags and links the generic patch method
+        for (const key in paramsCopy) {
+          if (key === 'tags') {
+            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
+            delete paramsCopy[key];
+          } else if (['items_links', 'experiments_links'].includes(key)) {
+            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
+            delete paramsCopy[key];
+          }
+        }
+        // patch whatever is left
+        if (Object.entries(paramsCopy).length > 0) {
+          ajaxs.push(ApiC.patch(`${entity.type}/${chk.id}`, paramsCopy));
+        }
+      });
+      // reload the page once it's done
+      Promise.all(ajaxs).then(() => {
+        notif({msg: i18next.t('saved'), res: true});
+        ApiC.notifOnSaved = true;
+        reloadEntitiesShow();
+      });
+
+    } else if (el.matches('[data-action="clear-form"]')) {
+      clearForm(document.getElementById(el.dataset.target));
 
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {

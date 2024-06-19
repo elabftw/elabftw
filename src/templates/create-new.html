@@ -29,9 +29,9 @@
           {% endfor %}
         {% endif %}
         <div class='dropdown-divider'></div>
-        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='importModal'>
+        <a href='profile.php?tab=3' class='dropdown-item'>
           <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
-        </button>
+        </a>
       </div>
     </div>
     <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityType }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>

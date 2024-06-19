@@ -74,13 +74,14 @@
                 <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
                 </button>
+                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+                  {# use a span as title doesn't work directly on i element #}
+                  <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
+                {% endif %}
                 <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
                 <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
                   {% include 'upload-more-info.html' %}
                 </div>
-                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
-                  <i class='fas fa-box-archive mr-1'></i>{{ 'Archived'|trans }}
-                {% endif %}
               </td>
               {# COMMENT #}
               <td>{% include('upload-comment.html') %}</td>

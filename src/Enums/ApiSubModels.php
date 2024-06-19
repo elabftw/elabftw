@@ -30,6 +30,7 @@ enum ApiSubModels: string
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
+    case SigKeys = 'sig_keys';
     case Status = 'status';
     case Steps = 'steps';
     case Tags = 'tags';

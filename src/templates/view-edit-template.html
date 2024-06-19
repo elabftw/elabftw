@@ -38,7 +38,7 @@
   {% include 'export-menu.html' %}
 
   {# IMPORT #}
-  {% if App.Request.getScriptName|split('/')|last == 'team.php' -%}
+  {% if Entity.entityData.userid != App.Users.userid -%}
     <button type='button' title='{{ 'Import to your profile'|trans }}' aria-label='{{ 'Import to your profile'|trans }}' data-action='import-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-file-import fa-fw'></i>
     </button>
@@ -170,5 +170,5 @@
 </div>
 {# in view mode templates-view.html gets included which has its own <div id='info'> #}
 {% if mode != 'view' %}
-  <div id='info' data-maxsize='{{ maxUploadSize }}' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
+  <div id='info' data-page='template-edit' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>
 {% endif %}

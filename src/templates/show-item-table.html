@@ -26,6 +26,9 @@
     {% endif %}
     {# toggle body #}
     <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+    {% if item.custom_id %}
+      <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+    {% endif %}
     <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
   </td>
 

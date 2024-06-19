@@ -79,6 +79,7 @@ enum ApiSubModels: string
                 self::ItemsStatus,
                 self::ProcurementRequests,
                 self::Status,
+                self::Tags,
                 self::Teamgroups,
             ),
         );
@@ -91,6 +92,8 @@ enum ApiSubModels: string
             array(
                 self::Notifications,
                 self::RequestActions,
+                self::SigKeys,
+                self::Uploads,
             ),
         );
     }

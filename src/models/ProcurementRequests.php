@@ -114,7 +114,7 @@ class ProcurementRequests implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/teams/current/procurement_requests/';
     }

@@ -67,7 +67,7 @@ class SigKeys implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/users/%d/sig_keys/%d', $this->Users->userData['userid'], $this->id ?? '');
     }

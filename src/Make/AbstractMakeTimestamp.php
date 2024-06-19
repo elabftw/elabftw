@@ -16,6 +16,7 @@ namespace Elabftw\Make;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
@@ -67,7 +68,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             timestamped = 1,
             timestampedby = :userid,
             timestamped_at = :when
-            WHERE id = :id', $this->Entity->type);
+            WHERE id = :id', $this->Entity->entityType->value);
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);
@@ -116,7 +117,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         if ($limit === 0) {
             return;
         }
-        if ($this->Entity->getTimestampLastMonth() >= $limit) {
+        if ($this->Entity instanceof AbstractConcreteEntity && $this->Entity->getTimestampLastMonth() >= $limit) {
             throw new ImproperActionException(_('Number of timestamps this past month reached the limit!'));
         }
     }

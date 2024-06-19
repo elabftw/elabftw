@@ -23,8 +23,8 @@ enum Entrypoint: int
     {
         return match ($this) {
             self::Dashboard => 'dashboard.php',
-            self::Experiments => 'experiments.php',
-            self::Database => 'database.php',
+            self::Experiments => EntityType::Experiments->toPage(),
+            self::Database => EntityType::Items->toPage(),
             self::Scheduler => 'team.php',
         };
     }

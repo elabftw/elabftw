@@ -24,9 +24,9 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams = new Teams(new Users(1, 1), 1);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/', $this->Teams->getPage());
+        $this->assertEquals('api/v2/teams/', $this->Teams->getApiPath());
     }
 
     public function testCreate(): void

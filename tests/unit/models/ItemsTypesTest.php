@@ -44,8 +44,8 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->duplicate();
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->ItemsTypes->getPage());
+        $this->assertEquals('api/v2/items_types/', $this->ItemsTypes->getApiPath());
     }
 }

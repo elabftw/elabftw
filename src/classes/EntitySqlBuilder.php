@@ -70,7 +70,7 @@ class EntitySqlBuilder
         );
 
         // replace all %1$s by 'experiments' or 'items', there are many more than the one in FROM
-        return sprintf(implode(' ', $sql), $this->entity->type);
+        return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 
     public function getCanFilter(string $can): string
@@ -104,8 +104,8 @@ class EntitySqlBuilder
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",
-                $this->entity->page,
-                $this->entity->type,
+                $this->entity->entityType->toPage(),
+                $this->entity->entityType->value,
             );
         } else {
             // only get the columns interesting for show mode
@@ -195,7 +195,7 @@ class EntitySqlBuilder
         $this->joinsSql[] = sprintf(
             'LEFT JOIN %s AS categoryt
                 ON (categoryt.id = entity.category)',
-            $this->entity->type === 'experiments'
+            $this->entity->entityType === EntityType::Experiments
                 ? 'experiments_categories'
                 : 'items_types',
         );

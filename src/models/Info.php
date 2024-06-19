@@ -43,7 +43,7 @@ class Info implements RestInterface
         throw new ImproperActionException('No PATCH action.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/info/';
     }

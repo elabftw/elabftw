@@ -56,7 +56,7 @@ class ApiKeys implements RestInterface
         throw new ImproperActionException('No patch action for apikeys.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('%d-%s', $this->keyId, $this->key);
     }

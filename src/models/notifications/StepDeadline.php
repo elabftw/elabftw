@@ -58,7 +58,7 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
     public function getEmail(): array
     {
         $body = sprintf(
-            '%s%s/%s.php?mode=view&id=%d&highlightstep=%d#step_view_%d',
+            '%s%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d',
             _('Hello. A step deadline is approaching: '),
             Config::fromEnv('SITE_URL'),
             $this->entityPage,

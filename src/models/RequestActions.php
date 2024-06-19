@@ -46,7 +46,7 @@ class RequestActions implements RestInterface
                     AND state = :state
                 ORDER BY created_at DESC
                 LIMIT 100',
-            $this->entity->page,
+            $this->entity->entityType->toPage(),
             $this->entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
@@ -127,9 +127,9 @@ class RequestActions implements RestInterface
         throw new ImproperActionException('No patch action for this endpoint.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('%s/%d/request_actions/', $this->entity->type, $this->entity->id ?? '');
+        return sprintf('%s%d/request_actions/', $this->entity->getApiPath(), $this->entity->id ?? '');
     }
 
     public function remove(RequestableAction $action): bool

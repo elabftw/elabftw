@@ -12,19 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\EntityType;
+
 /**
  * All about Items Links
  */
 class ItemsLinks extends AbstractLinks
 {
-    protected function getTargetType(): string
+    protected function getTargetType(): EntityType
     {
-        return 'items';
-    }
-
-    protected function getTargetPage(): string
-    {
-        return 'database';
+        return EntityType::Items;
     }
 
     protected function getCatTable(): string

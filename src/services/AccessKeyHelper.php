@@ -30,7 +30,7 @@ class AccessKeyHelper
 
     public function getIdFromAccessKey(string $ak): int
     {
-        $sql = 'SELECT id FROM ' . $this->entity->type . ' WHERE access_key = :ak';
+        $sql = 'SELECT id FROM ' . $this->entity->entityType->value . ' WHERE access_key = :ak';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ak', $ak);
         $this->Db->execute($req);
@@ -39,7 +39,7 @@ class AccessKeyHelper
 
     public function toggleAccessKey(): ?string
     {
-        $sql = 'UPDATE ' . $this->entity->type . ' SET access_key = ' . $this->getSqlValue() . ' WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entity->entityType->value . ' SET access_key = ' . $this->getSqlValue() . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -58,7 +58,7 @@ class AccessKeyHelper
 
     private function getAccessKey(): ?string
     {
-        $sql = 'SELECT access_key FROM ' . $this->entity->type . ' WHERE id = :id';
+        $sql = 'SELECT access_key FROM ' . $this->entity->entityType->value . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

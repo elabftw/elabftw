@@ -168,7 +168,7 @@ class MakePdf extends AbstractMakePdf
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
                     $this->Entity->id,
-                    $this->Entity->page,
+                    $this->Entity->entityType->toPage(),
                     implode(', ', $this->failedAppendPdfs)
                 );
             }
@@ -186,7 +186,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->page);
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage());
         }
         return $content;
     }
@@ -238,7 +238,7 @@ class MakePdf extends AbstractMakePdf
             'lockerName' => $lockerName,
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
-            'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->page, $this->Entity->id ?? 0),
+            'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
             'linkBaseUrl' => array(
                 'items' => $siteUrl . '/database.php',
                 'experiments' => $siteUrl . '/experiments.php',

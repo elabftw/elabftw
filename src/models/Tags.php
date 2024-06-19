@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\TeamsHelper;
@@ -36,9 +37,9 @@ class Tags implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/tags/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/tags/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -57,7 +58,7 @@ class Tags implements RestInterface
             WHERE item_id = :item_id AND item_type = :item_type ORDER BY tag';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':item_type', $this->Entity->type);
+        $req->bindValue(':item_type', $this->Entity->entityType->value);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -74,15 +75,15 @@ class Tags implements RestInterface
         $tags = $this->readAll();
         $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq = $this->Db->prepare($insertSql);
-        $type = $this->Entity->type;
+        $entityType = $this->Entity->entityType;
         // an experiment template transforms into an experiment
         if ($toExperiments) {
-            $type = 'experiments';
+            $entityType = EntityType::Experiments;
         }
 
         foreach ($tags as $tag) {
             $insertReq->bindParam(':item_id', $newId, PDO::PARAM_INT);
-            $insertReq->bindParam(':item_type', $type);
+            $insertReq->bindValue(':item_type', $entityType->value);
             $insertReq->bindParam(':tag_id', $tag['tag_id'], PDO::PARAM_INT);
             $this->Db->execute($insertReq);
         }
@@ -106,7 +107,7 @@ class Tags implements RestInterface
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         return $this->Db->execute($req);
     }
 
@@ -146,7 +147,7 @@ class Tags implements RestInterface
         }
         // now reference it
         $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $insertReq2->bindParam(':item_type', $this->Entity->type);
+        $insertReq2->bindValue(':item_type', $this->Entity->entityType->value);
         $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $this->Db->execute($insertReq2);
 

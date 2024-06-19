@@ -25,7 +25,7 @@ class EntityPruner implements CleanerInterface
 {
     private Db $Db;
 
-    public function __construct(private EntityType $type)
+    public function __construct(private EntityType $entityType)
     {
         $this->Db = Db::getConnection();
     }
@@ -36,7 +36,7 @@ class EntityPruner implements CleanerInterface
      */
     public function cleanup(): int
     {
-        $sql = 'DELETE FROM ' . $this->type->value . ' WHERE state = :state';
+        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);

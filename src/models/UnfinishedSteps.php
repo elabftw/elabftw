@@ -35,9 +35,9 @@ class UnfinishedSteps implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return 'unfinished_steps';
+        return 'api/v2/unfinished_steps';
     }
 
     public function postAction(Action $action, array $reqBody): int

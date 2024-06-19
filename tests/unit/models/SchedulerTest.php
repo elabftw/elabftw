@@ -44,9 +44,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/event/', $this->Scheduler->getPage());
+        $this->assertEquals('api/v2/event/', $this->Scheduler->getApiPath());
     }
 
     public function testCreate(): int

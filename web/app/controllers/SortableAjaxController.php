@@ -55,7 +55,7 @@ try {
     // extra fields position update
     if ($reqBody['table'] === 'extra_fields') {
         $OrderingParams = new ExtraFieldsOrderingParams($reqBody);
-        $Entity = $OrderingParams->type->toInstance($App->Users, $OrderingParams->id);
+        $Entity = $OrderingParams->entityType->toInstance($App->Users, $OrderingParams->id);
         $Entity->updateExtraFieldsOrdering($OrderingParams);
         $Response->send();
         exit;

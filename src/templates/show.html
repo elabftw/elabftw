@@ -35,7 +35,7 @@
         <i class='fas fa-fw fa-table'></i>
       </button>
 
-      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.type} %}
+      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value} %}
 
       <button class='btn btn-secondary btn-sm ml-2 mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
         <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
@@ -191,8 +191,8 @@
     {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}
     {% if count == 0 and App.Request.query.all|length > 0 %}
     <div class='row display-flex' id='itemList'>
-      {% set otherPage = Entity.type == 'experiments' ? 'database' : 'experiments' %}
-      {% set otherCategory = Entity.type == 'experiments' ? 'items' : 'experiments' %}
+      {% set otherPage = Entity.entityType.value == 'experiments' ? 'database' : 'experiments' %}
+      {% set otherCategory = Entity.entityType.value == 'experiments' ? 'items' : 'experiments' %}
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
     <div class='row d-flex'>
@@ -375,7 +375,7 @@
 
   <div id='info'
       data-page='show'
-      data-type='{{ Entity.type }}'
+      data-type='{{ Entity.entityType.value }}'
       data-locale='{{ App.Users.userData.lang }}'
       data-limit='{{ DisplayParams.limit }}'
   >

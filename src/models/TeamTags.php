@@ -37,7 +37,7 @@ class TeamTags implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/tags/%d', $this->Users->userData['team'], $this->id ?? '');
     }

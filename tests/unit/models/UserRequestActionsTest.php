@@ -48,9 +48,9 @@ class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
         $this->ura->patch(Action::Update, array());
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/users/me/request_actions/', $this->ura->getPage());
+        $this->assertEquals('api/v2/users/me/request_actions/', $this->ura->getApiPath());
     }
 
     public function testDestroy(): void

@@ -64,7 +64,7 @@ class Handler implements RestInterface
         throw new ImproperActionException('Error: only POST method allowed.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/import/';
     }

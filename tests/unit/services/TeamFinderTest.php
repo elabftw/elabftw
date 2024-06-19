@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -24,7 +25,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
         $Entity->setId($id);
         (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];
-        $finder = new TeamFinder('/experiments.php', $ak);
+        $finder = new TeamFinder(Entrypoint::Experiments->toPage(), $ak);
         $this->assertEquals(1, $finder->findTeam());
     }
 
@@ -35,7 +36,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
         $Entity->setId($id);
         (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];
-        $finder = new TeamFinder('/database.php', $ak);
+        $finder = new TeamFinder(Entrypoint::Database->toPage(), $ak);
         $this->assertEquals(1, $finder->findTeam());
     }
 }

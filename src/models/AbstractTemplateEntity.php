@@ -21,6 +21,8 @@ use Elabftw\Interfaces\CreateFromTitleInterface;
  */
 abstract class AbstractTemplateEntity extends AbstractEntity implements CreateFromTitleInterface
 {
+    abstract public function create(string $title): int;
+
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {

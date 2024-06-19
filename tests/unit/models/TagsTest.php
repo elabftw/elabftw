@@ -26,9 +26,9 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments = new Experiments($this->Users, 1);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/1/tags/', $this->Experiments->Tags->getPage());
+        $this->assertEquals('api/v2/experiments/1/tags/', $this->Experiments->Tags->getApiPath());
     }
 
     public function testCreate(): void

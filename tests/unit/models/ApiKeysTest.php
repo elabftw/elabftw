@@ -23,10 +23,12 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
     }
 
-    public function testCreateAndDestroy(): void
+    public function testCreateAndGetApiPathAndDestroy(): void
     {
         $id = $this->ApiKeys->postAction(Action::Create, array('name' => 'test key', 'canwrite' => 1));
         $this->assertIsInt($id);
+        $this->assertIsString($this->ApiKeys->getApiPath());
+        $this->assertMatchesRegularExpression('/\d+-[[:xdigit:]]{84}/', $this->ApiKeys->getApiPath());
         $this->ApiKeys->setId($id);
         $this->assertTrue($this->ApiKeys->destroy());
     }
@@ -46,11 +48,6 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     public function testReadOne(): void
     {
         $this->assertIsArray($this->ApiKeys->readOne());
-    }
-
-    public function testGetPage(): void
-    {
-        $this->assertIsString($this->ApiKeys->getPage());
     }
 
     public function testCreateKnown(): void

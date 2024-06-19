@@ -44,7 +44,7 @@ abstract class AbstractStatus extends AbstractCategory
         parent::updateOrdering($params);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/%s/', $this->Teams->id ?? 0, $this->table);
     }

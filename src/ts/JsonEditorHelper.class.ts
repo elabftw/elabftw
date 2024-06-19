@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { notif, notifSaved, reloadElements } from './misc';
+import { getNewIdFromPostRequest, notif, notifSaved, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
@@ -171,11 +171,9 @@ export default class JsonEditorHelper {
       'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };
-    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
-      const location = resp.headers.get('location').split('/');
-      reloadElements(['uploadsDiv']);
-      this.currentUploadId = String(location[location.length - 1]);
-    });
+    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
+      .then(resp => this.currentUploadId = String(getNewIdFromPostRequest(resp)))
+      .then(() => reloadElements(['uploadsDiv']));
   }
 
   // edit an existing file

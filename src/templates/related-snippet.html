@@ -1,5 +1,5 @@
 {# RELATED ITEMS/EXPERIMENTS #}
-{% if Entity.type == 'items' or Entity.type == 'experiments' %}
+{% if Entity.entityType.value == 'items' or Entity.entityType.value == 'experiments' %}
 
   {# RELATED EXPERIMENTS #}
   {% if Entity.entityData.related_experiments_links %}
@@ -12,7 +12,7 @@
 
       <div class='ml-3 mt-3 col-md-12'>
         <i class='fas fa-list mr-1 fa-fw'></i>
-        <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related experiments'|trans }}</a>
+        <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related experiments'|trans }}</a>
       </div>
     </div>
     <hr>
@@ -28,7 +28,7 @@
 
       <div class='ml-3 mt-3 col-md-12'>
         <i class='fas fa-list mr-1 fa-fw'></i>
-        <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related resources'|trans }}</a>
+        <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related resources'|trans }}</a>
       </div>
     </div>
     <hr>

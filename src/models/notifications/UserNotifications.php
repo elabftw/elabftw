@@ -98,9 +98,9 @@ class UserNotifications implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('users/%d/notifications/', $this->userid);
+        return sprintf('api/v2/users/%d/notifications/', $this->userid);
     }
 
     /**

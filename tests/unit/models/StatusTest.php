@@ -33,9 +33,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Status->readOne());
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->Status->getPage());
+        $this->assertIsString($this->Status->getApiPath());
     }
 
     public function testUpdate(): void

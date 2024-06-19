@@ -279,7 +279,7 @@
           {% for req in teamProcurementRequestsArr %}
             <tr>
               <td class='no-wrap' data-label='{{ 'Resource'|trans }}'>
-                <a href='/database.php?mode=view&id={{ req.entity_id }}'>
+                <a href='/database.php?mode=view&amp;id={{ req.entity_id }}'>
                   <span class='hl-hover-gray p-2 mr-2 rounded'><i class='fas fa-eye'></i></span>
                 </a>{{ req.entity_title }}</td>
               {# REQUESTER #}

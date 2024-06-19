@@ -108,7 +108,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsArr = $this->getItemsArr();
         // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {
-            return new RedirectResponse(sprintf('%s.php?mode=view&id=%d', $this->Entity->page, $itemsArr[0]['id']));
+            return new RedirectResponse(sprintf(
+                '%s?mode=view&id=%d',
+                $this->Entity->entityType->toPage(),
+                $itemsArr[0]['id']
+            ));
         }
 
         // get tags separately
@@ -211,7 +215,9 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
-            'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            ...$this->Entity instanceof AbstractConcreteEntity
+                    ? array('timestamperFullname' => $this->Entity->getTimestamperFullname())
+                    : array(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,

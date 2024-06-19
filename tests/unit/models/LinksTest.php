@@ -26,9 +26,9 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->ExperimentsLinks->setId(4);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->Experiments->ExperimentsLinks->getPage());
+        $this->assertEquals('api/v2/experiments/3/experiments2experiments/', $this->Experiments->ExperimentsLinks->getApiPath());
     }
 
     public function testCreateReadDestroy(): void

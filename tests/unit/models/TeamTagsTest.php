@@ -29,9 +29,9 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->Tags = new Tags(new Experiments($this->Users, 1));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getApiPath());
     }
 
     public function testCreate(): void

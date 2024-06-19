@@ -11,6 +11,7 @@ import { Api } from './Apiv2.class';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
 import $ from 'jquery';
+import { getNewIdFromPostRequest } from './misc';
 
 export class KeyboardShortcuts {
 
@@ -52,8 +53,7 @@ export class KeyboardShortcuts {
         // use default template
         const params = {'category_id': 0, 'tags': tags};
         this.api.post(EntityType.Experiment, params).then(resp => {
-          const location = resp.headers.get('location').split('/');
-          const newId = parseInt(location[location.length -1], 10);
+          const newId = getNewIdFromPostRequest(resp);
           window.location.href = `experiments.php?mode=edit&id=${newId}`;
         });
       }

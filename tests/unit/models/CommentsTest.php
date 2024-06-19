@@ -29,9 +29,9 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->Comments = new Comments($this->Entity);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getPage());
+        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getApiPath());
     }
 
     public function testCreate(): void

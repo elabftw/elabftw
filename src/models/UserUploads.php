@@ -45,7 +45,7 @@ class UserUploads implements RestInterface
         throw new ImproperActionException('No PATCH action for this endpoint');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/user/%d/uploads/', $this->owner->userid ?? 'me');
     }

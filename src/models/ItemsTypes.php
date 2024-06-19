@@ -28,14 +28,8 @@ class ItemsTypes extends AbstractTemplateEntity
 {
     public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
-        $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
         parent::__construct($Users, $id);
-    }
-
-    public function getPage(): string
-    {
-        return 'admin.php?tab=4&templateid=';
     }
 
     public function create(string $title): int

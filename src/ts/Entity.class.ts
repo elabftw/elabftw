@@ -41,7 +41,7 @@ export default class Entity {
   }
 
   patchAction(id: number, action: Action): Promise<Response> {
-    return this.api.patch(`${this.model}/${id}`, {action: action});
+    return this.api.patch(`${this.model}/${id}`, {action});
   }
 
   update(id: number, target: Target, content: string): Promise<Response> {

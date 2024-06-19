@@ -173,7 +173,7 @@ class Exports implements RestInterface
         throw new ImproperActionException('No PATCH action for this endpoint.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/export/';
     }

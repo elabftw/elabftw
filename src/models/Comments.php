@@ -39,19 +39,19 @@ class Comments implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/comments/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/comments/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     public function readOne(): array
     {
-        $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
+        $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid
-            FROM " . $this->Entity->type . '_comments
-            LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
-            WHERE ' . $this->Entity->type . '_comments.id = :id';
+            FROM " . $this->Entity->entityType->value . '_comments
+            LEFT JOIN users ON (' . $this->Entity->entityType->value . '_comments.userid = users.userid)
+            WHERE ' . $this->Entity->entityType->value . '_comments.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -60,12 +60,12 @@ class Comments implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT ' . $this->Entity->type . "_comments.*,
+        $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
-            FROM " . $this->Entity->type . '_comments
-            LEFT JOIN users ON (' . $this->Entity->type . '_comments.userid = users.userid)
-            WHERE item_id = :id ORDER BY ' . $this->Entity->type . '_comments.created_at ASC';
+            FROM " . $this->Entity->entityType->value . '_comments
+            LEFT JOIN users ON (' . $this->Entity->entityType->value . '_comments.userid = users.userid)
+            WHERE item_id = :id ORDER BY ' . $this->Entity->entityType->value . '_comments.created_at ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -88,7 +88,7 @@ class Comments implements RestInterface
     {
         $this->Entity->canOrExplode('read');
         $this->canWriteOrExplode();
-        $sql = 'UPDATE ' . $this->Entity->type . '_comments SET
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_comments SET
             comment = :content
             WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -103,7 +103,7 @@ class Comments implements RestInterface
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
@@ -122,7 +122,7 @@ class Comments implements RestInterface
 
     protected function create(CommentParam $params): int
     {
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_comments(item_id, comment, userid, immutable)
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_comments(item_id, comment, userid, immutable)
             VALUES(:item_id, :content, :userid, :immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -147,7 +147,7 @@ class Comments implements RestInterface
         }
 
         /** @psalm-suppress PossiblyNullArgument */
-        $Notif = new CommentCreated($this->Entity->page, $this->Entity->id, $this->Entity->Users->userData['userid']);
+        $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
         // target user is the owner of the entry
         $Notif->create($this->Entity->entityData['userid']);
     }

@@ -33,16 +33,8 @@ class Items extends AbstractConcreteEntity
 
     public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
     {
-        $this->type = EntityType::Items->value;
         $this->entityType = EntityType::Items;
-        $this->page = 'database';
         parent::__construct($users, $id, $bypassReadPermission);
-    }
-
-    // special case for items where the page property is not the correct endpoint
-    public function getPage(): string
-    {
-        return sprintf('api/v2/%s/', EntityType::Items->value);
     }
 
     public function create(int $template, array $tags = array()): int

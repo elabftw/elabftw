@@ -6,7 +6,7 @@
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
     <div class='d-flex'>
 
       {# lock icon #}
@@ -16,13 +16,13 @@
         </div>
       {% else %}
         {# edit icon #}
-        {% if (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.page }}.php?mode=edit&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+        {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
+          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
             <i class='fas fa-pencil fa-fw'></i>
           </a>
         {% else %}
         {# eye icon #}
-          <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
+          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
             <i class='fas fa-eye fa-fw'></i>
           </a>
         {% endif %}
@@ -60,7 +60,7 @@
       {% if item.custom_id %}
         <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+        <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
       </p>
     </div>
     {# owner #}
@@ -85,7 +85,7 @@
       {% if itemtagsArr|length > 0 %}
         <span class='d-inline-flex flex-wrap'><i class='fas fa-tags mr-1 fa-fw'></i>
           {% for tag in itemtagsArr %}
-            <a class='tag mathjax-ignore margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
+            <a class='tag mathjax-ignore margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.entityType.toPage }}?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
           {% endfor %}
         </span>
       {% endif %}
@@ -116,7 +116,7 @@
       </div>
       <div class='ml-auto'>
         {# toggle body #}
-        <button type='button' class=' btn p-1 hl-hover-gray' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <button type='button' class=' btn p-1 hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
           <i class='fas fa-square-plus fa-fw'></i>
         </button>
       </div>

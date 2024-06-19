@@ -12,19 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\EntityType;
+
 /**
  * All about Experiments Links
  */
 class ExperimentsLinks extends AbstractLinks
 {
-    protected function getTargetType(): string
+    protected function getTargetType(): EntityType
     {
-        return 'experiments';
-    }
-
-    protected function getTargetPage(): string
-    {
-        return 'experiments';
+        return EntityType::Experiments;
     }
 
     protected function getCatTable(): string

@@ -37,12 +37,11 @@ class UserRequestActions implements RestInterface
     {
         $tables = array(
             array(
-                'page' => EntityType::Experiments->value,
+                'page' => EntityType::Experiments->toPage(),
                 'entity_type' => EntityType::Experiments->value,
             ),
             array(
-                // Note: this should probably not be hardcoded here
-                'page' => 'database',
+                'page' => EntityType::Items->toPage(),
                 'entity_type' => EntityType::Items->value,
             ),
         );
@@ -94,7 +93,7 @@ class UserRequestActions implements RestInterface
         throw new ImproperActionException('No patch action for this endpoint.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/users/me/request_actions/';
     }

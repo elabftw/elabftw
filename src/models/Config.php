@@ -282,7 +282,7 @@ final class Config implements RestInterface
         return $this->readAll();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/config/';
     }

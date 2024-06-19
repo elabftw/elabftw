@@ -41,9 +41,9 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($res[0]['state_human']);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/current/procurement_requests/', $this->pr->getPage());
+        $this->assertEquals('api/v2/teams/current/procurement_requests/', $this->pr->getApiPath());
     }
 
     public function testDestroy(): void

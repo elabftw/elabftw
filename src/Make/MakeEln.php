@@ -171,7 +171,7 @@ class MakeEln extends AbstractMakeEln
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
             'encodingFormat' => $e['content_type'] === 1 ? 'text/html' : 'text/markdown',
-            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->page . '.php?mode=view&id=' . $e['id'],
+            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . '.php?mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
         $datasetNode = self::addIfNotEmpty(

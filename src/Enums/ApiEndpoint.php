@@ -40,6 +40,6 @@ enum ApiEndpoint: string
 
     public static function getCases(): array
     {
-        return array_map(fn(self $case): string => $case->value, ApiEndpoint::cases());
+        return array_map(fn(self $case): string => $case->value, self::cases());
     }
 }

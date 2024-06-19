@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use DateTime;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\MathjaxFailed;
@@ -28,7 +29,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
     public function testSendEmails(): void
     {
         // create a notification to fake send so there is something to process
-        $Notifications = new CommentCreated('experiments', 1, 2);
+        $Notifications = new CommentCreated(EntityType::Experiments->toPage(), 1, 2);
         $Notifications->create(1);
         $Notifications = new UserCreated(3, 'Some team name');
         $Notifications->create(1);
@@ -38,9 +39,9 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notifications->create(1);
         $Notifications = new SelfIsValidated();
         $Notifications->create(1);
-        $Notifications = new MathjaxFailed(1, 'experiments');
+        $Notifications = new MathjaxFailed(1, EntityType::Experiments->toPage());
         $Notifications->create(1);
-        $Notifications = new PdfAppendmentFailed(1, 'experiments', 'file1.pdf, file2.pdf');
+        $Notifications = new PdfAppendmentFailed(1, EntityType::Experiments->toPage(), 'file1.pdf, file2.pdf');
         $Notifications->create(1);
 
         $d = new DateTime();
@@ -57,12 +58,12 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(9, $targetCount);
         $this->assertIsArray($Notifications->readOne());
         $this->assertIsArray($Notifications->patch(Action::Update, array()));
-        $this->assertIsString($Notifications->getPage());
+        $this->assertIsString($Notifications->getApiPath());
         $this->assertFalse($Notifications->destroy());
 
         // create a deadline close to now
         $d->modify('+ 5 min');
-        $Notifications = new StepDeadline(1, 1, 'experiments', $d->format('Y-m-d H:i:s'));
+        $Notifications = new StepDeadline(1, 1, EntityType::Experiments->toPage(), $d->format('Y-m-d H:i:s'));
         $Notifications->create(1);
         // create it several times to toggle it and go in all code paths
         $Notifications->create(1);

@@ -46,4 +46,14 @@ enum EntityType: string
             $this::ItemsTypes => 'resource template',
         };
     }
+
+    public function toPage(): string
+    {
+        return match ($this) {
+            $this::Experiments => 'experiments.php',
+            $this::Items => 'database.php',
+            $this::Templates => 'ucp.php?tab=3',
+            $this::ItemsTypes => 'admin.php?tab=4',
+        };
+    }
 }

@@ -103,7 +103,7 @@ class Teams implements RestInterface
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/teams/';
     }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 
 /**
@@ -33,15 +35,15 @@ class TeamFinder
     public function findTeam(): int
     {
         return match ($this->page) {
-            '/experiments.php' => $this->searchIn('experiments'),
-            '/database.php' => $this->searchIn('items'),
+            Entrypoint::Experiments->toPage() => $this->searchIn(EntityType::Experiments),
+            Entrypoint::Database->toPage() => $this->searchIn(EntityType::Items),
             default => throw new ImproperActionException('Wrong page!'),
         };
     }
 
-    private function searchIn(string $entity): int
+    private function searchIn(EntityType $entityType): int
     {
-        $sql = 'SELECT users2teams.teams_id FROM ' . $entity . ' AS entity
+        $sql = 'SELECT users2teams.teams_id FROM ' . $entityType->value . ' AS entity
             CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
             WHERE entity.access_key = :ak';
         $req = $this->Db->prepare($sql);

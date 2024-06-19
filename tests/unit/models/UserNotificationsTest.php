@@ -27,9 +27,9 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->UserNotifications = new UserNotifications($this->Users, 1);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('users/1/notifications/', $this->UserNotifications->getPage());
+        $this->assertEquals('api/v2/users/1/notifications/', $this->UserNotifications->getApiPath());
     }
 
     public function testReadAll(): void

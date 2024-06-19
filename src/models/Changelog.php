@@ -42,9 +42,9 @@ class Changelog
                 return false;
             }
             /** @psalm-suppress PossiblyNullArgument */
-            $content = sprintf('Depending on your instance configuration, the change in the body is possibly recorded in the revisions. <a href="revisions.php?type=%s&amp;item_id=%d">See revisions page.</a>', $this->entity->type, $this->entity->id);
+            $content = sprintf('Depending on your instance configuration, the change in the body is possibly recorded in the revisions. <a href="revisions.php?type=%s&amp;item_id=%d">See revisions page.</a>', $this->entity->entityType->value, $this->entity->id);
         }
-        $sql = 'INSERT INTO ' . $this->entity->type . '_changelog (entity_id, users_id, target, content) VALUES (:entity_id, :users_id, :target, :content)';
+        $sql = 'INSERT INTO ' . $this->entity->entityType->value . '_changelog (entity_id, users_id, target, content) VALUES (:entity_id, :users_id, :target, :content)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $req->bindParam(':users_id', $this->entity->Users->userData['userid'], PDO::PARAM_INT);
@@ -56,7 +56,7 @@ class Changelog
     public function readAll(): array
     {
         $sql = "SELECT created_at, target, content, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM " . $this->entity->type . '_changelog LEFT JOIN users ON (users.userid = ' . $this->entity->type . '_changelog.users_id)
+            FROM " . $this->entity->entityType->value . '_changelog LEFT JOIN users ON (users.userid = ' . $this->entity->entityType->value . '_changelog.users_id)
             WHERE entity_id = :entity_id ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':entity_id', $this->entity->id, PDO::PARAM_INT);

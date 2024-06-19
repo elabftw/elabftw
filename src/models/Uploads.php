@@ -157,7 +157,7 @@ class Uploads implements RestInterface
         $req->bindValue(':comment', $params->getComment());
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindParam(':hash', $hash);
         $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
         $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
@@ -237,7 +237,7 @@ class Uploads implements RestInterface
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -272,9 +272,9 @@ class Uploads implements RestInterface
         };
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/uploads/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     /**
@@ -340,7 +340,7 @@ class Uploads implements RestInterface
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived) ORDER BY uploads.created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);

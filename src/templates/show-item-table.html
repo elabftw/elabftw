@@ -4,15 +4,15 @@
   {# DATE #}
   <td class='item-date'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.type }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
     {{ item.date|date('Y-m-d') }}
   </td>
 
   {# TITLE #}
   <td class='title'>
     {# edit icon #}
-    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.type == 'items' or App.Users.isAdmin) %}
-      <a href='{{ Entity.page }}.php?mode=edit&amp;id={{ item.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+    {% if not item.locked and (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
+      <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
         <i class='fas fa-fw fa-pencil-alt'></i>
       </a>
     {% endif %}
@@ -25,11 +25,11 @@
       <i class='fas fa-box-archive fa-fw'></i>
     {% endif %}
     {# toggle body #}
-    <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-type='{{ Entity.type }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+    <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
     {% if item.custom_id %}
       <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
     {% endif %}
-    <a href='{{ Entity.page }}.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+    <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
   </td>
 
   {# NEXT STEP #}
@@ -66,7 +66,7 @@
     {% if itemtagsArr|length > 0 %}
       <span class='d-flex flex-wrap'>
         {% for tag in itemtagsArr %}
-          <a class='tag margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.page }}.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
+          <a class='tag margin-1px {{ tag.is_favorite ? 'favorite' }}' href='{{ Entity.entityType.toPage }}?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}'>{{ tag.tag }}</a>
         {% endfor %}
       </span>
   {% endif %}

@@ -70,8 +70,7 @@ class ExclusiveEditMode
     {
         if ($this->isActive
             && $this->Entity->Users->userid !== $this->dataArr['locked_by']
-            && (!$this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
-                || !$this->Entity->Users->userData['is_sysadmin'])
+            && !$this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
         ) {
             /** @psalm-suppress PossiblyNullArgument */
             return new RedirectResponse(sprintf(
@@ -107,10 +106,8 @@ class ExclusiveEditMode
             ) {
                 return;
             }
-            // (sys)admin can additionally remove ExclusiveEditMode
             if ($action === Action::ExclusiveEditMode
-                && ($this->Entity->Users->userData['is_sysadmin']
-                    || $this->Entity->Users->isAdminOf($this->dataArr['locked_by']))
+                && $this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
             ) {
                 return;
             }

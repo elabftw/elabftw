@@ -106,7 +106,6 @@ enum Model {
   Step = 'steps',
   Tag = 'tags',
   Team = 'teams',
-  TeamTags = 'team_tags',
   TeamGroup = 'teamgroups',
   Todolist = 'todolist',
   UnfinishedSteps = 'unfinishedsteps',

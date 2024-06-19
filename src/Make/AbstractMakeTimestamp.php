@@ -17,6 +17,8 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
@@ -28,9 +30,13 @@ use PDO;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, protected ExportFormat $dataFormat)
+    protected AbstractEntity $Entity;
+
+    public function __construct(protected Users $requester, protected array $entitySlugs, protected array $configArr, protected ExportFormat $dataFormat)
     {
-        parent::__construct($entity);
+        parent::__construct();
+        $slug = $this->entitySlugs[0];
+        $this->Entity = $slug->type->toInstance($this->requester, $slug->id);
         $this->checkMonthlyLimit();
     }
 
@@ -66,7 +72,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -74,7 +80,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
 
     private function generateJson(): string
     {
-        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
+        $MakeJson = new MakeFullJson($this->requester, $this->entitySlugs);
         return $MakeJson->getFileContent();
     }
 
@@ -93,8 +99,8 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $MakePdf = new MakeTimestampPdf(
             log: $log,
             mpdfProvider: $MpdfProvider,
-            entity: $this->Entity,
-            entityIdArr: array($this->Entity->id),
+            requester: $this->Entity->Users,
+            entitySlugs: $this->entitySlugs,
             includeChangelog: true
         );
         if ($this->configArr['keeex_enabled'] === '1') {

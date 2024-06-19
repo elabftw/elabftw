@@ -1012,6 +1012,10 @@ the form-control fails to do that so we do the border ourselves */
     font-size: 80%;
 }
 
+.small {
+    font-size: 80%;
+}
+
 /* ucp.php */
 #currpass {
     background-color: $lightblue;
@@ -1481,7 +1485,38 @@ input:checked + .slider::before {
 
 /* PROFILE page */
 .counter {
-    color: $secondlevel;
+    color: $medium;
+}
+
+/* see Enums/State */
+.state-indicator {
+  /* error */
+  &[data-state="6"] {
+    color: $darkred;
+  }
+  /* processing */
+  &[data-state="5"] {
+    animation: pulse 2s infinite;
+    color: $orange;
+  }
+  /* pending */
+  &[data-state="4"] {
+    color: $mediumstrong;
+  }
+  /* normal */
+  &[data-state="1"] {
+    color: $green;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    color: #ffa500; /* Bright orange */
+  }
+
+  50% {
+    color: #ffe6b8; /* Less bright orange */
+  }
 }
 
 #exclusiveEditModeBtn {

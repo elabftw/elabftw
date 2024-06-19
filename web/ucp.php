@@ -128,7 +128,6 @@ try {
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
-        'maxUploadSize' => Tools::getMaxUploadSize(),
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
         'notificationsSettings' => $notificationsSettings,

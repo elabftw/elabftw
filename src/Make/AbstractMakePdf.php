@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\PdfMakerInterface;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Elabftw\FsTools;
 use Mpdf\Mpdf;
 
 /**
@@ -30,14 +30,23 @@ abstract class AbstractMakePdf extends AbstractMake implements PdfMakerInterface
 
     protected string $contentType = 'application/pdf';
 
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected bool $includeChangelog = false)
+    public function __construct(MpdfProviderInterface $mpdfProvider, protected bool $includeChangelog = false)
     {
-        parent::__construct($entity);
+        parent::__construct();
         $this->mpdf = $mpdfProvider->getInstance();
     }
 
     public function setNotifications(bool $state): void
     {
         $this->notifications = $state;
+    }
+
+    /**
+     * Get the contents of assets/pdf.min.css
+     */
+    protected function getCss(): string
+    {
+        $assetsFs = FsTools::getFs(dirname(__DIR__, 2) . '/web/assets');
+        return $assetsFs->read('pdf.min.css');
     }
 }

@@ -31,10 +31,10 @@ class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null)
+    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
     {
         $this->entityType = EntityType::Items;
-        parent::__construct($users, $id);
+        parent::__construct($users, $id, $bypassReadPermission);
     }
 
     public function create(int $template, array $tags = array()): int
@@ -47,7 +47,7 @@ class Items extends AbstractConcreteEntity
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id)
             VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':title', _('Untitled'));
         $req->bindParam(':status', $itemTemplate['status']);
         $req->bindParam(':body', $itemTemplate['body']);
@@ -57,7 +57,7 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':canwrite', $itemTemplate['canwrite_target']);
         $req->bindParam(':metadata', $itemTemplate['metadata']);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -98,7 +98,7 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
 

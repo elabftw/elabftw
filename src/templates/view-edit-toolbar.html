@@ -33,6 +33,33 @@
     </div>
   </div>
 </div>
+{# Modal for duplicate #}
+<div class='modal fade' id='duplicateModal' tabindex='-1' role='dialog' aria-labelledby='duplicateModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='duplicateModalLabel'>{{ 'Duplicate entry'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <p>{{ 'Duplicating an entry will create a new entry with the same attributes.'|trans }}</p>
+        <div class='d-flex justify-content-between'>
+          <label for='duplicateKeepFilesSelect' class='col-form-label'>{{ 'Copy attached files'|trans }}</label>
+          <label class='switch ucp-align'>
+            <input type='checkbox' autocomplete='off' id='duplicateKeepFilesSelect'>
+            <span class='slider'></span>
+          </label>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='duplicate-entity' data-dismiss='modal' class='btn btn-primary'>{{ 'Duplicate'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {# Modal for timestamping #}
 <div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -183,7 +210,7 @@
   {% if not App.Session.has('is_anon') %}
 
     {# DUPLICATE #}
-    <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+    <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-copy fa-fw'></i>
     </button>
 

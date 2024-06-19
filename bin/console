@@ -60,24 +60,29 @@ try {
     exit;
 }
 
+$cacheFs = new Cache();
+$sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
+
 $Application->add(new InstallRedir());
 $Application->add(new GenI18n4Js());
 $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
 $Application->add(new CheckTsBalance((int) $Config->configArr['ts_balance'], $Email));
 $Application->add(new CleanDatabase());
-$Application->add(new ExportUser(new Cache()));
-$Application->add(new ExportResources(new Cache()));
-$Application->add(new ImportResources(new Cache()));
-$Application->add(new ImportUser(new Cache()));
+$Application->add(new ExportUser($cacheFs));
+$Application->add(new ExportTeams($cacheFs));
+$Application->add(new ExportCommand($cacheFs));
+$Application->add(new ImportTeams($cacheFs));
+$Application->add(new ImportResources($cacheFs));
+$Application->add(new ImportUser($cacheFs));
 $Application->add(new UpdateDatabase());
-$Application->add(new RevertSchema(FsTools::getFs(dirname(__DIR__) . '/src/sql')));
+$Application->add(new RevertSchema($sqlFs));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());
 $Application->add(new ForceSchema());
 $Application->add(new GenCache());
-$Application->add(new GenSchema(FsTools::getFs(dirname(__DIR__) . '/src/sql')));
+$Application->add(new GenSchema($sqlFs));
 $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());

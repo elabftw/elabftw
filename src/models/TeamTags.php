@@ -18,7 +18,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +39,7 @@ class TeamTags implements RestInterface
 
     public function getApiPath(): string
     {
-        return 'api/v2/team_tags/';
+        return sprintf('api/v2/teams/%d/tags/%d', $this->Users->userData['team'], $this->id ?? '');
     }
 
     /**

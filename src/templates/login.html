@@ -30,7 +30,7 @@
 
 {# LOGIN ANNOUNCEMENT #}
 {% if App.Config.configArr.login_announcement %}
-  {{ App.Config.configArr.login_announcement|msg('warning') }}
+  {{ App.Config.configArr.login_announcement|msg('warning', false) }}
 {% endif %}
 
 <section class='text-center'>

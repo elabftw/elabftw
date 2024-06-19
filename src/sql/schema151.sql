@@ -1,110 +1,30 @@
 -- schema 151
-CREATE TABLE `experiments_edit_mode` (
-  `experiments_id` int UNSIGNED NOT NULL,
-  `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_id`)
+--
+-- Table structure for table `exports`
+--
+
+CREATE TABLE `exports` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `requester_userid` int UNSIGNED NOT NULL,
+  `state` tinyint UNSIGNED NOT NULL DEFAULT 4,
+  `long_name` varchar(255) DEFAULT NULL,
+  `filesize` int UNSIGNED DEFAULT NULL,
+  `modified_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `real_name` varchar(255) DEFAULT NULL,
+  `team` int UNSIGNED NOT NULL,
+  `changelog` tinyint NOT NULL DEFAULT 0,
+  `pdfa` tinyint NOT NULL DEFAULT 0,
+  `json` tinyint NOT NULL DEFAULT 0,
+  `hash` char(64) DEFAULT NULL,
+  `hash_algo` varchar(255) DEFAULT NULL,
+  `experiments` tinyint NOT NULL DEFAULT 1,
+  `items` tinyint NOT NULL DEFAULT 0,
+  `experiments_templates` tinyint NOT NULL DEFAULT 0,
+  `items_types` tinyint NOT NULL DEFAULT 0,
+  `format` varchar(100) NOT NULL,
+  `error` text NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-ALTER TABLE `experiments_edit_mode`
-  ADD KEY `idx_experiments_edit_mode_all_columns` (`experiments_id`, `locked_by`, `locked_at`),
-  ADD CONSTRAINT `fk_experiments_edit_mode_experiments_id`
-    FOREIGN KEY (`experiments_id`) REFERENCES `experiments` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_edit_mode_users_userid`
-    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE `items_edit_mode` (
-  `items_id` int UNSIGNED NOT NULL,
-  `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-ALTER TABLE `items_edit_mode`
-  ADD KEY `idx_items_edit_mode_all_columns` (`items_id`, `locked_by`, `locked_at`),
-  ADD CONSTRAINT `fk_items_edit_mode_items_id`
-    FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_items_edit_mode_users_userid`
-    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE `items_types_edit_mode` (
-  `items_types_id` int UNSIGNED NOT NULL,
-  `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_types_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-ALTER TABLE `items_types_edit_mode`
-  ADD KEY `idx_items_types_edit_mode_all_columns` (`items_types_id`, `locked_by`, `locked_at`),
-  ADD CONSTRAINT `fk_items_types_edit_mode_items_types_id`
-    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
-    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE `experiments_templates_edit_mode` (
-  `experiments_templates_id` int UNSIGNED NOT NULL,
-  `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_templates_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-ALTER TABLE `experiments_templates_edit_mode`
-  ADD KEY `idx_experiments_templates_edit_mode_all_columns` (`experiments_templates_id`, `locked_by`, `locked_at`),
-  ADD CONSTRAINT `fk_experiments_templates_edit_mode_experiments_templates_id`
-    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_templates_edit_mode_users_userid`
-    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE `experiments_templates_request_actions` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `requester_userid` INT UNSIGNED NOT NULL,
-  `target_userid` INT UNSIGNED NOT NULL,
-  `entity_id` INT UNSIGNED NOT NULL,
-  `action` INT UNSIGNED NOT NULL,
-  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  KEY `fk_experiments_templates_request_actions_experiments_templates_id` (`entity_id`),
-  CONSTRAINT `fk_experiments_templates_request_actions_experiments_templates_id`
-    FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE),
-  KEY `fk_experiments_templates_request_actions_requester_users_userid` (`requester_userid`),
-  CONSTRAINT `fk_experiments_templates_request_actions_requester_users_userid`
-    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  KEY `fk_experiments_templates_request_actions_target_users_userid` (`target_userid`),
-  CONSTRAINT `fk_experiments_templates_request_actions_target_users_userid`
-    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE TABLE `items_types_request_actions` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `requester_userid` INT UNSIGNED NOT NULL,
-  `target_userid` INT UNSIGNED NOT NULL,
-  `entity_id` INT UNSIGNED NOT NULL,
-  `action` INT UNSIGNED NOT NULL,
-  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  KEY `fk_items_types_request_actions_items_types_id` (`entity_id`),
-  CONSTRAINT `fk_items_types_request_actions_items_types_id`
-    FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE)
-  KEY `fk_items_types_request_actions_requester_users_userid` (`requester_userid`),
-  CONSTRAINT `fk_items_types_request_actions_requester_users_userid`
-    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  KEY `fk_items_types_request_actions_target_users_userid` (`target_userid`),
-  CONSTRAINT `fk_items_types_request_actions_target_users_userid`
-    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
 
 UPDATE config SET conf_value = 151 WHERE conf_name = 'schema';

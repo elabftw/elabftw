@@ -15,16 +15,16 @@ namespace Elabftw\Controllers;
 use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidEndpointException;
-use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * For API requests
  */
-abstract class AbstractApiController implements ControllerInterface
+abstract class AbstractApiController extends AbstractController
 {
+    public bool $canWrite = false;
+
     protected ?int $id = null;
 
     protected int $limit = 15;
@@ -34,13 +34,6 @@ abstract class AbstractApiController implements ControllerInterface
     protected string $search = '';
 
     protected ApiEndpoint $endpoint;
-
-    public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
-    {
-        if ($Users->userData['archived'] === 1) {
-            throw new ImproperActionException('Cannot use API with an archived account!');
-        }
-    }
 
     protected function parseReq(): array
     {
@@ -92,11 +85,11 @@ abstract class AbstractApiController implements ControllerInterface
         }
         // allow using "me" to refer to the current logged in user
         if (($req[4] ?? '') === 'me') {
-            $this->id = $this->Users->userData['userid'];
+            $this->id = $this->requester->userData['userid'];
         }
         // allow using "current" to refer to the current logged in team
         if (($req[4] ?? '') === 'current') {
-            $this->id = $this->Users->userData['team'];
+            $this->id = $this->requester->userData['team'];
         }
 
         return $req;

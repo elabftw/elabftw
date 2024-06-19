@@ -11,7 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
+use Elabftw\Elabftw\EntitySlug;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 
@@ -21,9 +22,9 @@ class MakeQrPdfTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $Entity = new Experiments(new Users(1, 1), 1);
+        $requester = new Users(1, 1);
         $MpdfProvider = new MpdfProvider('Toto');
-        $this->MakePdf = new MakeQrPdf($MpdfProvider, $Entity, array('1', '2', '3'));
+        $this->MakePdf = new MakeQrPdf($MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, 1), new EntitySlug(EntityType::Experiments, 2)));
     }
 
     public function testGetFileContent(): void

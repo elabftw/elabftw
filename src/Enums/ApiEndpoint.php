@@ -19,8 +19,10 @@ enum ApiEndpoint: string
     case ApiKeys = 'apikeys';
     case Config = 'config';
     case Idps = 'idps';
+    case Import = 'import';
     case Info = 'info';
     case Experiments = 'experiments';
+    case Export = 'exports';
     case Items = 'items';
     case ExperimentsTemplates = 'experiments_templates';
     case ItemsTypes = 'items_types';
@@ -28,7 +30,8 @@ enum ApiEndpoint: string
     case Events = 'events';
     case ExtraFieldsKeys = 'extra_fields_keys';
     case FavTags = 'favtags';
-    case SigKeys = 'sig_keys';
+
+    // @deprecated
     case TeamTags = 'team_tags';
     case Teams = 'teams';
     case Todolist = 'todolist';

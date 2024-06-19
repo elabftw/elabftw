@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -27,7 +28,7 @@ abstract class AbstractZip extends AbstractImport
     protected string $tmpPath;
 
     // the folder name where we extract the archive
-    protected string $tmpDir;
+    protected string $tmpDir = '';
 
     protected array $allowedMimes = array(
         'application/zip',
@@ -39,9 +40,9 @@ abstract class AbstractZip extends AbstractImport
     // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
 
-    public function __construct(Users $Users, string $target, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
+    public function __construct(Users $Users, EntityType $entityType, bool $forceEntityType, int $defaultCategory, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
     {
-        parent::__construct($Users, $target, $canread, $canwrite, $UploadedFile);
+        parent::__construct($Users, $entityType, $forceEntityType, $defaultCategory, $canread, $canwrite, $UploadedFile);
         // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
         $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
@@ -65,7 +66,6 @@ abstract class AbstractZip extends AbstractImport
     protected function transformIfNecessary(
         string $subject,
         bool $isComment = false,
-        bool $isMetadata = false,
     ): string {
         // skip transformation
         if (!$this->switchToEscapeOutput || $subject === '') {
@@ -75,9 +75,7 @@ abstract class AbstractZip extends AbstractImport
         $search = array('&#34;', '&#39;');
         $replace = array('"', '\'');
 
-        if ($isMetadata) {
-            $replace = array('\\"', '\'');
-        } elseif ($isComment) {
+        if ($isComment) {
             $search[] = '<br />';
             $replace[] = '';
         }

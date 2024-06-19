@@ -22,7 +22,6 @@ use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use Elabftw\Traits\UploadTrait;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Handler\ErrorLogHandler;
@@ -45,7 +44,6 @@ use function textdomain;
  */
 class App
 {
-    use UploadTrait;
     use TwigTrait;
 
     public const string INSTALLED_VERSION = '5.1.0';

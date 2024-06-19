@@ -11,11 +11,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\EntitySlug;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
@@ -32,8 +33,11 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 
     private Filesystem $fixturesFs;
 
+    private Users $requester;
+
     protected function setUp(): void
     {
+        $this->requester = new Users(1, 1);
         // taken from the example response on the api doc
         // https://app.swaggerhub.com/apis/bloxberg/fast-api/0.1.0#/certificate/createBloxbergCertificate_createBloxbergCertificate_post
         $this->fixturesFs = Storage::FIXTURES->getStorage()->getFs();
@@ -50,10 +54,9 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $entity = new Experiments(new Users(1, 1), 1);
         $configArr = Config::getConfig()->configArr;
         $configArr['blox_anon'] = '1';
-        $this->Make = new MakeBloxberg($configArr, $entity, $client);
+        $this->Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), $configArr, $client);
     }
 
     public function testGetFileName(): void
@@ -68,9 +71,9 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 
     public function testTimestampDisallowed(): void
     {
-        $entity = new Experiments(new Users(1, 1), 1);
+        $configArr = array('ts_limit' => '666', 'blox_enabled' => '0');
         $this->expectException(ImproperActionException::class);
-        new MakeBloxberg(array('ts_limit' => '666', 'blox_enabled' => '0'), $entity, new Client());
+        $this->Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), $configArr, new Client());
     }
 
     public function testTimestampFailGettingKey(): void
@@ -80,9 +83,8 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $entity = new Experiments(new Users(1, 1), 1);
         $this->expectException(ImproperActionException::class);
-        new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
+        new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $client);
     }
 
     public function testTimestampFail(): void
@@ -93,8 +95,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $entity = new Experiments(new Users(1, 1), 1);
-        $Make = new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
+        $Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $client);
         $this->expectException(ImproperActionException::class);
         $Make->timestamp();
     }
@@ -109,8 +110,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
-        $entity = new Experiments(new Users(1, 1), 1);
-        $Make = new MakeBloxberg(Config::getConfig()->configArr, $entity, $client);
+        $Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $client);
         $this->expectException(FilesystemErrorException::class);
         $Make->timestamp();
     }

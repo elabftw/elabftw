@@ -12,11 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\UploadTrait;
 use PDO;
 
 use function date;
@@ -26,13 +24,9 @@ use function date;
  */
 class MakeReport extends AbstractMakeCsv
 {
-    use UploadTrait;
-
-    protected Db $Db;
-
     public function __construct(private Teams $Teams)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
     }
 
     /**
@@ -90,6 +84,7 @@ class MakeReport extends AbstractMakeCsv
                 'auth_service',
                 'token',
                 'auth_lock_time',
+                'sig_pubkey',
             );
             foreach ($unusedColumns as $column) {
                 unset($allUsers[$key][$column]);

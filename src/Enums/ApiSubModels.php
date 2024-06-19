@@ -30,6 +30,7 @@ enum ApiSubModels: string
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
+    case SigKeys = 'sig_keys';
     case Status = 'status';
     case Steps = 'steps';
     case Tags = 'tags';
@@ -78,6 +79,7 @@ enum ApiSubModels: string
                 self::ItemsStatus,
                 self::ProcurementRequests,
                 self::Status,
+                self::Tags,
                 self::Teamgroups,
             ),
         );
@@ -90,6 +92,8 @@ enum ApiSubModels: string
             array(
                 self::Notifications,
                 self::RequestActions,
+                self::SigKeys,
+                self::Uploads,
             ),
         );
     }

@@ -31,8 +31,6 @@ try {
 
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
-        $rememberMe = (bool) $App->Request->cookies->get('icanhazcookies');
-
         $IdpsHelper = new IdpsHelper($App->Config, new Idps());
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
@@ -43,6 +41,11 @@ try {
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
+        $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
+
+        // the sysconfig option to allow users to set an auth cookie is the
+        // only toggle for saml login setting cookies or not
+        $rememberMe = $App->Config->configArr['remember_me_allowed'] === '1';
 
         // save IdP id and session idx for proper logout
         $cookieOptions = array(
@@ -55,7 +58,7 @@ try {
         $sessOptions = session_get_cookie_params();
 
         if ($rememberMe) {
-            $cookieOptions['expires'] = time() + 2592000;
+            $cookieOptions['expires'] = $LoginHelper->getExpires();
         } elseif ($sessOptions['lifetime'] > 0) {
             $cookieOptions['expires'] = time() + $sessOptions['lifetime'];
         }
@@ -82,7 +85,6 @@ try {
             // send a helpful message if account requires validation, needs to be after team selection
             throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         } else {
-            $LoginHelper = new LoginHelper($AuthResponse, $App->Session);
             $LoginHelper->login($rememberMe);
             // we redirect on the same page but this time we will be auth and it will redirect us to the correct location
             $location = '/index.php';

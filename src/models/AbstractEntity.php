@@ -75,6 +75,8 @@ abstract class AbstractEntity implements RestInterface
 
     public Pins $Pins;
 
+    public ExclusiveEditMode $ExclusiveEditMode;
+
     public EntityType $entityType;
 
     // use that to ignore the canOrExplode calls
@@ -112,7 +114,9 @@ abstract class AbstractEntity implements RestInterface
         $this->Comments = new Comments($this);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
+        $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         $this->setId($id);
+        $this->ExclusiveEditMode->manage();
     }
 
     /**
@@ -300,6 +304,11 @@ abstract class AbstractEntity implements RestInterface
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
         }
+        // if there is an active exclusive edit mode, entity cannot be modified
+        // only user who locked can do everything
+        // (sys)admin can remove locks
+        // everyone can Pin, AccessKey, Bloxberg, Sign, Timestamp
+        $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
             Action::Archive => (
@@ -336,6 +345,7 @@ abstract class AbstractEntity implements RestInterface
                     }
                 }
             )(),
+            Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -381,14 +391,6 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Add an arbitrary filter to the query, externally, not through DisplayParams
-     */
-    public function addFilter(string $column, string|int $value): void
-    {
-        $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
-    }
-
-    /**
      * Get timestamper full name for display in view mode
      */
     public function getTimestamperFullname(): string
@@ -397,6 +399,53 @@ abstract class AbstractEntity implements RestInterface
             return 'Unknown';
         }
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);
+    }
+
+    // generate a title useful for zip folder name for instance: shortened, with category and short elabid
+    public function toFsTitle(): string
+    {
+        $prefix = '';
+        if ($this->entityData['category_title']) {
+            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
+        }
+
+        return sprintf(
+            '%s%s - %s',
+            $prefix,
+            // prevent a zip name with too much characters from the title, see #3966
+            substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            Tools::getShortElabid($this->entityData['elabid'] ?? ''),
+        );
+    }
+
+    /**
+     * Add an arbitrary filter to the query, externally, not through DisplayParams
+     */
+    public function addFilter(string $column, string|int $value): void
+    {
+        $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
+    }
+
+    /**
+     * Get an array of id changed since the lastchange date supplied
+     *
+     * @param int $userid limit to this user
+     * @param string $period 20201206-20210101
+     */
+    public function getIdFromLastchange(int $userid, string $period): array
+    {
+        if ($period === '') {
+            $period = '15000101-30000101';
+        }
+        [$from, $to] = explode('-', $period);
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE userid = :userid AND modified_at BETWEEN :from AND :to';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':from', $from);
+        $req->bindParam(':to', $to);
+        $this->Db->execute($req);
+
+        return array_column($req->fetchAll(), 'id');
     }
 
     /**
@@ -461,23 +510,6 @@ abstract class AbstractEntity implements RestInterface
             $this->Db->execute($req);
         }
         return $this->readOne();
-    }
-
-    // generate a title useful for zip folder name for instance: shortened, with category and short elabid
-    public function toFsTitle(): string
-    {
-        $prefix = '';
-        if ($this->entityData['category_title']) {
-            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
-        }
-
-        return sprintf(
-            '%s%s - %s',
-            $prefix,
-            // prevent a zip name with too much characters from the title, see #3966
-            substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
-            Tools::getShortElabid($this->entityData['elabid'] ?? ''),
-        );
     }
 
     /**

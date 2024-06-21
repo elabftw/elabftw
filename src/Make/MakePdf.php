@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -224,6 +225,11 @@ class MakePdf extends AbstractMakePdf
 
         $Changelog = new Changelog($this->Entity);
 
+        $baseUrls = array();
+        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+            $baseUrls[$entityType->value] = sprintf('%s/%s', Config::fromEnv('SITE_URL'), $entityType->toPage());
+        }
+
         $siteUrl = Config::fromEnv('SITE_URL');
         $renderArr = array(
             'body' => $this->getBody(),
@@ -238,11 +244,8 @@ class MakePdf extends AbstractMakePdf
             'lockerName' => $lockerName,
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
+            'linkBaseUrl' => $baseUrls,
             'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
-            'linkBaseUrl' => array(
-                'items' => $siteUrl . '/database.php',
-                'experiments' => $siteUrl . '/experiments.php',
-            ),
             'useCjk' => $this->requester->userData['cjk_fonts'],
         );
 

@@ -30,6 +30,7 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         $this->entityType = EntityType::ItemsTypes;
         parent::__construct($Users, $id);
+        $this->ExclusiveEditMode->manage();
     }
 
     public function create(string $title): int
@@ -85,6 +86,7 @@ class ItemsTypes extends AbstractTemplateEntity
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }
 

@@ -5,7 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, getNewIdFromPostRequest, reloadElements, relativeMoment, notifError } from './misc';
+import {
+  getEntity,
+  getNewIdFromPostRequest,
+  notifError,
+  relativeMoment,
+  reloadElements,
+  toggleGrayClasses,
+} from './misc';
 import { Api } from './Apiv2.class';
 import EntityClass from './Entity.class';
 import i18next from 'i18next';
@@ -69,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
         // toggle appearance of button and icon
-        ['bgnd-gray', 'hl-hover-gray'].forEach(cl => el.classList.toggle(cl));
+        toggleGrayClasses(el.classList);
         el.querySelector('i').classList.toggle('color-weak');
       });
 
@@ -139,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DO REQUEST ACTION
     } else if (el.matches('[data-action="do-requestable-action"]')) {
-      switch (el.dataset.target.toLowerCase()) {
+      switch (el.dataset.target) {
       case Action.Archive:
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
           .then(() => reloadElements(['isArchivedDiv', 'requestActionsDiv']))
@@ -156,6 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
       case Action.Sign:
         $('#addSignatureModal').modal('toggle');
         break;
+      case Action.RemoveExclusiveEditMode:
+        EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+          .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+          .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        break;
       }
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
@@ -170,6 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname;
         EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
       }
+
+    // TOGGLE EXCLUSIVE EDIT MODE
+    } else if (el.matches('[data-action="toggle-exclusive-edit-mode"]')
+      || el.parentElement.matches('[data-action="toggle-exclusive-edit-mode"]')
+    ) {
+      EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
     }
   });
 });

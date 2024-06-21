@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { InputType, Malle, SelectOptions } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { getEntity, updateCatStat, relativeMoment, reloadElements } from './misc';
-import { EntityType, Model } from './interfaces';
+import { Action, EntityType, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -48,6 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
       }
+    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
+    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
+      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
+        action: Action.Create,
+        target_action: 60,
+        target_userid: el.dataset.targetUser,
+      }).then(() => reloadElements(['requestActionsDiv']))
+        // the request gets rejected if repeated
+        .catch(error => console.error(error.message));
     }
   });
 

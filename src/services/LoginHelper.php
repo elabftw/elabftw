@@ -24,6 +24,8 @@ use Elabftw\Models\Notifications\NewVersionInstalled;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+use function time;
+
 /**
  * Methods to login the user (once the authentication is done)
  */
@@ -60,6 +62,32 @@ class LoginHelper
             $this->updateAuthService();
         }
         AuditLogs::create(new UserLogin($this->AuthResponse->userid, $this->AuthResponse->userid));
+    }
+
+    public function getExpires(): int
+    {
+        return time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
+    }
+
+    /**
+     * Set a $_COOKIE['token'] and update the database with this token.
+     * Also set a token_team cookie for the team
+     */
+    private function setToken(): void
+    {
+        $CookieToken = CookieToken::fromScratch();
+        $CookieToken->saveToken($this->AuthResponse->userid);
+
+        $cookieOptions = array(
+            'expires' => $this->getExpires(),
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        setcookie('token', $CookieToken->getToken(), $cookieOptions);
+        setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 
     private function getLastSeenVersion(): int
@@ -146,29 +174,5 @@ class LoginHelper
         if ($this->AuthResponse->isAnonymous) {
             $this->Session->set('is_anon', 1);
         }
-    }
-
-    /**
-     * Set a $_COOKIE['token'] and update the database with this token.
-     * Also set a token_team cookie for the team
-     */
-    private function setToken(): void
-    {
-        $CookieToken = CookieToken::fromScratch();
-        $CookieToken->saveToken($this->AuthResponse->userid);
-
-        $expirationSeconds = time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
-
-        // create cookie for login
-        $cookieOptions = array(
-            'expires' => $expirationSeconds,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('token', $CookieToken->getToken(), $cookieOptions);
-        setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 }

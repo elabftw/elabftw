@@ -189,13 +189,7 @@
               {% endif %}
             {% endfor %}
           </select>
-          {# Remember me checkbox #}
-          {% if App.Config.configArr.remember_me_allowed %}
-            <div class='form-check mt-2'>
-              <input type='checkbox' class='form-check-input' {{ App.Config.configArr.remember_me_checked ? 'checked' }} name='rememberme' id='rememberme-2' />
-              <label for='rememberme-2' class='form-check-label'>{{ 'Remember me'|trans }}</label>
-            </div>
-          {% endif %}
+          {# No remember me checkbox for SAML because it's toggled by remember_me_allowed at the instance level #}
           <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
         </div>
       </form>

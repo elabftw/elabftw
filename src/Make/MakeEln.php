@@ -54,6 +54,8 @@ class MakeEln extends AbstractMakeEln
             '@id' => './',
             '@type' => array('Dataset'),
             'hasPart' => $this->rootParts,
+            'name' => 'eLabFTW export',
+            'description' => 'This is a .eln export from eLabFTW',
         );
 
         // merge all, including authors

@@ -24,6 +24,7 @@ enum Action: string
     case Deduplicate = 'deduplicate';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
+    case ExclusiveEditMode = 'exclusiveeditmode';
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';

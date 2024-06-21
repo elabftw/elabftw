@@ -1518,3 +1518,30 @@ input:checked + .slider::before {
     color: #ffe6b8; /* Less bright orange */
   }
 }
+
+#exclusiveEditModeBtn {
+    span {
+        height: 1rem;
+        line-height: 1rem;
+        width: 1.25rem;
+
+        i:first-child {
+            top: -1.7px;
+        }
+
+        .fa-lock-open {
+            left: -2px;
+        }
+
+        .fa-lock {
+            left: -4px;
+        }
+
+        .fa-pen-nib {
+            --fa-rotate-angle: 45deg;
+            color:var(--primary);
+            left: 2px;
+            top: 4px;
+        }
+    }
+}

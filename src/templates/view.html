@@ -17,6 +17,15 @@
   {% endblock %}
 {% endembed %}
 
+{% if App.Request.query.has('openedInExclusiveEditMode') and Entity.ExclusiveEditMode.isActive and Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
+  {{ 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s'|trans|format(
+      Entity.ExclusiveEditMode.dataArr.fullname,
+      Entity.ExclusiveEditMode.dataArr.locked_at,
+      '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+      '</button>'
+    )|msg('warning', false) }}
+{% endif %}
+
 {% include('view-edit-toolbar.html') %}
 
 <div id='isTimestampedByInfoDiv'>

@@ -127,6 +127,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
+        $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         ksort($this->entityData);
         return $this->entityData;
     }

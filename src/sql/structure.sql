@@ -382,7 +382,7 @@ CREATE TABLE `exports` (
   `requester_userid` int UNSIGNED NOT NULL,
   `state` tinyint UNSIGNED NOT NULL DEFAULT 4,
   `long_name` varchar(255) DEFAULT NULL,
-  `filesize` int UNSIGNED DEFAULT NULL,
+  `filesize` bigint UNSIGNED NULL DEFAULT NULL,
   `modified_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `real_name` varchar(255) DEFAULT NULL,
   `team` int UNSIGNED NOT NULL,
@@ -1122,7 +1122,7 @@ CREATE TABLE `uploads` (
   `hash` varchar(128) DEFAULT NULL,
   `hash_algorithm` varchar(10) DEFAULT NULL,
   `storage` int(10) UNSIGNED NOT NULL DEFAULT 1,
-  `filesize` int(10) UNSIGNED NULL DEFAULT NULL,
+  `filesize` bigint UNSIGNED NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `immutable` tinyint UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)

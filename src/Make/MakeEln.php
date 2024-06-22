@@ -154,14 +154,18 @@ class MakeEln extends AbstractMakeEln
         $linkTypes = array('experiments', 'items');
         foreach($linkTypes as $type) {
             foreach ($e[$type . '_links'] as $link) {
-                if ($type === 'items') {
-                    $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
-                } else {
-                    $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
+                try {
+                    if ($type === 'items') {
+                        $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
+                    } else {
+                        $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
+                    }
+                    $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
+                    // WARNING: recursion!
+                    $this->processEntity($link);
+                } catch (IllegalActionException) {
+                    continue;
                 }
-                $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
-                // WARNING: recursion!
-                $this->processEntity($link);
             }
         }
 

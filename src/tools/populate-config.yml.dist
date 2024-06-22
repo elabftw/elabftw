@@ -64,12 +64,14 @@ users:
       cjk_fonts: 1
 
   - email: titi@yopmail.com
+    firstname: Titi
     team: Alpha
     create_experiments: true
     create_templates: true
     create_mfa_secret: false
 
   - email: tutu@yopmail.com
+    firstname: Tutu
     team: Alpha
     create_experiments: true
     create_mfa_secret: true
@@ -80,6 +82,7 @@ users:
     create_experiments: true
 
   - email: tata@yopmail.com
+    firstname: Tata
     team: Bravo
     create_experiments: true
     create_items: true

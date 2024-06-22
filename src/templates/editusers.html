@@ -69,7 +69,7 @@
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
                       {% set currentTeam = user.teams|filter(t => t.id == team.id)|first %}
-                      <div class='user-badge px-2 py-1 rounded mr-2 mt-2'>{{ team.name }}
+                      <div class='user-badge'>{{ team.name }}
                         {# prevent deleting association of the team we are currently logged in, allow it for other users #}
                         {% if team.id != App.Users.userData.team or user.userid != App.Users.userData.userid %}
                           <span title='{{ 'Delete'|trans }}' class='hl-hover-gray p-1 rounded clickable m-1' data-action='destroy-user2team' data-userid='{{ user.userid }}' data-teamid='{{ team.id }}'><i class='fas fa-xmark' style='color:#29AEB9'></i></span>
@@ -117,7 +117,7 @@
         {% endfor %}
 
         <table id='usersTable' class='table' aria-label='{{ 'Users table'|trans }}' data-table-sort='true'>
-          <thead>
+          <thead class='with-top'>
             <tr>
               <th scope='col'>{{ 'User ID'|trans }}</th>
               <th scope='col'>{{ 'Team(s)'|trans }}</th>
@@ -136,25 +136,25 @@
           <tbody id='editUsersBox'>
             {% for user in usersArr %}
               <tr {{ user.archived ? "class='bg-medium'" }}>
-                <td><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
-                <td style='max-width: 270px'>
+                <td data-label='{{ 'User ID'|trans }}'><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
+                <td data-label='{{ 'Team(s)'|trans }}' style='max-width: 270px'>
                   <div class='d-flex flex-row flex-wrap'>
                     {% for team in user.teams %}
-                      <div class='px-2 py-1 rounded mr-2 mt-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge' }}'>{{ team.name }}</div>
+                      <div class='mr-2 {{ team.usergroup == 2 ? 'admin-badge' : 'user-badge' }}'>{{ team.name }}</div>
                     {% endfor %}
                   </div>
                 </td>
-                <td>
+                <td data-label='{{ 'Firstname'|trans }}'>
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='firstname'>{{ user.firstname }}</span>
                 </td>
-                <td>
+                <td data-label='{{ 'Lastname'|trans }}'>
                   <span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='users' data-id='{{ user.userid }}' data-target='lastname'>{{ user.lastname }}</span>
                 </td>
-                <td>
+                <td data-label='{{ 'Email'|trans }}'>
                   <span class='p-1 rounded {{ App.Users.userData.is_sysadmin == '1' ? 'hl-hover-gray malleableColumn' }}' data-ma-type='email' data-endpoint='users' data-id='{{ user.userid }}' data-target='email'>{{ user.email }}</span>
                 </td>
-                <td><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
-                <td>
+                <td data-label='{{ 'Last login'|trans }}'><span class='{{ not user.last_login ? 'font-italic' }}'>{{ user.last_login|default('never'|trans) }}</span></td>
+                <td data-label='{{ 'Valid until'|trans }}'>
                   {% if user.validated == 0 %}
                     <span class='p-1 rounded alert-warning'>{{ 'Unvalidated'|trans }}</span>
                   {% else %}
@@ -162,10 +162,10 @@
                   {% endif %}
                 </td>
 
-                <td>
+                <td data-label='{{ 'Internal ID'|trans }}'>
                   <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>
-                <td>
+                <td data-label='{{ 'Is Sysadmin'|trans }}'>
                   <div class='d-flex justify-content-between'>
                     <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}'>
                       <input type='checkbox' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} data-trigger='change' data-model='users/{{ user.userid }}' data-target='is_sysadmin' {{ user.is_sysadmin ? 'checked="checked"' }}>
@@ -173,8 +173,8 @@
                     </label>
                   </div>
                 </td>
-                <td>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
-                <td>
+                <td data-label='2FA'>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                <td data-label='{{ 'Actions'|trans }}'>
                   {% if App.Users.userData.is_sysadmin == '1' %}
                     <button class='btn p-2 hl-hover-gray text-center mr-1' title='{{ 'Reset user password'|trans }}' data-action='toggle-next' data-target='resetPasswordModal'>
                       <i class='fas fa-fw fa-key'></i>
@@ -357,11 +357,11 @@
           <tbody>
             {% for user in remoteDirectoryUsersArr %}
               <tr>
-                <td><input {{ user.disabled ? "disabled='disabled'" }} type='checkbox' /></td>
-                <td>{{ user.firstname }}</td>
-                <td>{{ user.lastname }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.orgid }}</td>
+                <td data-label='{{ 'Selection'|trans }}'><input {{ user.disabled ? "disabled='disabled'" }} type='checkbox' /></td>
+                <td data-label='{{ 'Firstname'|trans }}'>{{ user.firstname }}</td>
+                <td data-label='{{ 'Lastname'|trans }}'>{{ user.lastname }}</td>
+                <td data-label='{{ 'Email'|trans }}'>{{ user.email }}</td>
+                <td data-label='{{ 'Internal ID'|trans }}'>{{ user.orgid }}</td>
               </tr>
             {% endfor %}
           </tbody>

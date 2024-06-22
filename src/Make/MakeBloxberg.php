@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2015, 2022 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
@@ -14,14 +17,14 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractConcreteEntity;
-use Elabftw\Traits\UploadTrait;
+use Elabftw\Models\Users;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use ZipArchive;
+
 use function json_decode;
 use function json_encode;
-use ZipArchive;
 
 /**
  * Send data to Bloxberg server
@@ -29,25 +32,23 @@ use ZipArchive;
  */
 class MakeBloxberg extends AbstractMakeTimestamp
 {
-    use UploadTrait;
-
     /**
      * This pubkey is currently the same for everyone
      * Information about the user/institution is stored in the metadataJson field
      */
-    private const PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
+    private const string PUB_KEY = '0xc4d84f32cd6fd05e2e292c171f5209a678525002';
 
-    private const CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
+    private const string CERT_URL = 'https://certify.bloxberg.org/createBloxbergCertificate';
 
-    private const PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
+    private const string PROOF_URL = 'https://certify.bloxberg.org/generatePDF';
 
-    private const API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
+    private const string API_KEY_URL = 'https://get.elabftw.net/?bloxbergapikey';
 
     private string $apiKey;
 
-    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, private Client $client)
+    public function __construct(protected Users $requester, protected array $entitySlugs, protected array $configArr, private Client $client)
     {
-        parent::__construct($configArr, $entity, ExportFormat::Json);
+        parent::__construct($requester, $entitySlugs, $configArr, ExportFormat::Json);
         if ($configArr['blox_enabled'] !== '1') {
             throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
         }

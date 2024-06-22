@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,10 +8,14 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
@@ -25,25 +30,23 @@ use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
-use Elabftw\Traits\UploadTrait;
-use function hash_file;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
+use function hash_file;
+
 /**
  * All about the file uploads
  */
 class Uploads implements RestInterface
 {
-    use UploadTrait;
+    public const string HASH_ALGORITHM = 'sha256';
 
-    public const HASH_ALGORITHM = 'sha256';
-
-    /** @var int BIG_FILE_THRESHOLD size of a file in bytes above which we don't process it (50 Mb) */
-    private const BIG_FILE_THRESHOLD = 50000000;
+    // size of a file in bytes above which we don't process it (50 Mb)
+    private const int BIG_FILE_THRESHOLD = 50000000;
 
     public array $uploadData = array();
 
@@ -65,15 +68,22 @@ class Uploads implements RestInterface
      */
     public function create(CreateUploadParamsInterface $params): int
     {
-        $this->Entity->canOrExplode('write');
+        // by default we need write access to an entity to upload files
+        $rw = 'write';
+        // but timestamping/sign only needs read access
+        if ($params instanceof CreateImmutableArchivedUpload) {
+            $rw = 'read';
+        }
+        $this->Entity->canOrExplode($rw);
 
         // original file name
         $realName = $params->getFilename();
         $ext = $this->getExtensionOrExplode($realName);
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
-        $longName = $this->getLongName() . '.' . $ext;
-        $folder = substr($longName, 0, 2);
+        $someRandomString = FsTools::getUniqueString();
+        $folder = substr($someRandomString, 0, 2);
+        $longName = sprintf('%s/%s.%s', $folder, $someRandomString, $ext);
 
         // where our uploaded file lives
         $sourceFs = $params->getSourceFs();
@@ -82,7 +92,7 @@ class Uploads implements RestInterface
         $storage = (int) $Config->configArr['uploads_storage'];
         $storageFs = Storage::from($storage)->getStorage()->getFs();
 
-        $tmpFilename = basename($params->getFilePath());
+        $tmpFilename = $params->getTmpFilePath();
         $filesize = $sourceFs->filesize($tmpFilename);
         $hash = '';
         // we don't hash big files as this could take too much time/resources
@@ -147,7 +157,7 @@ class Uploads implements RestInterface
         $req->bindValue(':comment', $params->getComment());
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindParam(':hash', $hash);
         $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
         $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
@@ -157,6 +167,24 @@ class Uploads implements RestInterface
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    public function duplicate(AbstractEntity $entity): void
+    {
+        $uploads = $this->readAll();
+        foreach ($uploads as $upload) {
+            if ($upload['storage'] === Storage::LOCAL->value) {
+                $prefix = '/elabftw/uploads/';
+                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], $upload['comment']);
+            } else {
+                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], $upload['comment']);
+            }
+            $id = $entity->Uploads->create($param);
+            $fresh = new self($entity, $id);
+            // replace links in body with the new long_name
+            $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
+            $entity->patch(Action::Update, array('body' => $newBody));
+        }
     }
 
     /**
@@ -173,6 +201,14 @@ class Uploads implements RestInterface
         return $this->uploadData;
     }
 
+    public function readFilesizeSum(): int
+    {
+        $sql = 'SELECT SUM(filesize) FROM uploads';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     /**
      * Read an upload in binary format, so the actual file uploaded
      */
@@ -184,7 +220,7 @@ class Uploads implements RestInterface
             $storageFs,
             $this->uploadData['long_name'],
             $this->uploadData['real_name'],
-            true,
+            forceDownload: false,
         );
         return $DownloadController->getResponse();
     }
@@ -201,7 +237,7 @@ class Uploads implements RestInterface
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -236,9 +272,9 @@ class Uploads implements RestInterface
         };
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/uploads/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     /**
@@ -284,7 +320,7 @@ class Uploads implements RestInterface
     {
         $sql = 'SELECT storage FROM uploads WHERE long_name = :long_name LIMIT 1';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':long_name', $longname, PDO::PARAM_STR);
+        $req->bindParam(':long_name', $longname);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
@@ -304,7 +340,7 @@ class Uploads implements RestInterface
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived) ORDER BY uploads.created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':type', $this->Entity->type);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);

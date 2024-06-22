@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -26,4 +29,7 @@ enum AuditCategory: int
     case ConfigModified = 60;
     case Export = 70;
     case Import = 80;
+    case OnboardingEmailSent = 90;
+    case SignatureKeysCreated = 100;
+    case SignatureCreated = 101;
 }

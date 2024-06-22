@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, notifError, reloadElement, reloadElements, removeEmpty } from './misc';
+import { collectForm, notif, notifError, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
         .then(res => res.json().then(json => {
           if (json.res) {
-            reloadElement('bruteforceDiv');
+            reloadElements(['bruteforceDiv']);
           }
           notif(json);
         }));
@@ -127,25 +127,27 @@ document.addEventListener('DOMContentLoaded', () => {
         'orgid': (document.getElementById('teamOrgid_' + id) as HTMLInputElement).value,
         'visible': (document.getElementById('teamVisible_' + id) as HTMLSelectElement).value,
       };
-      ApiC.patch(`${Model.Team}/${id}`, removeEmpty(params));
+      ApiC.patch(`${Model.Team}/${id}`, params);
     // ARCHIVE TEAM
     } else if (el.matches('[data-action="archive-team"]')) {
       ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': Action.Archive});
     // DESTROY TEAM
     } else if (el.matches('[data-action="destroy-team"]')) {
-      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => reloadElement('teamsDiv'));
+      ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
     // ADD USER TO TEAM
     } else if (el.matches('[data-action="create-user2team"]')) {
       const selectEl = (el.previousElementSibling as HTMLSelectElement);
       const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
       const userid = parseInt(el.dataset.userid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team}).then(() => reloadElement(`manageUsers2teamsModal_${userid}`));
+      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team})
+        .then(() => reloadElements([`manageUsers2teamsModal_${userid}`]));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const userid = parseInt(el.dataset.userid, 10);
         const team = parseInt(el.dataset.teamid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team}).then(() => reloadElement(`manageUsers2teamsModal_${userid}`));
+        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team})
+          .then(() => reloadElements([`manageUsers2teamsModal_${userid}`]));
       }
     // MODIFY USER GROUP IN TEAM
     } else if (el.matches('[data-action="patch-user2team-group"]')) {
@@ -158,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group, userid: userid});
     // DESTROY ts_password
     } else if (el.matches('[data-action="destroy-ts-password"]')) {
-      ApiC.patch('config', {'ts_password': ''}).then(() => reloadElement('ts_loginpass'));
+      ApiC.patch(Model.Config, {'ts_password': ''}).then(() => reloadElements(['ts_loginpass']));
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);
@@ -167,14 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params[input.name] = input.value;
-      ApiC.patch('config', params);
+      ApiC.patch(Model.Config, params);
     } else if (el.matches('[data-action="clear-password"]')) {
       const key = `${el.dataset.target}_password`;
       const params = {};
       params[key] = null;
-      ApiC.patch('config', params).then(() => {
-        reloadElement(el.dataset.reload);
-      });
+      ApiC.patch(Model.Config, params)
+        .then(() => reloadElements([el.dataset.reload]));
     // PATCH POLICY - save or clear
     } else if (el.matches('[data-action="patch-policy"]')) {
       let content = tinymce.get(el.dataset.textarea).getContent();
@@ -183,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params[el.dataset.confname] = content;
-      ApiC.patch('config', params);
+      ApiC.patch(Model.Config, params);
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = collectForm(document.getElementById('createIdpForm'));
       ApiC.post(Model.Idp, params).then(() => {
         $('#createIdpModal').modal('hide');
-        reloadElement('idpsDiv');
+        reloadElements(['idpsDiv']);
       });
     } else if (el.matches('[data-action="destroy-idp"]')) {
       event.preventDefault();
@@ -217,9 +218,28 @@ document.addEventListener('DOMContentLoaded', () => {
         AjaxC.postForm('app/controllers/SysconfigAjaxController.php', {
           idpsDestroy: '1',
           id: el.dataset.id,
-        }).then(() => reloadElement('idpsDiv'));
+        }).then(() => reloadElements(['idpsDiv']));
       }
+      // PATCH ONBOARDING EMAIL USERS
+    } else if (el.matches('[data-action="patch-onboarding-email"]')) {
+      const key = 'onboarding_email_body';
+      ApiC.patch(Model.Config, {
+        [key]: tinymce.get(key).getContent(),
+      });
+      // PATCH ONBOARDING EMAIL ADMINS
+    } else if (el.matches('[data-action="patch-onboarding-email-for-admins"]')) {
+      const key = 'onboarding_email_admins_body';
+      ApiC.patch(Model.Config, {
+        [key]: tinymce.get(key).getContent(),
+      });
     }
+  });
+
+  /**
+   * Onboarding email for admins
+   */
+  (document.getElementById('onboarding_email_different_for_admins')).addEventListener('change', () => {
+    document.getElementById('onboarding-email-for-admins').toggleAttribute('hidden');
   });
 
   function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Import;
 
@@ -16,6 +19,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
+use PDO;
 
 /**
  * Import entries from a csv file.
@@ -48,7 +52,7 @@ class Csv extends AbstractImport
         $csv->setHeaderOffset(0);
         $rows = $csv->getRecords();
 
-        // SQL for importing
+        // items have canbook
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
@@ -64,7 +68,8 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $status = empty($row['status']) ? null : $row['status'];
+            $category = empty($row['category_title']) ? null : $this->getCategoryId($row['category_title']);
+            $status = empty($row['status_title']) ? null : $this->getStatusId($row['status_title']);
             $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
@@ -74,11 +79,11 @@ class Csv extends AbstractImport
             if ($this->Entity instanceof Items) {
                 $req->bindParam(':canbook', $this->canread);
             }
-            $req->bindParam(':team', $this->Users->userData['team']);
+            $req->bindParam(':team', $this->requester->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':title', $row['title']);
             $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->Users->userData['userid']);
-            $req->bindParam(':category', $this->targetNumber);
+            $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
+            $req->bindValue(':category', $category);
             $req->bindParam(':status', $status);
             $req->bindParam(':custom_id', $customId);
             $req->bindParam(':canread', $this->canread);

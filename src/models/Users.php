@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,23 +8,28 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\UserCreated;
@@ -37,6 +43,7 @@ use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+
 use function time;
 use function trim;
 
@@ -49,22 +56,18 @@ class Users implements RestInterface
 
     public array $userData = array();
 
-    public int $team = 0;
-
     public self $requester;
 
     public bool $isAdmin = false;
 
     protected Db $Db;
 
-    public function __construct(public ?int $userid = null, ?int $team = null, ?self $requester = null)
+    public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         $this->Db = Db::getConnection();
         if ($team !== null && $userid !== null) {
-            $this->team = $team;
-            $TeamsHelper = new TeamsHelper($team);
-            $permissions = $TeamsHelper->getPermissions($userid);
-            $this->isAdmin = (bool) $permissions['is_admin'];
+            $TeamsHelper = new TeamsHelper($this->team ?? 0);
+            $this->isAdmin = $TeamsHelper->isAdmin($userid);
         }
         if ($userid !== null) {
             $this->readOneFull();
@@ -93,7 +96,7 @@ class Users implements RestInterface
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
-        $TeamsHelper = new TeamsHelper((int) $teams[0]['id']);
+        $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
         $EmailValidator->validate();
@@ -127,7 +130,8 @@ class Users implements RestInterface
             `orgid`,
             `is_sysadmin`,
             `default_read`,
-            `default_write`
+            `default_write`,
+            `last_seen_version`
         ) VALUES (
             :email,
             :password_hash,
@@ -140,7 +144,8 @@ class Users implements RestInterface
             :orgid,
             :is_sysadmin,
             :default_read,
-            :default_write);';
+            :default_write,
+            :last_seen_version);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -155,6 +160,7 @@ class Users implements RestInterface
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
+        $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -162,13 +168,23 @@ class Users implements RestInterface
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);
+        // only send onboarding emails for new teams when user is validated
+        if ($isValidated) {
+            // do we send an email for the instance
+            if ($Config->configArr['onboarding_email_active'] === '1') {
+                $isAdmin = $usergroup === Usergroup::Admin || $usergroup === Usergroup::Sysadmin;
+                (new OnboardingEmail(-1, $isAdmin))->create($userid);
+            }
+            // send email for each team
+            $Users2Teams->sendOnboardingEmailOfTeams = true;
+        }
         $Users2Teams->addUserToTeams(
             $userid,
             array_column($teams, 'id'),
             // transform Sysadmin to Admin because users2teams.groups_id is 2 (Admin) or 4 (User), but never 1 (Sysadmin)
             $usergroup === Usergroup::Sysadmin
-                ? Usergroup::Admin->value
-                : $usergroup->value,
+                ? Usergroup::Admin
+                : $usergroup,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
@@ -225,14 +241,16 @@ class Users implements RestInterface
             users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            users.orcid, users.auth_service
+            users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
             FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
             AND (users.archived = 0' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         if ($teamId > 0) {
             $req->bindValue(':team', $teamId);
         }
@@ -251,9 +269,10 @@ class Users implements RestInterface
 
     public function readAllActiveFromTeam(): array
     {
-        return array_filter($this->readAllFromTeam(), function ($u) {
-            return $u['archived'] === 0;
-        });
+        return array_filter(
+            $this->readAllFromTeam(),
+            fn($u): bool => $u['archived'] === 0,
+        );
     }
 
     /**
@@ -282,6 +301,10 @@ class Users implements RestInterface
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token']);
+        // keep sig_privkey in response if requester is target
+        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+            unset($userData['sig_privkey']);
+        }
         return $userData;
     }
 
@@ -304,7 +327,7 @@ class Users implements RestInterface
             Usergroup::Admin->value,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid']);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->rowCount() >= 1;
     }
@@ -329,11 +352,15 @@ class Users implements RestInterface
                     // need to be admin to "import" a user in a team
                     $team = (int) $params['team'];
                     $TeamsHelper = new TeamsHelper($team);
-                    $permissions = $TeamsHelper->getPermissions($this->requester->userData['userid']);
-                    if ($permissions['is_admin'] !== 1 && $this->requester->userData['is_sysadmin'] !== 1) {
+                    $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
+                    if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    (new Users2Teams($this->requester))->create($this->userData['userid'], $team);
+                    $Users2Teams = new Users2Teams($this->requester);
+                    if ($this->userData['validated']) {
+                        $Users2Teams->sendOnboardingEmailOfTeams = true;
+                    }
+                    $Users2Teams->create($this->userData['userid'], $team);
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
@@ -354,7 +381,7 @@ class Users implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/users/';
     }
@@ -467,26 +494,60 @@ class Users implements RestInterface
         }
     }
 
+    // create a user from the information provided in a node of type Person (.eln)
+    public function createFromPerson(array $person, int $team): self
+    {
+        $userid = $this->createOne(
+            $person['email'] ?? throw new ImproperActionException('Could not find an email to create the user!'),
+            array($team),
+            $person['givenName'] ?? 'Unknown',
+            $person['familyName'] ?? 'Unknown',
+        );
+        return new self($userid, $team);
+    }
+
     protected static function search(string $column, string $term, bool $validated = false): self
     {
-        $searchColumn = 'email';
-        if ($column === 'orgid') {
-            $searchColumn = 'orgid';
-        }
-        $validatedFilter = '';
-        if ($validated) {
-            $validatedFilter = ' AND validated = 1 ';
-        }
         $Db = Db::getConnection();
-        $sql = sprintf('SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1', $searchColumn, $validatedFilter);
+        $sql = sprintf(
+            'SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1',
+            $column === 'orgid'
+                ? 'orgid'
+                : 'email',
+            $validated
+                ? 'AND validated = 1'
+                : '',
+        );
         $req = $Db->prepare($sql);
         $req->bindParam(':term', $term);
         $Db->execute($req);
-        $res = $req->fetchColumn();
-        if ($res === false) {
+        $res = (int) $req->fetchColumn();
+        if ($res === 0) {
             throw new ResourceNotFoundException();
         }
-        return new self((int) $res);
+        return new self($res);
+    }
+
+    /**
+     * Read all the columns (including sensitive ones) of the current user
+     */
+    protected function readOneFull(): array
+    {
+        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM users
+            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
+            WHERE users.userid = :userid";
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->userData = $this->Db->fetch($req);
+        $this->userData['team'] = $this->team;
+        $UsersHelper = new UsersHelper($this->userData['userid']);
+        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
+        return $this->userData;
     }
 
     private function disable2fa(): array
@@ -502,7 +563,9 @@ class Users implements RestInterface
     private function canReadOrExplode(): void
     {
         // it's ourself or we are sysadmin
-        if ($this->requester->userid === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
+
+        // FIXME To investigate: $this->requester->userid is a string here!!!
+        if ($this->requester->userData['userid'] === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
         if (!$this->requester->isAdmin && $this->userid !== $this->userData['userid']) {
@@ -613,26 +676,8 @@ class Users implements RestInterface
         $this->Db->execute($req);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
+        $this->sendOnboardingEmailsAfterValidation();
         return $this->readOne();
-    }
-
-    /**
-     * Read all the columns (including sensitive ones) of the current user
-     */
-    private function readOneFull(): array
-    {
-        $sql = "SELECT users.*,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM users WHERE users.userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $this->userData = $this->Db->fetch($req);
-        $this->userData['team'] = $this->team;
-        $UsersHelper = new UsersHelper($this->userData['userid']);
-        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
-        return $this->userData;
     }
 
     private function notifyAdmins(array $admins, int $userid, bool $isValidated, string $team): void
@@ -642,7 +687,22 @@ class Users implements RestInterface
             $Notifications = new UserNeedValidation($userid, $team);
         }
         foreach ($admins as $admin) {
-            $Notifications->create((int) $admin);
+            $Notifications->create($admin);
+        }
+    }
+
+    private function sendOnboardingEmailsAfterValidation(): void
+    {
+        // do we send an eamil for the instance
+        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            (new OnboardingEmail(-1, $this->isAdmin))->create($this->userData['userid']);
+        }
+
+        // Check setting for each team individually
+        foreach (array_column($this->userData['teams'], 'id') as $teamId) {
+            if ((new Teams($this))->readOne()['onboarding_email_active'] === 1) {
+                (new OnboardingEmail($teamId))->create($this->userData['userid']);
+            }
         }
     }
 }

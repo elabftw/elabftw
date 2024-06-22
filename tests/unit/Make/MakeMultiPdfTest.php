@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,7 +11,8 @@
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
+use Elabftw\Elabftw\EntitySlug;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use Monolog\Handler\NullHandler;
@@ -21,10 +24,10 @@ class MakeMultiPdfTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $Entity = new Experiments(new Users(1, 1), null);
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakeMultiPdf($log, $MpdfProvider, $Entity, array(3, 4));
+        $requester = new Users(1, 1);
+        $this->MakePdf = new MakeMultiPdf($log, $MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, 3), new EntitySlug(EntityType::Experiments, 4)));
     }
 
     public function testGetFileName(): void

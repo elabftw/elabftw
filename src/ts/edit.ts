@@ -5,10 +5,18 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, updateCatStat, escapeRegExp, notifError, reloadElement } from './misc';
-import { getTinymceBaseConfig, quickSave } from './tinymce';
+import {
+  escapeRegExp,
+  getEntity,
+  getNewIdFromPostRequest,
+  notif,
+  notifError,
+  reloadElements,
+  updateCatStat,
+  updateEntityBody,
+} from './misc';
+import { getTinymceBaseConfig } from './tinymce';
 import { EntityType, Target, Upload, Model, Action } from './interfaces';
-import { DateTime } from 'luxon';
 import './doodle';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -116,20 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END GET MOL FILES
 
-  // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button
-  function updateEntityBody(el?: HTMLElement): void {
-    EntityC.update(entity.id, Target.Body, editor.getContent()).then(() => {
-      if (editor.type === 'tiny') {
-        // set the editor as non dirty so we can navigate out without a warning to clear
-        tinymce.activeEditor.setDirty(false);
-      }
-    }).then(() => {
-      if (el && el.matches('[data-redirect="view"]')) {
-        window.location.replace('?mode=view&id=' + entity.id);
-      }
-    });
-  }
-
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
   const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
@@ -139,9 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // UPDATE ENTITY BODY
+    // UPDATE ENTITY BODY (SAVE BUTTON)
     if (el.matches('[data-action="update-entity-body"]')) {
-      updateEntityBody(el);
+      updateEntityBody().then(() => {
+        // SAVE AND GO BACK BUTTON
+        if (el.matches('[data-redirect="view"]')) {
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
+      });
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
@@ -173,24 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         button.disabled = false;
       });
 
-    // CLICK the NOW button of a time or date extra field
-    } else if (el.matches('[data-action="update-to-now"]')) {
-      const input = el.closest('.input-group').querySelector('input');
-      // use Luxon lib here
-      const now = DateTime.local();
-      // date format
-      let format = 'yyyy-MM-dd';
-      if (input.type === 'time') {
-        format = 'HH:mm';
-      }
-      if (input.type === 'datetime-local') {
-        /* eslint-disable-next-line quotes */
-        format = "yyyy-MM-dd'T'HH:mm";
-      }
-      input.value = now.toFormat(format);
-      // trigger change event so it is saved
-      input.dispatchEvent(new Event('change'));
-
     // SAVE CHEM CANVAS AS FILE: chemjson or png
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));
@@ -217,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'real_name': realName,
         'content': content,
       };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElement('uploadsDiv'));
+      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -287,6 +268,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // wrap in pre element to retain whitespace, html encode '<' and '>'
         editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
       });
+    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
+    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
+      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
+        action: Action.Create,
+        target_action: 60,
+        target_userid: el.dataset.targetUser,
+      }).then(() => reloadElements(['requestActionsDiv']))
+        // the request gets rejected if repeated
+        .catch(error => console.error(error.message));
     }
   });
 
@@ -354,15 +344,14 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: formData,
           }).then(resp => {
-            const location = resp.headers.get('location').split('/');
-            const newId = location[location.length -1];
+            const newId = getNewIdFromPostRequest(resp);
             // fetch info about the newly created upload
-            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
-              resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
-              // save here because using the old real_name will not return anything from the db (status is archived now)
-              updateEntityBody();
-              reloadElement('uploadsDiv');
-            });
+            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
+          }).then(json => {
+            resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+            // save here because using the old real_name will not return anything from the db (status is archived now)
+            updateEntityBody();
+            reloadElements(['uploadsDiv']);
           });
         } else {
           // Revert changes if confirm is cancelled
@@ -405,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       },
       // use a custom function for the save button in toolbar
-      save_onsavecallback: (): void => quickSave(),
+      save_onsavecallback: (): Promise<void> => updateEntityBody(),
     };
 
     tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
@@ -460,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData,
       }).then(resp => {
-        reloadElement('uploadsDiv');
+        reloadElements(['uploadsDiv']);
         // return early if longName is not found in body
         if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
           && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)
@@ -468,26 +457,25 @@ document.addEventListener('DOMContentLoaded', () => {
           return true;
         }
         // now replace all occurrence of the old file in the body with the long_name of the new file
-        const location = resp.headers.get('location').split('/');
-        const newId = location[location.length -1];
+        const newId = getNewIdFromPostRequest(resp);
         // fetch info about the newly created upload
-        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`).then(json => {
-          // use regExp in replace to find all occurrence
-          // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
-          // '.', '?', '[' and '(' need to be escaped in js regex
-          const editorNewContent = editorCurrentContent.replace(
-            new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
-            searchPrefixSrc + json.long_name,
-          ).replace(
-            new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
-            searchPrefixMd + json.long_name,
-          );
-          editor.replaceContent(editorNewContent);
+        return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
+      }).then(json => {
+        // use regExp in replace to find all occurrence
+        // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
+        // '.', '?', '[' and '(' need to be escaped in js regex
+        const editorNewContent = editorCurrentContent.replace(
+          new RegExp(escapeRegExp(searchPrefixSrc + formElement.dataset.longName), 'g'),
+          searchPrefixSrc + json.long_name,
+        ).replace(
+          new RegExp(escapeRegExp(searchPrefixMd + formElement.dataset.longName), 'g'),
+          searchPrefixMd + json.long_name,
+        );
+        editor.replaceContent(editorNewContent);
 
-          // status of previous file is archived now
-          // save because using the old file will not return an id from the db
-          updateEntityBody();
-        });
+        // status of previous file is archived now
+        // save because using the old file will not return an id from the db
+        updateEntityBody();
       });
     }
   });

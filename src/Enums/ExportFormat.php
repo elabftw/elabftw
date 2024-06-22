@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -19,6 +22,15 @@ enum ExportFormat: string
     case QrPng = 'qrpng';
     case Pdf = 'pdf';
     case PdfA = 'pdfa';
+    case SchedulerReport = 'schedulerReport';
+    case SysadminReport = 'report';
     case Zip = 'zip';
     case ZipA = 'zipa';
+
+    // create a comma separated list of values
+    public static function toCsList(): string
+    {
+        $values = array_map(fn($case) => $case->value, self::cases());
+        return implode(', ', $values);
+    }
 }

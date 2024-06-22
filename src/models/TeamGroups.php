@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,21 +8,25 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_map;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
+use PDO;
+
+use function array_map;
 use function explode;
 use function json_decode;
-use PDO;
 
 /**
  * Everything related to the team groups
@@ -43,7 +48,7 @@ class TeamGroups implements RestInterface
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/teamgroups/', $this->Users->userData['team']);
     }
@@ -79,12 +84,10 @@ class TeamGroups implements RestInterface
                 'name' => $group['name'],
                 'users' => isset($group['userids'])
                     ? array_map(
-                        function (string $userid, ?string $fullname): array {
-                            return array(
-                                'userid' => (int) $userid,
-                                'fullname' => $fullname,
-                            );
-                        },
+                        fn(string $userid, ?string $fullname): array => array(
+                            'userid' => (int) $userid,
+                            'fullname' => $fullname,
+                        ),
                         explode(',', $group['userids']),
                         explode(',', $group['fullnames'])
                     )
@@ -161,19 +164,9 @@ class TeamGroups implements RestInterface
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        // TODO add fk to do that
-        $sql = "UPDATE experiments SET canread = 'team', canwrite = 'user' WHERE canread = :id OR canwrite = :id";
-        $req = $this->Db->prepare($sql);
-        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
-        $res1 = $this->Db->execute($req);
 
-        // same for items but canwrite is team
-        $sql = "UPDATE items SET canread = 'team', canwrite = 'team' WHERE canread = :id OR canwrite = :id";
-        $req = $this->Db->prepare($sql);
-        // note: setting PDO::PARAM_INT here will throw error because the column type is varchar
-        $req->bindParam(':id', $this->id, PDO::PARAM_STR);
-        $res2 = $this->Db->execute($req);
+        $res1 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Experiments);
+        $res2 = $this->updateTeamgroupPermissionsOnDestroy(EntityType::Items);
 
         $sql = 'DELETE FROM team_groups WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -276,7 +269,7 @@ class TeamGroups implements RestInterface
     {
         $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':name', $params->getContent());
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -313,5 +306,63 @@ class TeamGroups implements RestInterface
         if (!$this->Users->isAdmin) {
             throw new IllegalActionException(Tools::error(true));
         }
+    }
+
+    private function updateTeamgroupPermissionsOnDestroy(EntityType $entityType): bool
+    {
+        // the complicated SQL could be avoided if we could use JSON_SEARCH with integers but it only works with strings :(
+        // https://bugs.mysql.com/bug.php?id=90085
+        // we need to do a detour and convert int to string to get the index of the element that we want to remove
+        // and we need to do it for canread and canwrite 🤯
+
+        $sql = 'UPDATE %1$s AS entity
+            -- canwrite join
+            INNER JOIN (
+                SELECT id,
+                    -- find position of value of interest and remove it
+                    JSON_REMOVE(entity.canwrite,
+                        JSON_UNQUOTE(JSON_SEARCH(JSON_OBJECT(
+                        "teamgroups",
+                            JSON_ARRAYAGG(t_write.canwrite_str)
+                        ), "one", :id))
+                    ) AS new
+                FROM %1$s AS entity
+                -- convert int to string
+                JOIN JSON_TABLE(
+                    entity.canwrite->"$.teamgroups",
+                    -- VARCHAR(10) can hold max int value
+                    "$[*]" COLUMNS (canwrite_str VARCHAR(10) PATH "$")
+                ) AS t_write
+                -- collapse json table
+                GROUP BY id
+            ) t_canwrite
+                ON (entity.id = t_canwrite.id)
+            -- canread join
+            INNER JOIN (
+                SELECT id,
+                    -- find position of value of interest and remove it
+                    JSON_REMOVE(entity.canread,
+                        JSON_UNQUOTE(JSON_SEARCH(JSON_OBJECT(
+                        "teamgroups",
+                            JSON_ARRAYAGG(t_read.canread_str)
+                        ), "one", :id))
+                    ) AS new
+                FROM %1$s as entity
+                -- convert int to string
+                JOIN JSON_TABLE(
+                    entity.canread->"$.teamgroups",
+                    -- VARCHAR(10) can hold max int value
+                    "$[*]" COLUMNS (canread_str VARCHAR(10) PATH "$")
+                ) AS t_read
+                -- collapse json table
+                GROUP BY id
+            ) t_canread
+                ON (entity.id = t_canread.id)
+            SET entity.canwrite = COALESCE(t_canwrite.new, entity.canwrite),
+                entity.canread = COALESCE(t_canread.new, entity.canread)';
+
+        $req = $this->Db->prepare(sprintf($sql, $entityType->value));
+        $req->bindValue(':id', $this->id);
+        return $this->Db->execute($req);
     }
 }

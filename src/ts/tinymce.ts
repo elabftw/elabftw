@@ -55,9 +55,8 @@ import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
-import EntityClass from './Entity.class';
-import { EntityType, Target } from './interfaces';
-import { getEntity, reloadElement, escapeExtendedQuery } from './misc';
+import { EntityType } from './interfaces';
+import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
 
@@ -65,25 +64,6 @@ import { isSortable } from './TableSorting.class';
 const ApiC = new Api();
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
-
-// called when you click the save button of tinymce
-export function quickSave(): void {
-  const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
-  EntityC.update(entity.id, Target.Body, tinymce.activeEditor.getContent()).catch(() => {
-    // detect if the session timedout (Session expired error is thrown)
-    // store the modifications in local storage to prevent any data loss
-    localStorage.setItem('body', tinymce.activeEditor.getContent());
-    localStorage.setItem('id', String(entity.id));
-    localStorage.setItem('type', entity.type);
-    localStorage.setItem('date', new Date().toLocaleString());
-    // reload the page so user gets redirected to the login page
-    location.reload();
-  }).then(() => {
-    // remove dirty state of editor
-    tinymce.activeEditor.setDirty(false);
-  });
-}
 
 function getNow(): DateTime {
   const locale = document.getElementById('user-prefs').dataset.jslang;
@@ -118,7 +98,7 @@ function doneTyping(): void {
     alert('Too many characters!!! Cannot save properly!!!');
     return;
   }
-  quickSave();
+  updateEntityBody();
 }
 
 // options for tinymce to pass to tinymce.init()
@@ -215,17 +195,16 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
-        const format = entity => {
-          const category = entity.category_title ? `${entity.category_title} - `: '';
-          return `<span><a href='${entity.page}.php?mode=view&id=${entity.id}'>${category}${selected.title}</a></span>`;
-        };
         if (selected.type === 'items') {
-          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`).then(() => reloadElement('linksDiv'));
+          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`)
+            .then(() => reloadElements(['linksDiv']));
         }
         if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
-          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`).then(() => reloadElement('linksExpDiv'));
+          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`)
+            .then(() => reloadElements(['linksExpDiv']));
         }
-        return format(selected);
+        const category = selected.category_title ? `${selected.category_title} - `: '';
+        return `<span><a href='${selected.page}?mode=view&id=${selected.id}'>${category}${selected.title}</a></span>`;
       },
     },
     mobile: {

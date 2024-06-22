@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,15 +8,14 @@
  * @package elabftw
  */
 
-namespace Elabftw\Controllers;
+declare(strict_types=1);
 
-use function count;
+namespace Elabftw\Controllers;
 
 use Elabftw\AuditEvent\Export;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -24,92 +24,89 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
+use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
 use Elabftw\Make\MakeReport;
 use Elabftw\Make\MakeSchedulerReport;
 use Elabftw\Make\MakeStreamZip;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use ValueError;
 use ZipStream\ZipStream;
+
+use function array_map;
+use function count;
 
 /**
  * Create zip, csv, pdf or report
  */
-class MakeController implements ControllerInterface
+class MakeController extends AbstractController
 {
-    private const AUDIT_THRESHOLD = 12;
-
-    private AbstractEntity $Entity;
-
-    // an array of id to process
-    private array $idArr = array();
+    private const int AUDIT_THRESHOLD = 12;
 
     private bool $pdfa = false;
 
-    public function __construct(private Users $Users, private Request $Request)
-    {
-    }
+    // array of EntitySlug
+    private array $entitySlugs = array();
 
     public function getResponse(): Response
     {
-        switch ($this->Request->query->get('format')) {
-            case 'csv':
-                $this->populateIdArr();
-                return $this->makeCsv();
+        $this->populateSlugs();
+        $format = ExportFormat::Json;
+        try {
+            $format = ExportFormat::from($this->Request->query->getAlpha('format'));
+        } catch (ValueError) {
+        }
+        switch ($format) {
+            case ExportFormat::Csv:
+                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
+                    $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
+                    return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
+                }
+                return $this->getFileResponse(new MakeCsv($this->requester, $this->entitySlugs));
 
-            case 'eln':
-                $this->populateIdArr();
-                return $this->makeEln();
+            case ExportFormat::Eln:
+                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entitySlugs));
 
-            case 'json':
-                $this->populateIdArr();
-                return $this->makeJson();
+            case ExportFormat::Json:
+                return $this->getFileResponse(new MakeJson($this->requester, $this->entitySlugs));
 
-            case 'pdfa':
+            case ExportFormat::PdfA:
                 $this->pdfa = true;
                 // no break
-            case 'pdf':
-                $this->populateIdArr();
+            case ExportFormat::Pdf:
                 return $this->makePdf();
 
-            case 'qrpdf':
-                $this->populateIdArr();
-                return $this->makeQrPdf();
+            case ExportFormat::QrPdf:
+                return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entitySlugs));
 
-            case 'qrpng':
-                $this->populateIdArr();
-                return $this->makeQrPng();
+            case ExportFormat::QrPng:
+                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size')));
 
-            case 'report':
-                if (!$this->Users->userData['is_sysadmin']) {
+            case ExportFormat::SysadminReport:
+                if (!$this->requester->userData['is_sysadmin']) {
                     throw new IllegalActionException('Non sysadmin user tried to generate report.');
                 }
-                return $this->makeReport();
+                return $this->getFileResponse(new MakeReport(new Teams($this->requester)));
 
-            case 'schedulerReport':
-                if (!$this->Users->isAdmin) {
-                    throw new IllegalActionException('Non admin user tried to generate scheduler report.');
-                }
+            case ExportFormat::SchedulerReport:
                 return $this->makeSchedulerReport();
 
-            case 'zipa':
+            case ExportFormat::ZipA:
                 $this->pdfa = true;
                 // no break
-            case 'zip':
-                $this->populateIdArr();
+            case ExportFormat::Zip:
                 return $this->makeZip();
 
             default:
@@ -117,37 +114,55 @@ class MakeController implements ControllerInterface
         }
     }
 
-    private function populateIdArr(): void
+    private function shouldIncludeChangelog(): bool
     {
-        $this->Entity = EntityType::from($this->Request->query->getString('type'))->toInstance($this->Users);
+        $includeChangelog =  $this->pdfa;
+        if ($this->Request->query->has('changelog')) {
+            $includeChangelog = $this->Request->query->getBoolean('changelog');
+        }
+        return $includeChangelog;
+    }
+
+    private function populateSlugs(): void
+    {
+        try {
+            $entityType = EntityType::from($this->Request->query->getString('type'));
+        } catch (ValueError) {
+            return;
+        }
+        $idArr = array();
         // generate the id array
         if ($this->Request->query->has('category')) {
-            $this->idArr = $this->Entity->getIdFromCategory($this->Request->query->getInt('category'));
+            $entity = $entityType->toInstance($this->requester);
+            $idArr = $entity->getIdFromCategory($this->Request->query->getInt('category'));
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
-            if (!$this->Users->isAdminOf($this->Request->query->getInt('owner'))) {
+            if (!$this->requester->isAdminOf($this->Request->query->getInt('owner'))) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
             // being admin is good, but we also need to be in the same team as the requested user
-            $Teams = new Teams($this->Users);
+            $Teams = new Teams($this->requester);
             $targetUserid = $this->Request->query->getInt('owner');
-            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->Users->userData['team'])) {
+            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->requester->userData['team'])) {
                 throw new IllegalActionException('User tried to export another user but is not in same team.');
             }
-            $this->idArr = $this->Entity->getIdFromUser($targetUserid);
+            $entity = $entityType->toInstance($this->requester);
+            $idArr = $entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {
-            $this->idArr = explode(' ', $this->Request->query->getString('id'));
+            $idArr = array_map(
+                fn(string $id): int => (int) $id,
+                explode(' ', $this->Request->query->getString('id')),
+            );
         }
+        $slugs = array_map(function ($id) use ($entityType) {
+            return sprintf('%s:%d', $entityType->value, $id);
+        }, $idArr);
+        $this->entitySlugs = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
         // generate audit log event if exporting more than $threshold entries
-        $count = count($this->idArr);
+        $count = count($this->entitySlugs);
         if ($count > self::AUDIT_THRESHOLD) {
-            AuditLogs::create(new Export($this->Users->userid ?? 0, count($this->idArr)));
+            AuditLogs::create(new Export($this->requester->userid ?? 0, count($this->entitySlugs)));
         }
-    }
-
-    private function makeCsv(): Response
-    {
-        return $this->getFileResponse(new MakeCsv($this->Entity, $this->idArr));
     }
 
     private function getZipStreamLib(): ZipStream
@@ -155,43 +170,13 @@ class MakeController implements ControllerInterface
         return new ZipStream(sendHttpHeaders:false);
     }
 
-    private function makeEln(): Response
-    {
-        return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->Entity, $this->idArr));
-    }
-
-    private function makeJson(): Response
-    {
-        return $this->getFileResponse(new MakeJson($this->Entity, $this->idArr));
-    }
-
     private function makePdf(): Response
     {
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        if (count($this->idArr) === 1) {
-            $this->Entity->setId((int) $this->idArr[0]);
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->Entity, array($this->Entity->id)));
+        if (count($this->entitySlugs) === 1) {
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog()));
         }
-        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->Entity, $this->idArr));
-    }
-
-    private function makeQrPdf(): Response
-    {
-        return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->Entity, $this->idArr));
-    }
-
-    private function makeQrPng(): Response
-    {
-        // only works for 1 entry
-        if (count($this->idArr) !== 1) {
-            throw new ImproperActionException('QR PNG format is only suitable for one ID.');
-        }
-        return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->Entity, (int) $this->idArr[0], $this->Request->query->getInt('size')));
-    }
-
-    private function makeReport(): Response
-    {
-        return $this->getFileResponse(new MakeReport(new Teams($this->Users)));
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog()));
     }
 
     private function makeSchedulerReport(): Response
@@ -200,7 +185,7 @@ class MakeController implements ControllerInterface
         $defaultEnd = '2119-12-23T00:00:00+01:00';
         return $this->getFileResponse(new MakeSchedulerReport(
             new Scheduler(
-                new Items($this->Users),
+                new Items($this->requester),
                 null,
                 $this->Request->query->getString('start', $defaultStart),
                 $this->Request->query->getString('end', $defaultEnd),
@@ -210,7 +195,14 @@ class MakeController implements ControllerInterface
 
     private function makeZip(): Response
     {
-        return $this->makeStreamZip(new MakeStreamZip($this->getZipStreamLib(), $this->Entity, $this->idArr, $this->pdfa));
+        return $this->makeStreamZip(new MakeStreamZip(
+            $this->getZipStreamLib(),
+            $this->requester,
+            $this->entitySlugs,
+            $this->pdfa,
+            $this->shouldIncludeChangelog(),
+            $this->Request->query->getBoolean('json'),
+        ));
     }
 
     private function makeStreamZip(ZipMakerInterface $Maker): Response
@@ -229,7 +221,7 @@ class MakeController implements ControllerInterface
 
     private function getMpdfProvider(): MpdfProviderInterface
     {
-        $userData = $this->Users->userData;
+        $userData = $this->requester->userData;
         return new MpdfProvider(
             $userData['fullname'],
             $userData['pdf_format'],

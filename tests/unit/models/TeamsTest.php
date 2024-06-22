@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -10,6 +12,7 @@
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
@@ -18,12 +21,12 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Teams= new Teams(new Users(1, 1), 1);
+        $this->Teams = new Teams(new Users(1, 1), 1);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/', $this->Teams->getPage());
+        $this->assertEquals('api/v2/teams/', $this->Teams->getApiPath());
     }
 
     public function testCreate(): void
@@ -81,5 +84,22 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->setId(1);
         $this->expectException(ImproperActionException::class);
         $this->Teams->destroy();
+    }
+
+    public function testSendOnboardingEmails(): void
+    {
+        $userids = array('userids' => array(1, 2, 3, 4, 5));
+
+        $this->assertIsArray($this->Teams->patch(
+            Action::SendOnboardingEmails,
+            $userids,
+        ));
+
+        $Team = new Teams(new Users(2, 1));
+        $this->expectException(IllegalActionException::class);
+        $Team->patch(
+            Action::SendOnboardingEmails,
+            $userids,
+        );
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,7 +11,9 @@
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Elabftw\TimestampResponse;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -37,7 +41,12 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
         $mockResponse = $this->fixturesFs->read('dfn.asn1');
         $client = $this->getClient($mockResponse);
 
-        $Maker = new MakeDfnTimestamp(array(), $this->getFreshTimestampableEntity(), ExportFormat::Json);
+        $Maker = new MakeDfnTimestamp(
+            new Users(1, 1),
+            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            array(),
+            ExportFormat::Json,
+        );
         $pdfBlob = $this->fixturesFs->read('dfn.pdf');
         $tsUtils = new TimestampUtils($client, $pdfBlob, $Maker->getTimestampParameters(), new TimestampResponse());
         $this->assertInstanceOf(TimestampResponse::class, $tsUtils->timestamp());
@@ -55,11 +64,10 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
         return new Client(array('handler' => $handlerStack));
     }
 
-    private function getFreshTimestampableEntity(): Experiments
+    private function getFreshTimestampableEntity(): int
     {
         $Entity = new Experiments(new Users(1, 1));
         // create a new experiment for timestamping tests
-        $Entity->setId($Entity->create());
-        return $Entity;
+        return $Entity->create();
     }
 }

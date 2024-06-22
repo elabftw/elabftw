@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -26,9 +28,9 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name')));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/1/teamgroups/', $this->TeamGroups->getPage());
+        $this->assertEquals('api/v2/teams/1/teamgroups/', $this->TeamGroups->getApiPath());
     }
 
     public function testReadOne(): void

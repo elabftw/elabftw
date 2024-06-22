@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,21 +8,30 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
+
+use Elabftw\Enums\EntityType;
 
 /**
  * All about Items Links
  */
 class ItemsLinks extends AbstractLinks
 {
-    protected function getTargetType(): string
+    protected function getTargetType(): EntityType
     {
-        return 'items';
+        return EntityType::Items;
     }
 
     protected function getCatTable(): string
     {
         return 'items_types';
+    }
+
+    protected function getStatusTable(): string
+    {
+        return 'items_status';
     }
 
     protected function getTable(): string

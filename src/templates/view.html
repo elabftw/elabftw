@@ -6,7 +6,7 @@
   {% block createnew %}
     <div class='d-flex'>
       {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Viewing an entry'|trans }}</h3></div>
+      <div class='align-self-center'><h3>{{ Entity.entityType.toPage[:-4]|capitalize|trans }} > {{ 'Viewing an entry'|trans }}</h3></div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>
@@ -16,6 +16,15 @@
     {% include 'show-view-edit.html' %}
   {% endblock %}
 {% endembed %}
+
+{% if App.Request.query.has('openedInExclusiveEditMode') and Entity.ExclusiveEditMode.isActive and Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
+  {{ 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s'|trans|format(
+      Entity.ExclusiveEditMode.dataArr.fullname,
+      Entity.ExclusiveEditMode.dataArr.locked_at,
+      '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+      '</button>'
+    )|msg('warning', false) }}
+{% endif %}
 
 {% include('view-edit-toolbar.html') %}
 
@@ -51,7 +60,7 @@
   {% if Entity.entityData.custom_id %}
     <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
   {% endif %}
-  <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+  <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
   </h1>
 
   {% include('catstat-view.html') %}
@@ -141,45 +150,41 @@
 
 {% include 'uploads.html' %}
 
-<div id='commentsDiv'>
-  {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
-    <div id='comment'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsInnerDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }}</h3>
-    <div class='mt-2' id='commentsInnerDiv' data-save-hidden='commentsInnerDiv'>
-        {% for comment in Entity.entityData.comments %}
-          <div class='box'>
-            <div class='comment-header text-muted p-2'>
-              {{ comment.fullname }} {{ 'commented'|trans }}
-              <span title='{{ comment.created_at }}' class='relative-moment'></span>
-              {% if comment.created_at != comment.modified_at %}
-                ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
-              {% endif %}
-              {% if comment.userid == Entity.Users.userData.userid %}
-                <button type='button' class='btn float-right lh-normal border-0 m-0 p-2 my-n2 hl-hover-gray' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
-                  <i class='fas fa-fw fa-trash-alt fa-lg'></i>
-                </button>
-              {% endif %}
-            </div>
-            {# the comment itself is only editable by the owner #}
-            <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|nl2br }}</p>
+{% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>
+  <div class='mt-2' id='commentsDiv' data-count-for='commentsCount' data-save-hidden='commentsDiv'>
+      {% for comment in Entity.entityData.comments %}
+        <div class='box countable'>
+          <div class='comment-header text-muted p-2'>
+            {{ comment.fullname }} {{ 'commented'|trans }}
+            <span title='{{ comment.created_at }}' class='relative-moment'></span>
+            {% if comment.created_at != comment.modified_at %}
+              ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
+            {% endif %}
+            {% if comment.userid == Entity.Users.userData.userid and comment.immutable == 0 %}
+              <button type='button' class='btn float-right lh-normal border-0 m-0 p-2 my-n2 hl-hover-gray' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
+                <i class='fas fa-fw fa-trash-alt fa-lg'></i>
+              </button>
+            {% endif %}
           </div>
-        {% endfor %}
+          {# the comment itself is only editable by the owner #}
+          <p class='comment m-2 p-2 {{ comment.userid == Entity.Users.userData.userid and comment.immutable == 0 ? "editable hl-hover" }}' data-id='{{ comment.id }}'>{{ comment.comment|nl2br }}</p>
+        </div>
+      {% endfor %}
 
-        {# CREATE COMMENT INPUT #}
-        <div class='input-group my-1 rounded'>
-          <textarea id='commentsCreateArea' class='form-control p-2 brr-none' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
-          <div class='input-group-append'>
-            <button class='btn btn-primary' aria-label='{{ 'Add a comment'|trans }}' type='button' data-action='create-comment'><i class='fas fa-paper-plane text-white'></i></button>
-          </div>
+      {# CREATE COMMENT INPUT #}
+      <div class='input-group my-1 rounded'>
+        <textarea id='commentsCreateArea' class='form-control p-2 brr-none' autocomplete='off' placeholder='{{ 'Add a comment'|trans }}' aria-label='Comment area'></textarea>
+        <div class='input-group-append'>
+          <button class='btn btn-primary' aria-label='{{ 'Add a comment'|trans }}' type='button' data-action='create-comment'><i class='fas fa-paper-plane text-white'></i></button>
         </div>
       </div>
     </div>
-  {% endif %}
-</div>
+{% endif %}
 
 <div id='info'
     data-page='view'
-    data-type='{{ Entity.type }}'
+    data-type='{{ Entity.entityType.value }}'
     data-id='{{ Entity.id }}'
     data-team='{{ App.Users.userData.team }}'
     data-isanon='{{ App.Session.get('is_anon') }}'

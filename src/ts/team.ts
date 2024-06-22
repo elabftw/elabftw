@@ -7,7 +7,7 @@
  */
 import { DateTime } from 'luxon';
 import i18next from 'i18next';
-import { Malle } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
@@ -35,10 +35,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import EntityClass from './Entity.class';
-import { Action, EntityType } from './interfaces';
+import { Action, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { notif } from './misc';
+import { TomSelect } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -267,6 +266,33 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // transform the enum into the kind of object we want
+  const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)
+    .filter(key => !isNaN(Number(key)))
+    .map(key => ({
+      selected: false,
+      text: ProcurementState[key],
+      value: key,
+    }));
+
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value: string, original: HTMLElement) => {
+      return ApiC.patch(`teams/current/procurement_requests/${original.dataset.id}`, {state: value}).then(res => res.json()).then(json => json.state);
+    },
+    inputType: InputType.Select,
+    selectOptions: procurementStateArr,
+    listenOn: '.malleableState',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+
+
   // add on change event listener on datetime inputs
   [startInput, endInput].forEach(input => {
     input.addEventListener('change', event => {
@@ -292,26 +318,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    const TemplateC = new EntityClass(EntityType.Template);
-    // IMPORT TPL
-    if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id));
+    // RECEIVE PROCUREMENT REQUEST
+    if (el.matches('[data-action="receive-procurement-request"]')) {
+      ApiC.patch(`teams/current/procurement_requests/${el.dataset.id}`);
+
+    // CANCEL PROCUREMENT REQUEST
+    } else if (el.matches('[data-action="cancel-procurement-request"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
+      }
 
     // CANCEL EVENT ACTION
     } else if (el.matches('[data-action="cancel-event"]')) {
-      ApiC.delete(`event/${el.dataset.id}`).then(() => {
-        calendar.refetchEvents();
-        $('#eventModal').modal('toggle');
-      }).catch();
+      ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
     // CANCEL EVENT ACTION WITH MESSAGE
     } else if (el.matches('[data-action="cancel-event-with-message"]')) {
       const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
       const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => {
-          calendar.refetchEvents();
-          $('#eventModal').modal('toggle');
-        }).catch();
+        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
 
     } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
@@ -322,14 +347,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();
       });
-
-    // DESTROY TEMPLATE
-    } else if (el.matches('[data-action="destroy-template"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        TemplateC.destroy(parseInt(el.dataset.id))
-          .then(() => window.location.replace('team.php?tab=3'))
-          .catch((e) => notif({'res': false, 'msg': e.message}));
-      }
     }
+  });
+
+  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
+    new TomSelect(`#${id}`, {
+      plugins: [
+        'dropdown_input',
+        'remove_button',
+      ],
+    });
   });
 });

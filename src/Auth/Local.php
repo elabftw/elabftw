@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
@@ -21,11 +24,13 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
+use Elabftw\Services\UsersHelper;
+use PDO;
+use SensitiveParameter;
 
 use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
-use PDO;
 
 /**
  * Local auth service
@@ -40,7 +45,7 @@ class Local implements AuthInterface
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $email, private string $password)
+    public function __construct(string $email, #[SensitiveParameter] private readonly string $password)
     {
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));
@@ -85,7 +90,8 @@ class Local implements AuthInterface
         $this->AuthResponse->userid = $this->userid;
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $res['validated'];
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
         return $this->AuthResponse;
     }
 

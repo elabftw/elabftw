@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,6 +8,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
@@ -14,7 +17,9 @@ use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\SearchType;
+use Elabftw\Enums\Currency;
+use Elabftw\Enums\Meaning;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -22,14 +27,21 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ProcurementRequests;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
+use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function array_filter;
+
+use const ARRAY_FILTER_USE_KEY;
 
 /**
  * For displaying an entity in show, view or edit mode
@@ -42,6 +54,12 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $visibilityArr = array();
 
+    protected array $meaningArr = array();
+
+    protected array $requestableActionArr = array();
+
+    protected array $currencyArr = array();
+
     protected array $templatesArr = array();
 
     protected array $teamGroupsFromUser = array();
@@ -53,6 +71,14 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
+        $this->meaningArr = Meaning::getAssociativeArray();
+        // exclude exclusive edit mode removal action
+        $this->requestableActionArr = array_filter(
+            RequestableAction::getAssociativeArray(),
+            fn(int $key): bool => $key !== RequestableAction::RemoveExclusiveEditMode->value,
+            ARRAY_FILTER_USE_KEY,
+        );
+        $this->currencyArr = Currency::getAssociativeArray();
         $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
         $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
@@ -91,7 +117,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsArr = $this->getItemsArr();
         // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {
-            return new RedirectResponse(sprintf('%s.php?mode=view&id=%d', $this->Entity->page, $itemsArr[0]['id']));
+            return new RedirectResponse(sprintf(
+                '%s?mode=view&id=%d',
+                $this->Entity->entityType->toPage(),
+                $itemsArr[0]['id']
+            ));
         }
 
         // get tags separately
@@ -112,6 +142,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
+        $UserRequestActions = new UserRequestActions($this->App->Users);
 
         $renderArr = array(
             'DisplayParams' => $DisplayParams,
@@ -124,9 +155,9 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
+            'requestActionsArr' => $UserRequestActions->readAllFull(),
             // generate light show page
             'searchPage' => $isSearchPage,
-            'searchType' => $isSearchPage ? SearchType::SearchPage : $DisplayParams->searchType,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readFull(),
@@ -173,13 +204,18 @@ abstract class AbstractEntityController implements ControllerInterface
         $itemsCategoryArr = $ItemsTypes->readAll();
 
         $Teams = new Teams($this->Entity->Users);
+        $RequestActions = new RequestActions($this->App->Users, $this->Entity);
+        $ProcurementRequests = new ProcurementRequests($Teams);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
+            'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'hideTitle' => true,
@@ -188,8 +224,12 @@ abstract class AbstractEntityController implements ControllerInterface
             'maxUploadSizeRaw' => ini_get('post_max_size'),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
-            'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            ...$this->Entity instanceof AbstractConcreteEntity
+                    ? array('timestamperFullname' => $this->Entity->getTimestamperFullname())
+                    : array(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
+            'meaningArr' => $this->meaningArr,
+            'requestableActionArr' => $this->requestableActionArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -214,10 +254,16 @@ abstract class AbstractEntityController implements ControllerInterface
             throw new ImproperActionException(_('This item is locked. You cannot edit it!'));
         }
 
+        // exclusive edit mode
+        $redirectResponse = $this->Entity->ExclusiveEditMode->gatekeeper();
+        if ($redirectResponse instanceof RedirectResponse) {
+            return ($redirectResponse);
+        }
+
         // last modifier name
         $lastModifierFullname = '';
         if ($this->Entity->entityData['lastchangeby'] !== null) {
-            $lastModifier = new Users((int) $this->Entity->entityData['lastchangeby']);
+            $lastModifier = new Users($this->Entity->entityData['lastchangeby']);
             $lastModifierFullname = $lastModifier->userData['fullname'];
         }
 
@@ -228,11 +274,17 @@ abstract class AbstractEntityController implements ControllerInterface
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
 
+        $RequestActions = new RequestActions($this->App->Users, $this->Entity);
+        $ProcurementRequests = new ProcurementRequests($Teams);
+
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
+            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
+            'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => $Metadata->getDisplayMainText(),
             'hideTitle' => true,
@@ -246,6 +298,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
+            'meaningArr' => $this->meaningArr,
+            'requestableActionArr' => $this->requestableActionArr,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

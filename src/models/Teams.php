@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
@@ -18,12 +20,15 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use RuntimeException;
+
+use function array_diff;
 
 /**
  * All about the teams
@@ -42,7 +47,7 @@ class Teams implements RestInterface
     {
         $this->Db = Db::getConnection();
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
-            $id = (int) $Users->userData['team'];
+            $id = $Users->userData['team'];
         }
         $this->setId($id);
     }
@@ -80,6 +85,10 @@ class Teams implements RestInterface
     public function synchronize(int $userid, array $teams): void
     {
         $Users2Teams = new Users2Teams($this->Users);
+        // send onboarding email of teams newly added to a user
+        if ($this->Users->userData['validated']) {
+            $Users2Teams->sendOnboardingEmailOfTeams = true;
+        }
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -94,7 +103,7 @@ class Teams implements RestInterface
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/teams/';
     }
@@ -159,6 +168,7 @@ class Teams implements RestInterface
                     }
                 }
             )(),
+            Action::SendOnboardingEmails => $this->sendOnboardingEmails($params['userids']),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -247,7 +257,7 @@ class Teams implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
-        if ($TeamsHelper->isAdminInTeam((int) $this->Users->userData['userid'])) {
+        if ($TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
@@ -316,7 +326,7 @@ class Teams implements RestInterface
         if ($this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {
+        if ($this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id)) {
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
@@ -330,5 +340,14 @@ class Teams implements RestInterface
             return $this->postAction(Action::Create, array('name' => $name));
         }
         throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
+    }
+
+    private function sendOnboardingEmails(array $userids): void
+    {
+        // validate that userid is part of team and active
+        foreach(array_intersect(array_column($this->Users->readAllActiveFromTeam(), 'userid'), $userids) as $userid) {
+            /** @psalm-suppress PossiblyNullArgument */
+            (new OnboardingEmail($this->id))->create($userid);
+        }
     }
 }

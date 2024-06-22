@@ -5,7 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { notif, notifError, reloadElement, updateCatStat } from './misc';
+import {
+  getNewIdFromPostRequest,
+  notif,
+  notifError,
+  reloadElements,
+  TomSelect,
+  updateCatStat,
+} from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
@@ -20,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/admin.php') {
     return;
   }
+
   const ApiC = new Api();
 
   const TabMenu = new Tab();
@@ -29,19 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
   tinymce.init(getTinymceBaseConfig('admin'));
   // and for md
   (new MdEditor()).init();
-
-  $('#team_groups_div').on('click', '.teamGroupDelete', function() {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${$(this).data('id')}`).then(() => reloadElement('team_groups_div'));
-    }
-  });
-
-
-  $('#team_groups_div').on('click', '.rmUserFromGroup', function() {
-    const user = $(this).data('user');
-    const group = $(this).data('group');
-    ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${group}`, {'how': Action.Unreference, 'userid': user}).then(() => reloadElement('team_groups_div'));
-  });
 
   // edit the team group name
   const malleableGroupname = new Malle({
@@ -106,7 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => window.location.href = resp.headers.get('location') + '#itemsCategoriesAnchor');
+        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => {
+          const newId = getNewIdFromPostRequest(resp);
+          window.location.href = `${window.location.href}&templateid=${newId}#itemsCategoriesAnchor`;
+        });
       }
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
@@ -116,11 +114,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=4');
       }
+    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
+    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
+      ApiC.post(`${EntityType.ItemType}/${el.dataset.id}/request_actions`, {
+        action: Action.Create,
+        target_action: 60,
+        target_userid: el.dataset.targetUser,
+      }).then(() => reloadElements(['requestActionsDiv']))
+        // the request gets rejected if repeated
+        .catch(error => console.error(error.message));
     // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
       ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {
-        reloadElement('team_groups_div');
+        reloadElements(['team_groups_div']);
         input.value = '';
       });
     // ADD USER TO TEAM GROUP
@@ -130,7 +137,20 @@ document.addEventListener('DOMContentLoaded', () => {
         notifError(new Error('Use the autocompletion menu to add users.'));
         return;
       }
-      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Add, 'userid': user}).then(() => reloadElement('team_groups_div'));
+      ApiC.patch(
+        `${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`,
+        {'how': Action.Add, 'userid': user},
+      ).then(() => reloadElements(['team_groups_div']));
+    // RM USER FROM TEAM GROUP
+    } else if (el.matches('[data-action="rmuser-teamgroup"]')) {
+      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Unreference, 'userid': el.dataset.userid})
+        .then(() => el.parentElement.remove());
+    // DELETE TEAM GROUP
+    } else if (el.matches('[data-action="destroy-teamgroup"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.id}`)
+          .then(() => el.parentElement.remove());
+      }
     // CREATE STATUSLIKE
     } else if (el.matches('[data-action="create-statuslike"]')) {
       const holder = el.parentElement.parentElement;
@@ -144,13 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${Model.Team}/current/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
-        $(`#create${el.dataset.target}Modal`).modal('hide');
         // clear the name
         nameInput.value = '';
         // assign a new random color
         colorInput.value = getRandomColor();
         // display newly added entry
-        reloadElement(`${el.dataset.target}Div`);
+        reloadElements([`${el.dataset.target}Div`]);
       });
     // UPDATE STATUSLIKE
     } else if (el.matches('[data-action="update-status"]')) {
@@ -171,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY CATEGORY/STATUS
     } else if (el.matches('[data-action="destroy-catstat"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`).then(() => reloadElement(`${el.dataset.target}Div`));
+        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`)
+          .then(() => el.parentElement.parentElement.parentElement.remove());
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {
@@ -185,9 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!tagInput.value) {
         return;
       }
-      ApiC.post(`${Model.TeamTags}`, {'tag': tagInput.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${Model.Tag}`, {'tag': tagInput.value}).then(() => {
         tagInput.value = '';
-        reloadElement('tagMgrDiv');
+        reloadElements(['tagMgrDiv']);
       });
     } else if (el.matches('[data-action="patch-team-common-template"]')) {
       const params = {};
@@ -202,6 +222,30 @@ document.addEventListener('DOMContentLoaded', () => {
       const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
       const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
       window.location.href = `make.php?format=schedulerReport&start=${from}&end=${to}`;
+    // PATCH ONBOARDING EMAIL
+    } else if (el.matches('[data-action="patch-onboarding-email"]')) {
+      const key = 'onboarding_email_body';
+      ApiC.patch(`${Model.Team}/current`, {
+        [key]: tinymce.get(key).getContent(),
+      });
+    } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
+      // reload the modal in case the users of the team have changed
+      reloadElements(['sendOnboardingEmailModal'])
+        .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
+        .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
+          plugins: ['dropdown_input', 'no_active_items', 'remove_button'],
+        }));
+    } else if (el.matches('[data-action="send-onboarding-emails"]')) {
+      ApiC.notifOnSaved = false;
+      ApiC.patch(`${Model.Team}/current`, {
+        'action': Action.SendOnboardingEmails,
+        'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+          .map(option => parseInt(option.value, 10)),
+      }).then(response => {
+        if (response.ok) {
+          notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
+        }
+      });
     }
   });
 });

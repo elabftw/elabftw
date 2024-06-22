@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -21,9 +24,7 @@ class CreateUpload implements CreateUploadParamsInterface
 
     protected State $state = State::Normal;
 
-    public function __construct(private string $realName, private string $filePath, private ?string $comment = null)
-    {
-    }
+    public function __construct(private string $realName, protected string $filePath, private ?string $comment = null) {}
 
     public function getFilename(): string
     {
@@ -33,6 +34,11 @@ class CreateUpload implements CreateUploadParamsInterface
     public function getFilePath(): string
     {
         return $this->filePath;
+    }
+
+    public function getTmpFilePath(): string
+    {
+        return basename($this->filePath);
     }
 
     public function getComment(): ?string

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
@@ -16,8 +19,9 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Users;
 use Elabftw\Traits\SetIdTrait;
 
-use function json_decode;
 use PDO;
+
+use function json_decode;
 
 /**
  * Notifications for a user
@@ -40,21 +44,26 @@ class UserNotifications implements RestInterface
     public function readAll(): array
     {
         // for step deadline only select notifications where deadline is in the next hour
-        $sql = 'SELECT id, category, body, is_ack, created_at, userid FROM notifications WHERE userid = :userid AND (
-                (category != :deadline AND category NOT IN (20, 30)) OR
-                (category = :deadline and JSON_UNQUOTE(JSON_EXTRACT(body, :deadline_json_path)) > (NOW() - INTERVAL 1 HOUR))
-            ) ORDER BY created_at DESC LIMIT 10';
+        $sql = 'SELECT id, category, body, is_ack, created_at, userid
+            FROM notifications
+            WHERE userid = :userid
+                AND ((category != :deadline AND category NOT IN (:need_validation, :is_validated, :onboarding_email))
+                     OR (category = :deadline AND body->>"$.deadline" > (NOW() - INTERVAL 1 HOUR)))
+            ORDER BY created_at DESC
+            LIMIT 10';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
-        $req->bindValue(':deadline_json_path', '$.deadline', PDO::PARAM_STR);
+        $req->bindValue(':need_validation', Notifications::SelfNeedValidation->value, PDO::PARAM_INT);
+        $req->bindValue(':is_validated', Notifications::SelfIsValidated->value, PDO::PARAM_INT);
+        $req->bindValue(':onboarding_email', Notifications::OnboardingEmail->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $notifs = $req->fetchAll();
         foreach ($notifs as $key => &$notif) {
             $notif['body'] = json_decode($notif['body'], true, 512, JSON_THROW_ON_ERROR);
             // remove the step deadline web notif if user doesn't want it shown
-            if ($this->users->userData['notif_step_deadline'] === 0 && ((int) $notif['category']) === Notifications::StepDeadline->value) {
+            if ($this->users->userData['notif_step_deadline'] === 0 && ($notif['category']) === Notifications::StepDeadline->value) {
                 unset($notifs[$key]);
             }
         }
@@ -89,9 +98,9 @@ class UserNotifications implements RestInterface
         return $this->readOne();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('users/%d/notifications/', $this->userid);
+        return sprintf('api/v2/users/%d/notifications/', $this->userid);
     }
 
     /**

@@ -19,7 +19,7 @@
         <input type='text' placeholder='{{ 'Enter team name'|trans }}' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='create-team' class='btn btn-primary' data-dismiss='modal'>{{ 'Create'|trans }}</button>
       </div>
     </div>
@@ -63,7 +63,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
-      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Items'|trans }}: {{ info.items_count }}</div>
+      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ info.items_count }}</div>
       <div><a href='make.php?format=report' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
     </div>
   </div>
@@ -129,7 +129,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
     {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
 
@@ -200,13 +200,14 @@
   <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }}</p>
+      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }})</a></p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createTeamModal'>{{ 'Create a team'|trans }}</button>
       </div>
     </div>
 
+    {% include 'filter-input-snippet.html' with {'target': 'teamsTableBody'} %}
     <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
       <thead>
         <tr>
@@ -217,7 +218,7 @@
           <th scope='col'>{{ 'Actions'|trans }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id='teamsTableBody'>
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
@@ -228,7 +229,7 @@
               {% plural count.totxp %}
               Experiments
               {% endtrans %}
-              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ count.totdb }}<p>
+              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ count.totdb }}<p>
 
             </td>
             <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
@@ -290,6 +291,11 @@
       </div>
     </div>
   </div>
+
+  {# ONBOARDINGELCOME EMAIL #}
+  {% set model = 'config' %}
+  {% set src = App.Config.configArr %}
+  {% include 'onboarding-email.html' %}
 
   {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
@@ -594,7 +600,7 @@
 <div data-tabcontent='10' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
-    <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
     {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
@@ -847,7 +853,7 @@
 
 {# TAB 11 LDAP #}
 <div data-tabcontent='11' id='ldapSettings' hidden>
-  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
@@ -1039,6 +1045,7 @@
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='auditLogsTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     {# Logs are presented in a sortable table #}
+    {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
     <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
       <thead>
         <tr>

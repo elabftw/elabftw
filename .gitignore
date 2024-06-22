@@ -18,6 +18,7 @@ config.php*
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg
+web/assets/*.ttf
 web/assets/tinymce_emojis.js
 src/node/*.LICENSE.txt
 tests/_output/*

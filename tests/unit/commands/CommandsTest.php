@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -215,17 +217,15 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester = new CommandTester(new ExportUser(new Memory()));
         $commandTester->execute(array(
             'userid' => '1',
+            'teamid' => '1',
         ));
 
         $commandTester->assertCommandIsSuccessful();
-    }
-
-    public function testExecuteExportResources(): void
-    {
-        $commandTester = new CommandTester(new ExportResources(new Memory()));
+        // now test with the skip resources flag
         $commandTester->execute(array(
-            'category_id' => '1',
             'userid' => '1',
+            'teamid' => '1',
+            '--skip-resources' => true,
         ));
 
         $commandTester->assertCommandIsSuccessful();

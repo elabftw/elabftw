@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -46,8 +49,8 @@ abstract class AbstractCategory implements RestInterface
     {
         $sql = sprintf('SELECT id FROM %s WHERE title = :title AND team = :team', $this->table);
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
@@ -64,12 +67,8 @@ abstract class AbstractCategory implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $status = $req->fetchColumn();
 
-        // if there is no is_default, null is fine
-        if (!$status) {
-            return null;
-        }
-        return (int) $status;
+        // if there is no default status, null is fine
+        return (int) $req->fetchColumn() ?: null;
     }
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,23 +8,30 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Enums\EntityType;
 
 /**
  * All about Experiments Links
  */
 class ExperimentsLinks extends AbstractLinks
 {
-    protected function getTargetType(): string
+    protected function getTargetType(): EntityType
     {
-        return 'experiments';
+        return EntityType::Experiments;
     }
 
     protected function getCatTable(): string
     {
         return 'experiments_categories';
+    }
+
+    protected function getStatusTable(): string
+    {
+        return 'experiments_status';
     }
 
     protected function getTable(): string
@@ -32,7 +40,7 @@ class ExperimentsLinks extends AbstractLinks
             return 'experiments2experiments';
         }
         if ($this->Entity instanceof Templates) {
-            throw new ImproperActionException('Templates cannot be linked to experiments.');
+            return 'experiments_templates2experiments';
         }
         return 'items2experiments';
     }

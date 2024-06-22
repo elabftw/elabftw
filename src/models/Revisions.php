@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use function count;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
@@ -18,8 +17,10 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
-use function mb_strlen;
 use PDO;
+
+use function count;
+use function mb_strlen;
 
 /**
  * All about the revisions
@@ -36,9 +37,9 @@ class Revisions implements RestInterface
         $this->id = $id;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/revisions/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/revisions/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -56,7 +57,7 @@ class Revisions implements RestInterface
         if ($this->maxRevisions !== 0 && ($this->readCount() >= $this->maxRevisions)) {
             $this->destroyOld();
         }
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_revisions (item_id, body, userid)
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_revisions (item_id, body, userid)
             VALUES(:item_id, :body, :userid)';
 
         $req = $this->Db->prepare($sql);
@@ -79,7 +80,7 @@ class Revisions implements RestInterface
 
         $rev = $this->readOne();
 
-        $sql = 'UPDATE ' . $this->Entity->type . ' SET body = :body WHERE id = :id';
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . ' SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':body', $rev['body']);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -96,7 +97,7 @@ class Revisions implements RestInterface
             CONCAT(users.firstname, " ", users.lastname) AS fullname
             FROM %1$s_revisions
             LEFT JOIN users ON (users.userid = %1$s_revisions.userid)
-            WHERE item_id = :item_id ORDER BY created_at DESC', $this->Entity->type);
+            WHERE item_id = :item_id ORDER BY created_at DESC', $this->Entity->entityType->value);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -125,7 +126,7 @@ class Revisions implements RestInterface
 
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_revisions WHERE id = :rev_id';
+        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :rev_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -145,7 +146,7 @@ class Revisions implements RestInterface
      */
     private function readCount(): int
     {
-        $sql = 'SELECT COUNT(*) FROM ' . $this->Entity->type . '_revisions
+        $sql = 'SELECT COUNT(*) FROM ' . $this->Entity->entityType->value . '_revisions
              WHERE item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -162,7 +163,7 @@ class Revisions implements RestInterface
     private function destroyOld(int $num = 1): void
     {
         $oldestRevisions = array_slice(array_reverse($this->readAll()), 0, $num);
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_revisions WHERE id = :id';
+        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($oldestRevisions as $revision) {
             $req->bindParam(':id', $revision['id'], PDO::PARAM_INT);

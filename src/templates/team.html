@@ -3,9 +3,10 @@
 {% block body %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Members'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Procurement requests'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -86,8 +87,8 @@
                 </div>
               {% endfor %}
               <div class='mt-2'>
-                <button type='button' data-action='cancel-event-with-message' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-                <button type='button' data-action='cancel-event' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+                <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
             </div>
           </div>
         {% endif %}
@@ -101,30 +102,35 @@
 
 {# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
-  <div class='mb-2'>
-    {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+  <div class='d-flex mb-2'>
+    <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+    <div class='ml-auto'>
+      {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+    </div>
   </div>
 
   <div id='mainSchedulerContent'>
     {% if itemsArr|length == 0 %}
       {{ 'No bookable items.'|trans|msg('warning', false) }}
     {% else %}
-    <div id='selectBookableWarningDiv' hidden>{{ 'Start by selecting a resource below'|trans|msg('info', false) }}</div>
     <div class='row mb-3'>
       <div class='col-md-3'>
         {# CATEGORY #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Filter by category'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
-          <select name='cat' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter category'>
-            <option value=''>{{ 'Filter by type'|trans }}</option>
+          <select
+            aria-label='{{ 'Filter by category'|trans }}'
+            class='autosubmit mr-1 form-control'
+            id='schedulerSelectCat'
+            name='cat'
+          >
+            <option value=''>{{ 'Filter by category'|trans }}</option>
             {% for category in bookableItemsTypes %}
               <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-            {{ category.title }}</option>
+                {{ category.title }}
+              </option>
             {% endfor %}
           </select>
         </form>
@@ -132,19 +138,22 @@
 
       <div class='col-md-3'>
         {# ITEM LIST #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button] -->
-        {%- endif %}
         <form aria-label='{{ 'Select a resource'|trans }}'>
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
-          <select id='itemSelect' name='item' class='autosubmit mr-1 form-control selectpicker' data-show-subtext='true' data-live-search='true' aria-label='Filter item'>
-            <option value=''>{{ 'Select an equipment'|trans }}</option>
+          <select
+            aria-label='{{ 'Select a resource'|trans }}'
+            class='autosubmit mr-1 form-control'
+            id='itemSelect'
+            name='item'
+          >
+            <option value=''>{{ 'Select a resource'|trans }}</option>
             {% for item in itemsArr %}
               {# data-color is used to set the background during initial drag #}
               <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-              {{ item.category_title }} - {{ item.title }}</option>
+                {{ item.category_title }} - {{ item.title }}
+              </option>
             {% endfor %}
           </select>
         </form>
@@ -170,11 +179,12 @@
 <div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
   {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ teamsStats.totdb }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
   </div>
 
-  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-users'></i> {{ 'Members'|trans }}</h3>
-  <table id='teamtable' class='table' aria-describedby='pageTitle' data-table-sort='true'>
+  <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Members'|trans }}</h3>
+  {% include 'filter-input-snippet.html' with {'target': 'teamTable'} %}
+  <table class='table' aria-describedby='pageTitle' data-table-sort='true'>
     <thead>
       <tr>
           <th scope='col'>{{ 'Name'|trans }}</th>
@@ -182,7 +192,7 @@
           <th scope='col'>ORCID</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id='teamTable'>
       {# archived users are hidden on this page #}
       {% for user in App.Users.readAllFromTeam()|filter(u => u.archived == 0) %}
       <tr>
@@ -206,13 +216,13 @@
 
 {# TAB 3 TEMPLATE #}
 <div data-tabcontent='3' hidden>
-  <h3 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h3>
-  <p class='mt-3'>All the experiments templates are now visible at one place: the <a href='/ucp.php?tab=3'>User Control Panel</a>.</p>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Experiments Templates'|trans }}</h3>
+  <p class='mt-3'>All the experiments templates are now visible at one place: the <a href='/ucp.php?tab=3'>Settings</a>.</p>
 </div>
 
 {# TAB 4 EMAIL #}
 <div data-tabcontent='4' hidden>
-  <h3 class='p-2 pl-3 mb-3 section-title'><i class='fas fa-envelope'></i> {{ 'Send an email to users'|trans }}</h3>
+  <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Send an email to users'|trans }}</h3>
   <form class='pl-3' method='post' action='app/controllers/TeamController.php' aria-label='{{ 'Mass email form'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
     <input type='hidden' name='emailUsers' />
@@ -235,6 +245,73 @@
       <button type='submit' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
   </form>
+</div>
+
+{# TAB 5 PROCUREMENT REQUESTS #}
+<div data-tabcontent='5' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Procurement requests'|trans }}</h3>
+  <div class='pl-3 my-2'>
+    {% if teamProcurementRequestsArr %}
+      {# DOWNLOAD as CSV #}
+      <div class='mb-4 d-flex flex-row-reverse'>
+        <a href='/api/v2/teams/current/procurement_requests?format=csv'><button type='button' class='btn btn-secondary'>{{ 'Download'|trans }} (.csv)</button></a>
+      </div>
+      {% include 'filter-input-snippet.html' with {'target': 'procurementRequestsTable'} %}
+
+      {# MAIN TABLE #}
+      <table class='table' aria-label='{{ 'Procurement requests'|trans }}' data-table-sort='true'>
+        <thead>
+          <tr>
+            <th scope='col'>{{ 'Resource'|trans }}</th>
+            <th scope='col'>{{ 'Requester'|trans }}</th>
+            <th scope='col'>{{ 'Ordered'|trans }}</th>
+            <th scope='col'>{{ 'Quantity ordered'|trans }}</th>
+            <th scope='col'>{{ 'Total'|trans }}</th>
+            <th scope='col'>{{ 'Quantity received'|trans }}</th>
+            <th scope='col'>{{ 'Comment'|trans }}</th>
+            <th scope='col'>{{ 'Quote'|trans }}</th>
+            <th scope='col'>{{ 'State'|trans }}</th>
+            <th scope='col'>{{ 'Actions'|trans }}</th>
+          </tr>
+        </thead>
+        {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
+        <tbody id='procurementRequestsTable'>
+          {% for req in teamProcurementRequestsArr %}
+            <tr>
+              <td class='no-wrap' data-label='{{ 'Resource'|trans }}'>
+                <a href='/database.php?mode=view&amp;id={{ req.entity_id }}'>
+                  <span class='hl-hover-gray p-2 mr-2 rounded'><i class='fas fa-eye'></i></span>
+                </a>{{ req.entity_title }}</td>
+              {# REQUESTER #}
+              <td data-label='{{ 'Requester'|trans }}'>{{ req.requester_fullname }}</td>
+              {# CREATED AT #}
+              <td data-label='{{ 'Ordered'|trans }}'><span title='{{ req.created_at }}' class='relative-moment text-nowrap'></span></td>
+              {# QTY ORDERED #}
+              <td data-label='{{ 'Quantity ordered'|trans }}'>{{ req.qty_ordered }}</td>
+              {# TOTAL #}
+              <td data-label='{{ 'Total'|trans }}'>{{ req.total }} {{ req.symbol }}</td>
+              <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
+              <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
+              <td data-label='{{ 'Quote'|trans }}'>
+                <a target='_blank' href='/api/v2/uploads/{{ req.quote }}?format=binary'>
+                  <span class='hl-hover-gray p-1 mr-2 rounded'>{{ req.quote ? "<i class='fas fa-download'></i>" }}</span>
+                </a>
+              </td>
+              <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+              <td data-label='{{ 'Actions'|trans }}'>
+                <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                  <i class='fas fa-trash-alt'></i>
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %} {# no requests #}
+      {# TODO add documentation link #}
+        <p>{{ 'No procurement requests have been made yet.'|trans }}</p>
+      {% endif %}
+  </div>
 </div>
 
 {% endblock body %}

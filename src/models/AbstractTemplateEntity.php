@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -18,6 +21,8 @@ use Elabftw\Interfaces\CreateFromTitleInterface;
  */
 abstract class AbstractTemplateEntity extends AbstractEntity implements CreateFromTitleInterface
 {
+    abstract public function create(string $title): int;
+
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {

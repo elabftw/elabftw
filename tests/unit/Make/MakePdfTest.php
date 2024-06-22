@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +12,9 @@
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
@@ -23,6 +27,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $requester = new Users(1, 1);
         // test >Append attached PDFs<
         (new Users(1, 1, new Users(1, 1)))->patch(Action::Update, array('append_pdfs' => 1));
         $Entity = new Experiments(new Users(1, 1), null);
@@ -58,7 +63,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $Entity, array($new, 2));
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, $new), new EntitySlug(EntityType::Experiments, 2)));
     }
 
     public function testGetFileContent(): void

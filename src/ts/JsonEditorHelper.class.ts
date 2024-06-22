@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { notif, notifSaved, reloadElement } from './misc';
+import { getNewIdFromPostRequest, notif, notifSaved, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
@@ -171,26 +171,9 @@ export default class JsonEditorHelper {
       'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };
-    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params).then(resp => {
-      const location = resp.headers.get('location').split('/');
-      reloadElement('uploadsDiv');
-      this.currentUploadId = String(location[location.length - 1]);
-    });
-  }
-
-  saveAsFile(): void {
-    const realName = this.askFilename();
-    const content = JSON.stringify(this.editor.get());
-    const blob = new Blob([content], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    // we create a link and click it
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = realName;
-    this.editorDiv.appendChild(link);
-    link.click();
-    // cleanup by revoking the URL object
-    URL.revokeObjectURL(url);
+    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
+      .then(resp => this.currentUploadId = String(getNewIdFromPostRequest(resp)))
+      .then(() => reloadElements(['uploadsDiv']));
   }
 
   // edit an existing file

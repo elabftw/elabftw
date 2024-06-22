@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -26,6 +29,8 @@ use Exception;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
+
+use function array_walk;
 
 /**
  * Administrate elabftw install
@@ -64,14 +69,15 @@ try {
             $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $UsersHelper = new UsersHelper($user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
         }
         // further filter if userid is present
         if ($App->Request->query->has('userid')) {
-            $usersArr = array_filter($usersArr, function ($u) use ($App) {
-                return $u['userid'] === $App->Request->query->getInt('userid');
-            });
+            $usersArr = array_filter(
+                $usersArr,
+                fn($u): bool => $u['userid'] === $App->Request->query->getInt('userid'),
+            );
         }
     }
 
@@ -118,7 +124,7 @@ try {
 
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
-    array_walk($auditLogsArr, function (&$event) {
+    array_walk($auditLogsArr, function (array &$event) {
         $event['category'] = AuditCategory::from($event['category'])->name;
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);

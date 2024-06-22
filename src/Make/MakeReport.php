@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,28 +8,25 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use function date;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\UploadTrait;
 use PDO;
+
+use function date;
 
 /**
  * Create a report of usage for all users
  */
 class MakeReport extends AbstractMakeCsv
 {
-    use UploadTrait;
-
-    protected Db $Db;
-
     public function __construct(private Teams $Teams)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
     }
 
     /**
@@ -70,13 +68,13 @@ class MakeReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        $allUsers = $this->Teams->Users->readFromQuery('');
+        $allUsers = $this->Teams->Users->readFromQuery('', includeArchived: true);
         foreach ($allUsers as $key => $user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
-            $diskUsage = $this->getDiskUsage((int) $user['userid']);
+            $diskUsage = $this->getDiskUsage($user['userid']);
 
             // remove unused columns as they will mess up the csv
             // these columns can be null
@@ -86,6 +84,7 @@ class MakeReport extends AbstractMakeCsv
                 'auth_service',
                 'token',
                 'auth_lock_time',
+                'sig_pubkey',
             );
             foreach ($unusedColumns as $column) {
                 unset($allUsers[$key][$column]);

@@ -21,7 +21,6 @@ $theme-colors: (
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-select/sass/bootstrap-select';
 @import 'prismjs/themes/prism';
 @import '@deltablot/dropzone/src/dropzone';
 @import '@fancyapps/fancybox/dist/jquery.fancybox';
@@ -45,6 +44,7 @@ $text-muted: $medium;
 @import 'jsoneditor';
 @import 'ove';
 @import 'search-syntax-highlighting';
+@import 'tom-select';
 
 /* Font is Lato */
 @font-face {
@@ -151,6 +151,16 @@ a:hover,
 .link-like:hover {
     color: $elabblue;
     text-decoration: none;
+}
+
+/* add arrow going out of square icon after external links */
+.external-link::after {
+    content: '\f08e'; // arrow-up-right-from-square
+    font-family: 'Font Awesome 6 Free';
+    font-size: 0.6em;
+    font-weight: 700;
+    padding-left: 3px;
+    vertical-align: text-top;
 }
 
 .underlined {
@@ -388,7 +398,7 @@ button:disabled {
 }
 
 /* fix for big images uploaded in the text */
-.item .txt {
+.entity .txt {
     overflow: auto;
 }
 
@@ -396,6 +406,12 @@ button:disabled {
     thead {
         position: sticky;
         top: 0;
+
+        /* thead with no filter on top need to have this class to have a top border */
+        /* stylelint-disable-next-line selector-no-qualifying-type */
+        &.with-top {
+          border-top: 1px solid $firstlevel;
+        }
     }
 
     tbody {
@@ -408,11 +424,16 @@ button:disabled {
     }
 
     th {
+        border-top: 0;
         white-space: nowrap;
 
         &:not(:last-child) {
             border-right: $firstlevel 1px solid;
         }
+    }
+
+    .no-wrap {
+        white-space: nowrap;
     }
 }
 
@@ -424,6 +445,42 @@ tr:nth-child(even) {
 tr:nth-child(odd) {
     background-color: $mainbackground;
 }
+
+/* responsive tables, with a threshold width pretty high */
+@media screen and (max-width: 800px) {
+    .table {
+        /** hide the header completely */
+        thead {
+            display: none;
+        }
+
+        tr {
+            display: block;
+        }
+
+        td,
+        th {
+            border-bottom: 1px solid $firstlevel;
+            display: block;
+            font-size: .8em;
+            /** ensure an empty value won't mess the rows */
+            min-height: 50px;
+            text-align: right;
+
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            &:last-child {
+                border-bottom: 3px solid $secondlevel;
+            }
+        }
+    }
+}
+
 
 
 /* TABLE SHOW MODE */
@@ -569,8 +626,8 @@ tr:nth-child(odd) {
     }
 }
 
-/* ITEMS */
-.item {
+/* ENTITIES */
+.entity {
     background-color: $white;
     border: 1px solid $firstlevel;
     border-left: 6px solid var(--left-color);
@@ -644,6 +701,15 @@ tr:nth-child(odd) {
     line-height: normal;
 }
 
+.btn-ghost {
+    border : 1px solid $firstlevel;
+
+    &:hover {
+        background-color: $firstlevel;
+        border-color: $secondlevel;
+    }
+}
+
 /* SIDE PANEL */
 .sidepanel-btn {
     border-radius: 0 5px 5px 0;
@@ -703,6 +769,11 @@ tr:nth-child(odd) {
 
     .side-panel-item {
         padding: 5px 0 5px 10px;
+
+        &.list-group-item {
+            background-color: $mediumstrong;
+            border: 0;
+        }
 
         /* Favtags will show up as selected */
         &.selected {
@@ -810,6 +881,10 @@ the form-control fails to do that so we do the border ourselves */
     background-color: $firstlevel;
 }
 
+.hl-hover-superlight:hover {
+    background-color: $superlight;
+}
+
 .hl-hover-gray:focus-visible {
     background-color: $firstlevel;
     outline: none;
@@ -860,6 +935,10 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-white {
     color: $white !important;
+}
+
+.color-blue {
+    color: $elabblue !important;
 }
 
 .color-success {
@@ -930,6 +1009,10 @@ the form-control fails to do that so we do the border ourselves */
 
 .smallgray {
     color: $medium;
+    font-size: 80%;
+}
+
+.small {
     font-size: 80%;
 }
 
@@ -1052,7 +1135,7 @@ the form-control fails to do that so we do the border ourselves */
         text-decoration: none !important;
     }
 
-    .item {
+    .entity {
         background-color: #fff;
         font-size: 14px;
         line-height: normal;
@@ -1188,11 +1271,16 @@ input[type='color'] {
 
 .user-badge {
     background-color: $lightblue;
+    border: 1px solid $firstlevel;
+    border-radius: .25rem;
+    padding: 4px 8px;
 }
 
 .admin-badge {
     background-color: $lightblue;
     border: 1px solid $gold;
+    border-radius: .25rem;
+    padding: 4px 8px;
     position: relative;
 
     &::before {
@@ -1397,5 +1485,63 @@ input:checked + .slider::before {
 
 /* PROFILE page */
 .counter {
-    color: $secondlevel;
+    color: $medium;
+}
+
+/* see Enums/State */
+.state-indicator {
+  /* error */
+  &[data-state="6"] {
+    color: $darkred;
+  }
+  /* processing */
+  &[data-state="5"] {
+    animation: pulse 2s infinite;
+    color: $orange;
+  }
+  /* pending */
+  &[data-state="4"] {
+    color: $mediumstrong;
+  }
+  /* normal */
+  &[data-state="1"] {
+    color: $green;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    color: #ffa500; /* Bright orange */
+  }
+
+  50% {
+    color: #ffe6b8; /* Less bright orange */
+  }
+}
+
+#exclusiveEditModeBtn {
+    span {
+        height: 1rem;
+        line-height: 1rem;
+        width: 1.25rem;
+
+        i:first-child {
+            top: -1.7px;
+        }
+
+        .fa-lock-open {
+            left: -2px;
+        }
+
+        .fa-lock {
+            left: -4px;
+        }
+
+        .fa-pen-nib {
+            --fa-rotate-angle: 45deg;
+            color:var(--primary);
+            left: 2px;
+            top: 4px;
+        }
+    }
 }

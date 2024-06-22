@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Commands;
 
-use function array_key_exists;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
@@ -27,11 +29,8 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
-use function is_string;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use function mb_strlen;
-use function str_repeat;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,6 +41,11 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
+use function array_key_exists;
+use function is_string;
+use function mb_strlen;
+use function str_repeat;
+
 /**
  * Populate the database with example data. Useful to get a fresh dev env.
  * For dev purposes, should not be used by normal users.
@@ -49,8 +53,8 @@ use Symfony\Component\Yaml\Yaml;
 #[AsCommand(name: 'db:populate')]
 class PopulateDatabase extends Command
 {
-    /** @var int DEFAULT_ITERATIONS number of things to create */
-    private const DEFAULT_ITERATIONS = 50;
+    // number of things to create
+    private const int DEFAULT_ITERATIONS = 50;
 
     protected function configure(): void
     {
@@ -135,8 +139,16 @@ class PopulateDatabase extends Command
             $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $faker->hexColor(), 'is_default' => 0));
 
-            if (isset($team['visible'])) {
-                $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
+            $columns = array(
+                'visible',
+                'onboarding_email_body',
+                'onboarding_email_subject',
+                'onboarding_email_active',
+            );
+            foreach ($columns as $column) {
+                if (isset($team[$column])) {
+                    $Teams->patch(Action::Update, array($column => (string) $team[$column]));
+                }
             }
         }
 

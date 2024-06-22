@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,15 +8,20 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+
 use function strlen;
 
 /**
@@ -23,23 +29,30 @@ use function strlen;
  */
 class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
-    private const DEFAULT_IMAGE_SIZE_PX = 250;
+    private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
-    private const LINE_HEIGHT_PX = 20;
+    private const int LINE_HEIGHT_PX = 20;
 
-    private const SPLIT_FACTOR = 8;
+    private const int SPLIT_FACTOR = 8;
 
     protected string $contentType = 'image/png';
 
     private int $fontSize = 16;
 
+    private AbstractEntity $entity;
+
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
-        private AbstractEntity $entity,
-        int $id,
+        private Users $requester,
+        array $entitySlugs,
         private int $size,
     ) {
-        $this->entity->setId($id);
+        // only works for 1 entry
+        if (count($entitySlugs) !== 1) {
+            throw new ImproperActionException('QR PNG format is only suitable for one ID.');
+        }
+        $slug = $entitySlugs[0];
+        $this->entity = $slug->type->toInstance($this->requester, $slug->id);
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
     }

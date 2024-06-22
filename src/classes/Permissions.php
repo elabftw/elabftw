@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -80,21 +83,21 @@ class Permissions
                 return true;
             }
             // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
+            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], $this->Users->userData['team'])) {
                 return true;
             }
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin
         if ($can['base'] === BasePermissions::User->value) {
-            if ($this->Users->isAdmin && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], (int) $this->Users->userData['team'])) {
+            if ($this->Users->isAdmin && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], $this->Users->userData['team'])) {
                 return true;
             }
         }
 
         // check for teams
         if (!empty($can['teams'])) {
-            $UsersHelper = new UsersHelper((int) $this->Users->userData['userid']);
+            $UsersHelper = new UsersHelper($this->Users->userData['userid']);
             $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
             foreach ($can['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
@@ -106,25 +109,25 @@ class Permissions
         // check for teamgroups
         if (!empty($can['teamgroups'])) {
             foreach ($can['teamgroups'] as $teamgroup) {
-                if ($this->TeamGroups->isInTeamGroup((int) $this->Users->userData['userid'], (int) $teamgroup)) {
+                if ($this->TeamGroups->isInTeamGroup($this->Users->userData['userid'], (int) $teamgroup)) {
                     return true;
                 }
             }
         }
 
         // check for users
-        if (in_array((int) $this->Users->userData['userid'], $can['users'], true)) {
+        if (in_array($this->Users->userData['userid'], $can['users'], true)) {
             return true;
         }
 
         // if we own the entity, we have access on it for sure
-        if ($this->item['userid'] === (int) $this->Users->userData['userid']) {
+        if ($this->item['userid'] === $this->Users->userData['userid']) {
             return true;
         }
 
         // it's not our entity, our last chance is to be admin in the same team as owner
         // also make sure that it's not in "useronly" mode
-        if ($this->Users->isAdmin && ($can['base'] ?? 0)!== BasePermissions::UserOnly->value) {
+        if ($this->Users->isAdmin && ($can['base'] ?? 0) !== BasePermissions::UserOnly->value) {
             // if it's an item (has team attribute), we need to be logged in in same team
             if (isset($this->item['team'])) {
                 if ($this->item['team'] === $this->Users->userData['team']) {
@@ -132,7 +135,7 @@ class Permissions
                 }
             } else { // experiment
                 $Owner = new Users($this->item['userid']);
-                if ($this->Teams->hasCommonTeamWithCurrent((int) $Owner->userData['userid'], (int) $this->Users->userData['team'])) {
+                if ($this->Teams->hasCommonTeamWithCurrent($Owner->userData['userid'], $this->Users->userData['team'])) {
                     return true;
                 }
             }
@@ -159,7 +162,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== (int) $this->Users->userData['userid']) && !$this->Users->isAdmin) {
+        if ($this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
         return $this->getCan($this->canwrite);

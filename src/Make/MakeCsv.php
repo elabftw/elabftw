@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,20 +8,24 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use function date;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users;
+
+use function date;
 
 /**
  * Make a CSV file from a list of id and a type
  */
 class MakeCsv extends AbstractMakeCsv
 {
-    public function __construct(AbstractEntity $entity, private array $idArr)
+    public function __construct(private Users $requester, private array $entitySlugs)
     {
-        parent::__construct($entity);
+        parent::__construct();
     }
 
     /**
@@ -28,7 +33,7 @@ class MakeCsv extends AbstractMakeCsv
      */
     public function getFileName(): string
     {
-        return date('Y-m-d') . '-export.elabftw.csv';
+        return date('Y-m-d_H-i-s') . '-export.elabftw.csv';
     }
 
     /**
@@ -45,34 +50,31 @@ class MakeCsv extends AbstractMakeCsv
     protected function getRows(): array
     {
         $rows = array();
-        foreach ($this->idArr as $id) {
+        foreach ($this->entitySlugs as $slug) {
             try {
-                $this->Entity->setId((int) $id);
-                $permissions = $this->Entity->getPermissions();
-            } catch (IllegalActionException) {
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;
             }
-            if ($permissions['read']) {
-                $row = array(
-                    $this->Entity->entityData['id'],
-                    $this->Entity->entityData['date'],
-                    htmlspecialchars_decode((string) $this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
-                    html_entity_decode(strip_tags(htmlspecialchars_decode((string) $this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
-                    (string) $this->Entity->entityData['category'],
-                    htmlspecialchars_decode((string) $this->Entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),
-                    (string) $this->Entity->entityData['category_color'],
-                    (string) $this->Entity->entityData['status'],
-                    htmlspecialchars_decode((string) $this->Entity->entityData['status_title'], ENT_QUOTES | ENT_COMPAT),
-                    (string) $this->Entity->entityData['status_color'],
-                    $this->Entity->entityData['custom_id'] ?? '',
-                    $this->Entity->entityData['elabid'] ?? '',
-                    $this->Entity->entityData['rating'],
-                    $this->getUrl(),
-                    $this->Entity->entityData['metadata'] ?? '',
-                    $this->Entity->entityData['tags'] ?? '',
-                );
-                $rows[] = $row;
-            }
+            $row = array(
+                $entity->entityData['id'],
+                $entity->entityData['date'],
+                htmlspecialchars_decode((string) $entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
+                html_entity_decode(strip_tags(htmlspecialchars_decode((string) $entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
+                (string) $entity->entityData['category'],
+                htmlspecialchars_decode((string) $entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),
+                (string) $entity->entityData['category_color'],
+                (string) $entity->entityData['status'],
+                htmlspecialchars_decode((string) $entity->entityData['status_title'], ENT_QUOTES | ENT_COMPAT),
+                (string) $entity->entityData['status_color'],
+                $entity->entityData['custom_id'] ?? '',
+                $entity->entityData['elabid'] ?? '',
+                $entity->entityData['rating'],
+                $entity->entityData['sharelink'],
+                $entity->entityData['metadata'] ?? '',
+                $entity->entityData['tags'] ?? '',
+            );
+            $rows[] = $row;
         }
         return $rows;
     }

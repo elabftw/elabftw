@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
@@ -50,7 +53,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         }
         // target can be bookable_item, team or teamgroup
         $this->target = EmailTarget::from($reqBody['target']);
-        $userids = Email::getAllEmails($this->target, $reqBody['targetid'], true);
+        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
         foreach($userids as $userid) {
             $this->create($userid);
         }
@@ -63,7 +66,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
 
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/nah';
     }

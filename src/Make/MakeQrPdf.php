@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,15 +8,16 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
@@ -24,9 +26,12 @@ class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 
-    public function __construct(MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, private array $idArr)
+    public function __construct(MpdfProviderInterface $mpdfProvider, protected Users $requester, private array $entitySlugs)
     {
-        parent::__construct($mpdfProvider, $entity);
+        parent::__construct(
+            mpdfProvider: $mpdfProvider,
+            includeChangelog: false
+        );
     }
 
     /**
@@ -56,12 +61,16 @@ class MakeQrPdf extends AbstractMakePdf
      */
     private function readAll(): array
     {
-        $DisplayParams = new DisplayParams($this->Entity->Users, Request::createFromGlobals(), $this->Entity->entityType);
-        $DisplayParams->limit = 9001;
-        $this->Entity->idFilter = Tools::getIdFilterSql($this->idArr);
-        $entityArr = $this->Entity->readShow($DisplayParams, true);
-        foreach ($entityArr as &$entity) {
-            $entity['url'] = $this->getUrl((int) $entity['id']);
+        $entityArr = array();
+        $siteUrl = Config::fromEnv('SITE_URL');
+        foreach ($this->entitySlugs as $slug) {
+            try {
+                $entity = $slug->type->toInstance($this->requester, $slug->id);
+                $entity->entityData['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity->page, $entity->id);
+                $entityArr[] = $entity;
+            } catch (IllegalActionException | ResourceNotFoundException) {
+                continue;
+            }
         }
         return $entityArr;
     }

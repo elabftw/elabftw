@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,10 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function array_column;
-use function array_unique;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
@@ -18,6 +19,9 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Services\UsersHelper;
+
+use function array_column;
+use function array_unique;
 use function implode;
 
 class EntitySqlBuilder
@@ -26,9 +30,7 @@ class EntitySqlBuilder
 
     private array $joinsSql = array();
 
-    public function __construct(private AbstractEntity $entity)
-    {
-    }
+    public function __construct(private AbstractEntity $entity) {}
 
     /**
      * Get the SQL string for read before the WHERE
@@ -68,7 +70,7 @@ class EntitySqlBuilder
         );
 
         // replace all %1$s by 'experiments' or 'items', there are many more than the one in FROM
-        return sprintf(implode(' ', $sql), $this->entity->type);
+        return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 
     public function getCanFilter(string $can): string
@@ -102,8 +104,8 @@ class EntitySqlBuilder
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",
-                $this->entity->page,
-                $this->entity->type,
+                $this->entity->entityType->toPage(),
+                $this->entity->entityType->value,
             );
         } else {
             // only get the columns interesting for show mode
@@ -181,7 +183,7 @@ class EntitySqlBuilder
                 ON (users2teams.users_id = users.userid
                     AND users2teams.teams_id = %d)
             LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->userData['team'],
+            $this->entity->Users->team ?? 0,
         );
     }
 
@@ -193,7 +195,7 @@ class EntitySqlBuilder
         $this->joinsSql[] = sprintf(
             'LEFT JOIN %s AS categoryt
                 ON (categoryt.id = entity.category)',
-            $this->entity->type === 'experiments'
+            $this->entity->entityType === EntityType::Experiments
                 ? 'experiments_categories'
                 : 'items_types',
         );
@@ -366,7 +368,7 @@ class EntitySqlBuilder
      */
     private function canTeams(string $can): string
     {
-        $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
+        $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays

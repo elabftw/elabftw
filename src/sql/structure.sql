@@ -161,6 +161,7 @@ CREATE TABLE `experiments_comments` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -190,6 +191,37 @@ CREATE TABLE `experiments_links` (
 --       `experiments` -> `id`
 --   `link_id`
 --       `items` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_request_actions`
+--
+CREATE TABLE IF NOT EXISTS `experiments_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_request_actions_experiments_id` (`entity_id`),
+    CONSTRAINT `fk_experiments_request_actions_experiments_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_experiments_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_experiments_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_request_actions`:
+--   `entity_id`
+--       `experiments` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -243,12 +275,33 @@ CREATE TABLE `experiments_steps` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_edit_mode`
+--
+
+CREATE TABLE `experiments_edit_mode` (
+  `experiments_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`experiments_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
+--   `experiments_id`
+--       `experiments` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `experiments_templates`
 --
 
 CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `team` int(10) UNSIGNED DEFAULT NULL,
+  `team` int(10) UNSIGNED NOT NULL,
   `body` text,
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -315,6 +368,85 @@ CREATE TABLE `experiments_templates_revisions` (
 --   `item_id`
 --       `experiments_templates` -> `id`
 --   `userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `exports`
+--
+
+CREATE TABLE `exports` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `requester_userid` int UNSIGNED NOT NULL,
+  `state` tinyint UNSIGNED NOT NULL DEFAULT 4,
+  `long_name` varchar(255) DEFAULT NULL,
+  `filesize` bigint UNSIGNED NULL DEFAULT NULL,
+  `modified_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `real_name` varchar(255) DEFAULT NULL,
+  `team` int UNSIGNED NOT NULL,
+  `changelog` tinyint NOT NULL DEFAULT 0,
+  `pdfa` tinyint NOT NULL DEFAULT 0,
+  `json` tinyint NOT NULL DEFAULT 0,
+  `hash` char(64) DEFAULT NULL,
+  `hash_algo` varchar(255) DEFAULT NULL,
+  `experiments` tinyint NOT NULL DEFAULT 1,
+  `items` tinyint NOT NULL DEFAULT 0,
+  `experiments_templates` tinyint NOT NULL DEFAULT 0,
+  `items_types` tinyint NOT NULL DEFAULT 0,
+  `format` varchar(100) NOT NULL,
+  `error` text NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `experiments_templates_edit_mode`
+--
+
+CREATE TABLE `experiments_templates_edit_mode` (
+  `experiments_templates_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`experiments_templates_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
+--   `experiments_templates_id`
+--       `experiments_templates` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_request_actions`
+--
+CREATE TABLE IF NOT EXISTS `experiments_templates_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_experiments_templates_request_actions_experiments_id` (`entity_id`),
+    CONSTRAINT `fk_experiments_templates_request_actions_experiments_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_experiments_templates_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_experiments_templates_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_request_actions`:
+--   `entity_id`
+--       `experiments_templates` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
 --       `users` -> `userid`
 --
 
@@ -426,6 +558,11 @@ CREATE TABLE `items` (
   `book_users_can_in_past` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
+  `is_procurable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `proc_pack_qty` MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+  `proc_price_notax` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `proc_price_tax` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `proc_currency` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -440,6 +577,7 @@ CREATE TABLE `items` (
 --
 
 -- --------------------------------------------------------
+
 --
 -- Table structure for table `items_changelog`
 --
@@ -454,6 +592,8 @@ CREATE TABLE `items_changelog` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `items_comments`
 --
@@ -465,6 +605,7 @@ CREATE TABLE `items_comments` (
   `item_id` int(10) UNSIGNED NOT NULL,
   `comment` text NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -473,6 +614,38 @@ CREATE TABLE `items_comments` (
 --   `item_id`
 --       `items` -> `id`
 --   `userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items_request_actions`
+--
+
+CREATE TABLE IF NOT EXISTS `items_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_request_actions_items_id` (`entity_id`),
+    CONSTRAINT `fk_items_request_actions_items_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_items_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_items_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `items_request_actions`:
+--   `entity_id`
+--       `items` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
 --       `users` -> `userid`
 --
 
@@ -494,6 +667,27 @@ CREATE TABLE `items_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `items_revisions`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items_edit_mode`
+--
+
+CREATE TABLE `items_edit_mode` (
+  `items_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`items_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `items_edit_mode`:
+--   `items_id`
+--       `items` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
 --
 
 -- --------------------------------------------------------
@@ -530,6 +724,8 @@ CREATE TABLE `items_types` (
 --   `team`
 --       `teams` -> `id`
 --
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `items_types_changelog`
@@ -574,6 +770,58 @@ CREATE TABLE `items_types_steps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `items_types_edit_mode`
+--
+
+CREATE TABLE `items_types_edit_mode` (
+  `items_types_id` int UNSIGNED NOT NULL,
+  `locked_by` int UNSIGNED NOT NULL,
+  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`items_types_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `items_edit_mode`:
+--   `items_types_id`
+--       `items_types` -> `id`
+--   `locked_by`
+--       `users` -> `userid`
+--
+
+--
+-- Table structure for table `items_types_request_actions`
+--
+
+CREATE TABLE IF NOT EXISTS `items_types_request_actions` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `target_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `action` INT UNSIGNED NOT NULL,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `fk_items_types_request_actions_items_id` (`entity_id`),
+    CONSTRAINT `fk_items_types_request_actions_items_id`
+      FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `fk_items_types_request_actions_requester_users_userid` (`requester_userid`),
+    KEY `fk_items_types_request_actions_target_users_userid` (`target_userid`));
+
+--
+-- RELATIONSHIPS FOR TABLE `items_types_request_actions`:
+--   `entity_id`
+--       `items_types` -> `id`
+--   `requester_userid`
+--       `users` -> `userid`
+--   `target_userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `lockout_devices`
 --
@@ -633,6 +881,25 @@ CREATE TABLE `pin_items2users` (
   PRIMARY KEY (`users_id`,`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Table structure for table `procurement_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `procurement_requests` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `team` INT UNSIGNED NOT NULL,
+    `requester_userid` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `qty_ordered` INT UNSIGNED NOT NULL DEFAULT 1,
+    `qty_received` INT UNSIGNED NOT NULL DEFAULT 0,
+    `body` TEXT NULL DEFAULT NULL,
+    `quote` INT UNSIGNED NULL DEFAULT NULL,
+    `email_sent` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `email_sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `state` TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `experiments_status`
@@ -687,6 +954,18 @@ CREATE TABLE `items_status` (
 --
 
 -- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `sig_keys` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pubkey` TEXT NULL DEFAULT NULL,
+  `privkey` TEXT NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `userid` int UNSIGNED NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `type` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+);
 
 --
 -- Table structure for table `tags`
@@ -748,6 +1027,9 @@ CREATE TABLE `teams` (
   `do_force_canwrite` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `announcement` varchar(255) NULL DEFAULT NULL,
+  `onboarding_email_active` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `onboarding_email_subject` VARCHAR(255) NULL,
+  `onboarding_email_body` TEXT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -840,7 +1122,7 @@ CREATE TABLE `uploads` (
   `hash` varchar(128) DEFAULT NULL,
   `hash_algorithm` varchar(10) DEFAULT NULL,
   `storage` int(10) UNSIGNED NOT NULL DEFAULT 1,
-  `filesize` int(10) UNSIGNED NULL DEFAULT NULL,
+  `filesize` bigint UNSIGNED NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `immutable` tinyint UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -979,6 +1261,24 @@ CREATE TABLE `experiments2experiments` (
 --       `experiments` -> `id`
 --
 
+--
+-- Table structure for table `experiments_templates2experiments`
+--
+
+CREATE TABLE `experiments_templates2experiments` (
+  `item_id` int UNSIGNED NOT NULL,
+  `link_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`item_id`, `link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates2experiments`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `link_id`
+--       `experiments` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -1036,6 +1336,12 @@ ALTER TABLE `experiments_steps`
   ADD KEY `fk_experiments_steps_experiments_id` (`item_id`);
 
 --
+-- Indexes for table `experiments_edit_mode`
+--
+ALTER TABLE `experiments_edit_mode`
+  ADD KEY `idx_experiments_edit_mode_all_columns` (`experiments_id`, `locked_by`, `locked_at`);
+
+--
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -1044,11 +1350,15 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
 
+--
+-- Indexes and Constraints for table `experiments_templates_changelog`
+--
 ALTER TABLE `experiments_templates_changelog`
   ADD KEY `fk_experiments_templates_changelog2experiments_templates_id` (`entity_id`),
   ADD KEY `fk_experiments_templates_changelog2users_userid` (`users_id`),
   ADD CONSTRAINT `fk_experiments_templates_changelog2experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_templates_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 --
 -- Indexes for table `favtags2users`
 --
@@ -1066,6 +1376,9 @@ ALTER TABLE `items`
   ADD KEY `fk_items_users_userid` (`userid`),
   ADD UNIQUE `unique_items_custom_id` (`category`, `custom_id`);
 
+--
+-- Indexes and Constraints for table `items_changelog`
+--
 ALTER TABLE `items_changelog`
   ADD KEY `fk_items_changelog2items_id` (`entity_id`),
   ADD KEY `fk_items_changelog2users_userid` (`users_id`),
@@ -1080,6 +1393,12 @@ ALTER TABLE `items_comments`
   ADD KEY `fk_items_comments_users_userid` (`userid`);
 
 --
+-- Indexes for table `items_edit_mode`
+--
+ALTER TABLE `items_edit_mode`
+  ADD KEY `idx_items_edit_mode_all_columns` (`items_id`, `locked_by`, `locked_at`);
+
+--
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
@@ -1087,11 +1406,15 @@ ALTER TABLE `items_types`
   ADD KEY `idx_items_types_state` (`state`),
   ADD UNIQUE `unique_items_types_custom_id` (`id`, `custom_id`);
 
+--
+-- Indexes and Constraints for table `items_types_changelog`
+--
 ALTER TABLE `items_types_changelog`
   ADD KEY `fk_items_types_changelog2items_types_id` (`entity_id`),
   ADD KEY `fk_items_types_changelog2users_userid` (`users_id`),
   ADD CONSTRAINT `fk_items_types_changelog2items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 --
 -- Indexes for table `items_types_links`
 --
@@ -1106,20 +1429,39 @@ ALTER TABLE `items_types_steps`
   ADD KEY `fk_items_types_steps_items_id` (`item_id`);
 
 --
+-- Indexes for table `items_types_edit_mode`
+--
+ALTER TABLE `items_types_edit_mode`
+  ADD KEY `idx_items_types_edit_mode_all_columns` (`items_types_id`, `locked_by`, `locked_at`);
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
   ADD KEY `fk_notifications_users_userid` (`userid`);
 
 --
--- Indexes for table `status`
+-- Indexes for table `experiments_status`
 --
 ALTER TABLE `experiments_status`
   ADD KEY `fk_experiments_status_teams_team_id` (`team`);
+
+--
+-- Indexes for table `items_status`
+--
 ALTER TABLE `items_status`
   ADD KEY `fk_items_status_teams_team_id` (`team`);
+
+--
+-- Indexes for table `experiments_categories`
+--
 ALTER TABLE `experiments_categories`
   ADD KEY `fk_experiments_categories_teams_team_id` (`team`);
+
+--
+-- Indexes for table `sig_keys`
+--
+ALTER TABLE `sig_keys`
+  ADD KEY `fk_sig_keys_users_userid` (`userid`);
 
 --
 -- Indexes for table `tags`
@@ -1152,6 +1494,13 @@ ALTER TABLE `todolist`
 ALTER TABLE `experiments2experiments`
   ADD KEY `fk_experiments2experiments_item_id` (`item_id`),
   ADD KEY `fk_experiments2experiments_link_id` (`link_id`);
+
+--
+-- Indexes for table `experiments_templates2experiments`
+--
+ALTER TABLE `experiments_templates2experiments`
+  ADD KEY `fk_experiments_templates2experiments_item_id` (`item_id`),
+  ADD KEY `fk_experiments_templates2experiments_link_id` (`link_id`);
 
 --
 -- Indexes for table `items2experiments`
@@ -1191,6 +1540,17 @@ ALTER TABLE `experiments_comments`
   ADD CONSTRAINT `fk_experiments_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_request_actions`
+--
+ALTER TABLE `experiments_request_actions`
+  ADD CONSTRAINT `fk_experiments_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_links`
 --
 ALTER TABLE `experiments_links`
@@ -1211,6 +1571,17 @@ ALTER TABLE `experiments_steps`
   ADD CONSTRAINT `fk_experiments_steps_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `experiments_edit_mode`
+--
+ALTER TABLE `experiments_edit_mode`
+  ADD CONSTRAINT `fk_experiments_edit_mode_experiments_id`
+    FOREIGN KEY (`experiments_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -1218,11 +1589,32 @@ ALTER TABLE `experiments_templates`
   ADD CONSTRAINT `fk_experiments_templates_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `exports`
+--
+ALTER TABLE `exports`
+  ADD CONSTRAINT `fk_exports_requester_userid_users_userid` FOREIGN KEY (`requester_userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `experiments_templates_revisions`
 --
 ALTER TABLE `experiments_templates_revisions`
-  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id`
+    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid`
+    FOREIGN KEY (`userid`) REFERENCES `users`(`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_templates_request_actions`
+--
+ALTER TABLE `experiments_templates_request_actions`
+  ADD CONSTRAINT `fk_experiments_templates_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `favtags2users`
@@ -1247,11 +1639,33 @@ ALTER TABLE `items_comments`
   ADD CONSTRAINT `fk_items_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `items_request_actions`
+--
+ALTER TABLE `items_request_actions`
+  ADD CONSTRAINT `fk_items_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `items_revisions`
 --
 ALTER TABLE `items_revisions`
   ADD CONSTRAINT `fk_items_revisions_items_id` FOREIGN KEY (`item_id`) REFERENCES `items`(`id`) ON DELETE cascade ON UPDATE cascade,
   ADD CONSTRAINT `fk_items_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
+
+--
+-- Constraints for table `items_edit_mode`
+--
+ALTER TABLE `items_edit_mode`
+  ADD CONSTRAINT `fk_items_edit_mode_items_id`
+    FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `items_types`
@@ -1273,6 +1687,28 @@ ALTER TABLE `items_types_steps`
   ADD CONSTRAINT `fk_items_types_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `items_types_edit_mode`
+--
+ALTER TABLE `items_types_edit_mode`
+  ADD CONSTRAINT `fk_items_types_edit_mode_items_types_id`
+    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `items_request_actions`
+--
+ALTER TABLE `items_types_request_actions`
+  ADD CONSTRAINT `fk_items_types_request_actions_requester_users_userid`
+    FOREIGN KEY (`requester_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_types_request_actions_target_users_userid`
+    FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -1287,6 +1723,12 @@ ALTER TABLE `items_status`
   ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `experiments_categories`
   ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `sig_keys`
+--
+ALTER TABLE `sig_keys`
+  ADD CONSTRAINT `fk_sig_keys_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tags`
@@ -1371,6 +1813,19 @@ CREATE TABLE `experiments_templates_links` (
     CONSTRAINT `fk_experiments_templates_links_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
+
+--
+-- Indexes and Constraints for table `experiments_templates_edit_mode`
+--
+ALTER TABLE `experiments_templates_edit_mode`
+  ADD KEY `idx_experiments_templates_edit_mode_all_columns` (`experiments_templates_id`, `locked_by`, `locked_at`),
+  ADD CONSTRAINT `fk_experiments_templates_edit_mode_experiments_templates_id`
+    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_edit_mode_users_userid`
+    FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
 --
 -- Indexes and Constraints for table `users2teams`
 --
@@ -1401,6 +1856,17 @@ ALTER TABLE `experiments2experiments`
     FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments2experiments_link_id`
+    FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `experiments_templates2experiments`
+--
+ALTER TABLE `experiments_templates2experiments`
+  ADD CONSTRAINT `fk_experiments_templates2experiments_item_id`
+    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates2experiments_link_id`
     FOREIGN KEY (`link_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -1456,6 +1922,20 @@ ALTER TABLE `pin_items2users`
 ALTER TABLE `pin_items2users`
   ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `procurement_requests`
+--
+ALTER TABLE `procurement_requests`
+  ADD KEY `fk_teams_id_proc_team` (`team`),
+  ADD KEY `fk_items_id_entity_id` (`entity_id`);
+
+--
+-- Constraints for table `procurement_requests`
+--
+ALTER TABLE `procurement_requests`
+  ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

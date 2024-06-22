@@ -10,10 +10,9 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElement, reloadElements, addAutocompleteToLinkInputs, getCheckedBoxes, notif, getEntity, adjustHiddenState } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, getEntity, adjustHiddenState } from './misc';
 import { Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
-
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -35,29 +34,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="step-update-deadline"]')) {
       const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
       StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
-        reloadElement('stepsDiv');
+        reloadElements(['stepsDiv']);
       });
     // ADD STEP
     } else if (el.matches('[data-action="create-step"]')) {
       createStep(el.parentElement.parentElement.querySelector('input'));
     // TOGGLE DEADLINE NOTIFICATIONS ON STEP
     } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
-      StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElement('stepsDiv'));
+      StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElements(['stepsDiv']));
     // DESTROY DEADLINE ON STEP
     } else if (el.matches('[data-action="step-destroy-deadline"]')) {
       StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
-        .then(() => reloadElement('stepsDiv'));
+        .then(() => reloadElements(['stepsDiv']));
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
       Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`)
+          .then(() => el.parentElement.parentElement.remove());
       }
     } else if (el.matches('[data-action="destroy-related-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`).then(() => reloadElements(['relatedItemsDiv', 'relatedExperimentsDiv']));
+        ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
+          .then(() => el.parentElement.parentElement.remove());
+      }
+    } else if (el.matches('[data-action="destroy-step"]')) {
+      if (confirm(i18next.t('step-delete-warning'))) {
+        StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
+          el.parentElement.parentElement.remove();
+          // keep to do list in sync
+          const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
+          if (todoStep) {
+            todoStep.parentElement.remove();
+          }
+        });
       }
     }
   });
@@ -76,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const content = input.value;
     if (content.length > 0) {
       StepC.create(content).then(() => {
-        reloadElement('stepsDiv').then(() => {
+        reloadElements(['stepsDiv']).then(() => {
           // clear input field
           input.value = '';
           input.focus();
@@ -133,26 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const stepId = e.currentTarget.dataset.stepid;
     const StepNew = new Step(newentity);
     StepNew.finish(stepId).then(() => {
-      reloadElement('stepsDiv').then(() => {
+      reloadElements(['stepsDiv']).then(() => {
         // keep to do list in sync
         $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
       });
     });
   });
-
-  // DESTROY
-  $(document).on('click', '.stepDestroy', function(e) {
-    if (confirm(i18next.t('step-delete-warning'))) {
-      const stepId = e.currentTarget.dataset.stepid;
-      StepC.destroy(stepId).then(() => {
-        reloadElement('stepsDiv').then(() => {
-          // keep to do list in sync
-          $('#todo_step_' + stepId).parent().hide();
-        });
-      });
-    }
-  });
-
   // END STEPS
 
   // CREATE LINK
@@ -175,32 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-  // CREATE FOR MULTIPLE ENTITIES
-  $(document).on('keypress blur', '.linkInputMultiple', function(e) {
-    if ($(this).val() === '') {
-      return;
-    }
-    const el = $(this);
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      // get the ids of selected entities
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        const json = {
-          'msg': 'Nothing selected!',
-          'res': false,
-        };
-        notif(json);
-        return;
-      }
-      $.each(checked, function(index) {
-        ApiC.post(`${entity.type}/${checked[index]['id']}/${el.data('endpoint')}/${parseInt(el.val() as string)}`);
-      });
-      $(this).val('');
-      addAutocompleteToLinkInputs();
-    }
-  });
-
   // AUTOCOMPLETE
   addAutocompleteToLinkInputs();
 });

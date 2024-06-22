@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -22,4 +25,5 @@ enum Notifications: int
     case PdfAppendmentFailed = 50;
     case PdfGenericError = 60;
     case NewVersionInstalled = 70;
+    case OnboardingEmail = 80;
 }

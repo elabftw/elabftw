@@ -86,7 +86,7 @@
         {# Notification bell #}
         {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
         <div class='nav-item dropdown ml-2' id='navbarNotifDiv'>
-          <button class='btn nav-link dropdown-toggle border-0' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
+          <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}
               {% for notif in App.notifsArr %}
@@ -105,7 +105,7 @@
 
         {# Help/Community dropdown #}
         <div class='nav-item dropdown'>
-          <button class='btn nav-link dropdown-toggle border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
+          <button class='btn nav-link border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
             <a class='dropdown-item' href='{{ App.getWhatsnewLink() }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' href='#' data-action='toggle-modal' data-target='helpModal'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
@@ -122,7 +122,7 @@
 
         {# User dropdown #}
         <div class='nav-item dropdown'>
-          <button class='btn nav-link dropdown-toggle border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user fa-2x'></i></button>
+          <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.teamArr.name }}</h6>
             {% if App.Users.userData.teams|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
@@ -133,7 +133,7 @@
               <a class='dropdown-item' href='ucp.php?tab=3'><i class='fas fa-layer-group fa-fw'></i> {{ 'Templates'|trans }}</a>
               <a class='dropdown-item' href='profile.php'><i class='fas fa-user fa-fw'></i> {{ 'My profile'|trans }}</a>
               <a class='dropdown-item' data-action='toggle-todolist' href='#'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
-              <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'User panel'|trans }}</a>
+              <a class='dropdown-item' href='ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'Settings'|trans }}</a>
               {% if App.Users.isAdmin %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -8,15 +9,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+
 use function json_decode;
 use function json_encode;
 
 class Metadata
 {
-    private const JSON_MAX_DEPTH = 42;
+    private const int JSON_MAX_DEPTH = 42;
 
     private array $metadata = array();
 
@@ -25,7 +29,10 @@ class Metadata
         if ($json === null || $json === 'null') {
             return;
         }
-        $this->metadata = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        $decoded = json_decode($json, true, self::JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        if (is_array($decoded)) {
+            $this->metadata = $decoded;
+        }
     }
 
     public function getRaw(): string
@@ -50,9 +57,10 @@ class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
-        uasort($extraFields, function (array $a, array $b): int {
-            return ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999);
-        });
+        uasort(
+            $extraFields,
+            fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),
+        );
         return $extraFields;
     }
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -7,19 +8,24 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
+
+use Elabftw\AuditEvent\OnboardingEmailSent;
+use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Notifications;
+use Elabftw\Factories\NotificationsFactory;
+use Elabftw\Models\AuditLogs;
+use Elabftw\Models\Users;
+use PDO;
+use Symfony\Component\Mime\Address;
 
 use function bindtextdomain;
 use function count;
 use function dirname;
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Notifications;
-use Elabftw\Factories\NotificationsFactory;
-use Elabftw\Models\Users;
-use PDO;
 use function putenv;
 use function setlocale;
-use Symfony\Component\Mime\Address;
 use function textdomain;
 
 /**
@@ -40,13 +46,25 @@ class EmailNotifications
     {
         $toSend = $this->getNotificationsToSend();
         foreach ($toSend as $notif) {
-            $targetUser = new Users((int) $notif['userid']);
+            $targetUser = new Users($notif['userid']);
             $this->setLang($targetUser->userData['lang']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $Factory = new NotificationsFactory((int) $notif['category'], $notif['body']);
+            $Factory = new NotificationsFactory($notif['category'], $notif['body']);
             $email = $Factory->getMailable()->getEmail();
-            if ($this->emailService->sendEmail($to, self::BASE_SUBJECT . $email['subject'], $email['body'])) {
-                $this->setEmailSent((int) $notif['id']);
+            $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
+            $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
+            $isEmailSent = $this->emailService->sendEmail(
+                $to,
+                self::BASE_SUBJECT . $email['subject'],
+                $email['body'],
+                $cc,
+                $htmlBody,
+            );
+            if ($isEmailSent) {
+                $this->setEmailSent($notif['id']);
+                if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
+                    AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
+                }
             }
         }
         return count($toSend);
@@ -69,8 +87,16 @@ class EmailNotifications
 
     protected function getNotificationsToSend(): array
     {
-        $sql='SELECT id, userid, category, body FROM notifications
-            WHERE send_email = 1 AND email_sent = 0 AND (category <> :deadline OR (category = :deadline AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(JSON_EXTRACT(body, "$.deadline") AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)))';
+        // for step deadline only select notifications where deadline is in the next 30 min
+        $sql = 'SELECT id, userid, category, body
+            FROM notifications
+            WHERE send_email = 1
+                AND email_sent = 0
+                AND (category <> :deadline
+                    OR (category = :deadline
+                        AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(body->"$.deadline" AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
+                    )
+                )';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $this->Db->execute($req);

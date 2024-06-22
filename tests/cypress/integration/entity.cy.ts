@@ -36,7 +36,7 @@ describe('Experiments', () => {
     cy.htmlvalidate();
 
     // delete step
-    cy.get('.stepDestroy').click();
+    cy.get('[data-action="destroy-step"]').click();
     cy.contains('some step').should('not.exist');
   };
 
@@ -45,9 +45,9 @@ describe('Experiments', () => {
     cy.get('[title="View mode"]').click();
     cy.get('#commentsCreateArea').type('This is a very nice experiment');
     cy.get('[data-action="create-comment"]').click();
-    cy.get('#comment').contains('Toto Le sysadmin commented').should('be.visible');
+    cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
-    cy.get('#comment').contains('Toto Le sysadmin commented').should('not.exist');
+    cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('not.exist');
     cy.htmlvalidate();
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();
@@ -59,6 +59,7 @@ describe('Experiments', () => {
       cy.log(url);
       // go in view mode
       cy.get('[title="View mode"]').click();
+      cy.get('[data-target="duplicateModal"]').click();
       cy.get('[data-action="duplicate-entity"]').click();
       cy.contains('Title').should('be.visible');
       // destroy the duplicated entity now

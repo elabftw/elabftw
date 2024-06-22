@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -183,6 +185,18 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = array('toto@yopmail.com');
+
+        $authResponse = $this->getAuthResponse($samlUserdata);
+        $this->assertEquals(1, $authResponse->selectedTeam);
+    }
+
+    /**
+     * Idp sends an array of orgIDs
+     */
+    public function testAssertIdpResponseOrgidArrayResponse(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['internal_id'] = array('internal_id_1');
 
         $authResponse = $this->getAuthResponse($samlUserdata);
         $this->assertEquals(1, $authResponse->selectedTeam);
@@ -476,9 +490,9 @@ class SamlTest extends \PHPUnit\Framework\TestCase
      */
     private function getAuthResponse(?array $samlUserdata = null, ?array $config = null, ?array $settings = null): AuthResponse
     {
-        $samlUserdata = $samlUserdata ?? $this->samlUserdata;
-        $config = $config ?? $this->configArr;
-        $settings = $settings ?? $this->settings;
+        $samlUserdata ??= $this->samlUserdata;
+        $config ??= $this->configArr;
+        $settings ??= $this->settings;
 
         $SamlAuthLib = $this->createMock(SamlAuthLib::class);
         $SamlAuthLib->method('login')->willReturn(null);

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
@@ -23,8 +26,7 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
-use function is_array;
-use function is_int;
+use Elabftw\Services\UsersHelper;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -36,12 +38,15 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
+use function is_array;
+use function is_int;
+
 /**
  * SAML auth service
  */
 class Saml implements AuthInterface
 {
-    private const TEAM_SELECTION_REQUIRED = 1;
+    private const int TEAM_SELECTION_REQUIRED = 1;
 
     private AuthResponse $AuthResponse;
 
@@ -83,6 +88,8 @@ class Saml implements AuthInterface
                 // Configures a new claim, called "uid"
                 ->withClaim('sid', $this->getSessionIndex())
                 ->withClaim('idp_id', $idpId)
+                ->withClaim('nameid', $this->SamlAuthLib->getNameId())
+                ->withClaim('nameid_format', $this->SamlAuthLib->getNameIdFormat())
                 // Builds a new token
                 ->getToken($config->signer(), $config->signingKey());
         return $token->toString();
@@ -102,7 +109,12 @@ class Saml implements AuthInterface
             }
             $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
 
-            return array($parsedToken->claims()->get('sid'), $parsedToken->claims()->get('idp_id'));
+            return array(
+                $parsedToken->claims()->get('sid'),
+                $parsedToken->claims()->get('idp_id'),
+                $parsedToken->claims()->get('nameid'),
+                $parsedToken->claims()->get('nameid_format'),
+            );
         } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
             throw new UnauthorizedException('Decoding JWT Token failed');
         }
@@ -143,8 +155,11 @@ class Saml implements AuthInterface
         // GET EMAIL
         $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
+        // GET ORGID
+        $orgid = $this->getOrgid();
+
         // GET POPULATED USERS OBJECT
-        $Users = $this->getUsers($email);
+        $Users = $this->getUsers($email, $orgid);
         if (!$Users instanceof Users) {
             $this->AuthResponse->userid = 0;
             $this->AuthResponse->initTeamRequired = true;
@@ -152,6 +167,7 @@ class Saml implements AuthInterface
                 'email' => $email,
                 'firstname' => $this->getName(),
                 'lastname' => $this->getName(true),
+                'orgid' => $orgid,
             );
             return $this->AuthResponse;
         }
@@ -170,7 +186,8 @@ class Saml implements AuthInterface
         }
 
         // load the teams from db
-        $this->AuthResponse->setTeams();
+        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;
     }
@@ -196,6 +213,15 @@ class Saml implements AuthInterface
             throw new ImproperActionException($err);
         }
         return $attr;
+    }
+
+    private function getOrgid(): ?string
+    {
+        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? 'Unknown'] ?? null;
+        if (is_array($orgid)) {
+            return $orgid[0];
+        }
+        return $orgid;
     }
 
     /**
@@ -264,7 +290,7 @@ class Saml implements AuthInterface
         throw new ImproperActionException('Could not find team ID to assign user!');
     }
 
-    private function getExistingUser(string $email): Users | false
+    private function getExistingUser(string $email, ?string $orgid = null): Users | false
     {
         try {
             // we first try to match a local user with the email
@@ -272,8 +298,7 @@ class Saml implements AuthInterface
         } catch (ResourceNotFoundException) {
             // try finding the user with the orgid because email didn't work
             // but only if we explicitly want to
-            if ($this->configArr['saml_fallback_orgid'] === '1' && !empty($this->settings['idp']['orgidAttr'])) {
-                $orgid = $this->extractAttribute($this->settings['idp']['orgidAttr']);
+            if ($this->configArr['saml_fallback_orgid'] === '1' && $orgid) {
                 try {
                     $Users = ExistingUser::fromOrgid($orgid);
                     // ok we found our user thanks to the orgid, maybe we want to update our stored email?
@@ -289,9 +314,9 @@ class Saml implements AuthInterface
         }
     }
 
-    private function getUsers(string $email): Users | int
+    private function getUsers(string $email, ?string $orgid = null): Users | int
     {
-        $Users = $this->getExistingUser($email);
+        $Users = $this->getExistingUser($email, $orgid);
         if ($Users === false) {
             // the user doesn't exist yet in the db
             // what do we do? Lookup the config setting for that case
@@ -312,7 +337,7 @@ class Saml implements AuthInterface
             }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true));
+            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid);
         }
         return $Users;
     }

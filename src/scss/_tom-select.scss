@@ -1,0 +1,72 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Marcel Bolten <github@marcelbolten.de>
+ * @copyright 2024 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+ @import 'tom-select/dist/scss/tom-select.bootstrap4';
+
+.focus .ts-control,
+.plugin-dropdown_input.focus .ts-dropdown .dropdown-input { /* stylelint-disable-line selector-class-pattern -- next-line does not work here */
+    border-color: $elabblue;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+    outline: 0;
+}
+
+.ts-dropdown {
+    min-width: 200px;
+
+    .dropdown-input-wrap .dropdown-input {
+        border-radius: .25rem .25rem 0 0;
+        border-width: 1px;
+    }
+}
+
+.ts-wrapper {
+    max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
+
+    .ts-control .item {
+        background: #efefef;
+        border: 0 solid #dee2e6;
+        border-radius: calc(.25rem - 1px);
+        color: #343a40;
+        cursor: pointer;
+        padding: 1px 5px;
+    }
+
+    // don't block down button
+    .ts-control:not(.rtl) {
+        padding-right: 2rem !important;
+    }
+
+    // keep size of select for tag filter
+    // prevent tags select from collapsing
+    /* stylelint-disable-next-line selector-class-pattern */
+    &.plugin-dropdown_input.dropdown-active:not(.has-items) .items-placeholder {
+        display: inline-block !important;
+    }
+
+    // need some extra space for x so it does not overlay selected options
+    /* stylelint-disable-next-line selector-class-pattern */
+    &.plugin-clear_button .ts-control {
+        padding-right: 30px !important;
+    }
+
+    // don't add padding if not multi
+    &:not(.multi) .ts-control .item {
+        padding: 0 5px;
+    }
+
+    // avoid inheritance form .text-center for team selection on register page
+    #team-ts-dropdown {
+        text-align: left;
+    }
+}
+
+// let the metavalue inuput stretch to same height as metakey select
+#metavalue {
+    height: auto;
+}

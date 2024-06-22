@@ -2,7 +2,11 @@
 
 {% block body %}
 
-<a href='{{ Entity.page }}.php?mode=view&amp;id={{ Entity.id }}'>
+{% set query = '?mode=view&' %}
+{% if Entity.entityType.value == 'experiments_templates' %}
+  {% set query = '&mode=view&template' %}
+{% endif %}
+<a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}'>
   <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
 

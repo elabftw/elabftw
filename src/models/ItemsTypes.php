@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -24,19 +26,11 @@ use PDO;
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
     {
-        $this->type = EntityType::ItemsTypes->value;
         $this->entityType = EntityType::ItemsTypes;
-        $this->Db = Db::getConnection();
-        $this->ItemsLinks = new ItemsLinks($this);
-        $this->Steps = new Steps($this);
-        $this->setId($id);
-    }
-
-    public function getPage(): string
-    {
-        return 'admin.php?tab=4&templateid=';
+        parent::__construct($Users, $id);
+        $this->ExclusiveEditMode->manage();
     }
 
     public function create(string $title): int
@@ -46,12 +40,12 @@ class ItemsTypes extends AbstractTemplateEntity
         $title = Filter::title($title);
         $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target)';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $title, PDO::PARAM_STR);
+        $req->bindValue(':content', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':canread', $defaultPermissions, PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $defaultPermissions, PDO::PARAM_STR);
-        $req->bindParam(':canread_target', $defaultPermissions, PDO::PARAM_STR);
-        $req->bindParam(':canwrite_target', $defaultPermissions, PDO::PARAM_STR);
+        $req->bindParam(':canread', $defaultPermissions);
+        $req->bindParam(':canwrite', $defaultPermissions);
+        $req->bindParam(':canread_target', $defaultPermissions);
+        $req->bindParam(':canwrite_target', $defaultPermissions);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -92,10 +86,11 @@ class ItemsTypes extends AbstractTemplateEntity
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }
 
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         throw new ImproperActionException('No duplicate action for resources categories.');
     }
@@ -108,7 +103,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $sql = 'SELECT id
             FROM items_types WHERE title = :title AND team = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -42,9 +44,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/event/', $this->Scheduler->getPage());
+        $this->assertEquals('api/v2/event/', $this->Scheduler->getApiPath());
     }
 
     public function testCreate(): int

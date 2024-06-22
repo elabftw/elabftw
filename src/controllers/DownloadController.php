@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,20 +8,23 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Controllers;
 
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Services\Filter;
-use function fopen;
-use function in_array;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
-use function stream_copy_to_stream;
-use function substr;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use function fopen;
+use function in_array;
+use function stream_copy_to_stream;
+use function substr;
 
 /**
  * To download uploaded files
@@ -82,7 +86,6 @@ class DownloadController implements ControllerInterface
             }
             stream_copy_to_stream($fileStream, $outputStream);
         });
-
         // set the correct Content-Type header based on mime type
         $mime = $this->getMimeType();
         $Response->headers->set('Content-Type', $mime);
@@ -118,14 +121,49 @@ class DownloadController implements ControllerInterface
     }
 
     /**
-     * Try and get the mime type for Content-Type header
-     */
+     * Return the MIME type, but replace the type of user-uploaded
+     * JavaScript that is served from the eLabFTW system.
+     *
+     * Used in conjunction with the "X-Content-Type-Options: nosniff"
+     * header as an extra layer of XSS protection. See
+     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+     *
+     **/
     private function getMimeType(): string
     {
         try {
-            return $this->fs->mimeType($this->getFilePath());
+            $mimeType = $this->fs->mimeType($this->getFilePath());
+            if ($this->isJavaScriptMimeType($mimeType)) {
+                return 'application/octet-stream';
+            }
+            return $mimeType;
         } catch (UnableToRetrieveMetadata) {
             return 'application/force-download';
         }
+    }
+
+    /**
+     * Return true if $mimeType is a JavaScript MIME type essence match, false otherwise.
+     *
+     * @param string $mimeType A MIME type of the form type/subtype, assumed correctly formatted and in a comparable encoding.
+     *
+     */
+    private function isJavaScriptMimeType(string $mimeType): bool
+    {
+        // https://mimesniff.spec.whatwg.org/#javascript-mime-type
+        $javaScriptLikeMimeTypesLower = array(
+            'application/ecmascript', 'application/javascript',
+            'application/x-ecmascript', 'application/x-javascript',
+            'text/ecmascript', 'text/javascript',
+            'text/javascript1.0', 'text/javascript1.1',
+            'text/javascript1.2', 'text/javascript1.3',
+            'text/javascript1.4', 'text/javascript1.5',
+            'text/jscript', 'text/livescript',
+            'text/x-ecmascript', 'text/x-javascript',
+        );
+
+        // JavaScript MIME type essence matches are case-insensitive.
+        $mimeTypeLower = strtolower($mimeType);
+        return in_array($mimeTypeLower, $javaScriptLikeMimeTypesLower, strict: false);
     }
 }

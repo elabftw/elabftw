@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
@@ -30,36 +33,37 @@ use Elabftw\Models\Config;
 use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
-use function setcookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function setcookie;
 
 /**
  * For all your authentication/login needs
  */
 class LoginController implements ControllerInterface
 {
-    public const AUTH_LOCAL = 10;
+    public const int AUTH_LOCAL = 10;
 
-    public const AUTH_SAML = 20;
+    public const int AUTH_SAML = 20;
 
-    public const AUTH_LDAP = 30;
+    public const int AUTH_LDAP = 30;
 
-    public const AUTH_EXTERNAL = 40;
+    public const int AUTH_EXTERNAL = 40;
 
-    public const AUTH_ANON = 50;
+    public const int AUTH_ANON = 50;
 
-    public function __construct(private App $App)
-    {
-    }
+    public function __construct(private App $App) {}
 
     public function getResponse(): Response
     {
@@ -88,9 +92,6 @@ class LoginController implements ControllerInterface
             'samesite' => 'Lax',
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
-
-        // INITIAL TEAM SELECTION
-        $this->initTeamSelection($authType);
 
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
@@ -166,12 +167,20 @@ class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
 
-        // no team was found so user must select one
+        // user does not exist and no team was found so user must select one
         if ($AuthResponse->initTeamRequired) {
             $this->App->Session->set('initial_team_selection_required', true);
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
+            return new RedirectResponse('/login.php');
+        }
+
+        // user exists but no team was found so user must select one
+        if ($AuthResponse->teamRequestSelectionRequired) {
+            $this->App->Session->set('team_request_selection_required', true);
+            $this->App->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
             return new RedirectResponse('/login.php');
         }
 
@@ -288,7 +297,7 @@ class LoginController implements ControllerInterface
                 // we are already authenticated
             case 'team':
                 return new Team(
-                    (int) $this->App->Session->get('auth_userid'),
+                    $this->App->Session->get('auth_userid'),
                     $this->App->Request->request->getInt('selected_team'),
                 );
 
@@ -296,37 +305,62 @@ class LoginController implements ControllerInterface
             case 'mfa':
                 return new Mfa(
                     new MfaHelper(
-                        (int) $this->App->Session->get('auth_userid'),
+                        $this->App->Session->get('auth_userid'),
                         $this->App->Session->get('mfa_secret'),
                     ),
                     $this->App->Request->request->getAlnum('mfa_code'),
                 );
+            case 'teaminit':
+                $this->initTeamSelection();
+                exit;
+            case 'teamselection':
+                $this->teamSelection($this->App->Session->get('teaminit_userid'), $this->App->Request->request->getInt('team_id'));
+                exit;
 
             default:
                 throw new ImproperActionException('Could not determine which authentication service to use.');
         }
     }
 
-    private function initTeamSelection(string $authType): void
+    /**
+     * For when a user already exists but has no associated team
+     */
+    private function teamSelection(int $userid, int $teamId): void
     {
-        if ($authType === 'teaminit'
-            && $this->App->Session->get('initial_team_selection_required')
-        ) {
-            // create a user in the requested team
-            $newUser = ExistingUser::fromScratch(
-                $this->App->Session->get('teaminit_email'),
-                array($this->App->Request->request->getInt('team_id')),
-                $this->App->Request->request->getString('teaminit_firstname'),
-                $this->App->Request->request->getString('teaminit_lastname'),
-            );
-            $this->App->Session->set('teaminit_done', true);
-            // will display the appropriate message to user
-            $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
-            $this->App->Session->remove('initial_team_selection_required');
-            $location = '/login.php';
-            echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
-            exit;
-        }
+        // Ensure that the team is actually one that users should be able to select.
+        $TeamsHelper = new TeamsHelper($teamId);
+        $TeamsHelper->teamIsVisibleOrExplode();
+
+        $this->App->Session->remove('team_selection_required');
+        $Users2Teams = new Users2Teams(new Users($userid));
+        $Users2Teams->create($userid, $teamId);
+        $this->App->Session->remove('teaminit_userid');
+        // TODO avoid re-login
+        $this->App->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
+        $location = '/login.php';
+        echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+    }
+
+    private function initTeamSelection(): void
+    {
+        // Ensure that the team is actually one that users should be able to select.
+        $TeamsHelper = new TeamsHelper($this->App->Request->request->getInt('team_id'));
+        $TeamsHelper->teamIsVisibleOrExplode();
+
+        // create a user in the requested team
+        $newUser = ExistingUser::fromScratch(
+            $this->App->Session->get('teaminit_email'),
+            array($this->App->Request->request->getInt('team_id')),
+            $this->App->Request->request->getString('teaminit_firstname'),
+            $this->App->Request->request->getString('teaminit_lastname'),
+            orgid: $this->App->Session->get('teaminit_orgid'),
+        );
+        $this->App->Session->set('teaminit_done', true);
+        // will display the appropriate message to user
+        $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
+        $this->App->Session->remove('initial_team_selection_required');
+        $location = '/login.php';
+        echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
     }
 
     private function enableMFA(): string
@@ -339,9 +373,7 @@ class LoginController implements ControllerInterface
             return '/login.php';
         }
 
-        $userid = isset($this->App->Users->userData['userid'])
-            ? (int) $this->App->Users->userData['userid']
-            : $this->App->Session->get('auth_userid');
+        $userid = $this->App->Users->userData['userid'] ?? $this->App->Session->get('auth_userid');
         $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
 
         // check the input code against the secret stored in session

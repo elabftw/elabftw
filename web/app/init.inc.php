@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -8,23 +10,28 @@
 
 namespace Elabftw\Elabftw;
 
-use function basename;
-use function dirname;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Services\LoginHelper;
 use Exception;
-use function header;
-use function in_array;
 use Monolog\Logger;
 use PDOException;
-use function setcookie;
-use function stripos;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+
+use function basename;
+use function dirname;
+
+use function header;
+use function in_array;
+
+use function setcookie;
+use function stripos;
 
 /**
  *   _       _ _
@@ -138,8 +145,7 @@ try {
     header('X-Elab-Need-Auth: 1');
     // don't send a GET app/logout.php if it's an ajax call because it messes up the jquery ajax
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
-        $url = Config::fromEnv('SITE_URL') . '/app/logout.php?keep_redirect=1';
-        header('Location: ' . $url);
+        header('Location: /app/logout.php?keep_redirect=1');
     }
     exit;
 } catch (Exception $e) {

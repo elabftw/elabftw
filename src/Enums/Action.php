@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -17,15 +20,19 @@ enum Action: string
     case Bloxberg = 'bloxberg';
     case Create = 'create';
     case CreateFromString = 'createfromstring';
+    case CreateSigkeys = 'createsigkeys';
     case Deduplicate = 'deduplicate';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
+    case ExclusiveEditMode = 'exclusiveeditmode';
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';
+    case Sign = 'sign';
+    case SendOnboardingEmails = 'sendonboardingemails';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';

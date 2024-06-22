@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,16 +8,23 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
+use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\InvalidApiSubModelException;
+use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -31,10 +39,14 @@ use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\ProcurementRequests;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\SigKeys;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -43,7 +55,9 @@ use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
+use Elabftw\Models\UserUploads;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -135,7 +149,7 @@ class Apiv2Controller extends AbstractApiController
         if (!empty($req[5])) {
             $subId = (int) ($req[6] ?? '');
             $this->subId = $subId > 0 ? $subId : null;
-            $this->Model = $this->getSubModel($req[5]);
+            $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));
             $this->hasSubmodel = true;
         }
 
@@ -144,11 +158,13 @@ class Apiv2Controller extends AbstractApiController
             try {
                 $this->format = ExportFormat::from($this->Request->query->getAlpha('format'));
             } catch (ValueError) {
-                throw new ImproperActionException('Incorrect format value.');
+                throw new ImproperActionException(
+                    sprintf('Incorrect value for format parameter. Available values are: %s.', ExportFormat::toCsList())
+                );
             }
             // fit the request with what makecontroller expects
             if ($this->Model instanceof AbstractEntity) {
-                $this->Request->query->set('type', $this->Model->type);
+                $this->Request->query->set('type', $this->Model->entityType->value);
                 $this->Request->query->set('id', $this->id);
             }
         }
@@ -170,13 +186,18 @@ class Apiv2Controller extends AbstractApiController
     private function handlePost(): Response
     {
         // special case for POST/uploads where we get the information from the "files" attribute
-        if ($this->Model instanceof Uploads && $this->action === Action::Create) {
+        if (($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) && $this->action === Action::Create) {
             $this->reqBody['real_name'] = $this->Request->files->get('file')->getClientOriginalName();
+            $this->reqBody['file'] = $this->Request->files->get('file');
+            $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
+            $this->reqBody['entity_type'] = $this->Request->request->getString('entity_type');
+            $this->reqBody['force_entity_type'] = $this->Request->request->getBoolean('force_entity_type');
+            $this->reqBody['category'] = $this->Request->request->getInt('category');
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getPage(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getApiPath(), $id)));
     }
 
     private function getArray(): array
@@ -192,7 +213,7 @@ class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads) {
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports) {
                         return $this->Model->readBinary();
                     }
                     throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
@@ -205,7 +226,7 @@ class Apiv2Controller extends AbstractApiController
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,
-            ExportFormat::Zip => (new MakeController($this->Users, $this->Request))->getResponse(),
+            ExportFormat::Zip => (new MakeController($this->requester, $this->Request))->getResponse(),
             default => new JsonResponse($this->getArray()),
         };
     }
@@ -223,83 +244,92 @@ class Apiv2Controller extends AbstractApiController
     private function getModel(): RestInterface
     {
         return match ($this->endpoint) {
-            ApiEndpoint::ApiKeys => new ApiKeys($this->Users, $this->id),
+            ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->id),
+            ApiEndpoint::Import => new ImportHandler($this->requester),
             ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
-            ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->Users, $this->id),
+            ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
             // for a single event, the id is the id of the event
-            ApiEndpoint::Event => new Scheduler(new Items($this->Users), $this->id),
+            ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(
-                new Items($this->Users, $this->id),
+                new Items($this->requester, $this->id),
                 null,
                 $this->Request->query->getString('start', Scheduler::EVENT_START),
                 $this->Request->query->getString('end', Scheduler::EVENT_END),
                 $this->Request->query->getInt('cat'),
             ),
             ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys(
-                $this->Users,
+                $this->requester,
                 trim($this->Request->query->getString('q')),
                 $this->Request->query->getInt('limit'),
             ),
-            ApiEndpoint::FavTags => new FavTags($this->Users, $this->id),
-            ApiEndpoint::TeamTags => new TeamTags($this->Users, $this->id),
-            ApiEndpoint::Teams => new Teams($this->Users, $this->id),
-            ApiEndpoint::Todolist => new Todolist($this->Users->userData['userid'], $this->id),
+            ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            // Temporary informational endpoint, can be removed in 5.2
+            ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
+            ApiEndpoint::Teams => new Teams($this->requester, $this->id),
+            ApiEndpoint::Todolist => new Todolist($this->requester->userData['userid'], $this->id),
             ApiEndpoint::UnfinishedSteps => new UnfinishedSteps(
-                $this->Users,
+                $this->requester,
                 $this->Request->query->get('scope') === 'team',
             ),
-            ApiEndpoint::Users => new Users($this->id, $this->Users->team, $this->Users),
+            ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
         };
     }
 
-    private function getSubModel(string $submodel): RestInterface
+    private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
             $Config = Config::getConfig();
             return match ($submodel) {
-                'comments' => new Comments($this->Model, $this->subId),
-                'experiments_links' => new ExperimentsLinks($this->Model, $this->subId),
-                'items_links' => new ItemsLinks($this->Model, $this->subId),
-                'revisions' => new Revisions(
+                ApiSubModels::Comments => new Comments($this->Model, $this->subId),
+                ApiSubModels::ExperimentsLinks => new ExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::ItemsLinks => new ItemsLinks($this->Model, $this->subId),
+                ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
+                ApiSubModels::Revisions => new Revisions(
                     $this->Model,
                     (int) $Config->configArr['max_revisions'],
                     (int) $Config->configArr['min_delta_revisions'],
                     (int) $Config->configArr['min_days_revisions'],
                     $this->subId
                 ),
-                'steps' => new Steps($this->Model, $this->subId),
-                'tags' => new Tags($this->Model, $this->subId),
-                'uploads' => new Uploads($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for ' . $this->Model->page . ': available models are: comments, experiments_links, items_links, revisions, steps, tags, uploads.'),
+                ApiSubModels::Steps => new Steps($this->Model, $this->subId),
+                ApiSubModels::Tags => new Tags($this->Model, $this->subId),
+                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };
         }
         if ($this->Model instanceof Teams) {
             return match ($submodel) {
-                // backward compatibility: status == experiments_status
-                'status' => new ExperimentsStatus($this->Model, $this->subId),
-                'experiments_status' => new ExperimentsStatus($this->Model, $this->subId),
-                'experiments_categories' => new ExperimentsCategories($this->Model, $this->subId),
-                'items_status' => new ItemsStatus($this->Model, $this->subId),
-                'teamgroups' => new TeamGroups($this->Users, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for teams: available models are: status, teamgroups.'),
+                // backward compatibility: Status == ExperimentsStatus
+                ApiSubModels::Status, ApiSubModels::ExperimentsStatus => new ExperimentsStatus($this->Model, $this->subId),
+                ApiSubModels::ExperimentsCategories => new ExperimentsCategories($this->Model, $this->subId),
+                ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
+                ApiSubModels::ItemsCategories => new ItemsTypes($this->requester, $this->subId),
+                ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
+                ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
+                ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),
             };
         }
         if ($this->Model instanceof Users) {
             return match ($submodel) {
-                'notifications' => new UserNotifications($this->Model, $this->subId),
-                default => throw new ImproperActionException('Incorrect submodel for users: available models are: notifications.'),
+                ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
+                ApiSubModels::RequestActions => new UserRequestActions($this->Model),
+                ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
+                ApiSubModels::Uploads => new UserUploads($this->Model, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Users),
             };
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                'notifications' => new EventDeleted($this->Model->readOne(), $this->Users->userData['fullname']),
-                default => throw new ImproperActionException('Incorrect submodel for event: available models are: notifications.'),
+                ApiSubModels::Notifications => new EventDeleted($this->Model->readOne(), $this->requester->userData['fullname']),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');
@@ -307,13 +337,14 @@ class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
-        if (($this->Model instanceof Config || $this->Model instanceof Idps) && $this->Users->userData['is_sysadmin'] !== 1) {
+        if (($this->Model instanceof Config || $this->Model instanceof Idps) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
-        // allow multipart/form-data for the POST/uploads endpoint only, use str_starts_with because the actual header will also contain the boundary
+        // allow multipart/form-data for the POST/uploads and POST/import endpoints only,
+        // use str_starts_with because the actual header will also contain the boundary
         if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
-            $this->Model instanceof Uploads &&
+            ($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) &&
             $this->Request->getMethod() === Request::METHOD_POST) {
             return;
         }

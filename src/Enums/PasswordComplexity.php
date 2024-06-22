@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -56,9 +59,10 @@ enum PasswordComplexity: int
     {
         $cases = self::cases();
         $values = array_column($cases, 'value');
-        $descriptions = array_map(function ($case) {
-            return $case->toHuman();
-        }, $cases);
+        $descriptions = array_map(
+            fn(self $case): string => $case->toHuman(),
+            $cases
+        );
 
         return array_combine($values, $descriptions);
     }

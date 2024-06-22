@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,11 +8,14 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
 
 /**
@@ -23,9 +27,10 @@ class Team implements AuthInterface
 
     public function __construct(int $userid, int $team)
     {
+        $Users = new Users($userid);
         $this->AuthResponse = new AuthResponse();
         $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->isValidated = true;
+        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
         $this->AuthResponse->selectedTeam = $team;
     }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -21,5 +23,17 @@ class TeamTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);
+    }
+
+    public function testTryAuthInvalidUser(): void
+    {
+        $AuthService = new Team(8, 2);
+
+        $authResponse = $AuthService->tryAuth();
+        $this->assertInstanceOf(AuthResponse::class, $authResponse);
+        $this->assertEquals(8, $authResponse->userid);
+        $this->assertFalse($authResponse->isValidated);
+        $this->assertFalse($authResponse->isAnonymous);
+        $this->assertEquals(2, $authResponse->selectedTeam);
     }
 }

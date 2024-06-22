@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,10 +8,13 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Local;
 use Elabftw\Enums\PasswordComplexity;
+use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -20,18 +24,20 @@ use Elabftw\Models\Changelog;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\RequestActions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Exception;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * User Control Panel
+ * Settings for user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('User Control Panel');
+$App->pageTitle = _('Settings');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -62,6 +68,11 @@ try {
 
     if ($App->Request->query->get('mode') === 'edit') {
         $Templates->canOrExplode('write');
+        // exclusive edit mode
+        $redirectResponse = $Templates->ExclusiveEditMode->gatekeeper();
+        if ($redirectResponse instanceof RedirectResponse) {
+            $redirectResponse->prepare($App->Request)->send();
+        }
     }
 
     // TEAM GROUPS
@@ -128,6 +139,10 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
+        'entityRequestActionsArr' => array_filter(
+            (new RequestActions($App->Users, $Templates))->readAllFull(),
+            fn(array $action): bool => $action['target'] === strtolower(RequestableAction::RemoveExclusiveEditMode->name),
+        ),
     );
 } catch (ImproperActionException $e) {
     // show message to user

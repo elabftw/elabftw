@@ -21,6 +21,7 @@ const t = {
     "not-set": "Nenastavený",
     "nothing-selected": "Nic není vybráno!",
     "now": "Nyní",
+    "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Počkejte prosím…",
     "replace-edited-file": "Chcete nahradit soubor na serveru touto úpravou?",
     "request-filename": "Zadejte název souboru",

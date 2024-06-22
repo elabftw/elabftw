@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Alexander Minges <alexander.minges@gmail.com>
@@ -8,12 +9,16 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
@@ -25,9 +30,13 @@ use PDO;
  */
 abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimestampInterface
 {
-    public function __construct(protected array $configArr, AbstractConcreteEntity $entity, protected ExportFormat $dataFormat)
+    protected AbstractEntity $Entity;
+
+    public function __construct(protected Users $requester, protected array $entitySlugs, protected array $configArr, protected ExportFormat $dataFormat)
     {
-        parent::__construct($entity);
+        parent::__construct();
+        $slug = $this->entitySlugs[0];
+        $this->Entity = $slug->type->toInstance($this->requester, $slug->id);
         $this->checkMonthlyLimit();
     }
 
@@ -59,11 +68,11 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             timestamped = 1,
             timestampedby = :userid,
             timestamped_at = :when
-            WHERE id = :id', $this->Entity->type);
+            WHERE id = :id', $this->Entity->entityType->value);
         $req = $this->Db->prepare($sql);
         // the date recorded in the db will match the creation time of the timestamp token
         $req->bindParam(':when', $responseTime);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -71,7 +80,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
 
     private function generateJson(): string
     {
-        $MakeJson = new MakeFullJson($this->Entity, array($this->Entity->id));
+        $MakeJson = new MakeFullJson($this->requester, $this->entitySlugs);
         return $MakeJson->getFileContent();
     }
 
@@ -87,7 +96,13 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             true, // PDF/A always for timestamp pdf
         );
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        $MakePdf = new MakeTimestampPdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
+        $MakePdf = new MakeTimestampPdf(
+            log: $log,
+            mpdfProvider: $MpdfProvider,
+            requester: $this->Entity->Users,
+            entitySlugs: $this->entitySlugs,
+            includeChangelog: true
+        );
         if ($this->configArr['keeex_enabled'] === '1') {
             $Keeex = new MakeKeeex(new Client());
             return $Keeex->fromString($MakePdf->getFileContent());
@@ -102,7 +117,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         if ($limit === 0) {
             return;
         }
-        if ($this->Entity->getTimestampLastMonth() >= $limit) {
+        if ($this->Entity instanceof AbstractConcreteEntity && $this->Entity->getTimestampLastMonth() >= $limit) {
             throw new ImproperActionException(_('Number of timestamps this past month reached the limit!'));
         }
     }

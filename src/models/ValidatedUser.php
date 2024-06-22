@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -26,9 +29,9 @@ class ValidatedUser extends ExistingUser
         return self::search('orgid', $orgid, true);
     }
 
-    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname): Users
+    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname, ?string $orgid = null): Users
     {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, null, true);
+        return parent::fromScratch($email, $teams, $firstname, $lastname, automaticValidationEnabled: true, orgid: $orgid);
     }
 
     public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup): Users

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
@@ -19,9 +22,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class Field implements Term, Visitable, FieldType
 {
-    public function __construct(private string $field, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null)
-    {
-    }
+    public function __construct(private string $field, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,11 +8,14 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
-use PDO;
 
 /**
  * Find a team from an access_key
@@ -31,19 +35,19 @@ class TeamFinder
     public function findTeam(): int
     {
         return match ($this->page) {
-            '/experiments.php' => $this->searchIn('experiments'),
-            '/database.php' => $this->searchIn('items'),
+            Entrypoint::Experiments->toPage() => $this->searchIn(EntityType::Experiments),
+            Entrypoint::Database->toPage() => $this->searchIn(EntityType::Items),
             default => throw new ImproperActionException('Wrong page!'),
         };
     }
 
-    private function searchIn(string $entity): int
+    private function searchIn(EntityType $entityType): int
     {
-        $sql = 'SELECT users2teams.teams_id FROM ' . $entity . ' AS entity
+        $sql = 'SELECT users2teams.teams_id FROM ' . $entityType->value . ' AS entity
             CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
             WHERE entity.access_key = :ak';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':ak', $this->ak, PDO::PARAM_STR);
+        $req->bindParam(':ak', $this->ak);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

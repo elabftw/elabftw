@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -34,6 +36,12 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.png';
         $this->Entity->Uploads->create(new CreateUpload($fileName, $fixturesFs->getPath() . '/' . $fileName));
+        $this->Entity->Uploads->duplicate($this->Entity);
+    }
+
+    public function testReadFilesizeSum(): void
+    {
+        $this->assertIsInt($this->Entity->Uploads->readFilesizeSum());
     }
 
     // same as above, but this file will fail mime type detection
@@ -102,9 +110,9 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertIsString($this->Entity->Uploads->getPage());
+        $this->assertIsString($this->Entity->Uploads->getApiPath());
     }
 
     public function testEditAnImmutableFile(): void

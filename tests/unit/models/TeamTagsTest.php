@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -27,9 +29,9 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->Tags = new Tags(new Experiments($this->Users, 1));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/team_tags/', $this->TeamTags->getPage());
+        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getApiPath());
     }
 
     public function testCreate(): void
@@ -66,6 +68,8 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDeduplicate(): void
     {
+        // start with a deduplicate action first
+        $this->TeamTags->patch(Action::Deduplicate, array());
         // we can't directly create two of the same, it needs to be edited from one with a typo first
         $this->Tags->postAction(Action::Create, array('tag' => 'duplicated'));
         $this->TeamTags->setId($this->Tags->postAction(Action::Create, array('tag' => 'duplikated')));

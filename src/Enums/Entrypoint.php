@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
@@ -20,8 +23,8 @@ enum Entrypoint: int
     {
         return match ($this) {
             self::Dashboard => 'dashboard.php',
-            self::Experiments => 'experiments.php',
-            self::Database => 'database.php',
+            self::Experiments => EntityType::Experiments->toPage(),
+            self::Database => EntityType::Items->toPage(),
             self::Scheduler => 'team.php',
         };
     }

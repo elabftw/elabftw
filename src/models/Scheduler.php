@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -21,6 +24,8 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
 use PDO;
+
+use function array_walk;
 use function preg_replace;
 use function strlen;
 use function substr;
@@ -32,9 +37,9 @@ class Scheduler implements RestInterface
 {
     use EntityTrait;
 
-    public const EVENT_START = '2012-31-12T00:00:00+00:00';
+    public const string EVENT_START = '2012-31-12T00:00:00+00:00';
 
-    public const EVENT_END = '2037-31-12T00:00:00+00:00';
+    public const string EVENT_END = '2037-31-12T00:00:00+00:00';
 
     private string $start = self::EVENT_START;
 
@@ -57,7 +62,7 @@ class Scheduler implements RestInterface
         }
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation
         return 'api/v2/event/';
@@ -218,12 +223,12 @@ class Scheduler implements RestInterface
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
         $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
         $admins = $TeamsHelper->getAllAdminsUserid();
-        array_map(function ($userid) use ($Notif) {
+        array_walk($admins, function ($userid) use ($Notif) {
             if ($userid === $this->Items->Users->userData['userid']) {
                 return;
             }
             $Notif->create($userid);
-        }, $admins);
+        });
         return $this->Db->execute($req);
     }
 
@@ -375,7 +380,7 @@ class Scheduler implements RestInterface
         $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
         return $this->Db->execute($req);
     }
 
@@ -444,8 +449,8 @@ class Scheduler implements RestInterface
             $sql .= ' AND id != :id';
         }
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':start', $start, PDO::PARAM_STR);
-        $req->bindParam(':end', $end, PDO::PARAM_STR);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         if ($this->id !== null) {
             $req->bindParam(':id', $this->id, PDO::PARAM_INT);

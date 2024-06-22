@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -27,9 +29,9 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->Comments = new Comments($this->Entity);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getPage());
+        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getApiPath());
     }
 
     public function testCreate(): void

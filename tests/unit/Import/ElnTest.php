@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -10,12 +12,14 @@
 namespace Elabftw\Import;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
@@ -42,7 +46,9 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
-            'items:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -62,7 +68,9 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
-            'items:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -82,12 +90,15 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'experiments:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
     }
@@ -104,14 +115,17 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'experiments:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
-        $this->assertEquals(2, $Import->getInserted());
+        $this->assertEquals(9, $Import->getInserted());
     }
 
     public function testImportItems(): void
@@ -126,12 +140,15 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'items:1',
+            EntityType::Items,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
     }
@@ -148,12 +165,15 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'items:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $this->expectException(ImproperActionException::class);
         $Import->import();
     }
@@ -170,7 +190,9 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'items:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
@@ -192,12 +214,15 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
-            'experiments:1',
+            EntityType::Experiments,
+            false,
+            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
             $this->fs,
         );
+        $Import->importAuthorsAsUsers = false;
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());
     }

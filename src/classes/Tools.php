@@ -14,13 +14,11 @@ namespace Elabftw\Elabftw;
 
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function bin2hex;
 use function date;
 use function htmlspecialchars;
 use function implode;
-use function mb_strlen;
 use function pathinfo;
 use function random_bytes;
 use function sha1;
@@ -31,9 +29,6 @@ use function trim;
  */
 class Tools
 {
-    // max size of uploaded file if we cannot find it in ini file
-    private const int DEFAULT_UPLOAD_SIZE = 2;
-
     /**
      * Convert markdown to html
      */
@@ -52,51 +47,6 @@ class Tools
             // so at least the thing is displayed instead of triggering a fatal error
             return $md;
         }
-    }
-
-    /**
-     * Converts the php.ini upload size setting to a numeric value in MB
-     * Returns DEFAULT_UPLOAD_SIZE if no value is found
-     * It also checks for the post_max_size value and returns the lowest value
-     *
-     * @return int maximum size in MB of files allowed for upload
-     */
-    public static function getMaxUploadSize(): int|float
-    {
-        //return UploadedFile::getMaxFilesize();
-        $max_size = trim((string) ini_get('upload_max_filesize'));
-        $post_max_size = trim((string) ini_get('post_max_size'));
-
-        if (empty($max_size) || empty($post_max_size)) {
-            return self::DEFAULT_UPLOAD_SIZE;
-        }
-
-        // assume they both have same unit to compare the values
-        if ((int) $post_max_size > (int) $max_size) {
-            $input = $max_size;
-        } else {
-            $input = $post_max_size;
-        }
-
-        // get unit
-        $unit = strtolower($input[mb_strlen($input) - 1]);
-        $value = (int) $input;
-
-        // convert to Mb
-        switch ($unit) {
-            case 'g':
-                $value *= 1000;
-                break;
-            case 'k':
-                $value /= 1024;
-                break;
-            case 'm':
-                break;
-            default:
-                return self::DEFAULT_UPLOAD_SIZE;
-        }
-
-        return (int) $value;
     }
 
     /**

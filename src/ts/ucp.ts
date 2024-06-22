@@ -28,7 +28,7 @@ import { Uploader } from './uploader';
 
 const ApiC = new Api();
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
     return;
   }

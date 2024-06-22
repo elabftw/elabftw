@@ -185,6 +185,9 @@ class Saml implements AuthInterface
             $Teams->synchronize($userid, $this->getTeamsFromIdpResponse());
         }
 
+        // update orgid with value from IDP
+        $Users->patch(Action::Update, array('orgid' => $orgid));
+
         // load the teams from db
         $UsersHelper = new UsersHelper($this->AuthResponse->userid);
         $this->AuthResponse->setTeams($UsersHelper);

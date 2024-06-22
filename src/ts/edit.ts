@@ -28,22 +28,16 @@ import { Api } from './Apiv2.class';
 import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { Uploader } from './uploader';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('info')) {
-    return;
-  }
-
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-
+document.addEventListener('DOMContentLoaded', async () => {
   // only run in edit mode
-  if (about.page !== 'edit') {
+  if (document.getElementById('info')?.dataset.page !== 'edit') {
     return;
   }
+
+  const ApiC = new Api();
 
   const entity = getEntity();
   const EntityC = new EntityClass(entity.type);
-  const ApiC = new Api();
 
   // Which editor are we using? md or tiny
   const editor = getEditor();

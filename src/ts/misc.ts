@@ -647,3 +647,31 @@ export function getNewIdFromPostRequest(response: Response): number {
   const location = response.headers.get('location').split('/');
   return parseInt(location[location.length -1], 10);
 }
+
+export function sizeToMb(size: string): number {
+  const units: { [key: string]: number } = {
+    'B': 1 / (1024 ** 2),
+    'K': 1 / 1024,
+    'M': 1,
+    'G': 1024,
+    'T': 1024 ** 2,
+    'P': 1024 ** 3,
+    'E': 1024 ** 4,
+  };
+
+  const regex = /^(\d+(?:\.\d+)?)([BKMGTPE]?)$/i;
+  const match = size.match(regex);
+
+  if (!match) {
+    throw new Error('Invalid size format');
+  }
+
+  const value = parseFloat(match[1]);
+  const unit = match[2].toUpperCase();
+
+  if (!units[unit]) {
+    throw new Error('Invalid unit');
+  }
+
+  return value * units[unit];
+}

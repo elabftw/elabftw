@@ -13,11 +13,6 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetMaxUploadSize(): void
-    {
-        $this->assertIsInt(Tools::getMaxUploadSize());
-    }
-
     public function testFormatBytes(): void
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));

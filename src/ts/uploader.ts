@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElements } from './misc';
+import { reloadElements, sizeToMb } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
@@ -15,14 +15,14 @@ export class Uploader
   tinyImageSuccess: (value: string | PromiseLike<string>) => void;
 
   getOptions() {
-    const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
     /* eslint-disable-next-line @typescript-eslint/no-this-alias */
     const that = this;
+    const sizeInMb = sizeToMb(__MAX_UPLOAD_SIZE__);
     return {
       // i18n message to user
-      dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
-      maxFilesize: maxsize,
-      timeout: 900000,
+      dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${sizeInMb} MB`,
+      maxFilesize: sizeInMb,
+      timeout: __MAX_UPLOAD_TIME__,
       init: function(): void {
         // once upload is finished
         this.on('complete', function() {

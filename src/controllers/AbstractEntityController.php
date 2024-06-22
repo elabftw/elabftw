@@ -16,7 +16,6 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
@@ -151,8 +150,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
-            'maxUploadSize' => Tools::getMaxUploadSize(),
-            'maxUploadSizeRaw' => ini_get('post_max_size'),
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
             'requestActionsArr' => $UserRequestActions->readAllFull(),
@@ -220,8 +217,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'hideTitle' => true,
             'teamsArr' => $Teams->readAll(),
-            'maxUploadSize' => Tools::getMaxUploadSize(),
-            'maxUploadSizeRaw' => ini_get('post_max_size'),
             'allTeamgroupsArr' => $this->allTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             ...$this->Entity instanceof AbstractConcreteEntity
@@ -290,8 +285,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'hideTitle' => true,
             'itemsCategoryArr' => $itemsCategoryArr,
             'lastModifierFullname' => $lastModifierFullname,
-            'maxUploadSize' => Tools::getMaxUploadSize(),
-            'maxUploadSizeRaw' => ini_get('post_max_size'),
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'statusArr' => $this->statusArr,

@@ -735,7 +735,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@teselagen/bio-parsers@npm:^0.4.15":
+"@teselagen/bio-parsers@npm:^0.4.18":
   version: 0.4.18
   resolution: "@teselagen/bio-parsers@npm:0.4.18"
   dependencies:
@@ -775,7 +775,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@teselagen/ove@npm:^0.4.10":
+"@teselagen/ove@npm:^0.4.12":
   version: 0.4.12
   resolution: "@teselagen/ove@npm:0.4.12"
   dependencies:
@@ -3047,9 +3047,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^13.8.1":
-  version: 13.11.0
-  resolution: "cypress@npm:13.11.0"
+"cypress@npm:^13.12.0":
+  version: 13.12.0
+  resolution: "cypress@npm:13.12.0"
   dependencies:
     "@cypress/request": "npm:^3.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3095,7 +3095,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/a78eca7c26279928a86110d136a8ffcb339e81a04345eff155b0bc1b58f39bcce669f72f9d4e8303d038daf477525e727be2e1814ae04c100a3700c5f6f922f2
+  checksum: 10c0/a9f74ce07b8d9d8058e4909ac3824d3d8a09af6f92eb4b69bce0892765ceeeac77094976e41a2a31e5138b6e43c2e5f1fb6fb54fbf9fa1bab957b465f5517540
   languageName: node
   linkType: hard
 
@@ -3416,8 +3416,8 @@ __metadata:
     "@fullcalendar/interaction": "npm:^6.1.14"
     "@fullcalendar/list": "npm:^6.1.14"
     "@fullcalendar/timegrid": "npm:^6.1.14"
-    "@teselagen/bio-parsers": "npm:^0.4.15"
-    "@teselagen/ove": "npm:^0.4.10"
+    "@teselagen/bio-parsers": "npm:^0.4.18"
+    "@teselagen/ove": "npm:^0.4.12"
     "@types/bootstrap": "npm:^5.2.10"
     "@types/dropzone": "npm:^5.7.8"
     "@types/fancybox": "npm:^3.5.7"
@@ -3434,15 +3434,15 @@ __metadata:
     bootstrap-markdown-fa5: "npm:^2.10.2"
     css-loader: "npm:^6.11.0"
     css-minimizer-webpack-plugin: "npm:^5.0.1"
-    cypress: "npm:^13.8.1"
+    cypress: "npm:^13.12.0"
     cypress-html-validate: "npm:^6.1.0"
     diff-match-patch: "npm:^1.0.5"
     eslint: "npm:^8.57.0"
     expose-loader: "npm:^4.1.0"
-    html-validate: "npm:^8.18.2"
-    i18next: "npm:^23.11.2"
+    html-validate: "npm:^8.20.1"
+    i18next: "npm:^23.11.5"
     jquery: "npm:^3.7.1"
-    jquery-ui: "npm:^1.13.2"
+    jquery-ui: "npm:^1.13.3"
     jsoneditor: "npm:^9.10.5"
     luxon: "npm:^3.4.4"
     marked: "npm:^11.2.0"
@@ -3454,12 +3454,12 @@ __metadata:
     postcss: "npm:^8.4.38"
     postcss-scss: "npm:^4.0.9"
     prismjs: "npm:^1.29.0"
-    sass: "npm:^1.75.0"
+    sass: "npm:^1.77.6"
     sass-loader: "npm:^13.3.3"
     stylelint: "npm:^15.11.0"
     stylelint-config-sass-guidelines: "npm:^10.0.0"
     terser-webpack-plugin: "npm:^5.3.10"
-    tinymce: "npm:^6.8.3"
+    tinymce: "npm:^6.8.4"
     tom-select: "npm:^2.3.1"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:5.2.2"
@@ -4532,9 +4532,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:^8.18.2":
-  version: 8.20.0
-  resolution: "html-validate@npm:8.20.0"
+"html-validate@npm:^8.20.1":
+  version: 8.20.1
+  resolution: "html-validate@npm:8.20.1"
   dependencies:
     "@babel/code-frame": "npm:^7.10.0"
     "@html-validate/stylish": "npm:^4.1.0"
@@ -4563,7 +4563,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.js
-  checksum: 10c0/fd495c2610c50a7df36745efd05e8e387d196b57afc599cad2ff5569d8ed9cbade2e81b8aa5565add9c1ebe33712dc2d1581cb6f2e56dfad08a1ea6a2e160123
+  checksum: 10c0/2a53b6854ab4348d16d4d7ea89ca0df48130f6a393ae198f17a3498e0df4512a8b08cbe23da7ef3c70ddfc300d6a921d2482b25ea5b199419ffd3eea351ad83d
   languageName: node
   linkType: hard
 
@@ -4632,7 +4632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^23.11.2":
+"i18next@npm:^23.11.5":
   version: 23.11.5
   resolution: "i18next@npm:23.11.5"
   dependencies:
@@ -5119,7 +5119,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-ui@npm:^1.13.2":
+"jquery-ui@npm:^1.13.3":
   version: 1.13.3
   resolution: "jquery-ui@npm:1.13.3"
   dependencies:
@@ -8358,16 +8358,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.75.0":
-  version: 1.77.4
-  resolution: "sass@npm:1.77.4"
+"sass@npm:^1.77.6":
+  version: 1.77.6
+  resolution: "sass@npm:1.77.6"
   dependencies:
     chokidar: "npm:>=3.0.0 <4.0.0"
     immutable: "npm:^4.0.0"
     source-map-js: "npm:>=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 10c0/b9cb4882bded282aabe38d011adfce375e1f282184fcf93dc3da5d5be834c6aa53c474c15634c351ef7bd85146cfd1cc81343654cc3bcf000d78e856da4225ef
+  checksum: 10c0/fe5a393c0aa29eda9f83c06be9b94788b61fe8bad0616ee6e3a25d21ab504f430d40c0064fdca89b02b8e426411ae6dcd906c91f2e48c263575c3d392b6daeb1
   languageName: node
   linkType: hard
 
@@ -9198,10 +9198,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^6.8.3":
-  version: 6.8.3
-  resolution: "tinymce@npm:6.8.3"
-  checksum: 10c0/92c1e70e9ed00efae66853f38e18e6720c27535a7617181971ed846a6e659da53ef2bf6e0871ea5e9f529eaed73fe8f2cbcf24f43ead336ef3d5100adb8e0b6a
+"tinymce@npm:^6.8.4":
+  version: 6.8.4
+  resolution: "tinymce@npm:6.8.4"
+  checksum: 10c0/8d35cfe1b5869606e3336df40725030214e7bbb420a6005b8931655f55ddd8ed6e01a75b22b96ce76ffbdd9c7fec1b7a2514877ff4f605427dbea7bf2daf21e4
   languageName: node
   linkType: hard
 

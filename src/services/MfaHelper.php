@@ -47,11 +47,11 @@ class MfaHelper
     public function __construct(public int $userid, public ?string $secret = null)
     {
         $this->TwoFactorAuth = new TwoFactorAuth(
+            new MpdfQrProvider(),
             self::ISSUER,
             self::DIGITS,
             self::PERIOD,
             Algorithm::Sha1,
-            new MpdfQrProvider(),
         );
         $this->Db = Db::getConnection();
     }

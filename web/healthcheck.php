@@ -27,7 +27,7 @@ $status = 500;
 try {
     $Db = Db::getConnection();
     $req = $Db->prepare('SELECT 12');
-    if ($req->execute() === true) {
+    if ($req->execute()) {
         $out = 'ok';
         $status = 200;
     }

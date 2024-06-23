@@ -47,7 +47,7 @@ $Response->setData(array(
 try {
     // decode JSON payload
     try {
-        $reqBody = json_decode((string) $App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
+        $reqBody = json_decode($App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
     } catch (JsonException) {
         throw new ImproperActionException('Error decoding JSON payload');
     }

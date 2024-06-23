@@ -123,8 +123,11 @@ class Saml implements AuthInterface
     public function tryAuth(): AuthResponse
     {
         $returnUrl = $this->settings['baseurl'] . '/index.php?acs';
+        // adding stay: true to login() will make psalm/phpstan happy but breaks saml auth
         $this->SamlAuthLib->login($returnUrl);
-        return $this->AuthResponse;
+        // ^-- this will run exit()
+        /** @psalm-suppress UnevaluatedCode */
+        return $this->AuthResponse; // @phpstan-ignore-line
     }
 
     public function assertIdpResponse(): AuthResponse

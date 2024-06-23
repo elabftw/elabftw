@@ -37,6 +37,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
         $csv->insertOne($this->getHeader());
 
         // insert all the records
+        /** @psalm-suppress PossiblyInvalidArgument */
         $csv->insertAll($this->getRows());
 
         // add UTF8 BOM

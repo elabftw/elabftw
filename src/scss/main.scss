@@ -813,8 +813,7 @@ tr:nth-child(odd) {
 
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
-    background-color: $elabblue;
-    color: $white;
+    border: 1px solid $elabblue;
 }
 
 .item-next {

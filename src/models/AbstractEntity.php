@@ -79,6 +79,8 @@ abstract class AbstractEntity implements RestInterface
 
     public EntityType $entityType;
 
+    public bool $alwaysShowOwned = false;
+
     // use that to ignore the canOrExplode calls
     public bool $bypassWritePermission = false;
 
@@ -244,6 +246,10 @@ abstract class AbstractEntity implements RestInterface
 
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
+
+        if ($this->alwaysShowOwned) {
+            $sql .= ' OR entity.userid = :userid';
+        }
 
         $sqlArr = array(
             $this->extendedFilter,
@@ -416,14 +422,6 @@ abstract class AbstractEntity implements RestInterface
             substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
             Tools::getShortElabid($this->entityData['elabid'] ?? ''),
         );
-    }
-
-    /**
-     * Add an arbitrary filter to the query, externally, not through DisplayParams
-     */
-    public function addFilter(string $column, string|int $value): void
-    {
-        $this->filterSql .= sprintf(" AND %s = '%s'", $column, (string) $value);
     }
 
     /**

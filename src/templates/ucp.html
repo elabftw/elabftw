@@ -275,6 +275,15 @@
         </button>
       </div>
     </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='always_show_owned' class='col-form-label'>{{ 'Always display your own entries, regardless of the current team'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='always_show_owned' {{ App.Users.userData.always_show_owned == 1 ? 'checked="checked"' }} id='always_show_owned'>
+        <span class='slider'></span>
+      </label>
+    </div>
   </div>
 
 </div>

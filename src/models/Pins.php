@@ -66,6 +66,7 @@ class Pins
         $this->Db->execute($req);
 
         $entity = clone $this->Entity;
+        $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
         return $entity->readAll();
     }
@@ -82,6 +83,7 @@ class Pins
         $this->Db->execute($req);
 
         $entity = clone $this->Entity;
+        $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'entity_id'));
         return $entity->readAll();
     }

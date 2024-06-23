@@ -113,6 +113,11 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->isAnon = true;
         }
 
+        // must be before the call to getItemsArr
+        if ($this->App->Users->userData['always_show_owned'] === 1) {
+            $this->Entity->alwaysShowOwned = true;
+        }
+
         $itemsArr = $this->getItemsArr();
         // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {

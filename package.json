@@ -46,7 +46,7 @@
     "tom-select": "^2.3.1",
     "ts-loader": "^9.5.1",
     "typescript": "5.2.2",
-    "webpack": "^5.91.0",
+    "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4"
   },
   "devDependencies": {

@@ -12,13 +12,14 @@ import {
   reloadElements,
   TomSelect,
   updateCatStat,
+  notifNothingSelected,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
 import { MdEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
-import { EntityType, Model, Action } from './interfaces';
+import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
@@ -37,6 +38,27 @@ document.addEventListener('DOMContentLoaded', () => {
   tinymce.init(getTinymceBaseConfig('admin'));
   // and for md
   (new MdEditor()).init();
+
+  function collectSelectable(name: string) {
+    const collected = [];
+    document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
+      const box = input as HTMLInputElement;
+      if (box.checked) {
+        collected.push(parseInt((input as HTMLInputElement).value, 10));
+      }
+    });
+    return collected;
+  }
+  function getSelected(): Selected {
+    return {
+      items_types: collectSelectable('items_types'),
+      items_status: collectSelectable('items_status'),
+      experiments_status: collectSelectable('experiments_status'),
+      experiments_categories: collectSelectable('experiments_categories'),
+      tags: collectSelectable('tags'),
+      users: collectSelectable('users'),
+    };
+  }
 
   // edit the team group name
   const malleableGroupname = new Malle({
@@ -106,6 +128,35 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = `${window.location.href}&templateid=${newId}#itemsCategoriesAnchor`;
         });
       }
+    // RUN ACTION ON SELECTED (BATCH)
+    } else if (el.matches('[data-action="run-action-selected"]')) {
+      const btn = el as HTMLButtonElement;
+      btn.disabled = true;
+      const selected = getSelected();
+      if (!Object.values(selected).some(array => array.length > 0)) {
+        notifNothingSelected();
+        return;
+      }
+      selected['action'] = btn.dataset.what;
+      // we use a custom notif message, so disable the native one
+      ApiC.notifOnSaved = false;
+      ApiC.post('batch', selected).then(res => {
+        const processed = res.headers.get('location').split('/').pop();
+        notif({res: true, msg: `${processed} entries processed`});
+      }).finally(() => {
+        btn.disabled = false;
+      });
+    } else if (el.matches('[data-action="update-counter-value"]')) {
+      const counterValue = el.parentElement.parentElement.parentElement.previousElementSibling.querySelector('.counterValue');
+      const box = el as HTMLInputElement;
+      let count = parseInt(counterValue.textContent, 10);
+      if (box.checked) {
+        count += 1;
+      } else {
+        count -= 1;
+      }
+      counterValue.textContent = String(count);
+
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));

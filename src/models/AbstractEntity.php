@@ -148,42 +148,47 @@ abstract class AbstractEntity implements RestInterface
         return $this->Db->execute($req);
     }
 
+    public function lock(): array
+    {
+        $this->checkToggleLockPermissions();
+        return $this->toggleLock(1);
+    }
+
+    public function unlock(): array
+    {
+        $this->checkToggleLockPermissions();
+        return $this->toggleLock(0);
+    }
+
     /**
      * Lock/unlock
      */
-    public function toggleLock(): array
+    public function toggleLock(?int $targetLockState = null): array
     {
-        $this->getPermissions();
-        if (!$this->Users->isAdmin && $this->entityData['userid'] !== $this->Users->userData['userid']) {
-            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
+        $this->checkToggleLockPermissions();
+        $currentLockState = $this->entityData['locked'];
+        if ($targetLockState !== null) {
+            $currentLockState = $targetLockState === 1 ? 0 : 1;
+        } else {
+            $targetLockState = $currentLockState === 1 ? 0 : 1;
         }
-        $locked = $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && !$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
-            // Get the first name of the locker to show in error message
-            $sql = 'SELECT firstname FROM users WHERE userid = :userid';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $firstname = $req->fetchColumn();
-            if (is_bool($firstname) || $firstname === null) {
-                throw new ImproperActionException('Could not find the firstname of the locker!');
-            }
-            throw new ImproperActionException(
-                sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)
-            );
+        if ($currentLockState === 1) {
+            $this->checkUnlockPermissions();
         }
 
-        $sql = 'UPDATE ' . $this->entityType->value . ' SET locked = IF(locked = 1, 0, 1), lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
+        $targetLockedBy = $targetLockState === 1 ? $this->Users->userData['userid'] : null;
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET locked = :locked, lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':lockedby', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':locked', $targetLockState, PDO::PARAM_INT);
+        $req->bindParam(':lockedby', $targetLockedBy, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // record this action in the changelog
         $Changelog = new Changelog($this);
-        $Changelog->create(new ContentParams('locked', $locked === 1 ? 'Unlocked' : 'Locked'));
+        $Changelog->create(new ContentParams('locked', $currentLockState === 1 ? 'Unlocked' : 'Locked'));
 
         // clear any request action - skip for templates
         if ($this instanceof AbstractConcreteEntity) {
@@ -332,7 +337,10 @@ abstract class AbstractEntity implements RestInterface
                     $RequestActions->remove(RequestableAction::Archive);
                 }
             )(),
+            Action::Destroy => $this->destroy(),
             Action::Lock => $this->toggleLock(),
+            Action::ForceLock => $this->lock(),
+            Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
             Action::UpdateMetadataField => (
                 function () use ($params) {
@@ -508,6 +516,32 @@ abstract class AbstractEntity implements RestInterface
             $this->Db->execute($req);
         }
         return $this->readOne();
+    }
+
+    protected function checkToggleLockPermissions(): void
+    {
+        $this->getPermissions();
+        if (!$this->Users->isAdmin && $this->entityData['userid'] !== $this->Users->userData['userid']) {
+            throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
+        }
+    }
+
+    protected function checkUnlockPermissions(): void
+    {
+        if (!$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+            // Get the first name of the locker to show in error message
+            $sql = 'SELECT firstname FROM users WHERE userid = :userid';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':userid', $this->entityData['lockedby'], PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $firstname = $req->fetchColumn();
+            if (is_bool($firstname) || $firstname === null) {
+                throw new ImproperActionException('Could not find the firstname of the locker!');
+            }
+            throw new ImproperActionException(
+                sprintf(_("This experiment was locked by %s. You don't have the rights to unlock this."), $firstname)
+            );
+        }
     }
 
     /**

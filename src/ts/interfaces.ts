@@ -42,6 +42,15 @@ interface CheckableItem {
   randomid: number;
 }
 
+interface Selected {
+  experiments_categories: number[];
+  experiments_status: number[];
+  items_status: number[];
+  items_types: number[];
+  tags: number[];
+  users: number[];
+}
+
 enum Method {
   GET = 'GET',
   POST = 'POST',
@@ -156,6 +165,7 @@ export {
   Action,
   Categories,
   CheckableItem,
+  Selected,
   Entity,
   EntityType,
   Method,

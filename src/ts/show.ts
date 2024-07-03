@@ -10,6 +10,7 @@ import {
   collectForm,
   getCheckedBoxes,
   getEntity,
+  notifNothingSelected,
   notif,
   permissionsToJson,
   reloadElements,
@@ -38,12 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
-
-  // THE CHECKBOXES
-  const nothingSelectedError = {
-    msg: i18next.t('nothing-selected'),
-    res: false,
-  };
 
   // background color for selected entities
   const bgColor = '#c4f9ff';
@@ -83,16 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
   /////////////////////////////////////////
   document.getElementById('container').addEventListener('change', event => {
     const el = (event.target as HTMLSelectElement);
+    // reset selection so button can be used again with same format
+    el.selectedIndex = 0;
     // EXPORT SELECTED
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       const format = el.value;
-      // reset selection so button can be used again with same format
-      el.selectedIndex = 0;
       window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
     }
   });
@@ -182,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       const ajaxs = [];
@@ -350,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
 
@@ -369,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       // loop on it and timestamp it
@@ -382,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
 
@@ -401,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       // ask for confirmation

@@ -189,13 +189,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
     {
         $entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
         return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
-            'dgn' => new MakeDgnTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'dfn' => new MakeDfnTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
+            'dgn' => new MakeDgnTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $config, $entitySlugs, $dataFormat) : new MakeUniversignTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
-            'digicert' => new MakeDigicertTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
-            'sectigo' => new MakeSectigoTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
-            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
-            'custom' => new MakeCustomTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'digicert' => new MakeDigicertTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
+            'sectigo' => new MakeSectigoTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
+            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
+            'custom' => new MakeCustomTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
     }

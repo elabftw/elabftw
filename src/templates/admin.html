@@ -26,6 +26,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Batch actions'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -619,6 +620,126 @@
       </table>
     </div>
   </div>
+</div>
+
+{# TAB 8 BATCH ACTIONS #}
+<div data-tabcontent='8' id='batchActions' hidden>
+  <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
+  <hr>
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+  {% for itemsCategory in itemsCategoryArr %}
+    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='col-form-label clickable'>{{ itemsCategory.title }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' name='items_types' value='{{ itemsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTypes-{{ itemsCategory.id }}'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  {% endfor %}
+    </div>
+    <hr>
+
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+  {% for status in itemsStatusArr %}
+    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <label for='batch-itemsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' name='items_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsStatus-{{ status.id }}'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  {% endfor %}
+    </div>
+
+  <hr>
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+  {% for experimentsCategory in experimentsCategoriesArr %}
+    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' name='experiments_categories' value='{{ experimentsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsCategories-{{ experimentsCategory.id }}'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  {% endfor %}
+    </div>
+    <hr>
+
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+  {% for status in statusArr %}
+    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <label for='batch-experimentsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' name='experiments_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsStatus-{{ status.id }}'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  {% endfor %}
+    </div>
+
+  <hr>
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+    {% for tag in tagsArr %}
+      <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+        <label for='batch-tags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
+        <label class='switch ucp-align'>
+          <input type='checkbox' name='tags' value='{{ tag.id }}' autocomplete='off' data-action='update-counter-value' id='batch-tags-{{ tag.id }}'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+  <hr>
+
+  <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Owner'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2'>
+    {% for user in allTeamUsersArr %}
+      <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+        <label for='batch-users-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
+        <label class='switch ucp-align'>
+          <input type='checkbox' name='users' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-users-{{ user.userid }}'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+  <hr>
+  </section>
+
+  <div class='row mx-0 mt-3'><p>{{ 'With selected:'|trans }}</p></div>
+        {# First line #}
+        <div class='row mx-0 form-inline mb-3'>
+          {# Action buttons #}
+          <button data-action='run-action-selected' data-what='forceLock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          <button data-action='run-action-selected' data-what='forceUnlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
+          <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
+          <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+        </div>
+
+        <form id='multiChangesForm' class='row mx-0 form-inline'>
+          {# CANREAD #}
+          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+          </select>
+          {# CANWRITE #}
+          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
+            <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
+            {% for key, value in visibilityArr %}
+              <option value='{{ key }}'>{{ value }}</option>
+            {% endfor %}
+          </select>
+          {# SAVE AND RESET BUTTONS #}
+          <button data-action='save-multi-changes' type='submit' class='btn btn-primary mr-1 mb-2'>{{ 'Save'|trans }}</button>
+          <button data-action='clear-form' data-target='multiChangesForm' type='button' class='btn btn-ghost mb-2'>{{ 'Reset'|trans }}</button>
+        </form>
 </div>
 
 <div id='info' data-page='template-edit' data-type='items_types' data-id='{{ App.Request.query.get('templateid') }}'></div>

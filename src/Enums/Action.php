@@ -36,6 +36,8 @@ enum Action: string
     case Replace = 'replace';
     case Sign = 'sign';
     case SendOnboardingEmails = 'sendonboardingemails';
+    case SetCanread = 'setcanread';
+    case SetCanwrite = 'setcanwrite';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';

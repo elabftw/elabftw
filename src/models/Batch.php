@@ -34,19 +34,19 @@ class Batch implements RestInterface
         $action = Action::from($reqBody['action']);
         if ($reqBody['items_types']) {
             $model = new Items($this->requester);
-            $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action);
+            $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody);
         }
         if ($reqBody['items_status']) {
             $model = new Items($this->requester);
-            $this->processEntities($reqBody['items_status'], $model, FilterableColumn::Status, $action);
+            $this->processEntities($reqBody['items_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
         if ($reqBody['experiments_categories']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['experiments_categories'], $model, FilterableColumn::Category, $action);
+            $this->processEntities($reqBody['experiments_categories'], $model, FilterableColumn::Category, $action, $reqBody);
         }
         if ($reqBody['experiments_status']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action);
+            $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
         if ($reqBody['tags']) {
             $model = new Experiments($this->requester);
@@ -55,7 +55,7 @@ class Batch implements RestInterface
             foreach($targetIds as $id) {
                 try {
                     $model->setId($id);
-                    $model->patch($action, array());
+                    $model->patch($action, $reqBody);
                     $this->processed++;
                 } catch (IllegalActionException) {
                     continue;
@@ -65,7 +65,7 @@ class Batch implements RestInterface
         if ($reqBody['users']) {
             // only process experiments
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action);
+            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
         }
         return $this->processed;
     }
@@ -95,7 +95,7 @@ class Batch implements RestInterface
         throw new ImproperActionException('No DELETE action for batch.');
     }
 
-    private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action): void
+    private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
     {
         foreach ($idArr as $id) {
             $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
@@ -105,7 +105,7 @@ class Batch implements RestInterface
             foreach($entries as $entry) {
                 try {
                     $model->setId($entry['id']);
-                    $model->patch($action, array());
+                    $model->patch($action, $params);
                     $this->processed++;
                 } catch (IllegalActionException) {
                     continue;

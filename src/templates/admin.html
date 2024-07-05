@@ -712,34 +712,61 @@
   </section>
 
   <div class='row mx-0 mt-3'><p>{{ 'With selected:'|trans }}</p></div>
-        {# First line #}
-        <div class='row mx-0 form-inline mb-3'>
-          {# Action buttons #}
-          <button data-action='run-action-selected' data-what='forceLock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='run-action-selected' data-what='forceUnlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
-          <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
-          <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-        </div>
+  {# First line #}
+  <div class='row mx-0 mb-3'>
+    {# Action buttons #}
+    <button data-action='run-action-selected' data-what='forceLock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+    <button data-action='run-action-selected' data-what='forceUnlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
+    <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
+    <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+  </div>
 
-        <form id='multiChangesForm' class='row mx-0 form-inline'>
-          {# CANREAD #}
-          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
-          </select>
-          {# CANWRITE #}
-          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
-          </select>
-          {# SAVE AND RESET BUTTONS #}
-          <button data-action='save-multi-changes' type='submit' class='btn btn-primary mr-1 mb-2'>{{ 'Save'|trans }}</button>
-          <button data-action='clear-form' data-target='multiChangesForm' type='button' class='btn btn-ghost mb-2'>{{ 'Reset'|trans }}</button>
-        </form>
+  <h4>{{ 'Set permissions'|trans }}</h4>
+  <div class='row'>
+    <div class='col-md-6 mb-3'>
+      <label for='masscan_select_base'>{{ 'Base'|trans }}</label>
+      <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below.'|trans }}</p>
+      <select id='masscan_select_base' class='form-control'>
+        {% for key, value in visibilityArr %}
+          <option value='{{ key }}'>{{ value|trans }}</option>
+        {% endfor %}
+      </select>
+      {# TEAMS #}
+      <label for='masscan_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+      <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
+      <select id='masscan_select_teams' multiple class='form-control' autocomplete='off'>
+        {% for team in teamsArr|filter(t => t.visible == '1') %}
+          <option value='team:{{ team.id }}'>{{ 'Team'|trans }} - {{ team.name }}</option>
+        {% endfor %}
+      </select>
+      {# TEAMGROUPS #}
+      <label for='masscan_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+      <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
+      <select {{ allTeamgroupsArr|length == 0 ? 'disabled' }} id='masscan_select_teamgroups' multiple class='form-control' autocomplete='off'>
+        {% for tg in allTeamgroupsArr %}
+          <option value='teamgroup:{{ tg.id }}'>{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>
+        {% endfor %}
+      </select>
+      {# USERS #}
+      <label for='masscan_select_users' class='mt-2'>+ {{ 'Users'|trans }}</label> <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
+      <ul class='list-group mb-1' id='masscan_list_users'></ul>
+      {# add user to permissions input #}
+      <div class='input-group'>
+        <input id='masscan_select_users' type='text' data-identifier='masscan' data-complete-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+        <div class='input-group-append'>
+          <button class='btn btn-primary' type='button' data-rw='canread' data-identifier='masscan' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
+        </div>
+      </div>
+      <div id='autocompleteAnchorDiv_masscan'></div>
+
+      <hr>
+      {# SAVE AND RESET BUTTONS #}
+      <div class='mt-3'>
+        <button data-action='run-action-selected' type='button' data-what='setcanread' class='btn btn-primary mr-1 mb-2'>{{ 'Set read permissions'|trans }}</button>
+        <button data-action='run-action-selected' type='button' data-what='setcanwrite' class='btn btn-primary mr-1 mb-2'>{{ 'Set write permissions'|trans }}</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id='info' data-page='template-edit' data-type='items_types' data-id='{{ App.Request.query.get('templateid') }}'></div>

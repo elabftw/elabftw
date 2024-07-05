@@ -13,6 +13,7 @@ import {
   TomSelect,
   updateCatStat,
   notifNothingSelected,
+  permissionsToJson,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -49,6 +50,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     return collected;
   }
+
+  function collectCan(): string {
+    // Warning: copy pasta from common.ts save-permissions action
+    // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+    const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
+      .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
+    return permissionsToJson(
+      parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
+      Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
+        .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
+        .concat(existingUsers),
+    );
+
+  }
   function getSelected(): Selected {
     return {
       items_types: collectSelectable('items_types'),
@@ -57,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
       experiments_categories: collectSelectable('experiments_categories'),
       tags: collectSelectable('tags'),
       users: collectSelectable('users'),
+      can: collectCan(),
     };
   }
 

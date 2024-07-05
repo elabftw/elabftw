@@ -49,6 +49,7 @@ interface Selected {
   items_types: number[];
   tags: number[];
   users: number[];
+  can: string;
 }
 
 enum Method {

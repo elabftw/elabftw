@@ -342,6 +342,8 @@ abstract class AbstractEntity implements RestInterface
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
+            Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {

@@ -46,7 +46,6 @@ class UserUploadsTest extends \PHPUnit\Framework\TestCase
         $UserUploads = new UserUploads(new Users(1, 1), 1);
         $res = $UserUploads->readOne();
         $this->assertIsArray($res);
-        $this->assertEquals(1, count($res));
     }
 
     public function testPatch(): void

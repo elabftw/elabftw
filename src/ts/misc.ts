@@ -273,6 +273,14 @@ export function makeSortableGreatAgain(): void {
   });
 }
 
+export function notifNothingSelected(): void {
+  notif({
+    msg: i18next.t('nothing-selected'),
+    res: false,
+  });
+}
+
+
 export function getCheckedBoxes(): Array<CheckableItem> {
   const checkedBoxes = [];
   $('.entity input[type=checkbox]:checked').each(function() {

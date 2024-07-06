@@ -22,9 +22,12 @@ enum Action: string
     case CreateFromString = 'createfromstring';
     case CreateSigkeys = 'createsigkeys';
     case Deduplicate = 'deduplicate';
+    case Destroy = 'destroy';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
     case ExclusiveEditMode = 'exclusiveeditmode';
+    case ForceLock = 'forceLock';
+    case ForceUnlock = 'forceUnlock';
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';
@@ -33,6 +36,8 @@ enum Action: string
     case Replace = 'replace';
     case Sign = 'sign';
     case SendOnboardingEmails = 'sendonboardingemails';
+    case SetCanread = 'setcanread';
+    case SetCanwrite = 'setcanwrite';
     case Timestamp = 'timestamp';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';

@@ -27,6 +27,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
@@ -245,6 +246,7 @@ class Apiv2Controller extends AbstractApiController
     {
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
+            ApiEndpoint::Batch => new Batch($this->requester),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester),

@@ -17,14 +17,12 @@ use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
+use Elabftw\Models\Tags2Entity;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Override;
-use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
-use function array_map;
-use function implode;
 use function sprintf;
 use function trim;
 
@@ -106,26 +104,8 @@ class DisplayParams extends BaseQueryParams
         if (!empty(($this->Request->query->all('tags'))[0])) {
             // get all the ids with that tag
             $tags = $this->Request->query->all('tags');
-            // look for item ids that have all the tags not only one of them
-            // the HAVING COUNT is necessary to make an AND search between tags
-            // Note: we cannot use a placeholder for the IN of the tags because we need the quotes
-            $Db = Db::getConnection();
-            $inPlaceholders = implode(', ', array_map(
-                fn($key): string => ":tag$key",
-                array_keys($tags),
-            ));
-            $sql = 'SELECT tags2entity.item_id FROM `tags2entity`
-                INNER JOIN (SELECT id FROM tags WHERE tags.tag IN ( ' . $inPlaceholders . ' )) tg ON tags2entity.tag_id = tg.id
-                WHERE tags2entity.item_type = :type GROUP BY item_id HAVING COUNT(DISTINCT tags2entity.tag_id) = :count';
-            $req = $Db->prepare($sql);
-            // bind the tags in IN clause
-            foreach ($tags as $key => $tag) {
-                $req->bindValue(":tag$key", $tag);
-            }
-            $req->bindValue(':type', $this->entityType->value);
-            $req->bindValue(':count', count($tags), PDO::PARAM_INT);
-            $req->execute();
-            $this->filterSql = Tools::getIdFilterSql($req->fetchAll(PDO::FETCH_COLUMN));
+            $Tags2Entity = new Tags2Entity($this->entityType);
+            $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags));
         }
 
         // RELATED FILTER

@@ -60,6 +60,7 @@ class Teams implements RestInterface
      */
     public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
     {
+        $Config = Config::getConfig();
         $res = array();
         $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
         $req = $this->Db->prepare($sql);
@@ -67,7 +68,7 @@ class Teams implements RestInterface
             $req->bindParam(':query', $query);
             $this->Db->execute($req);
             $team = $req->fetch();
-            if ($team === false) {
+            if ($team === false && $Config->configArr['saml_team_create']) {
                 $id = $this->createTeamIfAllowed($query);
                 $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id))[0];
             }

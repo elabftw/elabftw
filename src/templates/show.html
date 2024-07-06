@@ -150,10 +150,9 @@
         id='tagFilter'
         multiple
         name='tags[]'
-        class='form-control mr-1 mb-2 '
+        class='form-control mr-1 mb-2'
         placeholder='{{ 'Tags'|trans }}'
       >
-        <option value='' disabled >{{ 'Tags'|trans }}</option>
         {% for tag in tagsArrForSelect %}
           <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
         {% endfor %}

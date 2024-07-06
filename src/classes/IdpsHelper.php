@@ -118,6 +118,12 @@ class IdpsHelper
                             'friendlyName' => 'sn',
                         ),
                         array(
+                            'name' => $idp['team_attr'] ?? 'urn:oid:1.3.6.1.4.1.5923.1.1.1.7',
+                            'isRequired' => false,
+                            'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                            'friendlyName' => 'team',
+                        ),
+                        array(
                             'name' => $idp['orgid_attr'] ?? 'urn:oid:0.9.2342.19200300.100.1.1',
                             'isRequired' => false,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',

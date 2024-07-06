@@ -78,8 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /////////////////////////////////////////
   document.getElementById('container').addEventListener('change', event => {
     const el = (event.target as HTMLSelectElement);
-    // reset selection so button can be used again with same format
-    el.selectedIndex = 0;
     // EXPORT SELECTED
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
@@ -88,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const format = el.value;
+      // reset selection so button can be used again with same format
+      el.selectedIndex = 0;
       window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
     }
   });

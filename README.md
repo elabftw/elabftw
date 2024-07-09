@@ -129,6 +129,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 These projects were created by users of eLabFTW, check them out if interested!
 
+* [elAPI](https://github.com/uhd-urz/elAPI/): a powerful, extensible API client for eLabFTW developed at the University Computing Centre of University of Heidelberg
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects
 * [shabihsherjeel/nionswift_elabftw_plugin](https://github.com/shabihsherjeel/nionswift_elabftw_plugin): python plugin for [Nionswift](https://github.com/nion-software/nionswift)
 * [iam-cms/elabapy-cli](https://gitlab.com/iam-cms/workflows/extra-nodes/elabapy-cli): command line interface for eLabFTW API

@@ -400,6 +400,7 @@
     <div class='input-group'>
       <input type='password' class='form-control' autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
       <div class='input-group-append'>
+        <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='sigPassphraseInput' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
         <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>
       </div>
     </div>

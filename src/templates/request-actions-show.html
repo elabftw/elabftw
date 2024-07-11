@@ -13,7 +13,7 @@
             {% elseif action.entity_page == 'admin.php?tab=4' %}
               {% set url = '/%s%s&templateid=%d#itemsCategoriesAnchor' %}
             {% endif %}
-            <a href='{{ url|format(action.entity_page, action.mode, action.entity_id) }}'>{{ action.entity_title }}</a>
+            <a href='{{ url|format(action.entity_page, 'view', action.entity_id) }}'>{{ action.entity_title }}</a>
             <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-1'></span>
           </div>
         </div>

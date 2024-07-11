@@ -165,10 +165,11 @@ class Eln extends AbstractZip
                 $Author = ExistingUser::fromEmail($author['email'] ?? 'nope');
                 $Author->team = $this->requester->team;
             } catch (ResourceNotFoundException) {
-                $Users = new Users();
+                $Users = new Users(requester: $this->requester);
                 try {
                     $Author = $Users->createFromPerson($author, $this->requester->team ?? 0);
                 } catch (ImproperActionException) {
+                    // Author will be the requester
                 }
             }
         }

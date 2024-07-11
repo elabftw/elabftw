@@ -497,6 +497,10 @@ class Users implements RestInterface
     // create a user from the information provided in a node of type Person (.eln)
     public function createFromPerson(array $person, int $team): self
     {
+        $TeamsHelper = new TeamsHelper($team);
+        if (!$TeamsHelper->isAdminInTeam($this->requester->userid ?? 0)) {
+            throw new ImproperActionException('Trying to create a user from an Author node but user is not Admin');
+        }
         $userid = $this->createOne(
             $person['email'] ?? throw new ImproperActionException('Could not find an email to create the user!'),
             array($team),

@@ -48,7 +48,9 @@ export class Uploader
   }
 
   init(): Dropzone {
-    const dropzoneEl = document.getElementById('elabftw-dropzone');
+    // FIXME just added "as any" for now
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
     if (dropzoneEl) {
       // Dropzone can be initialized in edit.ts and uploads.ts but we should only init it once
       if (Object.prototype.hasOwnProperty.call(dropzoneEl, 'dropzone')) {

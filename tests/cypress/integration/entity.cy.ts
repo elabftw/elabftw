@@ -57,7 +57,7 @@ describe('Experiments', () => {
       cy.get('[title="View mode"]').click();
       cy.get('[data-target="duplicateModal"]').click();
       cy.get('[data-action="duplicate-entity"]').click();
-      cy.contains('Title').should('be.visible');
+      cy.get('#documentTitle').should('be.visible');
       // destroy the duplicated entity now
       entityDestroy();
       // go back to the original entity

@@ -12,6 +12,7 @@ describe('Exclusive edit mode', () => {
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     cy.url().should('include', 'mode=edit');
     cy.wait('@get');
+    cy.intercept('PATCH', '/api/v2/experiments/**').as('api');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@api');

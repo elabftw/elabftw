@@ -44,7 +44,6 @@ use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
-use function time;
 use function trim;
 
 /**
@@ -104,9 +103,6 @@ class Users implements RestInterface
         $firstname = trim($firstname);
         $lastname = trim($lastname);
 
-        // Registration date is stored in epoch
-        $registerDate = time();
-
         // get the user group for the new users
         $usergroup ??= $TeamsHelper->getGroup();
 
@@ -123,7 +119,6 @@ class Users implements RestInterface
             `password_hash`,
             `firstname`,
             `lastname`,
-            `register_date`,
             `validated`,
             `lang`,
             `valid_until`,
@@ -137,7 +132,6 @@ class Users implements RestInterface
             :password_hash,
             :firstname,
             :lastname,
-            :register_date,
             :validated,
             :lang,
             :valid_until,
@@ -152,7 +146,6 @@ class Users implements RestInterface
         $req->bindParam(':password_hash', $passwordHash);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
-        $req->bindParam(':register_date', $registerDate);
         $req->bindValue(':validated', $isValidated, PDO::PARAM_INT);
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
@@ -238,7 +231,7 @@ class Users implements RestInterface
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
         $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
+            users.firstname, users.lastname, users.created_at, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey

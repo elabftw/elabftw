@@ -155,6 +155,36 @@
 
   {# ONBOARDING EMAIL #}
   {% include 'onboarding-email.html' %}
+
+  {# FRESH USER INFO #}
+  <h3 class='p-2 pl-3 section-title'>{{ 'Newcomer banner'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'newcomer_banner_active',
+      'label': 'Activate newcomer banner'|trans,
+      'help': 'Display a message to users that recently joined the team.'|trans} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='newcomer_threshold' class='col-form-label'>{{ 'Number of days after registration where a user is considered a newcomer'|trans }}</label>
+      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='newcomer_threshold' type='number' value='{{ App.teamArr.newcomer_threshold|e('html_attr') }}' name='newcomer_threshold' id='newcomer_threshold' />
+    </div>
+    <hr>
+
+    <label for='newcomer_banner' class='col-form-label'>{{ 'Message to display'|trans }}</label>
+    <div>
+      {% if App.Config.configArr.debug -%}
+      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
+      {%- endif %}
+      <textarea style='height:400px' class='mceditable' name='newcomer_banner' id='newcomer_banner'>
+        {{ src.onboarding_email_admins_body|raw }}
+      </textarea>
+    </div>
+    <div class='mt-2 text-center'>
+      <button type='button' data-action='patch-newcomer_banner' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
+
+  </div>
 </div>
 
 {# TAB 2 TEAM GROUPS #}

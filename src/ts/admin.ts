@@ -282,6 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
       params['common_template'] = tinymce.get('common_template').getContent();
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;
       ApiC.patch(`${Model.Team}/current`, params);
+    } else if (el.matches('[data-action="patch-newcomer_banner"]')) {
+      const params = {};
+      params['newcomer_banner'] = tinymce.get('newcomer_banner').getContent();
+      ApiC.patch(`${Model.Team}/current`, params);
     } else if (el.matches('[data-action="patch-team-common-template-md"]')) {
       const params = {};
       params['common_template_md'] = (document.getElementById('common_template_md') as HTMLTextAreaElement).value;

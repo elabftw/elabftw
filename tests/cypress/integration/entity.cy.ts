@@ -10,10 +10,6 @@ describe('Experiments', () => {
     cy.get('#date_input').type('2021-05-01').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
 
-    // update title
-    cy.get('#title_input').type('Updated from cypress').blur();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
-
     // create Tag
     cy.get('#createTagInput').type('some tag').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

@@ -141,9 +141,7 @@
       {% if App.Config.configArr.debug -%}
         <!-- [html-validate-disable-block text-content, no-unused-disable: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>
-        {{ App.teamArr.common_template_md|raw }}
-      </textarea>
+      <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     </div>
     <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>

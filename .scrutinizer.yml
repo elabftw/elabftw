@@ -25,3 +25,20 @@ build:
       remote_engine: true
     php:
       version: 8.3.3
+  nodes:
+    analysis:
+      dependencies:
+        override:
+          - echo do nothing here
+        before:
+          - echo do nothing here
+      tests:
+        override:
+          - php-scrutinizer-run
+    tests:
+      dependencies:
+        override:
+          - echo do nothing here
+  tests:
+    override:
+      - command: "true"

@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE EXCLUSIVE EDIT MODE
     } else if (el.matches('[data-action="toggle-exclusive-edit-mode"]')
-      || el.parentElement.matches('[data-action="toggle-exclusive-edit-mode"]')
+      || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
     ) {
       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
         .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))

@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
+use Elabftw\Services\Filter;
 
 final class TeamParam extends ContentParams
 {
@@ -21,7 +22,7 @@ final class TeamParam extends ContentParams
     {
         return match ($this->target) {
             'name', 'orgid', 'link_name' => parent::getContent(),
-            'announcement',
+            'announcement', 'newcomer_banner',
             'onboarding_email_subject',
             'onboarding_email_body' => $this->getNullableContent(),
             'common_template', 'common_template_md' => $this->getBody(),
@@ -30,7 +31,9 @@ final class TeamParam extends ContentParams
             'do_force_canread',
             'do_force_canwrite',
             'visible',
+            'newcomer_banner_active',
             'onboarding_email_active' => parent::getBinary(),
+            'newcomer_threshold' => parent::getInt(),
             'link_href' => $this->getUrl(),
             'force_canread', 'force_canwrite' => Check::visibility($this->content),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
@@ -42,6 +45,6 @@ final class TeamParam extends ContentParams
         if (empty($this->content)) {
             return null;
         }
-        return parent::getContent();
+        return Filter::body(parent::getContent());
     }
 }

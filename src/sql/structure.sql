@@ -1033,6 +1033,9 @@ CREATE TABLE `teams` (
   `onboarding_email_active` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `onboarding_email_subject` VARCHAR(255) NULL,
   `onboarding_email_body` TEXT NULL,
+  `newcomer_threshold` INT UNSIGNED NOT NULL DEFAULT 15,
+  `newcomer_banner` TEXT NULL DEFAULT NULL,
+  `newcomer_banner_active` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1154,7 +1157,7 @@ CREATE TABLE `users` (
   `is_sysadmin` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `orcid` varchar(19) NULL DEFAULT NULL,
   `orgid` varchar(255) NULL DEFAULT NULL,
-  `register_date` bigint(20) UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `token` varchar(255) DEFAULT NULL,
   `token_created_at` TIMESTAMP NULL DEFAULT NULL,
   `limit_nb` tinyint UNSIGNED NOT NULL DEFAULT 15,

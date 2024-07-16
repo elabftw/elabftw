@@ -21,6 +21,7 @@ use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use PDO;
 
 use function array_map;
@@ -271,6 +272,10 @@ final class Config implements RestInterface
         // loop the array and update config
         foreach ($params as $name => $value) {
             if ($this->configArr[$name] !== $value) {
+                // prevent incorrect html in these two things
+                if ($name === 'login_announcement' || $name === 'announcement') {
+                    $value = Filter::body($value);
+                }
                 $req->bindParam(':value', $value);
                 $req->bindParam(':name', $name);
                 $this->Db->execute($req);

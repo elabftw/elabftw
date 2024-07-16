@@ -21,7 +21,7 @@
   <link rel='icon' href='/assets/images/favicon.svg' type='image/svg+xml'>
   <link rel='apple-touch-icon' href='/assets/images/apple-touch-icon.png'>{# 180×180 #}
 
-  <title>{{ App.pageTitle }} - eLabFTW</title>
+  <title>{{ Entity.entityData.title|default(App.pageTitle) }} - eLabFTW</title>
   {# see builder.js to see what gets inside these files #}
   {# CSS #}
   <link rel='stylesheet' media='all' href='/assets/vendor.min.css?v={{ v }}' />

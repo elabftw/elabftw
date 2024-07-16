@@ -5,8 +5,16 @@
 {% embed 'view-edit.html' %}
   {% block createnew %}
     <div class='d-flex'>
-      {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.entityType.toPage[:-4]|capitalize|trans }} > {{ 'Viewing an entry'|trans }}</h3></div>
+      <div class='align-self-center flex-grow-1 mr-2'>
+        {# CUSTOM ID #}
+        {# TITLE #}
+        <h1 class='text-dark' >
+          {% if Entity.entityData.custom_id %}
+            <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
+          {% endif %}
+          <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+        </h1>
+      </div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>
@@ -53,15 +61,6 @@
       {% endif %}
     </div>
   </div>
-
-  {# CUSTOM ID #}
-  {# TITLE #}
-  <h1 class='mb-4 text-dark' >
-  {% if Entity.entityData.custom_id %}
-    <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
-  {% endif %}
-  <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
-  </h1>
 
   {% include('catstat-view.html') %}
 

@@ -279,29 +279,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
-  // TITLE STUFF
-  const titleInput = document.getElementById('title_input') as HTMLInputElement;
-  // add the title in the page name (see #324)
-  document.title = titleInput.value + ' - eLabFTW';
-
-  // If the title is 'Untitled', clear it on focus
-  titleInput.addEventListener('focus', event => {
-    const el = event.target as HTMLInputElement;
-    if (el.value === i18next.t('entity-default-title')) {
-      el.value = '';
-    }
-  });
-
-  titleInput.addEventListener('blur', () => {
-    if (titleInput.value !== titleInput.defaultValue) {
-      const content = titleInput.value;
-      titleInput.defaultValue = content;
-      EntityC.update(entity.id, Target.Title, content);
-      // update the page's title
-      document.title = content + ' - eLabFTW';
-    }
-  });
-
   // no tinymce stuff when md editor is selected
   if (editor.type === 'tiny') {
     // Object to hold control data for selected image

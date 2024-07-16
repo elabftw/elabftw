@@ -55,8 +55,8 @@ class Changelog
 
     public function readAll(): array
     {
-        $sql = "SELECT created_at, target, content, CONCAT(users.firstname, ' ', users.lastname) AS fullname
-            FROM " . $this->entity->entityType->value . '_changelog LEFT JOIN users ON (users.userid = ' . $this->entity->entityType->value . '_changelog.users_id)
+        $sql = "SELECT ch.created_at, ch.target, ch.content, CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            FROM " . $this->entity->entityType->value . '_changelog AS ch LEFT JOIN users ON (users.userid = ch.users_id)
             WHERE entity_id = :entity_id ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':entity_id', $this->entity->id, PDO::PARAM_INT);

@@ -77,8 +77,8 @@ class ProcurementRequests implements RestInterface
 
     public function readForEntity(int $entityId): array
     {
-        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, id, created_at, team, requester_userid, entity_id, qty_ordered, body, quote, email_sent, state
-            FROM procurement_requests LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id";
+        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.body, pr.quote, pr.email_sent, pr.state
+            FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $entityId, PDO::PARAM_INT);
         $this->Db->execute($req);

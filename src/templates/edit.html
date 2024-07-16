@@ -14,8 +14,16 @@
 {% embed 'view-edit.html' %}
   {% block createnew %}
     <div class='d-flex'>
-      {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.entityType.toPage[:-4]|capitalize|trans }} > {{ 'Editing an entry'|trans }}</h3></div>
+      <div class='align-self-center flex-grow-1 mr-2'>
+        {# CUSTOM ID #}
+        {# TITLE #}
+        <h1 class='text-dark' >
+          {% if Entity.entityData.custom_id %}
+            <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
+          {% endif %}
+          <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+        </h1>
+      </div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>
@@ -82,13 +90,6 @@
       </div>
       <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
-  </div>
-
-  {# TITLE #}
-  <div class='d-flex mb-2 justify-content-between align-items-center'>
-    <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-    {# no data-trigger here because custom code in edit.ts #}
-    <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
   </div>
 
   {# CATEGORY / STATUS #}

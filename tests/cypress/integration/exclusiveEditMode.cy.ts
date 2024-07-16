@@ -13,6 +13,15 @@ describe('Exclusive edit mode', () => {
     cy.url().should('include', 'mode=edit');
     cy.wait('@get');
     cy.intercept('PATCH', '/api/v2/experiments/**').as('api');
+    cy.get('#documentTitle').click();
+    cy.get('input[value="Untitled"]').type(title).then(input => {
+      cy.wrap(input)
+        .closest('form')
+        .find('button:contains("Save")')
+        .click();
+    });
+    cy.wait('@api');
+    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@api');

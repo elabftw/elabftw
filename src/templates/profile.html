@@ -160,7 +160,7 @@
       <div id='importRadioEntityType'>
         <div class='form-check form-check-inline'>
           <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
-          <label class='form-check-label' for='entityTypeRadioExperiments'>{{ 'Experiments'|trans }}</label>
+          <label class='form-check-label' for='entityTypeRadioExperiments'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans%}</label>
         </div>
         <div class='form-check form-check-inline'>
           <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
@@ -192,7 +192,7 @@
       {% endif %}
 
       <hr>
-      <label for='import_modal_canread'>{{ 'Select read permissions'|trans }}</label>
+      <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
       <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'
@@ -202,7 +202,7 @@
       </select>
 
       <hr>
-      <label for='import_modal_canwrite'>{{ 'Select write permissions'|trans }}</label>
+      <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
       <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'

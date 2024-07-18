@@ -132,7 +132,7 @@ class TeamGroups implements RestInterface
 
     public function readScopedTeamgroups(): array
     {
-        $scope = Scope::from($this->Users->userData['teamgroups_scope']);
+        $scope = Scope::from($this->Users->userData['scope_teamgroups']);
         return match ($scope) {
             Scope::User => $this->readAllUser(),
             Scope::Team => $this->readAllTeam(),

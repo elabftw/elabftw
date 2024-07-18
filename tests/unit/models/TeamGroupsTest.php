@@ -60,8 +60,9 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->assertIsArray($this->TeamGroups->readAll());
-        $this->assertIsArray($this->TeamGroups->readAllSimple());
-        $this->assertIsArray($this->TeamGroups->readAllGlobal());
+        $this->assertIsArray($this->TeamGroups->readAllUser());
+        $this->assertIsArray($this->TeamGroups->readAllTeam());
+        $this->assertIsArray($this->TeamGroups->readAllEverything());
     }
 
     public function testDestroy(): void

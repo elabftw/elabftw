@@ -17,6 +17,7 @@ use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -54,7 +55,7 @@ class TeamGroups implements RestInterface
     }
 
     /**
-     * Read team groups
+     * Read team groups of the current team
      *
      * @return array all team groups with users in group as array
      */
@@ -98,7 +99,19 @@ class TeamGroups implements RestInterface
         return $fullGroups;
     }
 
-    public function readAllSimple(): array
+    public function readAllUser(): array
+    {
+        $sql = 'SELECT tg.id, tg.name
+            FROM team_groups AS tg
+            LEFT JOIN users2team_groups AS utg ON tg.id = utg.groupid
+            WHERE utg.userid = :userid ORDER BY tg.name ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    public function readAllTeam(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name
             FROM team_groups WHERE team_groups.team = :team ORDER BY team_groups.name ASC';
@@ -108,13 +121,23 @@ class TeamGroups implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readAllGlobal(): array
+    public function readAllEverything(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name
             FROM team_groups ORDER BY team_groups.name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    public function readScopedTeamgroups(): array
+    {
+        $scope = Scope::from($this->Users->userData['teamgroups_scope']);
+        return match ($scope) {
+            Scope::User => $this->readAllUser(),
+            Scope::Team => $this->readAllTeam(),
+            Scope::Everything => $this->readAllEverything(),
+        };
     }
 
     /**

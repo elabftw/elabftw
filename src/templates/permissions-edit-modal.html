@@ -55,8 +55,8 @@
           {# TEAMGROUPS #}
           <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
           <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
-          <select {{ allTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
-            {% for tg in allTeamgroupsArr %}
+          <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
+            {% for tg in scopedTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
                       >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>

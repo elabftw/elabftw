@@ -61,9 +61,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $templatesArr = array();
 
-    protected array $teamGroupsFromUser = array();
-
-    protected array $allTeamgroupsArr = array();
+    protected array $scopedTeamgroupsArr = array();
 
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
@@ -78,8 +76,8 @@ abstract class AbstractEntityController implements ControllerInterface
             ARRAY_FILTER_USE_KEY,
         );
         $this->currencyArr = Currency::getAssociativeArray();
-        $this->teamGroupsFromUser = $TeamGroups->readGroupsFromUser();
-        $this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
+        $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
+        //$this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
         $this->templatesArr = $Templates->Pins->readAllSimple();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
@@ -158,12 +156,12 @@ abstract class AbstractEntityController implements ControllerInterface
             'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
             'requestActionsArr' => $UserRequestActions->readAllFull(),
+            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             // generate light show page
             'searchPage' => $isSearchPage,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readFull(),
-            'teamGroupsFromUser' => $this->teamGroupsFromUser,
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
@@ -222,7 +220,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'hideTitle' => true,
             'teamsArr' => $Teams->readAll(),
-            'allTeamgroupsArr' => $this->allTeamgroupsArr,
+            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             ...$this->Entity instanceof AbstractConcreteEntity
                     ? array('timestamperFullname' => $this->Entity->getTimestamperFullname())
@@ -295,7 +293,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll(),
             'teamTagsArr' => $TeamTags->readAll(),
-            'allTeamgroupsArr' => $this->allTeamgroupsArr,
+            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'templatesArr' => $this->templatesArr,

@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Models\Config;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -38,8 +39,6 @@ use function sprintf;
  */
 class Eln extends AbstractZip
 {
-    public bool $importAuthorsAsUsers = true;
-
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
@@ -158,7 +157,10 @@ class Eln extends AbstractZip
     private function importRootDataset(array $dataset): void
     {
         $Author = $this->requester;
-        if ($this->importAuthorsAsUsers) {
+
+        $trustImportedFileMetadata = Config::getConfig()->configArr['trust_imported_archives'] === '1';
+
+        if ($trustImportedFileMetadata) {
             // look for the Author node, and create the user if they do not exist
             $author = $this->getNodeFromId($dataset['author']['@id']);
             try {
@@ -203,13 +205,17 @@ class Eln extends AbstractZip
                 $createTarget = -1;
             }
             $this->Entity->setId($this->Entity->create($createTarget, array()));
-            // set the date if we can
-            $date = date('Y-m-d');
-            if (isset($dataset['dateCreated'])) {
-                $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
-                $date = $dateCreated->format('Y-m-d');
+
+            // Only allow back- or future-dating if we trust imported file metadata
+            if ($trustImportedFileMetadata) {
+                // set the date if we can
+                $date = date('Y-m-d');
+                if (isset($dataset['dateCreated'])) {
+                    $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
+                    $date = $dateCreated->format('Y-m-d');
+                }
+                $this->Entity->patch(Action::Update, array('date' => $date));
             }
-            $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
             $this->Entity->setId($this->Entity->create($title));
         }

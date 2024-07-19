@@ -1169,6 +1169,7 @@ CREATE TABLE `users` (
   `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
+  `scope_teamgroups` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `uploads_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `validated` tinyint UNSIGNED NOT NULL DEFAULT 0,

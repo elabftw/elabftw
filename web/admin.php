@@ -121,7 +121,7 @@ try {
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
-        'allTeamgroupsArr' => $TeamGroups->readAllGlobal(),
+        'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $itemsStatusArr,

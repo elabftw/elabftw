@@ -16,6 +16,7 @@ const t = {
     "filename": "Nama file",
     "generic-delete-warning": "Hapus ini?",
     "link-delete-warning": "Hapus tautan ini?",
+    "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "new-apikey-warning": "Ini adalah satu-satunya waktu kunci akan ditampilkan! Pastikan untuk menyalinnya di tempat yang aman karena Anda tidak akan dapat melihatnya lagi:",
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-set": "Tidak diatur",

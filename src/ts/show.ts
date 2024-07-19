@@ -172,14 +172,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SAVE MULTI CHANGES
     } else if (el.matches('[data-action="save-multi-changes"]')) {
-      (el as HTMLButtonElement).disabled = true;
-      ApiC.notifOnSaved = false;
+
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
         notifNothingSelected();
         return;
       }
+      // display a warning with the number of impacted entries
+      if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+        return;
+      }
+      (el as HTMLButtonElement).disabled = true;
+      ApiC.notifOnSaved = false;
       const ajaxs = [];
       const params = collectForm(document.getElementById('multiChangesForm'));
       ['canread', 'canwrite'].forEach(can => {

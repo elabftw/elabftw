@@ -50,6 +50,8 @@ class i18n4Js
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
             'link-delete-warning' => _('Delete this link?'),
+            // https://www.i18next.com/translation-function/formatting
+            'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
             'new-apikey-warning' => _("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-set' => _('Not set'),

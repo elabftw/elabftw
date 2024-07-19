@@ -16,6 +16,7 @@ const t = {
     "filename": "Filename",
     "generic-delete-warning": "Delete this?",
     "link-delete-warning": "Delete this link?",
+    "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "new-apikey-warning": "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:",
     "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-set": "Not set",

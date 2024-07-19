@@ -16,6 +16,7 @@ const t = {
     "filename": "Tiedoston nimi",
     "generic-delete-warning": "Poistetaanko tämä?",
     "link-delete-warning": "Poistetaanko tämä linkki?",
+    "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "new-apikey-warning": "Tämä on ainoa kerta, kun avain näytetään! Muista kopioida se turvalliseen paikkaan, koska et näe sitä enää:",
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
     "not-set": "Ei valittu",

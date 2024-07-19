@@ -1,4 +1,4 @@
-{# required vars: rw visibilityArr teamsArr allTeamgroupsArr usersArr #}
+{# required vars: rw visibilityArr teamsArr scopedTeamgroupsArr usersArr #}
 {% if ucpPage %}{# set this to true on ucp page for default permissions #}
   {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
   {% set permissionsJson = App.Users.userData[column] %}

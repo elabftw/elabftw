@@ -77,7 +77,6 @@ abstract class AbstractEntityController implements ControllerInterface
         );
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
-        //$this->allTeamgroupsArr = $TeamGroups->readAllGlobal();
         $Templates = new Templates($this->Entity->Users);
         $this->templatesArr = $Templates->Pins->readAllSimple();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {

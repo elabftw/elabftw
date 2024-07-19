@@ -443,7 +443,18 @@
 <div data-tabcontent='4' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
-  <div id='newKeyPlaceholder'></div>{# the newly created key will be displayed here #}
+
+  {# hidden new key block #}
+  <div hidden id='newApiKeyInputGroup'>
+    {{ "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"|trans|msg('warning', false) }}
+    <div class='input-group'>
+      <div class='input-group-prepend'>
+        <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='newApiKeyInput'><i class='fas fa-clone'></i></button>
+      </div>
+      <input type='text' class='form-control' readonly id='newApiKeyInput' value=''>
+    </div>
+  </div>
+
   <div class='pl-3 mt-2 mb-5'>
 
     <div class='d-flex justify-content-between'>

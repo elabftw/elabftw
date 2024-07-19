@@ -17,7 +17,6 @@ const t = {
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",
-    "new-apikey-warning": "密钥将只显示这一次！请确保将其复制到安全的地方，因为您将无法再次看到它：",
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
     "not-set": "未设置",
     "nothing-selected": "未选中任何选项！",

@@ -17,7 +17,6 @@ const t = {
     "generic-delete-warning": "Eliminar isto?",
     "link-delete-warning": "Excluir esta ligação?",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",
-    "new-apikey-warning": "Esta é a única vez que a chave será exibida! Certifique-se de que a copia para lugar seguro, uma vez que será impossível de a exibir novamente.",
     "no-self-links": "Não é permitido associar um item a si próprio. Por favor, seleccione um destino diferente.",
     "not-set": "Não definido",
     "nothing-selected": "Nada selecionado!",

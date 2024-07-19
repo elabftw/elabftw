@@ -131,23 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
         const location = resp.headers.get('location').split('/');
         reloadElements(['apiTable']);
-        const warningDiv = document.createElement('div');
-        warningDiv.classList.add('alert', 'alert-warning');
-        const chevron = document.createElement('i');
-        chevron.classList.add('fas', 'fa-chevron-right', 'color-warning', 'fa-fw');
-        warningDiv.appendChild(chevron);
-
-        const newkey = document.createElement('p');
-        newkey.innerText = location[location.length -1];
-        const warningTextSpan = document.createElement('span');
-
-        warningTextSpan.innerText = i18next.t('new-apikey-warning');
-        warningTextSpan.classList.add('ml-1');
-        warningDiv.appendChild(warningTextSpan);
-        warningDiv.appendChild(newkey);
-        const placeholder = document.getElementById('newKeyPlaceholder');
-        placeholder.innerHTML = '';
-        placeholder.appendChild(warningDiv);
+        const newkeyInputGroup = document.getElementById('newApiKeyInputGroup');
+        const newkeyInput = document.getElementById('newApiKeyInput') as HTMLInputElement;
+        newkeyInput.value = location[location.length -1];
+        newkeyInputGroup.removeAttribute('hidden');
       });
     // DESTROY API KEY
     } else if (el.matches('[data-action="destroy-apikey"]')) {

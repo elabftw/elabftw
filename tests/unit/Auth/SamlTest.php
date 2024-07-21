@@ -80,7 +80,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->samlUserdata['User.email'] = 'toto@yopmail.com';
         $this->samlUserdata['User.firstname'] = 'Toto';
         $this->samlUserdata['User.lastname'] = 'FTW';
-        $this->samlUserdata['User.team'] = 'Alpha';
+        $this->samlUserdata['User.team'] = array('Alpha');
         $this->SamlAuthLib->method('getAttributes')->willReturn($this->samlUserdata);
 
         $this->IdpsHelper = new IdpsHelper(Config::getConfig(), $Idps);
@@ -386,7 +386,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real@example.com';
-        $samlUserdata['User.team'] = 'Bravo';
+        $samlUserdata['User.team'] = array('Bravo');
 
         // create the user on the fly
         $config = $this->configArr;
@@ -400,7 +400,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real_yes@example.com';
-        $samlUserdata['User.team'] = 'Bravo';
+        $samlUserdata['User.team'] = array('Bravo');
         $settings = $this->settings;
         // set an empty idp team attribute
         $settings['idp']['teamAttr'] = '';

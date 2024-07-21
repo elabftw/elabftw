@@ -59,12 +59,8 @@ class Teams implements RestInterface
      * Input can come from external auth and reference an uncreated team
      * so with this the team will be created on the fly (if it's allowed)
      */
-    public function getTeamsFromIdOrNameOrOrgidArray(array|string $teams, bool $allowTeamCreation = false): array
+    public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
     {
-        if (is_string($teams)) {
-            // maybe it's a string containing several teams separated by commas
-            $teams = explode(',', $teams);
-        }
         $res = array();
         $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
         $req = $this->Db->prepare($sql);

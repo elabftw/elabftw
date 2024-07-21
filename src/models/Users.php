@@ -88,13 +88,14 @@ class Users implements RestInterface
         bool $alertAdmin = true,
         ?string $validUntil = null,
         ?string $orgid = null,
+        bool $allowTeamCreation = false,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
         $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);

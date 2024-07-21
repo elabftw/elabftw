@@ -173,6 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE MULTI CHANGES
     } else if (el.matches('[data-action="save-multi-changes"]')) {
 
+      // prevent form submission
+      event.preventDefault();
+
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {

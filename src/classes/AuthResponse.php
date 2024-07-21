@@ -22,8 +22,7 @@ class AuthResponse
 {
     public int $userid;
 
-    /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
-    public $selectableTeams = array();
+    public array $selectableTeams = array();
 
     public int $selectedTeam;
 

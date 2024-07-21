@@ -81,7 +81,8 @@ if ($ci); then
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+    # verbose flag allows to see fwrite debug statements
+    docker exec -it elabtmp php vendor/bin/codecept run --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
 elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress

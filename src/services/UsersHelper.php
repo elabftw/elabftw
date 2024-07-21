@@ -76,6 +76,7 @@ class UsersHelper
 
     /**
      * Get the team id where the user belong
+     * @return array{array{id: int, name: string, is_owner: int, usergroup: int}} | array
      */
     public function getTeamsFromUserid(): array
     {

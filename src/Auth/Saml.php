@@ -39,7 +39,7 @@ use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
 use function is_array;
-use function is_int;
+use function is_string;
 
 /**
  * SAML auth service
@@ -256,15 +256,8 @@ class Saml implements AuthInterface
         }
 
         $Teams = new Teams(new Users());
-        if (is_array($teams)) {
-            return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams);
-        }
-
-        if (is_string($teams)) {
-            // maybe it's a string containing several teams separated by spaces
-            return $Teams->getTeamsFromIdOrNameOrOrgidArray(explode(',', $teams));
-        }
-        throw new ImproperActionException('Could not find team ID to assign user!');
+        $allowTeamCreation = ($this->configArr['saml_team_create'] ?? '1') === '1';
+        return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
     }
 
     private function getTeams(): array | int
@@ -284,16 +277,11 @@ class Saml implements AuthInterface
             }
             return array((int) $teamId);
         }
-
-        if (is_array($teams)) {
-            return $teams;
-        }
-
         if (is_string($teams)) {
-            // maybe it's a string containing several teams separated by commas
-            return explode(',', $teams);
+            return array($teams);
         }
-        throw new ImproperActionException('Could not find team ID to assign user!');
+
+        return $teams;
     }
 
     private function getExistingUser(string $email, ?string $orgid = null): Users | false
@@ -337,13 +325,14 @@ class Saml implements AuthInterface
             // now try and get the teams
             $teams = $this->getTeams();
 
-            // when we want to allow user to select a team before account is created
             if (is_int($teams)) {
                 return $teams;
             }
 
             // CREATE USER (and force validation of user, with user permissions)
-            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid);
+            $allowTeamCreation = ($this->configArr['saml_team_create'] ?? '1') === '1';
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid, allowTeamCreation: $allowTeamCreation);
         }
         return $Users;
     }

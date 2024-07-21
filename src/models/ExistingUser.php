@@ -38,9 +38,10 @@ class ExistingUser extends Users
         bool $automaticValidationEnabled = false,
         bool $alertAdmin = true,
         ?string $orgid = null,
+        bool $allowTeamCreation = false,
     ): Users {
         $Users = new self();
-        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $automaticValidationEnabled, $alertAdmin, orgid: $orgid);
+        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $automaticValidationEnabled, $alertAdmin, orgid: $orgid, allowTeamCreation: $allowTeamCreation);
         $fresh = new self($userid);
         // we need to report the needValidation flag into the new object
         $fresh->needValidation = $Users->needValidation;

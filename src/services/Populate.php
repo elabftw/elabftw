@@ -206,7 +206,7 @@ class Populate
             validUntil: null,
             orgid: $orgid
         );
-        $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']));
+        $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']), true);
         $Requester = new Users(1, 1);
         $Users = new Users($userid, $team[0]['id'], $Requester);
 

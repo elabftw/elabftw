@@ -29,6 +29,7 @@ use PDO;
 use RuntimeException;
 
 use function array_diff;
+use function trim;
 
 /**
  * All about the teams
@@ -58,20 +59,33 @@ class Teams implements RestInterface
      * Input can come from external auth and reference an uncreated team
      * so with this the team will be created on the fly (if it's allowed)
      */
-    public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
+    public function getTeamsFromIdOrNameOrOrgidArray(array|string $teams, bool $allowTeamCreation = false): array
     {
+        if (is_string($teams)) {
+            // maybe it's a string containing several teams separated by commas
+            $teams = explode(',', $teams);
+        }
         $res = array();
         $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
         $req = $this->Db->prepare($sql);
-        foreach ($input as $query) {
-            $req->bindParam(':query', $query);
+        foreach ($teams as $query) {
+            $req->bindValue(':query', trim((string) $query));
             $this->Db->execute($req);
             $team = $req->fetch();
-            if ($team === false) {
-                $id = $this->createTeamIfAllowed($query);
-                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id))[0];
+            // team was not found, we need to create it, but only if we're allowed to
+            if ($team === false && $allowTeamCreation === true) {
+                $this->bypassWritePermission = true;
+                $id = $this->create($query, _('Default'));
+                $TeamsHelper = new TeamsHelper($id);
+                $team = $TeamsHelper->getSimple();
             }
-            $res[] = $team;
+            // this prevents adding a bool(false)
+            if (is_array($team)) {
+                $res[] = $team;
+            }
+        }
+        if (empty($res)) {
+            throw new ImproperActionException('At least one team must be provided: none were found.');
         }
         return $res;
     }
@@ -110,6 +124,7 @@ class Teams implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         return match ($action) {
             Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Default')),
             default => throw new ImproperActionException('Incorrect action for teams.'),
@@ -265,7 +280,6 @@ class Teams implements RestInterface
 
     private function create(string $name, string $defaultCategoryName): int
     {
-        $this->canWriteOrExplode();
         $name = Filter::title($name);
 
         $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
@@ -330,16 +344,6 @@ class Teams implements RestInterface
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
-    }
-
-    private function createTeamIfAllowed(string $name): int
-    {
-        $Config = Config::getConfig();
-        if ($Config->configArr['saml_team_create']) {
-            $this->bypassWritePermission = true;
-            return $this->postAction(Action::Create, array('name' => $name));
-        }
-        throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }
 
     private function sendOnboardingEmails(array $userids): void

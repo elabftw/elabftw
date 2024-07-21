@@ -179,6 +179,53 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Idp sends an array of teams, with a mix of valid teams and teams that must not be created because team creation is disabled
+     */
+    public function testAssertIdpResponseTeamsArrayMultiResponse(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        // here user should end up in Alpha and Bravo, and teams wheel staff and researcher must not be created
+        $samlUserdata['User.email'] = 'is_in_alpha_and_bravo@example.com';
+        $samlUserdata['User.firstname'] = 'Multiteam';
+        $samlUserdata['User.lastname'] = 'User';
+        $samlUserdata['User.team'] = array('Alpha', 'wheel', 'Bravo', 'staff', 'researcher');
+        $config = $this->configArr;
+        // disable creation of new teams
+        $config['saml_team_create'] = '0';
+        // allow creation of user on the fly
+        $config['saml_user_default'] = '1';
+
+        $authResponse = $this->getAuthResponse($samlUserdata, $config);
+        $this->assertTrue($authResponse->isInSeveralTeams);
+        $this->assertEquals(2, count($authResponse->selectableTeams));
+        $this->assertEquals('Alpha', $authResponse->selectableTeams[0]['name']);
+        $this->assertEquals('Bravo', $authResponse->selectableTeams[1]['name']);
+    }
+
+    /**
+     * Now synchronize by removing bravo team
+     */
+    public function testAssertIdpResponseTeamsArrayMultiResponseSync(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        // here user should end up in Alpha and Bravo, and teams wheel staff and researcher must not be created
+        $samlUserdata['User.email'] = 'is_in_alpha_and_bravo@example.com';
+        $samlUserdata['User.firstname'] = 'Multiteam';
+        $samlUserdata['User.lastname'] = 'User';
+        $samlUserdata['User.team'] = array('Alpha', 'wheel', 'staff', 'researcher');
+        $config = $this->configArr;
+        // disable creation of new teams
+        $config['saml_team_create'] = '0';
+        // allow creation of user on the fly
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+
+        $authResponse = $this->getAuthResponse($samlUserdata, $config);
+        $this->assertFalse($authResponse->isInSeveralTeams);
+        $this->assertEquals(1, $authResponse->selectedTeam);
+    }
+
+    /**
      * Idp sends an array of email
      */
     public function testAssertIdpResponseEmailArrayResponse(): void

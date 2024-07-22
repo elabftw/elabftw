@@ -328,6 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // this option is necessary or the autocomplete box will get lost under the permissions modal
         appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+          if (request.term.length < 3) {
+            return;
+          }
           if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
             request.term = escapeExtendedQuery(request.term);
           }

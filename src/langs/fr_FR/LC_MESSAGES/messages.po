@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-17 11:06+0200\n"
+"POT-Creation-Date: 2024-07-22 02:11+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -11,14 +11,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.3\n"
 "X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
 "X-Poedit-Basepath: ../../../..\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: web\n"
 "X-Poedit-SearchPathExcluded-0: web/assets\n"
 
-#: src/Auth/External.php:61 src/Auth/Ldap.php:67 src/Auth/Saml.php:330
+#: src/Auth/External.php:61 src/Auth/Ldap.php:67 src/Auth/Saml.php:318
 msgid "Could not find an existing user. Ask a Sysadmin to create your account."
 msgstr ""
 "Impossible de trouver un utilisateur existant. Demandez à un administrateur "
@@ -106,7 +106,7 @@ msgstr "Administrateurs"
 msgid "Everyone"
 msgstr "Tout le monde"
 
-#: src/Enums/PasswordComplexity.php:29 src/templates/sysconfig.html:441
+#: src/Enums/PasswordComplexity.php:29 src/templates/sysconfig.html:442
 msgid "Minimum password length"
 msgstr "Longueur minimale du mot de passe"
 
@@ -190,19 +190,19 @@ msgstr "Administrateur"
 msgid "User"
 msgstr "Utilisateur"
 
-#: src/Import/Eln.php:138
+#: src/Import/Eln.php:137
 #, php-format
 msgid "Error: could not read archive file properly! (missing %s)"
 msgstr "Erreur : impossible de lire le fichier correctement ! (manque %s)"
 
-#: src/Import/Eln.php:190 src/classes/i18n4Js.php:46
+#: src/Import/Eln.php:192 src/classes/i18n4Js.php:46
 #: src/models/AbstractStatus.php:55 src/models/AbstractTemplateEntity.php:29
 #: src/models/Experiments.php:45 src/models/Items.php:51
-#: src/models/TeamGroups.php:48 src/services/Filter.php:109
+#: src/models/TeamGroups.php:49 src/services/Filter.php:109
 msgid "Untitled"
 msgstr "Sans titre"
 
-#: src/Import/Eln.php:337
+#: src/Import/Eln.php:343
 msgid "Author"
 msgstr "Auteur"
 
@@ -244,7 +244,7 @@ msgid "Input is too short! (minimum: %d)"
 msgstr "Trop court ! (minimum : %d)"
 
 #: src/classes/Metadata.php:81 src/classes/Metadata.php:101
-#: src/classes/i18n4Js.php:71 src/templates/field-builder-modal.html:34
+#: src/classes/i18n4Js.php:72 src/templates/field-builder-modal.html:34
 msgid "Undefined group"
 msgstr "Groupe non défini"
 
@@ -270,10 +270,10 @@ msgstr "Une erreur est survenue!"
 msgid "User could not be found."
 msgstr "L'utilisateur n'a pas été trouvé."
 
-#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:55
+#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:56
 #: src/templates/catstat-edit.html:8 src/templates/catstat-edit.html:30
 #: src/templates/catstat-view.html:14 src/templates/catstat-view.html:22
-#: src/templates/sysconfig.html:235
+#: src/templates/sysconfig.html:236
 msgid "Not set"
 msgstr "Non défini"
 
@@ -345,34 +345,30 @@ msgstr "Supprimer ça ?"
 msgid "Delete this link?"
 msgstr "Supprimer ce lien ?"
 
-#: src/classes/i18n4Js.php:53
-msgid ""
-"This is the only time the key will be shown! Make sure to copy it somewhere "
-"safe as you won't be able to see it again:"
-msgstr ""
-"C'est la seule fois où la clé sera affichée ! Veillez à la copier dans un "
-"endroit sûr, car vous ne pourrez plus la voir à nouveau :"
+#: src/classes/i18n4Js.php:54
+msgid "Apply to {{num, number}} entries?"
+msgstr "Appliquer à {{num, nombre}} entrées ?"
 
-#: src/classes/i18n4Js.php:54 src/models/AbstractEntity.php:665
+#: src/classes/i18n4Js.php:55 src/models/AbstractEntity.php:665
 msgid ""
 "Linking an item to itself is not allowed. Please select a different target."
 msgstr ""
 "Il n'est pas permis de lier un élément à lui-même. Veuillez sélectionner une "
 "autre cible."
 
-#: src/classes/i18n4Js.php:56
+#: src/classes/i18n4Js.php:57
 msgid "Nothing selected!"
 msgstr "Aucune sélection !"
 
-#: src/classes/i18n4Js.php:57
+#: src/classes/i18n4Js.php:58
 msgid "Now"
 msgstr "Maintenant"
 
-#: src/classes/i18n4Js.php:58
+#: src/classes/i18n4Js.php:59
 msgid "Onboarding email(s) will soon be sent."
 msgstr "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s)."
 
-#: src/classes/i18n4Js.php:59 src/templates/create-idp-modal.html:11
+#: src/classes/i18n4Js.php:60 src/templates/create-idp-modal.html:11
 #: src/templates/footer.html:58 src/templates/head.html:191
 #: src/templates/login.html:15 src/templates/search-syntax-doc-modal.html:10
 #: src/templates/sysconfig.html:17 src/templates/team.html:27
@@ -383,20 +379,20 @@ msgstr "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s)."
 msgid "Please wait…"
 msgstr "Patientez…"
 
-#: src/classes/i18n4Js.php:60
+#: src/classes/i18n4Js.php:61
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr ""
 "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?"
 
-#: src/classes/i18n4Js.php:61
+#: src/classes/i18n4Js.php:62
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/classes/i18n4Js.php:62 src/exceptions/ResourceNotFoundException.php:25
+#: src/classes/i18n4Js.php:63 src/exceptions/ResourceNotFoundException.php:25
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
-#: src/classes/i18n4Js.php:63 src/templates/admin.html:135
+#: src/classes/i18n4Js.php:64 src/templates/admin.html:135
 #: src/templates/admin.html:148 src/templates/admin.html:182
 #: src/templates/admin.html:280 src/templates/admin.html:396
 #: src/templates/admin.html:451 src/templates/admin.html:498
@@ -407,50 +403,50 @@ msgstr "Rien à afficher avec cet ID"
 #: src/templates/json-editor.html:37 src/templates/onboarding-email.html:37
 #: src/templates/onboarding-email.html:80
 #: src/templates/ownership-transfer-modal.html:24
-#: src/templates/permissions-edit-modal.html:103 src/templates/show.html:289
-#: src/templates/steps-links-edit.html:71 src/templates/sysconfig.html:273
-#: src/templates/sysconfig.html:287 src/templates/sysconfig.html:502
-#: src/templates/ucp.html:346 src/templates/ucp.html:373
+#: src/templates/permissions-edit-modal.html:117 src/templates/show.html:289
+#: src/templates/steps-links-edit.html:71 src/templates/sysconfig.html:274
+#: src/templates/sysconfig.html:288 src/templates/sysconfig.html:503
+#: src/templates/ucp.html:360 src/templates/ucp.html:387
 #: src/templates/view-edit-template.html:219
 #: src/templates/view-edit-toolbar.html:31
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/classes/i18n4Js.php:64 web/app/controllers/SortableAjaxController.php:44
+#: src/classes/i18n4Js.php:65 web/app/controllers/SortableAjaxController.php:44
 #: web/app/controllers/SysconfigAjaxController.php:39
 #: web/app/controllers/UcpController.php:90
 msgid "Saved"
 msgstr "Enregistré"
 
-#: src/classes/i18n4Js.php:65
+#: src/classes/i18n4Js.php:66
 msgid "Sort by column"
 msgstr "Trier par colonne"
 
-#: src/classes/i18n4Js.php:66
+#: src/classes/i18n4Js.php:67
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/classes/i18n4Js.php:67
+#: src/classes/i18n4Js.php:68
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/classes/i18n4Js.php:68
+#: src/classes/i18n4Js.php:69
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
 
-#: src/classes/i18n4Js.php:69
+#: src/classes/i18n4Js.php:70
 msgid "Template title"
 msgstr "Titre du modèle"
 
-#: src/classes/i18n4Js.php:70
+#: src/classes/i18n4Js.php:71
 msgid "Today"
 msgstr "Aujourd’hui"
 
-#: src/classes/i18n4Js.php:72
+#: src/classes/i18n4Js.php:73
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: src/controllers/AbstractEntityController.php:254
+#: src/controllers/AbstractEntityController.php:251
 msgid "This item is locked. You cannot edit it!"
 msgstr "Cet objet est verrouillé. Vous ne pouvez pas l'éditer !"
 
@@ -619,8 +615,9 @@ msgstr "Le paramètre obligatoire \"passphrase\" n'a pas été fourni !"
 msgid "Users cannot create tags."
 msgstr "Les utilisateurs ne peuvent pas créer de tags."
 
-#: src/models/Teams.php:114 src/templates/admin.html:276
-#: src/templates/admin.html:447 src/templates/admin.html:494
+#: src/models/Teams.php:74 src/models/Teams.php:125
+#: src/templates/admin.html:276 src/templates/admin.html:447
+#: src/templates/admin.html:494
 msgid "Default"
 msgstr "Défaut"
 
@@ -628,7 +625,7 @@ msgstr "Défaut"
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience !"
 
-#: src/models/Users.php:466
+#: src/models/Users.php:467
 msgid "New password must not be the same as the current one."
 msgstr ""
 "Le nouveau mot de passe ne doit pas être identique au mot de passe actuel."
@@ -925,9 +922,10 @@ msgstr[0] "Ressource"
 msgstr[1] "Ressources"
 
 #: web/experiments.php:28 src/templates/dashboard.html:19
-#: src/templates/field-builder-modal.html:51 src/templates/head.html:60
-#: src/templates/profile.html:64 src/templates/search.html:72
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:228
+#: src/templates/export-modal.html:17 src/templates/field-builder-modal.html:51
+#: src/templates/head.html:60 src/templates/profile.html:64
+#: src/templates/profile.html:163 src/templates/search.html:72
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:229
 #: src/templates/team.html:182 src/templates/todolist-panel.html:38
 #: src/templates/ucp.html:117
 msgid "Experiment"
@@ -941,7 +939,7 @@ msgstr[1] "Expériences"
 msgid "Login"
 msgstr "Connexion"
 
-#: web/login.php:58 src/templates/mfa.html:7 src/templates/ucp.html:334
+#: web/login.php:58 src/templates/mfa.html:7 src/templates/ucp.html:348
 msgid "Two Factor Authentication"
 msgstr "Authentification à deux facteurs"
 
@@ -985,11 +983,11 @@ msgstr "Configuration eLabFTW"
 #: web/team.php:32 src/templates/admin.html:22 src/templates/admin.html:767
 #: src/templates/catstat-view.html:4 src/templates/editusers.html:273
 #: src/templates/head.html:66 src/templates/permissions-edit-modal.html:52
-#: src/templates/register.html:43 src/templates/register.html:44
-#: src/templates/scope-button.html:12
+#: src/templates/permissions-edit-modal.html:65 src/templates/register.html:43
+#: src/templates/register.html:44 src/templates/scope-button.html:12
 #: src/templates/show-templates-select.html:18
-#: src/templates/todolist-panel.html:33 src/templates/ucp.html:460
-#: src/templates/ucp.html:471
+#: src/templates/todolist-panel.html:33 src/templates/ucp.html:297
+#: src/templates/ucp.html:485 src/templates/ucp.html:496
 msgid "Team"
 msgstr "Équipe"
 
@@ -1033,7 +1031,7 @@ msgstr "Valider"
 #: src/templates/admin.html:749 src/templates/editusers.html:75
 #: src/templates/link-view-one.html:29 src/templates/profile.html:264
 #: src/templates/show.html:226 src/templates/steps-links-edit.html:16
-#: src/templates/sysconfig.html:739 src/templates/ucp.html:476
+#: src/templates/sysconfig.html:740 src/templates/ucp.html:501
 #: src/templates/upload-dropdown-menu.html:93 src/templates/uploads.html:118
 #: src/templates/view-edit-toolbar.html:348 src/templates/view.html:164
 msgid "Delete"
@@ -1045,7 +1043,7 @@ msgid "Groups"
 msgstr "Groupes"
 
 #: src/templates/admin.html:24 src/templates/admin.html:779
-#: src/templates/permissions-edit-modal.html:66 src/templates/search.html:168
+#: src/templates/permissions-edit-modal.html:80 src/templates/search.html:168
 #: src/templates/sysconfig.html:43
 #: src/templates/view-permissions-details.html:23
 msgid "Users"
@@ -1087,11 +1085,11 @@ msgstr "Créer un nouveau statut pour les ressources"
 msgid "Configure your Team"
 msgstr "Configurez votre équipe"
 
-#: src/templates/admin.html:52 src/templates/sysconfig.html:267
+#: src/templates/admin.html:52 src/templates/sysconfig.html:268
 msgid "Announcement"
 msgstr "Annonce"
 
-#: src/templates/admin.html:55 src/templates/sysconfig.html:269
+#: src/templates/admin.html:55 src/templates/sysconfig.html:270
 msgid ""
 "The following text will be displayed to all users on all pages while it's "
 "active."
@@ -1123,8 +1121,8 @@ msgstr "Nom du lien dans le menu du haut"
 msgid "Address where this link should point"
 msgstr "Adresse vers laquelle ce lien pointe"
 
-#: src/templates/admin.html:83 src/templates/ucp.html:442
-#: src/templates/ucp.html:462 src/templates/ucp.html:473
+#: src/templates/admin.html:83 src/templates/ucp.html:467
+#: src/templates/ucp.html:487 src/templates/ucp.html:498
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -1201,8 +1199,8 @@ msgstr ""
 msgid "Message to display"
 msgstr "Message à afficher"
 
-#: src/templates/admin.html:190 src/templates/sysconfig.html:603
-#: src/templates/sysconfig.html:856 src/templates/ucp.html:430
+#: src/templates/admin.html:190 src/templates/sysconfig.html:604
+#: src/templates/sysconfig.html:857 src/templates/ucp.html:444
 msgid "Link to documentation"
 msgstr "Lien vers la documentation"
 
@@ -1235,7 +1233,7 @@ msgid "User name"
 msgstr "Nom d'utilisateur"
 
 #: src/templates/admin.html:227 src/templates/admin.html:783
-#: src/templates/permissions-edit-modal.html:77
+#: src/templates/permissions-edit-modal.html:91
 msgid "Add user"
 msgstr "Ajouter cet utilisateur"
 
@@ -1252,9 +1250,9 @@ msgstr "Créer et modifier les catégories disponibles pour les expériences."
 #: src/templates/create-statuslike-modal.html:13
 #: src/templates/field-builder-modal.html:58
 #: src/templates/field-builder-modal.html:59 src/templates/sysconfig.html:18
-#: src/templates/sysconfig.html:214 src/templates/team.html:190
-#: src/templates/ucp.html:436 src/templates/ucp.html:461
-#: src/templates/ucp.html:472
+#: src/templates/sysconfig.html:215 src/templates/team.html:190
+#: src/templates/ucp.html:461 src/templates/ucp.html:486
+#: src/templates/ucp.html:497
 msgid "Name"
 msgstr "Nom"
 
@@ -1285,7 +1283,7 @@ msgstr "Retourner à la liste"
 
 #: src/templates/admin.html:312 src/templates/show-item-table.html:15
 #: src/templates/show-item.html:20 src/templates/show-templates-select.html:33
-#: src/templates/sysconfig.html:360 src/templates/sysconfig.html:899
+#: src/templates/sysconfig.html:361 src/templates/sysconfig.html:900
 #: src/templates/ucp.html:136 src/templates/ucp.html:149
 #: src/templates/view-edit-toolbar.html:204
 msgid "Edit"
@@ -1530,14 +1528,14 @@ msgstr ""
 
 #: src/templates/admin.html:763 src/templates/permissions-edit-modal.html:46
 #: src/templates/profile.html:30 src/templates/sysconfig.html:42
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:999
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:1000
 #: src/templates/view-permissions-details.html:5
 msgid "Teams"
 msgstr "Équipes"
 
 #: src/templates/admin.html:763 src/templates/admin.html:771
 #: src/templates/permissions-edit-modal.html:46
-#: src/templates/permissions-edit-modal.html:56
+#: src/templates/permissions-edit-modal.html:58
 msgid "(hold %sctrl%s key to select multiple entries)"
 msgstr "(maintenez %sctrl%s pour sélectionner plusieurs entrées)"
 
@@ -1550,33 +1548,33 @@ msgstr ""
 msgid "Teamgroups"
 msgstr "Groupes"
 
-#: src/templates/admin.html:772 src/templates/permissions-edit-modal.html:57
+#: src/templates/admin.html:772 src/templates/permissions-edit-modal.html:71
 msgid ""
 "Selecting a teamgroup here will give access to all users part of this "
 "teamgroup."
 msgstr "Choisir un groupe ici va donner accès à tous les membres de ce groupe."
 
-#: src/templates/admin.html:775 src/templates/permissions-edit-modal.html:62
+#: src/templates/admin.html:775 src/templates/permissions-edit-modal.html:76
 msgid "Teamgroup"
 msgstr "Groupe"
 
-#: src/templates/admin.html:779 src/templates/permissions-edit-modal.html:66
+#: src/templates/admin.html:779 src/templates/permissions-edit-modal.html:80
 msgid "Allow individual users to access this entry."
 msgstr "Autorisez les utilisateurs individuels à accéder à cette entrée."
 
 #: src/templates/admin.html:785 src/templates/favtags-panel.html:24
-#: src/templates/permissions-edit-modal.html:79
+#: src/templates/permissions-edit-modal.html:93
 #: src/templates/steps-links-edit.html:126
 #: src/templates/steps-links-edit.html:158 src/templates/todolist-panel.html:8
 #: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:11
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/templates/admin.html:793
+#: src/templates/admin.html:793 src/templates/profile.html:195
 msgid "Set read permissions"
 msgstr "Définir les autorisations de lecture"
 
-#: src/templates/admin.html:794
+#: src/templates/admin.html:794 src/templates/profile.html:205
 msgid "Set write permissions"
 msgstr "Définir les droits d'écriture"
 
@@ -1624,7 +1622,7 @@ msgstr ""
 #: src/templates/ownership-transfer-modal.html:7
 #: src/templates/ownership-transfer-modal.html:23
 #: src/templates/permissions-edit-modal.html:30
-#: src/templates/permissions-edit-modal.html:102
+#: src/templates/permissions-edit-modal.html:116
 #: src/templates/procurement-params-modal.html:7
 #: src/templates/procurement-params-modal.html:47
 #: src/templates/register.html:14 src/templates/register.html:22
@@ -1691,7 +1689,7 @@ msgstr "Temps minimum avant qu'un créneau puisse être annulé (en minutes)"
 #: src/templates/catstat-edit.html:4 src/templates/catstat-view.html:12
 #: src/templates/pdf.html:36 src/templates/show-templates-select.html:20
 #: src/templates/show.html:52 src/templates/show.html:332
-#: src/templates/sysconfig.html:1052 src/templates/ucp.html:94
+#: src/templates/sysconfig.html:1053 src/templates/ucp.html:94
 msgid "Category"
 msgstr "Catégorie"
 
@@ -1704,7 +1702,7 @@ msgid "New password"
 msgstr "Nouveau mot de passe"
 
 #: src/templates/change-pass.html:19 src/templates/editusers.html:183
-#: src/templates/register.html:69 src/templates/ucp.html:323
+#: src/templates/register.html:69 src/templates/ucp.html:337
 msgid "Minimum password length: %d."
 msgstr "Longueur minimale du mot de passe : %d."
 
@@ -1736,11 +1734,11 @@ msgstr "Nouvelle valeur"
 msgid "Go back"
 msgstr "Revenir en arrière"
 
-#: src/templates/create-idp-modal.html:6 src/templates/sysconfig.html:731
+#: src/templates/create-idp-modal.html:6 src/templates/sysconfig.html:732
 msgid "Add new IDP"
 msgstr "Ajouter un nouvel IDP"
 
-#: src/templates/create-idp-modal.html:13 src/templates/sysconfig.html:756
+#: src/templates/create-idp-modal.html:13 src/templates/sysconfig.html:757
 msgid "Friendly name"
 msgstr "Nom convivial"
 
@@ -1881,9 +1879,9 @@ msgid "Use %sCtrl%s + click to add text"
 msgstr "Utilisez %sCtrl%s + clic pour ajouter du texte"
 
 #: src/templates/edit.html:183 src/templates/filter-input-snippet.html:6
-#: src/templates/json-editor.html:44 src/templates/sysconfig.html:276
-#: src/templates/sysconfig.html:290 src/templates/sysconfig.html:469
-#: src/templates/sysconfig.html:475 src/templates/sysconfig.html:503
+#: src/templates/json-editor.html:44 src/templates/sysconfig.html:277
+#: src/templates/sysconfig.html:291 src/templates/sysconfig.html:470
+#: src/templates/sysconfig.html:476 src/templates/sysconfig.html:504
 msgid "Clear"
 msgstr "Effacer"
 
@@ -1987,16 +1985,16 @@ msgstr "Équipe(s)"
 #: src/templates/editusers.html:124 src/templates/editusers.html:147
 #: src/templates/editusers.html:296 src/templates/editusers.html:351
 #: src/templates/editusers.html:361 src/templates/login.html:55
-#: src/templates/register.html:78 src/templates/sysconfig.html:981
-#: src/templates/ucp.html:354
+#: src/templates/register.html:78 src/templates/sysconfig.html:982
+#: src/templates/ucp.html:368
 msgid "Firstname"
 msgstr "Prénom"
 
 #: src/templates/editusers.html:125 src/templates/editusers.html:150
 #: src/templates/editusers.html:302 src/templates/editusers.html:352
 #: src/templates/editusers.html:362 src/templates/login.html:58
-#: src/templates/register.html:84 src/templates/sysconfig.html:987
-#: src/templates/ucp.html:360
+#: src/templates/register.html:84 src/templates/sysconfig.html:988
+#: src/templates/ucp.html:374
 msgid "Lastname"
 msgstr "Nom"
 
@@ -2004,9 +2002,9 @@ msgstr "Nom"
 #: src/templates/editusers.html:310 src/templates/editusers.html:353
 #: src/templates/editusers.html:363 src/templates/field-builder-modal.html:47
 #: src/templates/login.html:126 src/templates/register.html:55
-#: src/templates/sysconfig.html:45 src/templates/sysconfig.html:993
+#: src/templates/sysconfig.html:45 src/templates/sysconfig.html:994
 #: src/templates/team.html:8 src/templates/team.html:191
-#: src/templates/ucp.html:315 src/templates/ucp.html:499
+#: src/templates/ucp.html:329 src/templates/ucp.html:524
 msgid "Email"
 msgstr "Email"
 
@@ -2028,12 +2026,12 @@ msgid "Is Sysadmin"
 msgstr "Est Sysadmin"
 
 #: src/templates/editusers.html:132 src/templates/editusers.html:177
-#: src/templates/sysconfig.html:218 src/templates/team.html:274
+#: src/templates/sysconfig.html:219 src/templates/team.html:274
 #: src/templates/team.html:301 src/templates/uploads.html:67
 msgid "Actions"
 msgstr "Actions"
 
-#: src/templates/editusers.html:156 src/templates/ucp.html:475
+#: src/templates/editusers.html:156 src/templates/ucp.html:500
 msgid "never"
 msgstr "jamais"
 
@@ -2054,7 +2052,7 @@ msgid "Set new password"
 msgstr "Définir un nouveau mot de passe"
 
 #: src/templates/editusers.html:194 src/templates/steps-links-edit.html:33
-#: src/templates/ucp.html:379 src/templates/upload-dropdown-menu.html:3
+#: src/templates/ucp.html:393 src/templates/upload-dropdown-menu.html:3
 #: src/templates/view-edit-template.html:140
 #: src/templates/view-edit-toolbar.html:317
 msgid "More options"
@@ -2144,10 +2142,6 @@ msgstr "Créer un export"
 msgid "Export source"
 msgstr "Source d'exportation"
 
-#: src/templates/export-modal.html:17 src/templates/profile.html:163
-msgid "Experiments"
-msgstr "Expériences"
-
 #: src/templates/export-modal.html:21 src/templates/head.html:133
 #: src/templates/profile.html:171 src/templates/team.html:7
 #: src/templates/ucp.html:15
@@ -2156,7 +2150,7 @@ msgstr "Modèles"
 
 #: src/templates/export-modal.html:25 src/templates/head.html:62
 #: src/templates/profile.html:167 src/templates/search.html:73
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:232
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:233
 #: src/templates/team.html:182 src/templates/todolist-panel.html:45
 msgid "Resources"
 msgstr "Ressources"
@@ -2450,7 +2444,7 @@ msgstr "Effacer tout"
 msgid "No new notifications to show."
 msgstr "Pas de nouvelles notifications."
 
-#: src/templates/head.html:101 src/templates/ucp.html:485
+#: src/templates/head.html:101 src/templates/ucp.html:510
 msgid "Notifications settings"
 msgstr "Préférences des notifications"
 
@@ -2468,7 +2462,7 @@ msgid "Help"
 msgstr "Aide"
 
 #: src/templates/head.html:112 src/templates/head.html:113
-#: src/templates/sysconfig.html:203
+#: src/templates/sysconfig.html:204
 msgid "Documentation"
 msgstr "Documentation"
 
@@ -2611,7 +2605,7 @@ msgid "Display main text"
 msgstr "Afficher le texte principal"
 
 #: src/templates/json-editor.html:65 src/templates/profile.html:6
-#: src/templates/sysconfig.html:180
+#: src/templates/sysconfig.html:181
 msgid "Information"
 msgstr "Information"
 
@@ -2687,11 +2681,11 @@ msgid "Login to your account"
 msgstr "Connectez-vous à votre compte"
 
 #: src/templates/login.html:128 src/templates/register.html:67
-#: src/templates/sysconfig.html:892
+#: src/templates/sysconfig.html:893
 msgid "Password"
 msgstr "Mot de passe"
 
-#: src/templates/login.html:132 src/templates/ucp.html:403
+#: src/templates/login.html:132 src/templates/ucp.html:417
 msgid "Show password"
 msgstr "Afficher le mot de passe"
 
@@ -2743,7 +2737,8 @@ msgstr "Ouvrez votre application d'authentification et scannez le code QR"
 msgid "Display secret for manual setup"
 msgstr "Secret d'affichage pour la configuration manuelle"
 
-#: src/templates/mfa.html:35 src/templates/permissions-edit-modal.html:93
+#: src/templates/mfa.html:35 src/templates/permissions-edit-modal.html:107
+#: src/templates/ucp.html:452
 msgid "Copy to clipboard"
 msgstr "Copier dans le presse-papier"
 
@@ -2776,7 +2771,7 @@ msgid "Search users..."
 msgstr "Rechercher des utilisateurs …"
 
 #: src/templates/onboarding-email-modal.html:20
-#: src/templates/sysconfig.html:322 src/templates/sysconfig.html:382
+#: src/templates/sysconfig.html:323 src/templates/sysconfig.html:383
 #: src/templates/team.html:245
 msgid "Send"
 msgstr "Envoyer"
@@ -2799,7 +2794,7 @@ msgid "Subject"
 msgstr "Sujet"
 
 #: src/templates/onboarding-email.html:25
-#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1054
+#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1055
 #: src/templates/team.html:241
 msgid "Content"
 msgstr "Contenu"
@@ -2896,11 +2891,26 @@ msgstr "Peut réserver"
 msgid "Select who can book this entry"
 msgstr "Sélectionner qui peut réserver cette entrée"
 
-#: src/templates/permissions-edit-modal.html:88
+#: src/templates/permissions-edit-modal.html:61
+#: src/templates/permissions-edit-modal.html:62
+msgid "Set scope"
+msgstr "Modifier le périmètre"
+
+#: src/templates/permissions-edit-modal.html:64
+#: src/templates/scope-button.html:8 src/templates/ucp.html:296
+msgid "Self"
+msgstr "Soi-même"
+
+#: src/templates/permissions-edit-modal.html:66
+#: src/templates/scope-button.html:16 src/templates/ucp.html:298
+msgid "Everything"
+msgstr "Tout"
+
+#: src/templates/permissions-edit-modal.html:102
 msgid "Allow read access for anonymous users"
 msgstr "Autoriser l'accès en lecture pour les utilisateurs anonymes"
 
-#: src/templates/permissions-edit-modal.html:97
+#: src/templates/permissions-edit-modal.html:111
 msgid "Anyone following this link can access this entry."
 msgstr "Toute personne qui suit ce lien pourra accéder à cette entrée."
 
@@ -2998,14 +3008,6 @@ msgstr "Sélectionner une catégorie"
 msgid "Select owner of imported elements"
 msgstr "Sélectionner le propriétaire des éléments importés"
 
-#: src/templates/profile.html:195
-msgid "Select read permissions"
-msgstr "Sélectionner les autorisations de lecture"
-
-#: src/templates/profile.html:205
-msgid "Select write permissions"
-msgstr "Sélectionner les droits d'écriture"
-
 #: src/templates/profile.html:227
 msgid "This page allows you to export your data in different formats."
 msgstr "Cette page vous permet d'exporter vos données dans différents formats."
@@ -3018,7 +3020,7 @@ msgstr "Créer un nouvel export"
 msgid "Exported files"
 msgstr "Fichiers exportés"
 
-#: src/templates/profile.html:235 src/templates/sysconfig.html:1045
+#: src/templates/profile.html:235 src/templates/sysconfig.html:1046
 msgid "Refresh"
 msgstr "Actualiser"
 
@@ -3132,14 +3134,6 @@ msgstr "Restaurer"
 #: src/templates/scope-button.html:5
 msgid "Scope"
 msgstr "Périmètre"
-
-#: src/templates/scope-button.html:8
-msgid "Self"
-msgstr "Soi-même"
-
-#: src/templates/scope-button.html:16
-msgid "Everything"
-msgstr "Tout"
 
 #: src/templates/search-syntax-doc-modal.html:5
 msgid "Search Syntax"
@@ -3327,12 +3321,12 @@ msgid "Select lock status"
 msgstr "Choisir un statut de vérouillage"
 
 #: src/templates/search.html:255 src/templates/search.html:266
-#: src/templates/ucp.html:339
+#: src/templates/ucp.html:353
 msgid "Yes"
 msgstr "Oui"
 
 #: src/templates/search.html:256 src/templates/search.html:267
-#: src/templates/ucp.html:340
+#: src/templates/ucp.html:354
 msgid "No"
 msgstr "Non"
 
@@ -3719,7 +3713,7 @@ msgstr "Téléversements"
 msgid "External auth"
 msgstr "Authentification externe"
 
-#: src/templates/sysconfig.html:53 src/templates/sysconfig.html:1040
+#: src/templates/sysconfig.html:53 src/templates/sysconfig.html:1041
 msgid "Audit Logs"
 msgstr "Journaux d’audit"
 
@@ -3727,7 +3721,7 @@ msgstr "Journaux d’audit"
 msgid "Usage Statistics"
 msgstr "Statistiques d'utilisation"
 
-#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:226
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:227
 #: src/templates/team.html:6 src/templates/team.html:182
 #: src/templates/team.html:185
 msgid "Members"
@@ -3754,7 +3748,7 @@ msgid ""
 "proxy.example.com:3128"
 msgstr ""
 "Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
-"proxy.example.cm:3128"
+"proxy.example.com:3128"
 
 #: src/templates/sysconfig.html:92
 msgid "Allow the base permission setting «Only owner»"
@@ -3866,11 +3860,25 @@ msgstr ""
 msgid "Allow Admins to archive users"
 msgstr "Autoriser les administrateurs à archiver les utilisateurs"
 
-#: src/templates/sysconfig.html:152
+#: src/templates/sysconfig.html:151
+msgid "Trust imported files about data ownership and dates"
+msgstr ""
+"Faire confiance aux fichiers importés en ce qui concerne la propriété des "
+"données et les dates"
+
+#: src/templates/sysconfig.html:151
+msgid ""
+"Allows users to import experiments under the identity stated in the file, "
+"creating missing users (if allowed)."
+msgstr ""
+"Permet aux utilisateurs d'importer des expériences sous l'identité indiquée "
+"dans le fichier, en créant des utilisateurs manquants (si cela est autorisé)."
+
+#: src/templates/sysconfig.html:153
 msgid "Show local login form"
 msgstr "Afficher le formulaire d'authentification locale"
 
-#: src/templates/sysconfig.html:152
+#: src/templates/sysconfig.html:153
 msgid ""
 "You can still show the local login form by appending ?letmein to the login "
 "page URL."
@@ -3878,7 +3886,7 @@ msgstr ""
 "Vous pourrez toujours afficher le formulaire en ajoutant ?letmein à l'URL de "
 "la page de login."
 
-#: src/templates/sysconfig.html:155
+#: src/templates/sysconfig.html:156
 msgid ""
 "Message shown to user after successful external auth but local account "
 "provisioning is required"
@@ -3886,130 +3894,130 @@ msgstr ""
 "Message affiché à l'utilisateur après une authentification externe réussie "
 "mais le provisionnement du compte local est requis"
 
-#: src/templates/sysconfig.html:161 src/templates/sysconfig.html:172
+#: src/templates/sysconfig.html:162 src/templates/sysconfig.html:173
 msgid "Remote directory configuration"
 msgstr "Configuration de l’annuaire distant"
 
-#: src/templates/sysconfig.html:163
+#: src/templates/sysconfig.html:164
 msgid "Admins can create local accounts from remote directory"
 msgstr ""
 "Les administrateurs peuvent créer des comptes locaux à partir d’un annuaire "
 "distant"
 
-#: src/templates/sysconfig.html:166
+#: src/templates/sysconfig.html:167
 msgid "Remote directory service"
 msgstr "Service d’annuaire distant"
 
-#: src/templates/sysconfig.html:175
+#: src/templates/sysconfig.html:176
 msgid "Use a JSON string for configuration. This setting is stored encrypted."
 msgstr ""
 "Utilisez une chaîne JSON pour la configuration. Ce paramètre est stocké "
 "chiffré."
 
-#: src/templates/sysconfig.html:183
+#: src/templates/sysconfig.html:184
 msgid "Operating System"
 msgstr "Système d'exploitation"
 
-#: src/templates/sysconfig.html:184
+#: src/templates/sysconfig.html:185
 msgid "Docker image version"
 msgstr "Version de l’image Docker"
 
-#: src/templates/sysconfig.html:185
+#: src/templates/sysconfig.html:186
 msgid "PHP Version"
 msgstr "Version PHP"
 
-#: src/templates/sysconfig.html:186
+#: src/templates/sysconfig.html:187
 msgid "MySQL Version"
 msgstr "Version MySQL"
 
-#: src/templates/sysconfig.html:187
+#: src/templates/sysconfig.html:188
 msgid "MySQL database structure version"
 msgstr "Version de la structure de base de données MySQL"
 
-#: src/templates/sysconfig.html:188
+#: src/templates/sysconfig.html:189
 msgid "Largest integer supported"
 msgstr "Plus grand entier pris en charge"
 
-#: src/templates/sysconfig.html:189
+#: src/templates/sysconfig.html:190
 msgid "PHP configuration directory"
 msgstr "Répertoire de configuration de PHP"
 
-#: src/templates/sysconfig.html:190
+#: src/templates/sysconfig.html:191
 msgid "Maximum file size for uploaded files"
 msgstr "Taille maximale pour les fichiers téléversés"
 
-#: src/templates/sysconfig.html:192
+#: src/templates/sysconfig.html:193
 msgid "Timezone"
 msgstr "Fuseau horaire"
 
-#: src/templates/sysconfig.html:200
+#: src/templates/sysconfig.html:201
 msgid "Teams list"
 msgstr "Liste des équipes"
 
-#: src/templates/sysconfig.html:203
+#: src/templates/sysconfig.html:204
 msgid "This page allows you to edit the teams present on this instance."
 msgstr ""
 "Cette page vous permet de modifier les équipes présentes sur cette instance."
 
-#: src/templates/sysconfig.html:206
+#: src/templates/sysconfig.html:207
 msgid "Create a team"
 msgstr "Créer une équipe"
 
-#: src/templates/sysconfig.html:215
+#: src/templates/sysconfig.html:216
 msgid "Organisation ID"
 msgstr "Organisation ID"
 
-#: src/templates/sysconfig.html:216 src/templates/ucp.html:463
-#: src/templates/ucp.html:474 src/templates/uploads.html:65
+#: src/templates/sysconfig.html:217 src/templates/ucp.html:488
+#: src/templates/ucp.html:499 src/templates/uploads.html:65
 msgid "Creation date"
 msgstr "Date de création"
 
-#: src/templates/sysconfig.html:217 src/templates/sysconfig.html:241
+#: src/templates/sysconfig.html:218 src/templates/sysconfig.html:242
 msgid "Visible"
 msgstr "Visible"
 
-#: src/templates/sysconfig.html:250
+#: src/templates/sysconfig.html:251
 msgid "None available"
 msgstr "Aucun disponible"
 
-#: src/templates/sysconfig.html:281
+#: src/templates/sysconfig.html:282
 msgid "Login page announcement"
 msgstr "Annonce sur la page de login"
 
-#: src/templates/sysconfig.html:283
+#: src/templates/sysconfig.html:284
 msgid "The following text will be displayed only on the login page."
 msgstr "Ce texte sera montré sur la page de login."
 
-#: src/templates/sysconfig.html:301
+#: src/templates/sysconfig.html:302
 msgid "Send a Mass Email"
 msgstr "Envoyer un email en masse"
 
-#: src/templates/sysconfig.html:303 src/templates/team.html:77
+#: src/templates/sysconfig.html:304 src/templates/team.html:77
 #: src/templates/team.html:229
 msgid "Send to"
 msgstr "Envoyer à"
 
-#: src/templates/sysconfig.html:306
+#: src/templates/sysconfig.html:307
 msgid "All active users"
 msgstr "Tous les utilisateurs actifs"
 
-#: src/templates/sysconfig.html:310
+#: src/templates/sysconfig.html:311
 msgid "All active admins"
 msgstr "Tous les administrateurs actifs"
 
-#: src/templates/sysconfig.html:314
+#: src/templates/sysconfig.html:315
 msgid "All active sysadmins"
 msgstr "Tous les administrateurs système actifs"
 
-#: src/templates/sysconfig.html:316
+#: src/templates/sysconfig.html:317
 msgid "Email Subject"
 msgstr "Sujet de l'email"
 
-#: src/templates/sysconfig.html:319
+#: src/templates/sysconfig.html:320
 msgid "Email Body"
 msgstr "Corps de l'email"
 
-#: src/templates/sysconfig.html:329
+#: src/templates/sysconfig.html:330
 msgid ""
 "Without a valid way to send emails, users won't be able to reset their "
 "password. It is recommended to create a specific %ssmtp2go.com%s account and "
@@ -4019,89 +4027,89 @@ msgstr ""
 "réinitialiser leur mots de passe. Il est recommandé de créer un compte "
 "spécifique %ssmtp2go.com%s et d'ajouter les informations ici."
 
-#: src/templates/sysconfig.html:330
+#: src/templates/sysconfig.html:331
 msgid "E-mail Settings"
 msgstr "Paramètres email"
 
-#: src/templates/sysconfig.html:334
+#: src/templates/sysconfig.html:335
 msgid "Address of the SMTP server"
 msgstr "Adresse du serveur SMTP"
 
-#: src/templates/sysconfig.html:340
+#: src/templates/sysconfig.html:341
 msgid "SMTP Port"
 msgstr "Port SMTP"
 
-#: src/templates/sysconfig.html:343
+#: src/templates/sysconfig.html:344
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: src/templates/sysconfig.html:347
+#: src/templates/sysconfig.html:348
 msgid "SMTP username"
 msgstr "Nom d’utilisateur SMTP"
 
-#: src/templates/sysconfig.html:353
+#: src/templates/sysconfig.html:354
 msgid "SMTP password"
 msgstr "Mot de passe SMTP"
 
-#: src/templates/sysconfig.html:358 src/templates/sysconfig.html:897
+#: src/templates/sysconfig.html:359 src/templates/sysconfig.html:898
 msgid "A password is already set."
 msgstr "Un mot de passe existe déjà."
 
-#: src/templates/sysconfig.html:359 src/templates/sysconfig.html:898
+#: src/templates/sysconfig.html:360 src/templates/sysconfig.html:899
 msgid "%sClear it%s or change it below:"
 msgstr "%sEffacer%s ou modifier ci-dessous :"
 
-#: src/templates/sysconfig.html:368
+#: src/templates/sysconfig.html:369
 msgid "Sender address"
 msgstr "Adresse de l'expéditeur"
 
-#: src/templates/sysconfig.html:373 src/templates/sysconfig.html:555
+#: src/templates/sysconfig.html:374 src/templates/sysconfig.html:556
 msgid "Verify TLS certificate"
 msgstr "Vérifier le certificat TLS"
 
-#: src/templates/sysconfig.html:377
+#: src/templates/sysconfig.html:378
 msgid "Send a test email"
 msgstr "Envoyer un email de test"
 
-#: src/templates/sysconfig.html:380
+#: src/templates/sysconfig.html:381
 msgid "Email address"
 msgstr "Adresse email"
 
-#: src/templates/sysconfig.html:390
+#: src/templates/sysconfig.html:391
 msgid "Security Settings"
 msgstr "Paramètres de sécurité"
 
-#: src/templates/sysconfig.html:393
+#: src/templates/sysconfig.html:394
 msgid "Users need validation by admin after registration"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin"
 
-#: src/templates/sysconfig.html:396
+#: src/templates/sysconfig.html:397
 msgid "Enforce 2FA"
 msgstr "Appliquer 2FA"
 
-#: src/templates/sysconfig.html:406
+#: src/templates/sysconfig.html:407
 msgid "Enforce a domain name for emails"
 msgstr "Forcer un nom de domaine pour les emails"
 
-#: src/templates/sysconfig.html:409
+#: src/templates/sysconfig.html:410
 msgid ""
 "Only email addresses at this domain will be allowed to register an account."
 msgstr "Seules les adresses appartenant à ce domaine pourront créer un compte."
 
-#: src/templates/sysconfig.html:410
+#: src/templates/sysconfig.html:411
 msgid "You can add several domains by separating them with a comma."
 msgstr ""
 "Vous pouvez ajouter plusieurs domaines en les séparant par une virgule."
 
-#: src/templates/sysconfig.html:414
+#: src/templates/sysconfig.html:415
 msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-#: src/templates/sysconfig.html:417
+#: src/templates/sysconfig.html:418
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
-#: src/templates/sysconfig.html:421
+#: src/templates/sysconfig.html:422
 msgid ""
 "Time after which inactive sessions are invalidated (force logout) (in "
 "seconds)"
@@ -4109,86 +4117,86 @@ msgstr ""
 "Temps après lequel les sessions sont inactivées (déconnexion forcée) (en "
 "secondes)"
 
-#: src/templates/sysconfig.html:424 src/templates/sysconfig.html:461
+#: src/templates/sysconfig.html:425 src/templates/sysconfig.html:462
 msgid "Set to 0 to disable this feature."
 msgstr "Mettre à 0 pour désactiver."
 
-#: src/templates/sysconfig.html:427
+#: src/templates/sysconfig.html:428
 msgid "Allow setting an authentication cookie"
 msgstr "Autoriser la mise en place d'un cookie d'authentification"
 
-#: src/templates/sysconfig.html:427
+#: src/templates/sysconfig.html:428
 msgid ""
 "Disabling this setting will hide the \"remember me\" checkbox on login page."
 msgstr ""
 "La désactivation de ce paramètre masque la case à cocher \"se souvenir de moi"
 "\" sur la page de connexion."
 
-#: src/templates/sysconfig.html:429
+#: src/templates/sysconfig.html:430
 msgid "Check the \"remember me\" box on login page by default"
 msgstr ""
 "Cochez la case \"se souvenir de moi\" sur la page de connexion par défaut"
 
-#: src/templates/sysconfig.html:432
+#: src/templates/sysconfig.html:433
 msgid "Validity period of an authentication cookie (in minutes)"
 msgstr "Période de validité d'un cookie d'authentification (en minutes)"
 
-#: src/templates/sysconfig.html:438
+#: src/templates/sysconfig.html:439
 msgid "Password policy"
 msgstr "Politique en matière de mot de passe"
 
-#: src/templates/sysconfig.html:447
+#: src/templates/sysconfig.html:448
 msgid "Password complexity requirement"
 msgstr "Exigence de complexité du mot de passe"
 
-#: src/templates/sysconfig.html:454
+#: src/templates/sysconfig.html:455
 msgid "The minimum password length is always enforced."
 msgstr "La longueur minimale du mot de passe est toujours appliquée."
 
-#: src/templates/sysconfig.html:458
+#: src/templates/sysconfig.html:459
 msgid "Maximum number of days since last password change"
 msgstr "Nombre maximal de jours depuis le dernier changement de mot de passe"
 
-#: src/templates/sysconfig.html:465
+#: src/templates/sysconfig.html:466
 msgid "Bruteforce login protection"
 msgstr "Protection de connexion par force brute"
 
-#: src/templates/sysconfig.html:468
+#: src/templates/sysconfig.html:469
 msgid "%d users are currently prevented from logging in from unknown devices."
 msgstr ""
 "%d utilisateurs sont empêchés de s'authentifier depuis des appareils "
 "inconnus."
 
-#: src/templates/sysconfig.html:474
+#: src/templates/sysconfig.html:475
 msgid "%d devices are currently denied authentication."
 msgstr "%d appareils sont empêchés de s'authentifier."
 
-#: src/templates/sysconfig.html:488
+#: src/templates/sysconfig.html:489
 msgid "Link name"
 msgstr "Nom du lien"
 
-#: src/templates/sysconfig.html:493
+#: src/templates/sysconfig.html:494
 msgid "Note: the text below is a template and must be edited and saved."
 msgstr ""
 "Note : le text ci-dessous est un modèle et doit être édité et sauvegardé."
 
-#: src/templates/sysconfig.html:517
+#: src/templates/sysconfig.html:518
 msgid "Uploaded files configuration"
 msgstr "Configuration des fichiers téléversés"
 
-#: src/templates/sysconfig.html:522
+#: src/templates/sysconfig.html:523
 msgid "Where user uploaded files are stored:"
 msgstr "Où les fichiers téléversés par les utilisateurs sont stockés :"
 
-#: src/templates/sysconfig.html:524 src/templates/upload-more-info.html:2
+#: src/templates/sysconfig.html:525 src/templates/upload-more-info.html:2
 msgid "Local filesystem"
 msgstr "Système de fichiers local"
 
-#: src/templates/sysconfig.html:525
+#: src/templates/sysconfig.html:526
 msgid "S3 bucket"
 msgstr "S3 bucket"
 
-#: src/templates/sysconfig.html:528
+#: src/templates/sysconfig.html:529
 msgid ""
 "You can select where uploaded files will be stored. The default is local "
 "storage but you can configure any S3 compatible object storage."
@@ -4197,197 +4205,197 @@ msgstr ""
 "système de fichiers local est utilisé mais vous pouvez configurer n'importe "
 "quel service de stockage objet S3."
 
-#: src/templates/sysconfig.html:561
+#: src/templates/sysconfig.html:562
 msgid "Timestamping Configuration"
 msgstr "Configuration de l'horodatage"
 
-#: src/templates/sysconfig.html:567
+#: src/templates/sysconfig.html:568
 msgid "Blockchain timestamp configuration"
 msgstr "Configuration de l'horodatage chaîne de blocs"
 
-#: src/templates/sysconfig.html:570
+#: src/templates/sysconfig.html:571
 msgid "Enable blockchain timestamping with Bloxberg"
 msgstr "Permettre l'horodatage chaîne de blocs avec Bloxberg"
 
-#: src/templates/sysconfig.html:571
+#: src/templates/sysconfig.html:572
 msgid "Anonymize author for GDPR compliance"
 msgstr "Anonymiser l'auteur pour conformité GDPR"
 
-#: src/templates/sysconfig.html:576
+#: src/templates/sysconfig.html:577
 msgid "Keeex configuration"
 msgstr "Configuration de Keeex"
 
-#: src/templates/sysconfig.html:578
+#: src/templates/sysconfig.html:579
 msgid "Requires a Keeex Fusion daemon running. %sSee documentation%s."
 msgstr "Requiert un service Keeex Fusion. %sVoir documentation%s."
 
-#: src/templates/sysconfig.html:580
+#: src/templates/sysconfig.html:581
 msgid "Enable Keeex"
 msgstr "Activer Keeex"
 
-#: src/templates/sysconfig.html:583
+#: src/templates/sysconfig.html:584
 msgid "Keeex host"
 msgstr "Hôte Keeex"
 
-#: src/templates/sysconfig.html:586
+#: src/templates/sysconfig.html:587
 msgid "Address (hostname or IP) of the Keeex service."
 msgstr "Adresse (nom d’hôte ou IP) du service Keeex."
 
-#: src/templates/sysconfig.html:590
+#: src/templates/sysconfig.html:591
 msgid "Keeex port"
 msgstr "Port Keeex"
 
-#: src/templates/sysconfig.html:593
+#: src/templates/sysconfig.html:594
 msgid "Default port is 8080."
 msgstr "Le port par défaut est 8080."
 
-#: src/templates/sysconfig.html:606
+#: src/templates/sysconfig.html:607
 msgid "View metadata.xml"
 msgstr "Afficher les métadonnées.xml"
 
-#: src/templates/sysconfig.html:610
+#: src/templates/sysconfig.html:611
 msgid "General settings"
 msgstr "Paramètres généraux"
 
-#: src/templates/sysconfig.html:613
+#: src/templates/sysconfig.html:614
 msgid "Enable SAML authentication"
 msgstr "Activer l’authentification SAML"
 
-#: src/templates/sysconfig.html:614
+#: src/templates/sysconfig.html:615
 msgid "Strict mode"
 msgstr "Mode strict"
 
-#: src/templates/sysconfig.html:615
+#: src/templates/sysconfig.html:616
 msgid "Debug mode"
 msgstr "Mode de débogage"
 
-#: src/templates/sysconfig.html:619
+#: src/templates/sysconfig.html:620
 msgid "Service provider"
 msgstr "Fournisseur de service"
 
-#: src/templates/sysconfig.html:623
+#: src/templates/sysconfig.html:624
 msgid "Base URL"
 msgstr "URL de base"
 
-#: src/templates/sysconfig.html:687
+#: src/templates/sysconfig.html:688
 msgid "Teams settings"
 msgstr "Paramètres des équipes"
 
-#: src/templates/sysconfig.html:690
+#: src/templates/sysconfig.html:691
 msgid "Fallback to internal id if existing user cannot be matched with email"
 msgstr ""
 "Repli vers l’ID interne si l’utilisateur existant ne peut pas être associé à "
 "l’e-mail"
 
-#: src/templates/sysconfig.html:691
+#: src/templates/sysconfig.html:692
 msgid "If user is matched with internal id, update the email sent by IDP?"
 msgstr ""
 "Si l’utilisateur correspond à un identifiant interne, mettre à jour l’e-mail "
 "envoyé par l’IDP ?"
 
-#: src/templates/sysconfig.html:692
+#: src/templates/sysconfig.html:693
 msgid "Synchronize the local teams with the teams sent by IDP"
 msgstr "Synchroniser les équipes locales avec les équipes envoyées par l'IDP"
 
-#: src/templates/sysconfig.html:693
+#: src/templates/sysconfig.html:694
 msgid "Create team sent by IDP if it doesn't exist already"
 msgstr "Créer une équipe envoyée par l'IDP si elle n’existe pas déjà"
 
-#: src/templates/sysconfig.html:696 src/templates/sysconfig.html:927
-#: src/templates/sysconfig.html:1011
+#: src/templates/sysconfig.html:697 src/templates/sysconfig.html:928
+#: src/templates/sysconfig.html:1012
 msgid "If no team attribute is found, to which team user is assigned?"
 msgstr ""
 "Si aucun attribut d’équipe n’est trouvé, à quelle équipe l'utilisateur est-"
 "il affecté ?"
 
-#: src/templates/sysconfig.html:701 src/templates/sysconfig.html:932
-#: src/templates/sysconfig.html:1016
+#: src/templates/sysconfig.html:702 src/templates/sysconfig.html:933
+#: src/templates/sysconfig.html:1017
 msgid "Throw error"
 msgstr "Émettre une erreur"
 
-#: src/templates/sysconfig.html:702 src/templates/sysconfig.html:933
+#: src/templates/sysconfig.html:703 src/templates/sysconfig.html:934
 msgid "Let user select a team"
 msgstr "Permettre à l’utilisateur de sélectionner une équipe"
 
-#: src/templates/sysconfig.html:708 src/templates/sysconfig.html:939
-#: src/templates/sysconfig.html:1022
+#: src/templates/sysconfig.html:709 src/templates/sysconfig.html:940
+#: src/templates/sysconfig.html:1023
 msgid "If the user doesn't exist yet, what to do?"
 msgstr "Si l’utilisateur n’existe pas encore, que faire ?"
 
-#: src/templates/sysconfig.html:710 src/templates/sysconfig.html:941
-#: src/templates/sysconfig.html:1024
+#: src/templates/sysconfig.html:711 src/templates/sysconfig.html:942
+#: src/templates/sysconfig.html:1025
 msgid "Create the user on the fly"
 msgstr "Créer l’utilisateur à la volée"
 
-#: src/templates/sysconfig.html:711 src/templates/sysconfig.html:942
-#: src/templates/sysconfig.html:1025
+#: src/templates/sysconfig.html:712 src/templates/sysconfig.html:943
+#: src/templates/sysconfig.html:1026
 msgid "Throw error, allowing a sysadmin to create the user"
 msgstr ""
 "Émettre une erreur, permettant à un administrateur système de créer "
 "l’utilisateur"
 
-#: src/templates/sysconfig.html:717
+#: src/templates/sysconfig.html:718
 msgid "Security settings"
 msgstr "Paramètres de sécurité"
 
-#: src/templates/sysconfig.html:725
+#: src/templates/sysconfig.html:726
 msgid "Identity Providers list"
 msgstr "Liste des fournisseurs d’identité"
 
-#: src/templates/sysconfig.html:728
+#: src/templates/sysconfig.html:729
 msgid ""
 "It is possible to configure several identity providers for your instance."
 msgstr ""
 "Il est possible de configurer plusieurs fournisseurs d’identité pour votre "
 "instance."
 
-#: src/templates/sysconfig.html:747
+#: src/templates/sysconfig.html:748
 msgid "Enabled"
 msgstr "Activé"
 
-#: src/templates/sysconfig.html:857
+#: src/templates/sysconfig.html:858
 msgid "LDAP server configuration"
 msgstr "Configuration serveur LDAP"
 
-#: src/templates/sysconfig.html:861
+#: src/templates/sysconfig.html:862
 msgid "Toggle LDAP login"
 msgstr "Activer/Désactiver l'authentification LDAP"
 
-#: src/templates/sysconfig.html:864
+#: src/templates/sysconfig.html:865
 msgid "LDAP Host"
 msgstr "Hôte LDAP"
 
-#: src/templates/sysconfig.html:867
+#: src/templates/sysconfig.html:868
 msgid "Domain name or IP address"
 msgstr "Nom de domaine ou adresse IP"
 
-#: src/templates/sysconfig.html:871
+#: src/templates/sysconfig.html:872
 msgid "LDAP Port"
 msgstr "Port LDAP"
 
-#: src/templates/sysconfig.html:874
+#: src/templates/sysconfig.html:875
 msgid "Default: 389 LDAPS: 636"
 msgstr "Défaut: 389 LDAPS: 636"
 
-#: src/templates/sysconfig.html:877
+#: src/templates/sysconfig.html:878
 msgid "Use TLS"
 msgstr "Utiliser TLS"
 
-#: src/templates/sysconfig.html:886
+#: src/templates/sysconfig.html:887
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: src/templates/sysconfig.html:908
+#: src/templates/sysconfig.html:909
 msgid "eLabFTW LDAP configuration"
 msgstr "Configuration LDAP eLabFTW"
 
-#: src/templates/sysconfig.html:912
+#: src/templates/sysconfig.html:913
 msgid "By which LDAP attribute the user will be found (default is 'mail')."
 msgstr ""
 "Par quel attribut LDAP l’utilisateur sera trouvé (la valeur par défaut est "
 "'mail')."
 
-#: src/templates/sysconfig.html:915
+#: src/templates/sysconfig.html:916
 msgid ""
 "You can search for several attributes by separating them with a comma (e.g. "
 "uid,mail)."
@@ -4395,31 +4403,31 @@ msgstr ""
 "Vous pouvez rechercher plusieurs attributs en les séparant par une virgule "
 "(par exemple : uid, mail)."
 
-#: src/templates/sysconfig.html:919
+#: src/templates/sysconfig.html:920
 msgid "What attribute to look for the team name"
 msgstr "Quel attribut rechercher pour le nom de l’équipe"
 
-#: src/templates/sysconfig.html:924 src/templates/sysconfig.html:1030
+#: src/templates/sysconfig.html:925 src/templates/sysconfig.html:1031
 msgid "Create team sent by server if it doesn't exist already"
 msgstr "Créer une équipe envoyée par le serveur si elle n’existe pas déjà"
 
-#: src/templates/sysconfig.html:948
+#: src/templates/sysconfig.html:949
 msgid "What attribute to look for the email"
 msgstr "Quel attribut rechercher pour l’e-mail"
 
-#: src/templates/sysconfig.html:954
+#: src/templates/sysconfig.html:955
 msgid "What attribute to look for the firstname"
 msgstr "Quel attribut rechercher pour le prénom"
 
-#: src/templates/sysconfig.html:960
+#: src/templates/sysconfig.html:961
 msgid "What attribute to look for the lastname"
 msgstr "Quel attribut rechercher pour le nom de famille"
 
-#: src/templates/sysconfig.html:969
+#: src/templates/sysconfig.html:970
 msgid "External authentication mapping"
 msgstr "Configuration de l'authentification externe"
 
-#: src/templates/sysconfig.html:971
+#: src/templates/sysconfig.html:972
 msgid ""
 "If authentication is handled by an upstream server, configure here the "
 "request headers mappings and behaviors."
@@ -4427,11 +4435,11 @@ msgstr ""
 "Si l'authentification est gérée par un serveur en amont, configurez ici les "
 "correspondances des en-têtes et comportements."
 
-#: src/templates/sysconfig.html:974
+#: src/templates/sysconfig.html:975
 msgid "Remote user"
 msgstr "Utilisateur distant"
 
-#: src/templates/sysconfig.html:977
+#: src/templates/sysconfig.html:978
 msgid ""
 "Use this to detect if the user is logged in from upstream server (value is "
 "not used, only presence)."
@@ -4439,19 +4447,19 @@ msgstr ""
 "Utilisez cette valeur pour décecter si l'utilisateur est authentifié par le "
 "serveur en amont (la valeur n'est pas utilisée, seulement sa présence)."
 
-#: src/templates/sysconfig.html:1005
+#: src/templates/sysconfig.html:1006
 msgid "Logout URL"
 msgstr "Déconnexion URL"
 
-#: src/templates/sysconfig.html:1035
+#: src/templates/sysconfig.html:1036
 msgid "Audit Logs configuration"
 msgstr "Configuration des journaux d'audit"
 
-#: src/templates/sysconfig.html:1037
+#: src/templates/sysconfig.html:1038
 msgid "Emit audit logs with PHP error log"
 msgstr "Émission des journaux d'audit avec le journal des erreurs de PHP"
 
-#: src/templates/sysconfig.html:1042
+#: src/templates/sysconfig.html:1043
 msgid ""
 "This table lists the most recent events recorded in the application and "
 "worth keeping a trace of."
@@ -4459,15 +4467,15 @@ msgstr ""
 "Ce tableau répertorie les événements les plus récents enregistrés dans "
 "l'application et dont il est utile de garder une trace."
 
-#: src/templates/sysconfig.html:1053
+#: src/templates/sysconfig.html:1054
 msgid "Created at"
 msgstr "Créé à"
 
-#: src/templates/sysconfig.html:1055
+#: src/templates/sysconfig.html:1056
 msgid "Actor"
 msgstr "Acteur"
 
-#: src/templates/sysconfig.html:1056
+#: src/templates/sysconfig.html:1057
 msgid "Target user"
 msgstr "Utilisateur cible"
 
@@ -4550,7 +4558,7 @@ msgstr "Sélectionner une ressource"
 msgid "You belong to the %s team."
 msgstr "Vous appartenez à l'équipe %s."
 
-#: src/templates/team.html:219 src/templates/ucp.html:419
+#: src/templates/team.html:219 src/templates/ucp.html:433
 msgid "Experiments Templates"
 msgstr "Modèles d'expériences"
 
@@ -4681,7 +4689,7 @@ msgid "API keys"
 msgstr "Clés API"
 
 #: src/templates/ucp.html:30 src/templates/ucp.html:47
-#: src/templates/ucp.html:391
+#: src/templates/ucp.html:405
 msgid "Regenerate signature keys"
 msgstr "Régénérer les clés de signature"
 
@@ -4761,8 +4769,8 @@ msgstr "Base de données"
 msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: src/templates/ucp.html:133 src/templates/ucp.html:465
-#: src/templates/ucp.html:476
+#: src/templates/ucp.html:133 src/templates/ucp.html:490
+#: src/templates/ucp.html:501
 msgid "Action"
 msgstr "Action"
 
@@ -4841,45 +4849,57 @@ msgid "Always display your own entries, regardless of the current team"
 msgstr ""
 "Affichez toujours vos propres entrées, quelle que soit l'équipe utilisée"
 
-#: src/templates/ucp.html:293
+#: src/templates/ucp.html:291
+msgid "Select the scope for teamgroups"
+msgstr "Choisir le périmètre pour les groupes d'équipes"
+
+#: src/templates/ucp.html:292
+msgid ""
+"This setting controls which teamgroups will be listed in the permission "
+"settings window."
+msgstr ""
+"Ce paramètre détermine quels groupes d'équipe seront répertoriés dans la "
+"fenêtre des paramètres de permission."
+
+#: src/templates/ucp.html:307
 msgid "User information"
 msgstr "Information utilisateur"
 
-#: src/templates/ucp.html:301
+#: src/templates/ucp.html:315
 msgid "Enter your password to edit your profile."
 msgstr "Entrez votre mot de passe pour éditer votre profil."
 
-#: src/templates/ucp.html:311
+#: src/templates/ucp.html:325
 msgid "Personal information"
 msgid_plural "Personal information"
 msgstr[0] "Information personnelle"
 msgstr[1] "Informations personnelles"
 
-#: src/templates/ucp.html:321
+#: src/templates/ucp.html:335
 msgid "Modify your password"
 msgstr "Modifier votre mot de passe"
 
-#: src/templates/ucp.html:337
+#: src/templates/ucp.html:351
 msgid "Use two-factor authentication?"
 msgstr "Utilise l'authentification deux facteurs ?"
 
-#: src/templates/ucp.html:351
+#: src/templates/ucp.html:365
 msgid "Your identity"
 msgstr "Votre identité"
 
-#: src/templates/ucp.html:376
+#: src/templates/ucp.html:390
 msgid "Signature keys"
 msgstr "Clés de signature"
 
-#: src/templates/ucp.html:384
+#: src/templates/ucp.html:398
 msgid "Download private key"
 msgstr "Télécharger la clé privée"
 
-#: src/templates/ucp.html:387
+#: src/templates/ucp.html:401
 msgid "Download public key"
 msgstr "Télécharger la clé publique"
 
-#: src/templates/ucp.html:395
+#: src/templates/ucp.html:409
 msgid ""
 "Signature keys are a highly secure public-key signature system that allows "
 "you to cryptographically sign experiments or resources. Signing an entry "
@@ -4889,7 +4909,7 @@ msgstr ""
 "sécurisé qui vous permet de signer cryptographiquement des expériences ou "
 "des ressources. La signature d'une entrée génère une archive immuable."
 
-#: src/templates/ucp.html:396
+#: src/templates/ucp.html:410
 msgid ""
 "To learn more about signature keys, have a look at the %scomplete "
 "documentation%s."
@@ -4897,21 +4917,21 @@ msgstr ""
 "Pour en savoir plus sur les clés de signature, consultez la %sdocumentation "
 "complète%s."
 
-#: src/templates/ucp.html:398
+#: src/templates/ucp.html:412
 msgid "You do not have a key pair associated with your account yet."
 msgstr "Vous n'avez pas encore de paire de clés associée à votre compte."
 
-#: src/templates/ucp.html:399
+#: src/templates/ucp.html:413
 msgid "To generate a key pair, enter a passphrase below and click the button:"
 msgstr ""
 "Pour générer une paire de clés, entrez une phrase secrète ci-dessous et "
 "cliquez sur le bouton :"
 
-#: src/templates/ucp.html:404
+#: src/templates/ucp.html:418
 msgid "Generate signature keys"
 msgstr "Générer des clés de signature"
 
-#: src/templates/ucp.html:407
+#: src/templates/ucp.html:421
 msgid ""
 "Tip: use a password manager or a passphrase that you can remember, see "
 "%sthis XKCD comic%s."
@@ -4919,40 +4939,48 @@ msgstr ""
 "Conseil : utilisez un gestionnaire de mots de passe ou une phrase de passe "
 "dont vous pouvez vous souvenir, voir %scette bande dessinée XKCD%s."
 
-#: src/templates/ucp.html:409
+#: src/templates/ucp.html:423
 msgid "Your account is already associated with a keypair."
 msgstr "Votre compte est déjà associé à une paire de clés."
 
-#: src/templates/ucp.html:410
+#: src/templates/ucp.html:424
 msgid "Here is your public key. You can share it with the world:"
 msgstr ""
 "Voici votre clé publique. Vous pouvez la partager avec le monde entier :"
 
-#: src/templates/ucp.html:431
+#: src/templates/ucp.html:445
 msgid "Create new key"
 msgstr "Créer une nouvelle clé"
 
-#: src/templates/ucp.html:444 src/templates/ucp.html:473
+#: src/templates/ucp.html:449
+msgid ""
+"This is the only time the key will be shown! Make sure to copy it somewhere "
+"safe as you won't be able to see it again:"
+msgstr ""
+"C'est la seule fois où la clé sera affichée ! Veillez à la copier dans un "
+"endroit sûr, car vous ne pourrez plus la voir à nouveau :"
+
+#: src/templates/ucp.html:469 src/templates/ucp.html:498
 msgid "Read Only"
 msgstr "Lecture seule"
 
-#: src/templates/ucp.html:445 src/templates/ucp.html:473
+#: src/templates/ucp.html:470 src/templates/ucp.html:498
 msgid "Read/Write"
 msgstr "Lecture/Écriture"
 
-#: src/templates/ucp.html:451
+#: src/templates/ucp.html:476
 msgid "Generate an API Key"
 msgstr "Générer une clé pour l'API"
 
-#: src/templates/ucp.html:456
+#: src/templates/ucp.html:481
 msgid "Existing keys"
 msgstr "Clés existantes"
 
-#: src/templates/ucp.html:464 src/templates/ucp.html:475
+#: src/templates/ucp.html:489 src/templates/ucp.html:500
 msgid "Last used"
 msgstr "Dernière utilisation"
 
-#: src/templates/ucp.html:492
+#: src/templates/ucp.html:517
 msgid "Web"
 msgstr "Web"
 
@@ -5276,3 +5304,12 @@ msgstr "a laissé un commentaire"
 #: src/templates/view.html:161
 msgid "edited"
 msgstr "édité"
+
+#~ msgid "Experiments"
+#~ msgstr "Expériences"
+
+#~ msgid "Select read permissions"
+#~ msgstr "Sélectionner les autorisations de lecture"
+
+#~ msgid "Select write permissions"
+#~ msgstr "Sélectionner les droits d'écriture"

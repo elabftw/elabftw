@@ -3439,7 +3439,7 @@ __metadata:
     diff-match-patch: "npm:^1.0.5"
     eslint: "npm:^8.57.0"
     expose-loader: "npm:^4.1.0"
-    html-validate: "npm:^8.20.1"
+    html-validate: "npm:^8.21.0"
     i18next: "npm:^23.11.5"
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.13.3"
@@ -4532,9 +4532,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-validate@npm:^8.20.1":
-  version: 8.20.1
-  resolution: "html-validate@npm:8.20.1"
+"html-validate@npm:^8.21.0":
+  version: 8.21.0
+  resolution: "html-validate@npm:8.21.0"
   dependencies:
     "@babel/code-frame": "npm:^7.10.0"
     "@html-validate/stylish": "npm:^4.1.0"
@@ -4563,7 +4563,7 @@ __metadata:
       optional: true
   bin:
     html-validate: bin/html-validate.js
-  checksum: 10c0/2a53b6854ab4348d16d4d7ea89ca0df48130f6a393ae198f17a3498e0df4512a8b08cbe23da7ef3c70ddfc300d6a921d2482b25ea5b199419ffd3eea351ad83d
+  checksum: 10c0/90642078d712e322e8ac1aac2399d4c48ab4aec6264cbdf9def24d4a476cfebe6adba01cda5753bd77416c860529bf4ab677b96cb942771e129ab0ac82429aa1
   languageName: node
   linkType: hard
 

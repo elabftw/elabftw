@@ -9,16 +9,16 @@
 /* jsoneditor related css */
 
 .jsoneditor {
-    min-height: 220px;
-    overflow: hidden;
-    resize: vertical;
+  min-height: 220px;
+  overflow: hidden;
+  resize: vertical;
 }
 
 .jsoneditor,
 .jsoneditor-menu {
-    border-color: $medium;
+  border-color: $medium;
 }
 
 .jsoneditor-menu {
-    background-color: $medium;
+  background-color: $medium;
 }

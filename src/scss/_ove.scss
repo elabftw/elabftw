@@ -8,66 +8,66 @@
 
 // overwrite ove umd bundle setting
 code {
-    display: inline-block;
+  display: inline-block;
 }
 
 .preview-mode-container {
-    .bp3-button.bp3-intent-primary {
-        background-color: $elabblue !important;
-        border: 1px solid transparent !important;
-        border-radius: 5px !important;
-        box-shadow: none !important;
-    }
+  .bp3-button.bp3-intent-primary {
+    background-color: $elabblue !important;
+    border: 1px solid transparent !important;
+    border-radius: 5px !important;
+    box-shadow: none !important;
+  }
 
-    .bp3-button.bp3-intent-primary:hover {
-        background-color: #22919a !important;
-        border-color: #20878f !important;
-        box-shadow: none !important;
-    }
+  .bp3-button.bp3-intent-primary:hover {
+    background-color: #22919a !important;
+    border-color: #20878f !important;
+    box-shadow: none !important;
+  }
 
-    .bp3-button.bp3-intent-primary:focus {
-        box-shadow: 0 0 0 0.2rem rgba(73, 186, 196, 0.5) !important;
-    }
+  .bp3-button.bp3-intent-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(73, 186, 196, 0.5) !important;
+  }
 
-    .bp3-button-group.preview-mode-view-fullscreen:hover {
-        background: none !important;
-    }
+  .bp3-button-group.preview-mode-view-fullscreen:hover {
+    background: none !important;
+  }
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
 .veToolbar {
-    .bp3-button[class*='bp3-intent-'] .bp3-icon {
-        //$elabblue does not look as great here IMHO, it's to light
-        color: #20878f !important;
-    }
+  .bp3-button[class*='bp3-intent-'] .bp3-icon {
+    //$elabblue does not look as great here IMHO, it's to light
+    color: #20878f !important;
+  }
 }
 
 // overwrite some default open-vector-editor settings
 // this is only working for the circular preview (single svg element)
 // the linear preview unfortunately is made from individual svg elements
 .viewer-ove {
-    overflow: hidden;
+  overflow: hidden;
 
-    .preview-mode-container {
-        display: block;
-        width: auto !important;
+  .preview-mode-container {
+    display: block;
+    width: auto !important;
 
-        div {
-            box-shadow: none !important;
-        }
+    div {
+      box-shadow: none !important;
     }
+  }
 
-    .veCircularView { /* stylelint-disable-line */
-        height: auto !important;
-        width: auto !important;
-    }
+  .veCircularView { /* stylelint-disable-line */
+    height: auto !important;
+    width: auto !important;
+  }
 
-    .circularViewSvg { /* stylelint-disable-line */
-        height: 100% !important;
-        width: 100% !important;
-    }
+  .circularViewSvg { /* stylelint-disable-line */
+    height: 100% !important;
+    width: 100% !important;
+  }
 
-    .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
-        overflow: auto !important;
-    }
+  .ve-propertiesPanel .bp3-tab-list { /* stylelint-disable-line */
+    overflow: auto !important;
+  }
 }

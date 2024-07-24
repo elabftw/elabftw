@@ -40,7 +40,7 @@
     "phpeggy": "^2.0.1",
     "popper.js": "^1.16.1",
     "prismjs": "^1.29.0",
-    "sass": "^1.77.6",
+    "sass": "^1.77.8",
     "terser-webpack-plugin": "^5.3.10",
     "tinymce": "^6.8.4",
     "tom-select": "^2.3.1",
@@ -65,9 +65,9 @@
     "html-validate": "^8.21.0",
     "postcss": "^8.4.38",
     "postcss-scss": "^4.0.9",
-    "sass-loader": "^13.3.3",
-    "stylelint": "^15.11.0",
-    "stylelint-config-sass-guidelines": "^10.0.0",
+    "sass-loader": "^15.0.0",
+    "stylelint": "^16.7.0",
+    "stylelint-config-sass-guidelines": "^12.0.0",
     "webpack-bundle-analyzer": "^4.10.2"
   },
   "scripts": {

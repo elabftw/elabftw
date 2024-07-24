@@ -8,74 +8,74 @@
 
 /* loading spinner */
 .lds-dual-ring::after {
-    animation: lds-dual-ring 1.3s linear infinite;
-    border: 8px solid currentColor;
-    border-color: $elabblue transparent $elabblue transparent;
-    border-radius: 50%;
-    content: ' ';
-    display: block;
-    height: 150px;
-    margin: 4px;
-    width: 150px;
+  animation: lds-dual-ring 1.3s linear infinite;
+  border: 8px solid currentColor;
+  border-color: $elabblue transparent $elabblue transparent;
+  border-radius: 50%;
+  content: ' ';
+  display: block;
+  height: 150px;
+  margin: 4px;
+  width: 150px;
 }
 
 @keyframes lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* To generate a path, use Inkscape and draw Bezier curves and save as svg */
 .moving-bug {
-    animation: crawl 3s forwards linear;
-    offset-path: path('M 0,0 C 12.665605,11.589579 11.928138,3.2275405 17.89012,3.9059119 22.510445,4.4316258 31.215218,-0.63454953 31.84037,3.9733749 32.752011,10.692973 42.510567,21.856688 46.363102,20.322735 52.62615,17.828995 55.24992,-0.95807772 60.359661,0.99422564 67.355357,3.6671046 74.588748,22.375307 80.733546,25.741014 99.56382,36.054972 110.72842,20.776429 103.01153,15.283795 c -6.77062,-4.819109 15.68715,-14.31937313 21.1714,-8.0753273 5.97593,6.8038503 12.04769,-6.92044453 18.96241,-6.66581506 7.76736,0.28602767 13.62434,13.59179536 19.12289,6.81266596 6.21245,-7.65928702 10.26095,14.2467484 17.98362,12.7003124 4.57794,-0.916714 28.94474,12.145381 28.94474,12.145381');
-    transform: rotate(90deg);
+  animation: crawl 3s forwards linear;
+  offset-path: path('M 0,0 C 12.665605,11.589579 11.928138,3.2275405 17.89012,3.9059119 22.510445,4.4316258 31.215218,-0.63454953 31.84037,3.9733749 32.752011,10.692973 42.510567,21.856688 46.363102,20.322735 52.62615,17.828995 55.24992,-0.95807772 60.359661,0.99422564 67.355357,3.6671046 74.588748,22.375307 80.733546,25.741014 99.56382,36.054972 110.72842,20.776429 103.01153,15.283795 c -6.77062,-4.819109 15.68715,-14.31937313 21.1714,-8.0753273 5.97593,6.8038503 12.04769,-6.92044453 18.96241,-6.66581506 7.76736,0.28602767 13.62434,13.59179536 19.12289,6.81266596 6.21245,-7.65928702 10.26095,14.2467484 17.98362,12.7003124 4.57794,-0.916714 28.94474,12.145381 28.94474,12.145381');
+  transform: rotate(90deg);
 }
 
 @keyframes crawl {
-    0% {
-        offset-distance: 0%;
-    }
+  0% {
+    offset-distance: 0%;
+  }
 
-    100% {
-        offset-distance: 100%;
-    }
+  100% {
+    offset-distance: 100%;
+  }
 }
 
 @keyframes bounce-left {
-    0%,
-    100%,
-    50%,
-    80% {
-        transform: translateX(0);
-    }
+  0%,
+  100%,
+  50%,
+  80% {
+    transform: translateX(0);
+  }
 
-    50% {
-        transform: translateX(-6px);
-    }
+  50% {
+    transform: translateX(-6px);
+  }
 }
 
 @keyframes bounce-right {
-    0%,
-    100%,
-    50%,
-    80% {
-        transform: translateX(0);
-    }
+  0%,
+  100%,
+  50%,
+  80% {
+    transform: translateX(0);
+  }
 
-    50% {
-        transform: translateX(6px);
-    }
+  50% {
+    transform: translateX(6px);
+  }
 }
 
 .bounce-left:hover {
-    animation: bounce-left 250ms;
+  animation: bounce-left 250ms;
 }
 
 .bounce-right:hover {
-    animation: bounce-right 250ms;
+  animation: bounce-right 250ms;
 }

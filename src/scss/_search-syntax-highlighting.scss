@@ -8,38 +8,38 @@
  */
 
 #extendedArea {
-    background-color: transparent;
-    caret-color: $mediumstrong;
-    color: transparent;
-    position: relative;
-    z-index: 1;
+  background-color: transparent;
+  caret-color: $mediumstrong;
+  color: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 #search-highlighting {
-    left: 0;
-    position: absolute;
-    top: 0;
-    z-index: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  z-index: 0;
 }
 
 #extendedArea,
 #search-highlighting {
-    margin: 0;
-    overflow: auto;
-    resize: vertical;
+  margin: 0;
+  overflow: auto;
+  resize: vertical;
 }
 
 #extendedArea,
 #search-highlighting,
 #search-highlighting * {
-    font-family: monospace;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    overflow-wrap: break-word;
-    tab-size: 2;
-    white-space: pre-wrap;
-    word-break: normal;
-    word-spacing: normal;
-    word-wrap: break-word;
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  tab-size: 2;
+  white-space: pre-wrap;
+  word-break: normal;
+  word-spacing: normal;
+  word-wrap: break-word;
 }

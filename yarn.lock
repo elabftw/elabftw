@@ -1740,10 +1740,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ace-builds@npm:^1.31.1":
-  version: 1.34.2
-  resolution: "ace-builds@npm:1.34.2"
-  checksum: 10c0/0ad0c9cfefe0f10ce66d5c1ee0b2a2c56185fcdf72f65ca4cb0c6dc0045f075863116dd1f2c7daa8b8f45355a5a36b728f1b4ecd7a03cde328506ceef819b1c9
+"ace-builds@npm:^1.35.0":
+  version: 1.35.4
+  resolution: "ace-builds@npm:1.35.4"
+  checksum: 10c0/19e43dcb84bc82d311f9b94e14c047c8bc49ffbce44ce88118450b34d92a9533b55803cb19a32f026c22cce5c4b8374c4d85e244b9b742d1a38049f3919371fc
   languageName: node
   linkType: hard
 
@@ -3404,7 +3404,7 @@ __metadata:
     i18next: "npm:^23.12.2"
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.13.3"
-    jsoneditor: "npm:^9.10.5"
+    jsoneditor: "npm:^10.1.0"
     luxon: "npm:^3.4.4"
     marked: "npm:^11.2.0"
     mathjax-full: "npm:^3.2.2"
@@ -5181,20 +5181,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsoneditor@npm:^9.10.5":
-  version: 9.10.5
-  resolution: "jsoneditor@npm:9.10.5"
+"jsoneditor@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "jsoneditor@npm:10.1.0"
   dependencies:
-    ace-builds: "npm:^1.31.1"
+    ace-builds: "npm:^1.35.0"
     ajv: "npm:^6.12.6"
     javascript-natural-sort: "npm:^0.7.1"
     jmespath: "npm:^0.16.0"
     json-source-map: "npm:^0.6.1"
-    jsonrepair: "npm:3.1.0"
+    jsonrepair: "npm:^3.8.0"
     mobius1-selectr: "npm:^2.4.13"
     picomodal: "npm:^3.0.0"
-    vanilla-picker: "npm:^2.12.2"
-  checksum: 10c0/d984ccd9ca068bedd0d0eaaf4cf7ca418d3d44811989eff1ffb65728e96fa8cd29f04e88acb33c393b96b5573972d884d7dee931f629dbd2aa9b1f6171810f34
+    vanilla-picker: "npm:^2.12.3"
+  checksum: 10c0/1d478b419f2f981600b766cc02ee63bae8c155943f96e85b5710d316b3e8333bf823de3ccbe424bdcddfc02ccbb4944d95df3588afafd98bb4fbc871ca54af7b
   languageName: node
   linkType: hard
 
@@ -5211,12 +5211,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonrepair@npm:3.1.0":
-  version: 3.1.0
-  resolution: "jsonrepair@npm:3.1.0"
+"jsonrepair@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "jsonrepair@npm:3.8.0"
   bin:
     jsonrepair: bin/cli.js
-  checksum: 10c0/8227a2ef9c6aafbdd3943888dd2bccfac8a58d3ea80056c7e849ee6e84b3a766e891df6fb61420e6e3b1ee4887ddf2d3ef145abb35ece5ae438dc3c583cc5359
+  checksum: 10c0/24e90efde3f3683abb935b5b9dc9cacd9480eb897d3e2fc202ce594509c15af8c627755640f0bc36b9b8efdf13d291f8f7affee0eaf53ad7762a0e985582b867
   languageName: node
   linkType: hard
 
@@ -9535,7 +9535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vanilla-picker@npm:^2.12.2":
+"vanilla-picker@npm:^2.12.3":
   version: 2.12.3
   resolution: "vanilla-picker@npm:2.12.3"
   dependencies:

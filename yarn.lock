@@ -3401,7 +3401,7 @@ __metadata:
     eslint: "npm:^8.57.0"
     expose-loader: "npm:^4.1.0"
     html-validate: "npm:^8.21.0"
-    i18next: "npm:^23.11.5"
+    i18next: "npm:^23.12.2"
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.13.3"
     jsoneditor: "npm:^9.10.5"
@@ -4587,12 +4587,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^23.11.5":
-  version: 23.11.5
-  resolution: "i18next@npm:23.11.5"
+"i18next@npm:^23.12.2":
+  version: 23.12.2
+  resolution: "i18next@npm:23.12.2"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-  checksum: 10c0/b0bec64250a3e529d4c51e2fc511406a85c5dde3d005d3aabe919551ca31dfc0a8f5490bf6e44649822e895a1fa91a58092d112367669cd11b2eb89e6ba90d1a
+  checksum: 10c0/aa7654afefc3f5383513563226401994558675a57eb562f0c4580d573d8410d24954f25112d45f9b6b1ca3f88c7beea1ac802ed50ad4081a06a17d08857e3c5d
   languageName: node
   linkType: hard
 

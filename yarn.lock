@@ -3406,7 +3406,7 @@ __metadata:
     jquery-ui: "npm:^1.13.3"
     jsoneditor: "npm:^10.1.0"
     luxon: "npm:^3.4.4"
-    marked: "npm:^11.2.0"
+    marked: "npm:^13.0.2"
     mathjax-full: "npm:^3.2.2"
     mini-css-extract-plugin: "npm:^2.9.0"
     peggy: "npm:^3.0.2"
@@ -5557,12 +5557,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^11.2.0":
-  version: 11.2.0
-  resolution: "marked@npm:11.2.0"
+"marked@npm:^13.0.2":
+  version: 13.0.2
+  resolution: "marked@npm:13.0.2"
   bin:
     marked: bin/marked.js
-  checksum: 10c0/4713cceabdcd0b4de9a156d601a55ae7e9091cd89ba75d8283042ddbbedb7cd765e02445a80be01131aa24a79003346fc650d66bf4423f7aa186dcc46b403849
+  checksum: 10c0/c8d0f63674b8de406029d58df9ef91f42464a58c6a914f063e88b270dd59d4cdafa378c2ac96a04eec13ca06566737829e27d45a5da6ef4f640811d7a7becdee
   languageName: node
   linkType: hard
 

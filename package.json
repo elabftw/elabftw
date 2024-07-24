@@ -33,7 +33,7 @@
     "jquery-ui": "^1.13.3",
     "jsoneditor": "^10.1.0",
     "luxon": "^3.4.4",
-    "marked": "^11.2.0",
+    "marked": "^13.0.2",
     "mathjax-full": "^3.2.2",
     "mini-css-extract-plugin": "^2.9.0",
     "peggy": "^3.0.2",

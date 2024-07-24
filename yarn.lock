@@ -1144,12 +1144,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jqueryui@npm:^1.12.22":
-  version: 1.12.22
-  resolution: "@types/jqueryui@npm:1.12.22"
+"@types/jqueryui@npm:^1.12.23":
+  version: 1.12.23
+  resolution: "@types/jqueryui@npm:1.12.23"
   dependencies:
     "@types/jquery": "npm:*"
-  checksum: 10c0/beca7f6a4ae64bfc56af38b6d8baa6810400f1172fa347e169f6c4062b20ece536d8dceb02396105721e5278993d8a6feaabc17833d77b2a92b94a4f64293cbb
+  checksum: 10c0/2b28473f289dbdbac4b2932734b36ebf714cbdf9bff8127e9b3270ec6778ea5144b98788b963e2d23547d3a3c5b69db5892349d26a680872822471e95c12dab1
   languageName: node
   linkType: hard
 
@@ -3383,7 +3383,7 @@ __metadata:
     "@types/dropzone": "npm:^5.7.8"
     "@types/fancybox": "npm:^3.5.7"
     "@types/jquery": "npm:^3.5.30"
-    "@types/jqueryui": "npm:^1.12.22"
+    "@types/jqueryui": "npm:^1.12.23"
     "@types/luxon": "npm:^3.4.2"
     "@types/marked": "npm:^6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"

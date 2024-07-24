@@ -523,7 +523,9 @@ abstract class AbstractEntity implements RestInterface
     protected function checkToggleLockPermissions(): void
     {
         $this->getPermissions();
-        if (!$this->Users->isAdmin && $this->entityData['userid'] !== $this->Users->userData['userid']) {
+        // if the entry is locked, only an admin or the locker can unlock it
+        // it is no longer necessary to be an admin or owner to lock something
+        if ($this->entityData['locked'] === 1 && (!$this->Users->isAdmin && $this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
     }

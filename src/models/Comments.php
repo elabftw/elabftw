@@ -46,20 +46,23 @@ class Comments implements RestInterface
 
     public function readOne(): array
     {
+        $this->Entity->canOrExplode('read');
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
             FROM " . $this->Entity->entityType->value . '_comments
             LEFT JOIN users ON (' . $this->Entity->entityType->value . '_comments.userid = users.userid)
-            WHERE ' . $this->Entity->entityType->value . '_comments.id = :id';
+            WHERE ' . $this->Entity->entityType->value . '_comments.id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
 
     public function readAll(): array
     {
+        $this->Entity->canOrExplode('read');
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email

@@ -41,14 +41,16 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
+        $id = $this->Comments->postAction(Action::Create, array('comment' => 'Ohai'));
         $this->assertIsArray($this->Comments->readAll());
-        $this->Comments->setId(1);
+        $this->Comments->setId($id);
         $this->assertIsArray($this->Comments->readOne());
     }
 
     public function testUpdate(): void
     {
-        $this->Comments->setId(1);
+        $id = $this->Comments->postAction(Action::Create, array('comment' => 'Ohai'));
+        $this->Comments->setId($id);
         $this->Comments->patch(Action::Update, array('comment' => 'Updated'));
         // too short comment
         $this->expectException(ImproperActionException::class);
@@ -57,7 +59,8 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $this->Comments->setId(1);
+        $id = $this->Comments->postAction(Action::Create, array('comment' => 'Ohai'));
+        $this->Comments->setId($id);
         $this->assertTrue($this->Comments->destroy());
     }
 

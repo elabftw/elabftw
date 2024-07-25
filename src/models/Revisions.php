@@ -93,6 +93,7 @@ class Revisions implements RestInterface
      */
     public function readAll(): array
     {
+        $this->Entity->canOrExplode('read');
         $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
             CONCAT(users.firstname, " ", users.lastname) AS fullname
             FROM %1$s_revisions
@@ -126,9 +127,11 @@ class Revisions implements RestInterface
 
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :rev_id';
+        $this->Entity->canOrExplode('read');
+        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :rev_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $entityData = $this->Db->fetch($req);

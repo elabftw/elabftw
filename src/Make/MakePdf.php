@@ -245,7 +245,7 @@ class MakePdf extends AbstractMakePdf
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,
-            'url' => sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
+            'url' => sprintf('%s/%s?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
             'useCjk' => $this->requester->userData['cjk_fonts'],
         );
 

@@ -723,8 +723,39 @@
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity Providers list'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
+    <h5>{{ 'Add source from URL'|trans }}</h5>
+    <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata.'|trans }}</p>
+    <ul class='list-group' id='idpsSourcesDiv'>
+      <li class='list-group-item'>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>+</span>
+          </div>
+          <input class='form-control' type='url' placeholder='https://www.aai.example.com/idps.xml' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-action='save-idps-source' type='button'>{{ 'Save'|trans }}</button>
+          </div>
+        </div>
+      </li>
+      {% for source in idpsSources %}
+      <li class='list-group-item'>
+        <div class='d-flex'>
+          <a target='_blank' rel='noopener' class='external-link' href='{{ source.url }}'>{{ source.url }}</a>
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-sm btn-primary mx-2' data-action='refresh-idps-source' data-id='{{ source.id }}'>{{ 'Refresh'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='enable-idps-with-source' data-id='{{ source.id }}'>{{ 'Enable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='disable-idps-with-source' data-id='{{ source.id }}'>{{ 'Disable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-danger mx-2' data-action='delete-idps-source' data-id='{{ source.id }}'>{{ 'Delete'|trans }}</button>
+          </div>
+        </div>
+        <div class='smallgray'>{{ 'Associated with %d IDPs (%d enabled)'|trans|format(source.idps_count, source.idps_count_enabled) }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <h5>{{ 'IDPs list'|trans }}</h5>
     <div class='mb-3 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
@@ -735,7 +766,7 @@
     <div id='idpsDiv'>
       {% for idp in idpsArr %}
         <div class='my-2'>
-          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ idp.name|upper }} ({{ idp.entityid }})
+          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-right fa-fw mr-2'></i><i class='color-{{ idp.enabled == 1 ? 'success' : 'danger' }} fas fa-circle-{{ idp.enabled == 1 ? 'check' : 'xmark' }}'></i> {{ idp.name|upper }} ({{ idp.entityid }})
 
             <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
                 <i class='fas fa-trash-alt'></i>
@@ -752,6 +783,14 @@
               </label>
             </div>
             <hr>
+
+            {% if idp.source_url %}
+              <div class='d-flex justify-content-between'>
+                <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
+                <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
+              </div>
+              <hr>
+            {% endif %}
 
             <div class='d-flex justify-content-between'>
               <label for='editIdpName_{{ idp.id }}' class='col-form-label'>{{ 'Friendly name'|trans }}</label>

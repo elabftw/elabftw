@@ -181,6 +181,9 @@
         <input type='hidden' name='auth_type' value='saml'>
         {{ App.Session.get('csrf')|csrf }}
         <div class='form-group col-md-4 mx-auto'>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+          {%- endif %}
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
           <select name='idpId' class='form-control' id='idp_login_select'>
             {% for idp in idpsArr %}

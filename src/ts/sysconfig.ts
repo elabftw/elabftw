@@ -232,6 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(Model.Config, {
         [key]: tinymce.get(key).getContent(),
       });
+    } else if (el.matches('[data-action="save-idps-source"]')) {
+      const url = el.parentElement.parentElement.querySelector('input').value.trim();
+      ApiC.post(`${Model.IdpsSources}`, {url: url}).then(() => reloadElements(['idpsSourcesDiv']));
+    } else if (el.matches('[data-action="refresh-idps-source"]')) {
+      (el as HTMLButtonElement).disabled = true;
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Replace}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']).then(() => {
+        (el as HTMLButtonElement).disabled = false;
+      }));
+    } else if (el.matches('[data-action="enable-idps-with-source"]')) {
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Validate}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
+    } else if (el.matches('[data-action="disable-idps-with-source"]')) {
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Finish}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
+    } else if (el.matches('[data-action="delete-idps-source"]')) {
+      ApiC.delete(`${Model.IdpsSources}/${el.dataset.id}`).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
     }
   });
 

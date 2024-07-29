@@ -36,6 +36,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsLinks;
@@ -249,6 +250,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Batch => new Batch($this->requester),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->id),
+            ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),

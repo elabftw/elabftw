@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // tom-select for team selection on login and register page
-  ['init_team_select', 'team'].forEach(id =>{
+  // tom-select for team selection on login and register page, and idp selection
+  ['init_team_select', 'team', 'idp_login_select'].forEach(id =>{
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
         plugins: [

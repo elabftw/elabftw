@@ -19,7 +19,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Idps = new Idps();
+        $this->Idps = new Idps(new Users(1, 1));
     }
 
     public function testGetApiPath(): void

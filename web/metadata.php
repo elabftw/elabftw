@@ -29,7 +29,7 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps());
+    $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps($App->Users));
     $settingsArr = $IdpsHelper->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
         throw new ImproperActionException('No Service Provider configured. Aborting.');

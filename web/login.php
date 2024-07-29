@@ -96,7 +96,7 @@ try {
         $showLocal = false;
     }
 
-    $Idps = new Idps();
+    $Idps = new Idps($App->Users);
     $idpsArr = $Idps->readAll();
 
     $Teams = new Teams($App->Users);

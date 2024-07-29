@@ -31,7 +31,7 @@ try {
 
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
-        $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids

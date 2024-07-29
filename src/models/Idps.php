@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -41,7 +42,7 @@ class Idps implements RestInterface
 
     protected Db $Db;
 
-    public function __construct(?int $id = null)
+    public function __construct(private Users $requester, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->id = $id;
@@ -54,6 +55,7 @@ class Idps implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         return $this->create(
             name: $reqBody['name'],
             entityid: $reqBody['entityid'],
@@ -92,6 +94,7 @@ class Idps implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
+        $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
             $this->update($key, $value);
         }
@@ -100,6 +103,7 @@ class Idps implements RestInterface
 
     public function toggleEnabledFromSource(int $sourceId, int $enabled): bool
     {
+        $this->canWriteOrExplode();
         $sql = 'UPDATE idps SET enabled = :enabled WHERE source = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $sourceId, PDO::PARAM_INT);
@@ -135,6 +139,7 @@ class Idps implements RestInterface
 
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -159,6 +164,7 @@ class Idps implements RestInterface
         int $enabled = 1,
         ?int $source = null,
     ): int {
+        $this->canWriteOrExplode();
         if (empty($x509_new)) {
             $x509_new = $x509;
         }
@@ -196,6 +202,13 @@ class Idps implements RestInterface
             return 0;
         }
         return (int) $res;
+    }
+
+    private function canWriteOrExplode(): void
+    {
+        if ($this->requester->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('Only a Sysadmin can modify this!');
+        }
     }
 
     private function update(string $target, string $value): array

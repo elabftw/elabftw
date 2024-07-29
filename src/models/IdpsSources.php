@@ -113,7 +113,7 @@ class IdpsSources implements RestInterface
 
     private function toggleEnable(int $enabled): array
     {
-        $Idps = new Idps();
+        $Idps = new Idps($this->requester);
         $Idps->toggleEnabledFromSource($this->id ?? -1, $enabled);
         return $this->readOne();
     }
@@ -129,7 +129,7 @@ class IdpsSources implements RestInterface
         }
         $dom = new DOMDocument();
         $dom->loadXML($xml);
-        $Idps = new Xml2Idps($source['id'], $dom, new Idps());
+        $Idps = new Xml2Idps($source['id'], $dom, new Idps($this->requester));
         $Idps->upsertFromXml();
         $this->touch();
         return $this->readOne();

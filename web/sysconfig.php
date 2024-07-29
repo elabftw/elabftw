@@ -52,7 +52,7 @@ try {
     }
 
     $AuthFail = new AuthFail();
-    $Idps = new Idps();
+    $Idps = new Idps($App->Users);
     $idpsArr = $Idps->readAll();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();

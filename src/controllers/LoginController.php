@@ -274,7 +274,7 @@ class LoginController implements ControllerInterface
                 // AUTH WITH SAML
             case 'saml':
                 $this->App->Session->set('auth_service', self::AUTH_SAML);
-                $IdpsHelper = new IdpsHelper($this->App->Config, new Idps());
+                $IdpsHelper = new IdpsHelper($this->App->Config, new Idps($this->App->Users));
                 $idpId = $this->App->Request->request->getInt('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $IdpsHelper->getSettings($idpId);

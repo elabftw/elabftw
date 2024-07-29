@@ -725,7 +725,7 @@
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <label for='addIdpsSourcesInput'><h5>{{ 'Add source from URL'|trans }}</h5></label>
+    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add source from URL'|trans }}</h5>
     <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata.'|trans }}</p>
     <ul class='list-group' id='idpsSourcesDiv'>
       <li class='list-group-item'>
@@ -733,7 +733,7 @@
           <div class='input-group-prepend'>
             <span class='input-group-text'>+</span>
           </div>
-          <input id='addIdpsSourcesInput' class='form-control' type='url' placeholder='https://www.aai.example.com/idps.xml' />
+          <input id='addIdpsSourcesInput' aria-labelledby='addIdpsSourcesInputLabel' class='form-control' type='url' placeholder='https://www.aai.example.com/idps.xml' />
           <div class='input-group-append'>
             <button class='btn btn-primary' data-action='save-idps-source' type='button'>{{ 'Save'|trans }}</button>
           </div>

@@ -211,10 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   document.querySelectorAll('input[data-filter-target]').forEach((input: HTMLInputElement) => {
     const target = document.getElementById(input.dataset.filterTarget);
-    let targetType = 'tr';
-    if (input.dataset.targetType === 'li') {
-      targetType = 'li';
-    }
+    const targetType = input.dataset.targetType;
     // FIRST LISTENER is to filter the rows
     input.addEventListener('keyup', () => {
       target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {

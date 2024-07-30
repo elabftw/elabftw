@@ -725,7 +725,7 @@
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add source from URL'|trans }}</h5>
+    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h5>
     <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata.'|trans }}</p>
     <ul class='list-group' id='idpsSourcesDiv'>
       <li class='list-group-item'>
@@ -755,17 +755,22 @@
       {% endfor %}
     </ul>
 
-    <h5>{{ 'IDPs list'|trans }}</h5>
-    <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
+    <div class='my-3'>
+      <h5>{{ 'Add IDP manually'|trans }}</h5>
+      <p class='col-form-label'>{{ 'You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed.'|trans }}</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createIdpModal'>{{ 'Add new IDP'|trans }}</button>
       </div>
     </div>
-    <div id='idpsDiv'>
-      {% for idp in idpsArr %}
-        <div class='my-2'>
+
+    <div class='my-3'>
+      <h5>{{ 'IDPs list'|trans }}</h5>
+      <p class='col-form-label'>{{ 'Currently %d IDPs are configured.'|trans|format(idpsArr|length) }}</p>
+      {% include 'filter-input-snippet.html' with {'target': 'idpsDiv', 'targetType': 'li'} %}
+      <ul class='list-group' id='idpsDiv'>
+      {% for idp in idpsArr|slice(0, 5) %}
+        <li class='list-group-item'>
           <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-right fa-fw mr-2'></i><i class='color-{{ idp.enabled == 1 ? 'success' : 'danger' }} fas fa-circle-{{ idp.enabled == 1 ? 'check' : 'xmark' }}'></i> {{ idp.name|upper }} ({{ idp.entityid }})
 
             <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
@@ -884,9 +889,9 @@
             <hr>
 
           </div>
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 
 </div>

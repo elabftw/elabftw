@@ -19,6 +19,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
@@ -62,7 +63,7 @@ class IdpsSources implements RestInterface
 
     public function getApiPath(): string
     {
-        return sprintf('/idps_sources/%d', $this->id ?? '');
+        return sprintf('api/v2/idps_sources/%s', $this->id ?? '');
     }
 
     public function readAll(): array
@@ -123,14 +124,11 @@ class IdpsSources implements RestInterface
         $source = $this->readOne();
         $Config = Config::getConfig();
         $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
-        $xml = $getter->get($source['url']);
-        if (empty($xml)) {
-            throw new ImproperActionException('Could not get XML content!');
-        }
-        $dom = new DOMDocument();
-        $dom->loadXML($xml);
-        $Idps = new Xml2Idps($source['id'], $dom, new Idps($this->requester));
-        $Idps->upsertFromXml();
+        $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
+        $dom = $Url2Xml->getXmlDocument();
+        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+        $Idps = new Idps($this->requester);
+        $Idps->upsert($source['id'], $Xml2Idps);
         $this->touch();
         return $this->readOne();
     }

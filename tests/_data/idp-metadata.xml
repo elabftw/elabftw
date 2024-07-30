@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntitiesDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" Name="https://janus-plus.cnrs.fr">
+    <md:EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://janus-plus.cnrs.fr/auth/realms/cnrs">
+        <md:IDPSSODescriptor WantAuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:Extensions>
+                    <shibmd:Scope regexp="false">cnrs.fr</shibmd:Scope>
+                    <mdui:UIInfo>
+                        <mdui:DisplayName xml:lang="fr">Janus+ Personnels des unités CNRS</mdui:DisplayName>
+                        <mdui:DisplayName xml:lang="en">Janus+ CNRS units staff</mdui:DisplayName>
+                        <mdui:Logo height="16" width="16">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAQAAAAEABcxq3DAAAC1klEQVQ4y4WTaUjTARjGf/+5NaduqzXLWK5a1+yge2W3SZeQMfpUEF2mFB1QBBFZUQRddNIlFEIRVtBh9MGi0o6PLpOif5uFdijZGrbSTf/b3j5YRgf0fHo/PM/z4eX3KPxDq3aXnKyofjmvLRYzO3vZ6hdNH3+1eMWCg/xPe85fP4UyWnDmCVNXCrOKhOmrhcFeITNPio5cuvNnRvl5OPI3qB/Kbw5l0gwwGUGvhyQ9GPSdtngCAu/hU5C3deX5TrvlFoAOYOPRC2c+3K0Yyrgp0PgJPgbhWwQlkaDb1zZo/AwJQZdph3FZOJ2Lyh+8eL0cABExYugrq/aXiki7SPtXYetZoSog3H8hFB4SaQmLiMiwktuiVKrCkesCbgFIqg2Zzqu+plHXLhTTI3Ua6Y7eZCzOw3/jHp5Xdbybl8uuXqnoczbT7J1J8o7jxPyvwGhj3c7tVl2N/+0Ie7ab2uo66GFl3Zq9ALhSjAxITgCg2tMwKVHMz/1oWwphRBbYTVTWBGbp0oz6b8HmEFazCcdYN47cbACaox1dnw4rCu29baRUPCTpWCmsXQoGAx1tEaNuxoTh1TTUMyV7DAD+s8UEQl+Ia/HOtBbHo+jRPgYJeuej5Xgg0gFaB067tUE3e+qYO7S2Mq1wF/V3S8jdd45HBbuxqWpnweUbFJ24AslG4r5axNkXdhwA3zu8c7Kv/uBgpOB2QWMIMtIh2cCQYS48bgcXL1WBzQw9LRCJQqgFUk1Q44fWJ4oOYPaKhfdRVXD1AasJknQQj3V2mwyQ1g2iUSAB3c3wxMem/esP/0YiZAiusWBJg5gwJKs/nuH9uFhWBelmfkADzwLgcsCzy0oXiQDhcIObNw+gJQwx7VdvJAKaBtF2eOwDa0pX+C+JiBtcAplimbhE3N6NwsB8wTJZYIAsKz5R+d9FAuw9VbZlYE7B03TP4qZBc4vUgm3HTouI9V/e77ShIdcL4sPwAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE1LTA3LTIwVDEwOjQ4OjE2KzAyOjAwlICcrAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNS0wNy0yMFQxMDo0ODoxNiswMjowMOXdJBAAAAAASUVORK5CYII=</mdui:Logo>
+                    </mdui:UIInfo>
+            </md:Extensions>
+            <md:KeyDescriptor use="signing">
+                <ds:KeyInfo>
+                    <ds:KeyName>nwtZ913qsA5Kn4yLoTYj9i7p6q8ii2QA2EO-I0cZf0c</ds:KeyName>
+                    <ds:X509Data>
+                        <ds:X509Certificate>MIIClzCCAX8CBgF32NKhajANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARjbnJzMB4XDTIxMDIyNTEwNTE1OFoXDTMxMDIyNTEwNTMzOFowDzENMAsGA1UEAwwEY25yczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALuPxGhudy4vICCZIXafLoGPTWVy/1B2VFHYtx3H7BFkxdnEhuVn5PSVuOUBUL/5jBLMVca4O/VaRrKlQQPuBNdLZEq/BfWabTcj1POi2nZVzIuFQZY4Z7ONcJNkUWSlG0ZuzgwV0m/1Grm4plKlA0MrkcAi3JVoCvm/3dOxg/JEhHB19axPoDIW6K82JXE5VP4LINkSBqpi3BqsHZBTU16Zx6MPy1oMgOr3ythetifw7+bEIhS902n+DT8AL1kV2z5j/AIeloOqGb5+wzS9UMjYOiv/MQ06lDmzVsPIpWGn/8yEG3A83lv5hU7kWk9DQ+LLmxWmmnAfkr00uPxWXT8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAWceGpEv3BoWZeeLTWmpXtyWbRWffH4hyGbrY8so8bD/5xtHTFLZ7l0lOekNTCzXwDfkwoVcms6yFdJaTQFQyREh8TWZNymgsc19P3RahZzHbk0TbtHzJ1hPyWtyFix7dBhpj3zC8lgCKd76LAYNTLX7EyNT6oNHlEvh/IyDiis6cyGrvyQxj4DftkuNGRuP4M29et/nKmxmrNzjbeMpZdnu4z6nB1n/beZvIw0HOcQHQqXu36n70PH4AAuc3K2COwwcv2s+UOnTb1UqgwOjPsN6HEuC/Q83ZzZS+73YShRSTDSFGj9TWQfxzQgG2gbEeA4R76bF6wUtqmXWOxd5D6Q==</ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </md:KeyDescriptor>
+            <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml/resolve" index="0"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://janus-plus.cnrs.fr/auth/realms/cnrs/protocol/saml"/>
+        </md:IDPSSODescriptor>
+    </md:EntityDescriptor>
+    <md:EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://janus-plus.cnrs.fr/auth/realms/uhpi">
+        <md:IDPSSODescriptor WantAuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <md:Extensions>
+                    <shibmd:Scope regexp="false">cnrs.fr</shibmd:Scope>
+                    <mdui:UIInfo>
+                        <mdui:DisplayName xml:lang="fr">Janus+ Prestataires et usagers des unités CNRS</mdui:DisplayName>
+                        <mdui:DisplayName xml:lang="en">Janus+ Contractors and service users of CNRS units</mdui:DisplayName>
+                        <mdui:Logo height="16" width="16">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAAAQAAAAEABcxq3DAAAC1klEQVQ4y4WTaUjTARjGf/+5NaduqzXLWK5a1+yge2W3SZeQMfpUEF2mFB1QBBFZUQRddNIlFEIRVtBh9MGi0o6PLpOif5uFdijZGrbSTf/b3j5YRgf0fHo/PM/z4eX3KPxDq3aXnKyofjmvLRYzO3vZ6hdNH3+1eMWCg/xPe85fP4UyWnDmCVNXCrOKhOmrhcFeITNPio5cuvNnRvl5OPI3qB/Kbw5l0gwwGUGvhyQ9GPSdtngCAu/hU5C3deX5TrvlFoAOYOPRC2c+3K0Yyrgp0PgJPgbhWwQlkaDb1zZo/AwJQZdph3FZOJ2Lyh+8eL0cABExYugrq/aXiki7SPtXYetZoSog3H8hFB4SaQmLiMiwktuiVKrCkesCbgFIqg2Zzqu+plHXLhTTI3Ua6Y7eZCzOw3/jHp5Xdbybl8uuXqnoczbT7J1J8o7jxPyvwGhj3c7tVl2N/+0Ie7ab2uo66GFl3Zq9ALhSjAxITgCg2tMwKVHMz/1oWwphRBbYTVTWBGbp0oz6b8HmEFazCcdYN47cbACaox1dnw4rCu29baRUPCTpWCmsXQoGAx1tEaNuxoTh1TTUMyV7DAD+s8UEQl+Ia/HOtBbHo+jRPgYJeuej5Xgg0gFaB067tUE3e+qYO7S2Mq1wF/V3S8jdd45HBbuxqWpnweUbFJ24AslG4r5axNkXdhwA3zu8c7Kv/uBgpOB2QWMIMtIh2cCQYS48bgcXL1WBzQw9LRCJQqgFUk1Q44fWJ4oOYPaKhfdRVXD1AasJknQQj3V2mwyQ1g2iUSAB3c3wxMem/esP/0YiZAiusWBJg5gwJKs/nuH9uFhWBelmfkADzwLgcsCzy0oXiQDhcIObNw+gJQwx7VdvJAKaBtF2eOwDa0pX+C+JiBtcAplimbhE3N6NwsB8wTJZYIAsKz5R+d9FAuw9VbZlYE7B03TP4qZBc4vUgm3HTouI9V/e77ShIdcL4sPwAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE1LTA3LTIwVDEwOjQ4OjE2KzAyOjAwlICcrAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNS0wNy0yMFQxMDo0ODoxNiswMjowMOXdJBAAAAAASUVORK5CYII=</mdui:Logo>
+                    </mdui:UIInfo>
+            </md:Extensions>
+            <md:KeyDescriptor use="signing">
+                <ds:KeyInfo>
+                    <ds:KeyName>i1hY1yej2TI8WuItyx4qeg9CP0dQkMon2jSvgUnwMec</ds:KeyName>
+                    <ds:X509Data>
+                        <ds:X509Certificate>MIIClzCCAX8CBgGC7ckLmDANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDAR1aHBpMB4XDTIyMDgzMDA4MDQxMloXDTMyMDgzMDA4MDU1MlowDzENMAsGA1UEAwwEdWhwaTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOfejVh6DadKh2GK6dIn/7FVdWbbXcLbhjP8rV1EDXYF7B4J6UtssLoznzNvHtF7zhV9WO6XpsKC1UjQZhJohBSu7An7NacbrW9gS8p8v20ssOw4WK6ixxBAHso76FQqcJS3BA7eJCLd0/SkA/tlbSMwpFU9F73BaTYrPRehZ2dHsMB2jBhQguZcCtGc1LEeTGFQ7nuVp8DxiNTqLNCUkI1VMvrAChWgDA+eEcq3EZCA9rm3gEBP/TIcay0evElThr5k6vASTJT7t4iYbrPC7egvTphI+W2JTpIpPT+XLrOddFFUwcIXnrw4+FuK9bKnymN6Oiaqw4gVf+UYs6UVof0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAMwQv8WQwbMiZHikNtRif1xKGhRSAB3dyi/eoSoXIb0l6ze0HPkMCMnHGDAKD67n0UWN/xe1fBcJVhxqdvAKT50oINqDhRt3FStNG468KL891DStFzq++lZ6zPsXdBquv9wHgdVNhbcUQxfrrfiLbGI5pQ0zUFbvyC6mgMmHLlX9GQy3SCE794k4ceVE08qicCPfRc815qTo8AlWoOTmFV5rCXm/dxs5p2ooJwvYvZAPFQcPy0Pgfn9mSEHEG7CiovesBMY2pJRftDplKlu29N1bTHByd770rOY4VgiOMB+vWEUZS+LO56dOQKTS1q/U3VFNuVvZySFdQWHulgfVn5Q==</ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </md:KeyDescriptor>
+            <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml/resolve" index="0"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+            <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+            <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://janus-plus.cnrs.fr/auth/realms/uhpi/protocol/saml"/>
+        </md:IDPSSODescriptor>
+    </md:EntityDescriptor>
+</md:EntitiesDescriptor>

@@ -13,42 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DOMDocument;
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Idps;
 
 /**
  * Convert XML metadata about IDPs into eLabFTW's IDP
  */
 class Xml2Idps
 {
-    public function __construct(private int $sourceId, private DOMDocument $dom, private Idps $idps) {}
+    public function __construct(private DOMDocument $dom, private string $ssoBinding, private string $sloBinding) {}
 
-    public function upsertFromXml(): int
-    {
-        $idps = $this->getIdpsFromDom();
-
-        foreach ($idps as $idp) {
-            $id = $this->idps->findByEntityId($idp['entityid']);
-            if ($id === 0) {
-                $this->idps->create(
-                    name: $idp['name'],
-                    entityid: $idp['entityid'],
-                    sso_url: $idp['sso_url'],
-                    slo_url: $idp['slo_url'] ?? '',
-                    x509: $idp['x509'],
-                    enabled: 0,
-                    source: $this->sourceId,
-                );
-                continue;
-            }
-            $this->idps->setId($id);
-            $this->idps->patch(Action::Update, $idp);
-        }
-        return count($idps);
-    }
-
-    private function getIdpsFromDom(): array
+    public function getIdpsFromDom(): array
     {
         $res = array();
         $entities = $this->dom->getElementsByTagNameNS('*', 'EntityDescriptor');
@@ -85,7 +59,7 @@ class Xml2Idps
             // SSO
             $ssoServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleSignOnService');
             foreach ($ssoServiceNodes as $node) {
-                if ($node->getAttribute('Binding') === $this->idps::SSO_BINDING) {
+                if ($node->getAttribute('Binding') === $this->ssoBinding) {
                     $idp['sso_url'] = $node->getAttribute('Location');
                 }
             }
@@ -96,7 +70,7 @@ class Xml2Idps
             // SLO
             $sloServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleLogoutService');
             foreach ($sloServiceNodes as $node) {
-                if ($node->getAttribute('Binding') === $this->idps::SLO_BINDING) {
+                if ($node->getAttribute('Binding') === $this->sloBinding) {
                     $idp['slo_url'] = $node->getAttribute('Location');
                 }
             }

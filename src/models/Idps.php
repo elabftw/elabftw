@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -99,6 +100,30 @@ class Idps implements RestInterface
             $this->update($key, $value);
         }
         return $this->readOne();
+    }
+
+    public function upsert(int $sourceId, Xml2Idps $xml2Idps): int
+    {
+        $idps = $xml2Idps->getIdpsFromDom();
+
+        foreach ($idps as $idp) {
+            $id = $this->findByEntityId($idp['entityid']);
+            if ($id === 0) {
+                $this->create(
+                    name: $idp['name'],
+                    entityid: $idp['entityid'],
+                    sso_url: $idp['sso_url'],
+                    slo_url: $idp['slo_url'] ?? '',
+                    x509: $idp['x509'],
+                    enabled: 0,
+                    source: $sourceId,
+                );
+                continue;
+            }
+            $this->setId($id);
+            $this->patch(Action::Update, $idp);
+        }
+        return count($idps);
     }
 
     public function toggleEnabledFromSource(int $sourceId, int $enabled): bool

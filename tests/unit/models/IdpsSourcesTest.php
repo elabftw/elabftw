@@ -12,17 +12,24 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DOMDocument;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\Url2Xml;
+use Elabftw\Services\Xml2Idps;
 
 class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
 {
     private IdpsSources $IdpsSources;
 
+    private Users $requester;
+
     protected function setUp(): void
     {
-        $this->IdpsSources = new IdpsSources(new Users(1, 1));
+        $this->requester = new Users(1, 1);
+        $this->IdpsSources = new IdpsSources($this->requester);
     }
 
     public function testGetApiPath(): void
@@ -59,6 +66,19 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->IdpsSources->readAll());
         $this->IdpsSources->setId($id);
         $this->assertIsArray($this->IdpsSources->readOne());
+        // try refresh now
+        $Idps = new Idps($this->requester);
+        $getterStub = $this->createStub(HttpGetter::class);
+        $xmlContent = (string) file_get_contents(dirname(__DIR__, 2) . '/_data/idp-metadata.xml');
+        $getterStub->method('get')->willReturn($xmlContent);
+        $source = $this->IdpsSources->readOne();
+        $Url2Xml = new Url2Xml($getterStub, $source['url'], new DOMDocument());
+        $dom = $Url2Xml->getXmlDocument();
+        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+        $this->IdpsSources->refresh($Xml2Idps, $Idps);
+        // now test toggleenable
+        $this->IdpsSources->patch(Action::Validate, array());
+        $this->IdpsSources->patch(Action::Finish, array());
         $this->assertTrue($this->IdpsSources->destroy());
     }
 }

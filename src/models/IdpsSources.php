@@ -54,7 +54,18 @@ class IdpsSources implements RestInterface
             throw new ImproperActionException('No id was set!');
         }
         return match($action) {
-            Action::Replace => $this->refresh(),
+            Action::Replace => (
+                function () {
+                    $source = $this->readOne();
+                    $Config = Config::getConfig();
+                    $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
+                    $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
+                    $dom = $Url2Xml->getXmlDocument();
+                    $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+                    $Idps = new Idps($this->requester);
+                    return $this->refresh($Xml2Idps, $Idps);
+                }
+            )(),
             Action::Validate => $this->toggleEnable(1),
             Action::Finish => $this->toggleEnable(0),
             default => throw new ImproperActionException('Incorrect action parameter'),
@@ -112,24 +123,17 @@ class IdpsSources implements RestInterface
         return $this->Db->lastInsertId();
     }
 
+    public function refresh(Xml2Idps $Xml2Idps, Idps $Idps): array
+    {
+        $Idps->upsert($this->id ?? 0, $Xml2Idps);
+        $this->touch();
+        return $this->readOne();
+    }
+
     private function toggleEnable(int $enabled): array
     {
         $Idps = new Idps($this->requester);
         $Idps->toggleEnabledFromSource($this->id ?? -1, $enabled);
-        return $this->readOne();
-    }
-
-    private function refresh(): array
-    {
-        $source = $this->readOne();
-        $Config = Config::getConfig();
-        $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
-        $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
-        $dom = $Url2Xml->getXmlDocument();
-        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
-        $Idps = new Idps($this->requester);
-        $Idps->upsert($source['id'], $Xml2Idps);
-        $this->touch();
         return $this->readOne();
     }
 

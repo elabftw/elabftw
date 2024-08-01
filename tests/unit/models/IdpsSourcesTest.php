@@ -64,6 +64,7 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
         $id = $this->IdpsSources->postAction(Action::Create, $params);
         $this->assertIsInt($id);
         $this->assertIsArray($this->IdpsSources->readAll());
+        $this->assertIsArray($this->IdpsSources->readAllAutoRefreshable());
         $this->IdpsSources->setId($id);
         $this->assertIsArray($this->IdpsSources->readOne());
         // try refresh now

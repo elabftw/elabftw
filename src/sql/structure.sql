@@ -523,6 +523,7 @@ CREATE TABLE `idps_sources` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `url` TEXT NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `auto_refresh` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `last_fetched_at` timestamp NULL DEFAULT NULL,
   `enabled` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),

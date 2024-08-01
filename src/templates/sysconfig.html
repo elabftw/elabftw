@@ -726,7 +726,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <h5 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h5>
-    <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata.'|trans }}</p>
+    <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically.'|trans }}</p>
     <ul class='list-group' id='idpsSourcesDiv'>
       <li class='list-group-item'>
         <div class='input-group'>
@@ -744,6 +744,11 @@
         <div class='d-flex'>
           <a target='_blank' rel='noopener' class='external-link' href='{{ source.url }}'>{{ source.url }}</a>
           <div class='ml-auto'>
+            <label for='autorefreshIdpsSource-{{ source.id }}' class='col-form-label clickable'>{{ 'Auto-refresh'|trans }}</label>
+            <label class='switch ucp-align'>
+              <input type='checkbox' id='autorefreshIdpsSource-{{ source.id }}' {{ source.auto_refresh == 1 ? "checked='checked'" }} autocomplete='off' data-trigger='change' data-model='idps_sources/{{ source.id }}' data-target='auto_refresh'>
+              <span class='slider'></span>
+            </label>
             <button type='button' class='btn btn-sm btn-primary mx-2' data-action='refresh-idps-source' data-id='{{ source.id }}'>{{ 'Refresh'|trans }}</button>
             <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='enable-idps-with-source' data-id='{{ source.id }}'>{{ 'Enable all'|trans }}</button>
             <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='disable-idps-with-source' data-id='{{ source.id }}'>{{ 'Disable all'|trans }}</button>

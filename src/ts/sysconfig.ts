@@ -246,6 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#idpModal').modal('show');
       });
     } else if (el.matches('[data-action="save-idp"]')) {
+      // prevent form submission
+      event.preventDefault();
       const params = collectForm(document.getElementById('idpForm'));
       if (el.dataset.id) { // PATCH IDP
         ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {

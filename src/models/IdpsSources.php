@@ -54,6 +54,8 @@ class IdpsSources implements RestInterface
             throw new ImproperActionException('No id was set!');
         }
         return match($action) {
+            // currently only one aspect is modifiable, the auto_refresh
+            Action::Update => $this->toggleAutoRefresh(),
             Action::Replace => (
                 function () {
                     $source = $this->readOne();
@@ -79,7 +81,7 @@ class IdpsSources implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT idps_sources.id, idps_sources.url,
+        $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,
             CAST(COALESCE(SUM(CASE WHEN idps.enabled = 1 THEN 1 ELSE 0 END), 0) AS UNSIGNED) AS idps_count_enabled
             FROM idps_sources LEFT JOIN idps ON idps_sources.id = idps.source GROUP BY idps_sources.id ORDER BY created_at DESC';
@@ -88,9 +90,18 @@ class IdpsSources implements RestInterface
         return $req->fetchAll();
     }
 
+    public function readAllAutoRefreshable(): array
+    {
+        $sql = 'SELECT idps_sources.id, idps_sources.url
+            FROM idps_sources';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     public function readOne(): array
     {
-        $sql = 'SELECT idps_sources.id, idps_sources.url,
+        $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,
             CAST(COALESCE(SUM(CASE WHEN idps.enabled = 1 THEN 1 ELSE 0 END), 0) AS UNSIGNED) AS idps_count_enabled
             FROM idps_sources
@@ -127,6 +138,15 @@ class IdpsSources implements RestInterface
     {
         $Idps->upsert($this->id ?? 0, $Xml2Idps);
         $this->touch();
+        return $this->readOne();
+    }
+
+    private function toggleAutoRefresh(): array
+    {
+        $sql = 'UPDATE idps_sources SET auto_refresh = auto_refresh XOR 1 WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
         return $this->readOne();
     }
 

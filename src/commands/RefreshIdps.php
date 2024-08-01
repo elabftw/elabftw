@@ -38,8 +38,8 @@ class RefreshIdps extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('For each defined Idp source, fetch the latest version and update metadata of associated Idps')
-            ->setHelp('Refresh Idps associated with an URL source');
+        $this->setDescription('For each defined Idp source that is auto-refreshable, fetch the latest version and update metadata of associated Idps')
+            ->setHelp('Refresh Idps associated with an URL source and auto-refreshable');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -48,7 +48,7 @@ class RefreshIdps extends Command
         $IdpsSources = new IdpsSources($requester);
         $Idps = new Idps($requester);
         $getter = new HttpGetter(new Client(), $this->proxy);
-        $sources = $IdpsSources->readAll();
+        $sources = $IdpsSources->readAllAutoRefreshable();
         foreach ($sources as $source) {
             $IdpsSources->setId($source['id']);
             $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());

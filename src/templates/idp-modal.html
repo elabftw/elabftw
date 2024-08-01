@@ -8,8 +8,8 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <form id='idpForm'>
+      <form id='idpForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
           <div class='d-flex justify-content-between'>
             <label for='idpModal_name' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
             <input class='form-control col-md-4' type='text' placeholder='Acme Looniversity' id='idpModal_name' name='name' required />
@@ -99,13 +99,12 @@
             <label for='idpModal_orgid_attr' class='col-form-label'>What attribute to look for the internal id (optional)</label>
             <input class='form-control col-md-4' type='text' id='idpModal_orgid_attr' name='orgid_attr' />
           </div>
-        </form>
-
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='submit' data-action='save-idp' id='idpModalSaveButton' data-dismiss='modal' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-action='save-idp' id='idpModalSaveButton' data-dismiss='modal' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

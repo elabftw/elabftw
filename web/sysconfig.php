@@ -53,7 +53,7 @@ try {
 
     $AuthFail = new AuthFail();
     $Idps = new Idps($App->Users);
-    $idpsArr = $Idps->readAll();
+    $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
     $Teams = new Teams($App->Users);

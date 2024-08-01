@@ -86,7 +86,33 @@ class Idps implements RestInterface
 
     public function readAll(): array
     {
-        $sql = 'SELECT idps.*, idps_sources.url AS source_url FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
+        $sql = 'SELECT idps.*, idps_sources.url AS source_url
+            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Used to get a list of enabled IDP for the login page, without having to load too much data
+     */
+    public function readAllSimpleEnabled(): array
+    {
+        $sql = 'SELECT idps.id, idps.name FROM idps WHERE idps.enabled = 1 ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Used to get a list of IDP for the sysconfig page, without having to load too much data
+     */
+    public function readAllLight(): array
+    {
+        $sql = 'SELECT idps.id, idps.name, idps.entityid, idps.enabled, idps_sources.url AS source_url
+            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

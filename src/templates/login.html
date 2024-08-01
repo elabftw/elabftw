@@ -173,7 +173,7 @@
 
     {% endif %}
 
-    {% if App.Config.configArr.saml_toggle %}
+    {% if App.Config.configArr.saml_toggle and idpsArr|length %}
       <div class='separator col-md-4 mx-auto'></div>
       <h2>{{ 'Login through your institution'|trans }}</h2>
       <br>
@@ -187,9 +187,7 @@
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
           <select name='idpId' class='form-control' id='idp_login_select'>
             {% for idp in idpsArr %}
-              {% if idp.enabled %}
-                <option value='{{ idp.id }}'>{{ idp.name }}</option>
-              {% endif %}
+              <option value='{{ idp.id }}'>{{ idp.name }}</option>
             {% endfor %}
           </select>
           {# No remember me checkbox for SAML because it's toggled by remember_me_allowed at the instance level #}

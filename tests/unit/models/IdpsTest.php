@@ -51,9 +51,11 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($newValue, $response['name']);
     }
 
-    public function testReadAll(): void
+    public function testRead(): void
     {
         $this->assertIsArray($this->Idps->readAll());
+        $this->assertIsArray($this->Idps->readAllSimpleEnabled());
+        $this->assertIsArray($this->Idps->readAllLight());
     }
 
     public function testGetActiveByEntityId(): void

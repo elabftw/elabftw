@@ -97,7 +97,7 @@ try {
     }
 
     $Idps = new Idps($App->Users);
-    $idpsArr = $Idps->readAll();
+    $idpsArr = $Idps->readAllSimpleEnabled();
 
     $Teams = new Teams($App->Users);
     $Teams->bypassReadPermission = true;

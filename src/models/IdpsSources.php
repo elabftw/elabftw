@@ -93,7 +93,7 @@ class IdpsSources implements RestInterface
     public function readAllAutoRefreshable(): array
     {
         $sql = 'SELECT idps_sources.id, idps_sources.url
-            FROM idps_sources';
+            FROM idps_sources WHERE auto_refresh = 1';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();

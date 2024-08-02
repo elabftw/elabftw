@@ -46,6 +46,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         private Users $requester,
         array $entitySlugs,
         private int $size,
+        private bool $withTitle = true,
     ) {
         // only works for 1 entry
         if (count($entitySlugs) !== 1) {
@@ -80,6 +81,9 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         $draw->setFontSize($this->fontSize);
 
         $splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());
+        if (!$this->withTitle) {
+            $splitTitle = array();
+        }
         $fullHeight = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
 
         // Create a new image to hold the qrcode + text

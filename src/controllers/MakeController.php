@@ -92,7 +92,7 @@ class MakeController extends AbstractController
                 return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entitySlugs));
 
             case ExportFormat::QrPng:
-                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size')));
+                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size'), $this->Request->query->getBoolean('withTitle')));
 
             case ExportFormat::SysadminReport:
                 if (!$this->requester->userData['is_sysadmin']) {

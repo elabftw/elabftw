@@ -39,6 +39,12 @@ class MakeQrPngTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($Maker->getFileContent());
     }
 
+    public function testGetFileContentNotitle(): void
+    {
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Users, array(new EntitySlug(EntityType::Experiments, 1)), 250, false);
+        $this->assertIsString($Maker->getFileContent());
+    }
+
     public function testGetFileName(): void
     {
         $this->assertStringEndsWith('qr-code.elabftw.png', $this->Maker->getFileName());

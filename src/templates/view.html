@@ -78,6 +78,14 @@
     {% endif %}
   </div>
 
+  {# ID #}
+  <div class='d-flex mb-2 align-items-center'>
+    <div class='edit-mode-label'>
+      <i class='fas fa-hashtag mr-2'></i>{{ 'ID'|trans }}
+    </div>
+    {{ Entity.entityData.id }}
+  </div>
+
   <hr>
   {% include('edit-permissions.html') %}
 

@@ -86,6 +86,7 @@ $Application->add(new GenSchema($sqlFs));
 $Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new AddMissingLinks());
+$Application->add(new RefreshIdps($Config->configArr['proxy']));
 $Application->add(new SendNotifications($Email));
 $Application->add(new SendExpirationNotifications($Email));
 $Application->add(new TagsTeamsSync());

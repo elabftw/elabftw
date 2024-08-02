@@ -69,7 +69,7 @@ try {
 
     // DESTROY IDP
     if ($App->Request->request->has('idpsDestroy')) {
-        $Idps = new Idps($App->Request->request->getInt('id'));
+        $Idps = new Idps($App->Users, $App->Request->request->getInt('id'));
         $Idps->destroy();
     }
 

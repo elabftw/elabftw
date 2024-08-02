@@ -40,6 +40,7 @@ use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
+use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
@@ -175,11 +176,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
 
     protected function bloxberg(): array
     {
+        $configArr = Config::getConfig()->configArr;
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
         $Maker = new MakeBloxberg(
             $this->Users,
-            Config::getConfig()->configArr,
             array(new EntitySlug($this->entityType, $this->id ?? 0)),
-            new Client()
+            $configArr,
+            $HttpGetter,
         );
         $Maker->timestamp();
         return $this->readOne();

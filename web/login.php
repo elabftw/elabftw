@@ -96,8 +96,8 @@ try {
         $showLocal = false;
     }
 
-    $Idps = new Idps();
-    $idpsArr = $Idps->readAll();
+    $Idps = new Idps($App->Users);
+    $idpsArr = $Idps->readAllSimpleEnabled();
 
     $Teams = new Teams($App->Users);
     $Teams->bypassReadPermission = true;

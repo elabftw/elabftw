@@ -253,4 +253,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
     }
+
+    public function testRefreshIdps(): void
+    {
+        $commandTester = new CommandTester(new RefreshIdps(''));
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
 }

@@ -20,6 +20,7 @@ enum ApiEndpoint: string
     case Batch = 'batch';
     case Config = 'config';
     case Idps = 'idps';
+    case IdpsSources = 'idps_sources';
     case Import = 'import';
     case Info = 'info';
     case Experiments = 'experiments';

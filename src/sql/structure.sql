@@ -504,6 +504,7 @@ CREATE TABLE `idps` (
   `x509` text NOT NULL,
   `x509_new` text NOT NULL,
   `enabled` tinyint UNSIGNED NOT NULL DEFAULT 1,
+  `source` tinyint UNSIGNED NULL DEFAULT NULL,
   `email_attr` varchar(255) NOT NULL,
   `team_attr` varchar(255) NULL DEFAULT NULL,
   `fname_attr` varchar(255) NULL DEFAULT NULL,
@@ -512,9 +513,22 @@ CREATE TABLE `idps` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
+-- --------------------------------------------------------
+
 --
--- RELATIONSHIPS FOR TABLE `idps`:
+-- Table structure for table `idps_sources`
 --
+
+CREATE TABLE `idps_sources` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `url` TEXT NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `auto_refresh` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `last_fetched_at` timestamp NULL DEFAULT NULL,
+  `enabled` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_url` (`url`(255))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 

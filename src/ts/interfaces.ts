@@ -106,6 +106,7 @@ enum Model {
   Config = 'config',
   FavTag = 'favtags',
   Idp = 'idps',
+  IdpsSources = 'idps_sources',
   ItemsStatus = 'items_status',
   Link = 'links',
   Notification = 'notifications',

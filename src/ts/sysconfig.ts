@@ -206,12 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
         { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button));
-    } else if (el.matches('[data-action="create-idp"]')) {
-      const params = collectForm(document.getElementById('createIdpForm'));
-      ApiC.post(Model.Idp, params).then(() => {
-        $('#createIdpModal').modal('hide');
-        reloadElements(['idpsDiv']);
-      });
     } else if (el.matches('[data-action="destroy-idp"]')) {
       event.preventDefault();
       if (confirm(i18next.t('generic-delete-warning'))) {
@@ -232,6 +226,53 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(Model.Config, {
         [key]: tinymce.get(key).getContent(),
       });
+    // EDIT IDP MODAL
+    } else if (el.matches('[data-action="display-idp-modal"]')) {
+      ApiC.getJson(`${Model.Idp}/${el.dataset.id}`).then(idp => {
+        (document.getElementById('idpModal_name') as HTMLInputElement).value = idp.name;
+        (document.getElementById('idpModal_entityid') as HTMLInputElement).value = idp.entityid;
+        (document.getElementById('idpModal_sso_url') as HTMLInputElement).value = idp.sso_url;
+        (document.getElementById('idpModal_sso_binding') as HTMLSelectElement).value = idp.sso_binding;
+        (document.getElementById('idpModal_slo_url') as HTMLInputElement).value = idp.slo_url;
+        (document.getElementById('idpModal_slo_binding') as HTMLSelectElement).value = idp.slo_binding;
+        (document.getElementById('idpModal_x509_idp') as HTMLInputElement).value = idp.x509;
+        (document.getElementById('idpModal_x509_new_idp') as HTMLInputElement).value = idp.x509_new;
+        (document.getElementById('idpModal_email_attr') as HTMLInputElement).value = idp.email_attr;
+        (document.getElementById('idpModal_fname_attr') as HTMLInputElement).value = idp.fname_attr;
+        (document.getElementById('idpModal_lname_attr') as HTMLInputElement).value = idp.lname_attr;
+        (document.getElementById('idpModal_team_attr') as HTMLInputElement).value = idp.team_attr;
+        (document.getElementById('idpModal_orgid_attr') as HTMLInputElement).value = idp.orgid_attr;
+        document.getElementById('idpModalSaveButton').dataset.id = idp.id;
+        $('#idpModal').modal('show');
+      });
+    } else if (el.matches('[data-action="save-idp"]')) {
+      // prevent form submission
+      event.preventDefault();
+      const params = collectForm(document.getElementById('idpForm'));
+      if (el.dataset.id) { // PATCH IDP
+        ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {
+          reloadElements(['idpsDiv']);
+        });
+      } else { // CREATE IDP
+        ApiC.post(Model.Idp, params).then(() => {
+          reloadElements(['idpsDiv']);
+        });
+      }
+
+    } else if (el.matches('[data-action="save-idps-source"]')) {
+      const url = el.parentElement.parentElement.querySelector('input').value.trim();
+      ApiC.post(`${Model.IdpsSources}`, {url: url}).then(() => reloadElements(['idpsSourcesDiv']));
+    } else if (el.matches('[data-action="refresh-idps-source"]')) {
+      (el as HTMLButtonElement).disabled = true;
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Replace}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']).then(() => {
+        (el as HTMLButtonElement).disabled = false;
+      }));
+    } else if (el.matches('[data-action="enable-idps-with-source"]')) {
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Validate}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
+    } else if (el.matches('[data-action="disable-idps-with-source"]')) {
+      ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Finish}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
+    } else if (el.matches('[data-action="delete-idps-source"]')) {
+      ApiC.delete(`${Model.IdpsSources}/${el.dataset.id}`).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
     }
   });
 

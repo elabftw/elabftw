@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // tom-select for team selection on login and register page
-  ['init_team_select', 'team'].forEach(id =>{
+  // tom-select for team selection on login and register page, and idp selection
+  ['init_team_select', 'team', 'idp_login_select'].forEach(id =>{
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
         plugins: [
@@ -211,10 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   document.querySelectorAll('input[data-filter-target]').forEach((input: HTMLInputElement) => {
     const target = document.getElementById(input.dataset.filterTarget);
-    let targetType = 'tr';
-    if (input.dataset.targetType === 'li') {
-      targetType = 'li';
-    }
+    const targetType = input.dataset.targetType;
     // FIRST LISTENER is to filter the rows
     input.addEventListener('keyup', () => {
       target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {

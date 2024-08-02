@@ -2,7 +2,7 @@
 
 {% block body %}
 
-{% include('create-idp-modal.html') %}
+{% include('idp-modal.html') %}
 
 {# Modal for team creation #}
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel'>
@@ -723,131 +723,84 @@
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity Providers list'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
-      {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
-      <div>
-        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createIdpModal'>{{ 'Add new IDP'|trans }}</button>
-      </div>
-    </div>
-    <div id='idpsDiv'>
-      {% for idp in idpsArr %}
-        <div class='my-2'>
-          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ idp.name|upper }} ({{ idp.entityid }})
-
-            <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
-                <i class='fas fa-trash-alt'></i>
-            </a>
-          </h4>
-
-          <div class='m-2' hidden>
-
-            <div class='d-flex justify-content-between'>
-              <label for='enabled_{{ idp.id }}' class='col-form-label'>{{ 'Enabled'|trans }}</label>
-              <label class='switch ucp-align'>
-                <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
-                <span class='slider'></span>
-              </label>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='editIdpName_{{ idp.id }}' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
-              <input class='form-control col-md-3' type='text' id='editIdpName_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='name' value='{{ idp.name }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='entityId_{{ idp.id }}' class='col-form-label'>EntityId</label>
-              <input class='form-control col-md-3' type='url' id='entityId_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='entityid' value='{{ idp.entityid }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='ssoUrl_{{ idp.id }}' class='col-form-label'>Single Sign-On URL</label>
-              <input class='form-control col-md-3' type='url' id='ssoUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='sso_url' value='{{ idp.sso_url }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding</label>
-              <select class='form-control col-md-3' id='ssoBinding_{{ idp.id }}' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='sso_binding'>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-                <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest' {{ idp.sso_binding == 'urn:mace:shibboleth:1.0:profiles:AuthnRequest' ? 'selected' }}>Shibboleth AuthnRequest</option>
-              </select>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='sloUrl_{{ idp.id }}' class='col-form-label'>Single Log Out URL</label>
-              <input class='form-control col-md-3' type='url' id='sloUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_url' value='{{ idp.slo_url }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='sloBinding_{{ idp.id }}' class='col-form-label'>Single Log Out binding (only Redirect is supported)</label>
-              <select class='form-control col-md-3' id='sloBinding_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_binding'>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-              </select>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <div>
-                <label for='x509_{{ idp.id }}' class='col-form-label'>x509cert</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control'  aria-label='File upload: x509 Certificate in PEM format' />
-              </div>
-              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <div>
-                <label for='x509_new_{{ idp.id }}' class='col-form-label'>x509cert (additional for rollover)</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
-              </div>
-              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-email_{{ idp.id }}' class='col-form-label'>What attribute to look for the email</label>
-              <input class='form-control col-md-3' type='text' id='saml-email_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='email_attr' value='{{ idp.email_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-firstname_{{ idp.id }}' class='col-form-label'>What attribute to look for the firstname</label>
-              <input class='form-control col-md-3' type='text' id='saml-firstname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='fname_attr' value='{{ idp.fname_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-lastname_{{ idp.id }}' class='col-form-label'>What attribute to look for the lastname</label>
-              <input class='form-control col-md-3' type='text' id='saml-lastname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='lname_attr' value='{{ idp.lname_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-team_{{ idp.id }}' class='col-form-label'>What attribute to look for the team name (optional)</label>
-              <input class='form-control col-md-3' type='text' id='saml-team_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='team_attr' value='{{ idp.team_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-orgid_{{ idp.id }}' class='col-form-label'>What attribute to look for the internal id (optional)</label>
-              <input class='form-control col-md-3' type='text' id='saml-orgid_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='orgid_attr' value='{{ idp.orgid_attr }}' />
-            </div>
-            <hr>
-
+    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h5>
+    <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically.'|trans }}</p>
+    <ul class='list-group' id='idpsSourcesDiv'>
+      <li class='list-group-item'>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>+</span>
+          </div>
+          <input id='addIdpsSourcesInput' aria-labelledby='addIdpsSourcesInputLabel' class='form-control' type='url' placeholder='https://www.aai.example.com/idps.xml' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-action='save-idps-source' type='button'>{{ 'Save'|trans }}</button>
           </div>
         </div>
+      </li>
+      {% for source in idpsSources %}
+      <li class='list-group-item'>
+        <div class='d-flex'>
+          <a target='_blank' rel='noopener' class='external-link' href='{{ source.url }}'>{{ source.url }}</a>
+          <div class='ml-auto'>
+            <label for='autorefreshIdpsSource-{{ source.id }}' class='col-form-label clickable'>{{ 'Auto-refresh'|trans }}</label>
+            <label class='switch ucp-align'>
+              <input type='checkbox' id='autorefreshIdpsSource-{{ source.id }}' {{ source.auto_refresh == 1 ? "checked='checked'" }} autocomplete='off' data-trigger='change' data-model='idps_sources/{{ source.id }}' data-target='auto_refresh'>
+              <span class='slider'></span>
+            </label>
+            <button type='button' class='btn btn-sm btn-primary mx-2' data-action='refresh-idps-source' data-id='{{ source.id }}'>{{ 'Refresh'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='enable-idps-with-source' data-id='{{ source.id }}'>{{ 'Enable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='disable-idps-with-source' data-id='{{ source.id }}'>{{ 'Disable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-danger mx-2' data-action='delete-idps-source' data-id='{{ source.id }}'>{{ 'Delete'|trans }}</button>
+          </div>
+        </div>
+        <div class='smallgray'>{{ 'Associated with %d IDPs (%d enabled)'|trans|format(source.idps_count, source.idps_count_enabled) }}</div>
+      </li>
       {% endfor %}
+    </ul>
+
+    <div class='my-3'>
+      <h5>{{ 'Add IDP manually'|trans }}</h5>
+      <p class='col-form-label'>{{ 'You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed.'|trans }}</p>
+      {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
+      <div>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='idpModal'>{{ 'Add new IDP'|trans }}</button>
+      </div>
     </div>
+
+    <div class='my-3'>
+      <h5>{{ 'IDPs list'|trans }}</h5>
+      <p class='col-form-label'>{{ 'Currently %d IDPs are configured.'|trans|format(idpsArr|length) }}</p>
+      {% include 'filter-input-snippet.html' with {'target': 'idpsDiv', 'targetType': 'li'} %}
+      <ul class='list-group' id='idpsDiv'>
+      {% for idp in idpsArr %}
+        <li class='list-group-item'>
+          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
+            <i class='fas fa-caret-right fa-fw mr-2'></i>
+            <label class='switch ucp-align'>
+              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
+              <span class='slider'></span>
+            </label>
+            {{ idp.name|upper }} ({{ idp.entityid }})
+          </h4>
+
+          <div class='pl-3 m-2' hidden>
+            <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
+            <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
+
+            {% if idp.source_url %}
+              <div class='d-flex justify-content-between'>
+                <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
+                <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
+              </div>
+              <hr>
+            {% endif %}
+
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 
 </div>

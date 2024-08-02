@@ -19,7 +19,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Idps = new Idps();
+        $this->Idps = new Idps(new Users(1, 1));
     }
 
     public function testGetApiPath(): void
@@ -51,9 +51,11 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($newValue, $response['name']);
     }
 
-    public function testReadAll(): void
+    public function testRead(): void
     {
         $this->assertIsArray($this->Idps->readAll());
+        $this->assertIsArray($this->Idps->readAllSimpleEnabled());
+        $this->assertIsArray($this->Idps->readAllLight());
     }
 
     public function testGetActiveByEntityId(): void

@@ -15,4 +15,10 @@ namespace Elabftw\Models;
 /**
  * A user interacting with the app from CLI, so has full rights on everything
  */
-final class UltraAdmin extends Users {}
+final class UltraAdmin extends Users
+{
+    public function __construct(public ?int $userid = null, public ?int $team = null)
+    {
+        $this->userData['is_sysadmin'] = 1;
+    }
+}

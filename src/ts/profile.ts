@@ -21,12 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // when selecting the target type, change the category listing
-  document.getElementById('importRadioEntityType').addEventListener('change', event => {
+  document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
     const el = (event.target as HTMLInputElement);
     const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
     // Remove all options
-    while (categorySelect.options.length > 0) {
-      categorySelect.remove(1);
+    for (let i = categorySelect.options.length - 1; i >= 0; i--) {
+      categorySelect.remove(i);
     }
     let entityType = el.value;
     if (el.value === 'experiments_templates') {

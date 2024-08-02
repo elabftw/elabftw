@@ -854,6 +854,7 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
+      <!-- [html-validate-disable no-missing-references: if there is an ldap_password, the input is not shown] -->
       <label for='ldap_password' class='col-form-label'>LDAP {{ 'Password'|trans }}</label>
       {% if App.Config.configArr.ldap_password|length == 0 %}
         <div class='input-group col-md-3 p-0'>

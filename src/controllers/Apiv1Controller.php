@@ -22,6 +22,6 @@ class Apiv1Controller extends AbstractApiController
 {
     public function getResponse(): Response
     {
-        return new JsonResponse(array('result' => 'error', 'message' => 'API v1 has been removed. Use API v2.'), 400);
+        return new JsonResponse(array('result' => 'error', 'message' => 'API v1 has been removed. Use API v2.'), Response::HTTP_BAD_REQUEST);
     }
 }

@@ -244,6 +244,7 @@ class LoginController implements ControllerInterface
                     $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
                 }
                 $ldapConfig = array(
+                    'protocol' => $c['ldap_scheme'] . '://',
                     'hosts' => array($c['ldap_host']),
                     'port' => (int) $c['ldap_port'],
                     'base_dn' => $c['ldap_base_dn'],

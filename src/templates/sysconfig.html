@@ -818,6 +818,14 @@
     {% include 'binary-setting.html' with {'label': 'Toggle LDAP login'|trans, 'slug': 'ldap_toggle'} %}
 
     <div class='d-flex justify-content-between'>
+      <label for='ldap_scheme' class='col-form-label'>{{ 'LDAP Scheme'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_scheme' placeholder='ldap' value='{{ App.Config.configArr.ldap_scheme }}' id='ldap_scheme' />
+    </div>
+    <p class='smallgray'>{{ 'Ldap scheme can be set regardless of the SSL/TLS settings. Valid values are "ldap" or "ldaps". Default is "ldap".'|trans }}</p>
+    <hr>
+
+
+    <div class='d-flex justify-content-between'>
       <label for='ldap_host' class='col-form-label'>{{ 'LDAP Host'|trans }}</label>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_host' placeholder='ldap' value='{{ App.Config.configArr.ldap_host }}' id='ldap_host' />
     </div>

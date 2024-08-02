@@ -353,13 +353,15 @@
     <div class='d-flex justify-content-between'>
       <label for='smtp_password' class='col-form-label'>{{ 'SMTP password'|trans }}</label>
       {% if App.Config.configArr.smtp_password|length == 0 %}
-        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='smtp_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
       {% else %}
         <p>
-          {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>", "</span>")|raw }}
-          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
+        {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>{{ 'Clear'|trans }}</button>
         </p>
       {% endif %}
     </div>
@@ -774,33 +776,34 @@
       <p class='col-form-label'>{{ 'Currently %d IDPs are configured.'|trans|format(idpsArr|length) }}</p>
       {% include 'filter-input-snippet.html' with {'target': 'idpsDiv', 'targetType': 'li'} %}
       <ul class='list-group' id='idpsDiv'>
-      {% for idp in idpsArr %}
-        <li class='list-group-item'>
-          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
-            <i class='fas fa-caret-right fa-fw mr-2'></i>
-            <label class='switch ucp-align'>
-              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
-              <span class='slider'></span>
-            </label>
-            {{ idp.name|upper }} ({{ idp.entityid }})
-          </h4>
+        {% for idp in idpsArr %}
+          <li class='list-group-item'>
+            <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
+              <i class='fas fa-caret-right fa-fw mr-2'></i>
+              <label class='switch ucp-align'>
+                <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
+                <span class='slider'></span>
+              </label>
+              {{ idp.name|upper }} ({{ idp.entityid }})
+            </h4>
 
-          <div class='pl-3 m-2' hidden>
-            <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
-            <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
+            <div class='pl-3 m-2' hidden>
+              <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
+              <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
 
-            {% if idp.source_url %}
-              <div class='d-flex justify-content-between'>
-                <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
-                <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
-              </div>
-              <hr>
-            {% endif %}
+              {% if idp.source_url %}
+                <div class='d-flex justify-content-between'>
+                  <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
+                  <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
+                </div>
+                <hr>
+              {% endif %}
 
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 
 </div>
@@ -845,13 +848,15 @@
     <div class='d-flex justify-content-between'>
       <label for='ldap_password' class='col-form-label'>LDAP {{ 'Password'|trans }}</label>
       {% if App.Config.configArr.ldap_password|length == 0 %}
-        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='ldap_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
       {% else %}
         <p>
-          {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>", "</span>")|raw }}
-          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='ldap_password' />
+        {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>{{ 'Clear'|trans }}</button>
         </p>
       {% endif %}
     </div>

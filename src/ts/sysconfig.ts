@@ -158,9 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const userid = parseInt(el.dataset.userid, 10);
       // add the userid in params too for Users2Teams
       ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group, userid: userid});
-    // DESTROY ts_password
-    } else if (el.matches('[data-action="destroy-ts-password"]')) {
-      ApiC.patch(Model.Config, {'ts_password': ''}).then(() => reloadElements(['ts_loginpass']));
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);

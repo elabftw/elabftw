@@ -149,6 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Listen for malleable columns
   new Malle({
+    after: (original, _, value) => {
+      // special case for title: update the page title on update
+      if (original.id === 'documentTitle') {
+        document.title = value;
+      }
+      return true;
+    },
     onEdit: (original, _, input) => {
       if (original.innerText === 'unset') {
         input.value = '';

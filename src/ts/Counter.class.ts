@@ -33,6 +33,7 @@ export class Counter {
 
   private observe() {
     const observer = new MutationObserver(() => this.update());
-    observer.observe(this.container, { childList: true });
+    // subtree is necessary or deleting an element doesn't update the counter
+    observer.observe(this.container, { childList: true, subtree: true });
   }
 }

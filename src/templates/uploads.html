@@ -51,12 +51,13 @@
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
+        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray my-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 
     {# TABLE LAYOUT (0) #}
     {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
+      {% include 'filter-input-snippet.html' with {'target': 'uploadsTable'} %}
       <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
@@ -67,7 +68,7 @@
             <th scope='col'>{{ 'Actions'|trans }}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id='uploadsTable'>
           {% for upload in Entity.entityData.uploads %}
             <tr class='countable' id='uploadDiv_{{ upload.id }}'>
               <td>

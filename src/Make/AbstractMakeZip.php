@@ -65,7 +65,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             }
 
             // add files to archive
-            $this->Zip->addFileFromStream($this->folder . $realName, $storageFs->readStream($file['long_name']));
+            $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
         return $filesArr;
     }

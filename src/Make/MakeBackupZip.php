@@ -24,6 +24,6 @@ final class MakeBackupZip extends MakeStreamZip
     protected function getFolder(AbstractEntity $entity): string
     {
         $owner = new Users($entity->entityData['userid']);
-        return Filter::forFilesystem($owner->userData['fullname']) . '/' . $entity->toFsTitle();
+        return Filter::forFilesystem($owner->userData['fullname']) . '/' . $entity->toFsTitle() . '/';
     }
 }

@@ -34,6 +34,7 @@ enum Action: string
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';
+    case Review = 'review';
     case Sign = 'sign';
     case SendOnboardingEmails = 'sendonboardingemails';
     case SetCanread = 'setcanread';

@@ -157,6 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
         EntityC.patchAction(entity.id, Action.Lock)
           .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
+      case Action.Review:
+        EntityC.patchAction(entity.id, Action.Review)
+          .then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        break;
       case Action.Timestamp:
         $('#timestampModal').modal('toggle');
         break;

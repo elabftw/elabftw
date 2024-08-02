@@ -311,6 +311,15 @@ abstract class AbstractEntity implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
+        // a Review action doesn't do anything
+        if ($action === Action::Review) {
+            // clear any request action - skip for templates
+            if ($this instanceof AbstractConcreteEntity) {
+                $RequestActions = new RequestActions($this->Users, $this);
+                $RequestActions->remove(RequestableAction::Review);
+            }
+            return $this->readOne();
+        }
         // the toggle pin action doesn't require write access to the entity
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');

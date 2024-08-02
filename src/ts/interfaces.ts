@@ -90,6 +90,7 @@ enum Action {
   RemoveExclusiveEditMode = 'removeexclusiveeditmode',
   Replace = 'replace',
   RequestAction = 'requestaction',
+  Review = 'review',
   SendOnboardingEmails = 'sendonboardingemails',
   Sign = 'sign',
   Timestamp = 'timestamp',

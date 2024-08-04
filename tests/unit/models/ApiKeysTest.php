@@ -66,7 +66,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     {
         $res = $this->ApiKeys->readAll();
         $this->assertIsArray($res);
-        $this->assertSame('known key used for tests', $res[1]['name']);
+        $this->assertSame('known key used from db:populate command', $res[1]['name']);
         $this->assertSame(1, $res[1]['can_write']);
     }
 }

@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\Classification;
 use Mpdf\Mpdf;
 
 /**
@@ -30,8 +31,11 @@ abstract class AbstractMakePdf extends AbstractMake implements PdfMakerInterface
 
     protected string $contentType = 'application/pdf';
 
-    public function __construct(MpdfProviderInterface $mpdfProvider, protected bool $includeChangelog = false)
-    {
+    public function __construct(
+        MpdfProviderInterface $mpdfProvider,
+        protected bool $includeChangelog = false,
+        protected Classification $classification = Classification::None,
+    ) {
         parent::__construct();
         $this->mpdf = $mpdfProvider->getInstance();
     }

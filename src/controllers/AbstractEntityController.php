@@ -16,6 +16,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
+use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
@@ -53,6 +54,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $visibilityArr = array();
 
+    protected array $classificationArr = array();
+
     protected array $meaningArr = array();
 
     protected array $requestableActionArr = array();
@@ -68,6 +71,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
+        $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         // exclude exclusive edit mode removal action
         $this->requestableActionArr = array_filter(
@@ -209,6 +213,7 @@ abstract class AbstractEntityController implements ControllerInterface
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
@@ -277,6 +282,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,

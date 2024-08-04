@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\AuditEvent\Export;
+use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
@@ -92,7 +93,12 @@ class MakeController extends AbstractController
                 return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entitySlugs));
 
             case ExportFormat::QrPng:
-                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size'), $this->Request->query->getBoolean('withTitle')));
+                $withTitle = true;
+                // this is needed or omitting the query param will result in false, but we want the default to be with the title
+                if ($this->Request->query->has('withTitle')) {
+                    $withTitle = $this->Request->query->getBoolean('withTitle');
+                }
+                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size'), $withTitle));
 
             case ExportFormat::SysadminReport:
                 if (!$this->requester->userData['is_sysadmin']) {
@@ -173,8 +179,9 @@ class MakeController extends AbstractController
     private function makePdf(): Response
     {
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entitySlugs) === 1) {
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog()));
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog(), $classification));
         }
         return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog()));
     }
@@ -195,6 +202,7 @@ class MakeController extends AbstractController
 
     private function makeZip(): Response
     {
+        $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         return $this->makeStreamZip(new MakeStreamZip(
             $this->getZipStreamLib(),
             $this->requester,
@@ -202,6 +210,7 @@ class MakeController extends AbstractController
             $this->pdfa,
             $this->shouldIncludeChangelog(),
             $this->Request->query->getBoolean('json'),
+            $classification,
         ));
     }
 

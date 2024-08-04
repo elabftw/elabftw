@@ -1,0 +1,35 @@
+{# use with var "format" zip or pdf #}
+{# CHANGELOG #}
+<div class='d-flex justify-content-between mb-2'>
+  <div>
+    <label class='d-inline mr-1' for='{{ format }}_exportWithChangelog'>{{ 'Include changelog'|trans }}</label>
+    <p class='smallgray'>{{ 'The PDF files will contain the changelog.'|trans }}</p>
+  </div>
+  <label class='switch' title='{{ 'Include changelog'|trans }}'>
+    <input type='checkbox' id='{{ format }}_exportWithChangelog'>
+    <span class='slider'></span>
+  </label>
+</div>
+
+{# PDF/A #}
+<div class='d-flex justify-content-between mb-2'>
+  <div>
+    <label class='d-inline mr-1' for='{{ format }}_exportPdfa'>{{ 'Use PDF/A'|trans }}</label>
+    <p class='smallgray'>{{ 'For long term archiving. Warning: using this option will make the files much bigger!'|trans }}</p>
+  </div>
+  <label class='switch' title='{{ 'Use PDF/A'|trans }}'>
+    <input type='checkbox' id='{{ format }}_exportPdfa'>
+    <span class='slider'></span>
+  </label>
+</div>
+
+{# CLASSIFICATION #}
+<div class='mb-2'>
+  <label for='{{ format }}_exportClassification'>{{ 'Classification'|trans }}</label>
+  <p class='smallgray'>{{ 'Add a classification level in the footer.'|trans }}</p>
+  <select id='{{ format }}_exportClassification' class='form-control'>
+    {% for value, text in classificationArr|default([]) %}
+      <option value='{{ value }}'>{{ text }}</option>
+    {% endfor %}
+  </select>
+</div>

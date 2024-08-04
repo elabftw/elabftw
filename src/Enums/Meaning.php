@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 /**
  * When signing something, we need to add a meaning to that signature
  */
 enum Meaning: int
 {
-    use \Elabftw\Traits\EnumsTrait;
+    use EnumsTrait;
 
     case Approval = 10;
     case Authorship = 20;

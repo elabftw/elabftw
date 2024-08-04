@@ -1,16 +1,108 @@
+{# Modal for PDF export #}
+<div class='modal fade' id='pdfExportModal' tabindex='-1' role='dialog' aria-labelledby='pdfExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='pdfExportModalLabel'><i class='fas fa-fw fa-file-pdf mr-1'></i>{{ 'Export as PDF'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% include 'export-menu-options.html' with {'format': 'pdf'} %}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='pdf' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for ZIP export #}
+<div class='modal fade' id='zipExportModal' tabindex='-1' role='dialog' aria-labelledby='zipExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='zipExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Export as ZIP'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% include 'export-menu-options.html' with {'format': 'zip'} %}
+
+        {# JSON #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='zip_exportJson'>{{ 'Include JSON'|trans }}</label>
+            <p class='smallgray'>{{ 'Only for ZIP: include a full JSON export for each entry.'|trans }}</p>
+          </div>
+          <label class='switch' title='{{ 'Include JSON'|trans }}'>
+            <input type='checkbox' id='zip_exportJson'>
+            <span class='slider'></span>
+          </label>
+        </div>
+
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='zip' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal for QRPNG export #}
+<div class='modal fade' id='qrpngExportModal' tabindex='-1' role='dialog' aria-labelledby='qrpngExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='qrpngExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Create a QR Code'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# SIZE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrpng_exportSize'>{{ 'Size'|trans }}</label>
+            <p class='smallgray'>{{ 'Select image size (in pixels)'|trans }}</p>
+          </div>
+          <input type='number' min='10' max='1337' class='form-control col-md-3' value='250' id='qrpng_exportSize'>
+        </div>
+
+        {# TITLE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrpng_exportTitle'>{{ 'Include title'|trans }}</label>
+          </div>
+          <label class='switch' title='{{ 'Include title'|trans }}'>
+            <input type='checkbox' checked='checked' id='qrpng_exportTitle'>
+            <span class='slider'></span>
+          </label>
+        </div>
+
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to-qrpng' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {# requires Entity #}
 <div class='dropdown'>
   <button class='btn hl-hover-gray d-inline p-2 mr-2' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
     <i class='fas fa-download fa-fw'></i>
   </button>
   <div class='dropdown-menu'>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=pdf' target='_blank'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=pdfa' target='_blank'><i class='fas fa-file-pdf fa-fw'></i> {{ 'Long term storage PDF'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=zip'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=zipa'><i class='fas fa-file-archive fa-fw'></i> {{ 'Long term storage ZIP'|trans }}</a>
+    <div class='dropdown-item' data-action='toggle-modal' data-target='pdfExportModal'><i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}</div>
+    <div class='dropdown-item' data-action='toggle-modal' data-target='zipExportModal'><i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}</div>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=qrpng' target='_blank'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</a>
+    <div class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</div>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i> JSON</a>
   </div>
 </div>

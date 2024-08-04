@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\EntitySlug;
+use Elabftw\Enums\Classification;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use League\Flysystem\UnableToReadFile;
@@ -40,6 +41,7 @@ class MakeStreamZip extends AbstractMakeZip
         protected bool $usePdfa = false,
         protected bool $includeChangelog = false,
         protected bool $includeJson = false,
+        protected Classification $classification = Classification::None,
     ) {
         parent::__construct($Zip);
     }
@@ -79,6 +81,7 @@ class MakeStreamZip extends AbstractMakeZip
             requester: $this->requester,
             entitySlugs: array($entitySlug),
             includeChangelog: $this->includeChangelog,
+            classification: $this->classification,
         );
     }
 

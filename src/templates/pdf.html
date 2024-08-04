@@ -145,6 +145,9 @@
           <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
         {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
+        {% if classification != 'None' %}
+          <p class='elabid'>Classification: {{ classification }}</p>
+        {% endif %}
       </td>
     </tr>
   </table>

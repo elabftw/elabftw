@@ -173,6 +173,21 @@ document.addEventListener('DOMContentLoaded', () => {
           .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
         break;
       }
+    // EXPORT TO (PDF/ZIP)
+    } else if (el.matches('[data-action="export-to"]')) {
+      const format = el.dataset.format;
+      const changelog = (document.getElementById(`${format}_exportWithChangelog`) as HTMLInputElement).checked ? 1 : 0;
+      const classification = (document.getElementById(`${format}_exportClassification`) as HTMLSelectElement).value;
+      let json = 0;
+      if (format === 'zip') {
+        json = (document.getElementById(`${format}_exportJson`) as HTMLInputElement).checked ? 1 : 0;
+      }
+      const finalFormat = (document.getElementById(`${format}_exportPdfa`) as HTMLInputElement).checked ? format + 'a' : format;
+      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=${finalFormat}&changelog=${changelog}&json=${json}&classification=${classification}`, '_blank');
+    } else if (el.matches('[data-action="export-to-qrpng"]')) {
+      const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
+      const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
+      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}`, '_blank');
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

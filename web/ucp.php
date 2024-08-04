@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Local;
+use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -125,6 +126,7 @@ try {
         'apiKeysArr' => $apiKeysArr,
         'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
+        'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),

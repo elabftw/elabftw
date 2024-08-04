@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
@@ -66,10 +67,12 @@ class MakePdf extends AbstractMakePdf
         protected Users $requester,
         protected array $entitySlugs,
         bool $includeChangelog = false,
+        Classification $classification = Classification::None,
     ) {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
-            includeChangelog: $includeChangelog
+            includeChangelog: $includeChangelog,
+            classification: $classification,
         );
 
         $this->pdfa = $mpdfProvider->isPdfa();
@@ -234,6 +237,7 @@ class MakePdf extends AbstractMakePdf
         $renderArr = array(
             'body' => $this->getBody(),
             'changes' => $Changelog->readAllWithAbsoluteUrls(),
+            'classification' => $this->classification->toHuman(),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,

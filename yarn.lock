@@ -5,15 +5,15 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"3dmol@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "3dmol@npm:2.2.1"
+"3dmol@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "3dmol@npm:2.3.0"
   dependencies:
     iobuffer: "npm:^5.3.1"
     netcdfjs: "npm:^3.0.0"
     pako: "npm:^2.1.0"
     upng-js: "npm:^2.1.0"
-  checksum: 10c0/fb52b1035b9cd1dfa72b236c0cd1c6412f04a7b814531f2dd33a7797b5b06355e4d3f8fcc208d681eb83b1ed9c5ac6c13b5dc75a2849c93f7aaacf659270b3bc
+  checksum: 10c0/56e5161a22aed267e739e4f32c978b1453a99a18fb994c5246b5ef2bdd08cd152a627d07ad4191d90bd410602ce55cf69f60b15c061f53ecd5bdb64ee1264b89
   languageName: node
   linkType: hard
 
@@ -3366,7 +3366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "elabftw@workspace:."
   dependencies:
-    3dmol: "npm:^2.2.1"
+    3dmol: "npm:^2.3.0"
     "@deltablot/chemdoodle-web-mini": "npm:^9.5.1"
     "@deltablot/dropzone": "npm:^7.1.4"
     "@deltablot/malle": "npm:^2.6.0"

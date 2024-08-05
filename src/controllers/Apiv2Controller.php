@@ -326,7 +326,8 @@ class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),
                 ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
-                ApiSubModels::Uploads => new UserUploads($this->Model, $this->subId),
+                // the uploads users/X/uploads endpoint forces the use of the requester
+                ApiSubModels::Uploads => new UserUploads($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Users),
             };
         }

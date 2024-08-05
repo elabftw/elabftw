@@ -193,10 +193,11 @@ class Uploads implements RestInterface
     public function readOne(): array
     {
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE id = :id AND item_id = :item_id';
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE id = :id AND item_id = :item_id AND type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':type', $this->Entity->entityType->value);
         $this->Db->execute($req);
         $this->uploadData = $this->Db->fetch($req);
         return $this->uploadData;

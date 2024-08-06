@@ -121,6 +121,7 @@ class Experiments extends AbstractConcreteEntity
             $Tags->copyTags($newId, true);
             $this->Steps->duplicate($template, $newId, true);
             $this->ItemsLinks->duplicate($template, $newId, true);
+            $this->ExperimentsLinks->duplicate($template, $newId, true);
             $Templates->Uploads->duplicate($this);
         }
 
@@ -175,7 +176,7 @@ class Experiments extends AbstractConcreteEntity
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         // also add a link to the previous experiment
-        $ExperimentsLinks = new ExperimentsLinks($fresh);
+        $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
         $ExperimentsLinks->setId($this->id);
         $ExperimentsLinks->postAction(Action::Create, array());
         if ($copyFiles) {

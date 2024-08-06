@@ -86,6 +86,7 @@ class ItemsTypes extends AbstractTemplateEntity
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }

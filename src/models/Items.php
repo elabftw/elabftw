@@ -63,6 +63,7 @@ class Items extends AbstractConcreteEntity
 
         $this->insertTags($tags, $newId);
         $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
+        $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
         $this->Steps->duplicate($itemTemplate['id'], $newId, true);
 
         return $newId;
@@ -133,7 +134,7 @@ class Items extends AbstractConcreteEntity
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         // also add a link to the previous resource
-        $ItemsLinks = new ItemsLinks(new self($this->Users, $newId));
+        $ItemsLinks = new Items2ItemsLinks(new self($this->Users, $newId));
         $ItemsLinks->setId($this->id);
         $ItemsLinks->postAction(Action::Create, array());
 
@@ -146,12 +147,12 @@ class Items extends AbstractConcreteEntity
 
         // Todo: should this be remove from here as we do soft delete?
         // delete links of this item in experiments with this item linked
-        $sql = 'DELETE FROM experiments_links WHERE link_id = :link_id';
+        $sql = 'DELETE FROM experiments2items WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         // same for items_links
-        $sql = 'DELETE FROM items_links WHERE link_id = :link_id';
+        $sql = 'DELETE FROM items2items WHERE link_id = :link_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

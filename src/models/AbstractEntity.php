@@ -29,6 +29,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
@@ -63,9 +64,9 @@ abstract class AbstractEntity implements RestInterface
 
     public Comments $Comments;
 
-    public ExperimentsLinks $ExperimentsLinks;
+    public AbstractExperimentsLinks $ExperimentsLinks;
 
-    public ItemsLinks $ItemsLinks;
+    public AbstractItemsLinks $ItemsLinks;
 
     public Steps $Steps;
 
@@ -108,8 +109,8 @@ abstract class AbstractEntity implements RestInterface
     {
         $this->Db = Db::getConnection();
 
-        $this->ExperimentsLinks = new ExperimentsLinks($this);
-        $this->ItemsLinks = new ItemsLinks($this);
+        $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
+        $this->ItemsLinks = LinksFactory::getItemsLinks($this);
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);

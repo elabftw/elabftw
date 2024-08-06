@@ -22,6 +22,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\Exports;
@@ -31,7 +32,6 @@ use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
@@ -39,7 +39,6 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsLinks;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -292,8 +291,8 @@ class Apiv2Controller extends AbstractApiController
             $Config = Config::getConfig();
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
-                ApiSubModels::ExperimentsLinks => new ExperimentsLinks($this->Model, $this->subId),
-                ApiSubModels::ItemsLinks => new ItemsLinks($this->Model, $this->subId),
+                ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(
                     $this->Model,

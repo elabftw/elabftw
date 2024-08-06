@@ -67,7 +67,7 @@ abstract class AbstractLinks implements RestInterface
             categoryt.color AS category_color,
             statust.title AS status_title,
             statust.color AS status_color,
-            ' . ($this instanceof ItemsLinks ? 'entity.is_bookable,' : '') . '
+            ' . ($this instanceof AbstractItemsLinks ? 'entity.is_bookable,' : '') . '
             entity.state AS link_state
             FROM ' . $this->getTable() . '
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
@@ -101,7 +101,7 @@ abstract class AbstractLinks implements RestInterface
             categoryt.title AS category_title, categoryt.color AS category_color,
             statust.title AS status_title, statust.color AS status_color, entity.state AS link_state';
 
-        if ($this instanceof ItemsLinks) {
+        if ($this instanceof AbstractItemsLinks) {
             $sql .= ', entity.is_bookable';
         }
 

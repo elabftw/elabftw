@@ -254,10 +254,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       // link to the video
       const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
       // no syntax for video in markdown; use plain html in both cases
-      let video = document.createElement('video');
-      let source = document.createElement('source');
+      const video = document.createElement('video');
+      const source = document.createElement('source');
       source.src = url;
-      video.setAttribute("controls", "controls");
+      video.setAttribute('controls', 'controls');
       video.appendChild(source);
       editor.setContent(video.outerHTML);
 
@@ -266,9 +266,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       // link to the video
       const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
       // no syntax for audio in markdown; use plain html in both cases
-      let audio = document.createElement('audio');
-      audio.setAttribute("src", url);
-      audio.setAttribute("controls", "controls");
+      const audio = document.createElement('audio');
+      audio.setAttribute('src', url);
+      audio.setAttribute('controls', 'controls');
       editor.setContent(audio.outerHTML);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT

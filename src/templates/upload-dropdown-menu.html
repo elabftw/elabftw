@@ -15,14 +15,14 @@
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for videos #}
-    {% if ext matches '/(mpeg|mpg|mpe|mp4|ogg|ogv|webm|avi)$/i' %}
+    {% if ext matches '/(mpeg|mpg|mpe|mp4|ogv|webm|avi)$/i' %}
       <button type='button' class='dropdown-item' data-action='insert-video-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-video mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
       </button>
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for audio #}
-    {% if ext matches '/(mp3|mp4|ogg|opus|wav|flac)$/i' %}
+    {% if ext matches '/(mp3|ogg|opus|wav|flac)$/i' %}
       <button type='button' class='dropdown-item' data-action='insert-audio-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-volume-low mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
       </button>

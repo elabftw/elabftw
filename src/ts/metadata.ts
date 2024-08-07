@@ -16,6 +16,7 @@ import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
 import i18next from 'i18next';
+import { merge } from 'lodash-es';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('fieldLoaderModal').addEventListener('click', event => {
+  document.getElementById('fieldLoaderModal').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
     const ApiC = new Api();
     // LOAD METADATA FROM TEMPLATE/CATEGORY
@@ -121,13 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const applyBtn = (document.getElementById('applyMetadataLoadBtn') as HTMLButtonElement);
         applyBtn.removeAttribute('disabled');
-        const warningTxt = document.getElementById('loadMetadataWarning');
-        warningTxt.removeAttribute('hidden');
       });
     } else if (el.matches('[data-action="load-metadata-from-textarea"]')) {
       const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
       const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-      ApiC.patch(`${entity.type}/${entity.id}`, {metadata: textarea.value}).then(() => {
+      const currentMetadata = await ApiC.getJson(`${entity.type}/${entity.id}`).then(json => JSON.parse(json.metadata));
+      // we need to use lodash's merge because Object.assign() or spread operator will only do shallow merge
+      const mergedMetadata = merge(JSON.parse(textarea.value), currentMetadata);
+      ApiC.patch(`${entity.type}/${entity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
       });

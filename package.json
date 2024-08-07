@@ -32,6 +32,7 @@
     "jquery": "^3.7.1",
     "jquery-ui": "^1.13.3",
     "jsoneditor": "^10.1.0",
+    "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "marked": "^13.0.2",
     "mathjax-full": "^3.2.2",

@@ -3405,6 +3405,7 @@ __metadata:
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.13.3"
     jsoneditor: "npm:^10.1.0"
+    lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
     marked: "npm:^13.0.2"
     mathjax-full: "npm:^3.2.2"
@@ -5376,7 +5377,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.15":
+"lodash-es@npm:^4.17.15, lodash-es@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash-es@npm:4.17.21"
   checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2

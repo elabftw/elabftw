@@ -43,7 +43,7 @@
             {% endfor %}
           </select>
           {# TEAMS #}
-          <label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
             {% for team in teamsArr|filter(t => t.visible == '1') %}
@@ -55,7 +55,7 @@
           {# TEAMGROUPS #}
           <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label>
           <div class='d-flex'>
-            <p class='smallgray'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+            <p class='smallgray'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
             <div class='ml-auto'>
               <details closed>
                 <summary class='p-2 rounded hl-hover-gray'>{{ 'Set scope'|trans }}</summary>

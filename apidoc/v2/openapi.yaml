@@ -1242,12 +1242,47 @@ paths:
             second:
               summary: Generate a csv
               value: csv
-        - name: changelog
+        - name: json
           in: query
-          required: false
+          schema:
+            type: boolean
+          description: |
+            Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
+          examples:
+            includeJson:
+              summary: Include JSON in ZIP
+              value: true
+            excludeJson:
+              summary: Exclude JSON in ZIP
+              value: false
+        - name: withTitle
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include the title in the QR code. Only applicable if format is qrpng.
+          examples:
+            includeTitle:
+              summary: Include title in QR code
+              value: true
+            excludeTitle:
+              summary: Exclude title in QR code
+              value: false
+        - name: size
+          in: query
           schema:
             type: integer
-            enum: [0, 1]
+            default: 250
+          description: |
+            Specify the size of the QR code in pixels. Only applicable if format is qrpng.
+          examples:
+            mediumSize:
+              summary: Small QR code
+              value: 50
+        - name: changelog
+          in: query
+          schema:
+            type: boolean
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -1255,9 +1290,6 @@ paths:
               summary: Generate PDF exports that always includes the changelog
               value: true
             second:
-              summary: Generate PDF exports that always includes the changelog.
-              value: 1
-            third:
               summary: Generate PDF exports that do not include the changelog.
               value: false
       responses:
@@ -1552,6 +1584,7 @@ paths:
       summary: Read an item
       operationId: get-item
       parameters:
+      # Start copy paste from experiments/id
         - name: format
           in: query
           schema:
@@ -1567,24 +1600,57 @@ paths:
             second:
               summary: Generate a csv
               value: csv
-        - name: changelog
+        - name: json
           in: query
-          required: false
+          schema:
+            type: boolean
+          description: |
+            Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
+          examples:
+            includeJson:
+              summary: Include JSON in ZIP
+              value: true
+            excludeJson:
+              summary: Exclude JSON in ZIP
+              value: false
+        - name: withTitle
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include the title in the QR code. Only applicable if format is qrpng.
+          examples:
+            includeTitle:
+              summary: Include title in QR code
+              value: true
+            excludeTitle:
+              summary: Exclude title in QR code
+              value: false
+        - name: size
+          in: query
           schema:
             type: integer
-            enum: [0,1]
+            default: 250
           description: |
-              Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
+            Specify the size of the QR code in pixels. Only applicable if format is qrpng.
+          examples:
+            mediumSize:
+              summary: Small QR code
+              value: 50
+        - name: changelog
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
             first:
               summary: Generate PDF exports that always includes the changelog
               value: true
             second:
-              summary: Generate PDF exports that always includes the changelog.
-              value: 1
-            third:
               summary: Generate PDF exports that do not include the changelog.
               value: false
+      # End copy paste from experiments/id
       responses:
         '200':
           description: An item

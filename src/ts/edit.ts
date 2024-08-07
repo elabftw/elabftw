@@ -249,6 +249,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       editor.setContent(content);
 
+    // INSERT VIDEO AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-video-in-body"]')) {
+      // link to the video
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // no syntax for video in markdown; use plain html in both cases
+      let content = '<video controls>\n<source src="' + url + '" /></video>';
+      editor.setContent(content);
+
+    // INSERT AUDIO AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-audio-in-body"]')) {
+      // link to the video
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // no syntax for video in markdown; use plain html in both cases
+      let content = '<audio src="' + url + '" controls></audio>';
+      editor.setContent(content);
+
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
       fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {

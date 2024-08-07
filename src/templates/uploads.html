@@ -228,10 +228,19 @@
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
 
+            {# VIDEO #}
             {% elseif ext matches '/(mp4|webm)$/i' %}
               <div class='text-center'>
                 <video controls width='300' preload='metadata'>
                   <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='video/{{ ext }}'>
+                </video>
+              </div>
+
+            {# AUDIO #}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::AUDIO') %}
+              <div class='text-center'>
+                <audio controls>
+                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='audio/{{ ext }}'>
                 </video>
               </div>
 

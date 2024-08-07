@@ -26,6 +26,17 @@ final class Extensions
         'tar',
     );
 
+    public const array AUDIO = array(
+        'aac',
+        'flac',
+        'm4a',
+        'mp3',
+        'mp4',
+        'ogg',
+        'wav',
+        'webm',
+    );
+
     public const array CODE = array(
         'py',
         'jupyter',

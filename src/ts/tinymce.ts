@@ -110,9 +110,9 @@ export function getTinymceBaseConfig(page: string): object {
   let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit') {
     plugins += ' autosave';
-    // add Image and Media button in toolbar
+    // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
-    // let Image and Media in menu
+    // let Image in menu
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();

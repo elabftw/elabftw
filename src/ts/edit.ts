@@ -254,16 +254,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       // link to the video
       const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
       // no syntax for video in markdown; use plain html in both cases
-      let content = '<video controls>\n<source src="' + url + '" /></video>';
-      editor.setContent(content);
+      let video = document.createElement('video');
+      let source = document.createElement('source');
+      source.src = url;
+      video.setAttribute("controls", "controls");
+      video.appendChild(source);
+      editor.setContent(video.outerHTML);
 
     // INSERT AUDIO AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-audio-in-body"]')) {
       // link to the video
       const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
       // no syntax for audio in markdown; use plain html in both cases
-      let content = '<audio src="' + url + '" controls></audio>';
-      editor.setContent(content);
+      let audio = document.createElement('audio');
+      audio.setAttribute("src", url);
+      audio.setAttribute("controls", "controls");
+      editor.setContent(audio.outerHTML);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {

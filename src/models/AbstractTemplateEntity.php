@@ -17,7 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateFromTitleInterface;
 
 /**
- * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
+ * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
  */
 abstract class AbstractTemplateEntity extends AbstractEntity implements CreateFromTitleInterface
 {

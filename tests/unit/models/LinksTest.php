@@ -55,7 +55,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Items->ItemsLinks->setId(1);
         $Items->ItemsLinks->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
-        $Links = new ItemsLinks($this->Experiments, $Items->id);
+        $Links = new Items2ItemsLinks($this->Experiments, $Items->id);
         $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
         $this->Experiments->ItemsLinks->setId(1);
         $this->assertIsInt($this->Experiments->ItemsLinks->postAction(Action::Duplicate, array()));

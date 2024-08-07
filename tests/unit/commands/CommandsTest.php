@@ -60,13 +60,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('def', $commandTester->getDisplay());
     }
 
-    public function testExecuteAddMissingLinks(): void
-    {
-        $commandTester = new CommandTester(new AddMissingLinks());
-        $commandTester->execute(array());
-        $commandTester->assertCommandIsSuccessful();
-    }
-
     public function testExecuteCleanDatabase(): void
     {
         $commandTester = new CommandTester(new CleanDatabase());

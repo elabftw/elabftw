@@ -20,9 +20,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\Items2ExperimentsLinks;
+use Elabftw\Models\Items2ItemsLinks;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
@@ -279,14 +279,14 @@ class PopulateDatabase extends Command
                 }
                 if (isset($item['experiments_links'])) {
                     foreach ($item['experiments_links'] as $target) {
-                        $ExperimentsLinks = new ExperimentsLinks($Items, (int) $target);
+                        $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
                         $ExperimentsLinks->postAction(Action::Create, array());
                     }
                 }
                 if (isset($item['items_links'])) {
                     foreach ($item['items_links'] as $target) {
-                        $ExperimentsLinks = new ItemsLinks($Items, (int) $target);
-                        $ExperimentsLinks->postAction(Action::Create, array());
+                        $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
+                        $ItemsLinks->postAction(Action::Create, array());
                     }
                 }
                 $Items->patch(Action::Update, $patch);

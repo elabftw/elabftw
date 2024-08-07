@@ -108,8 +108,10 @@ class Templates extends AbstractTemplateEntity
         $Tags->copyTags($newId);
 
         // copy links and steps too
-        $ItemsLinks = new ItemsLinks($this);
+        $ItemsLinks = new ExperimentsTemplates2ItemsLinks($this);
         $ItemsLinks->duplicate($template['id'], $newId, true);
+        $ExperimentsLinks = new ExperimentsTemplates2ExperimentsLinks($this);
+        $ExperimentsLinks->duplicate($template['id'], $newId, true);
         $Steps = new Steps($this);
         $Steps->duplicate($template['id'], $newId, true);
 

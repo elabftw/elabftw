@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (el.matches('[data-action="insert-audio-in-body"]')) {
       // link to the video
       const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
-      // no syntax for video in markdown; use plain html in both cases
+      // no syntax for audio in markdown; use plain html in both cases
       let content = '<audio src="' + url + '" controls></audio>';
       editor.setContent(content);
 

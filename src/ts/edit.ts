@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  escapeHTML,
   escapeRegExp,
   getEntity,
   getNewIdFromPostRequest,

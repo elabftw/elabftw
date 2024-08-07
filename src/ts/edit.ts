@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import {
+  escapeHTML,
   escapeRegExp,
   getEntity,
   getNewIdFromPostRequest,
@@ -252,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // INSERT VIDEO AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-video-in-body"]')) {
       // link to the video
-      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
       // no syntax for video in markdown; use plain html in both cases
       const video = document.createElement('video');
       const source = document.createElement('source');
@@ -264,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // INSERT AUDIO AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-audio-in-body"]')) {
       // link to the video
-      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
       // no syntax for audio in markdown; use plain html in both cases
       const audio = document.createElement('audio');
       audio.setAttribute('src', url);

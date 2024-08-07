@@ -107,11 +107,11 @@ function doneTyping(): void {
 export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons';
   let toolbar1 = 'undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table | save';
-  let removedMenuItems = 'newdocument, image, media, anchor';
+  let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit') {
     plugins += ' autosave';
     // add Image and Media button in toolbar
-    toolbar1 = toolbar1.replace('link |', 'link image media |');
+    toolbar1 = toolbar1.replace('link |', 'link image |');
     // let Image and Media in menu
     removedMenuItems = 'newdocument, anchor';
   }

@@ -257,7 +257,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const video = document.createElement('video');
       const source = document.createElement('source');
       source.src = url;
-      video.setAttribute('controls', 'controls');
+      video.setAttribute('width', '640');
+      video.setAttribute('controls', '');
       video.appendChild(source);
       editor.setContent(video.outerHTML);
 
@@ -268,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // no syntax for audio in markdown; use plain html in both cases
       const audio = document.createElement('audio');
       audio.setAttribute('src', url);
-      audio.setAttribute('controls', 'controls');
+      audio.setAttribute('controls', '');
       editor.setContent(audio.outerHTML);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT

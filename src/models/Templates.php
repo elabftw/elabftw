@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
@@ -58,9 +59,13 @@ class Templates extends AbstractTemplateEntity
         if (isset($this->Users->userData['default_write'])) {
             $canwrite = $this->Users->userData['default_write'];
         }
+        $contentType = self::CONTENT_HTML;
+        if ($this->Users->userData['use_markdown'] === 1) {
+            $contentType = self::CONTENT_MD;
+        }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target)
-            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target, content_type)
+            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -69,6 +74,7 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_target', $canread);
         $req->bindParam(':canwrite_target', $canwrite);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();
 
@@ -166,6 +172,12 @@ class Templates extends AbstractTemplateEntity
             EntityType::Templates->toPage(),
             $this->id
         );
+        // add the body as html
+        $this->entityData['body_html'] = $this->entityData['body'];
+        // convert from markdown only if necessary
+        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }

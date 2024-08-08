@@ -64,10 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        // Note: here we create one and then patch it for the correct content_type but it would probably be better to allow setting the content_type directly on creation
         EntityC.create(title).then(async resp => {
           const newId = getNewIdFromPostRequest(resp);
-          await EntityC.update(newId, Target.ContentType, String(editor.typeAsInt));
           window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
         });
       }

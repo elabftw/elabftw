@@ -112,17 +112,8 @@
   {% endif %}
 
   {# BODY (show only if not empty) #}
-  {% set body = Entity.entityData.body %}
+  {% set body = Entity.entityData.body_html %}
   {% if body != '' %}
-    {% if Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD') %}
-      {% set body = Entity.entityData.body|md2html %}
-    {% endif %}
-    {# Workaround for bug #532; long tables result in empty body returned from md2html:
-    If body is empty, reload and don't parse as markdown
-    2022-06-07 note: could probably be removed now that we have content_type #}
-      {% if body|trim == '' %}
-          {% set body = Entity.entityData.body %}
-      {% endif %}
       {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
       {# body in view mode is text-dark for more lisibility see github issue #52 #}
       <div {{ not displayMainText ? 'hidden' }}>

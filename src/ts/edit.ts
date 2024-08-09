@@ -249,6 +249,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       editor.setContent(content);
 
+    // INSERT VIDEO AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-video-in-body"]')) {
+      // link to the video
+      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+      // no syntax for video in markdown; use plain html in both cases
+      const video = document.createElement('video');
+      const source = document.createElement('source');
+      source.src = url;
+      video.setAttribute('width', '640');
+      video.setAttribute('controls', '');
+      video.appendChild(source);
+      editor.setContent(video.outerHTML);
+
+    // INSERT AUDIO AT CURSOR POSITION IN TEXT
+    } else if (el.matches('[data-action="insert-audio-in-body"]')) {
+      // link to the video
+      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+      // no syntax for audio in markdown; use plain html in both cases
+      const audio = document.createElement('audio');
+      audio.setAttribute('src', url);
+      audio.setAttribute('controls', '');
+      editor.setContent(audio.outerHTML);
+
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
     } else if (el.matches('[data-action="insert-plain-text"]')) {
       fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {

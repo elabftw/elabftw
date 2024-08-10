@@ -194,7 +194,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             'dgn' => new MakeDgnTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $config, $entitySlugs, $dataFormat) : new MakeUniversignTimestamp($this->Users, $config, $entitySlugs, $dataFormat),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $entitySlugs, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $entitySlugs, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $entitySlugs, $config, $dataFormat),

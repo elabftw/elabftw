@@ -50,6 +50,9 @@
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   },
+  "resolutions": {
+    "fast-xml-parser": "^4.4.1"
+  },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
     "@types/dropzone": "^5.7.8",

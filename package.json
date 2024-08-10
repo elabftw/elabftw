@@ -17,7 +17,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
-    "@teselagen/bio-parsers": "^0.4.18",
+    "@teselagen/bio-parsers": "^0.4.22",
     "@teselagen/ove": "^0.4.12",
     "@yarnpkg/core": "^4.1.1",
     "@yarnpkg/fslib": "^3.1.0",

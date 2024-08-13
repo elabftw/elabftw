@@ -3420,7 +3420,7 @@ __metadata:
     jsoneditor: "npm:^10.1.0"
     lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
-    marked: "npm:^13.0.2"
+    marked: "npm:^14.0.0"
     mathjax-full: "npm:^3.2.2"
     mini-css-extract-plugin: "npm:^2.9.0"
     peggy: "npm:^3.0.2"
@@ -5560,12 +5560,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^13.0.2":
-  version: 13.0.2
-  resolution: "marked@npm:13.0.2"
+"marked@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "marked@npm:14.0.0"
   bin:
     marked: bin/marked.js
-  checksum: 10c0/c8d0f63674b8de406029d58df9ef91f42464a58c6a914f063e88b270dd59d4cdafa378c2ac96a04eec13ca06566737829e27d45a5da6ef4f640811d7a7becdee
+  checksum: 10c0/57a47cb110f7b1a10f398b0a7236f9183aad2dcd5345ee73f2732b6387e585d04cef472bc655d2f84c542296be9728e179aebe3ed7f2f8666b8a0a9dae592876
   languageName: node
   linkType: hard
 

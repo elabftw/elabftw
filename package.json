@@ -34,7 +34,7 @@
     "jsoneditor": "^10.1.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
-    "marked": "^13.0.2",
+    "marked": "^14.0.0",
     "mathjax-full": "^3.2.2",
     "mini-css-extract-plugin": "^2.9.0",
     "peggy": "^3.0.2",

@@ -19,7 +19,7 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@teselagen/bio-parsers": "^0.4.22",
     "@teselagen/ove": "^0.4.12",
-    "@yarnpkg/core": "^4.1.1",
+    "@yarnpkg/core": "^4.1.2",
     "@yarnpkg/fslib": "^3.1.0",
     "@yarnpkg/libzip": "^3.1.0",
     "bootstrap": "^4.6.2",

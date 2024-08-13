@@ -26,13 +26,13 @@ enum EntityType: string
     case Items = 'items';
     case ItemsTypes = 'items_types';
 
-    public function toInstance(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null): AbstractEntity
+    public function toInstance(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
     {
         return match ($this) {
-            $this::Experiments => new Experiments($users, $entityId, $bypassReadPermission),
-            $this::Items => new Items($users, $entityId, $bypassReadPermission),
-            $this::Templates => new Templates($users, $entityId, $bypassReadPermission),
-            $this::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission),
+            $this::Experiments => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            $this::Items => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            $this::Templates => new Templates($users, $entityId),
+            $this::ItemsTypes => new ItemsTypes($users, $entityId),
         };
     }
 

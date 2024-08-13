@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -31,7 +30,7 @@ use ZipStream\ZipStream;
  */
 class MakeEln extends AbstractMakeEln
 {
-    public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entitySlugs)
+    public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {
         parent::__construct($Zip);
     }
@@ -41,12 +40,7 @@ class MakeEln extends AbstractMakeEln
      */
     public function getStreamZip(): void
     {
-        foreach ($this->entitySlugs as $slug) {
-            try {
-                $entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
+        foreach ($this->entityArr as $entity) {
             $this->processEntity($entity);
         }
         // add the description of root with hasPart property

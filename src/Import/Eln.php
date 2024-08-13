@@ -106,10 +106,15 @@ class Eln extends AbstractZip
             // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
             // only newer versions have the areaServed attribute
             if ($node['@id'] === 'ro-crate-metadata.json' &&
-                array_key_exists('sdPublisher', $node) &&
-                $node['sdPublisher']['name'] === 'eLabFTW' &&
-                !array_key_exists('areaServed', $node['sdPublisher'])) {
-                $this->switchToEscapeOutput = true;
+                array_key_exists('sdPublisher', $node)) {
+                if (!array_key_exists('@id', $node['sdPublisher'])) {
+                    continue;
+                }
+
+                $sdPublisher = $this->getNodeFromId($node['sdPublisher']['@id']);
+                if (!array_key_exists('areaServed', $sdPublisher)) {
+                    $this->switchToEscapeOutput = true;
+                }
             }
         }
     }
@@ -333,7 +338,7 @@ class Eln extends AbstractZip
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
         // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff
-        foreach ($dataset['hasPart'] as $part) {
+        foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
     }

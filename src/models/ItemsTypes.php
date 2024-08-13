@@ -51,9 +51,14 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->Db->lastInsertId();
     }
 
-    public function getDefault(): ?int
+    public function getDefault(): int
     {
-        return null;
+        // there are no default items_types, so just pick the first one from the team
+        $sql = 'SELECT id FROM items_types WHERE team = :team LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

@@ -12,17 +12,18 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakePdf $MakePdf;
 
     protected function setUp(): void
@@ -63,7 +64,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array(new EntitySlug(EntityType::Experiments, $new), new EntitySlug(EntityType::Experiments, 2)));
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array($Entity, $this->getFreshExperiment()));
     }
 
     public function testGetFileContent(): void

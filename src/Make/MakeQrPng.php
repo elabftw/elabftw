@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Imagick;
 use ImagickDraw;
@@ -39,21 +37,12 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
 
     private int $fontSize = 16;
 
-    private AbstractEntity $entity;
-
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
-        private Users $requester,
-        array $entitySlugs,
+        private AbstractEntity $entity,
         private int $size,
         private bool $withTitle = true,
     ) {
-        // only works for 1 entry
-        if (count($entitySlugs) !== 1) {
-            throw new ImproperActionException('QR PNG format is only suitable for one ID.');
-        }
-        $slug = $entitySlugs[0];
-        $this->entity = $slug->type->toInstance($this->requester, $slug->id);
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
     }

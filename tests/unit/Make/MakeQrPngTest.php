@@ -11,21 +11,22 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\EntitySlug;
-use Elabftw\Enums\EntityType;
-use Elabftw\Models\Users;
+use Elabftw\Models\Experiments;
 use Elabftw\Services\MpdfQrProvider;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeQrPngTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeQrPng $Maker;
 
-    private Users $Users;
+    private Experiments $Entity;
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Maker = new MakeQrPng(new MpdfQrProvider(), $this->Users, array(new EntitySlug(EntityType::Experiments, 1)), 250);
+        $this->Entity = $this->getFreshExperiment();
+        $this->Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250);
     }
 
     public function testGetFileContent(): void
@@ -35,13 +36,13 @@ class MakeQrPngTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileContentSmallsize(): void
     {
-        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Users, array(new EntitySlug(EntityType::Experiments, 1)), 250);
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250);
         $this->assertIsString($Maker->getFileContent());
     }
 
     public function testGetFileContentNotitle(): void
     {
-        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Users, array(new EntitySlug(EntityType::Experiments, 1)), 250, false);
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250, false);
         $this->assertIsString($Maker->getFileContent());
     }
 

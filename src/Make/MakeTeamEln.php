@@ -32,9 +32,13 @@ class MakeTeamEln extends AbstractMakeEln
     public function getStreamZip(): void
     {
         $targets = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $this->gatherSlugs());
-        // we use an empty user object here because we must not care about permissions
-        $Maker = new MakeEln($this->Zip, new UltraAdmin(team: $this->teamId), $targets);
-        $Maker->bypassReadPermission = true;
+        $entityArr = array();
+        $requester = new UltraAdmin(team: $this->teamId);
+        foreach ($targets as $slug) {
+            $entityArr[] = $slug->type->toInstance($requester, $slug->id, bypassReadPermission: true, bypassWritePermission: true);
+        }
+        $Maker = new MakeEln($this->Zip, $requester, $entityArr);
+        //$Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }
 

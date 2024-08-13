@@ -40,9 +40,17 @@ abstract class AbstractZip extends AbstractImport
     // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
 
-    public function __construct(Users $Users, EntityType $entityType, bool $forceEntityType, int $defaultCategory, string $canread, string $canwrite, UploadedFile $UploadedFile, protected FilesystemOperator $fs)
-    {
-        parent::__construct($Users, $entityType, $forceEntityType, $defaultCategory, $canread, $canwrite, $UploadedFile);
+    public function __construct(
+        Users $Users,
+        EntityType $entityType,
+        bool $forceEntityType,
+        string $canread,
+        string $canwrite,
+        UploadedFile $UploadedFile,
+        protected FilesystemOperator $fs,
+        protected ?int $defaultCategory = null,
+    ) {
+        parent::__construct($Users, $entityType, $forceEntityType, $canread, $canwrite, $UploadedFile, $defaultCategory);
         // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
         $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;

@@ -31,15 +31,18 @@ class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
+    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = false, ?bool $bypassWritePermission = false)
     {
         $this->entityType = EntityType::Items;
-        parent::__construct($users, $id, $bypassReadPermission);
+        parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
     }
 
-    public function create(int $template, array $tags = array()): int
+    public function create(?int $template = null, array $tags = array()): int
     {
         $ItemsTypes = new ItemsTypes($this->Users, $template);
+        if ($template === null) {
+            $ItemsTypes->setId($ItemsTypes->getDefault());
+        }
         $itemTemplate = $ItemsTypes->readOne();
         // figure out the custom id
         $customId = $this->getNextCustomId($template);

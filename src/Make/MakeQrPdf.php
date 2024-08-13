@@ -26,7 +26,7 @@ class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 
-    public function __construct(MpdfProviderInterface $mpdfProvider, protected Users $requester, private array $entitySlugs)
+    public function __construct(MpdfProviderInterface $mpdfProvider, protected Users $requester, private array $entityArr)
     {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
@@ -64,9 +64,8 @@ class MakeQrPdf extends AbstractMakePdf
     {
         $entityArr = array();
         $siteUrl = Config::fromEnv('SITE_URL');
-        foreach ($this->entitySlugs as $slug) {
+        foreach ($this->entityArr as $entity) {
             try {
-                $entity = $slug->type->toInstance($this->requester, $slug->id);
                 $entity->entityData['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity->page, $entity->id);
                 $entityArr[] = $entity;
             } catch (IllegalActionException | ResourceNotFoundException) {

@@ -82,9 +82,6 @@ abstract class AbstractEntity implements RestInterface
 
     public bool $alwaysShowOwned = false;
 
-    // use that to ignore the canOrExplode calls
-    public bool $bypassWritePermission = false;
-
     // sql of ids to include
     public string $idFilter = '';
 
@@ -105,7 +102,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @param int|null $id the id of the entity
      */
-    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
+    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
         $this->Db = Db::getConnection();
 

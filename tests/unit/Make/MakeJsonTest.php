@@ -11,19 +11,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\EntitySlug;
-use Elabftw\Enums\EntityType;
-use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeJsonTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeJson $Make;
 
     protected function setUp(): void
     {
         $this->Make = new MakeJson(
-            new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, 1), new EntitySlug(EntityType::Experiments, 2))
+            array($this->getFreshExperiment(), $this->getFreshExperiment())
         );
     }
 

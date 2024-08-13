@@ -234,6 +234,10 @@ class Exports implements RestInterface
             withItemsTypes: $withItemsTypes,
         );
         $entitySlugs = $builder->getAllEntitySlugs();
+        $entityArr = array();
+        foreach ($entitySlugs as $slug) {
+            $entityArr[] = $slug->EntityType->toInstance($this->requester, $slug->id);
+        }
 
         switch ($format) {
             case ExportFormat::Eln:
@@ -244,9 +248,9 @@ class Exports implements RestInterface
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeEln($ZipStream, $this->requester, $entitySlugs);
+                    $Maker = new MakeEln($ZipStream, $this->requester, $entityArr);
                 } else {
-                    $Maker = new MakeBackupZip($ZipStream, $this->requester, $entitySlugs, $usePdfa, $includeChangelog, $includeJson);
+                    $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
                 };
                 $Maker->getStreamZip();
                 fclose($fileStream);
@@ -258,11 +262,11 @@ class Exports implements RestInterface
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $Maker = new MakeMultiPdf($log, $mpdfProvider, $this->requester, $entitySlugs, $includeChangelog);
+                $Maker = new MakeMultiPdf($log, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:
-                $Maker = new MakeFullJson($this->requester, $entitySlugs);
+                $Maker = new MakeFullJson(array($entityArr));
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             default:

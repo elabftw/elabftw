@@ -54,7 +54,7 @@ class ImportResources extends Command
         $filePath = $this->Fs->getPath($input->getArgument('file'));
         $uploadedFile = new UploadedFile($filePath, 'input.eln', null, null, true);
         $teamid = (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
-        $Eln = new Eln(new Users($userid, $teamid), EntityType::Items, true, $categoryId, BasePermissions::Team->toJson(), BasePermissions::User->toJson(), $uploadedFile, Storage::CACHE->getStorage()->getFs());
+        $Eln = new Eln(new Users($userid, $teamid), EntityType::Items, true, BasePermissions::Team->toJson(), BasePermissions::User->toJson(), $uploadedFile, Storage::CACHE->getStorage()->getFs(), $categoryId);
         $Eln->import();
 
         $output->writeln(sprintf('Items successfully imported in category with ID %d.', $categoryId));

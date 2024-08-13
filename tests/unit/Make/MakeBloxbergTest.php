@@ -11,14 +11,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\EntitySlug;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -30,6 +29,8 @@ use League\Flysystem\Filesystem;
 
 class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeBloxberg $Make;
 
     private Filesystem $fixturesFs;
@@ -60,7 +61,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $configArr = Config::getConfig()->configArr;
         $configArr['blox_anon'] = '1';
         $this->httpGetter = new HttpGetter($client);
-        $this->Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), $configArr, $this->httpGetter);
+        $this->Make = new MakeBloxberg($this->requester, $this->getFreshExperiment(), $configArr, $this->httpGetter);
     }
 
     public function testGetFileName(): void
@@ -77,7 +78,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
     {
         $configArr = array('ts_limit' => '666', 'blox_enabled' => '0');
         $this->expectException(ImproperActionException::class);
-        $this->Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), $configArr, $this->httpGetter);
+        $this->Make = new MakeBloxberg($this->requester, $this->getFreshExperiment(), $configArr, $this->httpGetter);
     }
 
     public function testTimestampFailGettingKey(): void
@@ -89,7 +90,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $client = new Client(array('handler' => $handlerStack));
         $this->expectException(ImproperActionException::class);
         $getter = new HttpGetter($client);
-        new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $getter);
+        new MakeBloxberg($this->requester, $this->getFreshExperiment(), Config::getConfig()->configArr, $getter);
     }
 
     public function testTimestampFail(): void
@@ -101,7 +102,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $getter = new HttpGetter($client);
-        $Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $getter);
+        $Make = new MakeBloxberg($this->requester, $this->getFreshExperiment(), Config::getConfig()->configArr, $getter);
         $this->expectException(RequestException::class);
         $Make->timestamp();
     }
@@ -117,7 +118,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $getter = new HttpGetter($client);
-        $Make = new MakeBloxberg($this->requester, array(new EntitySlug(EntityType::Experiments, 1)), Config::getConfig()->configArr, $getter);
+        $Make = new MakeBloxberg($this->requester, $this->getFreshExperiment(), Config::getConfig()->configArr, $getter);
         $this->expectException(FilesystemErrorException::class);
         $Make->timestamp();
     }

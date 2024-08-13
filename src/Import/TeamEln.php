@@ -14,7 +14,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Models\UltraAdmin;
+use Elabftw\Models\Users;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -25,14 +25,13 @@ class TeamEln extends AbstractZip
 {
     private Eln $Importer;
 
-    public function __construct(private int $teamid, private string $filePath, protected FilesystemOperator $fs)
+    public function __construct(private int $userid, private int $teamid, private string $filePath, protected FilesystemOperator $fs)
     {
         $UploadedFile = new UploadedFile($this->filePath, 'input.eln', null, null, true);
         $this->Importer = new Eln(
-            new UltraAdmin(team: $this->teamid),
+            new Users($this->userid, $this->teamid),
             EntityType::Experiments,
             false,
-            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $UploadedFile,

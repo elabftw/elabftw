@@ -36,6 +36,7 @@ class ImportTeams extends Command
     {
         $this->setDescription('Import everything from a .eln created with teams:export command')
             ->setHelp('Everything is recreated in a pre-existing or empty team.')
+            ->addArgument('userid', InputArgument::REQUIRED, 'Importer userid')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import present in cache/elab folder')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done');
@@ -43,10 +44,11 @@ class ImportTeams extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $userid = (int) $input->getArgument('userid');
         $teamid = (int) $input->getArgument('teamid');
         $filePath = $this->Fs->getPath((string) $input->getArgument('file'));
 
-        $Importer = new TeamEln($teamid, $filePath, $this->Fs->getFs());
+        $Importer = new TeamEln($userid, $teamid, $filePath, $this->Fs->getFs());
         if ($input->getOption('dry-run')) {
             $result = $Importer->dryRun();
             $output->writeln(sprintf('Found %d main entities to import.', $result['parts']));

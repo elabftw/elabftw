@@ -11,20 +11,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\EntitySlug;
-use Elabftw\Enums\EntityType;
-use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeCsv $Make;
 
     protected function setUp(): void
     {
-        $requester = new Users(1, 1);
         $this->Make = new MakeCsv(
-            $requester,
-            array(new EntitySlug(EntityType::Experiments, 1), new EntitySlug(EntityType::Items, 2))
+            array($this->getFreshExperiment(), $this->getFreshExperiment())
         );
     }
 

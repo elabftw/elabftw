@@ -14,17 +14,17 @@ namespace Elabftw\Make;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\CreateImmutableArchivedUpload;
-use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Elabftw\TimestampResponse;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private array $configArr;
 
     private string $dataPath;
@@ -51,7 +51,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new MakeDfnTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $configArr,
             $this->dataFormat,
         );
@@ -61,7 +61,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeDfnTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $this->configArr,
             $this->dataFormat,
         );
@@ -81,10 +81,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         );
         $Maker = new MakeCustomTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(
-                EntityType::Experiments,
-                $this->getFreshTimestampableEntity()
-            )),
+            $this->getFreshExperiment(),
             $configArr,
             $this->dataFormat,
         );
@@ -95,7 +92,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeDfnTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $this->configArr,
             ExportFormat::Pdf,
         );
@@ -112,7 +109,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeDigicertTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $this->configArr,
             $this->dataFormat,
         );
@@ -135,7 +132,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         );
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $config,
             $this->dataFormat,
         );
@@ -153,7 +150,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeGlobalSignTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $this->configArr,
             $this->dataFormat,
         );
@@ -168,7 +165,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         $Maker = new MakeDgnTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $config,
             $this->dataFormat,
         );
@@ -179,7 +176,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeSectigoTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $this->configArr,
             $this->dataFormat,
         );
@@ -190,7 +187,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     {
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             array(),
             $this->dataFormat,
         );
@@ -203,7 +200,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config = array('ts_login' => 'some-login');
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $config,
             $this->dataFormat,
         );
@@ -220,7 +217,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             $config,
             $this->dataFormat,
         );
@@ -230,12 +227,5 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('yestermorrow');
         $this->expectException(ImproperActionException::class);
         $Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
-    }
-
-    // create a new experiment for timestamping tests
-    private function getFreshTimestampableEntity(): int
-    {
-        $Entity = new Experiments(new Users(1, 1));
-        return $Entity->create();
     }
 }

@@ -11,14 +11,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Elabftw\TimestampResponse;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Make\MakeDfnTimestamp;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -29,6 +27,8 @@ use League\Flysystem\Filesystem;
 
 class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Filesystem $fixturesFs;
 
     protected function setUp(): void
@@ -43,7 +43,7 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
 
         $Maker = new MakeDfnTimestamp(
             new Users(1, 1),
-            array(new EntitySlug(EntityType::Experiments, $this->getFreshTimestampableEntity())),
+            $this->getFreshExperiment(),
             array(),
             ExportFormat::Json,
         );
@@ -62,12 +62,5 @@ class TimestampUtilsTest extends \PHPUnit\Framework\TestCase
         ));
         $handlerStack = HandlerStack::create($mock);
         return new Client(array('handler' => $handlerStack));
-    }
-
-    private function getFreshTimestampableEntity(): int
-    {
-        $Entity = new Experiments(new Users(1, 1));
-        // create a new experiment for timestamping tests
-        return $Entity->create();
     }
 }

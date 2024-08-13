@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Users;
 
 use function json_encode;
 use function ksort;
@@ -27,7 +26,7 @@ use function ksort;
  */
 class MakeJson extends AbstractMake implements StringMakerInterface
 {
-    public function __construct(private Users $requester, private array $entitySlugs)
+    public function __construct(private array $entityArr)
     {
         parent::__construct();
         $this->contentType = 'application/json';
@@ -55,13 +54,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
     public function getJsonContent(): array
     {
         $res = array();
-        foreach ($this->entitySlugs as $slug) {
-            try {
-                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
-                $entity = $slug->type->toInstance($this->requester, $slug->id);
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
+        foreach ($this->entityArr as $entity) {
             try {
                 $all = $this->getEntityData($entity);
                 // add eLabFTW version number

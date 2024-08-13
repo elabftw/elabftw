@@ -35,10 +35,10 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             EntityType::Items,
             false,
-            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
+            1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -58,10 +58,10 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             EntityType::Experiments,
             false,
-            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
+            1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -82,10 +82,10 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             EntityType::Items,
             false,
-            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
+            1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -105,10 +105,10 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             new Users(1, 1),
             EntityType::Items,
             false,
-            1,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $uploadedFile,
+            1,
         );
         $this->expectException(ImproperActionException::class);
         $Import->import();

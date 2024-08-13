@@ -12,19 +12,25 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use ZipStream\ZipStream;
 
 class MakeElnTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeEln $Make;
 
     protected function setUp(): void
     {
-        $slugs = array('experiments:1', 'items:2', 'experiments:3');
-        $slugsArr = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
+        $targets = array(
+            $this->getFreshExperiment(),
+            $this->getFreshExperiment(),
+            $this->getFreshItem(),
+        );
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->Make = new MakeEln($Zip, $Users, $slugsArr);
+        $this->Make = new MakeEln($Zip, $Users, $targets);
     }
 
     public function testGetFileName(): void

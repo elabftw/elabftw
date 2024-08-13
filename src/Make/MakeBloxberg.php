@@ -17,6 +17,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
 use ZipArchive;
@@ -44,9 +45,9 @@ class MakeBloxberg extends AbstractMakeTimestamp
 
     private string $apiKey;
 
-    public function __construct(protected Users $requester, protected array $entitySlugs, protected array $configArr, private HttpGetter $getter)
+    public function __construct(protected Users $requester, protected AbstractEntity $entity, protected array $configArr, private HttpGetter $getter)
     {
-        parent::__construct($requester, $entitySlugs, $configArr, ExportFormat::Json);
+        parent::__construct($requester, $entity, $configArr, ExportFormat::Json);
         if ($configArr['blox_enabled'] !== '1') {
             throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
         }
@@ -72,11 +73,11 @@ class MakeBloxberg extends AbstractMakeTimestamp
         // update timestamp on the entry
         $this->updateTimestamp(date('Y-m-d H:i:s'));
         // save the zip file as an upload
-        return $this->Entity->Uploads->create(
+        return $this->entity->Uploads->create(
             new CreateImmutableArchivedUpload(
                 $this->getFileName(),
                 $tmpFilePath,
-                sprintf(_('Timestamp archive by %s'), $this->Entity->Users->userData['fullname'])
+                sprintf(_('Timestamp archive by %s'), $this->entity->Users->userData['fullname'])
             )
         );
     }
@@ -84,7 +85,7 @@ class MakeBloxberg extends AbstractMakeTimestamp
     private function certify(string $hash): string
     {
         // in order to be GDPR compliant, it is possible to anonymize the author
-        $author = $this->Entity->entityData['fullname'];
+        $author = $this->entity->entityData['fullname'];
         if ($this->configArr['blox_anon']) {
             $author = 'eLabFTW user';
         }
@@ -96,7 +97,7 @@ class MakeBloxberg extends AbstractMakeTimestamp
             'enableIPFS' => false,
             'metadataJson' => json_encode(array(
                 'author' => $author,
-                'elabid' => $this->Entity->entityData['elabid'],
+                'elabid' => $this->entity->entityData['elabid'],
                 'instanceid' => 'not implemented',
             ), JSON_THROW_ON_ERROR, 4),
         );

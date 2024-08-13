@@ -20,5 +20,7 @@ final class UltraAdmin extends Users
     public function __construct(public ?int $userid = null, public ?int $team = null)
     {
         $this->userData['is_sysadmin'] = 1;
+        $this->userData['userid'] = $userid;
+        $this->userData['team'] = $team;
     }
 }

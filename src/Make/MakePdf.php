@@ -18,8 +18,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -65,7 +63,7 @@ class MakePdf extends AbstractMakePdf
         private LoggerInterface $log,
         MpdfProviderInterface $mpdfProvider,
         protected Users $requester,
-        protected array $entitySlugs,
+        protected array $entityArr,
         bool $includeChangelog = false,
         Classification $classification = Classification::None,
     ) {
@@ -140,14 +138,9 @@ class MakePdf extends AbstractMakePdf
      */
     private function loopOverEntries(): void
     {
-        $entriesCount = count($this->entitySlugs);
-        foreach ($this->entitySlugs as $key => $slug) {
-            try {
-                //$entity = $slug->type->toInstance($this->requester, $slug->id, $this->bypassReadPermission);
-                $this->Entity = $slug->type->toInstance($this->requester, $slug->id);
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
+        $entriesCount = count($this->entityArr);
+        foreach ($this->entityArr as $key => $entity) {
+            $this->Entity = $entity;
             $this->addEntry();
 
             if ($key !== $entriesCount - 1) {

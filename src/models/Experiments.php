@@ -28,13 +28,13 @@ class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null)
+    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null)
     {
         $this->entityType = EntityType::Experiments;
-        parent::__construct($users, $id, $bypassReadPermission);
+        parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
     }
 
-    public function create(int $template = -1, array $tags = array()): int
+    public function create(?int $template = -1, array $tags = array()): int
     {
         $Templates = new Templates($this->Users);
         $Teams = new Teams($this->Users, $this->Users->team);
@@ -50,7 +50,7 @@ class Experiments extends AbstractConcreteEntity
         $canwrite = BasePermissions::User->toJson();
         $metadata = null;
         $contentType = AbstractEntity::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown']) {
+        if ($this->Users->userData['use_markdown'] ?? 0) {
             $contentType = AbstractEntity::CONTENT_MD;
         }
 
@@ -76,8 +76,8 @@ class Experiments extends AbstractConcreteEntity
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
             // use user settings for permissions
-            $canread = $this->Users->userData['default_read'];
-            $canwrite = $this->Users->userData['default_write'];
+            $canread = $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
+            $canwrite = $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
         }
         // load common template
         if ($template === 0) {

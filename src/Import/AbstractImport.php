@@ -49,10 +49,10 @@ abstract class AbstractImport implements ImportInterface
         protected Users $requester,
         protected EntityType $entityType,
         protected bool $forceEntityType,
-        protected int $defaultCategory,
         protected string $canread,
         protected string $canwrite,
         protected UploadedFile $UploadedFile,
+        protected ?int $defaultCategory = null,
     ) {
         $this->Db = Db::getConnection();
         $this->Entity = $this->entityType->toInstance($this->requester);
@@ -88,13 +88,12 @@ abstract class AbstractImport implements ImportInterface
         if ($this->Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($this->Teams);
         } else { // items
-            $Category = new ItemsTypes($this->requester, $this->requester->team);
+            $Category = new ItemsTypes($this->requester);
             // yes, this opens it up to normal users that normally cannot create status and category,
             // but user experience takes over this consideration here
             $Category->bypassWritePermission = true;
         }
         return $Category->getIdempotentIdFromTitle($category);
-
     }
 
     /**

@@ -82,21 +82,21 @@ class Handler implements RestInterface
                     $this->requester,
                     EntityType::from($reqBody['entity_type']),
                     $reqBody['force_entity_type'],
-                    $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
+                    (int) $reqBody['category'],
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
                     EntityType::from($reqBody['entity_type']),
                     $reqBody['force_entity_type'],
-                    $reqBody['category'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],
+                    (int) $reqBody['category'],
                 );
             default:
                 throw new ImproperActionException(sprintf(

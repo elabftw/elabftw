@@ -52,7 +52,7 @@ class ImportUser extends Command
         $filePath = $this->Fs->getPath((string) $input->getArgument('file'));
         $uploadedFile = new UploadedFile($filePath, 'input.eln', null, null, true);
         $teamid = (new UsersHelper($userid))->getTeamsFromUserid()[0]['id'];
-        $Eln = new Eln(new Users($userid, $teamid), EntityType::Experiments, true, $userid, BasePermissions::User->toJson(), BasePermissions::User->toJson(), $uploadedFile, Storage::CACHE->getStorage()->getFs());
+        $Eln = new Eln(new Users($userid, $teamid), EntityType::Experiments, true, BasePermissions::User->toJson(), BasePermissions::User->toJson(), $uploadedFile, Storage::CACHE->getStorage()->getFs());
         $Eln->import();
 
         $output->writeln(sprintf('Experiments successfully imported for user with ID %d.', $userid));

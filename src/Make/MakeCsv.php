@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Users;
-
 use function date;
 
 /**
@@ -23,7 +19,7 @@ use function date;
  */
 class MakeCsv extends AbstractMakeCsv
 {
-    public function __construct(private Users $requester, private array $entitySlugs)
+    public function __construct(private array $entityArr)
     {
         parent::__construct();
     }
@@ -50,12 +46,7 @@ class MakeCsv extends AbstractMakeCsv
     protected function getRows(): array
     {
         $rows = array();
-        foreach ($this->entitySlugs as $slug) {
-            try {
-                $entity = $slug->type->toInstance($this->requester, $slug->id);
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
+        foreach ($this->entityArr as $entity) {
             $row = array(
                 $entity->entityData['id'],
                 $entity->entityData['date'],

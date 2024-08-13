@@ -17,6 +17,7 @@ use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -58,8 +59,8 @@ class MakeController extends AbstractController
 
     private bool $pdfa = false;
 
-    // array of EntitySlug
-    private array $entitySlugs = array();
+    // @var array<AbstractEntity>
+    private array $entityArr = array();
 
     public function getResponse(): Response
     {
@@ -75,13 +76,13 @@ class MakeController extends AbstractController
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
                     return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
                 }
-                return $this->getFileResponse(new MakeCsv($this->requester, $this->entitySlugs));
+                return $this->getFileResponse(new MakeCsv($this->entityArr));
 
             case ExportFormat::Eln:
-                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entitySlugs));
+                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entityArr));
 
             case ExportFormat::Json:
-                return $this->getFileResponse(new MakeJson($this->requester, $this->entitySlugs));
+                return $this->getFileResponse(new MakeJson($this->entityArr));
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;
@@ -90,7 +91,7 @@ class MakeController extends AbstractController
                 return $this->makePdf();
 
             case ExportFormat::QrPdf:
-                return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entitySlugs));
+                return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entityArr));
 
             case ExportFormat::QrPng:
                 $withTitle = true;
@@ -98,7 +99,11 @@ class MakeController extends AbstractController
                 if ($this->Request->query->has('withTitle')) {
                     $withTitle = $this->Request->query->getBoolean('withTitle');
                 }
-                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->requester, $this->entitySlugs, $this->Request->query->getInt('size'), $withTitle));
+                // only works for 1 entry
+                if (count($this->entityArr) !== 1) {
+                    throw new ImproperActionException('QR PNG format is only suitable for one ID.');
+                }
+                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->entityArr[0], $this->Request->query->getInt('size'), $withTitle));
 
             case ExportFormat::SysadminReport:
                 if (!$this->requester->userData['is_sysadmin']) {
@@ -160,14 +165,14 @@ class MakeController extends AbstractController
                 explode(' ', $this->Request->query->getString('id')),
             );
         }
-        $slugs = array_map(function ($id) use ($entityType) {
-            return sprintf('%s:%d', $entityType->value, $id);
-        }, $idArr);
-        $this->entitySlugs = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $slugs);
+        foreach($idArr as $id) {
+            $this->entityArr[] = $entityType->toInstance($this->requester, $id);
+        }
+
         // generate audit log event if exporting more than $threshold entries
-        $count = count($this->entitySlugs);
+        $count = count($this->entityArr);
         if ($count > self::AUDIT_THRESHOLD) {
-            AuditLogs::create(new Export($this->requester->userid ?? 0, count($this->entitySlugs)));
+            AuditLogs::create(new Export($this->requester->userid ?? 0, $count));
         }
     }
 
@@ -180,10 +185,10 @@ class MakeController extends AbstractController
     {
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
-        if (count($this->entitySlugs) === 1) {
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog(), $classification));
+        if (count($this->entityArr) === 1) {
+            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification));
         }
-        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entitySlugs, $this->shouldIncludeChangelog()));
+        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog()));
     }
 
     private function makeSchedulerReport(): Response
@@ -206,7 +211,7 @@ class MakeController extends AbstractController
         return $this->makeStreamZip(new MakeStreamZip(
             $this->getZipStreamLib(),
             $this->requester,
-            $this->entitySlugs,
+            $this->entityArr,
             $this->pdfa,
             $this->shouldIncludeChangelog(),
             $this->Request->query->getBoolean('json'),

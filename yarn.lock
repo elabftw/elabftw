@@ -250,12 +250,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/dropzone@npm:^7.1.4":
-  version: 7.1.4
-  resolution: "@deltablot/dropzone@npm:7.1.4"
+"@deltablot/dropzone@npm:^7.1.5":
+  version: 7.1.5
+  resolution: "@deltablot/dropzone@npm:7.1.5"
   dependencies:
-    "@swc/helpers": "npm:^0.5.11"
-  checksum: 10c0/05b56abff9ed443c244c6826c81a210153345d00e6ee32530b5564be8119458c2547884dcdf6364e2e651b8328c155135ec3b64bcdf614bb386345086a6ef89d
+    "@swc/helpers": "npm:^0.5.12"
+  checksum: 10c0/87348a640ff2aad5ac7439d4a9ac50fb8799e13b548ed35a70120cfae04e66d987342c0d22826b02f720456320815934b16031976e07d20b0674f09f4ed93cc1
   languageName: node
   linkType: hard
 
@@ -723,7 +723,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/helpers@npm:^0.5.11":
+"@swc/helpers@npm:^0.5.12":
   version: 0.5.12
   resolution: "@swc/helpers@npm:0.5.12"
   dependencies:
@@ -3381,7 +3381,7 @@ __metadata:
   dependencies:
     3dmol: "npm:^2.3.0"
     "@deltablot/chemdoodle-web-mini": "npm:^9.5.1"
-    "@deltablot/dropzone": "npm:^7.1.4"
+    "@deltablot/dropzone": "npm:^7.1.5"
     "@deltablot/malle": "npm:^2.6.0"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.15"

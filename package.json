@@ -30,7 +30,7 @@
     "expose-loader": "^4.1.0",
     "i18next": "^23.12.2",
     "jquery": "^3.7.1",
-    "jquery-ui": "^1.13.3",
+    "jquery-ui": "^1.14.0",
     "jsoneditor": "^10.1.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",

@@ -82,7 +82,7 @@ try {
         $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             $App->Request->query->getString('q'),
-            $App->Request->query->getBoolean('includeNotTeam') ? 0 : $App->Users->userData['team'],
+            $App->Request->query->getInt('teamFilter'),
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
         );

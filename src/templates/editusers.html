@@ -9,16 +9,14 @@
         <div class='input-group-prepend'>
           <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
         </div>
-        {% if App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
           <div class='input-group-prepend'>
             <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
               <option value=''>{{ 'All teams'|trans }}</option>
               {% for team in teamsArr %}
-                <option value='{{ team.id }}' {{- Request.query.get('teamFilter') == team.id ? ' selected' }}>{{ team.name }}</option>
+                <option value='{{ team.id }}' {{- App.Request.query.get('teamFilter') == team.id or (App.Users.team == team.id and not App.Request.query.has('teamFilter')) ? ' selected' }}>{{ team.name }}</option>
               {% endfor %}
             </select>
           </div>
-        {% endif %}
         <input type='text' class='form-control' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
@@ -31,13 +29,6 @@
             <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeArchived') ? 'checked="checked"' }} name='includeArchived'>{{ 'Include archived'|trans }}</label>
           </div>
         </div>
-        {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
-          <div class='input-group-append'>
-            <div class='input-group-text'>
-              <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('includeNotTeam') ? 'checked="checked"' }} name='includeNotTeam'>{{ 'Include users not in this team'|trans }}</label>
-            </div>
-          </div>
-        {% endif %}
         <div class='input-group-append'>
           <div class='input-group-text'>
             <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}</label>
@@ -217,9 +208,9 @@
                           </button>
                         {% endif %}
                         {# Add to team #}
-                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty and App.Config.configArr.admins_import_users %}
-                          <div class='dropdown-item' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
-                              <i class='fas fa-fw fa-user-plus mr-1'></i>{{ 'Add to team'|trans }}
+                        {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty %}
+                          <div class='dropdown-item {{ App.Config.configArr.admins_import_users == '0' ? 'disabled' }}' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
+                              <i class='fas fa-fw fa-user-plus mr-1 {{ App.Config.configArr.admins_import_users == '0' ? 'color-weak' }}'></i>{{ 'Add to team'|trans }}
                           </div>
                         {% endif %}
                       {% endif %}

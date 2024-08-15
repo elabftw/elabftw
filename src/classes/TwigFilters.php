@@ -84,6 +84,9 @@ class TwigFilters
         foreach ($grouped as $group) {
             $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
             $final .= '<div>';
+            if (!array_key_exists('extra_fields', $group)) {
+                continue;
+            }
             foreach ($group['extra_fields'] as $field) {
                 $newTab = ' target="_blank" rel="noopener"';
                 if (($field['open_in_current_tab'] ?? false) === true) {

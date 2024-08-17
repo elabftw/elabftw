@@ -29,6 +29,19 @@ class UploadsChecker
         $this->Db = Db::getConnection();
     }
 
+    public function getStats(): array
+    {
+        $sql = 'SELECT
+            COUNT(id) AS count_all,
+            SUM(filesize) AS filesize_all,
+            COUNT(CASE WHEN hash IS NULL THEN 1 END) AS count_null_hash,
+            COUNT(CASE WHEN filesize IS NULL THEN 1 END) AS count_null_filesize
+            FROM uploads';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetch();
+    }
+
     public function getNullColumn(string $column): array
     {
         // don't use bindParam here for the column, it doesn't work.

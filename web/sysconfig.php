@@ -25,6 +25,7 @@ use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
+use Elabftw\Services\UploadsChecker;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
@@ -125,6 +126,8 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
+    $UploadsChecker = new UploadsChecker();
+
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
@@ -150,6 +153,7 @@ try {
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
+        'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),

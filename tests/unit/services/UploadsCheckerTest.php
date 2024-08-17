@@ -19,4 +19,10 @@ class UploadsCheckerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $UploadsChecker->fixNullFilesize());
         $this->assertEquals(0, $UploadsChecker->fixNullHash());
     }
+
+    public function testGetStats(): void
+    {
+        $UploadsChecker = new UploadsChecker();
+        $this->assertIsArray($UploadsChecker->getStats());
+    }
 }

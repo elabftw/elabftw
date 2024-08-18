@@ -154,9 +154,10 @@ class Email
         return $this->send($message);
     }
 
-    public function notifySysadminsTsBalance(int $tsBalance): bool
+      public function notifySysadminsTsBalance(int $tsBalance): bool
     {
         $emailBatches = self::getAllEmailAddresses(EmailTarget::Sysadmins);
+        $allEmailsAreSent = true;
 
         /** @var array $batch */
         foreach ($emailBatches as $batch) {
@@ -167,8 +168,13 @@ class Email
                 ->from($this->from)
                 ->to(...$batch)
                 ->text($body . $this->footer);
-            return $this->send($message);
+
+            if (!$this->send($message)) {
+                $allEmailsAreSent = false;
+            }
         }
+
+        return $allEmailsAreSent;
     }
 
     /**
@@ -181,8 +187,8 @@ class Email
     }
 
     /**
-     * Get email addresses of all active users on instance, in team or teamgroup
-     * @return Address[]
+     * Get email addresses of all active users on instance, in team or teamgroup, as list of batches
+     * @return Address[][]
      */
     public static function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
     {

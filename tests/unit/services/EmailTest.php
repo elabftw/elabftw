@@ -13,8 +13,6 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Mailer\Exception\TransportException;
@@ -76,7 +74,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $TeamsHelper = new TeamsHelper(1);
         $adminsIds = $TeamsHelper->getAllAdminsUserid();
         // we have to remove the current user which counts as one admin too many
-        $allAdminsCountWithoutCurrentSender = count($adminsIds) -1;
+        $allAdminsCountWithoutCurrentSender = count($adminsIds) - 1;
 
         // assert emails sent count with emails that can be fetched with getAllEmailAddresses()
         $this->assertEquals($activeUsersEmailsCount, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));

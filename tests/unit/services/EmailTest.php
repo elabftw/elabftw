@@ -13,6 +13,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Mailer\Exception\TransportException;
@@ -66,29 +68,25 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $adminsEmails = $this->Email->getAllEmailAddresses(EmailTarget::Admins);
         $sysAdminsEmails = $this->Email->getAllEmailAddresses(EmailTarget::Sysadmins);
 
-        $activeUsersEmailsCount = 0;
-        $adminsEmailsCount = 0;
-        $sysAdminsEmailsCount = 0;
+        $activeUsersEmailsCount = self::countEmails($activeUsersEmails);
+        $adminsEmailsCount = self::countEmails($adminsEmails);
+        $sysAdminsEmailsCount = self::countEmails($sysAdminsEmails);
 
-        /** @var array $batch */
-        foreach ($activeUsersEmails as $batch) {
-            $activeUsersEmailsCount += count($batch);
-        }
-        foreach ($adminsEmails as $batch) {
-            $adminsEmailsCount += count($batch);
-        }
-        foreach ($sysAdminsEmails as $batch) {
-            $sysAdminsEmailsCount += count($batch);
-        }
+        // count the admins for current team
+        $TeamsHelper = new TeamsHelper(1);
+        $adminsIds = $TeamsHelper->getAllAdminsUserid();
+        // we have to remove the current user which counts as one admin too many
+        $allAdminsCountWithoutCurrentSender = count($adminsIds) -1;
 
         // assert emails sent count with emails that can be fetched with getAllEmailAddresses()
         $this->assertEquals($activeUsersEmailsCount, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
         $this->assertEquals($adminsEmailsCount, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
         $this->assertEquals($sysAdminsEmailsCount, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));
-        $this->assertEquals(72, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo));
+        $this->assertEquals($allAdminsCountWithoutCurrentSender, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo));
         $this->assertEquals(135, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::TeamGroup, 1, 'Important message', 'yep', $replyTo));
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo));
+
     }
 
     public function testSendEmail(): void
@@ -99,5 +97,14 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));
+    }
+
+    private function countEmails(array $batches): int
+    {
+        $count = 0;
+        foreach ($batches as $batch) {
+            $count += count($batch);
+        }
+        return $count;
     }
 }

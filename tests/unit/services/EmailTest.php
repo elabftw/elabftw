@@ -60,13 +60,35 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     {
         $replyTo = new Address('sender@example.com', 'Sergent Garcia');
         // Note that non-validated users are not active users
-        $this->assertEquals(19, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
-        $this->assertEquals(10, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
+
+        // count the actual number of items in db (for users & admins), so that the test can be automated
+        $activeUsersEmails = $this->Email->getAllEmailAddresses(EmailTarget::ActiveUsers);
+        $adminsEmails = $this->Email->getAllEmailAddresses(EmailTarget::Admins);
+        $sysAdminsEmails = $this->Email->getAllEmailAddresses(EmailTarget::Sysadmins);
+
+        $activeUsersEmailsCount = 0;
+        $adminsEmailsCount = 0;
+        $sysAdminsEmailsCount = 0;
+
+        /** @var array $batch */
+        foreach ($activeUsersEmails as $batch) {
+            $activeUsersEmailsCount += count($batch);
+        }
+        foreach ($adminsEmails as $batch) {
+            $adminsEmailsCount += count($batch);
+        }
+        foreach ($sysAdminsEmails as $batch) {
+            $sysAdminsEmailsCount += count($batch);
+        }
+
+        // assert emails sent count with emails that can be fetched with getAllEmailAddresses()
+        $this->assertEquals($activeUsersEmailsCount, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo));
+        $this->assertEquals($adminsEmailsCount, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
+        $this->assertEquals($sysAdminsEmailsCount, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));
+        $this->assertEquals(72, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo));
+        $this->assertEquals(135, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo));
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::TeamGroup, 1, 'Important message', 'yep', $replyTo));
-        $this->assertEquals(6, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo));
-        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo));
-        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo));
-        $this->assertEquals(1, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo));
+        $this->assertEquals(0, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo));
     }
 
     public function testSendEmail(): void

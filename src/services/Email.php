@@ -37,19 +37,10 @@ class Email
 
     private Address $from;
 
-//    private array $allEmails;
-//
-//    private array $currentBatch;
-//
-//    private int $count;
-
     public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
     {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
-//        $this->allEmails = [];
-//        $this->currentBatch = [];
-//        $this->count = 0;
     }
 
     /**
@@ -99,22 +90,29 @@ class Email
         // set from
         $from = $this->from;
 
-        // get all email addresses
-        $emails = self::getAllEmailAddresses($target, $targetId);
+        // get all batches(<=99) of email addresses
+        $emailBatches = self::getAllEmailAddresses($target, $targetId);
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $message = (new Memail())
-        ->subject($subject)
-        ->from($from)
-        ->to($replyTo)
-        // Set recipients in BCC to protect email addresses
-        ->bcc(...$emails)
-        ->replyTo($replyTo)
-        ->text($body . $sender . $this->footer);
+        $allEmailsCount = 0;
 
-        $this->send($message);
-        return count($emails);
+        /** @var array $batch */
+        foreach ($emailBatches as $batch) {
+            $message = (new Memail())
+                ->subject($subject)
+                ->from($from)
+                ->to($replyTo)
+                // Set recipients in BCC to protect email addresses
+                ->bcc(...$batch)
+                ->replyTo($replyTo)
+                ->text($body . $sender . $this->footer);
+
+            $allEmailsCount += count($batch);
+            $this->send($message);
+        }
+
+        return $allEmailsCount;
     }
 
     /**
@@ -158,15 +156,19 @@ class Email
 
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
-        $emails = self::getAllEmailAddresses(EmailTarget::Sysadmins);
-        $subject = '[eLabFTW] Warning: timestamp balance low!';
-        $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
-        $message = (new Memail())
-            ->subject($subject)
-            ->from($this->from)
-            ->to(...$emails)
-            ->text($body . $this->footer);
-        return $this->send($message);
+        $emailBatches = self::getAllEmailAddresses(EmailTarget::Sysadmins);
+
+        /** @var array $batch */
+        foreach ($emailBatches as $batch) {
+            $subject = '[eLabFTW] Warning: timestamp balance low!';
+            $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
+            $message = (new Memail())
+                ->subject($subject)
+                ->from($this->from)
+                ->to(...$batch)
+                ->text($body . $this->footer);
+            return $this->send($message);
+        }
     }
 
     /**
@@ -182,32 +184,25 @@ class Email
      * Get email addresses of all active users on instance, in team or teamgroup
      * @return Address[]
      */
-    public function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
+    public static function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
     {
-//        $emails = array();
-//        foreach (self::getAllEmailAddressesRawData($target, $targetId) as $user) {
-//            $emails[] = new Address($user['email'], $user['fullname']);
-//        }
-//        return $emails;
-
-
         $allEmails = array();
         $currentBatch = array();
         $count = 0;
 
         foreach (self::getAllEmailAddressesRawData($target, $targetId) as $user) {
             if ($count >= 99) {
-                // let's save the current batch with 99 recipiets and start a new one
+                // Save current batch with 99 recipients and start a new one
                 $allEmails[] = $currentBatch;
                 $currentBatch = array();
                 $count = 0;
             }
-            // add emails to the batch until possible breakpoint (couldn't identify the exact one)
+            // add emails to the batch until suspected breakpoint of 99
             $currentBatch[] = new Address($user['email'], $user['fullname']);
             $count++;
         }
 
-        // if the batch isnt complete, add remaining emails that didn't fill Add any remaining emails that didn't fill a complete batch
+        // Add remaining emails for incomplete batches
         if (!empty($currentBatch)) {
             $allEmails[] = $currentBatch;
         }

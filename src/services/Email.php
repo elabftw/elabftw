@@ -37,10 +37,19 @@ class Email
 
     private Address $from;
 
+//    private array $allEmails;
+//
+//    private array $currentBatch;
+//
+//    private int $count;
+
     public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
     {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
+//        $this->allEmails = [];
+//        $this->currentBatch = [];
+//        $this->count = 0;
     }
 
     /**
@@ -173,13 +182,37 @@ class Email
      * Get email addresses of all active users on instance, in team or teamgroup
      * @return Address[]
      */
-    public static function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
+    public function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
     {
-        $emails = array();
+//        $emails = array();
+//        foreach (self::getAllEmailAddressesRawData($target, $targetId) as $user) {
+//            $emails[] = new Address($user['email'], $user['fullname']);
+//        }
+//        return $emails;
+
+
+        $allEmails = array();
+        $currentBatch = array();
+        $count = 0;
+
         foreach (self::getAllEmailAddressesRawData($target, $targetId) as $user) {
-            $emails[] = new Address($user['email'], $user['fullname']);
+            if ($count >= 99) {
+                // let's save the current batch with 99 recipiets and start a new one
+                $allEmails[] = $currentBatch;
+                $currentBatch = array();
+                $count = 0;
+            }
+            // add emails to the batch until possible breakpoint (couldn't identify the exact one)
+            $currentBatch[] = new Address($user['email'], $user['fullname']);
+            $count++;
         }
-        return $emails;
+
+        // if the batch isnt complete, add remaining emails that didn't fill Add any remaining emails that didn't fill a complete batch
+        if (!empty($currentBatch)) {
+            $allEmails[] = $currentBatch;
+        }
+
+        return $allEmails;
     }
 
     private function makeFooter(): string
@@ -219,7 +252,9 @@ class Email
                 $join = '';
                 $filter = '';
         }
-        $where = 'WHERE users.validated = 1 AND users.archived = 0';
+
+        // filter email addresses in db that are either deleted or wrong
+        $where = 'WHERE users.validated = 1 AND users.archived = 0 AND email LIKE \'%_@__%.__%\' AND email IS NOT NULL';
         $sql = sprintf('%s %s %s %s', $select, $join, $where, $filter);
         $Db = Db::getConnection();
         $req = $Db->prepare($sql);

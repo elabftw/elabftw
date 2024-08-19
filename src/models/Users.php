@@ -593,6 +593,14 @@ class Users implements RestInterface
             }
             Filter::email($params->getContent());
         }
+        $Config = Config::getConfig();
+        // prevent modification of identity fields if we are not sysadmin
+        if (in_array($params->getTarget(), array('email', 'firstname', 'lastname'), true)
+            && $Config->configArr['allow_users_change_identity'] === '0'
+            && $this->requester->userData['is_sysadmin'] === 0
+        ) {
+            throw new ImproperActionException('Identity information can only be modified by Sysadmin.');
+        }
         // special case for is_sysadmin: only a sysadmin can affect this column
         if ($params->getTarget() === 'is_sysadmin') {
             if ($this->requester->userData['is_sysadmin'] === 0) {

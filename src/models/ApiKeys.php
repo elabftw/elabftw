@@ -173,7 +173,7 @@ class ApiKeys implements RestInterface
         // must be executed before AuditLog request!
         $this->keyId = $this->Db->lastInsertId();
         if ($res) {
-            AuditLogs::create(new ApiKeyCreated($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+            AuditLogs::create(new ApiKeyCreated((int) $this->Users->requester->userid, (int) $this->Users->userid));
         }
         return $this->keyId;
     }

@@ -136,13 +136,16 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Simply update the modified_at column of the entity
+     * Signal that a submodel has been modified (such as steps or links).
+     * The modified_at column is automatically updated when the entity row is modified, but not if a child model is modified,
+     * so this need to be called after a post/patch/delete action on the submodel.
      */
     public function touch(): bool
     {
-        $sql = sprintf('UPDATE %s SET modified_at = NOW() WHERE id = :id', $this->entityType->value);
+        $sql = sprintf('UPDATE %s SET modified_at = NOW(), lastchangeby = :userid WHERE id = :id', $this->entityType->value);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->requester->userid);
         return $this->Db->execute($req);
     }
 

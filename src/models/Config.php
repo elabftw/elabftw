@@ -140,6 +140,7 @@ final class Config implements RestInterface
             ('saml_lowercaseurlencoding', '0'),
             ('saml_fallback_orgid', '0'),
             ('email_domain', NULL),
+            ('email_send_grouped', '1'),
             ('saml_sync_teams', '0'),
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),

@@ -376,6 +376,9 @@
     <hr>
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 'smtp_verify_cert'} %}
+
+    {% include 'binary-setting.html' with {'label': 'Send mass emails grouped'|trans, 'slug': 'email_send_grouped', 'help': 'When enabled, mass emails are sent as a single email with all recipients in Bcc. Disable this setting if you encounter issues with your SMTP server refusing to deliver emails if a recipient has an invalid account or if there are too many recipients.'} %}
+
   </div>
 
   {# TEST EMAIL #}

@@ -63,7 +63,8 @@ try {
             null,
             $App->Request->request->getString('subject'),
             $App->Request->request->getString('body'),
-            $replyTo
+            $replyTo,
+            (bool) $App->Config->configArr['email_send_grouped'],
         );
     }
 

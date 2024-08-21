@@ -52,13 +52,8 @@
         {{ 'Enter the 6 digits displayed on your phone'|trans }}
       </p>
     </div>
-    <div class='mx-auto text-center col-md-6'>
-      <div class='input-group mx-auto col-md-6 mb-4'>
-        <div class='input-group-prepend'>
-          <span class='input-group-text' id='mfaCodeLabel'>{{ 'Authentication code'|trans }}</span>
-          <input class='form-control brl-none' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
-        </div>
-      </div>
+    <div class='mx-auto text-center col-md-3 mb-4'>
+      <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
     </div>
   </div>
   <div class='text-center'>

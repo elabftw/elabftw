@@ -81,31 +81,40 @@ class Email
     /**
      * Send a mass email to all users
      */
-    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo): int
+    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo, bool $sendGrouped): int
     {
         if (empty($subject)) {
             $subject = '[eLabFTW] No subject';
         }
 
-        // set from
-        $from = $this->from;
-
         // get all email addresses
-        $emails = self::getAllEmailAddresses($target, $targetId);
+        $addresses = self::getAllEmailAddresses($target, $targetId);
+        $addressesCount = count($addresses);
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $message = (new Memail())
-        ->subject($subject)
-        ->from($from)
-        ->to($replyTo)
-        // Set recipients in BCC to protect email addresses
-        ->bcc(...$emails)
-        ->replyTo($replyTo)
-        ->text($body . $sender . $this->footer);
+        $content = $body . $sender . $this->footer;
 
-        $this->send($message);
-        return count($emails);
+        if ($sendGrouped) {
+            // send one single email to everyone
+            $message = (new Memail())
+            ->subject($subject)
+            ->from($this->from)
+            ->to($replyTo)
+            // set recipients in BCC to hide email addresses
+            ->bcc(...$addresses)
+            ->replyTo($replyTo)
+            ->text($content);
+
+            $this->send($message);
+            return $addressesCount;
+        }
+
+        // send emails one by one
+        foreach($addresses as $address) {
+            $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
+        }
+        return $addressesCount;
     }
 
     /**
@@ -116,7 +125,8 @@ class Email
         string $subject,
         string $body,
         ?array $cc = null,
-        ?string $htmlBody = null
+        ?string $htmlBody = null,
+        ?Address $replyTo = null,
     ): bool {
         $message = (new Memail())
         ->subject($subject)
@@ -126,6 +136,10 @@ class Email
 
         if (!empty($cc)) {
             $message->cc(...$cc);
+        }
+
+        if ($replyTo !== null) {
+            $message->addReplyTo($replyTo);
         }
 
         if (!empty($htmlBody)) {

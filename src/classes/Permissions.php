@@ -82,10 +82,6 @@ class Permissions
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return true;
             }
-            // check if we have a team in common
-            if ($this->Teams->hasCommonTeamWithCurrent($this->item['userid'], $this->Users->userData['team'])) {
-                return true;
-            }
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin

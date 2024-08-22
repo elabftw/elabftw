@@ -240,7 +240,7 @@ class EntitySqlBuilder
             $table = 'experiments';
         }
 
-        $related = '_links';
+        $related = '2items';
         if ($relatedOrigin === EntityType::Experiments) {
             $related = '2experiments';
         }

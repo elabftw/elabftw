@@ -346,7 +346,7 @@ class Eln extends AbstractZip
     private function authorToHtml(array $node): string
     {
         $html = sprintf('<h1>%s</h1><ul>', _('Author'));
-        $fullNode = $this->getNodeFromId($node['@id']);
+        $fullNode = $this->getNodeFromId($node['@id'] ?? '');
         $html .= sprintf(
             '<li>%s %s %s</li>',
             $this->transformIfNecessary($fullNode['givenName'] ?? ''),

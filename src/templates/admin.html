@@ -45,6 +45,21 @@
 
 {# TAB 1 TEAM CONFIG #}
 <div data-tabcontent='1' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <div class='d-flex justify-content-between'>
+      <div>
+      {{ 'Members'|trans }}: {{ teamStats.totusers }} &ndash;
+              {% trans %}
+              Experiment
+              {% plural teamStats.totxp %}
+              Experiments
+              {% endtrans %}
+              : {{ teamStats.totxp }} ({{ teamStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamStats.totdb }}</div>
+      <div><a href='make.php?format=teamReport' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
+    </div>
+  </div>
+
   <h3 class='p-2 pl-3 section-title'>{{ 'Configure your Team'|trans }}</h3>
 
   <div class='pl-3 mt-2'>

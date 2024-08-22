@@ -109,7 +109,13 @@ class MakeController extends AbstractController
                 if (!$this->requester->userData['is_sysadmin']) {
                     throw new IllegalActionException('Non sysadmin user tried to generate report.');
                 }
-                return $this->getFileResponse(new MakeReport(new Teams($this->requester)));
+                return $this->getFileResponse(new MakeReport($this->requester->readFromQuery('', includeArchived: true)));
+
+            case ExportFormat::TeamReport:
+                if (!$this->requester->isAdmin) {
+                    throw new IllegalActionException('Non Admin user tried to generate report.');
+                }
+                return $this->getFileResponse(new MakeReport($this->requester->readFromQuery('', teamId: $this->requester->userData['team'])));
 
             case ExportFormat::SchedulerReport:
                 return $this->makeSchedulerReport();

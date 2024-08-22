@@ -24,6 +24,7 @@ enum ExportFormat: string
     case PdfA = 'pdfa';
     case SchedulerReport = 'schedulerReport';
     case SysadminReport = 'report';
+    case TeamReport = 'teamReport';
     case Zip = 'zip';
     case ZipA = 'zipa';
 

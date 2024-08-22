@@ -13,18 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
 use function date;
 
 /**
- * Create a report of usage for all users
+ * Create a report of usage for users provided in construct
  */
 class MakeReport extends AbstractMakeCsv
 {
-    public function __construct(private Teams $Teams)
+    public function __construct(private array $users)
     {
         parent::__construct();
     }
@@ -46,6 +45,7 @@ class MakeReport extends AbstractMakeCsv
             'userid',
             'firstname',
             'lastname',
+            'created_at',
             'orgid',
             'email',
             'has_mfa_enabled',
@@ -68,8 +68,7 @@ class MakeReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        $allUsers = $this->Teams->Users->readFromQuery('', includeArchived: true);
-        foreach ($allUsers as $key => $user) {
+        foreach ($this->users as $key => $user) {
             $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
@@ -87,16 +86,16 @@ class MakeReport extends AbstractMakeCsv
                 'sig_pubkey',
             );
             foreach ($unusedColumns as $column) {
-                unset($allUsers[$key][$column]);
+                unset($this->users[$key][$column]);
             }
 
-            $allUsers[$key]['team(s)'] = $teams;
-            $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
-            $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $UsersHelper->countExperiments();
-            $allUsers[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
+            $this->users[$key]['team(s)'] = $teams;
+            $this->users[$key]['diskusage_in_bytes'] = $diskUsage;
+            $this->users[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
+            $this->users[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $this->users[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
         }
-        return $allUsers;
+        return $this->users;
     }
 
     private function getDiskUsage(int $userid): int

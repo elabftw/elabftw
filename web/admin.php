@@ -58,6 +58,7 @@ try {
     $TeamTags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
+    $teamStats = $Teams->getStats($App->Users->userData['team']);
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     $ExperimentsCategories = new ExperimentsCategories($Teams);
@@ -131,6 +132,7 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'teamsArr' => $teamsArr,
+        'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );

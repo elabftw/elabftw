@@ -93,7 +93,7 @@ class MakeEln extends AbstractMakeEln
         $this->rootParts[] = array('@id' => './' . $currentDatasetFolder);
         // COMMENTS
         $comments = array();
-        foreach ($e['comments'] as $comment) {
+        foreach ($e['comments'] ?? array() as $comment) {
             // simply use some random bytes here for the id
             $hash = hash(self::HASH_ALGO, random_bytes(6));
             $id = sprintf('comment://%s?hash_algo=%s', $hash, self::HASH_ALGO);
@@ -176,11 +176,11 @@ class MakeEln extends AbstractMakeEln
         );
         $datasetNode = self::addIfNotEmpty(
             $datasetNode,
-            array('alternateName' => $e['custom_id']),
+            array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
             array('creativeWorkStatus' => $e['status_title']),
             array('hasPart' => $hasPart),
-            array('identifier' => $e['elabid']),
+            array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),
             array('mentions' => $mentions),
             array('text' => $e['body']),
@@ -203,7 +203,7 @@ class MakeEln extends AbstractMakeEln
             $datasetNode['variableMeasured'] = $this->metadataToJsonLd($e['metadata']);
         }
         // RATING
-        if ($e['rating']) {
+        if (!empty($e['rating'])) {
             $datasetNode['aggregateRating'] = array(
                 '@type' => 'AggregateRating',
                 'ratingValue' => $e['rating'],

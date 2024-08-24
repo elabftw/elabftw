@@ -31,11 +31,7 @@ class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = false, ?bool $bypassWritePermission = false)
-    {
-        $this->entityType = EntityType::Items;
-        parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
-    }
+    public EntityType $entityType = EntityType::Items;
 
     public function create(
         ?string $canread = null,

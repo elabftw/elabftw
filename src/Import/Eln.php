@@ -143,7 +143,12 @@ class Eln extends AbstractZip
         }
         // otherwise try looking into "genre" attribute
         if (!empty($dataset['genre'])) {
-            return $dataset['genre'] === 'experiment' ? EntityType::Experiments : EntityType::Items;
+            return match($dataset['genre']) {
+                'experiment', 'experiments' => EntityType::Experiments,
+                'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
+                // everything else is a Resource
+                default => EntityType::Items,
+            };
         }
         // not sure if best to throw an Exception here or have a default
         $this->logger->notice('Could not find entity type (genre), falling back to Resource');

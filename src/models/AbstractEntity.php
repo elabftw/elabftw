@@ -606,7 +606,7 @@ abstract class AbstractEntity implements RestInterface
         switch ($params->getTarget()) {
             case 'bodyappend':
                 $content = $this->readOne()['body'] . $content;
-                // no break
+                break;
             case 'canread':
             case 'canwrite':
                 if ($this->bypassWritePermission === false) {

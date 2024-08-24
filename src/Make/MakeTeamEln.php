@@ -47,7 +47,9 @@ class MakeTeamEln extends AbstractMakeEln
         // we don't grab the deleted ones
         $sql = 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid AND state IN (1, 2)
             UNION All
-            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2)';
+            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2)
+            UNION All
+            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':teamid', $this->teamId, PDO::PARAM_INT);
         $this->Db->execute($req);

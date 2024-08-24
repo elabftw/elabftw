@@ -26,12 +26,7 @@ use PDO;
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
-    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false)
-    {
-        $this->entityType = EntityType::ItemsTypes;
-        parent::__construct($Users, $id);
-        $this->ExclusiveEditMode->manage();
-    }
+    public EntityType $entityType = EntityType::ItemsTypes;
 
     public function create(string $title, ?string $color = null): int
     {

@@ -41,11 +41,7 @@ class Templates extends AbstractTemplateEntity
 
     public string $page = 'ucp';
 
-    public function __construct(Users $users, ?int $id = null, public ?bool $bypassReadPermission = false)
-    {
-        $this->entityType = EntityType::Templates;
-        parent::__construct($users, $id);
-    }
+    public EntityType $entityType = EntityType::Templates;
 
     public function create(string $title): int
     {

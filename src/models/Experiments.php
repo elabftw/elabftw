@@ -28,11 +28,7 @@ class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null)
-    {
-        $this->entityType = EntityType::Experiments;
-        parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
-    }
+    public EntityType $entityType = EntityType::Experiments;
 
     public function create(
         ?string $canread = null,

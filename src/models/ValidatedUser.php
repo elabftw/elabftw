@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Usergroup;
+use Elabftw\Exceptions\ImproperActionException;
 
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team
@@ -37,5 +38,17 @@ class ValidatedUser extends ExistingUser
     public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup): Users
     {
         return parent::fromScratch($email, $teams, $firstname, $lastname, $usergroup, true, false);
+    }
+
+    // create a user from the information provided in a node of type Person (.eln)
+    public static function createFromPerson(array $person, int $team): Users
+    {
+        return self::fromAdmin(
+            $person['email'] ?? throw new ImproperActionException('Could not find an email to create the user!'),
+            array($team),
+            $person['givenName'] ?? 'Unknown',
+            $person['familyName'] ?? 'Unknown',
+            Usergroup::User,
+        );
     }
 }

@@ -25,6 +25,8 @@ use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Exception\RfcComplianceException;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 use function dirname;
 
@@ -32,31 +34,23 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
 $Config = Config::getConfig();
-$Logger = new Logger('elabftw');
-$Logger->pushHandler(new ErrorLogHandler());
+$errorLogLogger = new Logger('elabftw');
+$errorLogLogger->pushHandler(new ErrorLogHandler());
+$logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),
-        $Logger,
+        $errorLogLogger,
         $Config->configArr['mail_from'],
     );
 } catch (WrongKeyOrModifiedCiphertextException $e) {
-    echo "ERROR:\n";
-    echo "It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\n";
-    echo "Error message:\n";
-    echo $e->getMessage() . "\n";
+    $logger->critical("It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\nError message:\n" . $e->getMessage() . "\n");
     exit;
 } catch (RfcComplianceException $e) {
-    echo "ERROR:\n";
-    echo "It seems the configured sending email address is wrong. Try setting the 'mail_from' value to a valid email address: update config set conf_value = 'example@example.com' where conf_name = 'mail_from';\n";
-    echo "Error message:\n";
-    echo $e->getMessage() . "\n";
+    $logger->critical("It seems the configured sending email address is wrong. Try setting the 'mail_from' value to a valid email address: update config set conf_value = 'example@example.com' where conf_name = 'mail_from';\nError message:\n" . $e->getMessage() . "\n");
     exit;
 } catch (InvalidArgumentException $e) {
-    echo "ERROR:\n";
-    echo "It seems your SMTP configuration is wrong. Try setting the 'smtp_address' value to a valid hostname: update config set conf_value = 'example.com' where conf_name = 'smtp_address';\n";
-    echo "Error message:\n";
-    echo $e->getMessage() . "\n";
+    $logger->critical("It seems your SMTP configuration is wrong. Try setting the 'smtp_address' value to a valid hostname: update config set conf_value = 'example.com' where conf_name = 'smtp_address';\nError message:\n" . $e->getMessage() . "\n");
     exit;
 }
 
@@ -72,9 +66,7 @@ $Application->add(new CleanDatabase());
 $Application->add(new ExportUser($cacheFs));
 $Application->add(new ExportTeams($cacheFs));
 $Application->add(new ExportCommand($cacheFs));
-$Application->add(new ImportTeams($cacheFs));
-$Application->add(new ImportResources($cacheFs));
-$Application->add(new ImportUser($cacheFs));
+$Application->add(new ImportEln($cacheFs));
 $Application->add(new UpdateDatabase());
 $Application->add(new RevertSchema($sqlFs));
 $Application->add(new UpdateTo3());

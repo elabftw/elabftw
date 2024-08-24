@@ -194,8 +194,8 @@ class MakeEln extends AbstractMakeEln
                     '@type' => 'Thing',
                     'name' => $e['category_title'],
                 );
-                $datasetNode['about'] = array('@id' => $categoryAtId);
             }
+            $datasetNode['about'] = array('@id' => $categoryAtId);
         }
         // METADATA (extra fields)
         if ($e['metadata']) {

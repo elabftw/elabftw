@@ -17,7 +17,7 @@ namespace Elabftw\Interfaces;
  */
 interface ImportInterface
 {
-    public function import(): void;
+    public function import(): int;
 
     public function getInserted(): int;
 }

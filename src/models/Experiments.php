@@ -34,20 +34,24 @@ class Experiments extends AbstractConcreteEntity
         parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
     }
 
-    public function create(?int $template = -1, array $tags = array()): int
-    {
+    public function create(
+        ?string $canread = null,
+        ?string $canwrite = null,
+        ?int $template = -1,
+        array $tags = array(),
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+        ?int $status = null,
+    ): int {
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::User->toJson();
         $Templates = new Templates($this->Users);
-        $Teams = new Teams($this->Users, $this->Users->team);
-        $teamConfigArr = $Teams->readOne();
-        $Status = new ExperimentsStatus($Teams);
 
         // defaults
         $title = _('Untitled');
         $category = null;
-        $status = $Status->getDefault();
         $body = null;
-        $canread = BasePermissions::Team->toJson();
-        $canwrite = BasePermissions::User->toJson();
         $metadata = null;
         $contentType = AbstractEntity::CONTENT_HTML;
         if ($this->Users->userData['use_markdown'] ?? 0) {
@@ -72,7 +76,7 @@ class Experiments extends AbstractConcreteEntity
         // we don't use a proper template (use of common tpl or blank)
         if ($template === 0 || $template === -1) {
             // if admin forced template use, throw error
-            if ($teamConfigArr['force_exp_tpl'] === 1) {
+            if ($forceExpTpl) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
             // use user settings for permissions
@@ -81,17 +85,13 @@ class Experiments extends AbstractConcreteEntity
         }
         // load common template
         if ($template === 0) {
-            $commonTemplateKey = 'common_template';
+            $body = $defaultTemplateHtml;
             // use the markdown template if the user prefers markdown
             if ($this->Users->userData['use_markdown']) {
-                $commonTemplateKey .= '_md';
+                $body = $defaultTemplateMd;
             }
-            $body = $teamConfigArr[$commonTemplateKey];
         }
 
-        // enforce the permissions if the admin has set them
-        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : $canread;
-        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
 

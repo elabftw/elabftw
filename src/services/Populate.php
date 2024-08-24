@@ -130,7 +130,7 @@ class Populate
         );
 
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create($tpl);
+            $id = $Entity->create(template: $tpl);
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);

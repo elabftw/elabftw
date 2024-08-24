@@ -20,6 +20,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
@@ -56,12 +57,35 @@ use function sprintf;
  */
 abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFromTemplateInterface
 {
-    abstract public function create(?int $template, array $tags): int;
+    abstract public function create(
+        ?string $canread = null,
+        ?string $canwrite = null,
+        ?int $template = -1,
+        array $tags = array(),
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+        ?int $status = null,
+    ): int;
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $Teams = new Teams($this->Users, $this->Users->team);
+        $teamConfigArr = $Teams->readOne();
+        // enforce the permissions if the admin has set them
+        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : BasePermissions::Team->toJson();
+        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : BasePermissions::User->toJson();
         return match ($action) {
-            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags'] ?? array()),
+            Action::Create => $this->create(
+                $canread,
+                $canwrite,
+                (int) ($reqBody['category_id'] ?? -1),
+                $reqBody['tags'] ?? array(),
+                (bool) $teamConfigArr['force_exp_tpl'],
+                $teamConfigArr['common_template'],
+                $teamConfigArr['common_template_md'],
+                $reqBody['status'] ?? null,
+            ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

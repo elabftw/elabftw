@@ -32,7 +32,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         // test >Append attached PDFs<
         (new Users(1, 1, new Users(1, 1)))->patch(Action::Update, array('append_pdfs' => 1));
         $Entity = new Experiments(new Users(1, 1), null);
-        $new = $Entity->create(0);
+        $new = $Entity->create(template: 0);
         $Entity->setId($new);
         $Entity->canOrExplode('write');
         $entityData = $Entity->readOne();

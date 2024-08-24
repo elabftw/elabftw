@@ -14,12 +14,15 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
 use PDO;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import entries from a csv file.
@@ -34,29 +37,45 @@ class Csv extends AbstractImport
         'text/tsv',
     );
 
+    public function __construct(
+        protected Users $requester,
+        // TODO nullable and have it in .eln export so it is not lost on import
+        protected string $canread,
+        protected string $canwrite,
+        protected UploadedFile $UploadedFile,
+        protected LoggerInterface $logger,
+        protected EntityType $entityType,
+        private bool $dryRun = false,
+        protected ?int $defaultCategory = null,
+        protected bool $authorIsRequester = true,
+    ) {
+        parent::__construct(
+            $requester,
+            $UploadedFile,
+        );
+        if ($dryRun) {
+            $this->logger->info('Running in dry-mode: nothing will be imported.');
+        }
+    }
+
     /**
      * Do the work
      *
      * @throws ImproperActionException
      */
-    public function import(): void
+    public function import(): int
     {
-        // we directly read from temporary uploaded file location and do not need to use the cache folder as no extraction is necessary for a .csv
-        $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
-        // get stats about the most likely delimiter
-        $delimitersCount = CsvInfo::getDelimiterStats($csv, array(',', '|', "\t", ';'), -1);
-        // reverse sort the array by value to get the delimiter with highest probability
-        arsort($delimitersCount, SORT_NUMERIC);
-        // set the delimiter from the first value
-        $csv->setDelimiter((string) key($delimitersCount));
-        $csv->setHeaderOffset(0);
-        $rows = $csv->getRecords();
+        $reader = $this->preProcess();
+        if ($this->dryRun) {
+            return $reader->count();
+        }
+        $rows = $reader->getRecords();
 
         // items have canbook
         $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
             VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
 
-        if ($this->Entity instanceof Experiments) {
+        if ($this->entityType === EntityType::Experiments) {
             $sql = 'INSERT INTO experiments(team, title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
                 VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
         }
@@ -68,15 +87,15 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $category = empty($row['category_title']) ? null : $this->getCategoryId($row['category_title']);
-            $status = empty($row['status_title']) ? null : $this->getStatusId($row['status_title']);
+            $category = empty($row['category_title']) ? $this->defaultCategory : $this->getCategoryId($this->entityType, $row['category_title']);
+            $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;
             if (isset($row['metadata']) && !empty($row['metadata'])) {
                 $metadata = $row['metadata'];
             }
 
-            if ($this->Entity instanceof Items) {
+            if ($this->entityType === EntityType::Items) {
                 $req->bindParam(':canbook', $this->canread);
             }
             $req->bindParam(':team', $this->requester->userData['team'], PDO::PARAM_INT);
@@ -93,15 +112,33 @@ class Csv extends AbstractImport
             $this->Db->execute($req);
             $newItemId = $this->Db->lastInsertId();
 
-            $this->Entity->setId($newItemId);
 
             // insert tags from the tags column
             if (isset($row['tags'])) {
-                $this->insertTags($row['tags']);
+                $entity = $this->entityType->toInstance($this->requester, $newItemId);
+                $this->insertTags($entity, $row['tags']);
             }
 
             $this->inserted++;
         }
+        return $this->getInserted();
+    }
+
+    /**
+     * @return Reader<array>
+     */
+    private function preProcess(): Reader
+    {
+        // we directly read from temporary uploaded file location and do not need to use the cache folder as no extraction is necessary for a .csv
+        $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
+        // get stats about the most likely delimiter
+        $delimitersCount = CsvInfo::getDelimiterStats($csv, array(',', '|', "\t", ';'), -1);
+        // reverse sort the array by value to get the delimiter with highest probability
+        arsort($delimitersCount, SORT_NUMERIC);
+        // set the delimiter from the first value
+        $csv->setDelimiter((string) key($delimitersCount));
+        $csv->setHeaderOffset(0);
+        return $csv;
     }
 
     /**
@@ -131,13 +168,13 @@ class Csv extends AbstractImport
         return $body;
     }
 
-    private function insertTags(string $tags): void
+    private function insertTags(AbstractEntity $entity, string $tags): void
     {
         $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
         foreach ($tagsArr as $tag) {
             // maybe it's empty for this row
             if ($tag) {
-                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
+                $entity->Tags->postAction(Action::Create, array('tag' => $tag));
             }
         }
     }

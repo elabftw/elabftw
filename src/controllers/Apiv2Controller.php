@@ -61,6 +61,7 @@ use Elabftw\Models\Users;
 use Elabftw\Models\UserUploads;
 use Exception;
 use JsonException;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -244,13 +245,14 @@ class Apiv2Controller extends AbstractApiController
 
     private function getModel(): RestInterface
     {
+        $logger = new Logger('elabftw');
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Batch => new Batch($this->requester),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
-            ApiEndpoint::Import => new ImportHandler($this->requester),
+            ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
             ApiEndpoint::Experiments,

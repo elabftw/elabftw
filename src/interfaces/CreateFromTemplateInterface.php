@@ -17,5 +17,14 @@ namespace Elabftw\Interfaces;
  */
 interface CreateFromTemplateInterface
 {
-    public function create(int $template, array $tags): int;
+    public function create(
+        ?string $canread = null,
+        ?string $canwrite = null,
+        ?int $template = -1,
+        array $tags = array(),
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+        ?int $status = null,
+    ): int;
 }

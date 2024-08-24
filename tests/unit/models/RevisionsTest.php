@@ -47,7 +47,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore(): void
     {
         $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(0);
+        $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
@@ -58,7 +58,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestoreLocked(): void
     {
         $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(0);
+        $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));

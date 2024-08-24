@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Storage;
 use Elabftw\Models\Users;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -36,24 +36,23 @@ abstract class AbstractZip extends AbstractImport
         'application/x-zip-compressed',
     );
 
+    protected FilesystemOperator $tmpFs;
+
     // in version 5.0.0 we switched from filter input to escape output
     // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
 
     public function __construct(
-        Users $Users,
-        EntityType $entityType,
-        bool $forceEntityType,
-        string $canread,
-        string $canwrite,
+        Users $requester,
         UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
-        protected ?int $defaultCategory = null,
     ) {
-        parent::__construct($Users, $entityType, $forceEntityType, $canread, $canwrite, $UploadedFile, $defaultCategory);
+        parent::__construct($requester, $UploadedFile);
         // set up a temporary directory in the cache to extract the archive to
         $this->tmpDir = FsTools::getUniqueString();
-        $this->tmpPath = FsTools::getCacheFolder('elab') . '/' . $this->tmpDir;
+        $cacheStorage = Storage::CACHE->getStorage();
+        $this->tmpPath = $cacheStorage->getPath() . '/' . $this->tmpDir;
+        $this->tmpFs = $cacheStorage->getFs();
 
         $Zip = new ZipArchive();
         $Zip->open($this->UploadedFile->getPathname());
@@ -65,7 +64,7 @@ abstract class AbstractZip extends AbstractImport
      */
     public function __destruct()
     {
-        $this->fs->deleteDirectory($this->tmpDir);
+        $this->fs->deleteDirectory($this->tmpPath);
     }
 
     /**

@@ -22,6 +22,7 @@ use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -33,7 +34,7 @@ class Handler implements RestInterface
 
     private const int AUDIT_THRESHOLD = 12;
 
-    public function __construct(private Users $requester) {}
+    public function __construct(private Users $requester, private LoggerInterface $logger) {}
 
     public function readOne(): array
     {
@@ -80,23 +81,23 @@ class Handler implements RestInterface
             case 'eln':
                 return new Eln(
                     $this->requester,
-                    EntityType::from($reqBody['entity_type']),
-                    $reqBody['force_entity_type'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
-                    (int) $reqBody['category'],
+                    $this->logger,
+                    EntityType::from($reqBody['entity_type']),
+                    defaultCategory: (int) $reqBody['category'],
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    EntityType::from($reqBody['entity_type']),
-                    $reqBody['force_entity_type'],
                     $reqBody['canread'] ?? BasePermissions::Team->toJson(),
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],
-                    (int) $reqBody['category'],
+                    $this->logger,
+                    EntityType::from($reqBody['entity_type']),
+                    defaultCategory: (int) $reqBody['category'],
                 );
             default:
                 throw new ImproperActionException(sprintf(

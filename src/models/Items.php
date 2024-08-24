@@ -37,8 +37,16 @@ class Items extends AbstractConcreteEntity
         parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
     }
 
-    public function create(?int $template = null, array $tags = array()): int
-    {
+    public function create(
+        ?string $canread = null,
+        ?string $canwrite = null,
+        ?int $template = -1,
+        array $tags = array(),
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+        ?int $status = null,
+    ): int {
         $ItemsTypes = new ItemsTypes($this->Users, $template);
         if ($template === null) {
             $ItemsTypes->setId($ItemsTypes->getDefault());

@@ -120,6 +120,7 @@ final class Db
     {
         $res = $req->fetch();
         if ($res === false || $res === null || $req->rowCount() === 0) {
+            debug_print_backtrace();
             throw new ResourceNotFoundException();
         }
         return $res;

@@ -87,7 +87,7 @@ class Csv extends AbstractImport
                 throw new ImproperActionException('Could not find the title column!');
             }
             $body = $this->getBodyFromRow($row);
-            $category = empty($row['category_title']) ? $this->defaultCategory : $this->getCategoryId($this->entityType, $row['category_title']);
+            $category = empty($row['category_title']) ? $this->defaultCategory : $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : $row['custom_id'];
             $metadata = null;

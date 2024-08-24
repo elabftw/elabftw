@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // no body on template creation
         ApiC.post(EntityType.ItemType, {'title': title}).then(resp => {
           const newId = getNewIdFromPostRequest(resp);
-          window.location.href = `${window.location.href}&templateid=${newId}#itemsCategoriesAnchor`;
+          window.location.replace(`?tab=4&templateid=${newId}#itemsCategoriesAnchor`);
         });
       }
     // RUN ACTION ON SELECTED (BATCH)

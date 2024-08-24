@@ -61,6 +61,9 @@ class Populate
         } else {
             $Category = new ItemsTypes($Entity->Users);
             $Category->bypassWritePermission = true;
+            if (empty($Category->readAll())) {
+                $Category->create('Default');
+            }
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
         }

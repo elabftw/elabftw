@@ -712,6 +712,7 @@ CREATE TABLE `items_edit_mode` (
 
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` INT UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

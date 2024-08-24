@@ -146,6 +146,7 @@ class Eln extends AbstractZip
             return match($dataset['genre']) {
                 'experiment', 'experiments' => EntityType::Experiments,
                 'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
+                'resource template' => EntityType::ItemsTypes,
                 // everything else is a Resource
                 default => EntityType::Items,
             };
@@ -223,7 +224,7 @@ class Eln extends AbstractZip
         // a .eln can contain mixed types: experiments, resources, or templates.
         $entityType = $this->getEntityType($dataset);
 
-        $this->Entity = $entityType->toInstance($Author);
+        $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
 
@@ -231,7 +232,7 @@ class Eln extends AbstractZip
         $categoryId = $this->defaultCategory;
         if (isset($dataset['about'])) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
+            $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;

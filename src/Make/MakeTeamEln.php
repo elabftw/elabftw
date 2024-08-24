@@ -49,7 +49,9 @@ class MakeTeamEln extends AbstractMakeEln
             UNION All
             SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2)
             UNION All
-            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2)';
+            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2)
+            UNION All
+            SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :teamid AND state IN (1, 2)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':teamid', $this->teamId, PDO::PARAM_INT);
         $this->Db->execute($req);

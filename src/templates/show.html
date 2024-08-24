@@ -185,6 +185,9 @@
 
   {% set count = itemsArr|length %}
 
+  {% if App.Users.isAdmin and itemsCategoryArr|length == 0 %}
+  {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='admin.php?tab=4#itemsCategoriesAnchor'>", "</a>")|raw|msg('warning', false) }}
+  {% endif %}
   <div id='showModeContent'>
 
     {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}

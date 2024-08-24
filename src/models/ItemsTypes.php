@@ -34,11 +34,12 @@ class ItemsTypes extends AbstractTemplateEntity
         $defaultPermissions = BasePermissions::Team->toJson();
         $title = Filter::title($title);
         if ($color === null) {
-            // TODO have a function for a random cool color?
+            // TODO have a function for a random cool color? like in status
             $color = '29AEB9';
         }
-        $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
+        $sql = 'INSERT INTO items_types(userid, title, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:userid, :content, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':content', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
@@ -53,6 +54,10 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function getDefault(): int
     {
+        // there might be none, so create one if needed
+        if (empty($this->readAll())) {
+            return $this->create(_('Default'));
+        }
         // there are no default items_types, so just pick the first one from the team
         $sql = 'SELECT id FROM items_types WHERE team = :team LIMIT 1';
         $req = $this->Db->prepare($sql);
@@ -66,7 +71,7 @@ class ItemsTypes extends AbstractTemplateEntity
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, title, color, body, ordering, canread, canwrite, canread_target, canwrite_target
+        $sql = 'SELECT id, userid, created_at, modified_at, team, color, title, status, body, ordering, canread, canwrite, canread_target, canwrite_target, metadata, state
             FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -78,7 +83,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, team, color, title, status, body, canread, canwrite, canread_target, canwrite_target, metadata, state
+        $sql = 'SELECT id, userid, created_at, modified_at, team, color, title, status, body, ordering, canread, canwrite, canread_target, canwrite_target, metadata, state
             FROM items_types WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

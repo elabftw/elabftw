@@ -110,14 +110,14 @@ class MakeEln extends AbstractMakeEln
         }
         // TAGS
         $keywords = array();
-        if ($e['tags']) {
+        if (!empty($e['tags'] ?? array())) {
             // the keywords value is a comma separated list
-            // let's hope no one has a comma in their tags...
-            $keywords = implode(',', explode('|', (string) $e['tags']));
+            // but eLab allows comma in tags, so to prevent issues, replace all commas in tags with -
+            $keywords = implode(',', explode('|', strtr((string) $e['tags'], ',', '-')));
         }
 
         // UPLOADS
-        $uploadedFilesArr = $e['uploads'];
+        $uploadedFilesArr = $e['uploads'] ?? array();
         if (!empty($uploadedFilesArr)) {
             try {
                 // this gets modified by the function so we have the correct real_names
@@ -170,7 +170,7 @@ class MakeEln extends AbstractMakeEln
             'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
-            'encodingFormat' => $e['content_type'] === 1 ? 'text/html' : 'text/markdown',
+            'encodingFormat' => ($e['content_type'] ?? 1) === 1 ? 'text/html' : 'text/markdown',
             'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . '.php?mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
@@ -178,14 +178,14 @@ class MakeEln extends AbstractMakeEln
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
-            array('creativeWorkStatus' => $e['status_title']),
+            array('creativeWorkStatus' => $e['status_title'] ?? ''),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),
             array('mentions' => $mentions),
             array('text' => $e['body']),
         );
-        if ($e['category_title'] !== null) {
+        if (!empty($e['category_title'])) {
             $categoryAtId = '#category-' . $e['category_title'];
             // only add it once
             if (!in_array($categoryAtId, array_column($this->dataEntities, '@id'), true)) {

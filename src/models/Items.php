@@ -43,10 +43,11 @@ class Items extends AbstractConcreteEntity
         string $defaultTemplateMd = '',
         ?int $status = null,
     ): int {
-        $ItemsTypes = new ItemsTypes($this->Users, $template);
-        if ($template === null) {
-            $ItemsTypes->setId($ItemsTypes->getDefault());
+        $ItemsTypes = new ItemsTypes($this->Users);
+        if ($template < 0) {
+            $template = $ItemsTypes->getDefault();
         }
+        $ItemsTypes->setId($template);
         $itemTemplate = $ItemsTypes->readOne();
         // figure out the custom id
         $customId = $this->getNextCustomId($template);

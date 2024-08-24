@@ -88,8 +88,11 @@ class Eln extends AbstractZip
 
         // loop over each hasPart of the root node
         // this is the main import loop
+        $current = 1;
         foreach ($this->crateNodeHasPart as $part) {
+            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
+            $current++;
         }
 
         // NOW CREATE THE LINKS
@@ -258,6 +261,17 @@ class Eln extends AbstractZip
                 // CATEGORY
                 case 'about':
                     $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+                    break;
+                    // CUSTOM ID
+                case 'alternateName':
+                    try {
+                        $this->Entity->patch(Action::Update, array('custom_id' => (string) $value));
+                        // prevent abort if the custom id is already used
+                    } catch (ImproperActionException) {
+                        $this->logger->error(
+                            sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
+                        );
+                    }
                     break;
                     // COMMENTS
                 case 'comment':

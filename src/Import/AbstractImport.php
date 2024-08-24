@@ -70,7 +70,7 @@ abstract class AbstractImport implements ImportInterface
         return $Status->getIdempotentIdFromTitle($status);
     }
 
-    protected function getCategoryId(EntityType $type, string $category): int
+    protected function getCategoryId(EntityType $type, string $category, ?string $color = null): int
     {
         if ($type === EntityType::Experiments) {
             $Category = new ExperimentsCategories($this->Teams);
@@ -80,7 +80,7 @@ abstract class AbstractImport implements ImportInterface
             // but user experience takes over this consideration here
             $Category->bypassWritePermission = true;
         }
-        return $Category->getIdempotentIdFromTitle($category);
+        return $Category->getIdempotentIdFromTitle($category, $color);
     }
 
     /**

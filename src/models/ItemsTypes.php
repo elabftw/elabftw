@@ -33,12 +33,16 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->ExclusiveEditMode->manage();
     }
 
-    public function create(string $title): int
+    public function create(string $title, ?string $color = null): int
     {
         $this->isAdminOrExplode();
         $defaultPermissions = BasePermissions::Team->toJson();
         $title = Filter::title($title);
-        $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target)';
+        if ($color === null) {
+            // TODO have a function for a random cool color?
+            $color = '29AEB9';
+        }
+        $sql = 'INSERT INTO items_types(title, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:content, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -46,6 +50,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':canwrite', $defaultPermissions);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
+        $req->bindParam(':color', $color);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -104,7 +109,7 @@ class ItemsTypes extends AbstractTemplateEntity
     /**
      * Get an id of an existing one or create it and get its id
      */
-    public function getIdempotentIdFromTitle(string $title): int
+    public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
     {
         $sql = 'SELECT id
             FROM items_types WHERE title = :title AND team = :team';
@@ -114,7 +119,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
-            return $this->create($title);
+            return $this->create($title, $color);
         }
         return $res;
     }

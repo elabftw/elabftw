@@ -43,7 +43,7 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
         $ZipArchive->addFile($tsResponse->dataPath, $dataName);
         $ZipArchive->addFile($tsResponse->tokenPath, $tokenName);
         $ZipArchive->close();
-        return $this->entity->Uploads->create($create);
+        return $this->entity->Uploads->create($create, isTimestamp: true);
     }
 
     /**

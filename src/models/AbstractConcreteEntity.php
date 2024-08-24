@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
@@ -253,7 +253,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
         $Maker->saveTimestamp(
             $TimestampUtils->timestamp(),
-            new CreateImmutableArchivedUpload($zipName, $zipPath, $comment),
+            new CreateUpload($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
         );
 
         // decrement the balance
@@ -287,7 +287,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
-        $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
+        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

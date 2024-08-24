@@ -20,11 +20,13 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
-    protected int $immutable = 0;
-
-    protected State $state = State::Normal;
-
-    public function __construct(private string $realName, protected string $filePath, private ?string $comment = null) {}
+    public function __construct(
+        private readonly string $realName,
+        protected readonly string $filePath,
+        private readonly ?string $comment = null,
+        private readonly int $immutable = 0,
+        private readonly State $state = State::Normal,
+    ) {}
 
     public function getFilename(): string
     {

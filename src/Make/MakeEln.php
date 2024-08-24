@@ -193,6 +193,7 @@ class MakeEln extends AbstractMakeEln
                     '@id' => $categoryAtId,
                     '@type' => 'Thing',
                     'name' => $e['category_title'],
+                    'color' => $e['category_color'],
                 );
             }
             $datasetNode['about'] = array('@id' => $categoryAtId);

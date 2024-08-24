@@ -17,6 +17,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
@@ -221,7 +222,8 @@ class Eln extends AbstractZip
         // CATEGORY
         $categoryId = $this->defaultCategory;
         if (isset($dataset['about'])) {
-            $categoryId = $this->getCategoryId($entityType, $this->getNodeFromId($dataset['about']['@id'])['name']);
+            $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
+            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;
@@ -345,12 +347,13 @@ class Eln extends AbstractZip
         $this->Entity->patch(Action::Update, array('bodyappend' => $bodyAppend));
 
         // also save the Dataset node as a .json file so we don't lose information with things not imported
-        // TODO archive it
-        $this->Entity->Uploads->postAction(Action::CreateFromString, array(
-            'file_type' => FileFromString::Json->value,
-            'real_name' => 'dataset-node-from-ro-crate.json',
-            'content' => json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
-        ));
+        // saved as an archived file, so it doesn't appear in the UI but is still there if needed
+        $this->Entity->Uploads->createFromString(
+            FileFromString::Json,
+            'dataset-node-from-ro-crate.json',
+            json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
+            State::Archived,
+        );
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files

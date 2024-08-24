@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\Db;
@@ -66,12 +65,12 @@ class Uploads implements RestInterface
      * Main method for normal file upload
      * @psalm-suppress UndefinedClass
      */
-    public function create(CreateUploadParamsInterface $params): int
+    public function create(CreateUploadParamsInterface $params, bool $isTimestamp = false): int
     {
         // by default we need write access to an entity to upload files
         $rw = 'write';
         // but timestamping/sign only needs read access
-        if ($params instanceof CreateImmutableArchivedUpload) {
+        if ($isTimestamp) {
             $rw = 'read';
         }
         $this->Entity->canOrExplode($rw);
@@ -327,6 +326,29 @@ class Uploads implements RestInterface
         return (int) $req->fetchColumn();
     }
 
+    /**
+     * Create an upload from a string (binary png data or json string or mol file)
+     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
+     */
+    public function createFromString(FileFromString $fileType, string $realName, string $content, State $state = State::Normal): int
+    {
+        // a png file will be received as dataurl, so we need to convert it to binary before saving it
+        if ($fileType === FileFromString::Png) {
+            $content = $this->pngDataUrlToBinary($content);
+        }
+
+        // add file extension if it wasn't provided
+        if (Tools::getExt($realName) === 'unknown') {
+            $realName .= '.' . $fileType->value;
+        }
+        // create a temporary file so we can upload it using create()
+        $tmpFilePath = FsTools::getCacheFile();
+        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
+        $tmpFilePathFs->write(basename($tmpFilePath), $content);
+
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state));
+    }
+
     private function update(UploadParams $params): bool
     {
         $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
@@ -361,29 +383,6 @@ class Uploads implements RestInterface
         $upload = $this->archive();
 
         return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
-    }
-
-    /**
-     * Create an upload from a string (binary png data or json string or mol file)
-     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
-     */
-    private function createFromString(FileFromString $fileType, string $realName, string $content): int
-    {
-        // a png file will be received as dataurl, so we need to convert it to binary before saving it
-        if ($fileType === FileFromString::Png) {
-            $content = $this->pngDataUrlToBinary($content);
-        }
-
-        // add file extension if it wasn't provided
-        if (Tools::getExt($realName) === 'unknown') {
-            $realName .= '.' . $fileType->value;
-        }
-        // create a temporary file so we can upload it using create()
-        $tmpFilePath = FsTools::getCacheFile();
-        $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
-        $tmpFilePathFs->write(basename($tmpFilePath), $content);
-
-        return $this->create(new CreateUpload($realName, $tmpFilePath));
     }
 
     /**

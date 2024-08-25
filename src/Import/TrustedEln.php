@@ -49,6 +49,7 @@ class TrustedEln extends Eln
             $this->logger->info(sprintf('Created user with email: %s', $author['email']));
         }
         $Author->team = $this->requester->team;
+        $Author->userData['team'] = $this->requester->team;
         return $Author;
     }
 }

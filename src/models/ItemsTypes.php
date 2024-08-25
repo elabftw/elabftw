@@ -76,7 +76,7 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         // there might be none, so create one if needed
         if (empty($this->readAll())) {
-            return $this->create(title: _('Default'));
+            return $this->create();
         }
         // there are no default items_types, so just pick the first one from the team
         $sql = 'SELECT id FROM items_types WHERE team = :team LIMIT 1';

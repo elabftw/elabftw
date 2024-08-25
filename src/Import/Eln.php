@@ -41,6 +41,8 @@ use function sprintf;
  */
 class Eln extends AbstractZip
 {
+    protected const string TAGS_SEPARATOR = ',';
+
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
@@ -349,7 +351,7 @@ class Eln extends AbstractZip
                 case 'keywords':
                     $tags = $value;
                     if (is_string($tags)) {
-                        $tags = explode(',', $tags);
+                        $tags = explode(self::TAGS_SEPARATOR, $tags);
                     }
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {

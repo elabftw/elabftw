@@ -151,7 +151,7 @@ class Csv extends AbstractImport
             if (filter_var($content, FILTER_VALIDATE_URL)) {
                 $contentEscaped = sprintf('<a href="%1$s">%1$s</a>', $contentEscaped);
             }
-            $body .= sprintf('<p>%s:%s</p>', htmlspecialchars($subheader), $contentEscaped);
+            $body .= sprintf('<p>%s: %s</p>', htmlspecialchars($subheader), $contentEscaped);
         }
 
         return $body;

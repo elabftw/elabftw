@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -35,11 +36,15 @@ class Experiments extends AbstractConcreteEntity
         ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
+        ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -50,6 +55,7 @@ class Experiments extends AbstractConcreteEntity
 
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
+        $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
         if (empty($body)) {
             $body = null;
@@ -98,11 +104,12 @@ class Experiments extends AbstractConcreteEntity
         $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type, rating)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
+        $req->bindValue(':date', $date->format('Y-m-d'));
         $req->bindParam(':body', $body);
         $req->bindValue(':category', $category);
         $req->bindValue(':status', $status);
@@ -113,6 +120,7 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
         $this->setId($newId);

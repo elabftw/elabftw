@@ -104,7 +104,7 @@ class Handler implements RestInterface
                     $reqBody['file'],
                     $this->logger,
                     EntityType::from($reqBody['entity_type']),
-                    defaultCategory: (int) $reqBody['category'],
+                    category: (int) $reqBody['category'],
                 );
             default:
                 throw new ImproperActionException(sprintf(

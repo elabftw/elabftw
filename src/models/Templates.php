@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -47,11 +48,15 @@ class Templates extends AbstractTemplateEntity
         ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
+        ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -71,8 +76,8 @@ class Templates extends AbstractTemplateEntity
             $contentType = self::CONTENT_MD;
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target, content_type)
-            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type)';
+        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target, content_type, rating)
+            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -82,6 +87,7 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':canread_target', $canread);
         $req->bindParam(':canwrite_target', $canwrite);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();
 

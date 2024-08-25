@@ -1,5 +1,7 @@
 -- schema 165
 ALTER TABLE `items_types` ADD `userid` INT UNSIGNED NOT NULL;
+ALTER TABLE `items_types` ADD `rating` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `experiments_templates` ADD `rating` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 -- find an admin in that team and assign the userid to that user
 UPDATE items_types it
 JOIN (

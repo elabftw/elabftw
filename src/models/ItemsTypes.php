@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -32,11 +33,15 @@ class ItemsTypes extends AbstractTemplateEntity
         ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
+        ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -49,10 +54,11 @@ class ItemsTypes extends AbstractTemplateEntity
         // TODO have a function for a random cool color? like in status
         $color ??= '29AEB9';
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:userid, :content, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, rating)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->bindValue(':content', $title);
+        $req->bindValue(':title', $title);
         $req->bindValue(':body', $body);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
@@ -60,6 +66,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
         $req->bindParam(':color', $color);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

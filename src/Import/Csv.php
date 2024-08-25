@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
+use DateTimeImmutable;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
-use PDO;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -39,14 +36,13 @@ class Csv extends AbstractImport
 
     public function __construct(
         protected Users $requester,
-        // TODO nullable and have it in .eln export so it is not lost on import
         protected string $canread,
         protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected LoggerInterface $logger,
         protected EntityType $entityType,
         private bool $dryRun = false,
-        protected ?int $defaultCategory = null,
+        protected ?int $category = null,
         protected bool $authorIsRequester = true,
     ) {
         parent::__construct(
@@ -69,59 +65,35 @@ class Csv extends AbstractImport
         if ($this->dryRun) {
             return $reader->count();
         }
-        $rows = $reader->getRecords();
-
-        // items have canbook
-        $fsql = 'INSERT INTO %s (team, title, date, body, userid, category, status, custom_id, canread, canwrite, %s elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, %s :elabid, :metadata)';
-
-        $canbook = $canbookPlaceholder = '';
-        if ($this->entityType === EntityType::Items) {
-            $canbook = 'canbook,';
-            $canbookPlaceholder = ':' . $canbook;
-        }
-        $sql = sprintf($fsql, $this->entityType->value, $canbook, $canbookPlaceholder);
-        $req = $this->Db->prepare($sql);
-
         // now loop the rows and do the import
-        foreach ($rows as $row) {
+        foreach ($reader->getRecords() as $row) {
+            // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
             $entity = $this->entityType->toInstance($this->requester);
-            $entity->setId($entity->create(title: $row['title']));
             $body = $this->getBodyFromRow($row);
-            $category = empty($row['category_title']) ? $this->defaultCategory : $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
+            $date = empty($row['date']) ? null : new DateTimeImmutable($row['date']);
+            $category = $this->category;
+            // use the category_title of the row only if we didn't specify a category
+            if (array_key_exists('category_title', $row) && $this->category === null) {
+                $category = $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
+            }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
-            $customId = empty($row['custom_id']) ? null : $row['custom_id'];
-            $metadata = null;
-            if (isset($row['metadata']) && !empty($row['metadata'])) {
-                $metadata = $row['metadata'];
-            }
+            $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
+            $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
+            $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
 
-            if ($this->entityType === EntityType::Items) {
-                $req->bindParam(':canbook', $this->canread);
-            }
-            $req->bindParam(':team', $this->requester->userData['team'], PDO::PARAM_INT);
-            $req->bindParam(':title', $row['title']);
-            $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-            $req->bindValue(':category', $category);
-            $req->bindParam(':status', $status);
-            $req->bindParam(':custom_id', $customId);
-            $req->bindParam(':canread', $this->canread);
-            $req->bindParam(':canwrite', $this->canwrite);
-            $req->bindValue(':elabid', Tools::generateElabid());
-            $req->bindParam(':metadata', $metadata);
-            $this->Db->execute($req);
-            $newItemId = $this->Db->lastInsertId();
-
-
-            // insert tags from the tags column
-            if (isset($row['tags'])) {
-                $entity = $this->entityType->toInstance($this->requester, $newItemId);
-                $this->insertTags($entity, $row['tags']);
-            }
+            $entity->create(
+                title: $row['title'],
+                body: $body,
+                date: $date,
+                tags: $tags,
+                template: $category,
+                status: $status,
+                customId: $customId,
+                metadata: $metadata,
+            );
 
             $this->inserted++;
         }
@@ -152,12 +124,25 @@ class Csv extends AbstractImport
      */
     private function getBodyFromRow(array $row): string
     {
-        // get rid of the title
+        // if there is a row called "body", use that instead
+        if (array_key_exists('body', $row)) {
+            return $row['body'] ?? '';
+        }
+        // get rid of rows that are processed as columns
         unset($row['title']);
-        // and the tags
         unset($row['tags']);
-        // and the metadata
         unset($row['metadata']);
+        unset($row['category']);
+        unset($row['category_title']);
+        unset($row['category_color']);
+        unset($row['status']);
+        unset($row['status_title']);
+        unset($row['status_color']);
+        unset($row['id']);
+        unset($row['custom_id']);
+        unset($row['elabid']);
+        unset($row['date']);
+        unset($row['rating']);
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
@@ -170,16 +155,5 @@ class Csv extends AbstractImport
         }
 
         return $body;
-    }
-
-    private function insertTags(AbstractEntity $entity, string $tags): void
-    {
-        $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
-        foreach ($tagsArr as $tag) {
-            // maybe it's empty for this row
-            if ($tag) {
-                $entity->Tags->postAction(Action::Create, array('tag' => $tag));
-            }
-        }
     }
 }

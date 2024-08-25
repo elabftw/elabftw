@@ -46,7 +46,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -69,7 +69,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->logger,
             EntityType::Experiments,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -93,7 +93,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -116,7 +116,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $this->expectException(ImproperActionException::class);
         $Import->import();

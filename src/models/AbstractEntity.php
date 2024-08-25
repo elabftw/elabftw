@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -123,11 +124,15 @@ abstract class AbstractEntity implements RestInterface
         ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
+        ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',

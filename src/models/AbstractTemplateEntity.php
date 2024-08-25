@@ -14,19 +14,16 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\CreateFromTitleInterface;
 
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
  */
-abstract class AbstractTemplateEntity extends AbstractEntity implements CreateFromTitleInterface
+abstract class AbstractTemplateEntity extends AbstractEntity
 {
-    abstract public function create(string $title): int;
-
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create($reqBody['title'] ?? _('Untitled')),
+            Action::Create => $this->create(title: $reqBody['title'] ?? null),
             Action::Duplicate => $this->duplicate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

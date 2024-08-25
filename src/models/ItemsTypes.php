@@ -28,19 +28,32 @@ class ItemsTypes extends AbstractTemplateEntity
 {
     public EntityType $entityType = EntityType::ItemsTypes;
 
-    public function create(string $title, ?string $color = null): int
-    {
+    public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+        // specific to items_types
+        ?string $color = null,
+    ): int {
+        $title = Filter::title($title ?? _('Default'));
         $this->isAdminOrExplode();
         $defaultPermissions = BasePermissions::Team->toJson();
-        $title = Filter::title($title);
-        if ($color === null) {
-            // TODO have a function for a random cool color? like in status
-            $color = '29AEB9';
-        }
-        $sql = 'INSERT INTO items_types(userid, title, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:userid, :content, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
+        // TODO have a function for a random cool color? like in status
+        $color ??= '29AEB9';
+
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color) VALUES(:userid, :content, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':content', $title);
+        $req->bindValue(':body', $body);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
         $req->bindParam(':canwrite', $defaultPermissions);
@@ -56,7 +69,7 @@ class ItemsTypes extends AbstractTemplateEntity
     {
         // there might be none, so create one if needed
         if (empty($this->readAll())) {
-            return $this->create(_('Default'));
+            return $this->create(title: _('Default'));
         }
         // there are no default items_types, so just pick the first one from the team
         $sql = 'SELECT id FROM items_types WHERE team = :team LIMIT 1';
@@ -119,7 +132,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
-            return $this->create($title, $color);
+            return $this->create(title: $title, color: $color);
         }
         return $res;
     }

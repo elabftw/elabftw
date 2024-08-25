@@ -28,7 +28,6 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -55,19 +54,8 @@ use function sprintf;
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
-abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFromTemplateInterface
+abstract class AbstractConcreteEntity extends AbstractEntity
 {
-    abstract public function create(
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?int $template = -1,
-        array $tags = array(),
-        bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
-        ?int $status = null,
-    ): int;
-
     public function postAction(Action $action, array $reqBody): int
     {
         $Teams = new Teams($this->Users, $this->Users->team);
@@ -77,14 +65,17 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : BasePermissions::User->toJson();
         return match ($action) {
             Action::Create => $this->create(
-                $canread,
-                $canwrite,
-                (int) ($reqBody['category_id'] ?? -1),
-                $reqBody['tags'] ?? array(),
-                (bool) $teamConfigArr['force_exp_tpl'],
-                $teamConfigArr['common_template'],
-                $teamConfigArr['common_template_md'],
-                $reqBody['status'] ?? null,
+                // the category_id is there for backward compatibility (changed in 5.1)
+                template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                title: $reqBody['title'] ?? null,
+                canread: $canread,
+                canwrite: $canwrite,
+                tags: $reqBody['tags'] ?? array(),
+                category: $reqBody['category'] ?? null,
+                status: $reqBody['status'] ?? null,
+                forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
+                defaultTemplateHtml: $teamConfigArr['common_template'],
+                defaultTemplateMd: $teamConfigArr['common_template_md'],
             ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),

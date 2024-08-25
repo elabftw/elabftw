@@ -56,7 +56,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
     }
 
@@ -78,7 +78,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
     }
 
@@ -100,7 +100,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Experiments,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
@@ -124,7 +124,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(9, $Import->getInserted());
@@ -148,7 +148,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
@@ -172,7 +172,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Experiments,
-            defaultCategory: 1,
+            category: 1,
         );
         $this->expectException(ImproperActionException::class);
         $Import->import();
@@ -196,7 +196,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $this->expectException(ImproperActionException::class);
         $Import->import();
@@ -220,7 +220,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->fs,
             $this->logger,
             EntityType::Items,
-            defaultCategory: 1,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());

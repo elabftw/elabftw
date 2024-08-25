@@ -43,9 +43,20 @@ class Templates extends AbstractTemplateEntity
 
     public EntityType $entityType = EntityType::Templates;
 
-    public function create(string $title): int
-    {
-        $title = Filter::title($title);
+    public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+    ): int {
+        $title = Filter::title($title ?? _('Untitled'));
         $canread = BasePermissions::Team->toJson();
         $canwrite = BasePermissions::User->toJson();
 

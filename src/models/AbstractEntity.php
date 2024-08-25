@@ -119,6 +119,20 @@ abstract class AbstractEntity implements RestInterface
         $this->ExclusiveEditMode->manage();
     }
 
+    abstract public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+    ): int;
+
     /**
      * Duplicate an item
      *

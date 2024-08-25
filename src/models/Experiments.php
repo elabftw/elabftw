@@ -18,6 +18,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -31,23 +32,28 @@ class Experiments extends AbstractConcreteEntity
     public EntityType $entityType = EntityType::Experiments;
 
     public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
         ?string $canread = null,
         ?string $canwrite = null,
-        ?int $template = -1,
         array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
-        ?int $status = null,
     ): int {
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
         $Templates = new Templates($this->Users);
 
         // defaults
-        $title = _('Untitled');
-        $category = null;
-        $body = null;
+        $title = Filter::title($title ?? _('Untitled'));
+        $body = Filter::body($body);
+        if (empty($body)) {
+            $body = null;
+        }
         $metadata = null;
         $contentType = AbstractEntity::CONTENT_HTML;
         if ($this->Users->userData['use_markdown'] ?? 0) {

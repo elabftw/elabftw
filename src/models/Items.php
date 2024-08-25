@@ -20,6 +20,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,14 +35,17 @@ class Items extends AbstractConcreteEntity
     public EntityType $entityType = EntityType::Items;
 
     public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
         ?string $canread = null,
         ?string $canwrite = null,
-        ?int $template = -1,
         array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
-        ?int $status = null,
     ): int {
         $ItemsTypes = new ItemsTypes($this->Users);
         if ($template < 0) {
@@ -49,6 +53,7 @@ class Items extends AbstractConcreteEntity
         }
         $ItemsTypes->setId($template);
         $itemTemplate = $ItemsTypes->readOne();
+        $title = Filter::title($title ?? _('Untitled'));
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
 
@@ -56,7 +61,7 @@ class Items extends AbstractConcreteEntity
             VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindValue(':title', _('Untitled'));
+        $req->bindParam(':title', $title);
         $req->bindParam(':status', $itemTemplate['status']);
         $req->bindParam(':body', $itemTemplate['body']);
         $req->bindParam(':category', $template, PDO::PARAM_INT);

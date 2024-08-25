@@ -65,7 +65,7 @@ class Eln extends AbstractZip
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
         private bool $dryRun = false,
-        protected ?int $defaultCategory = null,
+        protected ?int $category = null,
         protected bool $authorIsRequester = true,
     ) {
         parent::__construct(
@@ -229,8 +229,8 @@ class Eln extends AbstractZip
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
 
         // CATEGORY
-        $categoryId = $this->defaultCategory;
-        if (isset($dataset['about'])) {
+        $categoryId = $this->category;
+        if (isset($dataset['about']) && $this->category === null) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
             $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
         }
@@ -252,7 +252,7 @@ class Eln extends AbstractZip
             }
             $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            $this->Entity->setId($this->Entity->create($title));
+            $this->Entity->setId($this->Entity->create(title: $title));
         }
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);

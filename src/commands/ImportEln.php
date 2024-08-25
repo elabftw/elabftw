@@ -47,7 +47,8 @@ class ImportEln extends Command
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in cache/elab folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
-            ->addOption('type', 'y', InputOption::VALUE_REQUIRED, 'Force entity type')
+            ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Force entity type. Values: ' . implode(', ', array_map(fn($case) => $case->value, EntityType::cases())))
+            ->addOption('category', 'c', InputOption::VALUE_REQUIRED, 'Force category: provide a category ID that belongs to the team')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done');
     }
 
@@ -61,14 +62,18 @@ class ImportEln extends Command
         $user = new UltraAdmin(team: $teamid);
         $authorIsRequester = false;
         $infoTrailer = '';
-        if ($input->hasParameterOption('userid')) {
+        if ($input->getOption('userid')) {
             $user = new Users((int) $input->getOption('userid'), $teamid);
             $authorIsRequester = true;
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
         }
         $entityType = null;
-        if ($input->hasParameterOption('type')) {
+        if ($input->getOption('type')) {
             $entityType = EntityType::tryFrom((string) $input->getOption('type'));
+        }
+        $defaultCategory = null;
+        if ($input->getOption('category')) {
+            $defaultCategory = (int) $input->getOption('category');
         }
         $Importer = new TrustedEln(
             $user,
@@ -79,6 +84,7 @@ class ImportEln extends Command
             $logger,
             $entityType,
             $input->getOption('dry-run'),
+            category: $defaultCategory,
             authorIsRequester: $authorIsRequester,
         );
         $Importer->import();

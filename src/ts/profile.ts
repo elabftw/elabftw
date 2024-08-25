@@ -20,31 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  // when selecting the target type, change the category listing
-  document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
-    const el = (event.target as HTMLInputElement);
-    const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    // Remove all options
-    for (let i = categorySelect.options.length - 1; i >= 0; i--) {
-      categorySelect.remove(i);
-    }
-    let entityType = el.value;
-    if (el.value === 'experiments_templates') {
-      entityType = 'experiments';
-    }
-    ApiC.getJson(`teams/current/${entityType}_categories`).then(categories => {
-      // Append new options
-      categories.forEach(category => {
-        const newOption = document.createElement('option');
-        newOption.value = category.id;
-        newOption.text = category.title;
-        categorySelect.add(newOption);
-      });
-    });
-  });
-
   // when the file is selected, check for its size, so we can display an error before submit
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
+    const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
+    importOptionsDiv.removeAttribute('hidden');
     const input = event.target as HTMLInputElement;
     const errorDivId = input.id + '_errorDiv';
     // make sure previous error message is removed first
@@ -57,7 +36,43 @@ document.addEventListener('DOMContentLoaded', () => {
       errorDiv.innerText = 'Error: file is too large!';
       input.parentNode.appendChild(errorDiv);
     }
+    // if it's a csv, hide the experiments templates
+    const onlyElnDiv = document.getElementById('onlyElnOptions') as HTMLElement;
+    onlyElnDiv.removeAttribute('hidden');
+    if (input.files[0].name.endsWith('.csv')) {
+      onlyElnDiv.setAttribute('hidden', 'hidden');
+    }
   });
+
+  // when selecting the target type, change the category listing
+  document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
+    const el = (event.target as HTMLInputElement);
+    const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
+    // Remove all options
+    for (let i = categorySelect.options.length - 1; i >= 0; i--) {
+      categorySelect.remove(i);
+    }
+    let entityType = el.value;
+    if (el.value === 'experiments_templates') {
+      entityType = 'experiments';
+    }
+    const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
+    selectCategoryDiv.removeAttribute('hidden');
+    if (el.value === 'items_types') {
+      selectCategoryDiv.setAttribute('hidden', 'hidden');
+      return;
+    }
+    ApiC.getJson(`teams/current/${entityType}_categories`).then(categories => {
+      // Append new options
+      categories.forEach(category => {
+        const newOption = document.createElement('option');
+        newOption.value = category.id;
+        newOption.text = category.title;
+        categorySelect.add(newOption);
+      });
+    });
+  });
+
 
   document.getElementById('importFileForm')?.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -84,14 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }).then(async response => {
       if (response.status === 201) {
         notif({msg: 'File imported successfully', res: true});
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalBtnContent;
       } else {
         const msg = await response.text();
         notifError(new Error('Import error: ' + msg));
+        console.error(msg);
       }
     }).catch(error => {
       notifError(new Error('Import error: ' + error.message));
+    }).finally(() => {
+      submitBtn.removeAttribute('disabled');
+      submitBtn.textContent = originalBtnContent;
     });
   });
 

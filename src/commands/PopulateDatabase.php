@@ -244,7 +244,7 @@ class PopulateDatabase extends Command
             foreach ($yaml['items_types'] as $items_types) {
                 $user = new Users(1, (int) ($items_types['team'] ?? 1));
                 $ItemsTypes = new ItemsTypes($user);
-                $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
+                $ItemsTypes->setId($ItemsTypes->create(title: $items_types['name']));
                 $ItemsTypes->bypassWritePermission = true;
                 $defaultPermissions = BasePermissions::Team->toJson();
                 $patch = array(

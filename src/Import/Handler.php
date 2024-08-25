@@ -79,15 +79,22 @@ class Handler implements RestInterface
     {
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
+                $authorIsRequester = true;
+                $owner = (int) ($reqBody['owner'] ?? $this->requester->userid);
+                if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
+                    $authorIsRequester = false;
+                    $this->requester = new Users($owner, $this->requester->team);
+                }
                 return new Eln(
                     $this->requester,
-                    $reqBody['canread'] ?? BasePermissions::Team->toJson(),
-                    $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
+                    $reqBody['canread']->toJson(),
+                    $reqBody['canwrite']->toJson(),
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
                     EntityType::from($reqBody['entity_type']),
-                    defaultCategory: (int) $reqBody['category'],
+                    category: (int) $reqBody['category'],
+                    authorIsRequester: $authorIsRequester,
                 );
             case 'csv':
                 return new Csv(

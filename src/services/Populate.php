@@ -62,7 +62,7 @@ class Populate
             $Category = new ItemsTypes($Entity->Users);
             $Category->bypassWritePermission = true;
             if (empty($Category->readAll())) {
-                $Category->create('Default');
+                $Category->create();
             }
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
@@ -244,9 +244,7 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i <= self::TEMPLATES_ITER; $i++) {
-                $id = $Templates->create($this->faker->sentence());
-                $Templates->setId($id);
-                $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));
+                $Templates->create(title: $this->faker->sentence(), body: $this->faker->realText(1000));
             }
         }
     }

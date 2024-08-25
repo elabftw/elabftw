@@ -72,13 +72,15 @@ class Csv extends AbstractImport
         $rows = $reader->getRecords();
 
         // items have canbook
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
+        $fsql = 'INSERT INTO %s (team, title, date, body, userid, category, status, custom_id, canread, canwrite, %s elabid, metadata)
+            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, %s :elabid, :metadata)';
 
-        if ($this->entityType === EntityType::Experiments) {
-            $sql = 'INSERT INTO experiments(team, title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
-                VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
+        $canbook = $canbookPlaceholder = '';
+        if ($this->entityType === EntityType::Items) {
+            $canbook = 'canbook,';
+            $canbookPlaceholder = ':' . $canbook;
         }
+        $sql = sprintf($fsql, $this->entityType->value, $canbook, $canbookPlaceholder);
         $req = $this->Db->prepare($sql);
 
         // now loop the rows and do the import
@@ -86,6 +88,8 @@ class Csv extends AbstractImport
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
+            $entity = $this->entityType->toInstance($this->requester);
+            $entity->setId($entity->create(title: $row['title']));
             $body = $this->getBodyFromRow($row);
             $category = empty($row['category_title']) ? $this->defaultCategory : $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);

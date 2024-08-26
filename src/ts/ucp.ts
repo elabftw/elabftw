@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
     } else if (el.matches('[data-action="patch-account"]')) {
-      const params = collectForm(document.getElementById('ucp-account-form'));
+      const params = collectForm(document.getElementById('ucp-account-form'), false);
       if (params['orcid'] === '') {
         delete params['orcid'];
       }

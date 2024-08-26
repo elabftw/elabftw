@@ -189,11 +189,15 @@ class Saml implements AuthInterface
         }
 
         // update some user attributes with value from IDP
-        $Users->patch(Action::Update, array(
-            'firstname' => $this->getName(),
-            'lastname' => $this->getName(true),
-            'orgid' => $orgid,
-        ));
+        $firstname = $this->getName();
+        $lastname = $this->getName(true);
+        if (!empty($firstname) && !empty($lastname)) {
+            $Users->patch(Action::Update, array(
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+            ));
+        }
+        $Users->patch(Action::Update, array('orgid' => $orgid));
 
         // load the teams from db
         $UsersHelper = new UsersHelper($this->AuthResponse->userid);

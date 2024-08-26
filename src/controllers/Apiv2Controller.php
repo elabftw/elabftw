@@ -198,8 +198,8 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['entity_type'] = $this->Request->request->getString('entity_type');
             $this->reqBody['category'] = $this->Request->request->getInt('category');
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');
-            $this->reqBody['canread'] = BasePermissions::from($this->Request->request->getInt('canread'))->toJson();
-            $this->reqBody['canwrite'] = BasePermissions::from($this->Request->request->getInt('canwrite'))->toJson();
+            $this->reqBody['canread'] = (BasePermissions::tryFrom($this->Request->request->getInt('canread')) ?? BasePermissions::Team)->toJson();
+            $this->reqBody['canwrite'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite')) ?? BasePermissions::User)->toJson();
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getApiPath(), $id)));

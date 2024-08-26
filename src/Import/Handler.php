@@ -87,8 +87,8 @@ class Handler implements RestInterface
                 }
                 return new Eln(
                     $this->requester,
-                    $reqBody['canread']->toJson(),
-                    $reqBody['canwrite']->toJson(),
+                    $reqBody['canread'],
+                    $reqBody['canwrite'],
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,

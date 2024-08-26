@@ -48,6 +48,8 @@ class Saml implements AuthInterface
 {
     private const int TEAM_SELECTION_REQUIRED = 1;
 
+    private const string UNKNOWN_VALUE = 'Unknown';
+
     private AuthResponse $AuthResponse;
 
     private array $samlUserdata = array();
@@ -191,7 +193,7 @@ class Saml implements AuthInterface
         // update some user attributes with value from IDP
         $firstname = $this->getName();
         $lastname = $this->getName(true);
-        if (!empty($firstname) && !empty($lastname)) {
+        if ($firstname !== self::UNKNOWN_VALUE && $lastname !== self::UNKNOWN_VALUE) {
             $Users->patch(Action::Update, array(
                 'firstname' => $firstname,
                 'lastname' => $lastname,
@@ -231,7 +233,7 @@ class Saml implements AuthInterface
 
     private function getOrgid(): ?string
     {
-        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? 'Unknown'] ?? null;
+        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? self::UNKNOWN_VALUE] ?? null;
         if (is_array($orgid)) {
             return $orgid[0];
         }
@@ -246,7 +248,7 @@ class Saml implements AuthInterface
         // toggle firstname or lastname
         $selector = $last ? 'lnameAttr' : 'fnameAttr';
 
-        $name = $this->samlUserdata[$this->settings['idp'][$selector] ?? 'Unknown'] ?? 'Unknown';
+        $name = $this->samlUserdata[$this->settings['idp'][$selector] ?? self::UNKNOWN_VALUE] ?? self::UNKNOWN_VALUE;
         if (is_array($name)) {
             return $name[0];
         }

@@ -23,6 +23,7 @@ const t = {
     "now": "Now",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "お待ちください…",
+    "remove": "Remove",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "ファイルの名前を入力してください",
     "resource-not-found": "このIDで表示するものはありません",

@@ -568,6 +568,8 @@ export class Metadata {
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
             deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            deleteBtn.type = 'button';
+            deleteBtn.setAttribute('aria-label', i18next.t('remove'));
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
@@ -593,9 +595,8 @@ export class Metadata {
               listItem.append(element.element);
             }
 
-            // this is useful for Sortable (re-ordering the elements): it needs to have an id
-            // and we use the label to get the name of the field
-            listItem.id = label.innerText;
+            // the data-name attribute is picked up by Sortable jquery-ui. Do not use the default id attribute as it's not a number.
+            listItem.dataset.name = label.innerText;
 
             wrapperUl.append(listItem);
           }

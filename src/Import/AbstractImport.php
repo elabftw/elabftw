@@ -16,15 +16,12 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
-use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
-use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -39,29 +36,19 @@ abstract class AbstractImport implements ImportInterface
     // final number of entries imported
     protected int $inserted = 0;
 
-    protected AbstractEntity $Entity;
-
     protected Teams $Teams;
 
     protected array $allowedMimes = array();
 
     public function __construct(
         protected Users $requester,
-        protected EntityType $entityType,
-        protected bool $forceEntityType,
-        protected string $canread,
-        protected string $canwrite,
         protected UploadedFile $UploadedFile,
-        protected ?int $defaultCategory = null,
     ) {
         $this->Db = Db::getConnection();
-        $this->Entity = $this->entityType->toInstance($this->requester);
         $this->Teams = new Teams($this->requester, $this->requester->team);
         // yes, this opens it up to normal users that normally cannot create status and category,
         // but user experience takes over this consideration here
         $this->Teams->bypassWritePermission = true;
-        $this->canread = Check::visibility($canread);
-        $this->canwrite = Check::visibility($canwrite);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }
@@ -73,9 +60,9 @@ abstract class AbstractImport implements ImportInterface
         return $this->inserted;
     }
 
-    protected function getStatusId(string $status): int
+    protected function getStatusId(EntityType $type, string $status): int
     {
-        if ($this->Entity instanceof Experiments) {
+        if ($type === EntityType::Experiments) {
             $Status = new ExperimentsStatus($this->Teams);
         } else { // items
             $Status = new ItemsStatus($this->Teams);
@@ -83,17 +70,17 @@ abstract class AbstractImport implements ImportInterface
         return $Status->getIdempotentIdFromTitle($status);
     }
 
-    protected function getCategoryId(string $category): int
+    protected function getCategoryId(EntityType $type, Users $author, string $category, ?string $color = null): int
     {
-        if ($this->Entity instanceof Experiments) {
+        if ($type === EntityType::Experiments) {
             $Category = new ExperimentsCategories($this->Teams);
         } else { // items
-            $Category = new ItemsTypes($this->requester);
+            $Category = new ItemsTypes($author);
             // yes, this opens it up to normal users that normally cannot create status and category,
             // but user experience takes over this consideration here
             $Category->bypassWritePermission = true;
         }
-        return $Category->getIdempotentIdFromTitle($category);
+        return $Category->getIdempotentIdFromTitle($category, $color);
     }
 
     /**

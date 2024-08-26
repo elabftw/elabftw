@@ -28,7 +28,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Items->create(1);
+        $new = $this->Items->create(template: 1);
         $this->assertTrue((bool) Check::id($new));
         $this->Items->setId($new);
         $this->Items->destroy();
@@ -36,7 +36,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $new = $this->Items->create(1);
+        $new = $this->Items->create(template: 1);
         $this->Items->setId($new);
         $this->Items->canOrExplode('read');
         $this->assertTrue(is_array($this->Items->entityData));
@@ -46,7 +46,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Items->create(1);
+        $new = $this->Items->create(template: 1);
         $this->Items->setId($new);
         $entityData = $this->Items->patch(Action::Update, array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
@@ -63,7 +63,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         // use a normal user
         $Items = new Items(new Users(2, 1));
-        $new = $Items->create(1);
+        $new = $Items->create(template: 1);
         $Items->setId($new);
         $Items->patch(Action::Update, array('book_users_can_in_past' => '1'));
         $this->assertTrue($Items->canBookInPast());
@@ -83,7 +83,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock(): void
     {
-        $new = $this->Items->create(1, array('locked'));
+        $new = $this->Items->create(template: 1, tags: array('locked'));
         $this->Items->setId($new);
 
         // lock

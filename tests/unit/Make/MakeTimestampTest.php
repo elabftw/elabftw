@@ -13,9 +13,10 @@ namespace Elabftw\Make;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -102,7 +103,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testDigicertTimestamp(): void
@@ -120,7 +121,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testUniversignTimestamp(): void
@@ -143,7 +144,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testGlobalSign(): void
@@ -226,6 +227,6 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('yestermorrow');
         $this->expectException(ImproperActionException::class);
-        $Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
+        $Maker->saveTimestamp($tsResponseMock, new CreateUpload('realName', 'longName', $this->comment, 1, State::Archived));
     }
 }

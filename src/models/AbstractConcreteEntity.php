@@ -13,13 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
@@ -27,7 +28,6 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\CreateFromTemplateInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -54,14 +54,29 @@ use function sprintf;
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
-abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFromTemplateInterface
+abstract class AbstractConcreteEntity extends AbstractEntity
 {
-    abstract public function create(?int $template, array $tags): int;
-
     public function postAction(Action $action, array $reqBody): int
     {
+        $Teams = new Teams($this->Users, $this->Users->team);
+        $teamConfigArr = $Teams->readOne();
+        // enforce the permissions if the admin has set them
+        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : BasePermissions::Team->toJson();
+        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : BasePermissions::User->toJson();
         return match ($action) {
-            Action::Create => $this->create((int) ($reqBody['category_id'] ?? -1), $reqBody['tags'] ?? array()),
+            Action::Create => $this->create(
+                // the category_id is there for backward compatibility (changed in 5.1)
+                template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                title: $reqBody['title'] ?? null,
+                canread: $canread,
+                canwrite: $canwrite,
+                tags: $reqBody['tags'] ?? array(),
+                category: $reqBody['category'] ?? null,
+                status: $reqBody['status'] ?? null,
+                forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
+                defaultTemplateHtml: $teamConfigArr['common_template'],
+                defaultTemplateMd: $teamConfigArr['common_template_md'],
+            ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
@@ -229,7 +244,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
         $Maker->saveTimestamp(
             $TimestampUtils->timestamp(),
-            new CreateImmutableArchivedUpload($zipName, $zipPath, $comment),
+            new CreateUpload($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
         );
 
         // decrement the balance
@@ -263,7 +278,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity implements CreateFr
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
-        $this->Uploads->create(new CreateImmutableArchivedUpload('signature archive.zip', $zipPath, $comment));
+        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

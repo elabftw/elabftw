@@ -149,71 +149,83 @@
       <label class='d-block' for='importFileInput'>{{ 'Select a file to import'|trans }}</label>
       <div class='d-flex'>
         <div>
-          <input id='importFileInput' required name='file' type='file' accept='.eln,.csv' />
+          <input id='importFileInput' required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
           <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
           {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
         </div>
       </div>
 
-      <hr>
-      <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
-      <div id='importRadioEntityType'>
-        <div class='form-check form-check-inline'>
-          <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
-          <label class='form-check-label' for='entityTypeRadioExperiments'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</label>
-        </div>
-        <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
-          <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
-        </div>
-        <div class='form-check form-check-inline'>
-          <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
-          <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
-        </div>
-      </div>
-
-      <hr>
-      <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
-      <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
-        {% for cat in experimentsCategoryArr %}
-          <option value='{{ cat.id }}'>{{ cat.title }}</option>
-        {% endfor %}
-      </select>
-
-      {# if we are admin we can select the owner #}
-      {% if App.Users.isAdmin %}
+      <div id='importOptionsDiv' hidden>
         <hr>
-        <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
-        <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+        <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
+        <div id='importRadioEntityType'>
+          <div class='form-check form-check-inline'>
+            <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
+            <label class='form-check-label' for='entityTypeRadioExperiments'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</label>
+          </div>
+          <div class='form-check form-check-inline'>
+            <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
+            <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
+          </div>
+          <div class='d-inline' id='onlyElnOptions'>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
+              <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
+            </div>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItemsTypes' value='items_types'>
+              <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources Categories'|trans }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div id='selectCategoryDiv'>
+          <hr>
+          <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
+          <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
+            {% for cat in experimentsCategoryArr %}
+              <option value='{{ cat.id }}'>{{ cat.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {# if we are admin we can select the owner #}
+        {% if App.Users.isAdmin %}
+          <hr>
+          <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
+          <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
+            {% for user in usersArr %}
+              <option {{ user.userid == App.Users.userid ? 'selected' }} value='{{ user.userid }}'>{{ user.fullname }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type='hidden' name='owner' value='{{ App.Users.userid }}' />
+        {% endif %}
+
+        <hr>
+        <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
+        <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ 30 == key ? ' selected' }}
+            >{{ value|trans }}</option>
+            {% endfor %}
+        </select>
+
+        <hr>
+        <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
+        <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ 20 == key ? ' selected' }}
+            >{{ value|trans }}</option>
           {% endfor %}
         </select>
-      {% endif %}
 
-      <hr>
-      <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
-      <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}'
-          {{ 30 == key ? ' selected' }}
-          >{{ value|trans }}</option>
-          {% endfor %}
-      </select>
-
-      <hr>
-      <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
-      <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}'
-          {{ 20 == key ? ' selected' }}
-          >{{ value|trans }}</option>
-        {% endfor %}
-      </select>
-
-      <hr>
-      <div class='mt-2'>
-        <button type='submit' id='importFileBtn' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+        <hr>
+        <div class='mt-2'>
+          <button type='submit' id='importFileBtn' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+        </div>
       </div>
     </form>
     <div id='importResultDiv'></div>

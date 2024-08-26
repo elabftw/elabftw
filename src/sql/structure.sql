@@ -323,6 +323,7 @@ CREATE TABLE `experiments_templates` (
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
+  `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -712,6 +713,7 @@ CREATE TABLE `items_edit_mode` (
 
 CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` INT UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -733,6 +735,7 @@ CREATE TABLE `items_types` (
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
+  `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

@@ -137,9 +137,7 @@
 {% if Entity.entityData.metadata %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='extraFieldsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
   <div class='mt-2 col-md-6' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
-    <ul class='list-group'>
-      {{ Entity.entityData.metadata|formatMetadata }}
-    </ul>
+    {{ Entity.entityData.metadata|formatMetadata }}
   </div>
   <hr>
 {% endif %}

@@ -31,8 +31,8 @@ enum EntityType: string
         return match ($this) {
             $this::Experiments => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
             $this::Items => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
-            $this::Templates => new Templates($users, $entityId),
-            $this::ItemsTypes => new ItemsTypes($users, $entityId),
+            $this::Templates => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            $this::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
         };
     }
 

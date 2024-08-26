@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
+use DateTimeImmutable;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
+use Elabftw\Models\Users;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader;
-use PDO;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import entries from a csv file.
@@ -34,12 +34,76 @@ class Csv extends AbstractImport
         'text/tsv',
     );
 
+    public function __construct(
+        protected Users $requester,
+        protected string $canread,
+        protected string $canwrite,
+        protected UploadedFile $UploadedFile,
+        protected LoggerInterface $logger,
+        protected EntityType $entityType,
+        private bool $dryRun = false,
+        protected ?int $category = null,
+        protected bool $authorIsRequester = true,
+    ) {
+        parent::__construct(
+            $requester,
+            $UploadedFile,
+        );
+        if ($dryRun) {
+            $this->logger->info('Running in dry-mode: nothing will be imported.');
+        }
+    }
+
     /**
      * Do the work
      *
      * @throws ImproperActionException
      */
-    public function import(): void
+    public function import(): int
+    {
+        $reader = $this->preProcess();
+        if ($this->dryRun) {
+            return $reader->count();
+        }
+        // now loop the rows and do the import
+        foreach ($reader->getRecords() as $row) {
+            // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
+            if (empty($row['title'])) {
+                throw new ImproperActionException('Could not find the title column!');
+            }
+            $entity = $this->entityType->toInstance($this->requester);
+            $body = $this->getBodyFromRow($row);
+            $date = empty($row['date']) ? null : new DateTimeImmutable($row['date']);
+            $category = $this->category;
+            // use the category_title of the row only if we didn't specify a category
+            if (array_key_exists('category_title', $row) && $this->category === null) {
+                $category = $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
+            }
+            $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
+            $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
+            $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
+            $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
+
+            $entity->create(
+                title: $row['title'],
+                body: $body,
+                date: $date,
+                tags: $tags,
+                template: $category,
+                status: $status,
+                customId: $customId,
+                metadata: $metadata,
+            );
+
+            $this->inserted++;
+        }
+        return $this->getInserted();
+    }
+
+    /**
+     * @return Reader<array>
+     */
+    private function preProcess(): Reader
     {
         // we directly read from temporary uploaded file location and do not need to use the cache folder as no extraction is necessary for a .csv
         $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
@@ -50,58 +114,7 @@ class Csv extends AbstractImport
         // set the delimiter from the first value
         $csv->setDelimiter((string) key($delimitersCount));
         $csv->setHeaderOffset(0);
-        $rows = $csv->getRecords();
-
-        // items have canbook
-        $sql = 'INSERT INTO items(team, title, date, body, userid, category, status, custom_id, canread, canwrite, canbook, elabid, metadata)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :canbook, :elabid, :metadata)';
-
-        if ($this->Entity instanceof Experiments) {
-            $sql = 'INSERT INTO experiments(team, title, date, body, userid, category, status, custom_id, canread, canwrite, elabid, metadata)
-                VALUES(:team, :title, CURDATE(), :body, :userid, :category, :status, :custom_id, :canread, :canwrite, :elabid, :metadata)';
-        }
-        $req = $this->Db->prepare($sql);
-
-        // now loop the rows and do the import
-        foreach ($rows as $row) {
-            if (empty($row['title'])) {
-                throw new ImproperActionException('Could not find the title column!');
-            }
-            $body = $this->getBodyFromRow($row);
-            $category = empty($row['category_title']) ? null : $this->getCategoryId($row['category_title']);
-            $status = empty($row['status_title']) ? null : $this->getStatusId($row['status_title']);
-            $customId = empty($row['custom_id']) ? null : $row['custom_id'];
-            $metadata = null;
-            if (isset($row['metadata']) && !empty($row['metadata'])) {
-                $metadata = $row['metadata'];
-            }
-
-            if ($this->Entity instanceof Items) {
-                $req->bindParam(':canbook', $this->canread);
-            }
-            $req->bindParam(':team', $this->requester->userData['team'], PDO::PARAM_INT);
-            $req->bindParam(':title', $row['title']);
-            $req->bindParam(':body', $body);
-            $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-            $req->bindValue(':category', $category);
-            $req->bindParam(':status', $status);
-            $req->bindParam(':custom_id', $customId);
-            $req->bindParam(':canread', $this->canread);
-            $req->bindParam(':canwrite', $this->canwrite);
-            $req->bindValue(':elabid', Tools::generateElabid());
-            $req->bindParam(':metadata', $metadata);
-            $this->Db->execute($req);
-            $newItemId = $this->Db->lastInsertId();
-
-            $this->Entity->setId($newItemId);
-
-            // insert tags from the tags column
-            if (isset($row['tags'])) {
-                $this->insertTags($row['tags']);
-            }
-
-            $this->inserted++;
-        }
+        return $csv;
     }
 
     /**
@@ -111,12 +124,25 @@ class Csv extends AbstractImport
      */
     private function getBodyFromRow(array $row): string
     {
-        // get rid of the title
+        // if there is a row called "body", use that instead
+        if (array_key_exists('body', $row)) {
+            return $row['body'] ?? '';
+        }
+        // get rid of rows that are processed as columns
         unset($row['title']);
-        // and the tags
         unset($row['tags']);
-        // and the metadata
         unset($row['metadata']);
+        unset($row['category']);
+        unset($row['category_title']);
+        unset($row['category_color']);
+        unset($row['status']);
+        unset($row['status_title']);
+        unset($row['status_color']);
+        unset($row['id']);
+        unset($row['custom_id']);
+        unset($row['elabid']);
+        unset($row['date']);
+        unset($row['rating']);
         // deal with the rest of the columns
         $body = '';
         foreach ($row as $subheader => $content) {
@@ -125,20 +151,9 @@ class Csv extends AbstractImport
             if (filter_var($content, FILTER_VALIDATE_URL)) {
                 $contentEscaped = sprintf('<a href="%1$s">%1$s</a>', $contentEscaped);
             }
-            $body .= sprintf('<p>%s:%s</p>', htmlspecialchars($subheader), $contentEscaped);
+            $body .= sprintf('<p>%s: %s</p>', htmlspecialchars($subheader), $contentEscaped);
         }
 
         return $body;
-    }
-
-    private function insertTags(string $tags): void
-    {
-        $tagsArr = explode(self::TAGS_SEPARATOR, $tags);
-        foreach ($tagsArr as $tag) {
-            // maybe it's empty for this row
-            if ($tag) {
-                $this->Entity->Tags->postAction(Action::Create, array('tag' => $tag));
-            }
-        }
     }
 }

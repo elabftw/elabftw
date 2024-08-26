@@ -21,7 +21,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindInExperiments(): void
     {
         $Entity = new Experiments(new Users(1, 1));
-        $id = $Entity->create(-1);
+        $id = $Entity->create();
         $Entity->setId($id);
         (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];
@@ -32,7 +32,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindInItems(): void
     {
         $Entity = new Items(new Users(1, 1));
-        $id = $Entity->create(1);
+        $id = $Entity->create(template: 1);
         $Entity->setId($id);
         (new AccessKeyHelper($Entity))->toggleAccessKey();
         $ak = $Entity->entityData['access_key'];

@@ -15,12 +15,20 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use const UPLOAD_ERR_OK;
 
 class CsvTest extends \PHPUnit\Framework\TestCase
 {
+    private LoggerInterface $logger;
+
+    protected function setUp(): void
+    {
+        $this->logger = $this->createMock(LoggerInterface::class);
+    }
+
     public function testImport(): void
     {
         $uploadedFile = new UploadedFile(
@@ -33,12 +41,12 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            EntityType::Items,
-            false,
             BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
             $uploadedFile,
-            1,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -56,12 +64,12 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            EntityType::Experiments,
-            false,
             BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
             $uploadedFile,
-            1,
+            $this->logger,
+            EntityType::Experiments,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -80,12 +88,12 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            EntityType::Items,
-            false,
             BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
             $uploadedFile,
-            1,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());
@@ -103,12 +111,12 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            EntityType::Items,
-            false,
             BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
             $uploadedFile,
-            1,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
         );
         $this->expectException(ImproperActionException::class);
         $Import->import();

@@ -34,7 +34,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
@@ -45,8 +45,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create('my template');
-        $new = $this->Experiments->create(1);
+        $Templates->create(title: 'my template');
+        $new = $this->Experiments->create(template: 1);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -60,7 +60,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->readOne();
@@ -70,7 +70,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
@@ -129,7 +129,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testInsertTags(): void
     {
-        $this->assertIsInt($this->Experiments->create(0, array('tag-bbbtbtbt', 'tag-auristearuiset')));
+        $this->assertIsInt($this->Experiments->create(template: 0, tags: array('tag-bbbtbtbt', 'tag-auristearuiset')));
     }
 
     public function testGetTags(): void

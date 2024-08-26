@@ -14,20 +14,22 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Models\Config;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
-use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use JsonException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function basename;
 use function hash_file;
@@ -39,6 +41,8 @@ use function sprintf;
  */
 class Eln extends AbstractZip
 {
+    protected const string TAGS_SEPARATOR = ',';
+
     // path where the metadata.json file lives (first folder found in archive)
     private string $root;
 
@@ -51,22 +55,46 @@ class Eln extends AbstractZip
 
     private array $crateNodeHasPart = array();
 
-    public function processOnly(): array
-    {
-        $this->preProcess();
-        return array(
-            'parts' => count($this->crateNodeHasPart),
+    private AbstractEntity $Entity;
+
+    public function __construct(
+        protected Users $requester,
+        // TODO nullable and have it in .eln export so it is not lost on import
+        protected string $canread,
+        protected string $canwrite,
+        protected UploadedFile $UploadedFile,
+        protected FilesystemOperator $fs,
+        protected LoggerInterface $logger,
+        protected ?EntityType $entityType = null,
+        private bool $dryRun = false,
+        protected ?int $category = null,
+        protected bool $authorIsRequester = true,
+    ) {
+        parent::__construct(
+            $requester,
+            $UploadedFile,
+            $fs,
         );
+        if ($dryRun) {
+            $this->logger->info('Running in dry-mode: nothing will be imported.');
+        }
     }
 
-    public function import(): void
+    public function import(): int
     {
-        $this->preProcess();
+        $count = $this->preProcess();
+        $this->logger->info(sprintf('Crate is composed of %d parts', $count));
+        if ($this->dryRun) {
+            return $count;
+        }
 
         // loop over each hasPart of the root node
         // this is the main import loop
+        $current = 1;
         foreach ($this->crateNodeHasPart as $part) {
+            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
+            $current++;
         }
 
         // NOW CREATE THE LINKS
@@ -91,10 +119,49 @@ class Eln extends AbstractZip
                 $entity->ItemsLinks->postAction(Action::Create, array());
             }
         }
+        return $this->getInserted();
     }
 
-    private function preProcess(): void
+    protected function getNodeFromId(string $id): array
     {
+        foreach ($this->graph as $node) {
+            if ($node['@id'] === $id) {
+                return $node;
+            }
+        }
+        return array();
+    }
+
+    protected function getAuthor(array $dataset): Users
+    {
+        return $this->requester;
+    }
+
+    protected function getEntityType(array $dataset): EntityType
+    {
+        // if it is present in the object, it means we force the entityType
+        if ($this->entityType !== null) {
+            return $this->entityType;
+        }
+        // otherwise try looking into "genre" attribute
+        if (!empty($dataset['genre'])) {
+            return match($dataset['genre']) {
+                'experiment', 'experiments' => EntityType::Experiments,
+                'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
+                'resource template' => EntityType::ItemsTypes,
+                // everything else is a Resource
+                default => EntityType::Items,
+            };
+        }
+        // not sure if best to throw an Exception here or have a default
+        $this->logger->notice('Could not find entity type (genre), falling back to Resource');
+        return EntityType::Items;
+
+    }
+
+    private function preProcess(): int
+    {
+        $this->logger->debug(sprintf('temporary directory in cache: %s', $this->tmpDir));
         $this->root = $this->getRootDirectory();
         $this->graph = $this->getGraph();
 
@@ -113,19 +180,22 @@ class Eln extends AbstractZip
 
                 $sdPublisher = $this->getNodeFromId($node['sdPublisher']['@id']);
                 if (!array_key_exists('areaServed', $sdPublisher)) {
+                    $this->logger->debug('Found old eLabFTW signature: HTML entities will be converted');
                     $this->switchToEscapeOutput = true;
                 }
             }
         }
+        return count($this->crateNodeHasPart);
     }
 
     // figure out the path to the root of the eln (where the metadata file lives)
     // folder name is variable, so list folders and pick the first one found (there should be only one)
     private function getRootDirectory(): string
     {
-        $listing = $this->fs->listContents($this->tmpDir);
+        $listing = $this->tmpFs->listContents($this->tmpDir);
         foreach ($listing as $item) {
             if ($item instanceof \League\Flysystem\DirectoryAttributes) {
+                $this->logger->debug(sprintf('Found root directory in archive: %s', basename($item->path())));
                 return $item->path();
             }
         }
@@ -136,7 +206,7 @@ class Eln extends AbstractZip
     {
         $metadataFile = 'ro-crate-metadata.json';
         try {
-            $content = $this->fs->read($this->root . '/' . $metadataFile);
+            $content = $this->tmpFs->read($this->root . '/' . $metadataFile);
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (UnableToReadFile) {
             throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
@@ -146,60 +216,25 @@ class Eln extends AbstractZip
         return $json['@graph'];
     }
 
-    private function getNodeFromId(string $id): array
-    {
-        foreach ($this->graph as $node) {
-            if ($node['@id'] === $id) {
-                return $node;
-            }
-        }
-        return array();
-    }
-
     /**
-     * This is one of the main Dataset `@type` node.
+     * Import a node of `@type` Dataset: the main kind of node that corresponds to an entity
      */
     private function importRootDataset(array $dataset): void
     {
-        $Author = $this->requester;
+        $Author = $this->getAuthor($dataset);
 
-        $trustImportedFileMetadata = Config::getConfig()->configArr['trust_imported_archives'] === '1';
+        // a .eln can contain mixed types: experiments, resources, or templates.
+        $entityType = $this->getEntityType($dataset);
 
-        if ($trustImportedFileMetadata) {
-            // look for the Author node, and create the user if they do not exist
-            $author = $this->getNodeFromId($dataset['author']['@id']);
-            try {
-                $Author = ExistingUser::fromEmail($author['email'] ?? 'nope');
-                $Author->team = $this->requester->team;
-            } catch (ResourceNotFoundException) {
-                $Users = new Users(requester: $this->requester);
-                try {
-                    $Author = $Users->createFromPerson($author, $this->requester->team ?? 0);
-                } catch (ImproperActionException) {
-                    // Author will be the requester
-                }
-            }
-        }
+        $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
-        // try and figure out if we are importing an experiment or a resource by looking at the genre
-        $entityType = $this->entityType;
-        // genre will override the entityType, unless we force it
-        if (!empty($dataset['genre'])) {
-            $entityType = $dataset['genre'] === 'experiment' ? EntityType::Experiments : EntityType::Items;
-        }
-        if ($this->forceEntityType) {
-            $entityType = $this->entityType;
-        }
-        $this->Entity = $entityType->toInstance($Author);
-
-        $this->Entity->Users = $Author;
-        $this->Entity->bypassWritePermission = true;
         $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
 
         // CATEGORY
-        $categoryId = $this->defaultCategory;
-        if (isset($dataset['about'])) {
-            $categoryId = $this->getCategoryId($this->getNodeFromId($dataset['about']['@id'])['name']);
+        $categoryId = $this->category;
+        if (isset($dataset['about']) && $this->category === null) {
+            $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
+            $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;
@@ -209,20 +244,17 @@ class Eln extends AbstractZip
                 // no template
                 $createTarget = -1;
             }
-            $this->Entity->setId($this->Entity->create($createTarget, array()));
+            $this->Entity->setId($this->Entity->create(template: $createTarget));
 
-            // Only allow back- or future-dating if we trust imported file metadata
-            if ($trustImportedFileMetadata) {
-                // set the date if we can
-                $date = date('Y-m-d');
-                if (isset($dataset['dateCreated'])) {
-                    $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
-                    $date = $dateCreated->format('Y-m-d');
-                }
-                $this->Entity->patch(Action::Update, array('date' => $date));
+            // set the date if we can
+            $date = date('Y-m-d');
+            if (isset($dataset['dateCreated'])) {
+                $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
+                $date = $dateCreated->format('Y-m-d');
             }
+            $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            $this->Entity->setId($this->Entity->create($title));
+            $this->Entity->setId($this->Entity->create(title: $title));
         }
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
@@ -234,12 +266,20 @@ class Eln extends AbstractZip
         $bodyAppend = '';
         foreach ($dataset as $attributeName => $value) {
             switch($attributeName) {
-                case 'author':
-                    $bodyAppend .= $this->authorToHtml($value);
-                    break;
-                    // CATEGORY
+                // CATEGORY
                 case 'about':
                     $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+                    break;
+                    // CUSTOM ID
+                case 'alternateName':
+                    try {
+                        $this->Entity->patch(Action::Update, array('custom_id' => (string) $value));
+                        // prevent abort if the custom id is already used
+                    } catch (ImproperActionException) {
+                        $this->logger->error(
+                            sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
+                        );
+                    }
                     break;
                     // COMMENTS
                 case 'comment':
@@ -299,7 +339,7 @@ class Eln extends AbstractZip
                     break;
                     // STATUS
                 case 'creativeWorkStatus':
-                    $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($value)));
+                    $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($entityType, $value)));
                     break;
                     // STEPS
                 case 'step':
@@ -311,7 +351,7 @@ class Eln extends AbstractZip
                 case 'keywords':
                     $tags = $value;
                     if (is_string($tags)) {
-                        $tags = explode(',', $tags);
+                        $tags = explode(self::TAGS_SEPARATOR, $tags);
                     }
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
@@ -329,11 +369,13 @@ class Eln extends AbstractZip
         $this->Entity->patch(Action::Update, array('bodyappend' => $bodyAppend));
 
         // also save the Dataset node as a .json file so we don't lose information with things not imported
-        $this->Entity->Uploads->postAction(Action::CreateFromString, array(
-            'file_type' => FileFromString::Json->value,
-            'real_name' => 'dataset-node-from-ro-crate.json',
-            'content' => json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
-        ));
+        // saved as an archived file, so it doesn't appear in the UI but is still there if needed
+        $this->Entity->Uploads->createFromString(
+            FileFromString::Json,
+            'dataset-node-from-ro-crate.json',
+            json_encode($dataset, JSON_THROW_ON_ERROR, 1024),
+            State::Archived,
+        );
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
@@ -341,19 +383,6 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
-    }
-
-    private function authorToHtml(array $node): string
-    {
-        $html = sprintf('<h1>%s</h1><ul>', _('Author'));
-        $fullNode = $this->getNodeFromId($node['@id'] ?? '');
-        $html .= sprintf(
-            '<li>%s %s %s</li>',
-            $this->transformIfNecessary($fullNode['givenName'] ?? ''),
-            $this->transformIfNecessary($fullNode['familyName'] ?? ''),
-            $this->transformIfNecessary($fullNode['identifier'] ?? ''),
-        );
-        return $html . '</ul>';
     }
 
     private function attrToHtml(array $attr, string $title): string

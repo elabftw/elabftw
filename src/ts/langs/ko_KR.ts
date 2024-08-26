@@ -23,6 +23,7 @@ const t = {
     "now": "Now",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "잠시만 기다려주세요…",
+    "remove": "Remove",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "파일 이름 입력",
     "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",

@@ -87,9 +87,9 @@ describe('Experiments', () => {
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_items').should('be.visible').should('contain', 'Generated').contains('Generated').click();
+    cy.get('#createModal_items').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
     entityEdit();
-    cy.get('#category_select').select('Microscope').blur();
+    cy.get('#category_select').select('Plasmid').blur();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();

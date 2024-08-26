@@ -28,7 +28,7 @@ trait TestsUtilsTrait
     protected function getFreshItem(): Items
     {
         $Entity = new Items(new Users(1, 1));
-        $id = $Entity->create(1);
+        $id = $Entity->create(template: 1);
         $Entity->setId($id);
         return $Entity;
     }

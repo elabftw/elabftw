@@ -148,7 +148,6 @@ final class Config implements RestInterface
             ('allow_useronly', '1'),
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
-            ('trust_imported_archives', '0'),
             ('max_revisions', '10'),
             ('min_delta_revisions', '100'),
             ('min_days_revisions', '23'),

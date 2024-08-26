@@ -71,7 +71,7 @@ class Teams implements RestInterface
             // team was not found, we need to create it, but only if we're allowed to
             if ($team === false && $allowTeamCreation === true) {
                 $this->bypassWritePermission = true;
-                $id = $this->create($query, _('Default'));
+                $id = $this->create($query);
                 $TeamsHelper = new TeamsHelper($id);
                 $team = $TeamsHelper->getSimple();
             }
@@ -122,7 +122,7 @@ class Teams implements RestInterface
     {
         $this->canWriteOrExplode();
         return match ($action) {
-            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Default')),
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name'),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
     }
@@ -274,7 +274,7 @@ class Teams implements RestInterface
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name, string $defaultCategoryName): int
+    private function create(string $name): int
     {
         $name = Filter::title($name);
 
@@ -292,25 +292,9 @@ class Teams implements RestInterface
         $newId = $this->Db->lastInsertId();
         $this->setId($newId);
 
-        $user = new Users();
-        // create default status
+        // create default experiments status set
         $Status = new ExperimentsStatus($this);
         $Status->createDefault();
-
-        // create default item type
-        $user->team = $newId;
-        $ItemsTypes = new ItemsTypes($user);
-        // we can't patch something that is not in our team!
-        $ItemsTypes->bypassWritePermission = true;
-        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
-        $defaultPermissions = BasePermissions::Team->toJson();
-        $extra = array(
-            'color' => '#32a100',
-            'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
-            'canread' => $defaultPermissions,
-            'canwrite' => $defaultPermissions,
-        );
-        $ItemsTypes->patch(Action::Update, $extra);
 
         return $newId;
     }

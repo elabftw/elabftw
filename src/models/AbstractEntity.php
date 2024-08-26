@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -118,6 +119,24 @@ abstract class AbstractEntity implements RestInterface
         $this->setId($id);
         $this->ExclusiveEditMode->manage();
     }
+
+    abstract public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?DateTimeImmutable $date = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+    ): int;
 
     /**
      * Duplicate an item
@@ -606,7 +625,7 @@ abstract class AbstractEntity implements RestInterface
         switch ($params->getTarget()) {
             case 'bodyappend':
                 $content = $this->readOne()['body'] . $content;
-                // no break
+                break;
             case 'canread':
             case 'canwrite':
                 if ($this->bypassWritePermission === false) {

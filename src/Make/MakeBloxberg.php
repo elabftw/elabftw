@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -74,11 +75,14 @@ class MakeBloxberg extends AbstractMakeTimestamp
         $this->updateTimestamp(date('Y-m-d H:i:s'));
         // save the zip file as an upload
         return $this->entity->Uploads->create(
-            new CreateImmutableArchivedUpload(
+            new CreateUpload(
                 $this->getFileName(),
                 $tmpFilePath,
-                sprintf(_('Timestamp archive by %s'), $this->entity->Users->userData['fullname'])
-            )
+                sprintf(_('Timestamp archive by %s'), $this->entity->Users->userData['fullname']),
+                immutable: 1,
+                state: State::Archived,
+            ),
+            isTimestamp: true,
         );
     }
 

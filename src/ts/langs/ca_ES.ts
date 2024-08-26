@@ -23,6 +23,7 @@ const t = {
     "now": "Now",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Espereu ...",
+    "remove": "Remove",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "request-filename": "Introduïu el nom del fitxer",
     "resource-not-found": "Res a mostrar amb aquest identificador",

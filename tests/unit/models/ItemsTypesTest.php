@@ -26,20 +26,26 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateUpdateDestroy(): void
     {
-        $extra = array(
+        // create
+        $this->ItemsTypes->setId($this->ItemsTypes->create(body: 'body1', color: '29aeb9'));
+        $this->assertEquals('29aeb9', $this->ItemsTypes->entityData['color']);
+        $this->assertEquals('body1', $this->ItemsTypes->entityData['body']);
+        // update
+        $params = array(
             'color' => '#faaccc',
-            'body' => 'body',
+            'body' => 'body2',
             'canread' => BasePermissions::Team->toJson(),
             'canwrite' => BasePermissions::Team->toJson(),
         );
-        $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
-        $this->ItemsTypes->patch(Action::Update, $extra);
+        $this->ItemsTypes->patch(Action::Update, $params);
+        $this->assertEquals('faaccc', $this->ItemsTypes->entityData['color']);
+        // destroy
         $this->assertTrue($this->ItemsTypes->destroy());
     }
 
     public function testDuplicate(): void
     {
-        $this->ItemsTypes->setId($this->ItemsTypes->create('new'));
+        $this->ItemsTypes->setId($this->ItemsTypes->create());
         $this->expectException(ImproperActionException::class);
         $this->ItemsTypes->duplicate();
     }

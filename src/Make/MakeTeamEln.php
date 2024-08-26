@@ -38,15 +38,20 @@ class MakeTeamEln extends AbstractMakeEln
             $entityArr[] = $slug->type->toInstance($requester, $slug->id, bypassReadPermission: true, bypassWritePermission: true);
         }
         $Maker = new MakeEln($this->Zip, $requester, $entityArr);
-        //$Maker->bypassReadPermission = true;
+        $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }
 
     private function gatherSlugs(): array
     {
-        $sql = 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid
+        // we don't grab the deleted ones
+        $sql = 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid AND state IN (1, 2)
             UNION All
-            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid';
+            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2)
+            UNION All
+            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2)
+            UNION All
+            SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :teamid AND state IN (1, 2)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':teamid', $this->teamId, PDO::PARAM_INT);
         $this->Db->execute($req);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
@@ -20,6 +21,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,36 +33,55 @@ class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null, ?bool $bypassReadPermission = false, ?bool $bypassWritePermission = false)
-    {
-        $this->entityType = EntityType::Items;
-        parent::__construct($users, $id, $bypassReadPermission, $bypassWritePermission);
-    }
+    public EntityType $entityType = EntityType::Items;
 
-    public function create(?int $template = null, array $tags = array()): int
-    {
-        $ItemsTypes = new ItemsTypes($this->Users, $template);
-        if ($template === null) {
-            $ItemsTypes->setId($ItemsTypes->getDefault());
+    public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?DateTimeImmutable $date = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+    ): int {
+        $ItemsTypes = new ItemsTypes($this->Users);
+        if ($template < 0) {
+            $template = $ItemsTypes->getDefault();
         }
+        $ItemsTypes->setId($template);
         $itemTemplate = $ItemsTypes->readOne();
+        $title = Filter::title($title ?? _('Untitled'));
+        $date ??= new DateTimeImmutable();
+        $body = Filter::body($body ?? $itemTemplate['body']);
+        $status ??= $itemTemplate['status'];
+        $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id)
-            VALUES(:team, :title, CURDATE(), :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id, rating)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindValue(':title', _('Untitled'));
-        $req->bindParam(':status', $itemTemplate['status']);
-        $req->bindParam(':body', $itemTemplate['body']);
+        $req->bindParam(':title', $title);
+        $req->bindValue(':date', $date->format('Y-m-d'));
+        $req->bindParam(':status', $status);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $itemTemplate['canread_target']);
         $req->bindParam(':canwrite', $itemTemplate['canwrite_target']);
-        $req->bindParam(':metadata', $itemTemplate['metadata']);
+        $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 

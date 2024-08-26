@@ -23,6 +23,7 @@ const t = {
     "now": "Nyní",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Počkejte prosím…",
+    "remove": "Remove",
     "replace-edited-file": "Chcete nahradit soubor na serveru touto úpravou?",
     "request-filename": "Zadejte název souboru",
     "resource-not-found": "Nic, co by se ukázalo s tímto id",

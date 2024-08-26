@@ -306,7 +306,7 @@
 
   {# RESOURCES CATEGORIES #}
   <h3 id='itemsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
-  <div class='pl-3'>
+  <div class='pl-3' id='itemsCategoriesDiv'>
     <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
       <div class='d-flex justify-content-between'>
         <p class='col-form-label'>{{ 'This menu allows you to define categories for your resources. A resource category is similar to an experiment template but for resources entries.'|trans }}</p>
@@ -327,7 +327,9 @@
         <li class='box' id='itemstypes_{{ itemType.id }}' style='color: #{{ itemType.color }}'><span class='sortableHandle draggable mr-2'><i class='fas fa-grip-vertical fa-fw'></i></span><a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mr-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a>{{ itemType.title }}</li>
       {% endfor %}
     </ul>
-    <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
+    {% if itemsCategoryArr %}
+      <p>{{ 'Use the handles to adjust the order in which the categories appear in the application.'|trans }}</p>
+    {% endif %}
   {% endif %}
 
     {# templateData will be loaded with content from an item type if templateid is present is url #}

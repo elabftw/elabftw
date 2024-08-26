@@ -61,6 +61,9 @@ class Populate
         } else {
             $Category = new ItemsTypes($Entity->Users);
             $Category->bypassWritePermission = true;
+            if (empty($Category->readAll())) {
+                $Category->create();
+            }
             $Status = new ItemsStatus($Teams);
             $tpl = (int) $Category->readAll()[0]['id'];
         }
@@ -130,7 +133,7 @@ class Populate
         );
 
         for ($i = 0; $i <= $this->iter; $i++) {
-            $id = $Entity->create($tpl);
+            $id = $Entity->create(template: $tpl);
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);
@@ -241,9 +244,7 @@ class Populate
         if ($user['create_templates'] ?? false) {
             $Templates = new Templates($Users);
             for ($i = 0; $i <= self::TEMPLATES_ITER; $i++) {
-                $id = $Templates->create($this->faker->sentence());
-                $Templates->setId($id);
-                $Templates->patch(Action::Update, array('body' => $this->faker->realText(1000)));
+                $Templates->create(title: $this->faker->sentence(), body: $this->faker->realText(1000));
             }
         }
     }

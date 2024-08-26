@@ -68,7 +68,8 @@ class Experiments extends AbstractConcreteEntity
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
-        if ($template > 0) {
+        // only look up the template if category has not been set. When importing a csv, we cannot discriminate between the template or category argument of create function, and use both. This will cause the following code to look up the category id as a template id
+        if ($template > 0 && $category === null) {
             $Templates->setId($template);
             $templateArr = $Templates->readOne();
             $title = $templateArr['title'];

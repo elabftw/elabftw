@@ -40,7 +40,7 @@ class Csv extends AbstractImport
         protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected LoggerInterface $logger,
-        protected EntityType $entityType,
+        protected EntityType $entityType = EntityType::Items,
         private bool $dryRun = false,
         protected ?int $category = null,
         protected bool $authorIsRequester = true,
@@ -51,6 +51,10 @@ class Csv extends AbstractImport
         );
         if ($dryRun) {
             $this->logger->info('Running in dry-mode: nothing will be imported.');
+        }
+        // we might have been forced to cast to int a null value, so bring it back to null
+        if ($this->category === 0) {
+            $this->category = null;
         }
     }
 
@@ -90,6 +94,8 @@ class Csv extends AbstractImport
                 date: $date,
                 tags: $tags,
                 template: $category,
+                // use template and category so it works for items and experiments
+                category: $category,
                 status: $status,
                 customId: $customId,
                 metadata: $metadata,

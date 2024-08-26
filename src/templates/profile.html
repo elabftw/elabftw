@@ -158,31 +158,37 @@
       <div id='importOptionsDiv' hidden>
         <hr>
         <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
+        <p hidden class='smallgray' data-showif='eln'>{{ "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."|trans }}</p>
         <div id='importRadioEntityType'>
-          <div class='form-check form-check-inline'>
+          <span class='form-check form-check-inline'>
             <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
             <label class='form-check-label' for='entityTypeRadioExperiments'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</label>
-          </div>
-          <div class='form-check form-check-inline'>
+          </span>
+          <span class='form-check form-check-inline'>
             <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
             <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
-          </div>
-          <div class='d-inline' id='onlyElnOptions'>
-            <div class='form-check form-check-inline'>
+          </span>
+          <span hidden data-showif='eln'>
+            <span class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
               <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
-            </div>
-            <div class='form-check form-check-inline'>
+            </span>
+            <span class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItemsTypes' value='items_types'>
               <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources Categories'|trans }}</label>
-            </div>
-          </div>
+            </span>
+            <span class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioNone' value='null'>
+              <label class='form-check-label' for='entityTypeRadioNone'>{{ 'Do not force type'|trans }}</label>
+            </span>
+          </span>
         </div>
 
         <div id='selectCategoryDiv'>
           <hr>
           <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
           <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
+            <option value='null'>{{ 'Do not force a category'|trans }}</option>
             {% for cat in experimentsCategoryArr %}
               <option value='{{ cat.id }}'>{{ cat.title }}</option>
             {% endfor %}

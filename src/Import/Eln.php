@@ -78,6 +78,10 @@ class Eln extends AbstractZip
         if ($dryRun) {
             $this->logger->info('Running in dry-mode: nothing will be imported.');
         }
+        // we might have been forced to cast to int a null value, so bring it back to null
+        if ($this->category === 0) {
+            $this->category = null;
+        }
     }
 
     public function import(): int

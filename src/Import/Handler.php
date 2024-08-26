@@ -92,7 +92,7 @@ class Handler implements RestInterface
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
-                    EntityType::from($reqBody['entity_type']),
+                    EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
                     category: (int) $reqBody['category'],
                     authorIsRequester: $authorIsRequester,
                 );
@@ -103,7 +103,7 @@ class Handler implements RestInterface
                     $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
                     $reqBody['file'],
                     $this->logger,
-                    EntityType::from($reqBody['entity_type']),
+                    EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
                     category: (int) $reqBody['category'],
                 );
             default:

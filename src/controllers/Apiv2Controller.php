@@ -195,8 +195,8 @@ class Apiv2Controller extends AbstractApiController
             $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
-            $this->reqBody['entity_type'] = $this->Request->request->getString('entity_type');
-            $this->reqBody['category'] = $this->Request->request->getInt('category');
+            $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
+            $this->reqBody['category'] = $this->Request->request->get('category'); // can be null
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');
             $this->reqBody['canread'] = (BasePermissions::tryFrom($this->Request->request->getInt('canread')) ?? BasePermissions::Team)->toJson();
             $this->reqBody['canwrite'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite')) ?? BasePermissions::User)->toJson();

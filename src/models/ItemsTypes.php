@@ -14,12 +14,14 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\OrderingParams;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
+use Override;
 use PDO;
 
 /**
@@ -142,6 +144,14 @@ class ItemsTypes extends AbstractTemplateEntity
             return $this->create(title: $title, color: $color);
         }
         return $res;
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        // items_types have no category, so allow for calling an update on it but ignore it here so it doesn't cause sql error with unknown column
+        unset($params['category']);
+        return parent::patch($action, $params);
     }
 
     /**

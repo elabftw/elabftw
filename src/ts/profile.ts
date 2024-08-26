@@ -36,31 +36,28 @@ document.addEventListener('DOMContentLoaded', () => {
       errorDiv.innerText = 'Error: file is too large!';
       input.parentNode.appendChild(errorDiv);
     }
-    // if it's a csv, hide the experiments templates
-    const onlyElnDiv = document.getElementById('onlyElnOptions') as HTMLElement;
-    onlyElnDiv.removeAttribute('hidden');
-    if (input.files[0].name.endsWith('.csv')) {
-      onlyElnDiv.setAttribute('hidden', 'hidden');
-    }
+    // toggle the eln/csv options depending on file extension
+    document.querySelectorAll('[data-showif="eln"]')
+      .forEach((el: HTMLElement) => input.files[0].name.endsWith('.eln') ? el.removeAttribute('hidden') : el.hidden = true);
   });
 
   // when selecting the target type, change the category listing
   document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
     const el = (event.target as HTMLInputElement);
+    const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
+    selectCategoryDiv.removeAttribute('hidden');
+    if (['items_types', 'null'].includes(el.value)) {
+      selectCategoryDiv.hidden = true;
+      return;
+    }
     const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    // Remove all options
-    for (let i = categorySelect.options.length - 1; i >= 0; i--) {
+    // Remove all options except the first one
+    for (let i = categorySelect.options.length - 1; i >= 1; i--) {
       categorySelect.remove(i);
     }
     let entityType = el.value;
     if (el.value === 'experiments_templates') {
       entityType = 'experiments';
-    }
-    const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
-    selectCategoryDiv.removeAttribute('hidden');
-    if (el.value === 'items_types') {
-      selectCategoryDiv.setAttribute('hidden', 'hidden');
-      return;
     }
     ApiC.getJson(`teams/current/${entityType}_categories`).then(categories => {
       // Append new options
@@ -89,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(form);
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
-    // for templates, we need to force the entity_type
-    if (formData.get('entity_type') === 'experiments_templates') {
-      formData.set('force_entity_type', '1');
+    if (formData.get('entity_type') === 'null') {
+      formData.delete('entity_type');
+    }
+    if (formData.get('category') === 'null') {
+      formData.delete('category');
     }
     fetch(form.action, {
       method: 'POST',

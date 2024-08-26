@@ -23,6 +23,7 @@ const t = {
     "now": "Nyt",
     "onboarding-email-sent": "Aloitussähköposti(t) lähetetään pian.",
     "please-wait": "Odota…",
+    "remove": "Remove",
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",
     "request-filename": "Anna tiedoston nimi",
     "resource-not-found": "Ei mitään näytettävää tällä tunnuksella",

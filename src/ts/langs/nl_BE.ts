@@ -23,6 +23,7 @@ const t = {
     "now": "Nu",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "please-wait": "Gelieve te wachten…",
+    "remove": "Remove",
     "replace-edited-file": "Wilt u het bestand op de server vervangen met deze wijziging?",
     "request-filename": "Voer de naam van het bestand in",
     "resource-not-found": "Niets te tonen met dit id",

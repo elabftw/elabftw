@@ -58,6 +58,7 @@ class i18n4Js
             'now' => _('Now'),
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'please-wait' => _('Please wait…'),
+            'remove' => _('Remove'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'request-filename' => _('Enter name of the file'),
             'resource-not-found' => _('Nothing to show with this id'),

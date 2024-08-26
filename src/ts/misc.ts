@@ -256,8 +256,14 @@ export function makeSortableGreatAgain(): void {
     cancel: 'nonSortable',
     // do ajax request to update db with new order
     update: function() {
+      // by default, use the id attribute (https://api.jqueryui.com/sortable/#method-toArray)
+      let attribute = 'id';
+      // but for extra fields, use the data-name attribute with the name of the field
+      if ($(this).data('table') === 'extra_fields') {
+        attribute = 'data-name';
+      }
       // send the order as an array
-      const params = {table: $(this).data('table'), entity: getEntity(), ordering: $(this).sortable('toArray')};
+      const params = {table: $(this).data('table'), entity: getEntity(), ordering: $(this).sortable('toArray', {attribute: attribute})};
       fetch('app/controllers/SortableAjaxController.php', {
         method: 'POST',
         headers: {
@@ -353,16 +359,16 @@ export function adjustHiddenState(): void {
     const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
       el.setAttribute('hidden', 'hidden');
-      caretIcon.classList.remove('fa-caret-down');
+      caretIcon?.classList.remove('fa-caret-down');
       if (targetElement !== 'filtersDiv') {
-        caretIcon.classList.add('fa-caret-right');
+        caretIcon?.classList.add('fa-caret-right');
       }
       button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
     } else if (localStorage.getItem(localStorageKey) === '0') {
       el.removeAttribute('hidden');
-      caretIcon.classList.remove('fa-caret-right');
-      caretIcon.classList.add('fa-caret-down');
+      caretIcon?.classList.remove('fa-caret-right');
+      caretIcon?.classList.add('fa-caret-down');
       button.setAttribute('aria-expanded', 'true');
     }
   });

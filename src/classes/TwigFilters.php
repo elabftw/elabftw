@@ -82,12 +82,14 @@ class TwigFilters
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {
-            $final .= sprintf("<h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
-            $final .= '<div>';
+            // group list item contains another list with fields
+            $final .= sprintf("<div><h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
+            $final .= '<ul class="list-group">';
             if (!array_key_exists('extra_fields', $group)) {
                 continue;
             }
             foreach ($group['extra_fields'] as $field) {
+                $final .= '<li class="list-group-item">';
                 $newTab = ' target="_blank" rel="noopener"';
                 if (($field['open_in_current_tab'] ?? false) === true) {
                     $newTab = '';
@@ -154,14 +156,15 @@ class TwigFilters
                 }
 
                 $final .= sprintf(
-                    '<li class="list-group-item"><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></li>',
+                    '<h5 class="mb-0">%s</h5>%s<h6>%s%s</h6>',
                     Tools::eLabHtmlspecialchars($field['name']),
                     $description,
                     $value,
                     $unit,
                 );
+                $final .= '</li>';
             }
-            $final .= '</div>';
+            $final .= '</ul></div>';
         }
         return $final . $Metadata->getAnyContent();
     }

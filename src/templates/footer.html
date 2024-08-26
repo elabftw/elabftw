@@ -60,7 +60,7 @@
         <select class='form-control' id='langSelect'>
           {% for lang, text in langsArr|sort %}
             <option value='{{ lang }}'
-            {{ App.getLang() == lang ? ' selected' }}
+            {{- App.getLang() == lang ? ' selected' -}}
             >{{ text }}</option>
           {% endfor %}
         </select>

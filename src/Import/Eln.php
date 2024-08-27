@@ -68,7 +68,6 @@ class Eln extends AbstractZip
         protected ?EntityType $entityType = null,
         private bool $dryRun = false,
         protected ?int $category = null,
-        protected bool $authorIsRequester = true,
     ) {
         parent::__construct(
             $requester,

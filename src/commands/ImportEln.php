@@ -60,11 +60,9 @@ class ImportEln extends Command
         $logger = new ConsoleLogger($output);
         $UploadedFile = new UploadedFile($filePath, 'input.eln', test: true);
         $user = new UltraAdmin(team: $teamid);
-        $authorIsRequester = false;
         $infoTrailer = '';
         if ($input->getOption('userid')) {
             $user = new Users((int) $input->getOption('userid'), $teamid);
-            $authorIsRequester = true;
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
         }
         $entityType = null;
@@ -85,7 +83,6 @@ class ImportEln extends Command
             $entityType,
             $input->getOption('dry-run'),
             category: $defaultCategory,
-            authorIsRequester: $authorIsRequester,
         );
         $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));

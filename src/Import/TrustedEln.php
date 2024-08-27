@@ -28,9 +28,6 @@ class TrustedEln extends Eln
     #[Override]
     protected function getAuthor(array $dataset): Users
     {
-        if ($this->authorIsRequester) {
-            return $this->requester;
-        }
         if (!array_key_exists('author', $dataset)) {
             $this->logger->warning('Could not find "author" property in Dataset node! Falling back to requester.');
             return $this->requester;

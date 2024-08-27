@@ -77,30 +77,29 @@ class Handler implements RestInterface
 
     private function getImporter(array $reqBody): ImportInterface
     {
+        $owner = (int) ($reqBody['owner'] ?? $this->requester->userid);
+        if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
+            $this->requester = new Users($owner, $this->requester->team);
+        }
+        $canread = $reqBody['canread'] ?? BasePermissions::Team->toJson();
+        $canwrite = $reqBody['canwrite'] ?? BasePermissions::User->toJson();
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
-                $authorIsRequester = true;
-                $owner = (int) ($reqBody['owner'] ?? $this->requester->userid);
-                if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
-                    $authorIsRequester = false;
-                    $this->requester = new Users($owner, $this->requester->team);
-                }
                 return new Eln(
                     $this->requester,
-                    $reqBody['canread'],
-                    $reqBody['canwrite'],
+                    $canread,
+                    $canwrite,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
                     EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
                     category: (int) $reqBody['category'],
-                    authorIsRequester: $authorIsRequester,
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    $reqBody['canread'] ?? BasePermissions::Team->toJson(),
-                    $reqBody['canwrite'] ?? BasePermissions::User->toJson(),
+                    $canread,
+                    $canwrite,
                     $reqBody['file'],
                     $this->logger,
                     EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,

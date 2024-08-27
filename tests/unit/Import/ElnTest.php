@@ -106,6 +106,30 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $Import->getInserted());
     }
 
+    public function testImportTrusted(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new TrustedEln(
+            new Users(1, 1),
+            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Experiments,
+            category: 1,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->getInserted());
+    }
+
     public function testImportExperimentsMulti(): void
     {
         $uploadedFile = new UploadedFile(

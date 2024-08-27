@@ -61,6 +61,8 @@ class Items extends AbstractConcreteEntity
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body ?? $itemTemplate['body']);
+        $canread ??= $itemTemplate['canread_target'];
+        $canwrite ??= $itemTemplate['canwrite_target'];
         $status ??= $itemTemplate['status'];
         $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
@@ -77,8 +79,8 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':category', $template, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread', $itemTemplate['canread_target']);
-        $req->bindParam(':canwrite', $itemTemplate['canwrite_target']);
+        $req->bindParam(':canread', $canread);
+        $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);

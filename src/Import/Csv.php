@@ -43,7 +43,6 @@ class Csv extends AbstractImport
         protected EntityType $entityType = EntityType::Items,
         private bool $dryRun = false,
         protected ?int $category = null,
-        protected bool $authorIsRequester = true,
     ) {
         parent::__construct(
             $requester,
@@ -87,10 +86,14 @@ class Csv extends AbstractImport
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
             $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
+            $canread = empty($row['canread']) ? $this->canread : $row['canread'];
+            $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
             $entity->create(
                 title: $row['title'],
                 body: $body,
+                canread: $canread,
+                canwrite: $canwrite,
                 date: $date,
                 tags: $tags,
                 template: $category,

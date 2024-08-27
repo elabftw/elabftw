@@ -131,6 +131,7 @@ try {
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
+        'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'teamsArr' => $teamsArr,
         'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,

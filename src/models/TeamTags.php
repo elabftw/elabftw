@@ -162,7 +162,7 @@ class TeamTags implements RestInterface
         // first get the ids of all the tags that are duplicated in the team
         $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
             SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) GROUP BY tag;';
+        ) AND team = :team GROUP BY tag;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);

@@ -257,8 +257,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const video = document.createElement('video');
       const source = document.createElement('source');
       source.src = url;
-      video.setAttribute('width', '640');
-      video.setAttribute('controls', '');
+      video.width = 640;
+      video.controls = true;
       video.appendChild(source);
       editor.setContent(video.outerHTML);
 
@@ -268,8 +268,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
       // no syntax for audio in markdown; use plain html in both cases
       const audio = document.createElement('audio');
-      audio.setAttribute('src', url);
-      audio.setAttribute('controls', '');
+      audio.src = url;
+      audio.controls = true;
       editor.setContent(audio.outerHTML);
 
     // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT

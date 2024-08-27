@@ -43,7 +43,7 @@ export class JsonEditorActions {
           JsonEditorHelperC.save();
           // make the save button stand out if the content is changed
           document.querySelector('[data-action="json-save"]').classList.remove('border-danger');
-          document.getElementById('jsonUnsavedChangesWarningDiv').setAttribute('hidden', '');
+          document.getElementById('jsonUnsavedChangesWarningDiv').hidden = true;
         } else if (el.matches('[data-action="json-import-file"]')) {
           document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
         } else if (el.matches('[data-action="json-upload-file"]')) {

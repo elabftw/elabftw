@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (editable) {
         info.el.style.boxShadow = '5px 4px 4px #474747';
       }
-      info.el.setAttribute('title', info.event.title);
+      info.el.title = info.event.title;
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {

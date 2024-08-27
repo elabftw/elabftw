@@ -202,10 +202,10 @@ export function notif(info: ResponseMsg): void {
   // "status" role: see WCAG2.1 4.1.3
   p.role = 'status';
   p.innerText = info.msg;
-  const result = info.res ? 'ok' : 'ko';
   const overlay = document.createElement('div');
-  overlay.setAttribute('id', 'overlay');
-  overlay.setAttribute('class', 'overlay ' + 'overlay-' + result);
+  overlay.id = 'overlay';
+  overlay.classList.add('overlay');
+  overlay.classList.add(`overlay-${info.res ? 'ok' : 'ko'}`);
   // show the overlay
   document.body.appendChild(overlay);
   // add text inside
@@ -345,8 +345,8 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
  * in localStorage. The localStorage key is the value of the save-hidden data attribute.
  */
 export function adjustHiddenState(): void {
-  document.querySelectorAll('[data-save-hidden]').forEach(el => {
-    const targetElement = (el as HTMLElement).dataset.saveHidden;
+  document.querySelectorAll('[data-save-hidden]').forEach((el: HTMLElement) => {
+    const targetElement = el.dataset.saveHidden;
     // failsafe
     if (!targetElement) {
       return;
@@ -358,7 +358,7 @@ export function adjustHiddenState(): void {
     }
     const caretIcon =  button.querySelector('i');
     if (localStorage.getItem(localStorageKey) === '1') {
-      el.setAttribute('hidden', 'hidden');
+      el.hidden = true;
       caretIcon?.classList.remove('fa-caret-down');
       if (targetElement !== 'filtersDiv') {
         caretIcon?.classList.add('fa-caret-right');

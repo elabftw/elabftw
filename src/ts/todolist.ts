@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // make it non editable (before function checks for that in malle)
         content.classList.remove('editable');
         // disable the checkbox
-        el.setAttribute('disabled', 'disabled');
+        (el as HTMLInputElement).disabled = true;
       });
 
     // TOGGLE TODOLIST

@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // the button is an up arrow
   btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
   // give it an id so we can remove it easily
-  btn.setAttribute('id', 'backToTopButton');
+  btn.id = 'backToTopButton';
   btn.setAttribute('aria-label', 'Back to top');
   btn.title = 'Back to top';
 
@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         original.classList.remove('font-italic');
       }
       if (original.dataset.inputType === 'number') {
+        // use setAttribute here because type is readonly property
         input.setAttribute('type', 'number');
       }
       return true;
@@ -226,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (row.innerText.toLowerCase().includes(input.value)) {
           row.removeAttribute('hidden');
         } else {
-          row.setAttribute('hidden', '');
+          row.hidden = true;
         }
       });
     });
@@ -498,12 +499,12 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.toggle('fa-eye-slash');
 
       // toggle input type
-      const input = document.getElementById(el.dataset.target);
+      const input = document.getElementById(el.dataset.target) as HTMLInputElement;
       let attribute = 'password';
       if (input.getAttribute('type') === 'password') {
         attribute = 'text';
       }
-      input.setAttribute('type', attribute);
+      input.type = attribute;
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {

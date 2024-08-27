@@ -49,12 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const query = el.value;
       if (el.matches('[data-action="favtags-search"]')) {
         // find all links that are endpoints
-        document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+        document.querySelectorAll('[data-action="add-tag-filter"]').forEach((el: HTMLElement) => {
           // begin by showing all so they don't stay hidden
           el.removeAttribute('hidden');
           // now simply hide the ones that don't match the query
-          if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-            el.setAttribute('hidden', '');
+          if (!el.innerText.toLowerCase().includes(query)) {
+            el.hidden = true;
           }
         });
       }

@@ -79,6 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
 
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT FIXME TODO duplicated code from edit.ts
+    } else if (el.matches('[data-action="insert-image-in-body"]')) {
+      // link to the image
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // switch for markdown or tinymce editor
+      let content: string;
+      if (editor.type === 'md') {
+        content = '\n![image](' + url + ')\n';
+      } else if (editor.type === 'tiny') {
+        content = '<img src="' + url + '" />';
+      }
+      editor.setContent(content);
+
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

@@ -47,10 +47,11 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Policies'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Uploads'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='10'>SAML</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='11'>LDAP</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'Audit Logs'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='10'>{{ 'Local auth'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='11'>SAML</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>LDAP</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'External auth'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -146,12 +147,10 @@
     <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register'} %}
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
 
-    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
@@ -444,33 +443,6 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
-  <div class='pl-3'>
-    <div class='d-flex justify-content-between'>
-      <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
-      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.min_password_length }}' data-trigger='blur' data-model='config' data-target='min_password_length' id='min_password_length' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='password_complexity_requirement' class='col-form-label'>{{ 'Password complexity requirement'|trans }}</label>
-      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='password_complexity_requirement' id='password_complexity_requirement'>
-        {% for value, human in passwordComplexityArr %}
-          <option value='{{ value }}' {{- App.Config.configArr.password_complexity_requirement == value ? ' selected' }}>{{ human }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'The minimum password length is always enforced.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='max_password_age_days' class='col-form-label'>{{ 'Maximum number of days since last password change'|trans }}</label>
-      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.max_password_age_days }}' data-trigger='blur' data-model='config' data-target='max_password_age_days' id='max_password_age_days' />
-    </div>
-    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
-    <hr>
-  </div>
-
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h3>
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
@@ -615,9 +587,46 @@
   </div>
 </div>
 
-
-{# TAB 10 SAML #}
+{# TAB 10 LOCAL AUTH #}
 <div data-tabcontent='10' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Local authentication configuration'|trans }}</h3>
+  <div class='pl-3 mt-2 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Enable local authentication'|trans, 'slug': 'local_auth_enabled', 'help': 'Toggle local authentication method (email + password). Warning: disabling this method might lock you out!'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register', 'help': 'Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL.'|trans} %}
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='d-flex justify-content-between'>
+      <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.min_password_length }}' data-trigger='blur' data-model='config' data-target='min_password_length' id='min_password_length' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='password_complexity_requirement' class='col-form-label'>{{ 'Password complexity requirement'|trans }}</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='password_complexity_requirement' id='password_complexity_requirement'>
+        {% for value, human in passwordComplexityArr %}
+          <option value='{{ value }}' {{- App.Config.configArr.password_complexity_requirement == value ? ' selected' }}>{{ human }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <p class='smallgray'>{{ 'The minimum password length is always enforced.'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='max_password_age_days' class='col-form-label'>{{ 'Maximum number of days since last password change'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.max_password_age_days }}' data-trigger='blur' data-model='config' data-target='max_password_age_days' id='max_password_age_days' />
+    </div>
+    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
+    <hr>
+  </div>
+
+</div>
+
+{# TAB 11 SAML #}
+<div data-tabcontent='11' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
     <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
@@ -825,8 +834,8 @@
 
 </div>
 
-{# TAB 11 LDAP #}
-<div data-tabcontent='11' id='ldapSettings' hidden>
+{# TAB 12 LDAP #}
+<div data-tabcontent='12' id='ldapSettings' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
@@ -949,8 +958,8 @@
   </div>
 </div>
 
-{# TAB 12 EXTERNAL AUTH #}
-<div data-tabcontent='12' hidden>
+{# TAB 13 EXTERNAL AUTH #}
+<div data-tabcontent='13' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
   <div class='pl-3'>
     <p class='smallgray'>{{ 'If authentication is handled by an upstream server, configure here the request headers mappings and behaviors.'|trans }}</p>
@@ -1016,10 +1025,11 @@
   </div>
 </div>
 
-<div data-tabcontent='13' hidden>
+{# TAB 14: AUDIT LOGS #}
+<div data-tabcontent='14' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'} %}
+    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'|trans} %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>

@@ -109,6 +109,7 @@ final class Config implements RestInterface
             ('saml_user_default', '1'),
             ('saml_allowrepeatattributename', '0'),
             ('local_login', '1'),
+            ('local_auth_enabled', '1'),
             ('local_register', '1'),
             ('admins_create_users', '1'),
             ('anon_users', '0'),

@@ -92,7 +92,7 @@ try {
     // don't show the local login form if it's disabled
     $showLocal = true;
     // if there is a ?letmein in the url, we still show it.
-    if (!$App->Config->configArr['local_login'] && !$App->Request->query->has('letmein')) {
+    if (($App->Config->configArr['local_login'] === '0' && !$App->Request->query->has('letmein')) || $App->Config->configArr['local_auth_enabled'] === '0') {
         $showLocal = false;
     }
 

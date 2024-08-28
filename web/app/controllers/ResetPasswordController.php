@@ -46,6 +46,9 @@ $Response = new RedirectResponse('/login.php');
 $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
 
 try {
+    if ($App->Config->configArr['local_auth_enabled'] === '0') {
+        throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
+    }
     $Email = new Email(
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,

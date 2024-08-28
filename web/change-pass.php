@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
@@ -34,6 +35,9 @@ $renderArr = array();
 $template = 'change-pass.html';
 
 try {
+    if ($App->Config->configArr['local_auth_enabled'] === '0') {
+        throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
+    }
     // make sure this page is accessed with a key
     if (!$App->Request->query->has('key')) {
         throw new IllegalActionException('Bad parameters in url.');

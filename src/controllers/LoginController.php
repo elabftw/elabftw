@@ -264,6 +264,10 @@ class LoginController implements ControllerInterface
 
                 // AUTH WITH LOCAL DATABASE
             case 'local':
+                // make sure local auth is enabled
+                if ($this->App->Config->configArr['local_auth_enabled'] === '0') {
+                    throw new ImproperActionException('Local authentication is disabled on this instance.');
+                }
                 $this->App->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();

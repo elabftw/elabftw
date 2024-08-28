@@ -26,4 +26,5 @@ enum Notifications: int
     case PdfGenericError = 60;
     case NewVersionInstalled = 70;
     case OnboardingEmail = 80;
+    case ActionRequested = 90;
 }

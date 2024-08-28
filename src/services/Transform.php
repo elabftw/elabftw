@@ -111,6 +111,19 @@ class Transform
                     sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],
                 ),
+            Notifications::ActionRequested =>
+                sprintf(
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s?mode=view&amp;id=%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    $notif['body']['entity_page'],
+                    (int) $notif['body']['entity_id'],
+                    sprintf(
+                        _('%s has requested %s from you.'),
+                        $notif['body']['requester_fullname'],
+                        $notif['body']['action'],
+                    ),
+                    $notif['created_at'],
+                ),
             default => throw new ImproperActionException('Invalid notification type.'),
         };
     }

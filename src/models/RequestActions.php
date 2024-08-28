@@ -18,6 +18,7 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\ActionRequested;
 use Elabftw\Traits\SetIdTrait;
 
 use PDO;
@@ -121,8 +122,16 @@ class RequestActions implements RestInterface
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $req->bindParam(':action', $reqBody['target_action'], PDO::PARAM_INT);
         $this->Db->execute($req);
+        $actionId = $this->Db->lastInsertId();
 
-        return $this->Db->lastInsertId();
+        $Notifications = new ActionRequested(
+            $this->requester,
+            RequestableAction::from((int) $reqBody['target_action']),
+            $this->entity,
+        );
+        $Notifications->create((int) $reqBody['target_userid']);
+
+        return $actionId;
     }
 
     public function patch(Action $action, array $params): array

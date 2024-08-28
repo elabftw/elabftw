@@ -583,7 +583,7 @@ export function replaceWithTitle(): void {
     }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
       // view mode for Experiments or Resources
-      let value = json.title;
+      let value = el.dataset.endpoint === Model.User ? json.fullname : json.title;
       // edit mode
       if (el instanceof HTMLInputElement) {
         value = `${json.id} - ${json.title}`;

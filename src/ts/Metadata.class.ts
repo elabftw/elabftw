@@ -206,6 +206,11 @@ export class Metadata {
       if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(properties.type)) {
+        valueEl.dataset.replaceWithTitle = 'true';
+        valueEl.dataset.endpoint = properties.type;
+        valueEl.dataset.id = properties.value as string;
+      }
     }
     const valueWrapper = document.createElement('div');
     // set the value on the right
@@ -439,6 +444,8 @@ export class Metadata {
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
       });
+    }).then (() => {
+      replaceWithTitle();
     });
   }
 

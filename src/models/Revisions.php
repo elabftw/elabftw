@@ -44,12 +44,17 @@ class Revisions implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
+        throw new ImproperActionException('Revision creation is not allowed through API.');
+    }
+
+    public function create(string $body): int
+    {
         if ($this->Entity instanceof ItemsTypes) {
             return 0;
         }
         $this->Entity->canOrExplode('write');
 
-        if (!$this->satisfyDeltaConstraint($reqBody['body']) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
+        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
             return 0;
         }
 
@@ -62,7 +67,7 @@ class Revisions implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':body', $reqBody['body']);
+        $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);

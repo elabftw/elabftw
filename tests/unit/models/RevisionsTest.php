@@ -36,7 +36,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Revisions->postAction(Action::Create, array('body' => 'Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')));
+        $this->assertIsInt($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
     public function testReadAll(): void
@@ -50,7 +50,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
-        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
         $this->assertIsArray($this->Revisions->patch(Action::Replace, array()));
     }
@@ -61,7 +61,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
-        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
         $Experiment->patch(Action::Lock, array());
         $this->expectException(ImproperActionException::class);

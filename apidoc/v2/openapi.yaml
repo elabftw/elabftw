@@ -4265,28 +4265,6 @@ paths:
         required: true
         schema:
           type: integer
-    post:
-      tags: ['Revisions']
-      summary: Create a revision.
-      operationId: post-entity-revisions
-      requestBody:
-        description: Parameters for creating a revision
-        content:
-          application/json:
-            schema:
-              required: ['body']
-              type: object
-              properties:
-                body:
-                  type: string
-      responses:
-        '201':
-          description: The revision has been created.
-          headers:
-            location:
-              description: An URL to the revision that was created.
-              schema:
-                type: string
     get:
       tags: ['Revisions']
       summary: Read all revisions of that entity.

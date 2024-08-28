@@ -643,7 +643,7 @@ abstract class AbstractEntity implements RestInterface
                 (int) $Config->configArr['min_delta_revisions'],
                 (int) $Config->configArr['min_days_revisions'],
             );
-            $Revisions->postAction(Action::Create, array('body' => (string) $content));
+            $Revisions->create((string) $content);
         }
 
         $Changelog = new Changelog($this);

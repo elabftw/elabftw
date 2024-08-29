@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -88,16 +89,18 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
-    /**
-     * SQL to get all items type
-     */
     public function readAll(): array
     {
-        $sql = 'SELECT id, userid, created_at, modified_at, team, color, title, status, body, ordering, canread, canwrite, canread_target, canwrite_target, metadata, state
-            FROM items_types WHERE team = :team AND state = :state ORDER BY ordering ASC';
+        $builder = new ItemsTypesSqlBuilder($this);
+        $sql = $builder->getReadSqlBeforeWhere(getTags: false);
+        // first WHERE is the state, possibly including archived
+        $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
+        // add the json permissions
+        $sql .= $builder->getCanFilter('canread');
+        $sql .= ' GROUP BY entity.id, entity.userid, entity.created_at, entity.modified_at, entity.team, entity.color, entity.title, entity.status, entity.body, entity.ordering, entity.canread, entity.canwrite, entity.canread_target, entity.canwrite_target, entity.metadata, entity.state, statust.title, statust.color, users.firstname, users.lastname, users.orcid, teams.name';
+
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -105,16 +108,18 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = 'SELECT id, userid, created_at, modified_at, team, color, title, status, body, ordering, canread, canwrite, canread_target, canwrite_target, metadata, state
-            FROM items_types WHERE id = :id AND team = :team';
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $builder = new ItemsTypesSqlBuilder($this);
+        $sql = $builder->getReadSqlBeforeWhere(getTags: false);
+
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $this->entityData = $this->Db->fetch($req);
-        // don't check for read permissions for items types as it can be read from many places/users
-        //$this->canOrExplode('read');
+        $this->canOrExplode('read');
         // add steps and links in there too
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
@@ -159,6 +164,7 @@ class ItemsTypes extends AbstractTemplateEntity
      */
     public function updateOrdering(OrderingParams $params): void
     {
+        // we'll probably need to extract the ordering column and place it in a team related table
         $this->isAdminOrExplode();
         $sql = 'UPDATE items_types SET ordering = :ordering WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);

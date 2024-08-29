@@ -26,9 +26,9 @@ use function implode;
 
 class EntitySqlBuilder
 {
-    private array $selectSql = array();
+    protected array $selectSql = array();
 
-    private array $joinsSql = array();
+    protected array $joinsSql = array();
 
     public function __construct(private AbstractEntity $entity) {}
 
@@ -44,7 +44,7 @@ class EntitySqlBuilder
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
     ): string {
-        $this->entity($fullSelect);
+        $this->entitySelect($fullSelect);
         $this->status();
         $this->category();
         $this->comments();
@@ -96,7 +96,7 @@ class EntitySqlBuilder
         return $sql;
     }
 
-    private function entity(bool $fullSelect): void
+    protected function entitySelect(bool $fullSelect): void
     {
         if ($fullSelect) {
             // get all the columns of entity table
@@ -129,6 +129,100 @@ class EntitySqlBuilder
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));
             }
         }
+    }
+
+    protected function category(): void
+    {
+        $this->selectSql[] = 'categoryt.title AS category_title,
+            categoryt.color AS category_color';
+
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN %s AS categoryt
+                ON (categoryt.id = entity.category)',
+            $this->entity->entityType === EntityType::Experiments
+                ? 'experiments_categories'
+                : 'items_types',
+        );
+    }
+
+    protected function status(): void
+    {
+        $this->selectSql[] = 'statust.title AS status_title,
+            statust.color AS status_color';
+        $this->joinsSql[] = 'LEFT JOIN %1$s_status AS statust
+            ON (statust.id = entity.status)';
+    }
+
+    protected function uploads(): void
+    {
+        $this->selectSql[] = 'uploads.up_item_id,
+            uploads.has_attachment';
+
+        // only include columns if actually searching for comments/filenames
+        $searchAttachments = '';
+        if (!empty(array_column($this->entity->extendedValues, 'searchAttachments'))) {
+            $searchAttachments = ', GROUP_CONCAT(comment) AS comments
+                , GROUP_CONCAT(real_name) AS real_names';
+        }
+
+        $this->joinsSql[] = 'LEFT JOIN (
+                SELECT item_id AS up_item_id,
+                    (item_id IS NOT NULL) AS has_attachment,
+                    type
+                    ' . $searchAttachments . '
+                FROM uploads
+                GROUP BY item_id, type
+            ) AS uploads
+                ON (uploads.up_item_id = entity.id
+                    AND uploads.type = \'%1$s\')';
+    }
+
+    protected function links(EntityType $relatedOrigin): void
+    {
+        $table = 'items';
+        if ($this->entity->entityType === EntityType::Experiments) {
+            $table = 'experiments';
+        }
+
+        $related = '2items';
+        if ($relatedOrigin === EntityType::Experiments) {
+            $related = '2experiments';
+        }
+
+        $this->joinsSql[] = "LEFT JOIN $table$related AS linkst
+            ON (linkst.item_id = entity.id)";
+    }
+
+    protected function steps(): void
+    {
+        $this->selectSql[] = "SUBSTRING_INDEX(GROUP_CONCAT(
+                stepst.next_step
+                ORDER BY steps_ordering, steps_id
+                SEPARATOR '|'
+            ), '|', 1) AS next_step";
+        $this->joinsSql[] = 'LEFT JOIN (
+                SELECT item_id AS steps_item_id,
+                    body AS next_step,
+                    ordering AS steps_ordering,
+                    id AS steps_id,
+                    finished AS finished
+                FROM %1$s_steps
+                WHERE finished = 0
+            ) AS stepst
+                ON (stepst.steps_item_id = entity.id)';
+    }
+
+    protected function comments(): void
+    {
+        $this->selectSql[] = 'commentst.recent_comment,
+            (commentst.recent_comment IS NOT NULL) AS has_comment';
+        $this->joinsSql[] = 'LEFT JOIN (
+                SELECT MAX(created_at) AS recent_comment,
+                    item_id
+                FROM %1$s_comments
+                GROUP BY item_id
+            ) AS commentst
+                ON (commentst.item_id = entity.id)';
     }
 
     private function tags(): void
@@ -185,100 +279,6 @@ class EntitySqlBuilder
             LEFT JOIN teams ON (entity.team = teams.id)',
             $this->entity->Users->team ?? 0,
         );
-    }
-
-    private function category(): void
-    {
-        $this->selectSql[] = 'categoryt.title AS category_title,
-            categoryt.color AS category_color';
-
-        $this->joinsSql[] = sprintf(
-            'LEFT JOIN %s AS categoryt
-                ON (categoryt.id = entity.category)',
-            $this->entity->entityType === EntityType::Experiments
-                ? 'experiments_categories'
-                : 'items_types',
-        );
-    }
-
-    private function status(): void
-    {
-        $this->selectSql[] = 'statust.title AS status_title,
-            statust.color AS status_color';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_status AS statust
-            ON (statust.id = entity.status)';
-    }
-
-    private function uploads(): void
-    {
-        $this->selectSql[] = 'uploads.up_item_id,
-            uploads.has_attachment';
-
-        // only include columns if actually searching for comments/filenames
-        $searchAttachments = '';
-        if (!empty(array_column($this->entity->extendedValues, 'searchAttachments'))) {
-            $searchAttachments = ', GROUP_CONCAT(comment) AS comments
-                , GROUP_CONCAT(real_name) AS real_names';
-        }
-
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT item_id AS up_item_id,
-                    (item_id IS NOT NULL) AS has_attachment,
-                    type
-                    ' . $searchAttachments . '
-                FROM uploads
-                GROUP BY item_id, type
-            ) AS uploads
-                ON (uploads.up_item_id = entity.id
-                    AND uploads.type = \'%1$s\')';
-    }
-
-    private function links(EntityType $relatedOrigin): void
-    {
-        $table = 'items';
-        if ($this->entity->entityType === EntityType::Experiments) {
-            $table = 'experiments';
-        }
-
-        $related = '2items';
-        if ($relatedOrigin === EntityType::Experiments) {
-            $related = '2experiments';
-        }
-
-        $this->joinsSql[] = "LEFT JOIN $table$related AS linkst
-            ON (linkst.item_id = entity.id)";
-    }
-
-    private function steps(): void
-    {
-        $this->selectSql[] = "SUBSTRING_INDEX(GROUP_CONCAT(
-                stepst.next_step
-                ORDER BY steps_ordering, steps_id
-                SEPARATOR '|'
-            ), '|', 1) AS next_step";
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT item_id AS steps_item_id,
-                    body AS next_step,
-                    ordering AS steps_ordering,
-                    id AS steps_id,
-                    finished AS finished
-                FROM %1$s_steps
-                WHERE finished = 0
-            ) AS stepst
-                ON (stepst.steps_item_id = entity.id)';
-    }
-
-    private function comments(): void
-    {
-        $this->selectSql[] = 'commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment';
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT MAX(created_at) AS recent_comment,
-                    item_id
-                FROM %1$s_comments
-                GROUP BY item_id
-            ) AS commentst
-                ON (commentst.item_id = entity.id)';
     }
 
     /**

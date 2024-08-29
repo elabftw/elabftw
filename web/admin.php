@@ -65,9 +65,9 @@ try {
     $experimentsCategoriesArr = $ExperimentsCategories->readAll();
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
+        $ItemsTypes->canOrExplode('write');
     }
     $statusArr = $Status->readAll();
-    $itemsStatusArr = $ItemsStatus->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -125,7 +125,7 @@ try {
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
-        'itemsStatusArr' => $itemsStatusArr,
+        'itemsStatusArr' => $ItemsStatus->readAll(),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'teamGroupsArr' => $teamGroupsArr,

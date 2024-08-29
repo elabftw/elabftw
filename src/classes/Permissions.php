@@ -140,25 +140,13 @@ class Permissions
     }
 
     /**
-     * For ItemType write permission check for metadata
-     */
-    public function forItemType(): array
-    {
-        if ($this->Users->isAdmin && ($this->item['team'] === $this->Users->userData['team'])) {
-            return array('read' => true, 'write' => true);
-        }
-        // everyone has read access
-        return array('read' => true, 'write' => false);
-    }
-
-    /**
      * Get the write permission for an exp/item
      */
     private function getWrite(): bool
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
+        if (array_key_exists('locked', $this->item) && $this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
         return $this->getCan($this->canwrite);

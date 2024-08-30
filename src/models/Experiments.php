@@ -62,7 +62,7 @@ class Experiments extends AbstractConcreteEntity
             $body = null;
         }
         $metadata = null;
-        $contentType ??= $this->Users->userData['use_markdown'] === AbstractEntity::CONTENT_HTML ? AbstractEntity::CONTENT_HTML : AbstractEntity::CONTENT_MD;
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
@@ -77,7 +77,7 @@ class Experiments extends AbstractConcreteEntity
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
-            $contentType = (int) $templateArr['content_type'];
+            $contentType = $templateArr['content_type'];
         }
 
         // we don't use a proper template (use of common tpl or blank)

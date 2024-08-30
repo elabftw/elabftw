@@ -74,7 +74,7 @@ class Templates extends AbstractTemplateEntity
         if (isset($this->Users->userData['default_write'])) {
             $canwrite = $this->Users->userData['default_write'];
         }
-        $contentType ??= $this->Users->userData['use_markdown'] === AbstractEntity::CONTENT_HTML ? AbstractEntity::CONTENT_HTML : AbstractEntity::CONTENT_MD;
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite, canread_target, canwrite_target, content_type, rating)
             VALUES(:team, :title, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';

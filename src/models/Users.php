@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\PasswordChanged;
 use Elabftw\AuditEvent\UserAttributeChanged;
+use Elabftw\AuditEvent\UserDeleted;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\App;
@@ -422,7 +423,11 @@ class Users implements RestInterface
         $sql = 'DELETE FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res) {
+            AuditLogs::create(new UserDeleted($this->requester->userid ?? 0, $this->userid ?? 0));
+        }
+        return $res;
     }
 
     /**

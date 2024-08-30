@@ -125,6 +125,8 @@
 
 </section>
 <div class='d-flex flex-column align-items-end'>
+  {# SHOW OWNER #}
+  <div>{{ 'Owner:'|trans }} {{ Entity.entityData.fullname }}</div>
   {# SHOW LAST MOD #}
   <div>{{ 'Last modified on %s'|trans|format(Entity.entityData.modified_at) }}</div>
   {# eLabID #}

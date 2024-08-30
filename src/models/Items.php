@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
@@ -20,7 +21,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -48,6 +48,7 @@ class Items extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -67,9 +68,10 @@ class Items extends AbstractConcreteEntity
         $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
+        $contentType = $itemTemplate['content_type'];
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id, rating)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id, :rating)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id, content_type, rating)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -83,6 +85,7 @@ class Items extends AbstractConcreteEntity
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
@@ -129,40 +132,33 @@ class Items extends AbstractConcreteEntity
     {
         $this->canOrExplode('read');
 
+        $title = $this->entityData['title'] . ' I';
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
-        // figure out the custom id
-        $customId = $this->getNextCustomId($this->entityData['category']);
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $metadata,
+            contentType: $this->entityData['content_type'],
+        );
 
-        $sql = 'INSERT INTO items(team, title, date, body, userid, canread, canwrite, canbook, category, elabid, metadata, custom_id, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :userid, :canread, :canwrite, :canbook, :category, :elabid, :metadata, :custom_id, :content_type)';
-        $req = $this->Db->prepare($sql);
-        $req->execute(array(
-            'team' => $this->Users->userData['team'],
-            'title' => $this->entityData['title'],
-            'body' => $this->entityData['body'],
-            'userid' => $this->Users->userData['userid'],
-            'elabid' => Tools::generateElabid(),
-            'canread' => $this->entityData['canread'],
-            'canwrite' => $this->entityData['canwrite'],
-            'canbook' => $this->entityData['canbook'],
-            'category' => $this->entityData['category'],
-            'metadata' => $metadata,
-            'custom_id' => $customId,
-            'content_type' => $this->entityData['content_type'],
-        ));
-        $newId = $this->Db->lastInsertId();
-
-        if ($this->id === null) {
-            throw new IllegalActionException('Try to duplicate without an id.');
-        }
+        // add missing canbook
+        $fresh = new self($this->Users, $newId);
+        $fresh->update(new ContentParams('canbook', $this->entityData['canbook']));
+        /** @psalm-suppress PossiblyNullArgument */
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         // also add a link to the previous resource
-        $ItemsLinks = new Items2ItemsLinks(new self($this->Users, $newId));
+        $ItemsLinks = new Items2ItemsLinks($fresh);
         $ItemsLinks->setId($this->id);
         $ItemsLinks->postAction(Action::Create, array());
+        if ($copyFiles) {
+            $this->Uploads->duplicate($fresh);
+        }
 
         return $newId;
     }

@@ -45,6 +45,7 @@ class ItemsTypes extends AbstractTemplateEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -97,7 +98,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
         // add the json permissions
         $sql .= $builder->getCanFilter('canread');
-        $sql .= ' GROUP BY entity.id, entity.userid, entity.created_at, entity.modified_at, entity.team, entity.color, entity.title, entity.status, entity.body, entity.ordering, entity.canread, entity.canwrite, entity.canread_target, entity.canwrite_target, entity.metadata, entity.state, statust.title, statust.color, users.firstname, users.lastname, users.orcid, teams.name';
+        $sql .= ' GROUP BY id';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
@@ -130,6 +131,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function duplicate(bool $copyFiles = false): int
     {
+        // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');
     }
 

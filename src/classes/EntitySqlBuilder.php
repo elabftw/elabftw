@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Templates;
 use Elabftw\Services\UsersHelper;
 
 use function array_column;
@@ -241,20 +242,22 @@ class EntitySqlBuilder
 
     private function teamEvents(): void
     {
+        if ($this->entity instanceof Experiments) {
+            $eventsColumn = 'experiment';
+        } elseif ($this->entity instanceof Items) {
+            $this->selectSql[] = 'entity.is_bookable';
+            $eventsColumn = 'item_link = entity.id OR team_events.item';
+        } elseif ($this->entity instanceof Templates) {
+            return;
+        } else {
+            throw new IllegalActionException('Nope.');
+        }
         $this->selectSql[] = "GROUP_CONCAT(
                 DISTINCT team_events.start
                 ORDER BY team_events.start
                 SEPARATOR '|'
             ) AS events_start";
 
-        if ($this->entity instanceof Experiments) {
-            $eventsColumn = 'experiment';
-        } elseif ($this->entity instanceof Items) {
-            $this->selectSql[] = 'entity.is_bookable';
-            $eventsColumn = 'item_link = entity.id OR team_events.item';
-        } else {
-            throw new IllegalActionException('Nope.');
-        }
 
         // only select events from the future
         $this->joinsSql[] = "LEFT JOIN team_events

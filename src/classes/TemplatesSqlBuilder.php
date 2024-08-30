@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\EntityType;
 use Override;
 
-class ItemsTypesSqlBuilder extends EntitySqlBuilder
+class TemplatesSqlBuilder extends EntitySqlBuilder
 {
     #[Override]
     protected function entitySelect(bool $fullSelect): void
@@ -27,7 +26,6 @@ class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.created_at,
             entity.modified_at,
             entity.team,
-            entity.color,
             entity.title,
             entity.status,
             entity.body,
@@ -41,7 +39,11 @@ class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.lockedby,
             entity.locked_at,
             entity.metadata,
-            entity.state';
+            entity.state,
+            (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned';
+        $this->joinsSql[] = 'LEFT JOIN pin_experiments_templates2users
+                ON (entity.id = pin_experiments_templates2users.entity_id
+                    AND pin_experiments_templates2users.users_id = :userid)';
     }
 
     #[Override]
@@ -49,37 +51,13 @@ class ItemsTypesSqlBuilder extends EntitySqlBuilder
     {
         $this->selectSql[] = 'statust.title AS status_title,
             statust.color AS status_color';
-        // use items_status as there are no items_types_status table
-        $this->joinsSql[] = 'LEFT JOIN items_status AS statust
+        // use experiments_status
+        $this->joinsSql[] = 'LEFT JOIN experiments_status AS statust
             ON (statust.id = entity.status)';
     }
 
     #[Override]
     protected function comments(): void
-    {
-        return;
-    }
-
-    #[Override]
-    protected function category(): void
-    {
-        return;
-    }
-
-    #[Override]
-    protected function steps(): void
-    {
-        return;
-    }
-
-    #[Override]
-    protected function links(EntityType $relatedOrigin): void
-    {
-        return;
-    }
-
-    #[Override]
-    protected function uploads(): void
     {
         return;
     }

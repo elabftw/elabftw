@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -44,9 +42,14 @@ class MakeQrPdf extends AbstractMakePdf
 
     public function getFileContent(): string
     {
+        // add view URL to entities
+        $siteUrl = Config::fromEnv('SITE_URL');
+        foreach ($this->entityArr as &$entity) {
+            $entity->entityData['url'] = sprintf('%s/%s?mode=view&id=%d', $siteUrl, $entity->entityType->toPage(), $entity->id);
+        }
         $renderArr = array(
             'css' => $this->getCss(),
-            'entityArr' => $this->readAll(),
+            'entityArr' => $this->entityArr,
             'useCjk' => $this->requester->userData['cjk_fonts'],
         );
         $Config = Config::getConfig();
@@ -55,23 +58,5 @@ class MakeQrPdf extends AbstractMakePdf
         $output = $this->mpdf->OutputBinaryData();
         $this->contentSize = strlen($output);
         return $output;
-    }
-
-    /**
-     * Get all the entity data from the id array
-     */
-    private function readAll(): array
-    {
-        $entityArr = array();
-        $siteUrl = Config::fromEnv('SITE_URL');
-        foreach ($this->entityArr as $entity) {
-            try {
-                $entity->entityData['url'] = sprintf('%s/%s.php?mode=view&id=%d', $siteUrl, $entity->page, $entity->id);
-                $entityArr[] = $entity;
-            } catch (IllegalActionException | ResourceNotFoundException) {
-                continue;
-            }
-        }
-        return $entityArr;
     }
 }

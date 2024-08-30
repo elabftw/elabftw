@@ -1,5 +1,6 @@
 {% set mode = App.Request.query.get('mode')|default('view') %}
 {% include('ownership-transfer-modal.html') %}
+{% include 'duplicate-modal.html' %}
 
 {# REQUEST ACTIONS #}
 <div id='requestActionsDiv'>
@@ -81,7 +82,7 @@
   </button>
 
   {# DUPLICATE TEMPLATE #}
-  <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='duplicate-entity' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
     <i class='fas fa-copy fa-fw'></i>
   </button>
 

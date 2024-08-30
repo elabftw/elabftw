@@ -133,7 +133,7 @@ abstract class AbstractLinks implements RestInterface
         if ($fromTpl) {
             $table = $this->getTemplateTable();
         }
-        $sql = 'INSERT INTO ' . $this->getTable() . ' (item_id, link_id)
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
             SELECT :new_id, link_id
             FROM ' . $table . '
             WHERE item_id = :old_id';

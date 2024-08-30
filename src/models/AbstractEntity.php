@@ -133,6 +133,7 @@ abstract class AbstractEntity implements RestInterface
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -417,6 +418,9 @@ abstract class AbstractEntity implements RestInterface
      */
     public function canOrExplode(string $rw): void
     {
+        if ($this->id === null) {
+            throw new ImproperActionException('Cannot check permissions without an id!');
+        }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;
         }

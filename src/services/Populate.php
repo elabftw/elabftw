@@ -33,11 +33,11 @@ use Elabftw\Models\Users;
  */
 class Populate
 {
-    /** @var string DEFAULT_PASSWORD the password to use if none are provided */
-    private const DEFAULT_PASSWORD = 'totototototo';
+    // the password to use if none are provided
+    private const string DEFAULT_PASSWORD = 'totototototo';
 
-    /** @var int TEMPLATES_ITER number of templates to generate */
-    private const TEMPLATES_ITER = 5;
+    // number of templates to generate
+    private const int TEMPLATES_ITER = 5;
 
     private \Faker\Generator $faker;
 
@@ -157,6 +157,8 @@ class Populate
             }
 
             // CATEGORY
+            // blank the custom_id first or we might run into an issue when changing the category because another entry has the same custom_id
+            $Entity->patch(Action::Update, array('custom_id' => ''));
             $category = $this->faker->randomElement($categoryArr);
             $Entity->patch(Action::Update, array('category' => (string) $category['id']));
 

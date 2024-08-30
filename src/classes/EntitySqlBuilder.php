@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,28 +8,30 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function array_column;
-use function array_unique;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Templates;
 use Elabftw\Services\UsersHelper;
+
+use function array_column;
+use function array_unique;
 use function implode;
 
 class EntitySqlBuilder
 {
-    private array $selectSql = array();
+    protected array $selectSql = array();
 
-    private array $joinsSql = array();
+    protected array $joinsSql = array();
 
-    public function __construct(private AbstractEntity $entity)
-    {
-    }
+    public function __construct(private AbstractEntity $entity) {}
 
     /**
      * Get the SQL string for read before the WHERE
@@ -42,7 +45,7 @@ class EntitySqlBuilder
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
     ): string {
-        $this->entity($fullSelect);
+        $this->entitySelect($fullSelect);
         $this->status();
         $this->category();
         $this->comments();
@@ -68,7 +71,7 @@ class EntitySqlBuilder
         );
 
         // replace all %1$s by 'experiments' or 'items', there are many more than the one in FROM
-        return sprintf(implode(' ', $sql), $this->entity->type);
+        return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 
     public function getCanFilter(string $can): string
@@ -94,7 +97,7 @@ class EntitySqlBuilder
         return $sql;
     }
 
-    private function entity(bool $fullSelect): void
+    protected function entitySelect(bool $fullSelect): void
     {
         if ($fullSelect) {
             // get all the columns of entity table
@@ -102,8 +105,8 @@ class EntitySqlBuilder
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",
-                $this->entity->page,
-                $this->entity->type,
+                $this->entity->entityType->toPage(),
+                $this->entity->entityType->value,
             );
         } else {
             // only get the columns interesting for show mode
@@ -129,63 +132,7 @@ class EntitySqlBuilder
         }
     }
 
-    private function tags(): void
-    {
-        $this->selectSql[] = "GROUP_CONCAT(
-                DISTINCT tags.tag
-                ORDER BY tags.id SEPARATOR '|'
-            ) as tags,
-            GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-        $this->joinsSql[] = 'LEFT JOIN tags2entity
-                ON (tags2entity.item_id = entity.id
-                    AND tags2entity.item_type = \'%1$s\')
-            LEFT JOIN tags
-                ON (tags.id = tags2entity.tag_id)';
-    }
-
-    private function teamEvents(): void
-    {
-        $this->selectSql[] = "GROUP_CONCAT(
-                DISTINCT team_events.start
-                ORDER BY team_events.start
-                SEPARATOR '|'
-            ) AS events_start";
-
-        if ($this->entity instanceof Experiments) {
-            $eventsColumn = 'experiment';
-        } elseif ($this->entity instanceof Items) {
-            $this->selectSql[] = 'entity.is_bookable';
-            $eventsColumn = 'item_link = entity.id OR team_events.item';
-        } else {
-            throw new IllegalActionException('Nope.');
-        }
-
-        // only select events from the future
-        $this->joinsSql[] = "LEFT JOIN team_events
-            ON ((team_events.$eventsColumn = entity.id)
-                AND team_events.start > NOW())";
-    }
-
-    private function usersTeams(): void
-    {
-        $this->selectSql[] = "users.firstname,
-            users.lastname,
-            users.orcid,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            teams.name AS team_name";
-
-        $this->joinsSql[] = 'LEFT JOIN users
-            ON (users.userid = entity.userid)';
-        $this->joinsSql[] = sprintf(
-            'LEFT JOIN users2teams
-                ON (users2teams.users_id = users.userid
-                    AND users2teams.teams_id = %d)
-            LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->userData['team'],
-        );
-    }
-
-    private function category(): void
+    protected function category(): void
     {
         $this->selectSql[] = 'categoryt.title AS category_title,
             categoryt.color AS category_color';
@@ -193,13 +140,13 @@ class EntitySqlBuilder
         $this->joinsSql[] = sprintf(
             'LEFT JOIN %s AS categoryt
                 ON (categoryt.id = entity.category)',
-            $this->entity->type === 'experiments'
+            $this->entity->entityType === EntityType::Experiments
                 ? 'experiments_categories'
                 : 'items_types',
         );
     }
 
-    private function status(): void
+    protected function status(): void
     {
         $this->selectSql[] = 'statust.title AS status_title,
             statust.color AS status_color';
@@ -207,7 +154,7 @@ class EntitySqlBuilder
             ON (statust.id = entity.status)';
     }
 
-    private function uploads(): void
+    protected function uploads(): void
     {
         $this->selectSql[] = 'uploads.up_item_id,
             uploads.has_attachment';
@@ -231,14 +178,14 @@ class EntitySqlBuilder
                     AND uploads.type = \'%1$s\')';
     }
 
-    private function links(EntityType $relatedOrigin): void
+    protected function links(EntityType $relatedOrigin): void
     {
         $table = 'items';
         if ($this->entity->entityType === EntityType::Experiments) {
             $table = 'experiments';
         }
 
-        $related = '_links';
+        $related = '2items';
         if ($relatedOrigin === EntityType::Experiments) {
             $related = '2experiments';
         }
@@ -247,7 +194,7 @@ class EntitySqlBuilder
             ON (linkst.item_id = entity.id)";
     }
 
-    private function steps(): void
+    protected function steps(): void
     {
         $this->selectSql[] = "SUBSTRING_INDEX(GROUP_CONCAT(
                 stepst.next_step
@@ -266,7 +213,7 @@ class EntitySqlBuilder
                 ON (stepst.steps_item_id = entity.id)';
     }
 
-    private function comments(): void
+    protected function comments(): void
     {
         $this->selectSql[] = 'commentst.recent_comment,
             (commentst.recent_comment IS NOT NULL) AS has_comment';
@@ -277,6 +224,64 @@ class EntitySqlBuilder
                 GROUP BY item_id
             ) AS commentst
                 ON (commentst.item_id = entity.id)';
+    }
+
+    private function tags(): void
+    {
+        $this->selectSql[] = "GROUP_CONCAT(
+                DISTINCT tags.tag
+                ORDER BY tags.id SEPARATOR '|'
+            ) as tags,
+            GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+        $this->joinsSql[] = 'LEFT JOIN tags2entity
+                ON (tags2entity.item_id = entity.id
+                    AND tags2entity.item_type = \'%1$s\')
+            LEFT JOIN tags
+                ON (tags.id = tags2entity.tag_id)';
+    }
+
+    private function teamEvents(): void
+    {
+        if ($this->entity instanceof Experiments) {
+            $eventsColumn = 'experiment';
+        } elseif ($this->entity instanceof Items) {
+            $this->selectSql[] = 'entity.is_bookable';
+            $eventsColumn = 'item_link = entity.id OR team_events.item';
+        } elseif ($this->entity instanceof Templates) {
+            return;
+        } else {
+            throw new IllegalActionException('Nope.');
+        }
+        $this->selectSql[] = "GROUP_CONCAT(
+                DISTINCT team_events.start
+                ORDER BY team_events.start
+                SEPARATOR '|'
+            ) AS events_start";
+
+
+        // only select events from the future
+        $this->joinsSql[] = "LEFT JOIN team_events
+            ON ((team_events.$eventsColumn = entity.id)
+                AND team_events.start > NOW())";
+    }
+
+    private function usersTeams(): void
+    {
+        $this->selectSql[] = "users.firstname,
+            users.lastname,
+            users.orcid,
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            teams.name AS team_name";
+
+        $this->joinsSql[] = 'LEFT JOIN users
+            ON (users.userid = entity.userid)';
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN users2teams
+                ON (users2teams.users_id = users.userid
+                    AND users2teams.teams_id = %d)
+            LEFT JOIN teams ON (entity.team = teams.id)',
+            $this->entity->Users->team ?? 0,
+        );
     }
 
     /**
@@ -366,7 +371,7 @@ class EntitySqlBuilder
      */
     private function canTeams(string $can): string
     {
-        $UsersHelper = new UsersHelper((int) $this->entity->Users->userData['userid']);
+        $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays

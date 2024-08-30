@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -16,8 +19,10 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Check;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Services\TeamsHelper;
 use PDO;
 
 /**
@@ -25,6 +30,10 @@ use PDO;
  */
 class Users2Teams
 {
+    // are onboarding emails sent in general?
+    // setting for each team is checked additionally
+    public bool $sendOnboardingEmailOfTeams = false;
+
     protected Db $Db;
 
     public function __construct(private Users $requester)
@@ -35,16 +44,24 @@ class Users2Teams
     /**
      * Add one user to one team
      */
-    public function create(int $userid, int $teamid, int $group = 4): bool
+    public function create(int $userid, int $teamid, Usergroup $group = Usergroup::User): bool
     {
         // primary key will take care of ensuring there are no duplicate tuples
         $sql = 'INSERT IGNORE INTO users2teams (`users_id`, `teams_id`, `groups_id`) VALUES (:userid, :team, :group);';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
-        $req->bindValue(':group', $group, PDO::PARAM_INT);
+        $req->bindValue(':group', $group->value, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamAddition($teamid, $group, $this->requester->userid ?? 0, $userid));
+        AuditLogs::create(new TeamAddition($teamid, $group->value, $this->requester->userid ?? 0, $userid));
+
+        // check onboarding email setting for each team
+        $Team = new Teams(new Users(), $teamid);
+        $Team->bypassReadPermission = true;
+        if ($this->sendOnboardingEmailOfTeams && $Team->readOne()['onboarding_email_active'] === 1) {
+            (new OnboardingEmail($teamid))->create($userid);
+        }
+
         return $res;
     }
 
@@ -53,8 +70,11 @@ class Users2Teams
         $userid = (int) $params['userid'];
         $teamid = (int) $params['team'];
         if ($params['target'] === 'group') {
-            $group = Usergroup::from((int) $params['content']);
-            return $this->patchTeamGroup($userid, $teamid, $group);
+            return $this->patchTeamGroup(
+                $userid,
+                $teamid,
+                Usergroup::from((int) $params['content']),
+            );
         }
 
         // currently only other value for target is: is_owner
@@ -66,10 +86,10 @@ class Users2Teams
      *
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      */
-    public function addUserToTeams(int $userid, array $teamIdArr, int $group = 4): void
+    public function addUserToTeams(int $userid, array $teamIdArr, Usergroup $group = Usergroup::User): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->create($userid, (int) $teamId, $group);
+            $this->create($userid, $teamId, $group);
         }
     }
 
@@ -81,7 +101,7 @@ class Users2Teams
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->destroy($userid, (int) $teamId);
+            $this->destroy($userid, $teamId);
         }
     }
 
@@ -106,21 +126,34 @@ class Users2Teams
 
     private function patchTeamGroup(int $userid, int $teamid, Usergroup $group): int
     {
-        $group = Check::usergroup($this->requester, $group)->value;
+        $group = Check::usergroup($this->requester, $group);
+        $promoteToAdmin = $group === Usergroup::Admin && !$this->wasAdminAlready($userid);
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
         }
+
+        $TeamsHelper = new TeamsHelper($teamid);
+        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('User tried to patch team group of a team where they are not admin');
+        }
         $sql = 'UPDATE users2teams SET groups_id = :group WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':group', $group, PDO::PARAM_INT);
+        $req->bindValue(':group', $group->value, PDO::PARAM_INT);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 
         $this->Db->execute($req);
+
+        // send the admin onboarding email only when user becomes admin the first time
+        if ($promoteToAdmin
+            && (Config::getConfig())->configArr['onboarding_email_active'] === '1'
+        ) {
+            (new OnboardingEmail(-1, $promoteToAdmin))->create($userid);
+        }
         /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $group, $userid, $teamid));
-        return $group;
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $group->value, $userid, $teamid));
+        return $group->value;
     }
 
     private function patchIsOwner(int $userid, int $teamid, int $content): int
@@ -137,5 +170,20 @@ class Users2Teams
 
         $this->Db->execute($req);
         return $content;
+    }
+
+    private function wasAdminAlready(int $userid): bool
+    {
+        $sql = sprintf(
+            'SELECT COUNT(users_id)
+                FROM users2teams
+                WHERE `users_id` = :userid
+                    AND `groups_id` = %d',
+            Usergroup::Admin->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchColumn() > 0;
     }
 }

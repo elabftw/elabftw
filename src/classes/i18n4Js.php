@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,10 +8,13 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
 use Elabftw\Traits\TwigTrait;
+use League\Flysystem\FilesystemOperator;
 
 /**
  * This class is used to generate the translations files for i18next (javascript)
@@ -19,6 +23,8 @@ use Elabftw\Traits\TwigTrait;
 class i18n4Js
 {
     use TwigTrait;
+
+    public function __construct(private FilesystemOperator $fs) {}
 
     public function generate(): void
     {
@@ -36,7 +42,7 @@ class i18n4Js
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
-            'editing-metadata' =>_('You are currently editing the metadata attached to this entry.'),
+            'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
             'error-no-category' => _('A category is required to fetch the next Custom ID'),
@@ -44,14 +50,18 @@ class i18n4Js
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
             'link-delete-warning' => _('Delete this link?'),
-            'new-apikey-warning' => _("This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"),
+            // https://www.i18next.com/translation-function/formatting
+            'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-set' => _('Not set'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
+            'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'please-wait' => _('Please wait…'),
+            'remove' => _('Remove'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'request-filename' => _('Enter name of the file'),
+            'resource-not-found' => _('Nothing to show with this id'),
             'save' => _('Save'),
             'saved' => _('Saved'),
             'sort-by-column' => _('Sort by column'),
@@ -81,7 +91,6 @@ class i18n4Js
 
         $Twig = $this->getTwig(true);
         $out = $Twig->render('ts-lang.ts.twig', array('terms' => $this->getTerms()));
-        $fs = FsTools::getFs(dirname(__DIR__, 2) . '/src/ts/langs');
-        $fs->write($language->value . '.ts', $out);
+        $this->fs->write($language->value . '.ts', $out);
     }
 }

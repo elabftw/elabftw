@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,6 +7,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
@@ -24,7 +27,7 @@ interface RestInterface
 
     public function patch(Action $action, array $params): array;
 
-    public function getPage(): string;
+    public function getApiPath(): string;
 
     public function destroy(): bool;
 }

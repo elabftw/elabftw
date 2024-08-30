@@ -8,152 +8,152 @@
 
 /* see documentation: https://mpdf.github.io/paging/using-page.html */
 @page {
-    /* stylelint-disable-next-line property-no-unknown */
-    footer: html_footer;
-    margin: 1cm;
+  /* stylelint-disable-next-line property-no-unknown */
+  footer: html_footer;
+  margin: 1cm;
 }
 
 body {
-    font-family: 'DejaVu', sans-serif;
-    font-kerning: normal;
+  font-family: 'DejaVu', sans-serif;
+  font-kerning: normal;
 }
 
 a {
-    color: #29aeb9;
-    text-decoration: none;
+  color: #29aeb9;
+  text-decoration: none;
 }
 
 code {
-    background-color: #eee;
-    border: 1px dotted #ccc;
+  background-color: #eee;
+  border: 1px dotted #ccc;
 }
 
 /* fix metadata extra fields having numbers in pdf */
 .no-list-style li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 table {
-    border-collapse: collapse;
+  border-collapse: collapse;
 }
 
 table,
 th,
 td {
-    border: 1px solid #797979;
+  border: 1px solid #797979;
 }
 
 table td {
-    padding: 5px;
+  padding: 5px;
 }
 
 table th {
-    background-color: #dcdddc;
-    color: #797979;
-    font-size: 90%;
-    padding: 5px;
-    text-align: left;
-    text-transform: uppercase;
-    width: 150px;
+  background-color: #dcdddc;
+  color: #797979;
+  font-size: 90%;
+  padding: 5px;
+  text-align: left;
+  text-transform: uppercase;
+  width: 150px;
 }
 
 /* color one row every other row */
 tr:nth-child(even) {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 tr:nth-child(odd) {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .no-break {
-    page-break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .page-break {
-    page-break-after: always;
+  page-break-after: always;
 }
 
 .pdf-ul {
-    border: 1px solid #797979;
-    border-radius: 5px;
-    margin: 5px;
-    padding: 7px;
+  border: 1px solid #797979;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 7px;
 }
 
 .elabid {
-    color: #000;
-    font-size: 8pt;
-    text-align: right;
+  color: #000;
+  font-size: 8pt;
+  text-align: right;
 }
 
 .barcode {
-    color: #000;
-    margin: 0;
-    padding: 1.5mm;
-    vertical-align: middle;
+  color: #000;
+  margin: 0;
+  padding: 1.5mm;
+  vertical-align: middle;
 }
 
 .attached-image {
-    border: 1px solid #dcdddc;
-    margin-top: 0.5em;
-    max-height: 10cm;
-    max-width: 100%;
+  border: 1px solid #dcdddc;
+  margin-top: 0.5em;
+  max-height: 10cm;
+  max-width: 100%;
 }
 
 /* border-radius or padding not working on non div elements */
 .tag {
-    border: 1px solid #ccc;
+  border: 1px solid #ccc;
 }
 
 .noborder {
-    border-style: none;
+  border-style: none;
 }
 
 #infoblock {
-    background-color: #f2f2f2;
-    border: 1px solid #dcdddc;
-    border-radius: 5px;
-    margin-top: 1em;
-    width: 100%;
+  background-color: #f2f2f2;
+  border: 1px solid #dcdddc;
+  border-radius: 5px;
+  margin-top: 1em;
+  width: 100%;
 }
 
 #header {
-    border-bottom: 1px solid #dcdddc;
+  border-bottom: 1px solid #dcdddc;
 }
 
 .footer-block {
-    border-top: 1px solid #dcdddc;
-    font-size: 80%;
-    text-align: right;
+  border-top: 1px solid #dcdddc;
+  font-size: 80%;
+  text-align: right;
 }
 
 .signatures {
-    margin-top: 10px;
-    padding-left: 10px;
-    text-align: left;
+  margin-top: 10px;
+  padding-left: 10px;
+  text-align: left;
 }
 
 /* caption for tinymce */
 .image figcaption {
-    border: 1px solid #ccc;
-    /* stylelint-disable-next-line shorthand-property-no-redundant-values */
-    margin: 2px 0 6px 0;
-    text-align: center;
+  border: 1px solid #ccc;
+  /* stylelint-disable-next-line shorthand-property-no-redundant-values */
+  margin: 2px 0 6px 0;
+  text-align: center;
 }
 
 /* This helps alignment for inline equations */
 img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is accepted and mpdf is bumped to next version */
 .mathjax-svg { /* keep only this selector */
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 /* BLOCKQUOTE */
 // quote marks in pdf is not implemented by mpdf
 // https://github.com/mpdf/mpdf/blob/d3ef7689800c6356ab7df7604289f97c17f37c76/src/Tag/BlockQuote.php
 blockquote {
-    background: #f9f9f9;
-    border-left: 10px solid #ccc;
-    margin: 1.5em 10px;
-    padding: 0.5em 10px;
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
 }

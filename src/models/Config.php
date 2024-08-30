@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_map;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
@@ -19,7 +21,10 @@ use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Services\Filter;
 use PDO;
+
+use function array_map;
 use function urlencode;
 
 /**
@@ -55,7 +60,7 @@ final class Config implements RestInterface
      * Insert the default values in the sql config table
      * Only run once of first ever page load
      */
-    public function create(): int
+    public function create(): bool
     {
         $schema = Update::getRequiredSchema();
 
@@ -81,7 +86,7 @@ final class Config implements RestInterface
             ('ts_balance', '0'),
             ('ts_login', NULL),
             ('ts_password', NULL),
-            ('ts_url', 'NULL'),
+            ('ts_url', NULL),
             ('ts_cert', NULL),
             ('ts_hash', 'sha256'),
             ('ts_limit', '0'),
@@ -104,6 +109,7 @@ final class Config implements RestInterface
             ('saml_user_default', '1'),
             ('saml_allowrepeatattributename', '0'),
             ('local_login', '1'),
+            ('local_auth_enabled', '1'),
             ('local_register', '1'),
             ('admins_create_users', '1'),
             ('anon_users', '0'),
@@ -120,31 +126,32 @@ final class Config implements RestInterface
             ('legal_notice_name', 'Legal notice'),
             ('announcement', NULL),
             ('login_announcement', NULL),
-            ('saml_nameidencrypted', 0),
-            ('saml_authnrequestssigned', 0),
-            ('saml_logoutrequestsigned', 0),
-            ('saml_logoutresponsesigned', 0),
-            ('saml_signmetadata', 0),
-            ('saml_wantmessagessigned', 0),
-            ('saml_wantassertionsencrypted', 0),
-            ('saml_wantassertionssigned', 0),
-            ('saml_wantnameid', 1),
-            ('saml_wantnameidencrypted', 0),
-            ('saml_wantxmlvalidation', 1),
-            ('saml_relaxdestinationvalidation', 0),
-            ('saml_lowercaseurlencoding', 0),
+            ('saml_nameidencrypted', '0'),
+            ('saml_authnrequestssigned', '0'),
+            ('saml_logoutrequestsigned', '0'),
+            ('saml_logoutresponsesigned', '0'),
+            ('saml_signmetadata', '0'),
+            ('saml_wantmessagessigned', '0'),
+            ('saml_wantassertionsencrypted', '0'),
+            ('saml_wantassertionssigned', '0'),
+            ('saml_wantnameid', '1'),
+            ('saml_wantnameidencrypted', '0'),
+            ('saml_wantxmlvalidation', '1'),
+            ('saml_relaxdestinationvalidation', '0'),
+            ('saml_lowercaseurlencoding', '0'),
             ('saml_fallback_orgid', '0'),
             ('email_domain', NULL),
-            ('saml_sync_teams', 0),
+            ('email_send_grouped', '1'),
+            ('saml_sync_teams', '0'),
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('chat_url', 'https://gitter.im/elabftw/elabftw'),
             ('allow_useronly', '1'),
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
-            ('max_revisions', 10),
-            ('min_delta_revisions', 100),
-            ('min_days_revisions', 23),
+            ('max_revisions', '10'),
+            ('min_delta_revisions', '100'),
+            ('min_days_revisions', '23'),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),
@@ -152,6 +159,7 @@ final class Config implements RestInterface
             ('extauth_teams', ''),
             ('logout_url', ''),
             ('ldap_toggle', '0'),
+            ('ldap_scheme', 'ldap'),
             ('ldap_search_attr', 'mail'),
             ('ldap_host', ''),
             ('ldap_port', '389'),
@@ -178,12 +186,19 @@ final class Config implements RestInterface
             ('password_complexity_requirement', '0'),
             ('max_password_age_days', '3650'),
             ('remote_dir_service', 'eairef'),
-            ('remote_dir_config', NULL)";
+            ('remote_dir_config', NULL),
+            ('onboarding_email_active', '0'),
+            ('onboarding_email_subject', NULL),
+            ('onboarding_email_body', NULL),
+            ('onboarding_email_different_for_admins', '0'),
+            ('onboarding_email_admins_subject', NULL),
+            ('onboarding_email_admins_body', NULL),
+            ('allow_users_change_identity', '1')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);
 
-        return (int) $this->Db->execute($req);
+        return $this->Db->execute($req);
     }
 
     /**
@@ -232,9 +247,7 @@ final class Config implements RestInterface
             $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
         }
 
-        return array_map(function ($v): mixed {
-            return $v[0];
-        }, $config);
+        return array_map(fn($v): mixed => $v[0], $config);
     }
 
     /**
@@ -262,17 +275,23 @@ final class Config implements RestInterface
 
         // loop the array and update config
         foreach ($params as $name => $value) {
-            $req->bindParam(':value', $value);
-            $req->bindParam(':name', $name);
-            $this->Db->execute($req);
-            AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
-            $this->configArr[$name] = (string) $value;
+            if ($this->configArr[$name] !== $value) {
+                // prevent incorrect html in these two things
+                if ($name === 'login_announcement' || $name === 'announcement') {
+                    $value = Filter::body($value);
+                }
+                $req->bindParam(':value', $value);
+                $req->bindParam(':name', $name);
+                $this->Db->execute($req);
+                AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
+                $this->configArr[$name] = (string) $value;
+            }
         }
 
         return $this->readAll();
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/config/';
     }
@@ -312,6 +331,8 @@ final class Config implements RestInterface
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return (bool) $this->create();
+        $createResult = $this->create();
+        $this->configArr = $this->readAll();
+        return $createResult;
     }
 }

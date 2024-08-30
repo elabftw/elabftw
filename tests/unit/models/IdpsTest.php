@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -17,12 +19,12 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Idps= new Idps();
+        $this->Idps = new Idps(new Users(1, 1));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/idps/', $this->Idps->getPage());
+        $this->assertEquals('api/v2/idps/', $this->Idps->getApiPath());
     }
 
     public function testCreate(): void
@@ -49,9 +51,11 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($newValue, $response['name']);
     }
 
-    public function testReadAll(): void
+    public function testRead(): void
     {
         $this->assertIsArray($this->Idps->readAll());
+        $this->assertIsArray($this->Idps->readAllSimpleEnabled());
+        $this->assertIsArray($this->Idps->readAllLight());
     }
 
     public function testGetActiveByEntityId(): void

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -6,6 +7,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -20,6 +23,8 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+use function time;
 
 /**
  * Methods to login the user (once the authentication is done)
@@ -45,7 +50,8 @@ class LoginHelper
             $this->setToken();
         }
         // if we run a version newer than the last time the user logged in, create a notification
-        if ($this->getLastSeenVersion() < App::INSTALLED_VERSION_INT && $this->AuthResponse->isAnonymous === false) {
+        // but only if it's a minor version
+        if ((App::INSTALLED_VERSION_INT - $this->getLastSeenVersion() >= 100) && $this->AuthResponse->isAnonymous === false) {
             $Notifications = new NewVersionInstalled();
             $Notifications->create($this->AuthResponse->userid);
         }
@@ -56,6 +62,32 @@ class LoginHelper
             $this->updateAuthService();
         }
         AuditLogs::create(new UserLogin($this->AuthResponse->userid, $this->AuthResponse->userid));
+    }
+
+    public function getExpires(): int
+    {
+        return time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
+    }
+
+    /**
+     * Set a $_COOKIE['token'] and update the database with this token.
+     * Also set a token_team cookie for the team
+     */
+    private function setToken(): void
+    {
+        $CookieToken = CookieToken::fromScratch();
+        $CookieToken->saveToken($this->AuthResponse->userid);
+
+        $cookieOptions = array(
+            'expires' => $this->getExpires(),
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        setcookie('token', $CookieToken->getToken(), $cookieOptions);
+        setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 
     private function getLastSeenVersion(): int
@@ -142,29 +174,5 @@ class LoginHelper
         if ($this->AuthResponse->isAnonymous) {
             $this->Session->set('is_anon', 1);
         }
-    }
-
-    /**
-     * Set a $_COOKIE['token'] and update the database with this token.
-     * Also set a token_team cookie for the team
-     */
-    private function setToken(): void
-    {
-        $CookieToken = new CookieToken();
-        $CookieToken->saveToken($this->AuthResponse->userid);
-
-        $expirationSeconds = time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
-
-        // create cookie for login
-        $cookieOptions = array(
-            'expires' => $expirationSeconds,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('token', $CookieToken->token, $cookieOptions);
-        setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
     }
 }

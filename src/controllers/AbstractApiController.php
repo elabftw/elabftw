@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -7,19 +8,23 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Controllers;
 
+use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Models\Users;
+use Elabftw\Exceptions\InvalidEndpointException;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * For API requests
  */
-abstract class AbstractApiController implements ControllerInterface
+abstract class AbstractApiController extends AbstractController
 {
+    public bool $canWrite = false;
+
     protected ?int $id = null;
 
     protected int $limit = 15;
@@ -28,14 +33,7 @@ abstract class AbstractApiController implements ControllerInterface
 
     protected string $search = '';
 
-    protected string $endpoint;
-
-    public function __construct(protected Users $Users, protected Request $Request, protected bool $canWrite = false)
-    {
-        if ($Users->userData['archived'] === 1) {
-            throw new ImproperActionException('Cannot use API with an archived account!');
-        }
-    }
+    protected ApiEndpoint $endpoint;
 
     protected function parseReq(): array
     {
@@ -76,9 +74,9 @@ abstract class AbstractApiController implements ControllerInterface
             $this->search = trim($this->Request->query->getString('search'));
         }
 
-        // assign the endpoint (experiments, items, uploads, items_types, status)
-        // 0 is "", 1 is "api", 2 is "v1"
-        $this->endpoint = $req[3] ?? 'invalid_endpoint';
+        // assign the endpoint, see ApiEndpoint enum
+        // req array: 0 is "", 1 is "api", 2 is "v2"
+        $this->endpoint = ApiEndpoint::tryFrom((string) $req[3]) ?? throw new InvalidEndpointException();
 
         // assign the id if there is one
         if (Check::id((int) ($req[4] ?? 0)) !== false) {
@@ -87,11 +85,11 @@ abstract class AbstractApiController implements ControllerInterface
         }
         // allow using "me" to refer to the current logged in user
         if (($req[4] ?? '') === 'me') {
-            $this->id = $this->Users->userData['userid'];
+            $this->id = $this->requester->userData['userid'];
         }
         // allow using "current" to refer to the current logged in team
         if (($req[4] ?? '') === 'current') {
-            $this->id = $this->Users->userData['team'];
+            $this->id = $this->requester->userData['team'];
         }
 
         return $req;

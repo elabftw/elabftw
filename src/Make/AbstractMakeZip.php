@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,19 +8,12 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
-use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
-use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Templates;
-use Elabftw\Services\Filter;
-use Elabftw\Services\MpdfProvider;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use ZipStream\ZipStream;
 
 /**
@@ -27,8 +21,6 @@ use ZipStream\ZipStream;
  */
 abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 {
-    protected ZipStream $Zip;
-
     protected bool $usePdfa = false;
 
     protected string $folder = '';
@@ -39,27 +31,11 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
 
     protected string $hashAlgorithm = 'sha256';
 
-    /**
-     * Folder and zip file name begins with date for experiments
-     */
-    protected function getBaseFileName(): string
-    {
-        // items will show category instead of date as file name prefix
-        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
-            $prefix = Filter::forFilesystem($this->Entity->entityData['category_title'] ?? '');
-        } elseif ($this->Entity instanceof Templates) {
-            $prefix = 'Experiment template';
-        } else { // Experiments
-            $prefix = Filter::forFilesystem($this->Entity->entityData['date']);
-        }
+    protected bool $bypassReadPermission = false;
 
-        return sprintf(
-            '%s - %s - %s',
-            $prefix,
-            // prevent a zip name with too much characters from the title, see #3966
-            substr(Filter::forFilesystem($this->Entity->entityData['title']), 0, 100),
-            Tools::getShortElabid($this->Entity->entityData['elabid'] ?? ''),
-        );
+    public function __construct(protected ZipStream $Zip)
+    {
+        parent::__construct();
     }
 
     /**
@@ -81,7 +57,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $realNamesSoFar[] = $realName;
             // modify the real_name in place
             $file['real_name'] = $realName;
-            $storageFs = Storage::from((int) $file['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
 
             // make sure we have a hash
             if (empty($file['hash'])) {
@@ -92,28 +68,5 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
         return $filesArr;
-    }
-
-    protected function getPdf(): PdfMakerInterface
-    {
-        $userData = $this->Entity->Users->userData;
-        $MpdfProvider = new MpdfProvider(
-            $userData['fullname'],
-            $userData['pdf_format'],
-            $this->usePdfa,
-        );
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
-        return new MakePdf($log, $MpdfProvider, $this->Entity, array($this->Entity->id));
-    }
-
-    /**
-     * Add a PDF file to the ZIP archive
-     */
-    protected function addPdf(): void
-    {
-        $MakePdf = $this->getPdf();
-        // disable makepdf notifications because they are handled by calling class
-        $MakePdf->setNotifications(false);
-        $this->Zip->addFile($this->folder . '/' . $MakePdf->getFileName(), $MakePdf->getFileContent());
     }
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,15 +8,21 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
+
+use Elabftw\Models\AbstractEntity;
+use Override;
 
 /**
  * Make a full JSON export, including all information from one or several entities
  */
 class MakeFullJson extends MakeJson
 {
-    protected function getEntityData(): array
+    #[Override]
+    protected function getEntityData(AbstractEntity $entity): array
     {
-        return $this->Entity->readOneFull();
+        return $entity->readOneFull();
     }
 }

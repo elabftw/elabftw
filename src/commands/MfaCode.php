@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Marcel Bolten <marcel.bolten@msl.ubc.ca>
  * @author Nicolas CARPi <nico-git@deltablot.email>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Commands;
 

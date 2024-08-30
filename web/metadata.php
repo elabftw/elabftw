@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -26,7 +29,7 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps());
+    $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps($App->Users));
     $settingsArr = $IdpsHelper->getSettings();
     if (empty($settingsArr['sp']['entityId'])) {
         throw new ImproperActionException('No Service Provider configured. Aborting.');

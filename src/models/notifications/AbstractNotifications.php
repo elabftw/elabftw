@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
@@ -43,14 +46,14 @@ abstract class AbstractNotifications
             $isAck = 0;
         }
 
-        $jsonBody = json_encode($this->getBody(), JSON_THROW_ON_ERROR|JSON_FORCE_OBJECT, 5);
+        $jsonBody = json_encode($this->getBody(), JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT, 5);
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
-        $req->bindParam(':body', $jsonBody, PDO::PARAM_STR);
+        $req->bindParam(':body', $jsonBody);
         $req->bindParam(':is_ack', $isAck, PDO::PARAM_INT);
         $this->Db->execute($req);
 

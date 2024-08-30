@@ -2,7 +2,7 @@
 
 {% block body %}
 
-{% include('create-idp-modal.html') %}
+{% include('idp-modal.html') %}
 
 {# Modal for team creation #}
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel'>
@@ -19,7 +19,7 @@
         <input type='text' placeholder='{{ 'Enter team name'|trans }}' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-action='create-team' class='btn btn-primary' data-dismiss='modal'>{{ 'Create'|trans }}</button>
       </div>
     </div>
@@ -47,10 +47,11 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Policies'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Uploads'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='9'>{{ 'Timestamp'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='10'>SAML</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='11'>LDAP</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>{{ 'External auth'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'Audit Logs'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='10'>{{ 'Local auth'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='11'>SAML</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>LDAP</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'External auth'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -63,7 +64,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
-      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Items'|trans }}: {{ info.items_count }}</div>
+      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ info.items_count }}</div>
       <div><a href='make.php?format=report' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
     </div>
   </div>
@@ -124,12 +125,14 @@
     </div>
     <hr>
 
+    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
+
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
   <div class='pl-3'>
 
-    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. Administrators of each team can choose whether or not database items will be visible.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
     {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
 
@@ -144,12 +147,10 @@
     <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register'} %}
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
 
-    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'You can still show the local login form by appending ?letmein to the login page URL.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
@@ -200,16 +201,18 @@
   <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }}</p>
+      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createTeamModal'>{{ 'Create a team'|trans }}</button>
       </div>
     </div>
 
+    {% include 'filter-input-snippet.html' with {'target': 'teamsTableBody'} %}
     <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
       <thead>
         <tr>
+          <th scope='col'>{{ 'ID'|trans }}</th>
           <th scope='col'>{{ 'Name'|trans }}</th>
           <th scope='col'>{{ 'Organisation ID'|trans }}</th>
           <th scope='col'>{{ 'Creation date'|trans }}</th>
@@ -217,10 +220,11 @@
           <th scope='col'>{{ 'Actions'|trans }}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id='teamsTableBody'>
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}
           <tr>
+            <td>{{ team.id }}</td>
             <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
               <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
               {% trans %}
@@ -228,7 +232,7 @@
               {% plural count.totxp %}
               Experiments
               {% endtrans %}
-              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Items'|trans }}: {{ count.totdb }}<p>
+              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ count.totdb }}<p>
 
             </td>
             <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
@@ -291,6 +295,11 @@
     </div>
   </div>
 
+  {# ONBOARDINGELCOME EMAIL #}
+  {% set model = 'config' %}
+  {% set src = App.Config.configArr %}
+  {% include 'onboarding-email.html' %}
+
   {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
   <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>
@@ -332,7 +341,7 @@
 
     <div class='d-flex justify-content-between'>
       <label for='smtp_port' class='col-form-label'>{{ 'SMTP Port'|trans }}</label>
-      <input class='form-control col-md-3' type='text' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' data-trigger='blur' data-model='config' data-target='smtp_port' id='smtp_port' />
+      <input class='form-control col-md-3' type='number' placeholder='587' value='{{ App.Config.configArr.smtp_port }}' data-trigger='blur' data-model='config' data-target='smtp_port' id='smtp_port' />
     </div>
     <p class='smallgray'>{{ 'Default is 587.'|trans }}</p>
     <hr>
@@ -346,13 +355,15 @@
     <div class='d-flex justify-content-between'>
       <label for='smtp_password' class='col-form-label'>{{ 'SMTP password'|trans }}</label>
       {% if App.Config.configArr.smtp_password|length == 0 %}
-        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='smtp_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
       {% else %}
         <p>
-          {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>", "</span>")|raw }}
-          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' name='smtp_password' hidden autocomplete='off' id='hidden_smtp_password' />
+        {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='smtp' data-reload='emailSettings'>{{ 'Clear'|trans }}</button>
         </p>
       {% endif %}
     </div>
@@ -365,6 +376,9 @@
     <hr>
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 'smtp_verify_cert'} %}
+
+    {% include 'binary-setting.html' with {'label': 'Send mass emails grouped'|trans, 'slug': 'email_send_grouped', 'help': 'When enabled, mass emails are sent as a single email with all recipients in Bcc. Disable this setting if you encounter issues with your SMTP server refusing to deliver emails if a recipient has an invalid account or if there are too many recipients.'} %}
+
   </div>
 
   {# TEST EMAIL #}
@@ -429,33 +443,6 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
-  <div class='pl-3'>
-    <div class='d-flex justify-content-between'>
-      <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
-      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.min_password_length }}' data-trigger='blur' data-model='config' data-target='min_password_length' id='min_password_length' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='password_complexity_requirement' class='col-form-label'>{{ 'Password complexity requirement'|trans }}</label>
-      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='password_complexity_requirement' id='password_complexity_requirement'>
-        {% for value, human in passwordComplexityArr %}
-          <option value='{{ value }}' {{- App.Config.configArr.password_complexity_requirement == value ? ' selected' }}>{{ human }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'The minimum password length is always enforced.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='max_password_age_days' class='col-form-label'>{{ 'Maximum number of days since last password change'|trans }}</label>
-      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.max_password_age_days }}' data-trigger='blur' data-model='config' data-target='max_password_age_days' id='max_password_age_days' />
-    </div>
-    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
-    <hr>
-  </div>
-
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h3>
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
@@ -487,7 +474,7 @@
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
       {% if configArr.debug -%}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
@@ -508,7 +495,18 @@
 
 {# TAB 8 UPLOADS #}
 <div data-tabcontent='8' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Uploaded files configuration'|trans }}</h3>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
+  <div class='pl-3 mt-2 mb-5'>
+    {% if uploadsStats.count_null_hash > 0 %}
+      {{ 'Warning: %d files are missing a hash value. Fix it with %sbin/console uploads:check%s command.'|format(uploadsStats.count_null_hash, '<code>', '</code>')|msg('warning', false) }}
+    {% endif %}
+    {% if uploadsStats.count_null_filesize > 0 %}
+      {{ 'Warning: %d files are missing a filesize value. Fix it with %sbin/console uploads:check%s command.'|format(uploadsStats.count_null_filesize, '<code>', '</code>')|msg('warning', false) }}
+    {% endif %}
+    {{ 'This instance has %d files uploaded using %s of disk space.'|trans|format(uploadsStats.count_all, uploadsStats.filesize_all|formatBytes) }}
+  </div>
+
+  <h3 class='p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
 
@@ -589,12 +587,49 @@
   </div>
 </div>
 
-
-{# TAB 10 SAML #}
+{# TAB 10 LOCAL AUTH #}
 <div data-tabcontent='10' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Local authentication configuration'|trans }}</h3>
+  <div class='pl-3 mt-2 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Enable local authentication'|trans, 'slug': 'local_auth_enabled', 'help': 'Toggle local authentication method (email + password). Warning: disabling this method might lock you out!'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register', 'help': 'Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL.'|trans} %}
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='d-flex justify-content-between'>
+      <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.min_password_length }}' data-trigger='blur' data-model='config' data-target='min_password_length' id='min_password_length' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='password_complexity_requirement' class='col-form-label'>{{ 'Password complexity requirement'|trans }}</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='password_complexity_requirement' id='password_complexity_requirement'>
+        {% for value, human in passwordComplexityArr %}
+          <option value='{{ value }}' {{- App.Config.configArr.password_complexity_requirement == value ? ' selected' }}>{{ human }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <p class='smallgray'>{{ 'The minimum password length is always enforced.'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='max_password_age_days' class='col-form-label'>{{ 'Maximum number of days since last password change'|trans }}</label>
+      <input class='form-control col-md-3' type='number' value='{{ App.Config.configArr.max_password_age_days }}' data-trigger='blur' data-model='config' data-target='max_password_age_days' id='max_password_age_days' />
+    </div>
+    <p class='smallgray'>{{ 'Set to 0 to disable this feature.'|trans }}</p>
+    <hr>
+  </div>
+
+</div>
+
+{# TAB 11 SAML #}
+<div data-tabcontent='11' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
-    <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
     {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
@@ -716,143 +751,105 @@
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity Providers list'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'It is possible to configure several identity providers for your instance.'|trans }}</p>
+    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h5>
+    <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically.'|trans }}</p>
+    <ul class='list-group' id='idpsSourcesDiv'>
+      <li class='list-group-item'>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>+</span>
+          </div>
+          <input id='addIdpsSourcesInput' aria-labelledby='addIdpsSourcesInputLabel' class='form-control' type='url' placeholder='https://www.aai.example.com/idps.xml' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-action='save-idps-source' type='button'>{{ 'Save'|trans }}</button>
+          </div>
+        </div>
+      </li>
+      {% for source in idpsSources %}
+      <li class='list-group-item'>
+        <div class='d-flex'>
+          <a target='_blank' rel='noopener' class='external-link' href='{{ source.url }}'>{{ source.url }}</a>
+          <div class='ml-auto'>
+            <label for='autorefreshIdpsSource-{{ source.id }}' class='col-form-label clickable'>{{ 'Auto-refresh'|trans }}</label>
+            <label class='switch ucp-align'>
+              <input type='checkbox' id='autorefreshIdpsSource-{{ source.id }}' {{ source.auto_refresh == 1 ? "checked='checked'" }} autocomplete='off' data-trigger='change' data-model='idps_sources/{{ source.id }}' data-target='auto_refresh'>
+              <span class='slider'></span>
+            </label>
+            <button type='button' class='btn btn-sm btn-primary mx-2' data-action='refresh-idps-source' data-id='{{ source.id }}'>{{ 'Refresh'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='enable-idps-with-source' data-id='{{ source.id }}'>{{ 'Enable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-secondary mx-2' data-action='disable-idps-with-source' data-id='{{ source.id }}'>{{ 'Disable all'|trans }}</button>
+            <button type='button' class='btn btn-sm btn-danger mx-2' data-action='delete-idps-source' data-id='{{ source.id }}'>{{ 'Delete'|trans }}</button>
+          </div>
+        </div>
+        <div class='smallgray'>{{ 'Associated with %d IDPs (%d enabled)'|trans|format(source.idps_count, source.idps_count_enabled) }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class='my-3'>
+      <h5>{{ 'Add IDP manually'|trans }}</h5>
+      <p class='col-form-label'>{{ 'You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed.'|trans }}</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
-        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createIdpModal'>{{ 'Add new IDP'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='idpModal'>{{ 'Add new IDP'|trans }}</button>
       </div>
     </div>
-    <div id='idpsDiv'>
-      {% for idp in idpsArr %}
-        <div class='my-2'>
-          <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ idp.name|upper }} ({{ idp.entityid }})
 
-            <a class='float-right' href='#' data-action='destroy-idp' title='{{ 'Delete'|trans }}' data-id='{{ idp.id }}'>
-                <i class='fas fa-trash-alt'></i>
-            </a>
-          </h4>
-
-          <div class='m-2' hidden>
-
-            <div class='d-flex justify-content-between'>
-              <label for='enabled_{{ idp.id }}' class='col-form-label'>{{ 'Enabled'|trans }}</label>
+    <div class='my-3'>
+      <h5>{{ 'IDPs list'|trans }}</h5>
+      <p class='col-form-label'>{{ 'Currently %d IDPs are configured.'|trans|format(idpsArr|length) }}</p>
+      {% include 'filter-input-snippet.html' with {'target': 'idpsDiv', 'targetType': 'li'} %}
+      <ul class='list-group' id='idpsDiv'>
+        {% for idp in idpsArr %}
+          <li class='list-group-item'>
+            <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
+              <i class='fas fa-caret-right fa-fw mr-2'></i>
               <label class='switch ucp-align'>
                 <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
                 <span class='slider'></span>
               </label>
-            </div>
-            <hr>
+              {{ idp.name|upper }} ({{ idp.entityid }})
+            </h4>
 
-            <div class='d-flex justify-content-between'>
-              <label for='editIdpName_{{ idp.id }}' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
-              <input class='form-control col-md-3' type='text' id='editIdpName_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='name' value='{{ idp.name }}' />
-            </div>
-            <hr>
+            <div class='pl-3 m-2' hidden>
+              <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
+              <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
 
-            <div class='d-flex justify-content-between'>
-              <label for='entityId_{{ idp.id }}' class='col-form-label'>EntityId</label>
-              <input class='form-control col-md-3' type='url' id='entityId_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='entityid' value='{{ idp.entityid }}' />
-            </div>
-            <hr>
+              {% if idp.source_url %}
+                <div class='d-flex justify-content-between'>
+                  <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
+                  <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
+                </div>
+                <hr>
+              {% endif %}
 
-            <div class='d-flex justify-content-between'>
-              <label for='ssoUrl_{{ idp.id }}' class='col-form-label'>Single Sign-On URL</label>
-              <input class='form-control col-md-3' type='url' id='ssoUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='sso_url' value='{{ idp.sso_url }}' />
             </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='ssoBinding_{{ idp.id }}' class='col-form-label'>Single Sign-On binding</label>
-              <select class='form-control col-md-3' id='ssoBinding_{{ idp.id }}' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='sso_binding'>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.sso_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-                <option value='urn:mace:shibboleth:1.0:profiles:AuthnRequest' {{ idp.sso_binding == 'urn:mace:shibboleth:1.0:profiles:AuthnRequest' ? 'selected' }}>Shibboleth AuthnRequest</option>
-              </select>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='sloUrl_{{ idp.id }}' class='col-form-label'>Single Log Out URL</label>
-              <input class='form-control col-md-3' type='url' id='sloUrl_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_url' value='{{ idp.slo_url }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='sloBinding_{{ idp.id }}' class='col-form-label'>Single Log Out binding (only Redirect is supported)</label>
-              <select class='form-control col-md-3' id='sloBinding_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='slo_binding'>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-                <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ idp.slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-              </select>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <div>
-                <label for='x509_{{ idp.id }}' class='col-form-label'>x509cert</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_{{ idp.id }}' class='form-control'  aria-label='File upload: x509 Certificate in PEM format' />
-              </div>
-              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509' id='x509_{{ idp.id }}'>{{ idp.x509 }}</textarea>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <div>
-                <label for='x509_new_{{ idp.id }}' class='col-form-label'>x509cert (additional for rollover)</label>
-                <input type='file' data-action='load-file-on-change' data-target='x509_new_{{ idp.id }}' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
-              </div>
-              <textarea class='form-control col-md-3' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='x509_new' id='x509_new_{{ idp.id }}'>{{ idp.x509_new }}</textarea>
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-email_{{ idp.id }}' class='col-form-label'>What attribute to look for the email</label>
-              <input class='form-control col-md-3' type='text' id='saml-email_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='email_attr' value='{{ idp.email_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-firstname_{{ idp.id }}' class='col-form-label'>What attribute to look for the firstname</label>
-              <input class='form-control col-md-3' type='text' id='saml-firstname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='fname_attr' value='{{ idp.fname_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-lastname_{{ idp.id }}' class='col-form-label'>What attribute to look for the lastname</label>
-              <input class='form-control col-md-3' type='text' id='saml-lastname_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='lname_attr' value='{{ idp.lname_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-team_{{ idp.id }}' class='col-form-label'>What attribute to look for the team name (optional)</label>
-              <input class='form-control col-md-3' type='text' id='saml-team_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='team_attr' value='{{ idp.team_attr }}' />
-            </div>
-            <hr>
-
-            <div class='d-flex justify-content-between'>
-              <label for='saml-orgid_{{ idp.id }}' class='col-form-label'>What attribute to look for the internal id (optional)</label>
-              <input class='form-control col-md-3' type='text' id='saml-orgid_{{ idp.id }}' data-trigger='blur' data-model='idps/{{ idp.id }}' data-target='orgid_attr' value='{{ idp.orgid_attr }}' />
-            </div>
-            <hr>
-
-          </div>
-        </div>
-      {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
 
 </div>
 
-{# TAB 11 LDAP #}
-<div data-tabcontent='11' id='ldapSettings' hidden>
-  <p><a target='_blank' rel='noopener' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }} <i class='fas fa-fw fa-arrow-up-right-from-square'></i></a></p>
+{# TAB 12 LDAP #}
+<div data-tabcontent='12' id='ldapSettings' hidden>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
 
     {% include 'binary-setting.html' with {'label': 'Toggle LDAP login'|trans, 'slug': 'ldap_toggle'} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='ldap_scheme' class='col-form-label'>{{ 'LDAP Scheme'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_scheme' placeholder='ldap' value='{{ App.Config.configArr.ldap_scheme }}' id='ldap_scheme' />
+    </div>
+    <p class='smallgray'>{{ 'Ldap scheme can be set regardless of the SSL/TLS settings. Valid values are "ldap" or "ldaps". Default is "ldap".'|trans }}</p>
+    <hr>
+
 
     <div class='d-flex justify-content-between'>
       <label for='ldap_host' class='col-form-label'>{{ 'LDAP Host'|trans }}</label>
@@ -883,15 +880,18 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
+      <!-- [html-validate-disable no-missing-references: if there is an ldap_password, the input is not shown] -->
       <label for='ldap_password' class='col-form-label'>LDAP {{ 'Password'|trans }}</label>
       {% if App.Config.configArr.ldap_password|length == 0 %}
-        <input class='form-control col-md-3' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='ldap_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
       {% else %}
         <p>
-          {{ 'A password is already set.'|trans }}
-          {{ '%sClear it%s or change it below:'|trans|format("<span class='link-like' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>", "</span>")|raw }}
-          <span data-action='toggle-next' class='btn btn-primary mt-2'>{{ 'Edit'|trans }}</span>
-          <input class='form-control' data-trigger='blur' data-model='config' data-target='ldap_password' type='password' hidden autocomplete='off' id='ldap_password' />
+        {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='ldap' data-reload='ldapSettings'>{{ 'Clear'|trans }}</button>
         </p>
       {% endif %}
     </div>
@@ -958,8 +958,8 @@
   </div>
 </div>
 
-{# TAB 12 EXTERNAL AUTH #}
-<div data-tabcontent='12' hidden>
+{# TAB 13 EXTERNAL AUTH #}
+<div data-tabcontent='13' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
   <div class='pl-3'>
     <p class='smallgray'>{{ 'If authentication is handled by an upstream server, configure here the request headers mappings and behaviors.'|trans }}</p>
@@ -1025,10 +1025,11 @@
   </div>
 </div>
 
-<div data-tabcontent='13' hidden>
+{# TAB 14: AUDIT LOGS #}
+<div data-tabcontent='14' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'} %}
+    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'|trans} %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>
@@ -1039,6 +1040,7 @@
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='auditLogsTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     {# Logs are presented in a sortable table #}
+    {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
     <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
       <thead>
         <tr>

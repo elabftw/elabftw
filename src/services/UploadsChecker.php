@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -24,6 +27,19 @@ class UploadsChecker
     public function __construct()
     {
         $this->Db = Db::getConnection();
+    }
+
+    public function getStats(): array
+    {
+        $sql = 'SELECT
+            COUNT(id) AS count_all,
+            SUM(filesize) AS filesize_all,
+            COUNT(CASE WHEN hash IS NULL THEN 1 END) AS count_null_hash,
+            COUNT(CASE WHEN filesize IS NULL THEN 1 END) AS count_null_filesize
+            FROM uploads';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetch();
     }
 
     public function getNullColumn(string $column): array
@@ -67,8 +83,8 @@ class UploadsChecker
             }
             $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':hash', $hash, PDO::PARAM_STR);
-            $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM, PDO::PARAM_STR);
+            $req->bindParam(':hash', $hash);
+            $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM);
             $req->bindParam(':id', $upload['id'], PDO::PARAM_INT);
             $this->Db->execute($req);
             $fixedCount += 1;

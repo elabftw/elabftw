@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -34,7 +37,7 @@ class Todolist implements RestInterface
         $this->id = $id;
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/todolist/';
     }

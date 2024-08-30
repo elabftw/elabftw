@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,7 +8,11 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
+
+use Elabftw\Enums\Usergroup;
 
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team, and they might not be validated
@@ -29,12 +34,14 @@ class ExistingUser extends Users
         array $teams,
         string $firstname,
         string $lastname,
-        ?int $usergroup = null,
-        bool $forceValidation = false,
+        ?Usergroup $usergroup = null,
+        bool $automaticValidationEnabled = false,
         bool $alertAdmin = true,
+        ?string $orgid = null,
+        bool $allowTeamCreation = false,
     ): Users {
         $Users = new self();
-        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $forceValidation, $alertAdmin);
+        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $automaticValidationEnabled, $alertAdmin, orgid: $orgid, allowTeamCreation: $allowTeamCreation);
         $fresh = new self($userid);
         // we need to report the needValidation flag into the new object
         $fresh->needValidation = $Users->needValidation;

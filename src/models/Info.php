@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -7,10 +8,13 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -39,7 +43,7 @@ class Info implements RestInterface
         throw new ImproperActionException('No PATCH action.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/info/';
     }
@@ -47,9 +51,15 @@ class Info implements RestInterface
     public function readAll(): array
     {
         $Config = Config::getConfig();
+        $Uploads = new Uploads(new Experiments(new Users()));
+        $Uploads->readFilesizeSum();
         $base = array(
             'elabftw_version' => App::INSTALLED_VERSION,
+            'elabftw_version_int' => App::INSTALLED_VERSION_INT,
             'ts_balance' => (int) $Config->configArr['ts_balance'],
+            'ts_limit' => (int) $Config->configArr['ts_limit'],
+            'uploads_filesize_sum' => $Uploads->readFilesizeSum(),
+            'uploads_filesize_sum_formatted' => Tools::formatBytes($Uploads->readFilesizeSum()),
         );
         return array_merge($base, $this->getAllStats());
     }
@@ -75,7 +85,8 @@ class Info implements RestInterface
         (SELECT COUNT(items.id) FROM items WHERE items.state = :state) AS items_count,
         (SELECT COUNT(teams.id) FROM teams) AS teams_count,
         (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state) AS experiments_count,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS experiments_timestamped_count';
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS experiments_timestamped_count,
+        (SELECT COUNT(id) FROM uploads WHERE comment LIKE "Timestamp archive%" = 1 AND created_at > (NOW() - INTERVAL 1 MONTH)) AS entities_timestamped_count_last_30_days';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);

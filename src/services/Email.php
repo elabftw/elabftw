@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,20 +8,25 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
-use function count;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EmailTarget;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use PDO;
 use Psr\Log\LoggerInterface;
+use Stevebauman\Hypertext\Transformer;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as Memail;
 use Symfony\Component\Mime\RawMessage;
+
+use function count;
 
 /**
  * Email service
@@ -75,47 +81,89 @@ class Email
     /**
      * Send a mass email to all users
      */
-    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo): int
+    public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo, bool $sendGrouped): int
     {
         if (empty($subject)) {
             $subject = '[eLabFTW] No subject';
         }
 
-        // set from
-        $from = $this->from;
-
         // get all email addresses
-        $emails = self::getAllEmails($target, $targetId);
+        $addresses = self::getAllEmailAddresses($target, $targetId);
+        $addressesCount = count($addresses);
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $message = (new Memail())
-        ->subject($subject)
-        ->from($from)
-        ->to($replyTo)
-        // Set recipients in BCC to protect email addresses
-        ->bcc(...$emails)
-        ->replyTo($replyTo)
-        ->text($body . $sender . $this->footer);
+        $content = $body . $sender . $this->footer;
 
-        $this->send($message);
-        return count($emails);
+        if ($sendGrouped) {
+            // send one single email to everyone
+            $message = (new Memail())
+            ->subject($subject)
+            ->from($this->from)
+            ->to($replyTo)
+            // set recipients in BCC to hide email addresses
+            ->bcc(...$addresses)
+            ->replyTo($replyTo)
+            ->text($content);
+
+            $this->send($message);
+            return $addressesCount;
+        }
+
+        // send emails one by one
+        foreach($addresses as $address) {
+            $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
+        }
+        return $addressesCount;
     }
 
-    public function sendEmail(Address $to, string $subject, string $body): bool
-    {
+    /**
+     * @param null|(\Symfony\Component\Mime\Address|string)[] $cc
+     */
+    public function sendEmail(
+        Address $to,
+        string $subject,
+        string $body,
+        ?array $cc = null,
+        ?string $htmlBody = null,
+        ?Address $replyTo = null,
+    ): bool {
         $message = (new Memail())
         ->subject($subject)
         ->from($this->from)
         ->to($to)
         ->text($body . $this->footer);
 
+        if (!empty($cc)) {
+            $message->cc(...$cc);
+        }
+
+        if ($replyTo !== null) {
+            $message->addReplyTo($replyTo);
+        }
+
+        if (!empty($htmlBody)) {
+            $message->html($htmlBody . $this->footer);
+
+            if (empty($body)) {
+                $textWithLinks = (new Transformer())
+                    ->keepLinks()
+                    ->keepNewLines()
+                    ->toText($htmlBody);
+                // convert links to plain text and keep the url
+                // <a href="url">link text</a> => link text (url)
+                $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);
+
+                $message->text($plainText . $this->footer);
+            }
+        }
+
         return $this->send($message);
     }
 
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
-        $emails = self::getAllEmails(EmailTarget::Sysadmins);
+        $emails = self::getAllEmailAddresses(EmailTarget::Sysadmins);
         $subject = '[eLabFTW] Warning: timestamp balance low!';
         $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
         $message = (new Memail())
@@ -127,9 +175,33 @@ class Email
     }
 
     /**
-     * Get email for all active users on instance, in team or teamgroup
+     * Get ids of all active users on instance, in team or teamgroup
+     * @return int[]
      */
-    public static function getAllEmails(EmailTarget $target, ?int $targetId = null, bool $returnUserids = false): array
+    public static function getIdsOfRecipients(EmailTarget $target, ?int $targetId = null): array
+    {
+        return array_column(self::getAllEmailAddressesRawData($target, $targetId), 'userid');
+    }
+
+    /**
+     * Get email addresses of all active users on instance, in team or teamgroup
+     * @return Address[]
+     */
+    public static function getAllEmailAddresses(EmailTarget $target, ?int $targetId = null): array
+    {
+        $emails = array();
+        foreach (self::getAllEmailAddressesRawData($target, $targetId) as $user) {
+            $emails[] = new Address($user['email'], $user['fullname']);
+        }
+        return $emails;
+    }
+
+    private function makeFooter(): string
+    {
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Config::fromEnv('SITE_URL'));
+    }
+
+    private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array
     {
         $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
         switch($target) {
@@ -143,7 +215,11 @@ class Email
                 break;
             case EmailTarget::Admins:
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
-                $filter = 'AND users2teams.groups_id = 2';
+                $filter = sprintf('AND users2teams.groups_id = %d', Usergroup::Admin->value);
+                break;
+            case EmailTarget::AdminsOfTeam:
+                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
+                $filter = sprintf('AND users2teams.groups_id = %d AND users2teams.teams_id = :id', Usergroup::Admin->value);
                 break;
             case EmailTarget::Sysadmins:
                 $join = '';
@@ -166,20 +242,6 @@ class Email
         }
         $Db->execute($req);
 
-        $res = $req->fetchAll();
-        if ($returnUserids) {
-            return array_column($res, 'userid');
-        }
-
-        $emails = array();
-        foreach ($res as $user) {
-            $emails[] = new Address($user['email'], $user['fullname']);
-        }
-        return $emails;
-    }
-
-    private function makeFooter(): string
-    {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Config::fromEnv('SITE_URL'));
+        return $req->fetchAll();
     }
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,9 @@
  * @package elabftw
  */
 
-namespace Elabftw\Models;
+declare(strict_types=1);
 
-use function bin2hex;
+namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
@@ -19,9 +20,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
+use PDO;
+
+use function bin2hex;
 use function password_hash;
 use function password_verify;
-use PDO;
 use function random_bytes;
 
 /**
@@ -53,19 +56,20 @@ class ApiKeys implements RestInterface
         throw new ImproperActionException('No patch action for apikeys.');
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('%d-%s', $this->keyId, $this->key);
     }
 
     /**
      * Create a known key so we can test against it in dev mode
+     * It can also be used to create an initial sysadmin key
      * This function should only be called from the db:populate command
      */
     public function createKnown(string $apiKey): int
     {
         $hash = password_hash($apiKey, PASSWORD_BCRYPT);
-        return $this->insert('known key used for tests', 1, $hash);
+        return $this->insert('known key used from db:populate command', 1, $hash);
     }
 
     /**
@@ -73,10 +77,12 @@ class ApiKeys implements RestInterface
      */
     public function readAll(): array
     {
-        $sql = 'SELECT id, name, created_at, last_used_at, hash, can_write FROM api_keys WHERE userid = :userid AND team = :team ORDER BY last_used_at DESC';
+        $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.hash, ak.can_write, ak.team, teams.name AS team_name
+            FROM api_keys AS ak
+            LEFT JOIN teams ON teams.id = ak.team
+            WHERE ak.userid = :userid ORDER BY last_used_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -121,9 +127,10 @@ class ApiKeys implements RestInterface
 
     public function destroy(): bool
     {
-        $sql = 'DELETE FROM api_keys WHERE id = :id';
+        $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
 
         if ($res = $this->Db->execute($req)) {
             AuditLogs::create(new ApiKeyDeleted($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
@@ -166,7 +173,7 @@ class ApiKeys implements RestInterface
         // must be executed before AuditLog request!
         $this->keyId = $this->Db->lastInsertId();
         if ($res) {
-            AuditLogs::create(new ApiKeyCreated($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+            AuditLogs::create(new ApiKeyCreated((int) $this->Users->requester->userid, (int) $this->Users->userid));
         }
         return $this->keyId;
     }

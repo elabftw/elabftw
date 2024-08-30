@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,6 +8,8 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Interfaces;
 
 /**
@@ -14,7 +17,7 @@ namespace Elabftw\Interfaces;
  */
 interface ImportInterface
 {
-    public function import(): void;
+    public function import(): int;
 
     public function getInserted(): int;
 }

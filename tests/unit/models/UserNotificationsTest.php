@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -25,9 +27,9 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->UserNotifications = new UserNotifications($this->Users, 1);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('users/1/notifications/', $this->UserNotifications->getPage());
+        $this->assertEquals('api/v2/users/1/notifications/', $this->UserNotifications->getApiPath());
     }
 
     public function testReadAll(): void

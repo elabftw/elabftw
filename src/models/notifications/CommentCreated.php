@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
@@ -20,7 +23,7 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
 
     protected Notifications $category = Notifications::CommentCreated;
 
-    public function __construct(private int $experimentId, private int $commenterId)
+    public function __construct(private string $page, private int $entityId, private int $commenterId)
     {
         parent::__construct();
     }
@@ -28,10 +31,10 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
     public function getEmail(): array
     {
         $commenter = new Users($this->commenterId);
-        $url = sprintf('%s/experiments.php?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->experimentId);
+        $url = sprintf('%s/%s.php?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->page, $this->entityId);
 
         $body = sprintf(
-            _('Hi. %s left a comment on your experiment. Have a look: %s'),
+            _('Hi. %s left a comment on your entry. Have a look: %s'),
             $commenter->userData['fullname'],
             $url,
         );
@@ -44,7 +47,8 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
     protected function getBody(): array
     {
         return array(
-            'experiment_id' => $this->experimentId,
+            'page' => $this->page,
+            'entity_id' => $this->entityId,
             'commenter_userid' => $this->commenterId,
         );
     }

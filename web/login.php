@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -19,10 +22,12 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
-use function implode;
-use function str_split;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+
+use function implode;
+use function str_split;
 
 /**
  * Login page
@@ -61,7 +66,7 @@ try {
             if ($App->Session->get('enforce_mfa')) {
                 $App->Users = new Users($App->Session->get('auth_userid'));
             }
-            $MfaHelper = new MfaHelper((int) $App->Users->userData['userid'], $App->Session->get('mfa_secret'));
+            $MfaHelper = new MfaHelper($App->Users->userData['userid'], $App->Session->get('mfa_secret'));
             $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
             $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
         }
@@ -71,7 +76,7 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
-        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_switch_required', true);
         $App->Session->set('team_selection', $App->Users->userData['teams']);
         $App->Session->set('auth_userid', $App->Users->userData['userid']);
         $App->Session->remove('is_auth');
@@ -87,12 +92,12 @@ try {
     // don't show the local login form if it's disabled
     $showLocal = true;
     // if there is a ?letmein in the url, we still show it.
-    if (!$App->Config->configArr['local_login'] && !$App->Request->query->has('letmein')) {
+    if (($App->Config->configArr['local_login'] === '0' && !$App->Request->query->has('letmein')) || $App->Config->configArr['local_auth_enabled'] === '0') {
         $showLocal = false;
     }
 
-    $Idps = new Idps();
-    $idpsArr = $Idps->readAll();
+    $Idps = new Idps($App->Users);
+    $idpsArr = $Idps->readAllSimpleEnabled();
 
     $Teams = new Teams($App->Users);
     $Teams->bypassReadPermission = true;

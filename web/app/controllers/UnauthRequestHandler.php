@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,10 +11,11 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Enums\Language;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
+
+use function dirname;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

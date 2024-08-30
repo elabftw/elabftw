@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -68,10 +71,9 @@ $renderArr = array(
 
 $responseContent = $App->render('search.html', $renderArr);
 
-$getFooterContent = function () use ($App): string {
-    return $App->render('todolist-panel.html', array())
-        . $App->render('footer.html', array());
-};
+$getFooterContent = fn(): string
+    => $App->render('todolist-panel.html', array())
+    . $App->render('footer.html', array());
 
 /**
  * Here the search begins

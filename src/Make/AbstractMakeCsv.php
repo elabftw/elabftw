@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,11 +8,14 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
 use Elabftw\Interfaces\StringMakerInterface;
 use League\Csv\Reader;
 use League\Csv\Writer;
+
 use function strlen;
 
 /**
@@ -33,6 +37,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
         $csv->insertOne($this->getHeader());
 
         // insert all the records
+        /** @psalm-suppress PossiblyInvalidArgument */
         $csv->insertAll($this->getRows());
 
         // add UTF8 BOM

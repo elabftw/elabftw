@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,8 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
 use Elabftw\Enums\Orderable;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -29,6 +31,8 @@ use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use function dirname;
+
 /**
  * Update ordering of various things
  */
@@ -43,7 +47,7 @@ $Response->setData(array(
 try {
     // decode JSON payload
     try {
-        $reqBody = json_decode((string) $App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
+        $reqBody = json_decode($App->Request->getContent(), true, 5, JSON_THROW_ON_ERROR);
     } catch (JsonException) {
         throw new ImproperActionException('Error decoding JSON payload');
     }
@@ -51,7 +55,7 @@ try {
     // extra fields position update
     if ($reqBody['table'] === 'extra_fields') {
         $OrderingParams = new ExtraFieldsOrderingParams($reqBody);
-        $Entity = $OrderingParams->type->toInstance($App->Users, $OrderingParams->id);
+        $Entity = $OrderingParams->entityType->toInstance($App->Users, $OrderingParams->id);
         $Entity->updateExtraFieldsOrdering($OrderingParams);
         $Response->send();
         exit;
@@ -82,7 +86,7 @@ try {
             $Entity = $model->Steps;
             break;
         case Orderable::Todolist:
-            $Entity = new Todolist((int) $App->Users->userData['userid']);
+            $Entity = new Todolist($App->Users->userData['userid']);
             break;
         case Orderable::ExperimentsTemplates:
             $Entity = new Templates($App->Users);

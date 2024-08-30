@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -19,13 +22,13 @@ class ExtraFieldsOrderingParams extends OrderingParams
 {
     public readonly int $id;
 
-    public readonly EntityType $type;
+    public readonly EntityType $entityType;
 
     public function __construct(protected array $reqBody)
     {
         parent::__construct($reqBody);
         $this->id = (int) $this->reqBody['entity']['id'];
-        $this->type = EntityType::tryFrom($this->reqBody['entity']['type'] ?? '') ?? throw new ValueError('Incorrect type value');
+        $this->entityType = EntityType::tryFrom($this->reqBody['entity']['type'] ?? '') ?? throw new ValueError('Incorrect type value');
     }
 
     /**

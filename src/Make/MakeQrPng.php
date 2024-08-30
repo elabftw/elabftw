@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -16,6 +19,7 @@ use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+
 use function strlen;
 
 /**
@@ -23,11 +27,11 @@ use function strlen;
  */
 class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
-    private const DEFAULT_IMAGE_SIZE_PX = 250;
+    private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
-    private const LINE_HEIGHT_PX = 20;
+    private const int LINE_HEIGHT_PX = 20;
 
-    private const SPLIT_FACTOR = 8;
+    private const int SPLIT_FACTOR = 8;
 
     protected string $contentType = 'image/png';
 
@@ -36,10 +40,9 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
         private AbstractEntity $entity,
-        int $id,
         private int $size,
+        private bool $withTitle = true,
     ) {
-        $this->entity->setId($id);
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
     }
@@ -67,6 +70,9 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         $draw->setFontSize($this->fontSize);
 
         $splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());
+        if (!$this->withTitle) {
+            $splitTitle = array();
+        }
         $fullHeight = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
 
         // Create a new image to hold the qrcode + text

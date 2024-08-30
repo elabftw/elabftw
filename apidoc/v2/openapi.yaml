@@ -31,6 +31,10 @@ components:
           type: string
         can_write:
           type: integer
+        team:
+          type: integer
+        team_name:
+          type: string
     comment:
       type: object
       properties:
@@ -64,6 +68,7 @@ components:
         admin_validate:
           type: string
         announcement:
+          description: This text will be shown on every page, including login page.
           type: string
         anon_users:
           type: string
@@ -120,6 +125,7 @@ components:
         local_register:
           type: string
         login_announcement:
+          description: This text will only be shown on the login page.
           type: string
         login_tries:
           type: string
@@ -132,6 +138,21 @@ components:
         min_days_revisions:
           type: string
         min_delta_revisions:
+          description: Minimum number of characters changed required to trigger a revision save.
+          type: string
+        onboarding_email_active:
+          enum: [0, 1]
+          type: string
+        onboarding_email_admins_body:
+          type: string
+        onboarding_email_admins_subject:
+          type: string
+        onboarding_email_body:
+          type: string
+        onboarding_email_different_for_admins:
+          enum: [0, 1]
+          type: string
+        onboarding_email_subject:
           type: string
         open_science:
           type: string
@@ -285,6 +306,8 @@ components:
           type: string
         elabid:
           type: string
+        exclusive_edit_mode:
+          $ref: '#/components/schemas/exclusive_edit_mode'
         experiments_links:
           type: array
           items:
@@ -436,6 +459,8 @@ components:
         category_color:
           type: string
           nullable: true
+        exclusive_edit_mode:
+          $ref: '#/components/schemas/exclusive_edit_mode'
         userid:
           type: integer
         canread:
@@ -475,6 +500,70 @@ components:
         tags_id:
           type: string
           nullable: true
+        uploads:
+          type: array
+          items:
+            $ref: '#/components/schemas/upload'
+    export:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 120
+        created_at:
+          type: string
+          example: "2024-05-28 02:42:19"
+        requester_userid:
+          type: integer
+          example: 2
+        state:
+          type: integer
+          example: 1
+        long_name:
+          type: string
+          example: "7dd6ef1e6093ab8861e425aeb1950e70e2a0bea9672bfff45f20a0cf26e49222c634c2fabf408bd6e9f3c447338edf3c4f11475c0472e00ab7ba5ea41319ec49"
+        filesize:
+          type: integer
+          example: 268438
+        modified_at:
+          type: string
+          example: "2024-05-28 02:42:31"
+        real_name:
+          type: string
+          example: "export-2024-05-28_02-42-30.json"
+        team:
+          type: integer
+          example: 1
+        changelog:
+          type: integer
+          example: 0
+        pdfa:
+          type: integer
+          example: 0
+        json:
+          type: integer
+          example: 0
+        hash:
+          type: string
+          example: "90651dd009d40b4d0fabc65395e9f3eba9b913a71b13bad94904c0cede7d8c24"
+        hash_algo:
+          type: string
+          example: "sha256"
+        experiments:
+          type: integer
+          example: 1
+        items:
+          type: integer
+          example: 0
+        experiments_templates:
+          type: integer
+          example: 0
+        items_types:
+          type: integer
+          example: 0
+        format:
+          type: string
+          example: "pdf"
     idp:
       type: object
       properties:
@@ -521,6 +610,8 @@ components:
               type: integer
             book_can_overlap:
               type: integer
+            book_users_can_in_past:
+              type: integer
             book_is_cancellable:
               type: integer
             book_cancel_minutes:
@@ -560,6 +651,16 @@ components:
         category_color:
           type: string
         category_title:
+          type: string
+        status_color:
+          type: string
+        status_title:
+          type: string
+        custom_id:
+          type: integer
+        page:
+          type: string
+        type:
           type: string
     notification:
       type: object
@@ -670,6 +771,20 @@ components:
           type: integer
         visible:
           type: integer
+        announcement:
+          description: Text shown on top of every page for all users of this team.
+          type: string
+          nullable: true
+        onboarding_email_active:
+          description: Do we send onboarding emails to new users?
+          enum: [0, 1]
+          type: integer
+        onboarding_email_body:
+          type: string
+          nullable: true
+        onboarding_email_subject:
+          type: string
+          nullable: true
     teamgroup:
       type: object
       properties:
@@ -785,6 +900,9 @@ components:
           type: integer
         entrypoint:
           type: integer
+        sig_pubkey:
+          type: string
+          description: Public signature key (minisign format)
         teams:
           type: array
           items:
@@ -805,6 +923,15 @@ components:
           type: string
         frequency:
           type: integer
+    exclusive_edit_mode:
+      type: object
+      properties:
+        locked_by:
+          type: integer
+        fullname:
+          type: string
+        locked_at:
+          type: string
 
 security:
   - token:
@@ -989,6 +1116,20 @@ paths:
             first:
               summary: Look for entries linked to item with id 42.
               value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         - name: cat
           in: query
           schema:
@@ -1035,6 +1176,34 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+          description: |
+            Change the ordering of the results.
+          examples:
+            first:
+              summary: Order by category
+              value: cat
+            second:
+              summary: Order by custom ID
+              value: customid
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+          description: |
+            Change the sorting of results: ascending or descending.
       responses:
         '200':
           description: A list of experiments
@@ -1073,6 +1242,56 @@ paths:
             second:
               summary: Generate a csv
               value: csv
+        - name: json
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
+          examples:
+            includeJson:
+              summary: Include JSON in ZIP
+              value: true
+            excludeJson:
+              summary: Exclude JSON in ZIP
+              value: false
+        - name: withTitle
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include the title in the QR code. Only applicable if format is qrpng.
+          examples:
+            includeTitle:
+              summary: Include title in QR code
+              value: true
+            excludeTitle:
+              summary: Exclude title in QR code
+              value: false
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 250
+          description: |
+            Specify the size of the QR code in pixels. Only applicable if format is qrpng.
+          examples:
+            mediumSize:
+              summary: Small QR code
+              value: 50
+        - name: changelog
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
+          examples:
+            first:
+              summary: Generate PDF exports that always includes the changelog
+              value: true
+            second:
+              summary: Generate PDF exports that do not include the changelog.
+              value: false
       responses:
         '200':
           description: An experiment
@@ -1094,7 +1313,15 @@ paths:
                   properties:
                     action:
                       type: string
-                      enum: ['lock', 'pin', 'updatemetadatafield', 'update', 'bloxberg', 'timestamp']
+                      enum: [
+                        'bloxberg',
+                        'exclusiveeditmode',
+                        'lock',
+                        'pin',
+                        'timestamp',
+                        'updatemetadatafield',
+                        'update',
+                      ]
                 - $ref: '#/components/schemas/experiment'
       responses:
         '200':
@@ -1135,6 +1362,10 @@ paths:
                     type: string
                     description: Current eLabFTW version
                     example: 4.8.0
+                  elabftw_version_int:
+                    type: integer
+                    description: Current eLabFTW version as an integer
+                    example: 50102
                   ts_balance:
                     type: integer
                     description: Number of timestamp tokens left
@@ -1163,6 +1394,14 @@ paths:
                     type: integer
                     description: Total count of experiments with timestamps
                     example: 1601
+                  uploads_filesize_sum:
+                    type: integer
+                    description: Sum of stored filesize in MySQL for all uploads of the instance.
+                    example: 25681672
+                  uploads_filesize_sum_formatted:
+                    type: string
+                    description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
+                    example: "24.49 MiB"
 
   # ITEMS
   /items:
@@ -1222,6 +1461,30 @@ paths:
             first:
               summary: Search for all items with a rating of 2.
               value: "rating:2"
+        - name: related
+          in: query
+          schema:
+            type: integer
+          description: |
+            Look only for entries linked to this item id.
+          examples:
+            first:
+              summary: Look for entries linked to item with id 42.
+              value: 42
+        - name: related_origin
+          in: query
+          schema:
+            type: string
+            enum: ['experiments', 'items']
+          description: |
+            When using the "related" query parameter, select the type of the related ID (experiments or items)
+          examples:
+            items:
+              summary: The related entry is a resource.
+              value: items
+            experiments:
+              summary: The related entry is an experiment.
+              value: experiments
         # This one is not exactly copy paste
         - name: cat
           in: query
@@ -1269,6 +1532,34 @@ paths:
             first:
               summary: Only display results from user with id 2
               value: 2
+        - name: scope
+          in: query
+          schema:
+            type: integer
+            enum: [1, 2, 3]
+          description: |
+            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+          description: |
+            Change the ordering of the results.
+          examples:
+            first:
+              summary: Order by category
+              value: cat
+            second:
+              summary: Order by custom ID
+              value: customid
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+          description: |
+            Change the sorting of results: ascending or descending.
       # end duplicate from GET /experiments
       responses:
         '200':
@@ -1293,6 +1584,7 @@ paths:
       summary: Read an item
       operationId: get-item
       parameters:
+      # Start copy paste from experiments/id
         - name: format
           in: query
           schema:
@@ -1308,6 +1600,57 @@ paths:
             second:
               summary: Generate a csv
               value: csv
+        - name: json
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
+          examples:
+            includeJson:
+              summary: Include JSON in ZIP
+              value: true
+            excludeJson:
+              summary: Exclude JSON in ZIP
+              value: false
+        - name: withTitle
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Include the title in the QR code. Only applicable if format is qrpng.
+          examples:
+            includeTitle:
+              summary: Include title in QR code
+              value: true
+            excludeTitle:
+              summary: Exclude title in QR code
+              value: false
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 250
+          description: |
+            Specify the size of the QR code in pixels. Only applicable if format is qrpng.
+          examples:
+            mediumSize:
+              summary: Small QR code
+              value: 50
+        - name: changelog
+          in: query
+          schema:
+            type: boolean
+          description: |
+            Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
+          examples:
+            first:
+              summary: Generate PDF exports that always includes the changelog
+              value: true
+            second:
+              summary: Generate PDF exports that do not include the changelog.
+              value: false
+      # End copy paste from experiments/id
       responses:
         '200':
           description: An item
@@ -1329,7 +1672,13 @@ paths:
                   properties:
                     action:
                       type: string
-                      enum: ['lock', 'pin', 'updatemetadatafield', 'update']
+                      enum: [
+                        'exclusiveeditmode',
+                        'lock',
+                        'pin',
+                        'updatemetadatafield',
+                        'update',
+                      ]
                 - $ref: '#/components/schemas/item'
       responses:
         '200':
@@ -1350,6 +1699,164 @@ paths:
         '204':
           description: The key was deleted
 
+  # IMPORT
+  /import:
+    summary: Import a file
+    get:
+      tags: ['Import']
+      summary: Get information about this endpoint
+      operationId: read-import
+      responses:
+        '200':
+          description: Information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  allowed_extensions:
+                    type: array
+                    items:
+                      type: string
+                    example: [".eln", ".csv"]
+                  max_filesize:
+                    type: integer
+                    example: 2147483648
+    post:
+      tags: ['Import']
+      summary: Send a file to import
+      operationId: post-import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: ['file', 'entity_type']
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+                entity_type:
+                  type: string
+                  example: "experiments"
+                  enum: ["experiments", "items", "experiments_templates", "items_types"]
+                  description: The target entity type
+                category:
+                  type: integer
+                  example: 6
+                  description: The default category ID if no category is defined for a given entry
+                canread:
+                  type: string
+                  example: |
+                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
+                  description: A JSON string representing read permissions
+                canwrite:
+                  type: string
+                  example: |
+                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
+                  description: A JSON string representing write permissions
+      responses:
+        '201':
+          description: The import was successful
+          headers:
+            location:
+              description: The number at the end is the number of imported entries
+              schema:
+                type: string
+  # EXPORT
+  /exports:
+    summary: Exported files
+    get:
+      tags: ['Exports']
+      summary: List exports
+      operationId: readall-exports
+      responses:
+        '200':
+          description: A list of exports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/export'
+    post:
+      tags: ['Exports']
+      summary: Register an export request
+      operationId: post-export
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['format']
+              properties:
+                format:
+                  type: string
+                  example: "pdf"
+                  enum: ["csv", "eln", "json", "pdf", "zip"]
+                  description: File format for the export
+                experiments:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include experiments in the export
+                items:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include resources in the export
+                experiments_templates:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include experiments templates in the export
+                items_types:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include resources categories in the export
+                changelog:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include the changelog in PDF files
+                json:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to include a full JSON export in the ZIP archives
+                pdfa:
+                  type: string
+                  example: "on"
+                  description: Set to "on" to create PDF files with the PDF/A specification
+  /exports/{id}:
+    summary: An export request
+    parameters:
+      - name: id
+        in: path
+        description: ID of the export request
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Exports']
+      summary: Get export
+      operationId: read-export
+      responses:
+        '200':
+          description: An export request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/export'
+    delete:
+      tags: ['Exports']
+      summary: Remove an export request and its associated file
+      description: This method will remove the file from the server temporary storage and clear the export request.
+      operationId: delete-export
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '204':
+          description: The file was deleted
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity
@@ -2023,8 +2530,15 @@ paths:
           description: The favorite tag was removed.
 
   # TEAM TAGS
-  /team_tags:
+  /teams/{id}/tags:
     summary: Manage tags at the team level.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
     get:
       tags: ['Team tags']
       summary: Read all tags for the team.
@@ -2079,7 +2593,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'deduplicate'
+                  enum: ['deduplicate']
               description: Find all duplicate tags and deduplicate them.
       responses:
         '200':
@@ -2090,10 +2604,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tag'
-  /team_tags/{id}:
+  /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
       - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
         in: path
         description: ID of the tag.
         required: true
@@ -2129,7 +2649,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'updatetag'
+                  enum: ['updatetag']
                 tag:
                   type: string
                   description: The content of the tag.
@@ -2202,7 +2722,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'current'
+              enum: ['current']
         examples:
           first:
             summary: Access the current team.
@@ -2231,7 +2751,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/team'
+              oneOf:
+                - $ref: '#/components/schemas/team'
+                - type: object
+                  description: (Re)send the onboarding email to all users specified in the userids property. Only admins can send emails to their team members.
+                  properties:
+                      action:
+                        enum: ['sendonboardingemails']
+                        type: string
+                      userids:
+                        description: A list of user ids for which the onboarding email shall be sent.
+                        type: array
+                        items:
+                          type: integer
+                        example: [5, 11, 7, 31]
       responses:
         '200':
           description: The updated team.
@@ -2265,9 +2798,9 @@ paths:
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
-      summary: Create a new experiments status.
+      summary: Create a new category for experiments.
       requestBody:
-        description: Parameters for creating a status.
+        description: Parameters for creating a category.
         content:
           application/json:
             schema:
@@ -2275,20 +2808,20 @@ paths:
               properties:
                 name:
                   type: string
-                  description: Status name
+                  description: Category name
                 color:
                   type: string
                   description: |
                     Hex color without leading \#.
                 default:
                   type: integer
-                  description: Is it the default status for the team?
+                  description: Is it the default category for the team?
       responses:
         '201':
-          description: Create a status.
+          description: Create a category.
           headers:
             location:
-              description: An URL to the status that was created.
+              description: An URL to the category that was created.
               schema:
                 type: string
   # ONE EXPERIMENTS CATEGORY
@@ -2302,14 +2835,14 @@ paths:
           type: integer
       - name: subid
         in: path
-        description: ID of the status
+        description: ID of the category.
         required: true
         schema:
           type: integer
     get:
       tags: ['Experiments categories']
       operationId: read-team-one-expcat
-      summary: Read a status.
+      summary: Read a category.
       responses:
         '200':
           description: Read a category.
@@ -2388,6 +2921,14 @@ paths:
                 default:
                   type: integer
                   description: Is it the default status for the team?
+      responses:
+        '201':
+          description: New experiments status created.
+          headers:
+            location:
+              description: An URL to the experiments status that was created.
+              schema:
+                type: string
   # ONE EXPERIMENTS STATUS
   /teams/{id}/experiments_status/{subid}:
     parameters:
@@ -2466,7 +3007,7 @@ paths:
     post:
       tags: ['Resources status']
       operationId: post-team-one-resstat
-      summary: Create a new experiments status.
+      summary: Create a new status for resources.
       requestBody:
         description: Parameters for creating a resources status.
         content:
@@ -2484,6 +3025,14 @@ paths:
                 default:
                   type: integer
                   description: Is it the default status for the team?
+      responses:
+        '201':
+          description: New resources status created.
+          headers:
+            location:
+              description: An URL to the resources status that was created.
+              schema:
+                type: string
 
   # ONE ITEMS STATUS
   /teams/{id}/items_status/{subid}:
@@ -2777,8 +3326,16 @@ paths:
     get:
       tags: ['Users']
       summary: Read users from instance.
-      description: If Sysadmin all users will be shown. If Admin only the users from the team. Normal users will be shown an error.
+      description: Get a list of users with an active account on the instance.
       operationId: read-users
+      parameters:
+        - name: includeArchived
+          in: query
+          description: Include archived users in the response
+          required: false
+          schema:
+            type: string
+            enum: ['0', '1']
       responses:
         '200':
           description: A list of users
@@ -2889,7 +3446,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -2985,6 +3542,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/users'
 
+  # USERS UPLOADS
+  /users/{id}/uploads:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['User Uploads']
+      summary: Read attached files from a user
+      operationId: read-user-uploads
+      responses:
+        '200':
+          description: Attachments from a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                   type: object
+                   properties:
+                     id:
+                      type: integer
+                      example: 113
+                     real_name:
+                       type: string
+                       example: example.png
+                     long_name:
+                       type: string
+                       example: 25/2509b6547bcc40c7c56df0fca0930357b7c5e90c1ee59c8040091b956bbbde3cc1726169488d6d485be5b5fed3240939083d8ea708b9a153a2d57d7be1931e43.png
+                     created_at:
+                       type: string
+                       format: date-time
+                       example: 2024-06-16 12:34:51
+                     filesize:
+                       type: integer
+                       example: 40959
+                     type:
+                       type: string
+                       example: experiments
+                     comment:
+                       type: string
+                       nullable: true
+                       example: null
+                     entity_id:
+                       type: integer
+                       example: 311
+                     entity_title:
+                       type: string
+                       example: image in body I
+                     page:
+                       type: string
+                       example: experiments
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:
@@ -2996,7 +3618,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -3049,7 +3671,7 @@ paths:
           oneOf:
             - type: integer
             - type: string
-              const: 'me'
+              enum: ['me']
         examples:
           first:
             summary: Access our own user.
@@ -3309,7 +3931,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'unreference'
+                  enum: ['unreference']
       responses:
         '200':
           description: The updated tag.
@@ -3465,7 +4087,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'update'
+                  enum: ['update']
                 real_name:
                   type: string
                 comment:
@@ -3473,13 +4095,13 @@ paths:
                 state:
                   type: integer
                   enum: [1, 2, 3]
-            anyOf:
-              - required:
-                  - real_name
-              - required:
-                  - comment
-              - required:
-                  - state
+              anyOf:
+                - required:
+                    - real_name
+                - required:
+                    - comment
+                - required:
+                    - state
       responses:
         '200':
           description: The updated upload.
@@ -3606,7 +4228,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'update'
+                  enum: ['update']
       responses:
         '200':
           description: The updated idp.
@@ -3643,28 +4265,6 @@ paths:
         required: true
         schema:
           type: integer
-    post:
-      tags: ['Revisions']
-      summary: Create a revision.
-      operationId: post-entity-revisions
-      requestBody:
-        description: Parameters for creating a revision
-        content:
-          application/json:
-            schema:
-              required: ['body']
-              type: object
-              properties:
-                body:
-                  type: string
-      responses:
-        '201':
-          description: The revision has been created.
-          headers:
-            location:
-              description: An URL to the revision that was created.
-              schema:
-                type: string
     get:
       tags: ['Revisions']
       summary: Read all revisions of that entity.
@@ -3733,7 +4333,7 @@ paths:
               properties:
                 action:
                   type: string
-                  const: 'replace'
+                  enum: ['replace']
                   description: |
                     The `replace` action will restore the revision body to the entity.
       responses:
@@ -3760,8 +4360,9 @@ paths:
         description: |
           Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
         schema:
-          type: int
+          type: integer
           default: 0
+
     get:
       tags: ['Extra Fields Keys']
       summary: Read extra fields keys.

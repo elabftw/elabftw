@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -22,7 +25,7 @@ class EntityPruner implements CleanerInterface
 {
     private Db $Db;
 
-    public function __construct(private EntityType $type)
+    public function __construct(private EntityType $entityType)
     {
         $this->Db = Db::getConnection();
     }
@@ -33,7 +36,7 @@ class EntityPruner implements CleanerInterface
      */
     public function cleanup(): int
     {
-        $sql = 'DELETE FROM ' . $this->type->value . ' WHERE state = :state';
+        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);

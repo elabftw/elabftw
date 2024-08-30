@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -51,8 +54,8 @@ try {
     $template = 'register.html';
     $renderArr = array(
         'hideTitle' => true,
-        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
-        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
+        'passwordInputHelp' => $passwordComplexity->toHuman(),
+        'passwordInputPattern' => $passwordComplexity->toPattern(),
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $teamsArr,
     );

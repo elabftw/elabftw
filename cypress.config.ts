@@ -22,6 +22,8 @@ export default defineConfig({
           ],
           rules: {
             'heading-level': Severity.DISABLED, // should be WARN but does not work, TODO: fix violations
+            // we keep autocomplete on checkboxes because it's important in firefox
+            'valid-autocomplete': Severity.DISABLED,
             'require-sri': [Severity.ERROR, {
               target: 'crossorigin',
               exclude: ['https://elabtmp'], // this is treated as crossorigin so we exclude it
@@ -31,8 +33,6 @@ export default defineConfig({
         {
           exclude: [
             '#sketcher_search_dialog', // chemdoodle 2d-sketcher
-            '#bs-select-1', // bootstrap select does not use native select element
-            '#bs-select-2', // bootstrap select does not use native select element
             '#scheduler', // scheduler on the team page has several violations
             'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
             'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element

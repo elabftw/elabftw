@@ -1,0 +1,23 @@
+{# this is the block displaying actions for current user #}
+{% if requestActionsArr %}
+  <ul class='list-group'>
+    {% for action in requestActionsArr %}
+      <li class='list-group-item'>
+        <div class='d-flex'>
+          <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+          <div>
+            {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }}
+            {% set url = '/%s?mode=%s&id=%d' %}
+            {% if action.entity_page == 'ucp.php?tab=3' %}
+              {% set url = '/%s&mode=%s&templateid=%d' %}
+            {% elseif action.entity_page == 'admin.php?tab=4' %}
+              {% set url = '/%s%s&templateid=%d#itemsCategoriesAnchor' %}
+            {% endif %}
+            <a href='{{ url|format(action.entity_page, 'view', action.entity_id) }}'>{{ action.entity_title }}</a>
+            <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-1'></span>
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

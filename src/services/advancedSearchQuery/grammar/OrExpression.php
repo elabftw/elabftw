@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -8,6 +9,8 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
@@ -16,9 +19,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 class OrExpression implements Visitable
 {
-    public function __construct(private AndExpression $expression, private ?OrOperand $tail = null)
-    {
-    }
+    public function __construct(private AndExpression $expression, private ?OrOperand $tail = null) {}
 
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {

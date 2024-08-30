@@ -8,7 +8,7 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { notifError } from './misc';
+import { notifError, saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 
 export class JsonEditorActions {
@@ -38,12 +38,12 @@ export class JsonEditorActions {
         } else if (el.matches('[data-action="json-save-file"]')) {
           JsonEditorHelperC.saveNewFile();
         } else if (el.matches('[data-action="json-saveas-file"]')) {
-          JsonEditorHelperC.saveAsFile();
+          saveStringAsFile(JsonEditorHelperC.askFilename(), JSON.stringify(JsonEditorHelperC.editor.get()));
         } else if (el.matches('[data-action="json-save"]')) {
           JsonEditorHelperC.save();
           // make the save button stand out if the content is changed
           document.querySelector('[data-action="json-save"]').classList.remove('border-danger');
-          document.getElementById('jsonUnsavedChangesWarningDiv').setAttribute('hidden', '');
+          document.getElementById('jsonUnsavedChangesWarningDiv').hidden = true;
         } else if (el.matches('[data-action="json-import-file"]')) {
           document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
         } else if (el.matches('[data-action="json-upload-file"]')) {

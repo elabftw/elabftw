@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements, replaceWithTitle } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
@@ -80,6 +80,9 @@ export class Metadata {
     // special case for Experiment/Resource/User link
     if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
       value = parseInt(value.split(' ')[0], 10);
+      if (isNaN(value)) {
+        return false;
+      }
       // also create a link automatically for experiments and resources
       if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
         this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
@@ -202,6 +205,11 @@ export class Metadata {
       // not innerHTML with manual "<a href...>" which implicates security considerations
       if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
+      }
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(properties.type)) {
+        valueEl.dataset.replaceWithTitle = 'true';
+        valueEl.dataset.endpoint = properties.type;
+        valueEl.dataset.id = properties.value as string;
       }
     }
     const valueWrapper = document.createElement('div');
@@ -367,6 +375,13 @@ export class Metadata {
       inputGroupDiv.appendChild(element);
       // add the unique id to the input group for the label
       inputGroupDiv.id = uniqid;
+      // we want to replace the bare id value with "id - title" or "userid - fullname" for users
+      const targetId = parseInt(element.value.split(' ')[0]);
+      if (!isNaN(targetId)) {
+        element.dataset.replaceWithTitle = 'true';
+        element.dataset.id = String(targetId);
+        element.dataset.endpoint = properties.type;
+      }
 
       return inputGroupDiv;
     }
@@ -429,6 +444,8 @@ export class Metadata {
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
       });
+    }).then (() => {
+      replaceWithTitle();
     });
   }
 
@@ -558,6 +575,8 @@ export class Metadata {
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
             deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            deleteBtn.type = 'button';
+            deleteBtn.setAttribute('aria-label', i18next.t('remove'));
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
@@ -583,9 +602,8 @@ export class Metadata {
               listItem.append(element.element);
             }
 
-            // this is useful for Sortable (re-ordering the elements): it needs to have an id
-            // and we use the label to get the name of the field
-            listItem.id = label.innerText;
+            // the data-name attribute is picked up by Sortable jquery-ui. Do not use the default id attribute as it's not a number.
+            listItem.dataset.name = label.innerText;
 
             wrapperUl.append(listItem);
           }
@@ -596,6 +614,9 @@ export class Metadata {
       });
 
       this.metadataDiv.append(wrapperDiv);
-    }).then(() => makeSortableGreatAgain());
+    }).then(() => {
+      makeSortableGreatAgain();
+      replaceWithTitle();
+    });
   }
 }

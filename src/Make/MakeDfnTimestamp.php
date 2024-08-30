@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2021 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -17,13 +20,13 @@ use function dirname;
  */
 class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const TS_URL = 'http://zeitstempel.dfn.de';
+    protected const string TS_URL = 'http://zeitstempel.dfn.de';
 
-    protected const TS_CERT = 'dfn.pem';
+    protected const string TS_CERT = 'dfn.pem';
 
-    protected const TS_CHAIN = 'dfn-chain.pem';
+    protected const string TS_CHAIN = 'dfn-chain.pem';
 
-    protected const TS_HASH = 'sha256';
+    protected const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp
@@ -39,6 +42,6 @@ class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
             'ts_cert' => dirname(__DIR__) . '/certs/' . self::TS_CERT,
             'ts_hash' => self::TS_HASH,
             'ts_chain' => dirname(__DIR__) . '/certs/' . self::TS_CHAIN,
-            );
+        );
     }
 }

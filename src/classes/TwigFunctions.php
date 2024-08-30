@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -16,10 +19,11 @@ use Elabftw\Enums\Sort;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Symfony\Component\HttpFoundation\Request;
+
 use function memory_get_usage;
 use function microtime;
 use function round;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Functions used by Twig in templates

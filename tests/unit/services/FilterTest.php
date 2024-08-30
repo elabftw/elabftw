@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -10,6 +12,7 @@
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+
 use function str_repeat;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
@@ -36,8 +39,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
         $this->expectException(ImproperActionException::class);
-        $body = str_repeat('a', 4120001);
-        Filter::body($body);
+        Filter::body(str_repeat('a', 4120001));
     }
 
     public function testForFilesystem(): void

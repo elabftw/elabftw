@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -27,14 +29,14 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getPage());
+        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getApiPath());
     }
 
     public function testCreate(): void
     {
-        $this->assertIsInt($this->Revisions->postAction(Action::Create, array('body' => 'Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')));
+        $this->assertIsInt($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
     public function testReadAll(): void
@@ -45,10 +47,10 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestore(): void
     {
         $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(0);
+        $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
-        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
         $this->assertIsArray($this->Revisions->patch(Action::Replace, array()));
     }
@@ -56,10 +58,10 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
     public function testRestoreLocked(): void
     {
         $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(0);
+        $new = $Experiment->create(template: 0);
         $Experiment->setId($new);
         $this->Revisions = new Revisions($Experiment, 10, 100, 10);
-        $id = $this->Revisions->postAction(Action::Create, array('body' => 'Ohai'));
+        $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
         $Experiment->patch(Action::Lock, array());
         $this->expectException(ImproperActionException::class);

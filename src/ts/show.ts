@@ -5,14 +5,24 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getCheckedBoxes, notif, reloadEntitiesShow, getEntity, reloadElement, permissionsToJson } from './misc';
+import {
+  clearForm,
+  collectForm,
+  getCheckedBoxes,
+  getEntity,
+  notifNothingSelected,
+  notif,
+  permissionsToJson,
+  reloadElements,
+  reloadEntitiesShow,
+  TomSelect,
+} from './misc';
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
-import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -30,12 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const FavTagC = new FavTag();
   const ApiC = new Api();
 
-  // THE CHECKBOXES
-  const nothingSelectedError = {
-    'msg': i18next.t('nothing-selected'),
-    'res': false,
-  };
-
   // background color for selected entities
   const bgColor = '#c4f9ff';
 
@@ -45,12 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const query = el.value;
       if (el.matches('[data-action="favtags-search"]')) {
         // find all links that are endpoints
-        document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
+        document.querySelectorAll('[data-action="add-tag-filter"]').forEach((el: HTMLElement) => {
           // begin by showing all so they don't stay hidden
           el.removeAttribute('hidden');
           // now simply hide the ones that don't match the query
-          if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-            el.setAttribute('hidden', '');
+          if (!el.innerText.toLowerCase().includes(query)) {
+            el.hidden = true;
           }
         });
       }
@@ -78,57 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       const format = el.value;
       // reset selection so button can be used again with same format
       el.selectedIndex = 0;
-      window.location.href = `make.php?format=${format}&type=${about.type}&id=${checked.map(value => value.id).join('+')}`;
-
-    // UPDATE CATEGORY OR STATUS
-    } else if (el.matches('[data-action="update-catstat-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        const params = {};
-        params[el.dataset.target] = el.value;
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, params));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
-
-    // UPDATE VISIBILITY
-    } else if (el.matches('[data-action="update-visibility-selected-entities"]')) {
-      const ajaxs = [];
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notif(nothingSelectedError);
-        return;
-      }
-      // loop on it and update the status/item type
-      checked.forEach(chk => {
-        ajaxs.push(ApiC.patch(`${about.type}/${chk.id}`, {'canread': permissionsToJson(parseInt(el.value, 10), [])}));
-      });
-      // reload the page once it's done
-      // a simple reload would not work here
-      // we need to use when/then
-      $.when.apply(null, ajaxs).then(function() {
-        reloadEntitiesShow();
-      });
-      notif({'msg': 'Saved', 'res': true});
+      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
     }
   });
 
@@ -189,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // we want to know if the newly applied limit actually brought new items
       // because if not, we disable the button
       // so simply count them
-      const previousNumber = document.querySelectorAll('.item').length;
+      const previousNumber = document.querySelectorAll('.entity').length;
       // this will be 0 if the button has not been clicked yet
       const queryLimit = getParamNum('limit');
       const usualLimit = parseInt(about.limit, 10);
@@ -204,11 +164,64 @@ document.addEventListener('DOMContentLoaded', () => {
         // expand and select what was expanded and selected
         setExpandedAndSelectedEntities();
         // remove Load more button if no new entries appeared
-        const newNumber = document.querySelectorAll('.item').length;
+        const newNumber = document.querySelectorAll('.entity').length;
         if (previousNumber === newNumber) {
           document.getElementById('loadMoreBtn').remove();
         }
       });
+
+    // SAVE MULTI CHANGES
+    } else if (el.matches('[data-action="save-multi-changes"]')) {
+
+      // prevent form submission
+      event.preventDefault();
+
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notifNothingSelected();
+        return;
+      }
+      // display a warning with the number of impacted entries
+      if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+        return;
+      }
+      (el as HTMLButtonElement).disabled = true;
+      ApiC.notifOnSaved = false;
+      const ajaxs = [];
+      const params = collectForm(document.getElementById('multiChangesForm'));
+      ['canread', 'canwrite'].forEach(can => {
+        // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
+        if (Object.prototype.hasOwnProperty.call(params, can)) {
+          params[can] = permissionsToJson(parseInt(params[can], 10), []);
+        }
+      });
+      checked.forEach(chk => {
+        const paramsCopy = Object.assign({}, params);
+        // they do not have all the same endpoint: handle tags and links the generic patch method
+        for (const key in paramsCopy) {
+          if (key === 'tags') {
+            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
+            delete paramsCopy[key];
+          } else if (['items_links', 'experiments_links'].includes(key)) {
+            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
+            delete paramsCopy[key];
+          }
+        }
+        // patch whatever is left
+        if (Object.entries(paramsCopy).length > 0) {
+          ajaxs.push(ApiC.patch(`${entity.type}/${chk.id}`, paramsCopy));
+        }
+      });
+      // reload the page once it's done
+      Promise.all(ajaxs).then(() => {
+        notif({msg: i18next.t('saved'), res: true});
+        ApiC.notifOnSaved = true;
+        reloadEntitiesShow();
+      });
+
+    } else if (el.matches('[data-action="clear-form"]')) {
+      clearForm(document.getElementById(el.dataset.target));
 
     // TOGGLE FAVTAGS PANEL
     } else if (el.matches('[data-action="toggle-favtags"]')) {
@@ -239,22 +252,13 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
 
-    // clear the filter input for favtags
-    } else if (el.matches('[data-action="clear-favtags-search"]')) {
-      const searchInput = el.parentElement.parentElement.querySelector('input');
-      searchInput.value = '';
-      searchInput.focus();
-      document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
-        el.removeAttribute('hidden');
-      });
-
     // TOGGLE PIN
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.item').remove());
+      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.entity').remove());
 
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElement('favtagsTagsDiv'));
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -280,9 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       if ((el as HTMLInputElement).checked) {
-        (el.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+        (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
-        (el.closest('.item') as HTMLElement).style.backgroundColor = '';
+        (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
 
     // EXPAND ALL
@@ -310,9 +314,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="select-all-entities"]')) {
       event.preventDefault();
       // check all boxes and set background color
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = true;
-        (box.closest('.item') as HTMLElement).style.backgroundColor = bgColor;
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       });
       // show advanced options and withSelected menu
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
@@ -322,9 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // UNSELECT ALL CHECKBOXES
     } else if (el.matches('[data-action="unselect-all-entities"]')) {
       event.preventDefault();
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = false;
-        (box.closest('.item') as HTMLElement).style.backgroundColor = '';
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
       });
       // hide menu
       ['advancedSelectOptions', 'withSelected'].forEach(id => {
@@ -334,13 +338,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // INVERT SELECTION
     } else if (el.matches('[data-action="invert-entities-selection"]')) {
       event.preventDefault();
-      document.querySelectorAll('.item input[type=checkbox]').forEach(box => {
+      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
         (box as HTMLInputElement).checked = !(box as HTMLInputElement).checked;
         let newBgColor = '';
         if ((box as HTMLInputElement).checked) {
           newBgColor = bgColor;
         }
-        (box.closest('.item') as HTMLElement).style.backgroundColor = newBgColor;
+        (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
 
@@ -349,14 +353,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
 
       // loop over it and lock entities
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.lock(chk.id));
+        results.push(EntityC.patchAction(chk.id, Action.Lock));
       });
 
       Promise.all(results).then(() => {
@@ -368,12 +372,31 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       // loop on it and timestamp it
       checked.forEach(chk => {
-        EntityC.timestamp(chk.id).then(() => reloadEntitiesShow());
+        EntityC.patchAction(chk.id, Action.Timestamp).then(() => reloadEntitiesShow());
+      });
+
+    // THE ARCHIVE BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="archive-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notifNothingSelected();
+        return;
+      }
+
+      // loop over it and lock entities
+      const results = [];
+      checked.forEach(chk => {
+        results.push(EntityC.patchAction(chk.id, Action.Archive));
+      });
+
+      Promise.all(results).then(() => {
+        reloadEntitiesShow();
       });
 
     // THE DELETE BUTTON FOR CHECKED BOXES
@@ -381,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notif(nothingSelectedError);
+        notifNothingSelected();
         return;
       }
       // ask for confirmation
@@ -405,4 +428,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('isfavtagsOpen') === '1') {
     FavTagC.toggle();
   }
+
+  new TomSelect('#tagFilter', {
+    plugins: {
+      checkbox_options: {
+        checkedClassNames: ['ts-checked'],
+        uncheckedClassNames: ['ts-unchecked'],
+      },
+      clear_button: {},
+      dropdown_input: {},
+      no_active_items: {},
+      remove_button: {},
+    },
+  });
 });

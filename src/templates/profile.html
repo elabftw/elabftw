@@ -1,100 +1,304 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<hr>
-{# PROFILE PAGE #}
-<h4>{{ App.Users.userData.fullname }}</h4>
-<p class='smallgray'>{{ App.Users.userData.email }}</p>
+{% include 'export-modal.html' %}
+<ul class='tabbed-menu'>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Information'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Attachments'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Import'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
+</ul>
 
-<div class='d-flex mb-4'>
-
-  {# TEAMS #}
-  <div class='col-md-6 mr-2 box bg-white'>
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
-    </div>
-    {% for team in teamsArr %}
-      <span class=''>{{ team.name }}</span>
-      <hr>
-    {% endfor %}
-  </div>
-
-  {# GROUPS #}
-  <div class='col-md-6 box bg-white'>
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
-    </div>
-    {% for teamGroup in teamGroupsArr %}
-      <details>
-        <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team }}</span> {{ teamGroup.name }}</summary>
-        <ul>
-      {% for user in teamGroup.users %}
-        <li class='list-unstyled text-muted'>{{ user.fullname }}</li>
-      {% endfor %}
-        </ul>
-      </details>
-      <hr>
-    {% endfor %}
-  </div>
+{# loading spinner #}
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
 </div>
 
-{# STATUS STAT #}
-<div class='mb-4 box'>
-  {% if count == 0 %}
-    {{ 'No statistics available yet.'|trans }}
-  {% else %}
-    <div class='mb-4'>
-      <h5 class='d-inline mr-2'>{% trans %}
-          Experiment
-          {% plural 2 %}
-          Experiments
-          {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
-    </div>
 
-    {# TODO show register date back #}
-    <div class='d-flex'>
-      <div class='col-md-6 mr-2'>
-        <div class='pie-chart-container'>
-          <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+{# TAB 1 INFORMATION #}
+<div data-tabcontent='1' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Profile'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <h4>{{ App.Users.userData.fullname }}</h4>
+    <p class='smallgray'>{{ App.Users.userData.email }}</p>
+
+    <div class='d-flex mb-4'>
+
+      {# TEAMS #}
+      <div class='col-md-6 mr-2 box bg-white'>
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
         </div>
+        {% for team in teamsArr %}
+          <span class=''>{{ team.name }}</span>
+          <hr>
+        {% endfor %}
       </div>
-      <div class='col-md-6 flex-column'>
-        {% for status in pieData %}
-          <div class='d-flex font-weight-bold'>
-            <span class='pie-percent mr-3' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>
-            <span class='align-self-center'>{{ status.name }}</span>
-            <span class='align-self-center ml-auto'>{{ status.count }}</span>
-          </div>
-          {% if not loop.last %}
-            <hr>
-          {% endif %}
+
+      {# GROUPS #}
+      <div class='col-md-6 box bg-white'>
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
+        </div>
+        {% for teamGroup in teamGroupsArr %}
+          <details>
+            <summary class='mb-3'><span class='badge badge-secondary'>{{ teamGroup.team }}</span> {{ teamGroup.name }}</summary>
+            <ul>
+          {% for user in teamGroup.users %}
+            <li class='list-unstyled text-muted'>{{ user.fullname }}</li>
+          {% endfor %}
+            </ul>
+          </details>
+          <hr>
         {% endfor %}
       </div>
     </div>
-  {% endif %}
 
-  <hr class='mt-5'>
+    {# STATUS STAT #}
+    <div class='mb-4 box'>
+      {% if count == 0 %}
+        {{ 'No statistics available yet.'|trans }}
+      {% else %}
+        <div class='mb-4'>
+          <h5 class='d-inline mr-2'>{% trans %}
+              Experiment
+              {% plural 2 %}
+              Experiments
+              {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
+        </div>
 
-  {# EXPORT EXPERIMENTS #}
-  <h4>{{ 'Export all your experiments'|trans }}</h4>
-  <label for='userExportFormat' class='smallgray mb-4'>{{ 'Select an export format'|trans }}</label>
-
-  <div class='input-group mb-4'>
-    <select class='form-control' id='userExportFormat' autocomplete='off'>
-      <option value='eln'>{{ 'Make an ELN'|trans }}</option>
-      <option value='zip'>{{ 'Make Zip'|trans }}</option>
-      <option value='csv'>{{ 'Make Csv'|trans }}</option>
-      <option value='pdf'>{{ 'Make PDF'|trans }}</option>
-      <option value='qrpdf'>{{ 'Make QR codes PDF'|trans }}</option>
-      <option value='json'>{{ 'Make JSON'|trans }}</option>
-    </select>
-    <div class='input-group-append'>
-      <button type='button' class='btn btn-light input-border' data-action='export-user' data-userid='{{ App.Users.userData.userid }}' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
-        <i class='fas fa-download'></i>
-      </button>
+        {# TODO show register date back #}
+        <div class='d-flex'>
+          <div class='col-md-6 mr-2'>
+            <div class='pie-chart-container'>
+              <div class='pie-chart' style='--pie-data: {{ pieDataCss }}'></div>
+            </div>
+          </div>
+          <div class='col-md-6 flex-column'>
+            {% for status in pieData %}
+              <div class='d-flex font-weight-bold'>
+                <span class='pie-percent mr-3' style='--bg: {{ status.color }}'>{{ status.percent }}%</span>
+                <span class='align-self-center'>{{ status.name }}</span>
+                <span class='align-self-center ml-auto'>{{ status.count }}</span>
+              </div>
+              {% if not loop.last %}
+                <hr>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
-<div id='info' data-page='profile'></div>
+{# TAB 2 ATTACHMENTS #}
+<div data-tabcontent='2' hidden>
+  <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    {% set currentLimit = App.Request.query.get('limit')|default(42) %}
+    <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
+      <a href='?tab=2&limit={{ uploadsTotal }}' class='ml-3 btn btn-sm btn-secondary {{ currentLimit == uploadsTotal ? 'disabled' }}'>
+        {{ 'Show all'|trans }}
+      </a>
+      <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
+      </a>
+    </p>
+    {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
+    <table class='table' aria-describedby='attachedFiles' data-table-sort='true'>
+      <thead>
+        <tr>
+          <th scope='col'>{{ 'File name'|trans }}</th>
+          <th scope='col'>{{ 'Created'|trans }}</th>
+          <th scope='col'>{{ 'Parent entry'|trans }}</th>
+          <th scope='col'>{{ 'File size'|trans }}</th>
+        </tr>
+      </thead>
+      <tbody id='attachedFilesTable'>
+        {% for file in attachedFiles %}
+          <tr>
+            <td data-label='{{ 'File name'|trans }}'><a target='_blank' href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
+            <td data-label='{{ 'Created'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
+            <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
+            <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {# LOAD MORE button #}
+    <a id='attachementsEnd'></a>
+    {% if currentLimit < uploadsTotal %}
+      <div class='text-center page-buttons mt-2'>
+        <a href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd'>
+          <button class='btn btn-primary ' type='button' id='loadMoreBtn'>{{ 'Load more'|trans }}</button>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{# TAB 3 IMPORT #}
+<div data-tabcontent='3' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>
+      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
+    </p>
+    <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
+      {{ App.Session.get('csrf')|csrf }}
+      <label class='d-block' for='importFileInput'>{{ 'Select a file to import'|trans }}</label>
+      <div class='d-flex'>
+        <div>
+          <input id='importFileInput' required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
+          {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
+        </div>
+      </div>
+
+      <div id='importOptionsDiv' hidden>
+        <hr>
+        <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
+        <p hidden class='smallgray' data-showif='eln'>{{ "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."|trans }}</p>
+        <div id='importRadioEntityType'>
+          <span class='form-check form-check-inline'>
+            <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
+            <label class='form-check-label' for='entityTypeRadioExperiments'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</label>
+          </span>
+          <span class='form-check form-check-inline'>
+            <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
+            <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
+          </span>
+          <span hidden data-showif='eln'>
+            <span class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
+              <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
+            </span>
+            <span class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItemsTypes' value='items_types'>
+              <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources Categories'|trans }}</label>
+            </span>
+            <span class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioNone' value='null'>
+              <label class='form-check-label' for='entityTypeRadioNone'>{{ 'Do not force type'|trans }}</label>
+            </span>
+          </span>
+        </div>
+
+        <div id='selectCategoryDiv'>
+          <hr>
+          <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
+          <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
+            <option value='null'>{{ 'Do not force a category'|trans }}</option>
+            {% for cat in experimentsCategoryArr %}
+              <option value='{{ cat.id }}'>{{ cat.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {# if we are admin we can select the owner #}
+        {% if App.Users.isAdmin %}
+          <hr>
+          <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
+          <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
+            {% for user in usersArr %}
+              <option {{ user.userid == App.Users.userid ? 'selected' }} value='{{ user.userid }}'>{{ user.fullname }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type='hidden' name='owner' value='{{ App.Users.userid }}' />
+        {% endif %}
+
+        <hr>
+        <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
+        <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ 30 == key ? ' selected' }}
+            >{{ value|trans }}</option>
+            {% endfor %}
+        </select>
+
+        <hr>
+        <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
+        <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+          {% for key, value in visibilityArr %}
+            <option value='{{ key }}'
+            {{ 20 == key ? ' selected' }}
+            >{{ value|trans }}</option>
+          {% endfor %}
+        </select>
+
+        <hr>
+        <div class='mt-2'>
+          <button type='submit' id='importFileBtn' class='btn btn-primary'>{{ 'Import'|trans }}</button>
+        </div>
+      </div>
+    </form>
+    <div id='importResultDiv'></div>
+  </div>
+</div>
+
+{# TAB 4 EXPORT #}
+<div data-tabcontent='4' hidden>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Export'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>{{ 'This page allows you to export your data in different formats.'|trans }}</p>
+    <div class='mb-4 d-flex flex-row'>
+      <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='exportModal'>{{ 'Create new export'|trans }}</button>
+    </div>
+
+    <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
+    {# Refresh button #}
+    <div class='text-center'>
+      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
+    </div>
+    <ul class='list-group' id='exportedFilesTable'>
+      {% for file in exportedFiles %}
+        <li class='list-group-item py-3 px-2 m-1'>
+          <span class='d-flex flew-wrap'>
+            <span>
+              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-plus-icon='1' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-keep-icon='1' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+              <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
+              {% if file.real_name %}
+                <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary'>
+                  {{ file.real_name }} <span class='smallgray'>{{ file.filesize|default(0)|formatBytes }}</span>
+                </a>
+                <span class='smallgray relative-moment ml-1' title='{{ file.created_at }}'></span>
+              {% else %}
+                {{ 'File is not ready'|trans }}
+              {% endif %}
+              <span class='ml-2'>
+              <span class='p-1 rounded smallgray border'>{{ file.format|upper }}</span>
+              {% if file.changelog %}<span class='p-1 rounded smallgray border'>{{ 'Changelog'|trans|upper }}</span>{% endif %}
+              {% if file.pdfa %}<span class='p-1 rounded smallgray border'>{{ 'PDF/A'|trans }}</span>{% endif %}
+              {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
+              </span>
+              {% if file.filepath %}
+                <a href='/api/v2/export/{{ file.id }}?format=binary' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
+                  <i class='fas fa-download fa-fw'></i>
+                </a>
+              {% endif %}
+            </span>
+          <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 ml-auto' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
+          </span>
+          {# SHOW MORE #}
+          <div id='showMoreDiv_{{ file.id }}' class='mt-2' hidden>
+            <hr>
+            <span class='p-2 my-n2 mr-2'><i class='fas fa-fingerprint fa-fw'></i></span>
+            {%- if file.hash -%}
+              <span class='p-1 rounded smallgray border m-1'>{{ file.hash_algo|upper }}</span>{{- file.hash -}}
+            {%- else -%}
+              {{- 'File is not ready'|trans -}}
+            {%- endif -%}
+            {%- if file.error -%}
+              <hr>
+              <span class='p-2 my-n2 mr-2'><i class='fas fa-triangle-exclamation fa-fw'></i></span>
+              <span class='p-1 rounded border mr-1 small alert alert-danger'>{{ 'Error'|trans|upper }}</span>{{ file.error }}
+            {%- endif -%}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 {% endblock body %}

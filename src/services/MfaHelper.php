@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,6 +8,8 @@
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -44,11 +47,11 @@ class MfaHelper
     public function __construct(public int $userid, public ?string $secret = null)
     {
         $this->TwoFactorAuth = new TwoFactorAuth(
+            new MpdfQrProvider(),
             self::ISSUER,
             self::DIGITS,
             self::PERIOD,
             Algorithm::Sha1,
-            new MpdfQrProvider(),
         );
         $this->Db = Db::getConnection();
     }

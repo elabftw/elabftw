@@ -76,10 +76,10 @@
   {# EXPERIMENTS CATEGORIES #}
   <div class='col-md-4' id='experimentsCategoriesDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
     <label for='experimentsCategoriesSelect'>{{ 'And category is'|trans }}</label>
-    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+    <select id='experimentsCategoriesSelect' class='form-control filterHelper' data-filter='category' name='expCatHelper'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in experimentsCategoriesArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('expCatHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -88,10 +88,10 @@
   {# RESOURCES CATEGORIES (items types) #}
   <div class='col-md-4' id='resourcesCategoriesDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
     <label for='resourcesCategoriesSelect'>{{ 'And category is'|trans }}</label>
-    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category'>
+    <select id='resourcesCategoriesSelect' class='form-control filterHelper' data-filter='category' name='resCatHelper'>
       <option value='' data-action='clear'>{{ 'Select category'|trans }}</option>
       {% for category in itemsTypesArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('resCatHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -100,10 +100,10 @@
   {# EXPERIMENTS STATUS #}
   <div class='col-md-4' id='experimentsStatusDiv' {{ App.Request.query.get('type') == 'items' ? 'hidden' }}>
     <label for='experimentsStatusSelect'>{{ 'And status is'|trans }}</label>
-    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status'>
+    <select id='experimentsStatusSelect' class='form-control filterHelper' data-filter='status' name='expStatusHelper'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in experimentsStatusArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('expStatusHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -112,10 +112,10 @@
   {# RESOURCES STATUS #}
   <div class='col-md-4' id='resourcesStatusDiv' {{ App.Request.query.get('type') != 'items' ? 'hidden' }}>
     <label for='resourcesStatusSelect'>{{ 'And status is'|trans }}</label>
-    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status'>
+    <select id='resourcesStatusSelect' class='form-control filterHelper' data-filter='status' name='resStatusHelper'>
       <option value='' data-action='clear'>{{ 'Select status'|trans }}</option>
       {% for category in itemsStatusArr %}
-        <option value='{{ category.title|e('html_attr') }}'>
+        <option value='{{ category.title|e('html_attr') }}' {{- Request.query.get('resStatusHelper') == category.title ? ' selected' }}>
           {{ category.title }}
         </option>
       {% endfor %}
@@ -154,20 +154,25 @@
 <div class='row mb-2'>
   {# AUTHOR/OWNER HELPER #}
   <div class='col-md-5'>
-    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+      <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
     {%- endif %}
-    <select id='searchonly' name='owner' data-filter='(?:author|group)' class='form-control selectpicker filterHelper' data-show-subtext='true' data-live-search='true'>
-      <option data-action='clear'>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
+    <label for='searchonly'>{{ 'And author is'|trans }}/{{ 'belongs to group:'|trans }}</label>
+    <select
+      class='form-control filterHelper'
+      data-filter='(?:author|group)'
+      id='searchonly'
+      name='searchonly'
+    >
+      <option value=''>{{ 'Select author'|trans }}/{{ 'group'|trans }}</option>
       <optgroup label='{{ 'Users'|trans }}'>
         {% for user in usersArr %}
-          <option value='author:{{ user.fullname|e('html_attr') }}' {{- Request.query.get('owner') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
+          <option value='author:{{ user.fullname|e('html_attr') }}' {{- Request.query.get('searchonly') == 'author:' ~ user.fullname ? ' selected' }}>[{{ 'author'|trans }}] {{ user.fullname }}</option>
         {% endfor %}
       </optgroup>
       <optgroup label='{{ 'Groups'|trans }}'>
         {% for group in teamGroups %}
-          <option value='group:{{ group }}' {{- Request.query.get('owner') == 'group:' ~ group ? ' selected' }}>[{{ 'group'|trans }}] {{ group }}</option>
+          <option value='group:{{ group }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>[{{ 'group'|trans }}] {{ group }}</option>
         {% endfor %}
       </optgroup>
     </select>
@@ -207,24 +212,24 @@
     <span class='d-inline-block mb-2'>{{ 'And extra field is'|trans }}</span>
     <div class='input-group flex-nowrap'>
       {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable-block element-permitted-content: suppress error from select picker: div child of button] -->
+        <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
       {%- endif %}
       <select
         aria-label='{{ 'Name of field'|trans }}'
-        class='form-control filterHelper selectpicker'
+        class='form-control filterHelper'
         data-filter='extrafield'
-        data-live-search='true'
-        data-style=''
-        data-style-base='form-control filterHelper'
         id='metakey'
         name='metakey'
-        title='{{ 'Name of field'|trans }}'
       >
+        <option value='' disabled>{{ 'Name of field'|trans }}</option>
         <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
         {% for metakey in metakeyArrForSelect %}
           <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
         {% endfor %}
       </select>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+      {%- endif %}
       <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
       <input
         aria-label='{{ 'Value'|trans }}'

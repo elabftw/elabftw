@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -11,16 +13,19 @@ namespace Elabftw\Make;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\CreateImmutableArchivedUpload;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private array $configArr;
 
     private string $dataPath;
@@ -45,12 +50,22 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_limit' => '-1',
         );
         $this->expectException(ImproperActionException::class);
-        new MakeDfnTimestamp($configArr, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        new MakeDfnTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $configArr,
+            $this->dataFormat,
+        );
     }
 
     public function testGetFileName(): void
     {
-        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeDfnTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $this->configArr,
+            $this->dataFormat,
+        );
         $this->assertStringContainsString('-timestamped.zip', $Maker->getFileName());
     }
 
@@ -65,25 +80,40 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             'ts_cert' => 'dummy.crt',
             'ts_hash' => 'sha1337',
         );
-        $Maker = new MakeCustomTimestamp($configArr, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeCustomTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $configArr,
+            $this->dataFormat,
+        );
         $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testDfnTimestamp(): void
     {
-        $Maker = new MakeDfnTimestamp($this->configArr, $this->getFreshTimestampableEntity(), ExportFormat::Pdf);
+        $Maker = new MakeDfnTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $this->configArr,
+            ExportFormat::Pdf,
+        );
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
         /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testDigicertTimestamp(): void
     {
-        $Maker = new MakeDigicertTimestamp($this->configArr, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeDigicertTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $this->configArr,
+            $this->dataFormat,
+        );
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
@@ -91,7 +121,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testUniversignTimestamp(): void
@@ -101,7 +131,12 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             // create a fake encrypted password
             'ts_password' => Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'))),
         );
-        $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeUniversignTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $config,
+            $this->dataFormat,
+        );
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
@@ -109,31 +144,67 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
         $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload($zipName, $this->dataPath . 'example.zip', $this->comment)));
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUpload($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
 
     public function testGlobalSign(): void
     {
-        $Maker = new MakeGlobalSignTimestamp(array(), $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeGlobalSignTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $this->configArr,
+            $this->dataFormat,
+        );
+        $this->assertIsArray($Maker->getTimestampParameters());
+    }
+
+    public function testDgn(): void
+    {
+        $config = array();
+        $config['ts_login'] = 'fakelogin@example.com';
+        // create a fake encrypted password
+        $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+        $Maker = new MakeDgnTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $config,
+            $this->dataFormat,
+        );
         $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testSectigo(): void
     {
-        $Maker = new MakeSectigoTimestamp(array(), $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeSectigoTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $this->configArr,
+            $this->dataFormat,
+        );
         $this->assertIsArray($Maker->getTimestampParameters());
     }
 
     public function testUniversignTimestampNoLogin(): void
     {
-        $Maker = new MakeUniversignTimestamp(array(), $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeUniversignTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            array(),
+            $this->dataFormat,
+        );
         $this->expectException(ImproperActionException::class);
         $Maker->getTimestampParameters();
     }
 
     public function testUniversignTimestampNoPassword(): void
     {
-        $Maker = new MakeUniversignTimestamp(array('ts_login' => 'some-login'), $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $config = array('ts_login' => 'some-login');
+        $Maker = new MakeUniversignTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $config,
+            $this->dataFormat,
+        );
         $this->expectException(ImproperActionException::class);
         $Maker->getTimestampParameters();
     }
@@ -145,20 +216,17 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $config['ts_login'] = 'fakelogin@example.com';
         // create a fake encrypted password
         $config['ts_password'] = Crypto::encrypt('fakepassword', Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
-        $Maker = new MakeUniversignTimestamp($config, $this->getFreshTimestampableEntity(), $this->dataFormat);
+        $Maker = new MakeUniversignTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $config,
+            $this->dataFormat,
+        );
         $Maker->generateData();
         /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
         $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('yestermorrow');
         $this->expectException(ImproperActionException::class);
-        $Maker->saveTimestamp($tsResponseMock, new CreateImmutableArchivedUpload('realName', 'longName', $this->comment));
-    }
-
-    private function getFreshTimestampableEntity(): Experiments
-    {
-        $Entity = new Experiments(new Users(1, 1));
-        // create a new experiment for timestamping tests
-        $Entity->setId($Entity->create());
-        return $Entity;
+        $Maker->saveTimestamp($tsResponseMock, new CreateUpload('realName', 'longName', $this->comment, 1, State::Archived));
     }
 }

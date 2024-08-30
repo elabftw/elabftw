@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,28 +8,24 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use function date;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Models\Teams;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\UploadTrait;
 use PDO;
 
+use function date;
+
 /**
- * Create a report of usage for all users
+ * Create a report of usage for users provided in construct
  */
 class MakeReport extends AbstractMakeCsv
 {
-    use UploadTrait;
-
-    protected Db $Db;
-
-    public function __construct(private Teams $Teams)
+    public function __construct(private array $users)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
     }
 
     /**
@@ -48,6 +45,7 @@ class MakeReport extends AbstractMakeCsv
             'userid',
             'firstname',
             'lastname',
+            'created_at',
             'orgid',
             'email',
             'has_mfa_enabled',
@@ -70,13 +68,12 @@ class MakeReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        $allUsers = $this->Teams->Users->readFromQuery('');
-        foreach ($allUsers as $key => $user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+        foreach ($this->users as $key => $user) {
+            $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
             // get disk usage for all uploaded files
-            $diskUsage = $this->getDiskUsage((int) $user['userid']);
+            $diskUsage = $this->getDiskUsage($user['userid']);
 
             // remove unused columns as they will mess up the csv
             // these columns can be null
@@ -86,18 +83,19 @@ class MakeReport extends AbstractMakeCsv
                 'auth_service',
                 'token',
                 'auth_lock_time',
+                'sig_pubkey',
             );
             foreach ($unusedColumns as $column) {
-                unset($allUsers[$key][$column]);
+                unset($this->users[$key][$column]);
             }
 
-            $allUsers[$key]['team(s)'] = $teams;
-            $allUsers[$key]['diskusage_in_bytes'] = $diskUsage;
-            $allUsers[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $allUsers[$key]['exp_total'] = $UsersHelper->countExperiments();
-            $allUsers[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
+            $this->users[$key]['team(s)'] = $teams;
+            $this->users[$key]['diskusage_in_bytes'] = $diskUsage;
+            $this->users[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
+            $this->users[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $this->users[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
         }
-        return $allUsers;
+        return $this->users;
     }
 
     private function getDiskUsage(int $userid): int

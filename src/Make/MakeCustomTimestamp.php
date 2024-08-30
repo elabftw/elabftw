@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Make;
 
@@ -19,7 +22,7 @@ use Elabftw\Models\Config;
 class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 {
     /** default hash algo for file */
-    private const TS_HASH = 'sha256';
+    private const string TS_HASH = 'sha256';
 
     /**
      * Return the needed parameters to request/verify a timestamp
@@ -48,6 +51,6 @@ class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
             'ts_cert' => $config['ts_cert'],
             'ts_hash' => $hash,
             'ts_chain' => '/etc/ssl/cert.pem',
-            );
+        );
     }
 }

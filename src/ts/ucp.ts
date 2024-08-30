@@ -5,17 +5,28 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getEntity, notif, reloadElement, collectForm, updateCatStat } from './misc';
+import {
+  collectForm,
+  getEntity,
+  getNewIdFromPostRequest,
+  notif,
+  reloadElements,
+  saveStringAsFile,
+  updateCatStat,
+} from './misc';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Model, Target } from './interfaces';
+import { Action, Model, Target, EntityType } from './interfaces';
 import Templates from './Templates.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
-import { Ajax } from './Ajax.class';
+import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
+import { Uploader } from './uploader';
+
+const ApiC = new Api();
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/ucp.php') {
@@ -28,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const EntityC = new Templates();
-  const ApiC = new Api();
+  // initialize the file uploader
+  (new Uploader()).init();
 
   const entity = getEntity();
   const TabMenu = new Tab();
@@ -43,49 +55,42 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
-  // FILTER TEMPLATES
-  if (document.getElementById('templatesFilterInput')) {
-    document.getElementById('templatesFilterInput').addEventListener('keyup', event => {
-      const el = (event.target as HTMLInputElement);
-      const query = el.value;
-      // find all links that are endpoints
-      document.querySelectorAll('#tplTable tr').forEach(el => {
-        // begin by showing all so they don't stay hidden
-        el.removeAttribute('hidden');
-        // now simply hide the ones that don't match the query
-        if (!(el as HTMLElement).innerText.toLowerCase().includes(query)) {
-          el.setAttribute('hidden', '');
-        }
-      });
-    });
-  }
-
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    const TemplateC = new EntityClass(EntityType.Template);
     // CREATE TEMPLATE
     if (el.matches('[data-action="create-template"]')) {
       const title = prompt(i18next.t('template-title'));
       if (title) {
         // no body on template creation
-        // Note: here we create one and then patch it for the correct content_type but it would probably be better to allow setting the content_type directly on creation
-        EntityC.create(title).then(resp => {
-          const location = resp.headers.get('location').split('/');
-          const newId = parseInt(location[location.length -1], 10);
-          EntityC.update(newId, Target.ContentType, String(editor.typeAsInt)).then(() => {
-            window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
-          });
+        EntityC.create(title).then(async resp => {
+          const newId = getNewIdFromPostRequest(resp);
+          window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
         });
       }
     // LOCK TEMPLATE
     } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.lock(parseInt(el.dataset.id)).then(() => reloadElement('lockTemplateButton'));
+      EntityC.patchAction(parseInt(el.dataset.id), Action.Lock).then(() => reloadElements(['lockTemplateButton']));
     // UPDATE TEMPLATE
     } else if (el.matches('[data-action="update-template"]')) {
       EntityC.update(entity.id, Target.Body, editor.getContent());
     // SWITCH EDITOR TODO duplicated code from edit.ts
     } else if (el.matches('[data-action="switch-editor"]')) {
       EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
+
+    // INSERT IMAGE AT CURSOR POSITION IN TEXT FIXME TODO duplicated code from edit.ts
+    } else if (el.matches('[data-action="insert-image-in-body"]')) {
+      // link to the image
+      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+      // switch for markdown or tinymce editor
+      let content: string;
+      if (editor.type === 'md') {
+        content = '\n![image](' + url + ')\n';
+      } else if (editor.type === 'tiny') {
+        content = '<img src="' + url + '" />';
+      }
+      editor.setContent(content);
 
     // DESTROY TEMPLATE
     } else if (el.matches('[data-action="destroy-template"]')) {
@@ -96,20 +101,32 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
     } else if (el.matches('[data-action="patch-account"]')) {
-      const params = collectForm(document.getElementById('ucp-account-form'));
+      const params = collectForm(document.getElementById('ucp-account-form'), false);
       if (params['orcid'] === '') {
         delete params['orcid'];
       }
       ApiC.patch(`${Model.User}/me`, params);
 
-    // CLEAR THE FILTER INPUT FOR TEMPLATES
-    } else if (el.matches('[data-action="clear-templates-search"]')) {
-      const searchInput = el.parentElement.parentElement.querySelector('input');
-      searchInput.value = '';
-      searchInput.focus();
-      document.querySelectorAll('#tplTable tr').forEach(el => {
-        el.removeAttribute('hidden');
+    // IMPORT TPL
+    } else if (el.matches('[data-action="import-template"]')) {
+      TemplateC.duplicate(parseInt(el.dataset.id), false);
+
+    // GENERATE SIGKEY
+    } else if (el.matches('[data-action="create-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
+      ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
+        .then(() => reloadElements(['ucp-sigkeys']));
+    // REGENERATE SIGKEY
+    } else if (el.matches('[data-action="regenerate-sigkeys"]')) {
+      const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
+      ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
+        .then(() => reloadElements(['ucp-sigkeys']));
+    // DOWNLOAD SIG KEY (pub or priv)
+    } else if (el.matches('[data-action="download-sigkey"]')) {
+      ApiC.getJson(`${Model.User}/me`).then(user => {
+        saveStringAsFile(`elabftw-signature-key.${el.dataset.target.split('_')[1]}`, user[el.dataset.target]);
       });
+
     // CREATE API KEY
     } else if (el.matches('[data-action="create-apikey"]')) {
       // clear any previous new key message
@@ -124,51 +141,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
       ApiC.post(`${Model.Apikey}`, {'name': content, 'canwrite': canwrite}).then(resp => {
         const location = resp.headers.get('location').split('/');
-        reloadElement('apiTable');
-        const warningDiv = document.createElement('div');
-        warningDiv.classList.add('alert', 'alert-warning');
-        const chevron = document.createElement('i');
-        chevron.classList.add('fas', 'fa-chevron-right', 'color-warning', 'fa-fw');
-        warningDiv.appendChild(chevron);
-
-        const newkey = document.createElement('p');
-        newkey.innerText = location[location.length -1];
-        const warningTextSpan = document.createElement('span');
-
-        warningTextSpan.innerText = i18next.t('new-apikey-warning');
-        warningTextSpan.classList.add('ml-1');
-        warningDiv.appendChild(warningTextSpan);
-        warningDiv.appendChild(newkey);
-        const placeholder = document.getElementById('newKeyPlaceholder');
-        placeholder.innerHTML = '';
-        placeholder.appendChild(warningDiv);
+        reloadElements(['apiTable']);
+        const newkeyInputGroup = document.getElementById('newApiKeyInputGroup');
+        const newkeyInput = document.getElementById('newApiKeyInput') as HTMLInputElement;
+        newkeyInput.value = location[location.length -1];
+        newkeyInputGroup.removeAttribute('hidden');
       });
     // DESTROY API KEY
     } else if (el.matches('[data-action="destroy-apikey"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        const id = parseInt(el.dataset.apikeyid, 10);
-        ApiC.delete(`${Model.Apikey}/${id}`).then(() => reloadElement('apiTable'));
+        ApiC.delete(`${Model.Apikey}/${el.dataset.apikeyid}`)
+          .then(() => el.parentElement.parentElement.remove());
       }
-    } else if (el.matches('[data-action="show-import-tpl"]')) {
-      document.getElementById('import_tpl').toggleAttribute('hidden');
     }
   });
-
-  // input to upload an ELN archive
-  const importTplInput = document.getElementById('import_tpl');
-  if (importTplInput) {
-    importTplInput.addEventListener('change', (event) => {
-      const params = {
-        'type': 'archive',
-        'file': (event.target as HTMLInputElement).files[0],
-        'target': 'experiments_templates:0',
-      };
-      // TODO check for file size here too, like the other import modal
-      (new Ajax()).postForm('app/controllers/ImportController.php', params).then(() => {
-        window.location.reload();
-      });
-    });
-  }
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));

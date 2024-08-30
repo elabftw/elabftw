@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -8,6 +10,8 @@
  */
 
 namespace Elabftw\Services;
+
+use Elabftw\Enums\Usergroup;
 
 class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +39,7 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTeamsFromUserid(): void
     {
-        $expected = array(array('id' => 1, 'name' => 'Alpha', 'usergroup' => 2, 'is_owner' => 0));
+        $expected = array(array('id' => 1, 'name' => 'Alpha', 'usergroup' => Usergroup::Admin->value, 'is_owner' => 0));
         $this->assertEquals($expected, $this->UsersHelper->getTeamsFromUserid());
     }
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services;
 
@@ -56,6 +59,7 @@ class UserArchiver
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException(_('This instance configuration only permits Sysadmin users to archive a user.'));
         }
+        $this->target->invalidateToken();
         // if we are archiving a user, also lock all experiments (if asked)
         return $lockExp ? $this->lockAndArchiveExperiments() : true;
     }
@@ -92,10 +96,11 @@ class UserArchiver
     private function lockAndArchiveExperiments(): bool
     {
         $sql = 'UPDATE experiments
-            SET locked = :locked, lockedby = :userid, locked_at = CURRENT_TIMESTAMP, state = :archived WHERE userid = :userid';
+            SET locked = :locked, lockedby = :lockedby, locked_at = CURRENT_TIMESTAMP, state = :archived WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':locked', 1);
         $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindParam(':lockedby', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

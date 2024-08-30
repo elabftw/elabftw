@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
-use function array_diff;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
@@ -18,12 +20,16 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use RuntimeException;
+
+use function array_diff;
+use function trim;
 
 /**
  * All about the teams
@@ -42,7 +48,7 @@ class Teams implements RestInterface
     {
         $this->Db = Db::getConnection();
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
-            $id = (int) $Users->userData['team'];
+            $id = $Users->userData['team'];
         }
         $this->setId($id);
     }
@@ -53,20 +59,29 @@ class Teams implements RestInterface
      * Input can come from external auth and reference an uncreated team
      * so with this the team will be created on the fly (if it's allowed)
      */
-    public function getTeamsFromIdOrNameOrOrgidArray(array $input): array
+    public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
     {
         $res = array();
         $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
         $req = $this->Db->prepare($sql);
-        foreach ($input as $query) {
-            $req->bindParam(':query', $query);
+        foreach ($teams as $query) {
+            $req->bindValue(':query', trim((string) $query));
             $this->Db->execute($req);
             $team = $req->fetch();
-            if ($team === false) {
-                $id = $this->createTeamIfAllowed($query);
-                $team = $this->getTeamsFromIdOrNameOrOrgidArray(array($id))[0];
+            // team was not found, we need to create it, but only if we're allowed to
+            if ($team === false && $allowTeamCreation === true) {
+                $this->bypassWritePermission = true;
+                $id = $this->create($query);
+                $TeamsHelper = new TeamsHelper($id);
+                $team = $TeamsHelper->getSimple();
             }
-            $res[] = $team;
+            // this prevents adding a bool(false)
+            if (is_array($team)) {
+                $res[] = $team;
+            }
+        }
+        if (empty($res)) {
+            throw new ImproperActionException('At least one team must be provided: none were found.');
         }
         return $res;
     }
@@ -80,6 +95,10 @@ class Teams implements RestInterface
     public function synchronize(int $userid, array $teams): void
     {
         $Users2Teams = new Users2Teams($this->Users);
+        // send onboarding email of teams newly added to a user
+        if ($this->Users->userData['validated']) {
+            $Users2Teams->sendOnboardingEmailOfTeams = true;
+        }
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -94,15 +113,16 @@ class Teams implements RestInterface
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return 'api/v2/teams/';
     }
 
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         return match ($action) {
-            Action::Create => $this->create($reqBody['name'] ?? 'New team name', $reqBody['default_category_name'] ?? _('Default')),
+            Action::Create => $this->create($reqBody['name'] ?? 'New team name'),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
     }
@@ -159,6 +179,7 @@ class Teams implements RestInterface
                     }
                 }
             )(),
+            Action::SendOnboardingEmails => $this->sendOnboardingEmails($params['userids']),
             default => throw new ImproperActionException('Incorrect action for teams.'),
         };
         return $this->readOne();
@@ -247,15 +268,14 @@ class Teams implements RestInterface
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
-        if ($TeamsHelper->isAdminInTeam((int) $this->Users->userData['userid'])) {
+        if ($TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name, string $defaultCategoryName): int
+    private function create(string $name): int
     {
-        $this->canWriteOrExplode();
         $name = Filter::title($name);
 
         $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
@@ -272,25 +292,9 @@ class Teams implements RestInterface
         $newId = $this->Db->lastInsertId();
         $this->setId($newId);
 
-        $user = new Users();
-        // create default status
+        // create default experiments status set
         $Status = new ExperimentsStatus($this);
         $Status->createDefault();
-
-        // create default item type
-        $user->team = $newId;
-        $ItemsTypes = new ItemsTypes($user);
-        // we can't patch something that is not in our team!
-        $ItemsTypes->bypassWritePermission = true;
-        $ItemsTypes->setId($ItemsTypes->create($defaultCategoryName));
-        $defaultPermissions = BasePermissions::Team->toJson();
-        $extra = array(
-            'color' => '#32a100',
-            'body' => '<p>This is the default text of the default category.</p><p>Head to the <a href="admin.php?tab=5">Admin Panel</a> to edit/add more categories for your database!</p>',
-            'canread' => $defaultPermissions,
-            'canwrite' => $defaultPermissions,
-        );
-        $ItemsTypes->patch(Action::Update, $extra);
 
         return $newId;
     }
@@ -316,19 +320,18 @@ class Teams implements RestInterface
         if ($this->Users->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->hasCommonTeamWithCurrent((int) $this->Users->userData['userid'], $this->id)) {
+        if ($this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id)) {
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
     }
 
-    private function createTeamIfAllowed(string $name): int
+    private function sendOnboardingEmails(array $userids): void
     {
-        $Config = Config::getConfig();
-        if ($Config->configArr['saml_team_create']) {
-            $this->bypassWritePermission = true;
-            return $this->postAction(Action::Create, array('name' => $name));
+        // validate that userid is part of team and active
+        foreach(array_intersect(array_column($this->Users->readAllActiveFromTeam(), 'userid'), $userids) as $userid) {
+            /** @psalm-suppress PossiblyNullArgument */
+            (new OnboardingEmail($this->id))->create($userid);
         }
-        throw new ImproperActionException('The administrator disabled team creation on login. Contact your administrator for creating the team beforehand.');
     }
 }

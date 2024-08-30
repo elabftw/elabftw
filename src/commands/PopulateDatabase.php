@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,9 +8,10 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Commands;
 
-use function array_key_exists;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
@@ -18,20 +20,17 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ExperimentsLinks;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsLinks;
+use Elabftw\Models\Items2ExperimentsLinks;
+use Elabftw\Models\Items2ItemsLinks;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
-use function is_string;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use function mb_strlen;
-use function str_repeat;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,6 +41,11 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
+use function array_key_exists;
+use function is_string;
+use function mb_strlen;
+use function str_repeat;
+
 /**
  * Populate the database with example data. Useful to get a fresh dev env.
  * For dev purposes, should not be used by normal users.
@@ -49,8 +53,8 @@ use Symfony\Component\Yaml\Yaml;
 #[AsCommand(name: 'db:populate')]
 class PopulateDatabase extends Command
 {
-    /** @var int DEFAULT_ITERATIONS number of things to create */
-    private const DEFAULT_ITERATIONS = 50;
+    // number of things to create
+    private const int DEFAULT_ITERATIONS = 50;
 
     protected function configure(): void
     {
@@ -135,8 +139,16 @@ class PopulateDatabase extends Command
             $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $faker->hexColor(), 'is_default' => 0));
             $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $faker->hexColor(), 'is_default' => 0));
 
-            if (isset($team['visible'])) {
-                $Teams->patch(Action::Update, array('visible' => (string) $team['visible']));
+            $columns = array(
+                'visible',
+                'onboarding_email_body',
+                'onboarding_email_subject',
+                'onboarding_email_active',
+            );
+            foreach ($columns as $column) {
+                if (isset($team[$column])) {
+                    $Teams->patch(Action::Update, array($column => (string) $team[$column]));
+                }
             }
         }
 
@@ -227,13 +239,12 @@ class PopulateDatabase extends Command
             }
         }
 
-        // delete the default items_types
-        // add more items types
+        // add Resources Categories (items types)
         if (array_key_exists('items_types', $yaml)) {
             foreach ($yaml['items_types'] as $items_types) {
                 $user = new Users(1, (int) ($items_types['team'] ?? 1));
                 $ItemsTypes = new ItemsTypes($user);
-                $ItemsTypes->setId($ItemsTypes->create($items_types['name']));
+                $ItemsTypes->setId($ItemsTypes->create(title: $items_types['name']));
                 $ItemsTypes->bypassWritePermission = true;
                 $defaultPermissions = BasePermissions::Team->toJson();
                 $patch = array(
@@ -267,14 +278,14 @@ class PopulateDatabase extends Command
                 }
                 if (isset($item['experiments_links'])) {
                     foreach ($item['experiments_links'] as $target) {
-                        $ExperimentsLinks = new ExperimentsLinks($Items, (int) $target);
+                        $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
                         $ExperimentsLinks->postAction(Action::Create, array());
                     }
                 }
                 if (isset($item['items_links'])) {
                     foreach ($item['items_links'] as $target) {
-                        $ExperimentsLinks = new ItemsLinks($Items, (int) $target);
-                        $ExperimentsLinks->postAction(Action::Create, array());
+                        $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
+                        $ItemsLinks->postAction(Action::Create, array());
                     }
                 }
                 $Items->patch(Action::Update, $patch);

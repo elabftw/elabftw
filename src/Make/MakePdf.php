@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,14 +8,16 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Make;
 
-use function date;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Classification;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -26,11 +29,12 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;
-use Elabftw\Traits\UploadTrait;
-use function implode;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use setasign\Fpdi\FpdiException;
+
+use function date;
+use function implode;
 use function str_replace;
 use function strlen;
 use function strtolower;
@@ -41,7 +45,6 @@ use function strtolower;
 class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
-    use UploadTrait;
 
     public array $failedAppendPdfs = array();
 
@@ -50,18 +53,25 @@ class MakePdf extends AbstractMakePdf
 
     protected bool $includeAttachments = false;
 
+    protected AbstractEntity $Entity;
+
     private FileSystem $cacheFs;
 
     private bool $pdfa;
 
-    /**
-     * Constructor
-     *
-     * @param AbstractEntity $entity Experiments or Database
-     */
-    public function __construct(private LoggerInterface $log, MpdfProviderInterface $mpdfProvider, AbstractEntity $entity, protected array $entityIdArr)
-    {
-        parent::__construct($mpdfProvider, $entity);
+    public function __construct(
+        private LoggerInterface $log,
+        MpdfProviderInterface $mpdfProvider,
+        protected Users $requester,
+        protected array $entityArr,
+        bool $includeChangelog = false,
+        Classification $classification = Classification::None,
+    ) {
+        parent::__construct(
+            mpdfProvider: $mpdfProvider,
+            includeChangelog: $includeChangelog,
+            classification: $classification,
+        );
 
         $this->pdfa = $mpdfProvider->isPdfa();
         $this->mpdf->SetTitle($this->getTitle());
@@ -73,7 +83,7 @@ class MakePdf extends AbstractMakePdf
         error_reporting(E_ERROR);
 
         $this->cacheFs = Storage::CACHE->getStorage()->getFs();
-        if ($this->pdfa === true || $this->Entity->Users->userData['inc_files_pdf']) {
+        if ($this->pdfa || $this->requester->userData['inc_files_pdf']) {
             $this->includeAttachments = true;
         }
     }
@@ -97,7 +107,7 @@ class MakePdf extends AbstractMakePdf
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
             $Notifications = new PdfGenericError();
-            $Notifications->create($this->Entity->Users->userData['userid']);
+            $Notifications->create($this->requester->userData['userid']);
         }
         return $output;
     }
@@ -109,9 +119,8 @@ class MakePdf extends AbstractMakePdf
     {
         $now = (new DateTimeImmutable())->format('Y-m-d');
         $date = $this->Entity->entityData['date'] ?? $now;
-        $title = Filter::forFilesystem($this->Entity->entityData['title']);
 
-        return sprintf('%s-%s.pdf', $date, $title);
+        return sprintf('%s-%s.pdf', $date, Filter::forFilesystem($this->getTitle()));
     }
 
     protected function getTitle(): string
@@ -129,24 +138,15 @@ class MakePdf extends AbstractMakePdf
      */
     private function loopOverEntries(): void
     {
-        $entriesCount = count($this->entityIdArr);
-        foreach ($this->entityIdArr as $key => $id) {
-            $this->Entity->setId((int) $id);
+        $entriesCount = count($this->entityArr);
+        foreach ($this->entityArr as $key => $entity) {
+            $this->Entity = $entity;
+            $this->addEntry();
 
-            try {
-                $permissions = $this->Entity->getPermissions();
-            } catch (IllegalActionException) {
-                return;
-            }
-
-            if ($permissions['read']) {
-                $this->addEntry();
-
-                if ($key !== $entriesCount - 1) {
-                    $this->mpdf->AddPageByArray(array(
-                        'sheet-size' => $this->Entity->Users->userData['pdf_format'],
-                    ));
-                }
+            if ($key !== $entriesCount - 1) {
+                $this->mpdf->AddPageByArray(array(
+                    'sheet-size' => $this->requester->userData['pdf_format'],
+                ));
             }
         }
     }
@@ -159,13 +159,13 @@ class MakePdf extends AbstractMakePdf
         // write content
         $this->mpdf->WriteHTML($this->getContent());
 
-        if ($this->Entity->Users->userData['append_pdfs']) {
+        if ($this->requester->userData['append_pdfs']) {
             $this->appendPdfs($this->getAttachedPdfs());
             if ($this->failedAppendPdfs) {
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
                     $this->Entity->id,
-                    $this->Entity->page,
+                    $this->Entity->entityType->toPage(),
                     implode(', ', $this->failedAppendPdfs)
                 );
             }
@@ -183,7 +183,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->page);
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage());
         }
         return $content;
     }
@@ -201,7 +201,7 @@ class MakePdf extends AbstractMakePdf
 
         if ($locked) {
             // get info about the locker
-            $Locker = new Users((int) $this->Entity->entityData['lockedby']);
+            $Locker = new Users($this->Entity->entityData['lockedby']);
             $lockerName = $Locker->userData['fullname'];
 
             // separate the date and time
@@ -211,7 +211,7 @@ class MakePdf extends AbstractMakePdf
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
-            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
@@ -221,24 +221,29 @@ class MakePdf extends AbstractMakePdf
 
         $Changelog = new Changelog($this->Entity);
 
+        $baseUrls = array();
+        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+            $baseUrls[$entityType->value] = sprintf('%s/%s', Config::fromEnv('SITE_URL'), $entityType->toPage());
+        }
+
+        $siteUrl = Config::fromEnv('SITE_URL');
         $renderArr = array(
             'body' => $this->getBody(),
             'changes' => $Changelog->readAllWithAbsoluteUrls(),
+            'classification' => $this->classification->toHuman(),
             'css' => $this->getCss(),
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
-            'includeChangelog' => $this->pdfa,
+            'includeChangelog' => $this->includeChangelog,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
-            'pdfSig' => $this->Entity->Users->userData['pdf_sig'],
-            'url' => $this->getURL(),
-            'linkBaseUrl' => array(
-                'items' => Config::fromEnv('SITE_URL') . '/database.php',
-                'experiments' => Config::fromEnv('SITE_URL') . '/experiments.php',
-            ),
-            'useCjk' => $this->Entity->Users->userData['cjk_fonts'],
+            'pdfSig' => $this->requester->userData['pdf_sig'],
+            // TODO fix for templates
+            'linkBaseUrl' => $baseUrls,
+            'url' => sprintf('%s/%s?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
+            'useCjk' => $this->requester->userData['cjk_fonts'],
         );
 
         $Config = Config::getConfig();
@@ -265,27 +270,30 @@ class MakePdf extends AbstractMakePdf
         // see https://mpdf.github.io/what-else-can-i-do/images.html
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageProcessor.php ImageProcessor::getImage() around line 218
         // and https://github.com/mpdf/mpdf/blob/development/src/Image/ImageTypeGuesser.php
+        // the slash (/) in the f parameter might be url encoded (%2F), see https://github.com/elabftw/elabftw/issues/4961
+        // a generic regex that asserts that the f parameter is present and well formatted but ignores the order of parameters
         $matches = array();
-        // ampersand (&) in html attributes is encoded (&amp;) so we need to use &amp; in the regex
-        preg_match_all('/app\/download.php\?(?:name=[^&]+&amp;)?f=[[:alnum:]]{2}\/[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)(?:&amp;storage=[0-9])?/i', $body, $matches);
+        preg_match_all('/app\/download\.php\?(?=.*?f=[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp))[^"]+/i', $body, $matches);
         foreach ($matches[0] as $src) {
-            // src will look like: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
-            // so we parse it to get the file path and storage type
-            $query = parse_url($src, PHP_URL_QUERY);
+            // src will look similar to: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
+            // ampersand (&) in html attributes should be encoded (&amp;) so we decode first
+            // and parse it to get the file path and storage type
+            $query = parse_url(htmlspecialchars_decode($src), PHP_URL_QUERY);
             if (!$query) {
                 continue;
             }
             $res = array();
+            // parse_str will also do the url decoding (%2F -> /)
             parse_str($query, $res);
-            // @phpstan-ignore-next-line
-            $longname = (string) ($res['amp;f'] ?? $res['f']);
+            // @phpstan-ignore-next-line (f will be here because of the regex above)
+            $longname = (string) $res['f'];
             // there might be no storage value. In this case get it from the uploads table via the long name
-            $storage = (int) ($res['amp;storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
+            $storage = (int) ($res['storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
             $storageFs = Storage::from($storage)->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$longname] = $storageFs->read($longname);
-            $body = str_replace($src, 'var:' . $longname, $body);
+            $body = str_replace($src, "var:$longname", $body);
         }
 
         return $this->fixLocalLinks($body);
@@ -322,7 +330,7 @@ class MakePdf extends AbstractMakePdf
         }
 
         foreach ($uploadsArr as $upload) {
-            $storageFs = Storage::from((int) $upload['storage'])->getStorage()->getFs();
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
             if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 // the real_name is used in case of error appending it
                 // the content is stored in a temporary file so it can be read with appendPdfs()

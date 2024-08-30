@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -14,19 +16,23 @@ use Elabftw\Enums\Action;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakePdf $MakePdf;
 
     protected function setUp(): void
     {
+        $requester = new Users(1, 1);
         // test >Append attached PDFs<
         (new Users(1, 1, new Users(1, 1)))->patch(Action::Update, array('append_pdfs' => 1));
         $Entity = new Experiments(new Users(1, 1), null);
-        $new = $Entity->create(0);
+        $new = $Entity->create(template: 0);
         $Entity->setId($new);
         $Entity->canOrExplode('write');
         $entityData = $Entity->readOne();
@@ -58,7 +64,7 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $Entity, array($new, 2));
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array($Entity, $this->getFreshExperiment()));
     }
 
     public function testGetFileContent(): void

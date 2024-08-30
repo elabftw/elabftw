@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,10 +8,13 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Exceptions;
 
-use function dirname;
 use Exception;
+
+use function dirname;
 use function file_get_contents;
 
 /**

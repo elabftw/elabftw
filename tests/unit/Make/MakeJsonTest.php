@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,17 +11,19 @@
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeJsonTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeJson $Make;
 
     protected function setUp(): void
     {
-        $idArr = array('1', '2', '3');
-        $this->Make = new MakeJson(new Experiments(new Users(1, 1)), $idArr);
+        $this->Make = new MakeJson(
+            array($this->getFreshExperiment(), $this->getFreshExperiment())
+        );
     }
 
     public function testGetFileName(): void

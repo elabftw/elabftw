@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\AuditEvent;
 
@@ -23,8 +26,8 @@ class PasswordResetRequested extends AbstractAuditEvent
         return sprintf('Password reset was requested for account associated with: %s', $this->email);
     }
 
-    public function getCategory(): int
+    public function getCategory(): AuditCategory
     {
-        return AuditCategory::PasswordResetRequested->value;
+        return AuditCategory::PasswordResetRequested;
     }
 }

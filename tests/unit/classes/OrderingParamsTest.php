@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2024 Nicolas CARPi
@@ -28,7 +30,7 @@ class OrderingParamsTest extends \PHPUnit\Framework\TestCase
             'ordering' => array('test_1', 'test_2', 'test_3'),
             'table' => 'extra_fields',
         ));
-        $this->assertInstanceOf(EntityType::class, $OrderingParams->type);
+        $this->assertInstanceOf(EntityType::class, $OrderingParams->entityType);
         $this->assertEquals(123, $OrderingParams->id);
     }
 }

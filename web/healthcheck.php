@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -24,7 +27,7 @@ $status = 500;
 try {
     $Db = Db::getConnection();
     $req = $Db->prepare('SELECT 12');
-    if ($req->execute() === true) {
+    if ($req->execute()) {
         $out = 'ok';
         $status = 200;
     }

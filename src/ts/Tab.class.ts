@@ -45,8 +45,9 @@ export default class Tab {
     document.querySelector(`[data-tabtarget="${tabid}"]`).classList.add('selected');
     // show the tab change in the url
     const params = new URLSearchParams(document.location.search);
+    const hash = document.location.hash;
     params.set('tab', String(tabid));
-    history.replaceState(null, '', `?${params.toString()}`);
+    history.replaceState(null, '', `?${params.toString()}${hash}`);
     // remember where we are
     this.currentTab = tabid;
   }

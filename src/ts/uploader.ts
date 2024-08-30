@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElement } from './misc';
+import { reloadElements, sizeToMb } from './misc';
 import i18next from 'i18next';
 
 export class Uploader
@@ -15,19 +15,19 @@ export class Uploader
   tinyImageSuccess: (value: string | PromiseLike<string>) => void;
 
   getOptions() {
-    const maxsize = parseInt(document.getElementById('info').dataset.maxsize, 10); // MB
     /* eslint-disable-next-line @typescript-eslint/no-this-alias */
     const that = this;
+    const sizeInMb = sizeToMb(__MAX_UPLOAD_SIZE__);
     return {
       // i18n message to user
-      dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${maxsize} MB`,
-      maxFilesize: maxsize,
-      timeout: 900000,
+      dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${sizeInMb} MB`,
+      maxFilesize: sizeInMb,
+      timeout: __MAX_UPLOAD_TIME__,
       init: function(): void {
         // once upload is finished
         this.on('complete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            reloadElement('uploadsDiv').then(() => {
+            reloadElements(['uploadsDiv']).then(() => {
               // Now grab the url of the image to give it to tinymce if needed
               // first make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
               if (typeof that.tinyImageSuccess !== 'undefined' && that.tinyImageSuccess !== null) {
@@ -48,7 +48,9 @@ export class Uploader
   }
 
   init(): Dropzone {
-    const dropzoneEl = document.getElementById('elabftw-dropzone');
+    // FIXME just added "as any" for now
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
     if (dropzoneEl) {
       // Dropzone can be initialized in edit.ts and uploads.ts but we should only init it once
       if (Object.prototype.hasOwnProperty.call(dropzoneEl, 'dropzone')) {

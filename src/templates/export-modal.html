@@ -1,0 +1,104 @@
+{# Modal for creating export #}
+<div class='modal fade' id='exportModal' tabindex='-1' role='dialog' aria-labelledby='exportModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='exportModalLabel'><i class='fas fa-fw fa-download'></i> {{ 'Create export'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' id='exportForm'>
+        <h6 class='p-2 pl-3 section-title'>{{ 'Export source'|trans }}</h6>
+        <div class='pl-3 d-flex flex-row justify-content-between mb-2'>
+          {# SOURCE #}
+          <label class='pl-3'>
+          <input class='form-check-input me-1' type='checkbox' checked name='experiments'>
+          {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='experiments_templates'>
+          {{ 'Templates'|trans }}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='items'>
+          {{ 'Resources'|trans }}
+          </label>
+          <label>
+          <input class='form-check-input me-1' type='checkbox' name='items_types'>
+          {{ 'Resources categories'|trans }}
+          </label>
+        </div>
+
+        <h6 class='p-2 pl-3 section-title'>{{ 'Export format'|trans }}</h6>
+        <div class='pl-3'>
+          {# FORMAT #}
+          <div class='d-flex justify-content-between mb-2'>
+              <label for='exportFormat' class='col-form-label'>{{ 'Select a format'|trans }}</label>
+              <select class='form-control col-md-3' name='format' id='exportFormat'>
+                <option value='eln'>{{ 'ELN archive'|trans }}</option>
+                <option value='json'>{{ 'JSON file'|trans }}</option>
+                <option value='pdf'>{{ 'PDF document'|trans }}</option>
+                <option value='zip'>{{ 'ZIP archive'|trans }}</option>
+              </select>
+          </div>
+        </div>
+        <h6 class='p-2 pl-3 section-title'>{{ 'Options'|trans }}</h6>
+        <div class='pl-3'>
+          {# CHANGELOG #}
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportWithChangelog'>{{ 'Include changelog'|trans }}</label>
+              <p class='smallgray'>{{ 'The PDF files will contain the changelog.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include changelog'|trans }}'>
+              <input type='checkbox' name='changelog' autocomplete='off' id='exportWithChangelog'>
+              <span class='slider'></span>
+            </label>
+          </div>
+
+          {# PDF/A #}
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportPdfa'>{{ 'Use PDF/A'|trans }}</label>
+              <p class='smallgray'>{{ 'For long term archiving. Warning: using this option will make the files much bigger!'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Use PDF/A'|trans }}'>
+              <input type='checkbox' name='pdfa' autocomplete='off' id='exportPdfa'>
+              <span class='slider'></span>
+            </label>
+          </div>
+
+          {# JSON #}
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportJson'>{{ 'Include JSON'|trans }}</label>
+              <p class='smallgray'>{{ 'Only for ZIP: include a full JSON export for each entry.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include JSON'|trans }}'>
+              <input type='checkbox' name='json' autocomplete='off' id='exportJson'>
+              <span class='slider'></span>
+            </label>
+          </div>
+
+          {# CUSTOM DATE RANGE #
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportFrom'>{{ 'Modified since'|trans }}</label>
+              <p class='smallgray'>{{ 'Select a starting date: everything modified since this date will be included.'|trans }}</p>
+            </div>
+            <input type='date' name='from' class='form-control' id='exportFrom'>
+            <label class='d-inline mr-1' for='exportTo'>{{ 'and'|trans }}</label>
+            <input type='date' name='to' class='form-control' id='exportTo'>
+          </div>
+          #}
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='create-export'>{{ 'Create'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

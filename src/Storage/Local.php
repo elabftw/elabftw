@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Storage;
 
@@ -17,7 +20,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
  */
 class Local extends AbstractStorage
 {
-    protected const FOLDER = 'uploads';
+    protected const string FOLDER = 'uploads';
 
     protected function getAdapter(): FilesystemAdapter
     {

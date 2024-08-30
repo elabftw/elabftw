@@ -1,0 +1,24 @@
+<div class='modal fade' id='sendOnboardingEmailModal' tabindex='-1' role='dialog' aria-labelledby='sendOnboardingEmailModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='sendOnboardingEmailModalLabel'><i class='fas fa-fw fa-envelope'></i> {{ 'Resend onboarding email'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <label for='sendOnboardingEmailToUsers'>{{ 'Select users to whom the onboarding email will be sent.'|trans }}</label>
+        <select id='sendOnboardingEmailToUsers' multiple placeholder='{{ 'Search users...'|trans }}' autocomplete='off'>
+          {% for user in allTeamUsersArr|filter(user => user.archived == 0) %}
+            <option value='{{ user.userid }}'>{{ user.fullname }} ({{ user.email }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='send-onboarding-emails' >{{ 'Send'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

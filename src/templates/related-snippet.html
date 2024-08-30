@@ -1,0 +1,37 @@
+{# RELATED ITEMS/EXPERIMENTS #}
+{% if Entity.entityType.value == 'items' or Entity.entityType.value == 'experiments' %}
+
+  {# RELATED EXPERIMENTS #}
+  {% if Entity.entityData.related_experiments_links %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }} (<span id='relatedExperimentsDivCount'>{{ Entity.entityData.related_experiments_links|length }}</span>)</h3>
+    <div class='row mt-2' id='relatedExperimentsDiv' data-count-for='relatedExperimentsDivCount' data-save-hidden='relatedExperimentsDiv'>
+    <!--div class='row mt-2' id='relatedExperimentsDiv' data-count-class='link-view-one' data-counter='relatedExperimentsDivCounter' data-save-hidden='relatedExperimentsDiv'-->
+      {% for link in Entity.entityData.related_experiments_links %}
+        {% include 'link-view-one.html' with {'isRelated': true} %}
+      {% endfor %}
+
+      <div class='ml-3 mt-3 col-md-12'>
+        <i class='fas fa-list mr-1 fa-fw'></i>
+        <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related experiments'|trans }}</a>
+      </div>
+    </div>
+    <hr>
+  {% endif %}
+
+  {# RELATED ITEMS #}
+  {% if Entity.entityData.related_items_links %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related resources'|trans }} (<span id='relatedItemsDivCount'>{{ Entity.entityData.related_items_links|length }}</span>)</h3>
+    <div class='row mt-2' id='relatedItemsDiv' data-count-for='relatedItemsDivCount' data-save-hidden='relatedItemsDiv'>
+      {% for link in Entity.entityData.related_items_links %}
+        {% include 'link-view-one.html' with {'isRelated': true} %}
+      {% endfor %}
+
+      <div class='ml-3 mt-3 col-md-12'>
+        <i class='fas fa-list mr-1 fa-fw'></i>
+        <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-1 rounded hl-hover-gray'>{{ 'Show related resources'|trans }}</a>
+      </div>
+    </div>
+    <hr>
+  {% endif %}
+
+{% endif %}

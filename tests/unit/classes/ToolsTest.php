@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -11,11 +13,6 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetMaxUploadSize(): void
-    {
-        $this->assertIsInt(Tools::getMaxUploadSize());
-    }
-
     public function testFormatBytes(): void
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,12 +8,15 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function bin2hex;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use PDO;
+
+use function bin2hex;
 use function random_bytes;
 use function sha1;
 use function sprintf;
@@ -29,7 +33,7 @@ use function sprintf;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const REQUIRED_SCHEMA = 144;
+    public const int REQUIRED_SCHEMA = 165;
 
     private Db $Db;
 

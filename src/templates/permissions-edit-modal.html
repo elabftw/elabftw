@@ -1,4 +1,4 @@
-{# required vars: rw visibilityArr teamsArr allTeamgroupsArr usersArr #}
+{# required vars: rw visibilityArr teamsArr scopedTeamgroupsArr usersArr #}
 {% if ucpPage %}{# set this to true on ucp page for default permissions #}
   {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
   {% set permissionsJson = App.Users.userData[column] %}
@@ -43,7 +43,7 @@
             {% endfor %}
           </select>
           {# TEAMS #}
-          <label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
             {% for team in teamsArr|filter(t => t.visible == '1') %}
@@ -53,10 +53,24 @@
             {% endfor %}
           </select>
           {# TEAMGROUPS #}
-          <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries)'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label>
+          <div class='d-flex'>
+            <p class='smallgray'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
+            <div class='ml-auto'>
+              <details closed>
+                <summary class='p-2 rounded hl-hover-gray'>{{ 'Set scope'|trans }}</summary>
+                <select aria-label='{{ 'Set scope'|trans }}' data-trigger='change' data-model='users/me' data-reload='{{ identifier }}_select_teamgroups' data-target='scope_teamgroups' class='form-control'>
+                  {# NOTE: it is currently not practical to use enums in twig. So we hardcode the value for now. FIXME. See: https://github.com/twigphp/Twig/issues/3681 #}
+                  <option value='1' {{ App.Users.userData.scope_teamgroups == 1 ? ' selected' }}>{{ 'Self'|trans }}</option>
+                  <option value='2' {{ App.Users.userData.scope_teamgroups == 2 ? ' selected' }}>{{ 'Team'|trans }}</option>
+                  <option value='3' {{ App.Users.userData.scope_teamgroups == 3 ? ' selected' }}>{{ 'Everything'|trans }}</option>
+                </select>
+              </details>
+            </div>
+          </div>
           <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
-          <select {{ allTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
-            {% for tg in allTeamgroupsArr %}
+          <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
+            {% for tg in scopedTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
                       >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>

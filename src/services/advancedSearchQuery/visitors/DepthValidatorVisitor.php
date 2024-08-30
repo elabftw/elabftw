@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -7,6 +8,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
@@ -26,9 +29,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 
 class DepthValidatorVisitor implements Visitor
 {
-    public function __construct(private ?int $limit = null)
-    {
-    }
+    public function __construct(private ?int $limit = null) {}
 
     public function checkDepthOfTree(Visitable $parsedQuery, VisitorParameters $parameters): void
     {

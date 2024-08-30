@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -16,6 +18,7 @@ use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Memory;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
@@ -56,13 +59,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('def', $commandTester->getDisplay());
-    }
-
-    public function testExecuteAddMissingLinks(): void
-    {
-        $commandTester = new CommandTester(new AddMissingLinks());
-        $commandTester->execute(array());
-        $commandTester->assertCommandIsSuccessful();
     }
 
     public function testExecuteCleanDatabase(): void
@@ -187,24 +183,18 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('An upgrade is required.', $commandTester->getDisplay());
     }
 
-    public function testExecuteImportResources(): void
+    public function testExecuteImportEln(): void
     {
-        $commandTester = new CommandTester(new ImportResources(new Fixtures()));
+        // make sure to declare the command as part of the application or the question helper cannot be retrieved
+        $command = new ImportEln(new Fixtures());
+        $application = new Application();
+        $command->setApplication($application);
+        $commandTester = new CommandTester($command);
         $commandTester->execute(array(
-            'category_id' => '1',
-            'userid' => '1',
             'file' => 'single-experiment.eln',
-        ));
-
-        $commandTester->assertCommandIsSuccessful();
-    }
-
-    public function testExecuteImportUser(): void
-    {
-        $commandTester = new CommandTester(new ImportUser(new Fixtures()));
-        $commandTester->execute(array(
-            'userid' => '1',
-            'file' => 'single-experiment.eln',
+            'teamid' => '2',
+            '--userid' => '4',
+            '--dry-run' => true,
         ));
 
         $commandTester->assertCommandIsSuccessful();
@@ -215,17 +205,15 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester = new CommandTester(new ExportUser(new Memory()));
         $commandTester->execute(array(
             'userid' => '1',
+            'teamid' => '1',
         ));
 
         $commandTester->assertCommandIsSuccessful();
-    }
-
-    public function testExecuteExportResources(): void
-    {
-        $commandTester = new CommandTester(new ExportResources(new Memory()));
+        // now test with the skip resources flag
         $commandTester->execute(array(
-            'category_id' => '1',
             'userid' => '1',
+            'teamid' => '1',
+            '--skip-resources' => true,
         ));
 
         $commandTester->assertCommandIsSuccessful();
@@ -250,6 +238,13 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testUploadsCheck(): void
     {
         $commandTester = new CommandTester(new CheckUploads());
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testRefreshIdps(): void
+    {
+        $commandTester = new CommandTester(new RefreshIdps(''));
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
     }

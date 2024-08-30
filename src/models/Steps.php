@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -37,9 +40,9 @@ class Steps implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return sprintf('api/v2/%s/%d/steps/', $this->Entity->page, $this->Entity->id ?? 0);
+        return sprintf('%s%d/steps/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
     /**
@@ -53,20 +56,43 @@ class Steps implements RestInterface
         $this->Entity->canOrExplode('write');
 
         $body = str_replace('|', ' ', $step['body']);
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering, finished, finished_time)
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, finished, finished_time)
             VALUES(:item_id, :body, :ordering, :finished, :finished_time)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':body', $body);
-        $req->bindParam(':ordering', $step['ordering']);
-        $req->bindParam(':finished', $step['finished']);
+        $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
+        $req->bindParam(':finished', $step['finished'], PDO::PARAM_INT);
         $req->bindParam(':finished_time', $step['finished_time']);
         $this->Db->execute($req);
     }
 
+    /**
+     * Create a step from https://schema.org/HowToStep
+     * Example:
+     *   "@type": "HowToStep",
+     *   "position": 4,
+     *   "creativeWorkStatus": "finished",
+     *   "expires": "2024-05-19T04:24:54+02:00",
+     *   "temporal": "2024-05-19T03:24:54+02:00",
+     *   "itemListElement": {
+     *     "@type":"HowToDirection",
+     *     "text": "finished with deadline"
+     *   }
+     */
+    public function importFromHowToStep(array $step): void
+    {
+        $stepArr = array();
+        $stepArr['body'] = $step['itemListElement'][0]['text'];
+        $stepArr['finished'] = $step['creativeWorkStatus'] === 'finished' ? 1 : 0;
+        $stepArr['finished_time'] = $step['temporal'] ?? null;
+        $stepArr['ordering'] = $step['position'] ?? null;
+        $this->import($stepArr);
+    }
+
     public function readAll(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE item_id = :id ORDER BY ordering';
+        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -76,7 +102,7 @@ class Steps implements RestInterface
 
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->type . '_steps WHERE id = :id';
+        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -93,7 +119,7 @@ class Steps implements RestInterface
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): void
     {
-        $table = $this->Entity->type;
+        $table = $this->Entity->entityType->value;
         if ($fromTpl) {
             $table = $this->Entity instanceof Experiments ? 'experiments_templates' : 'items_types';
         }
@@ -102,11 +128,11 @@ class Steps implements RestInterface
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         while ($steps = $stepreq->fetch()) {
-            $req->bindParam(':body', $steps['body'], PDO::PARAM_STR);
+            $req->bindParam(':body', $steps['body']);
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
@@ -151,7 +177,7 @@ class Steps implements RestInterface
         /** @psalm-suppress PossiblyNullArgument */
         $Changelog->create(new ContentParams('steps', sprintf('Removed step with id: %d', $this->id)));
 
-        $sql = 'DELETE FROM ' . $this->Entity->type . '_steps WHERE id = :id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -160,9 +186,9 @@ class Steps implements RestInterface
 
     private function update(StepParams $params): bool
     {
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET ' . $params->getColumn() . ' = :content WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET ' . $params->getColumn() . ' = :content WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -175,7 +201,7 @@ class Steps implements RestInterface
         // count the number of steps and add 1 to be sure we're last
         $ordering = count($this->readAll()) + 1;
 
-        $sql = 'INSERT INTO ' . $this->Entity->type . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':body', $body);
@@ -187,7 +213,7 @@ class Steps implements RestInterface
 
     private function toggleFinished(): bool
     {
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET finished = !finished,
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET finished = !finished,
             finished_time = NOW(), deadline = null, deadline_notif = 0 WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -198,7 +224,7 @@ class Steps implements RestInterface
     private function toggleNotif(): bool
     {
         // get the current deadline value so we can insert it in the notification
-        $sql = 'SELECT deadline FROM ' . $this->Entity->type . '_steps WHERE id = :id';
+        $sql = 'SELECT deadline FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
@@ -208,13 +234,13 @@ class Steps implements RestInterface
         $Notifications = new StepDeadline(
             $this->id,
             $this->Entity->entityData['id'],
-            $this->Entity->page,
+            $this->Entity->entityType->toPage(),
             $step['deadline'],
         );
         $Notifications->create($this->Entity->Users->userData['userid']);
 
         // update the deadline_notif column so we now if this step has a notif set for deadline or not
-        $sql = 'UPDATE ' . $this->Entity->type . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

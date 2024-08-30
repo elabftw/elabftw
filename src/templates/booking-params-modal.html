@@ -38,6 +38,14 @@
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
         </div>
 
+        {# USERS CAN BOOK IN PAST #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label class='d-inline mr-1' for='isBookableInPastSwitch'>{{ 'Allow users booking in past'|trans }}</label>
+          <label class='switch' title='{{ 'Allow users booking in past'|trans }}'>
+            <input type='checkbox' autocomplete='off' id='isBookableInPastSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_users_can_in_past' {{ Entity.entityData.book_users_can_in_past == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
 
         {# CAN CANCEL #}
         <div class='d-flex justify-content-between mb-2'>

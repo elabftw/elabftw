@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -13,6 +15,7 @@ use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
@@ -31,7 +34,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
@@ -42,8 +45,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->toggleLock();
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create('my template');
-        $new = $this->Experiments->create(1);
+        $Templates->create(title: 'my template');
+        $new = $this->Experiments->create(template: 1);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -57,7 +60,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->readOne();
@@ -67,7 +70,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Experiments->create(0);
+        $new = $this->Experiments->create(template: 0);
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
@@ -96,6 +99,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
     }
 
+    public function testSign(): void
+    {
+        $this->Experiments->setId(1);
+        // we need to generate a key
+        $passphrase = 'correct horse battery staple';
+        $SigKeys = new SigKeys($this->Users);
+        $SigKeys->postAction(Action::Create, array('passphrase' => $passphrase));
+        // reload the Users object because we now have a key
+        $this->Users->readOne();
+        $this->assertIsArray($this->Experiments->patch(Action::Sign, array(
+            'passphrase' => $passphrase,
+            'meaning' => (string) Meaning::Responsibility->value,
+        )));
+    }
+
     public function testDuplicate(): void
     {
         $this->Experiments->setId(1);
@@ -111,7 +129,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testInsertTags(): void
     {
-        $this->assertIsInt($this->Experiments->create(0, array('tag-bbbtbtbt', 'tag-auristearuiset')));
+        $this->assertIsInt($this->Experiments->create(template: 0, tags: array('tag-bbbtbtbt', 'tag-auristearuiset')));
     }
 
     public function testGetTags(): void

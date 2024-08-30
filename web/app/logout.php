@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -11,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthenticatedUser;
@@ -58,7 +61,7 @@ $destroySession = function () use ($App): void {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) ($App->Users->userData['auth_service'] ?? 0) === \Elabftw\Controllers\LoginController::AUTH_EXTERNAL) {
+if ((int) ($App->Users->userData['auth_service'] ?? 0) === LoginController::AUTH_EXTERNAL) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '/login.php';
@@ -71,8 +74,10 @@ if ($App->Request->cookies->has('saml_token')) {
         $samlToken = $App->Request->cookies->getString('saml_token');
         $sessionIndex = null;
         $idpId = null;
+        $nameid = null;
+        $nameidFormat = null;
         if (!empty($samlToken)) {
-            [$sessionIndex, $idpId] = SamlAuth::decodeToken($samlToken);
+            [$sessionIndex, $idpId, $nameid, $nameidFormat] = SamlAuth::decodeToken($samlToken);
         }
     } catch (Exception $e) {
         // log error and show general error message
@@ -87,7 +92,7 @@ if ($App->Request->cookies->has('saml_token')) {
 
 // check SAML LogoutRequest/Response first
 if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest') || $App->Request->query->has('SAMLResponse'))) {
-    $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+    $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
     $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
     if ($App->Request->query->has('SAMLRequest')) {
         $req = new SamlLogoutRequest(new SamlSettings($tmpSettings), $App->Request->query->getString('SAMLRequest'));
@@ -140,7 +145,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
 } elseif ($App->Request->cookies->has('saml_token')) {
     // originally logged in using saml, we should try initiating SLO
     try {
-        $IdpsHelper = new IdpsHelper($App->Config, new Idps());
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
         $settings = $IdpsHelper->getSettings($idpId ?? 0);
 
         // manually overwrite basepath with basepath + /app, to workaround php-saml#249
@@ -153,8 +158,8 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         // do not attempt SLO if no SLO is configured/supported
         if (!empty($settings['idp']['singleLogoutService']['url'])) {
             // initiate SAML SLO
-            $samlAuthLib->logout($redirectUrl, array(), null, $sessionIndex ?? null);
-            exit;
+            // src: https://github.com/SAML-Toolkits/php-saml/blob/master/lib/Saml2/Auth.php#L549
+            $samlAuthLib->logout($redirectUrl, array(), $nameid, $sessionIndex, false, $nameidFormat);
         }
     } catch (Exception $e) {
         // log error and show general error message

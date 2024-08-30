@@ -11,6 +11,7 @@ import csCZ from './langs/cs_CZ';
 import deDE from './langs/de_DE';
 import enGB from './langs/en_GB';
 import esES from './langs/es_ES';
+import fiFI from './langs/fi_FI';
 import frFR from './langs/fr_FR';
 import idID from './langs/id_ID';
 import itIT from './langs/it_IT';
@@ -33,6 +34,7 @@ i18next.init({
     'de_DE',
     'en_GB',
     'es_ES',
+    'fi_FI',
     'fr_FR',
     'id_ID',
     'it_IT',
@@ -54,6 +56,7 @@ i18next.init({
     de_DE: deDE,
     en_GB: enGB,
     es_ES: esES,
+    fi_FI: fiFI,
     fr_FR: frFR,
     id_ID: idID,
     it_IT: itIT,

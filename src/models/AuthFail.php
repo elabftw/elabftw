@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 declare(strict_types=1);
 
 namespace Elabftw\Models;
@@ -79,7 +81,7 @@ class AuthFail
     {
         $sql = 'INSERT INTO lockout_devices (device_token) VALUES (:device_token)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':device_token', $this->deviceToken, PDO::PARAM_STR);
+        $req->bindParam(':device_token', $this->deviceToken);
         return $req->execute();
     }
 
@@ -91,7 +93,7 @@ class AuthFail
         $sql = 'INSERT INTO authfail (users_id, device_token) VALUES (:users_id, :device_token)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->userid, PDO::PARAM_INT);
-        $req->bindParam(':device_token', $this->deviceToken, PDO::PARAM_STR);
+        $req->bindParam(':device_token', $this->deviceToken);
         return $req->execute();
     }
 
@@ -102,7 +104,7 @@ class AuthFail
     {
         $sql = 'SELECT COUNT(id) FROM authfail WHERE device_token = :device_token AND attempt_time > (NOW() - INTERVAL 1 HOUR)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':device_token', $this->deviceToken, PDO::PARAM_STR);
+        $req->bindParam(':device_token', $this->deviceToken);
         $req->execute();
         return (int) $req->fetchColumn();
     }

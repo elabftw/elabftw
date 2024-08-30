@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,15 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Services;
 
-use function checkdate;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use function filter_var;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+
+use function checkdate;
+use function filter_var;
 use function htmlspecialchars_decode;
 use function mb_convert_encoding;
 use function mb_strlen;
@@ -28,13 +32,12 @@ use function trim;
 class Filter
 {
     /**
-     * @var int MAX_BODY_SIZE max size for the body
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
      * But here it's less than that because while trying different sizes
      * I found this value to work, but not above.
      * Anyway, a few millions characters should be enough to report an experiment.
      */
-    private const MAX_BODY_SIZE = 4120000;
+    private const int MAX_BODY_SIZE = 4120000;
 
     public static function toBinary(string|bool|int $input): int
     {
@@ -44,7 +47,7 @@ class Filter
     /**
      * Return 0 or 1 if input is on. Used for UCP.
      */
-    public static function onToBinary(string $input): int
+    public static function onToBinary(?string $input): int
     {
         return $input === 'on' ? 1 : 0;
     }
@@ -166,7 +169,7 @@ class Filter
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
-        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href],s,span[style],ul[style],li[style],ol[style],dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style|data-table-sort|border],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,video[src|controls|style],audio[src|controls],pre[class],details,summary,caption,figure,figcaption');
+        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href],s,span[style],ul[style],li[style],ol[style],dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style|data-table-sort|border],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,source[src|type],video[src|controls|style|width|height],audio[src|controls],pre[class],details,summary,caption,figure,figcaption');
         $config->set('HTML.TargetBlank', true);
         // configure the cache for htmlpurifier
         $tmpDir = FsTools::getCacheFolder('purifier');

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -30,9 +33,9 @@ class Pins
      */
     public function isPinned(): bool
     {
-        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
+        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         $this->Db->execute($req);
@@ -55,14 +58,15 @@ class Pins
     {
         $sql = sprintf(
             'SELECT %1$s.id FROM pin_%1$s2users LEFT JOIN %1$s ON (entity_id = %1$s.id) WHERE users_id = :users_id',
-            $this->Entity->type
+            $this->Entity->entityType->value
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
 
         $entity = clone $this->Entity;
+        $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
         return $entity->readAll();
     }
@@ -72,13 +76,14 @@ class Pins
      */
     public function readAll(): array
     {
-        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->type . '2users WHERE users_id = :users_id';
+        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->entityType->value . '2users WHERE users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
 
         $entity = clone $this->Entity;
+        $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'entity_id'));
         return $entity->readAll();
     }
@@ -88,7 +93,7 @@ class Pins
      */
     public function cleanup(): bool
     {
-        $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id';
+        $sql = 'DELETE FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
@@ -102,9 +107,9 @@ class Pins
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'DELETE FROM pin_' . $this->Entity->type . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
+        $sql = 'DELETE FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -117,9 +122,9 @@ class Pins
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->type . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
+        $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->entityType->value . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid']);
+        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);

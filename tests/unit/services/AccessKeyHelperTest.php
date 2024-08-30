@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -17,7 +19,7 @@ class AccessKeyHelperTest extends \PHPUnit\Framework\TestCase
     public function testGetIdFromAccessKey(): void
     {
         $Entity = new Experiments(new Users(1, 1));
-        $id = $Entity->create(-1);
+        $id = $Entity->create();
         $Entity->setId($id);
         $AkHelper = new AccessKeyHelper($Entity);
         // set an ak

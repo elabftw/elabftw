@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -7,13 +8,18 @@
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 
@@ -24,37 +30,44 @@ class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
-    public function __construct(Users $users, ?int $id = null)
-    {
-        $this->page = EntityType::Experiments->value;
-        $this->type = EntityType::Experiments->value;
-        $this->entityType = EntityType::Experiments;
-        parent::__construct($users, $id);
-    }
+    public EntityType $entityType = EntityType::Experiments;
 
-    public function create(int $template = -1, array $tags = array()): int
-    {
+    public function create(
+        ?int $template = -1,
+        ?string $title = null,
+        ?string $body = null,
+        ?DateTimeImmutable $date = null,
+        ?string $canread = null,
+        ?string $canwrite = null,
+        array $tags = array(),
+        ?int $category = null,
+        ?int $status = null,
+        ?int $customId = null,
+        ?string $metadata = null,
+        int $rating = 0,
+        ?int $contentType = null,
+        bool $forceExpTpl = false,
+        string $defaultTemplateHtml = '',
+        string $defaultTemplateMd = '',
+    ): int {
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::User->toJson();
         $Templates = new Templates($this->Users);
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        $Status = new ExperimentsStatus($Teams);
 
         // defaults
-        $title = _('Untitled');
-        $category = null;
-        $status = $Status->getDefault();
-        $body = null;
-        $canread = BasePermissions::Team->toJson();
-        $canwrite = BasePermissions::User->toJson();
-        $metadata = null;
-        $contentType = AbstractEntity::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown']) {
-            $contentType = AbstractEntity::CONTENT_MD;
+        $title = Filter::title($title ?? _('Untitled'));
+        $date ??= new DateTimeImmutable();
+        $body = Filter::body($body);
+        if (empty($body)) {
+            $body = null;
         }
+        $metadata = null;
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
-        if ($template > 0) {
+        // only look up the template if category has not been set. When importing a csv, we cannot discriminate between the template or category argument of create function, and use both. This will cause the following code to look up the category id as a template id
+        if ($template > 0 && $category === null) {
             $Templates->setId($template);
             $templateArr = $Templates->readOne();
             $title = $templateArr['title'];
@@ -64,53 +77,52 @@ class Experiments extends AbstractConcreteEntity
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
-            $contentType = (int) $templateArr['content_type'];
+            $contentType = $templateArr['content_type'];
         }
 
         // we don't use a proper template (use of common tpl or blank)
         if ($template === 0 || $template === -1) {
             // if admin forced template use, throw error
-            if ($teamConfigArr['force_exp_tpl'] === 1) {
+            if ($forceExpTpl) {
                 throw new ImproperActionException(_('Experiments must use a template!'));
             }
             // use user settings for permissions
-            $canread = $this->Users->userData['default_read'];
-            $canwrite = $this->Users->userData['default_write'];
+            $canread = $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
+            $canwrite = $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
         }
         // load common template
         if ($template === 0) {
-            $commonTemplateKey = 'common_template';
+            $body = $defaultTemplateHtml;
             // use the markdown template if the user prefers markdown
             if ($this->Users->userData['use_markdown']) {
-                $commonTemplateKey .= '_md';
+                $body = $defaultTemplateMd;
             }
-            $body = $teamConfigArr[$commonTemplateKey];
         }
 
-        // enforce the permissions if the admin has set them
-        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : $canread;
-        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : $canwrite;
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type, rating)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':body', $body, PDO::PARAM_STR);
-        $req->bindValue(':category', $category, PDO::PARAM_INT);
-        $req->bindValue(':status', $status, PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $canread, PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $canwrite, PDO::PARAM_STR);
-        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
+        $req->bindValue(':date', $date->format('Y-m-d'));
+        $req->bindParam(':body', $body);
+        $req->bindValue(':category', $category);
+        $req->bindValue(':status', $status);
+        $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindParam(':canread', $canread);
+        $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
+        $this->setId($newId);
 
         // insert the tags, steps and links from the template
         if ($template > 0) {
@@ -118,6 +130,8 @@ class Experiments extends AbstractConcreteEntity
             $Tags->copyTags($newId, true);
             $this->Steps->duplicate($template, $newId, true);
             $this->ItemsLinks->duplicate($template, $newId, true);
+            $this->ExperimentsLinks->duplicate($template, $newId, true);
+            $Templates->Uploads->duplicate($this);
         }
 
         $this->insertTags($tags, $newId);
@@ -130,45 +144,46 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
+
+        $Teams = new Teams($this->Users);
+        $Status = new ExperimentsStatus($Teams);
 
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $Teams = new Teams($this->Users);
-        $Status = new ExperimentsStatus($Teams);
-
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
-        // figure out the custom id
-        $customId = $this->getNextCustomId((int) $this->entityData['category']);
 
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':body', $this->entityData['body'], PDO::PARAM_STR);
-        $req->bindValue(':category', $this->entityData['category']);
-        $req->bindValue(':status', $Status->getDefault(), PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid(), PDO::PARAM_STR);
-        $req->bindParam(':canread', $this->entityData['canread'], PDO::PARAM_STR);
-        $req->bindParam(':canwrite', $this->entityData['canwrite'], PDO::PARAM_STR);
-        $req->bindParam(':metadata', $metadata, PDO::PARAM_STR);
-        $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $newId = $this->Db->lastInsertId();
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            // use default status instead of copying the current one
+            status: $Status->getDefault(),
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $metadata,
+            contentType: $this->entityData['content_type'],
+        );
+
+        $fresh = new self($this->Users, $newId);
         /** @psalm-suppress PossiblyNullArgument
          * this->id cannot be null here, checked during canOrExplode */
         $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
+        // also add a link to the previous experiment
+        $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
+        $ExperimentsLinks->setId($this->id);
+        $ExperimentsLinks->postAction(Action::Create, array());
+        if ($copyFiles) {
+            $this->Uploads->duplicate($fresh);
+        }
 
         return $newId;
     }
@@ -180,18 +195,5 @@ class Experiments extends AbstractConcreteEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    protected function getNextCustomId(int $category): ?int
-    {
-        $sql = 'SELECT custom_id FROM experiments WHERE custom_id IS NOT NULL AND category = :category ORDER BY custom_id DESC LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false || $res['custom_id'] === null) {
-            return null;
-        }
-        return ++$res['custom_id'];
     }
 }

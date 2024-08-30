@@ -1,0 +1,85 @@
+<h3 class='p-2 pl-3 section-title'>{{ 'Onboarding email'|trans }}</h3>
+<div class='pl-3 mt-2 form-group'>
+  {# USERS #}
+  <p>{{ 'This email will be sent to new users.'|trans }}</p>
+
+  {% include 'binary-setting.html' with {
+    'model': model,
+    'src': src,
+    'slug': 'onboarding_email_active',
+    'label': 'Send onboarding emails'|trans
+  } %}
+
+  <label for='onboarding_email_subject' class='col-form-label'>{{ 'Subject'|trans }}</label>
+  <input
+    class='form-control'
+    data-trigger='blur'
+    data-model='{{ model }}'
+    data-target='onboarding_email_subject'
+    id='onboarding_email_subject'
+    name='onboarding_email_subject'
+    type='text'
+    value='{{ src.onboarding_email_subject }}'
+  />
+
+  <label for='onboarding_email_body'  class='col-form-label'>{{ 'Content'|trans }}</label>
+  <div>
+    {% if App.Config.configArr.debug -%}
+    {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+      <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
+    {%- endif %}
+    <textarea style='height:400px' class='mceditable' name='onboarding_email_body' id='onboarding_email_body'>
+      {{ src.onboarding_email_body|raw }}
+    </textarea>
+  </div>
+
+  <div class='mt-2 text-center'>
+    <button type='button' data-action='patch-onboarding-email' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+  </div>
+  {% if model == 'teams/current' %}
+    <div class='mt-2 text-center'>
+      <button type='button' data-action='open-onboarding-email-modal' class='btn btn-primary'>{{ 'Resend email to selected users'|trans }}</button>
+    </div>
+  {% endif %}
+  {# USERS END#}
+  {% if model == 'config' %}
+    {# ADMINS #}
+    {% include 'binary-setting.html' with {
+      'model': model,
+      'src': src,
+      'slug': 'onboarding_email_different_for_admins',
+      'label': 'Send a different email for (sys)admins.'|trans
+    } %}
+    <div id='onboarding-email-for-admins' {{- App.Config.configArr.onboarding_email_different_for_admins == 0 ? ' hidden' }}>
+      <p>{{ 'This email will be sent to new (sys)admins.'|trans }}</p>
+
+      <label for='onboarding_email_admins_subject' class='col-form-label'>{{ 'Subject'|trans }}</label>
+      <input
+        class='form-control'
+        data-trigger='blur'
+        data-model='{{ model }}'
+        data-target='onboarding_email_admins_subject'
+        id='onboarding_email_admins_subject'
+        name='onboarding_email_admins_subject'
+        type='text'
+        value='{{ src.onboarding_email_admins_subject }}'
+      />
+
+      <label for='onboarding_email_admins_body'  class='col-form-label'>{{ 'Content'|trans }}</label>
+      <div>
+        {% if App.Config.configArr.debug -%}
+        {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
+        {%- endif %}
+        <textarea style='height:400px' class='mceditable' name='onboarding_email_admins_body' id='onboarding_email_admins_body'>
+          {{ src.onboarding_email_admins_body|raw }}
+        </textarea>
+      </div>
+
+      <div class='mt-2 text-center'>
+        <button type='button' data-action='patch-onboarding-email-for-admins' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+    {# ADMINS END #}
+  {% endif %}
+</div>

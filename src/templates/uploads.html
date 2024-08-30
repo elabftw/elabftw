@@ -28,7 +28,7 @@
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
-        {% endtrans %}
+        {% endtrans %} (<span id='uploadsCount'>{{ Entity.entityData.uploads|length }}</span>)
       </h3>
     </div>
 
@@ -44,19 +44,20 @@
     </div>
   </div>
 
-  <div class='row mt-2 mx-0' id='uploadsDiv' data-save-hidden='uploadsDiv'>
+  <div class='row mt-2 mx-0' id='uploadsDiv' data-count-for='uploadsCount' data-save-hidden='uploadsDiv'>
     {# ADD NEW FILE #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.type }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray mt-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
+        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray my-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 
     {# TABLE LAYOUT (0) #}
     {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
+      {% include 'filter-input-snippet.html' with {'target': 'uploadsTable'} %}
       <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
         <thead>
           <tr>
@@ -67,20 +68,21 @@
             <th scope='col'>{{ 'Actions'|trans }}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id='uploadsTable'>
           {% for upload in Entity.entityData.uploads %}
-            <tr id='uploadDiv_{{ upload.id }}'>
+            <tr class='countable' id='uploadDiv_{{ upload.id }}'>
               <td>
                 <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
                 </button>
+                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+                  {# use a span as title doesn't work directly on i element #}
+                  <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
+                {% endif %}
                 <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
                 <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
                   {% include 'upload-more-info.html' %}
                 </div>
-                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
-                  <i class='fas fa-box-archive mr-1'></i>{{ 'Archived'|trans }}
-                {% endif %}
               </td>
               {# COMMENT #}
               <td>{% include('upload-comment.html') %}</td>
@@ -93,7 +95,7 @@
                 {% if loop.first %}
                   <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
                 {% endif %}
-                <a href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
                   <i class='fas fa-download fa-fw'></i>
                 </a>
                 {% if not upload.immutable %}
@@ -129,11 +131,11 @@
     {% else %}
       {% for upload in Entity.entityData.uploads %}
         {% set ext = upload.real_name|getExt %}
-        <div class='col-md-4 col-sm-6' id='uploadDiv_{{ upload.id }}'>
+        <div class='col-md-4 col-sm-6 countable' id='uploadDiv_{{ upload.id }}'>
           {% if loop.first %}
             <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
           {% endif %}
-          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
             {% include('upload-dropdown-menu.html') %}
             {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
             <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
@@ -144,7 +146,7 @@
               {# don't make the thumbnail clickable if it's a tif #}
               {% if ext matches '/(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                 <div class='text-center'>
-                  <a class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                  <a class='text-break' target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
                     {% if upload.real_name matches '/(jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name|e('html_attr') }}'{% endif %}
                     {% if upload.comment %}title='{{ upload.comment|e('html_attr') }}' data-caption='{{ upload.comment|e('html_attr') }}'{% endif %}
                   >
@@ -226,10 +228,19 @@
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
 
+            {# VIDEO #}
             {% elseif ext matches '/(mp4|webm)$/i' %}
               <div class='text-center'>
                 <video controls width='300' preload='metadata'>
                   <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='video/{{ ext }}'>
+                </video>
+              </div>
+
+            {# AUDIO #}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::AUDIO') %}
+              <div class='text-center'>
+                <audio controls>
+                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='audio/{{ ext }}'>
                 </video>
               </div>
 
@@ -241,7 +252,7 @@
             <div class='caption'>
               <i class='fas fa-fw fa-download mr-1'></i>
               <p class='d-inline'>
-                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener'>{{ upload.real_name }}</a>
+                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' target='_blank' rel='noopener'>{{ upload.real_name }}</a>
                 <span class='smallgray' style='display:inline'>
                   {% if upload.filesize %}
                     {{ upload.filesize|formatBytes }} -

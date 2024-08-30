@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -17,15 +20,19 @@ use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
+use Elabftw\Services\UploadsChecker;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
+
+use function array_walk;
 
 /**
  * Administrate elabftw install
@@ -46,8 +53,10 @@ try {
     }
 
     $AuthFail = new AuthFail();
-    $Idps = new Idps();
-    $idpsArr = $Idps->readAll();
+    $Idps = new Idps($App->Users);
+    $idpsArr = $Idps->readAllLight();
+    $IdpsSources = new IdpsSources($App->Users);
+    $idpsSources = $IdpsSources->readAll();
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
     $Experiments = new Experiments($App->Users);
@@ -64,14 +73,15 @@ try {
             $App->Request->query->getBoolean('onlyAdmins'),
         );
         foreach ($usersArr as &$user) {
-            $UsersHelper = new UsersHelper((int) $user['userid']);
+            $UsersHelper = new UsersHelper($user['userid']);
             $user['teams'] = $UsersHelper->getTeamsFromUserid();
         }
         // further filter if userid is present
         if ($App->Request->query->has('userid')) {
-            $usersArr = array_filter($usersArr, function ($u) use ($App) {
-                return $u['userid'] === $App->Request->query->getInt('userid');
-            });
+            $usersArr = array_filter(
+                $usersArr,
+                fn($u): bool => $u['userid'] === $App->Request->query->getInt('userid'),
+            );
         }
     }
 
@@ -116,9 +126,11 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
+    $UploadsChecker = new UploadsChecker();
+
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
-    array_walk($auditLogsArr, function (&$event) {
+    array_walk($auditLogsArr, function (array &$event) {
         $event['category'] = AuditCategory::from($event['category'])->name;
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
@@ -130,9 +142,10 @@ try {
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
+        'idpsSources' => $idpsSources,
         'isSearching' => $isSearching,
-        'passwordInputHelp' => PasswordComplexity::toHuman($passwordComplexity),
-        'passwordInputPattern' => PasswordComplexity::toPattern($passwordComplexity),
+        'passwordInputHelp' => $passwordComplexity->toHuman(),
+        'passwordInputPattern' => $passwordComplexity->toPattern(),
         'phpInfos' => $phpInfos,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
@@ -140,6 +153,7 @@ try {
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
+        'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),

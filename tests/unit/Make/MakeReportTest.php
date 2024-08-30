@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,7 +11,6 @@
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 
 class MakeReportTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +19,9 @@ class MakeReportTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Make = new MakeReport(new Teams((new Users(1, 1))));
+        $requester = new Users(1, 1);
+        $users = $requester->readFromQuery('', teamId: 1);
+        $this->Make = new MakeReport($users);
     }
 
     public function testGetFileName(): void

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,40 +11,33 @@
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Experiments;
-use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
 {
-    private MakeCsv $MakeExp;
+    use TestsUtilsTrait;
 
-    private MakeCsv $MakeDb;
+    private MakeCsv $Make;
 
     protected function setUp(): void
     {
-        $idArr = array('1', '2', '3');
-        $this->MakeExp = new MakeCsv(new Experiments(new Users(1, 1)), $idArr);
-        $this->MakeDb = new MakeCsv(new Items(new Users(1, 1)), $idArr);
+        $this->Make = new MakeCsv(
+            array($this->getFreshExperiment(), $this->getFreshExperiment())
+        );
     }
 
     public function testGetFileName(): void
     {
-        $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}-export.elabftw.csv/', $this->MakeExp->getFileName());
+        $this->assertTrue(str_ends_with($this->Make->getFileName(), 'export.elabftw.csv'));
     }
 
-    public function testGetCsvExp(): void
+    public function testGetCsv(): void
     {
-        $this->assertIsString($this->MakeExp->getFileContent());
-    }
-
-    public function testGetCsvDb(): void
-    {
-        $this->assertIsString($this->MakeDb->getFileContent());
+        $this->assertIsString($this->Make->getFileContent());
     }
 
     public function testGetContentType(): void
     {
-        $this->assertEquals('text/csv; charset=UTF-8', $this->MakeDb->getContentType());
+        $this->assertEquals('text/csv; charset=UTF-8', $this->Make->getContentType());
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -21,9 +23,9 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
         $this->FavTags = new FavTags(new Users(1, 1));
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/favtags/', $this->FavTags->getPage());
+        $this->assertEquals('api/v2/favtags/', $this->FavTags->getApiPath());
     }
 
     public function testCreate(): void

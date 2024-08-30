@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -26,14 +28,25 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($input, $params->getContent());
     }
 
-    public function testInvalidOrcid(): void
+    public function testOrcid(): void
     {
-        $invalidOrcid = '1234-5678-1212-000X';
-        $params = new UserParams('orcid', $invalidOrcid);
+        $orcid = '1234-5678-1212-0001';
+        $params = new UserParams('orcid', $orcid);
+        $this->assertEquals($orcid, $params->getContent());
+    }
+
+    public function testInvalidOrcidForamt(): void
+    {
+        $orcid = '1234-5678-1212-001';
+        $params = new UserParams('orcid', $orcid);
         $this->expectException(ImproperActionException::class);
         $params->getContent();
-        $invalidOrcid = '1234-5678-1212-0001';
-        $params = new UserParams('orcid', $invalidOrcid);
+    }
+
+    public function testInvalidOrcidChecksum(): void
+    {
+        $orcid = '1234-5678-1212-000X';
+        $params = new UserParams('orcid', $orcid);
         $this->expectException(ImproperActionException::class);
         $params->getContent();
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -20,7 +22,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Config= Config::getConfig();
+        $this->Config = Config::getConfig();
         $this->setupValues = $this->Config->configArr;
     }
 
@@ -36,9 +38,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('sha256', $this->Config->configArr['ts_hash']);
     }
 
-    public function testGetPage(): void
+    public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/config/', $this->Config->getPage());
+        $this->assertSame('api/v2/config/', $this->Config->getApiPath());
     }
 
     public function testPatch(): void

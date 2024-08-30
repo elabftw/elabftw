@@ -6,7 +6,7 @@
 {% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' or Entity.entityData.content_type == '2' %}
   {% set editor = 'md' %}
 {% endif %}
-{% if App.Request.query.get('editor') == 'tiny' %}
+{% if App.Request.query.get('editor') == 'tiny' or Entity.entityData.content_type == '1' %}
   {% set editor = 'tiny' %}
 {% endif %}
 
@@ -14,8 +14,16 @@
 {% embed 'view-edit.html' %}
   {% block createnew %}
     <div class='d-flex'>
-      {# TODO replace 'entry' with experiment|item #}
-      <div class='align-self-center'><h3>{{ Entity.page|capitalize }} > {{ 'Editing an entry'|trans }}</h3></div>
+      <div class='align-self-center flex-grow-1 mr-2'>
+        {# CUSTOM ID #}
+        {# TITLE #}
+        <h1 class='text-dark' >
+          {% if Entity.entityData.custom_id %}
+            <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
+          {% endif %}
+          <span id='documentTitle' class='breakable malleableColumn hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+        </h1>
+      </div>
       <div class='ml-auto'>
         {% include 'create-new.html' %}
       </div>
@@ -32,6 +40,24 @@
   {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
 {% endif %}
 
+{# Exclusive edit mode notification #}
+<div id='exclusiveEditModeInfo'>
+  {% if Entity.ExclusiveEditMode.isActive %}
+    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
+        Entity.ExclusiveEditMode.dataArr.locked_at,
+      )|msg('warning', false) %}
+    {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
+      {# here user can only be (sys)admin of user who locked entry all others are redirected to view mode in controller #}
+      {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock in the toolbar below or %sRequest exclusive edit mode removal%s.'|trans|format(
+        Entity.ExclusiveEditMode.dataArr.fullname,
+        Entity.ExclusiveEditMode.dataArr.locked_at,
+        '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
+        '</button>'
+      )|msg('ko', false) %}
+    {% endif %}
+    {{ writeLockNotice|raw }}
+  {% endif %}
+</div>
 
 {% include('view-edit-toolbar.html') %}
 
@@ -42,13 +68,13 @@
     <div class='form-inline'>
       <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
       {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
-      <input id='date_input' data-trigger='blur' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
+      <input id='date_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
     </div>
     {# RATING #}
     <div class='ml-auto rating' id='editRatingDiv'>
-      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
+      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
       {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
+        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
       {% endfor %}
     </div>
   </div>
@@ -60,17 +86,10 @@
     <label for='custom_id_input' class='col-form-label mx-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
     <div class='input-group justify-content-end flex-nowrap'>
       <div class='input-group-prepend'>
-        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.type }}'>{{ 'Get next'|trans }}</button>
+        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.entityType.value }}'>{{ 'Get next'|trans }}</button>
       </div>
-      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.type }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
+      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
-  </div>
-
-  {# TITLE #}
-  <div class='d-flex mb-2 justify-content-between align-items-center'>
-    <label for='title_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Title'|trans }}</label>
-    {# no data-trigger here because custom code in edit.ts #}
-    <input id='title_input' class='form-control' maxlength='255' type='text' value='{{ Entity.entityData.title|e('html_attr') }}' required />
   </div>
 
   {# CATEGORY / STATUS #}
@@ -83,8 +102,8 @@
 
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>
-    <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-    <div data-save-hidden='mainTextDiv'>
+    <h3 data-action='toggle-next' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3><span class='ml-4 smallgray'>{{ 'Last saved:'|trans }}</span><span id='lastSavedAt' class='ml-2 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+    <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
       <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {% if editor == 'md' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
@@ -119,8 +138,6 @@
   <hr>
 </div>
 
-
-{# STEPS #}
 {% include 'steps-links-edit.html' %}
 
 {% include 'uploads.html' %}
@@ -164,7 +181,7 @@
       <hr>
       <div>
         <button type='button' id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.type }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -192,8 +209,7 @@
 
 <div id='info'
     data-page='edit'
-    data-maxsize='{{ maxUploadSize }}'
-    data-type='{{ Entity.type }}'
+    data-type='{{ Entity.entityType.value }}'
     data-id='{{ Entity.id }}'
 >
 </div>

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -16,5 +18,11 @@ class UploadsCheckerTest extends \PHPUnit\Framework\TestCase
         $UploadsChecker = new UploadsChecker();
         $this->assertEquals(0, $UploadsChecker->fixNullFilesize());
         $this->assertEquals(0, $UploadsChecker->fixNullHash());
+    }
+
+    public function testGetStats(): void
+    {
+        $UploadsChecker = new UploadsChecker();
+        $this->assertIsArray($UploadsChecker->getStats());
     }
 }

@@ -7,14 +7,11 @@
  */
 import Todolist from './Todolist.class';
 import { Model } from './interfaces';
+import { getPageName } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('info')) {
-    return;
-  }
-
-  const pagesWithoutTodo = ['login', 'register', 'change-pass'];
-  if (pagesWithoutTodo.includes(document.getElementById('info').dataset.page)) {
+  // these are the pages where it's pointless to load todolist code
+  if (['login.php', 'register.php', 'change-pass.php'].includes(getPageName())) {
     return;
   }
 
@@ -94,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // make it non editable (before function checks for that in malle)
         content.classList.remove('editable');
         // disable the checkbox
-        el.setAttribute('disabled', 'disabled');
+        (el as HTMLInputElement).disabled = true;
       });
 
     // TOGGLE TODOLIST

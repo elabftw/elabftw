@@ -1,4 +1,4 @@
-{% if Entity.type != 'items_types' %}
+{% if Entity.entityType.value != 'items_types' %}
   {# CATEGORIES : not shown on resources categories edit page on admin panel #}
   <div class='d-flex mb-2 align-items-center'>
     <label for='category_select' class='col-form-label mr-3 edit-mode-label'>{{ 'Category'|trans }}</label>
@@ -17,7 +17,7 @@
 {% endif %}
 
 {# STATUS #}
-{% if Entity.type == 'items_types' %}
+{% if Entity.entityType.value == 'items_types' %}
   {% set statusArr = itemsStatusArr %}
 {% endif %}
 <div class='d-flex mb-2 align-items-center'>

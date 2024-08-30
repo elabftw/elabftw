@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,27 +8,29 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use function basename;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\TeamFinder;
-use function in_array;
 use Symfony\Component\HttpFoundation\Request;
+
+use function basename;
+use function in_array;
 
 /**
  * Provide methods to authenticate a user
  */
 class Auth implements AuthInterface
 {
-    public function __construct(private Config $Config, private Request $Request)
-    {
-    }
+    public function __construct(private Config $Config, private Request $Request) {}
 
     /**
      * Try to authenticate with session and cookie
@@ -47,9 +50,9 @@ class Auth implements AuthInterface
     private function getAuthType(): string
     {
         // try to login with the elabid for an entity in view mode
-        $page = basename($this->Request->getScriptName());
+        $entrypoint = basename($this->Request->getScriptName());
         if ($this->Request->query->has('access_key')
-            && ($page === 'experiments.php' || $page === 'database.php')
+            && ($entrypoint === Entrypoint::Experiments->toPage() || $entrypoint === Entrypoint::Database->toPage())
             && $this->Request->query->get('mode') === 'view') {
             return 'access_key';
         }
@@ -79,7 +82,7 @@ class Auth implements AuthInterface
                 );
             case 'access_key':
                 // now we need to know in which team we autologin the user
-                $TeamFinder = new TeamFinder($this->Request->getScriptName(), $this->Request->query->getString('access_key'));
+                $TeamFinder = new TeamFinder(basename($this->Request->getScriptName()), $this->Request->query->getString('access_key'));
                 $team = $TeamFinder->findTeam();
 
                 if ($team === 0) {
@@ -89,7 +92,11 @@ class Auth implements AuthInterface
             case 'open':
                 // don't do it if we have elabid in url
                 // only autologin on selected pages and if we are not authenticated with an account
-                $autoAnon = array('experiments.php', 'database.php', 'search.php');
+                $autoAnon = array(
+                    Entrypoint::Experiments->toPage(),
+                    Entrypoint::Database->toPage(),
+                    'search.php',
+                );
                 if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
                     return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
                 }

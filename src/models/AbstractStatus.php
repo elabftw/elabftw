@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -25,13 +28,13 @@ abstract class AbstractStatus extends AbstractCategory
 {
     use SetIdTrait;
 
-    private const DEFAULT_BLUE = '29AEB9';
+    private const string DEFAULT_BLUE = '29AEB9';
 
-    private const DEFAULT_GREEN = '54AA08';
+    private const string DEFAULT_GREEN = '54AA08';
 
-    private const DEFAULT_GRAY = 'C0C0C0';
+    private const string DEFAULT_GRAY = 'C0C0C0';
 
-    private const DEFAULT_RED = 'C24F3D';
+    private const string DEFAULT_RED = 'C24F3D';
 
     protected string $table;
 
@@ -41,7 +44,7 @@ abstract class AbstractStatus extends AbstractCategory
         parent::updateOrdering($params);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/%s/', $this->Teams->id ?? 0, $this->table);
     }
@@ -157,8 +160,8 @@ abstract class AbstractStatus extends AbstractCategory
         $sql = sprintf('INSERT INTO %s (title, color, team, is_default)
             VALUES(:title, :color, :team, :is_default)', $this->table);
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title, PDO::PARAM_STR);
-        $req->bindParam(':color', $color, PDO::PARAM_STR);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':color', $color);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $req->bindParam(':is_default', $isDefault, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -175,7 +178,7 @@ abstract class AbstractStatus extends AbstractCategory
 
         $sql = sprintf('UPDATE %s SET ' . $params->getColumn() . ' = :content WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

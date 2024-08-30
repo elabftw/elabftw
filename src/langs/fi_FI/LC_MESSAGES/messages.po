@@ -1,0 +1,4609 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: elabftw\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.3\n"
+
+#: src/templates/search.html:255 src/templates/search.html:266
+#: src/templates/ucp.html:330
+msgid "Yes"
+msgstr "Kyllä"
+
+#: src/templates/search.html:256 src/templates/search.html:267
+#: src/templates/ucp.html:331
+msgid "No"
+msgstr "Ei"
+
+#: web/app/controllers/RegisterController.php:45
+msgid "A mandatory field is missing!"
+msgstr "Pakollinen kenttä puuttuu!"
+
+#: src/templates/login.html:128 src/templates/register.html:67
+#: src/templates/sysconfig.html:892
+msgid "Password"
+msgstr "Salasana"
+
+#: src/templates/editusers.html:124 src/templates/editusers.html:147
+#: src/templates/editusers.html:296 src/templates/editusers.html:351
+#: src/templates/editusers.html:361 src/templates/login.html:55
+#: src/templates/register.html:78 src/templates/sysconfig.html:981
+#: src/templates/ucp.html:345
+msgid "Firstname"
+msgstr "Etunimi"
+
+#: src/templates/editusers.html:125 src/templates/editusers.html:150
+#: src/templates/editusers.html:302 src/templates/editusers.html:352
+#: src/templates/editusers.html:362 src/templates/login.html:58
+#: src/templates/register.html:84 src/templates/sysconfig.html:987
+#: src/templates/ucp.html:351
+msgid "Lastname"
+msgstr "Sukunimi"
+
+#: src/templates/editusers.html:126 src/templates/editusers.html:153
+#: src/templates/editusers.html:310 src/templates/editusers.html:353
+#: src/templates/editusers.html:363 src/templates/field-builder-modal.html:47
+#: src/templates/login.html:126 src/templates/register.html:55
+#: src/templates/sysconfig.html:45 src/templates/sysconfig.html:993
+#: src/templates/team.html:8 src/templates/team.html:188
+#: src/templates/ucp.html:306 src/templates/ucp.html:489
+msgid "Email"
+msgstr "Sähköposti"
+
+#: web/experiments.php:28 src/templates/dashboard.html:19
+#: src/templates/field-builder-modal.html:51 src/templates/head.html:60
+#: src/templates/profile.html:48 src/templates/search.html:72
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:228
+#: src/templates/team.html:180 src/templates/todolist-panel.html:38
+#: src/templates/ucp.html:117
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "Koe"
+msgstr[1] "Kokeet"
+
+#: src/templates/ucp.html:118
+msgid "Database"
+msgstr "Tietokanta"
+
+#: web/team.php:32 src/templates/admin.html:22
+#: src/templates/catstat-view.html:4 src/templates/editusers.html:273
+#: src/templates/head.html:66 src/templates/permissions-edit-modal.html:52
+#: src/templates/register.html:43 src/templates/register.html:44
+#: src/templates/scope-button.html:12
+#: src/templates/show-templates-select.html:19
+#: src/templates/todolist-panel.html:33 src/templates/ucp.html:450
+#: src/templates/ucp.html:461
+msgid "Team"
+msgstr "Tiimi"
+
+#: src/templates/changelog-block.html:6
+#: src/templates/field-builder-modal.html:45 src/templates/pdf.html:27
+#: src/templates/pdf.html:156 src/templates/show.html:310
+#: src/templates/ucp.html:95
+msgid "Date"
+msgstr "Päivämäärä"
+
+#: src/templates/edit.html:71 src/templates/show-templates-select.html:20
+#: src/templates/show.html:316 src/templates/ucp.html:96
+#: src/templates/view-edit-template.html:111
+msgid "Title"
+msgstr "Otsikko"
+
+#: src/templates/admin.html:26 src/templates/catstat-edit.html:25
+#: src/templates/catstat-view.html:20 src/templates/pdf.html:39
+#: src/templates/show.html:54 src/templates/show.html:330
+msgid "Status"
+msgid_plural "Status"
+msgstr[0] "Tila"
+msgstr[1] "Tilat"
+
+#: src/templates/admin.html:283 src/templates/show-item-table.html:15
+#: src/templates/show-item.html:20 src/templates/show-templates-select.html:34
+#: src/templates/sysconfig.html:360 src/templates/sysconfig.html:899
+#: src/templates/ucp.html:136 src/templates/ucp.html:149
+#: src/templates/view-edit-template.html:21
+#: src/templates/view-edit-toolbar.html:177
+msgid "Edit"
+msgstr "Muokkaa"
+
+#: src/classes/i18n4Js.php:63 src/templates/admin.html:134
+#: src/templates/admin.html:149 src/templates/admin.html:251
+#: src/templates/admin.html:330 src/templates/admin.html:385
+#: src/templates/admin.html:432 src/templates/admin.html:540
+#: src/templates/edit.html:101 src/templates/edit.html:165
+#: src/templates/editusers.html:83 src/templates/editusers.html:188
+#: src/templates/field-builder-modal.html:26
+#: src/templates/field-builder-modal.html:144 src/templates/footer.html:70
+#: src/templates/json-editor.html:37 src/templates/onboarding-email.html:37
+#: src/templates/onboarding-email.html:80
+#: src/templates/ownership-transfer-modal.html:24
+#: src/templates/permissions-edit-modal.html:103
+#: src/templates/steps-links-edit.html:71 src/templates/sysconfig.html:273
+#: src/templates/sysconfig.html:287 src/templates/sysconfig.html:502
+#: src/templates/ucp.html:337 src/templates/ucp.html:364
+#: src/templates/view-edit-template.html:149
+#: src/templates/view-edit-toolbar.html:31
+msgid "Save"
+msgstr "Tallenna"
+
+#: src/classes/i18n4Js.php:64 web/app/controllers/SortableAjaxController.php:44
+#: web/app/controllers/SysconfigAjaxController.php:39
+#: web/app/controllers/UcpController.php:90
+msgid "Saved"
+msgstr "Tallennettu"
+
+#: src/classes/i18n4Js.php:40 src/templates/archive-user-modal.html:33
+#: src/templates/create-idp-modal.html:104 src/templates/footer.html:69
+#: src/templates/mfa.html:42 src/templates/onboarding-email-modal.html:19
+#: src/templates/sysconfig.html:22 src/templates/team.html:91
+#: src/templates/ucp.html:46 src/templates/view-edit-toolbar.html:52
+#: src/templates/view-edit-toolbar.html:76
+#: src/templates/view-edit-toolbar.html:117
+#: src/templates/view-edit-toolbar.html:144
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: src/templates/ucp.html:133 src/templates/ucp.html:455
+#: src/templates/ucp.html:466
+msgid "Action"
+msgstr "Toiminto"
+
+#: src/templates/ucp.html:144
+msgid "Shortcut"
+msgstr "Pikakuvake"
+
+#: src/templates/admin.html:169 src/templates/admin.html:222
+#: src/templates/admin.html:271 src/templates/admin.html:356
+#: src/templates/admin.html:403 src/templates/create-idp-modal.html:105
+#: src/templates/create-new.html:37
+#: src/templates/create-statuslike-modal.html:26
+#: src/templates/editusers.html:317 src/templates/register.html:102
+#: src/templates/show-templates-select.html:9 src/templates/sysconfig.html:23
+#: src/templates/ucp.html:135 src/templates/ucp.html:145
+msgid "Create"
+msgstr "Luo"
+
+#: src/templates/ucp.html:138 src/templates/ucp.html:157
+msgid "TODO list"
+msgstr "Tehtävälista"
+
+#: src/templates/admin.html:236 src/templates/admin.html:296
+#: src/templates/admin.html:370 src/templates/admin.html:417
+#: src/templates/create-statuslike-modal.html:13
+#: src/templates/field-builder-modal.html:58
+#: src/templates/field-builder-modal.html:59 src/templates/sysconfig.html:18
+#: src/templates/sysconfig.html:214 src/templates/team.html:187
+#: src/templates/ucp.html:426 src/templates/ucp.html:451
+#: src/templates/ucp.html:462
+msgid "Name"
+msgstr "Nimi"
+
+#: src/templates/admin.html:8
+msgid "There are users waiting for validation of their account:"
+msgstr "Käyttäjät odottavat tilinsä vahvistusta:"
+
+#: src/templates/admin.html:24 src/templates/permissions-edit-modal.html:66
+#: src/templates/search.html:168 src/templates/sysconfig.html:43
+#: src/templates/view-permissions-details.html:23
+msgid "Users"
+msgstr "Käyttäjät"
+
+#: src/templates/admin.html:132 src/templates/admin.html:147
+msgid "This is the default text when someone creates an experiment."
+msgstr "Tämä on oletusteksti, kun joku luo kokeen."
+
+#: src/templates/change-pass.html:31
+msgid "Save new password"
+msgstr "Tallenna uusi salasana"
+
+#: src/Import/Eln.php:112 src/Import/Zip.php:80 src/classes/i18n4Js.php:46
+#: src/models/AbstractStatus.php:55 src/models/AbstractTemplateEntity.php:27
+#: src/models/Experiments.php:47 src/models/Items.php:59
+#: src/models/TeamGroups.php:47 src/services/Filter.php:110
+msgid "Untitled"
+msgstr "Nimetön"
+
+#: src/models/AbstractEntity.php:172
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Sinulla ei ole oikeutta lukita/avata tätä."
+
+#: web/login.php:37 src/templates/login.html:106 src/templates/login.html:126
+#: src/templates/login.html:168 src/templates/login.html:199
+#: src/templates/login.html:223
+msgid "Login"
+msgstr "Kirjaudu sisään"
+
+#: src/templates/login.html:18
+msgid "Enter your email address"
+msgstr "Syötä sähköpostiosoitteesi"
+
+#: src/services/EmailValidator.php:45
+msgid "Someone is already using that email address!"
+msgstr "Joku käyttää jo tätä sähköpostiosoitetta!"
+
+#: web/app/controllers/RegisterController.php:60
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Rekisteröinti onnistui :)<br>Tervetuloa eLabFTW:hen o/"
+
+#: src/templates/register.html:5
+msgid "go back to login page"
+msgstr "palaa kirjautumissivulle"
+
+#: src/templates/register.html:30
+msgid "Create your account"
+msgstr "Luo tilisi"
+
+#: src/templates/revisions.html:37
+msgid "Restore"
+msgstr "Palauta"
+
+#: src/templates/editusers.html:24 src/templates/editusers.html:340
+#: src/templates/head.html:70 src/templates/head.html:83
+#: src/templates/team.html:45 src/templates/team.html:61
+#: src/templates/ucp.html:139 src/templates/ucp.html:161
+msgid "Search"
+msgstr "Hae"
+
+#: src/templates/search.html:70
+msgid "Search in"
+msgstr "Etsi"
+
+#: src/templates/search.html:102 src/templates/search.html:114
+msgid "And status is"
+msgstr "Ja tila on"
+
+#: src/templates/search.html:196
+msgid "And rating is"
+msgstr "Ja arvostelu on"
+
+#: src/templates/search.html:199
+msgid "Unrated"
+msgstr "Luokittelematon"
+
+#: src/templates/search.html:276
+msgid "Launch search"
+msgstr "Käynnistä haku"
+
+#: src/templates/show.html:196
+msgid "Sorry. I couldn't find anything :("
+msgstr "Anteeksi. En löytänyt mitään :("
+
+#: src/templates/sysconfig.html:41
+msgid "Server"
+msgstr "Palvelin"
+
+#: src/templates/show.html:280 src/templates/sysconfig.html:49
+#: src/templates/view-edit-toolbar.html:53
+#: src/templates/view-edit-toolbar.html:77
+#: src/templates/view-edit-toolbar.html:214
+msgid "Timestamp"
+msgstr "Aikaleima"
+
+#: src/templates/sysconfig.html:46
+msgid "Security"
+msgstr "Turvallisuus"
+
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:226
+#: src/templates/team.html:180 src/templates/team.html:183
+msgid "Members"
+msgstr "Jäsenet"
+
+#: src/templates/sysconfig.html:66 src/templates/sysconfig.html:232
+msgid "Items"
+msgstr "Esineet"
+
+#: src/templates/sysconfig.html:414
+msgid "Number of allowed login attempts:"
+msgstr "Sallittujen kirjautumisyritysten määrä:"
+
+#: src/templates/sysconfig.html:417
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 saattaa olla liian vähän. Katso itse :)"
+
+#: src/templates/sysconfig.html:343
+msgid "Default is 587."
+msgstr "Oletusarvo on 587."
+
+#: src/templates/sysconfig.html:353
+msgid "SMTP password"
+msgstr "SMTP-salasana"
+
+#: src/templates/head.html:206
+msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
+msgstr "Ryhmän järjestelmänvalvoja voi muokata saatavilla olevien kohteiden tiloja ja tyyppejä (%sAdmin Panel%s)."
+
+#: src/templates/head.html:212
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "Mukautetut pikakuvakkeet ovat käytettävissä (%sOhjauspaneeli%s)."
+
+#: src/templates/head.html:215
+msgid "You can duplicate experiments in one click."
+msgstr "Voit kopioida kokeita yhdellä napsautuksella."
+
+#: src/templates/head.html:218
+msgid "Click a tag to list all items with this tag."
+msgstr "Napsauta tunnistetta listataksesi kaikki tällä tunnisteella varustetut kohteet."
+
+#: src/templates/head.html:221
+msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
+msgstr "Aikaleiman jälkeen kokeilun lukitusta ei voi avata tai muokata. Vain kommentteja voi lisätä."
+
+#: src/templates/ucp.html:14
+msgid "Account"
+msgstr "Tili"
+
+#: src/templates/ucp.html:56
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: src/templates/head.html:133 src/templates/team.html:7
+#: src/templates/ucp.html:15
+msgid "Templates"
+msgstr "Mallipohjat"
+
+#: src/templates/ucp.html:312
+msgid "Modify your password"
+msgstr "Muuta salasanaasi"
+
+#: src/templates/change-pass.html:17
+msgid "New password"
+msgstr "Uusi salasana"
+
+#: src/templates/footer.html:59 src/templates/sysconfig.html:75
+#: src/templates/ucp.html:59
+msgid "Language"
+msgstr "Kieli"
+
+#: src/templates/pdf.html:141 src/templates/view.html:124
+msgid "Unique eLabID:"
+msgstr "Ainutlaatuinen eLabID:"
+
+#: src/templates/view.html:147
+msgid "Comments"
+msgstr "Kommentit"
+
+#: src/classes/i18n4Js.php:41 src/templates/view.html:170
+#: src/templates/view.html:172
+msgid "Add a comment"
+msgstr "Lisää kommentti"
+
+#: src/classes/i18n4Js.php:51
+msgid "Delete this?"
+msgstr "Poistetaanko tämä?"
+
+#: src/templates/profile.html:44
+msgid "No statistics available yet."
+msgstr "Tilastoja ei ole vielä saatavilla."
+
+#: src/templates/show.html:101 src/templates/show.html:102
+msgid "Filter status"
+msgstr "Suodattimen tila"
+
+#: src/templates/edit-tags.html:3 src/templates/pdf.html:30
+#: src/templates/show.html:154 src/templates/show.html:156
+#: src/templates/show.html:335 src/templates/view.html:63
+msgid "Tags"
+msgstr "Tunnisteet"
+
+#: src/templates/admin.html:535 src/templates/admin.html:538
+#: src/templates/edit-tags.html:11 src/templates/show.html:251
+msgid "Add a tag"
+msgstr "Lisää tunniste"
+
+#: src/templates/show.html:255 src/templates/steps-links-edit.html:151
+#: src/templates/steps-links-edit.html:211
+msgid "Add a link"
+msgstr "Lisää linkki"
+
+#: src/templates/steps-links-edit.html:211
+msgid "from the database"
+msgstr "tietokannasta"
+
+#: web/ucp.php:37 src/templates/head.html:136 src/templates/sysconfig.html:71
+msgid "Settings"
+msgstr "Asetukset"
+
+#: src/templates/head.html:146
+msgid "Logout"
+msgstr "Uloskirjautuminen"
+
+#: src/templates/head.html:141
+msgid "Sysadmin panel"
+msgstr "Sysadmin paneeli"
+
+#: web/admin.php:42 src/templates/head.html:138
+msgid "Admin panel"
+msgstr "Ylläpitäjän paneeli"
+
+#: src/templates/footer.html:36
+msgid "Powered by"
+msgstr "Voimanlähteenä"
+
+#: src/templates/head.html:200
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "Sinulla voi olla kokeilumalleja (%sOhjauspaneeli%s)."
+
+#: src/templates/head.html:209
+msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
+msgstr "Jos painat Ctrl Shift D editorissa, päivämäärä tulee näkyviin kursorin alle."
+
+#: src/templates/permissions-edit-modal.html:46 src/templates/profile.html:14
+#: src/templates/sysconfig.html:42 src/templates/sysconfig.html:66
+#: src/templates/sysconfig.html:999
+#: src/templates/view-permissions-details.html:5
+msgid "Teams"
+msgstr "Tiimit"
+
+#: src/templates/ts-config.html:39
+msgid "URL for external timestamping service:"
+msgstr "Ulkoisen aikaleimapalvelun URL-osoite:"
+
+#: web/app/controllers/RegisterController.php:58
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "Rekisteröinti onnistui :)<br>Järjestelmänvalvojan on nyt vahvistettava tilisi.<br>Saat sähköpostin, kun se on tehty."
+
+#: src/templates/pdf.html:98 src/templates/uploads.html:28
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "Liitetiedosto"
+msgstr[1] "Liitetiedostot"
+
+#: src/classes/i18n4Js.php:43
+msgid "Drop files here to upload"
+msgstr "Pudota tiedostot tähän ladattavaksi"
+
+#: src/models/Revisions.php:78
+msgid "You cannot restore a revision of a locked item!"
+msgstr "Et voi palauttaa lukitun kohteen versiota!"
+
+#: src/templates/ts-config.html:42
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "Tämän tulee olla %sRFC 3161%s -yhteensopivien aikaleimauspyyntöjen URL-osoite."
+
+#: src/controllers/ImportController.php:46
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "kohteen tuonti onnistui."
+msgstr[1] "Kohteiden tuonti onnistui."
+
+#: src/templates/sysconfig.html:29
+msgid "Installed version:"
+msgstr "Asennettu versio:"
+
+#: src/templates/ucp.html:233
+msgid "Miscellaneous"
+msgstr "Sekalaista"
+
+#: src/templates/footer.html:40
+msgid "seconds"
+msgstr "sekuntia"
+
+#: src/templates/show.html:46 src/templates/ucp.html:103
+msgid "Sort"
+msgstr "Järjestä"
+
+#: src/templates/login.html:141 src/templates/login.html:196
+msgid "Remember me"
+msgstr "Muista minut"
+
+#: web/app/controllers/ResetPasswordController.php:122
+msgid "New password inserted. You can now login."
+msgstr "Uusi salasana lisätty. Voit nyt kirjautua sisään."
+
+#: src/templates/view-edit-template.html:56
+#: src/templates/view-edit-toolbar.html:250
+msgid "Lock/Unlock item"
+msgstr "Lukitse/avaa kohde"
+
+#: src/templates/sysconfig.html:377
+msgid "Send a test email"
+msgstr "Lähetä testisähköposti"
+
+#: src/templates/onboarding-email-modal.html:20
+#: src/templates/sysconfig.html:322 src/templates/sysconfig.html:382
+#: src/templates/team.html:242
+msgid "Send"
+msgstr "Lähetä"
+
+#: src/templates/team.html:127
+msgid "Filter by type"
+msgstr "Suodata tyypin mukaan"
+
+#: src/templates/catstat-edit.html:4 src/templates/catstat-view.html:12
+#: src/templates/pdf.html:36 src/templates/show-templates-select.html:21
+#: src/templates/show.html:52 src/templates/show.html:324
+#: src/templates/sysconfig.html:1052 src/templates/ucp.html:94
+msgid "Category"
+msgstr "Kategoria"
+
+#: src/templates/show.html:340
+msgid "Rating"
+msgstr "Luokitus"
+
+#: src/templates/ucp.html:107
+msgid "DESC"
+msgstr "DESC"
+
+#: src/templates/ucp.html:106
+msgid "ASC"
+msgstr "ASC"
+
+#: src/templates/admin.html:241 src/templates/admin.html:301
+#: src/templates/admin.html:375 src/templates/admin.html:422
+#: src/templates/create-statuslike-modal.html:19 src/templates/edit.html:141
+msgid "Color"
+msgstr "Väri"
+
+#: src/templates/admin.html:12 src/templates/admin.html:181
+#: src/templates/admin.html:188 src/templates/admin.html:255
+#: src/templates/admin.html:292 src/templates/admin.html:389
+#: src/templates/admin.html:436 src/templates/admin.html:558
+#: src/templates/admin.html:576 src/templates/admin.html:577
+#: src/templates/editusers.html:75 src/templates/related-snippet.html:22
+#: src/templates/related-snippet.html:57 src/templates/show.html:282
+#: src/templates/steps-links-edit.html:16
+#: src/templates/steps-links-edit.html:127
+#: src/templates/steps-links-edit.html:187 src/templates/sysconfig.html:739
+#: src/templates/ucp.html:466 src/templates/upload-dropdown-menu.html:93
+#: src/templates/uploads.html:117 src/templates/view-edit-toolbar.html:299
+#: src/templates/view.html:158
+msgid "Delete"
+msgstr "Poista"
+
+#: src/templates/sysconfig.html:301
+msgid "Send a Mass Email"
+msgstr "Lähetä joukkosähköposti"
+
+#: src/templates/sysconfig.html:316
+msgid "Email Subject"
+msgstr "Sähköpostin aihe"
+
+#: src/templates/sysconfig.html:319
+msgid "Email Body"
+msgstr "Sähköpostin runko"
+
+#: src/classes/Tools.php:147
+msgid "This section is out of your reach!"
+msgstr "Tämä osio ei ole ulottuvillasi!"
+
+#: src/classes/Tools.php:149
+msgid "An error occurred!"
+msgstr "Tapahtui virhe!"
+
+#: src/templates/uploads.html:198
+msgid "Stick"
+msgstr "Tikku"
+
+#: src/templates/uploads.html:180
+msgid "Style"
+msgstr "Tyyli"
+
+#: src/classes/i18n4Js.php:62 src/exceptions/ResourceNotFoundException.php:25
+msgid "Nothing to show with this id"
+msgstr "Ei mitään näytettävää tällä tunnuksella"
+
+#: src/templates/changelog.html:6 src/templates/revisions.html:14
+msgid "Go back"
+msgstr "Mene takaisin"
+
+#: src/templates/dashboard.html:90 src/templates/team.html:5
+#: src/templates/ucp.html:119
+msgid "Scheduler"
+msgstr "Aikataulutin"
+
+#: src/templates/team.html:111
+msgid "No bookable items."
+msgstr "Ei varattavissa olevia kohteita."
+
+#: src/templates/team.html:149
+msgid "Select an equipment"
+msgstr "Valitse laite"
+
+#: src/templates/ucp.html:72
+msgid "Display"
+msgstr "Näyttö"
+
+#: src/templates/ucp.html:128
+msgid "Keyboard Shortcuts"
+msgstr "Pikanäppäimet"
+
+#: src/templates/team.html:216 src/templates/ucp.html:409
+msgid "Experiments Templates"
+msgstr "Kokeiden mallipohjat"
+
+#: src/templates/admin.html:12
+msgid "Validate"
+msgstr "Vahvista"
+
+#: src/templates/admin.html:23 src/templates/profile.html:25
+#: src/templates/search.html:173 src/templates/view-permissions-details.html:14
+msgid "Groups"
+msgstr "Ryhmät"
+
+#: src/templates/admin.html:47
+msgid "Configure your Team"
+msgstr "Määritä tiimisi"
+
+#: src/templates/editusers.html:179
+msgid "Reset user password"
+msgstr "Palauta käyttäjän salasana"
+
+#: src/templates/change-pass.html:9
+msgid "characters minimum"
+msgstr "merkkiä vähintään"
+
+#: src/templates/admin.html:122 src/templates/admin.html:138
+msgid "Common Experiment Template"
+msgstr "Yhteinen kokeen mallipohja"
+
+#: src/templates/show-view-edit.html:17
+msgid "1. Select where to import:"
+msgstr "1. Valitse tuontipaikka:"
+
+#: src/templates/admin.html:162
+msgid "Create a group"
+msgstr "Luo ryhmä"
+
+#: src/templates/favtags-panel.html:24
+#: src/templates/permissions-edit-modal.html:79
+#: src/templates/steps-links-edit.html:153
+#: src/templates/steps-links-edit.html:213 src/templates/todolist-panel.html:8
+#: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:11
+msgid "Add"
+msgstr "Lisää"
+
+#: src/templates/admin.html:177
+msgid "Existing groups"
+msgstr "Olemassa olevat ryhmät"
+
+#: src/templates/sysconfig.html:63
+msgid "Usage Statistics"
+msgstr "Käyttötilastot"
+
+#: src/templates/sysconfig.html:183
+msgid "Operating System"
+msgstr "Käyttöjärjestelmä"
+
+#: src/templates/sysconfig.html:185
+msgid "PHP Version"
+msgstr "PHP versio"
+
+#: src/templates/sysconfig.html:188
+msgid "Largest integer supported"
+msgstr "Suurin tuettu kokonaisluku"
+
+#: src/templates/sysconfig.html:189
+msgid "PHP configuration directory"
+msgstr "PHP-asetushakemisto"
+
+#: src/templates/sysconfig.html:561
+msgid "Timestamping Configuration"
+msgstr "Aikaleiman määritys"
+
+#: src/templates/sysconfig.html:390
+msgid "Security Settings"
+msgstr "Turvallisuusasetukset"
+
+#: src/templates/sysconfig.html:330
+msgid "E-mail Settings"
+msgstr "Sähköpostiasetukset"
+
+#: src/templates/head.html:111 src/templates/head.html:186
+#: src/templates/search.html:33
+msgid "Help"
+msgstr "Auta"
+
+#: src/templates/head.html:203
+msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
+msgstr "Voit luoda linkkejä tekstiin kirjoittamalla #, jolloin automaattisen täydennyksen valikko avautuu sisältäen luettelon kokeista/kohteista."
+
+#: src/templates/search.html:184
+msgid "And visibility is:"
+msgstr "Ja näkyvyys on:"
+
+#: src/templates/search.html:186
+msgid "Select visibility"
+msgstr "Valitse näkyvyys"
+
+#: src/templates/footer.html:42
+msgid "Memory usage:"
+msgstr "Muistin käyttö:"
+
+#: src/templates/footer.html:43
+msgid "bytes"
+msgstr "tavua"
+
+#: src/templates/login.html:178
+msgid "Login through your institution"
+msgstr "Kirjaudu laitoksesi kautta"
+
+#: src/templates/ucp.html:441
+msgid "Generate an API Key"
+msgstr "Luo API-avain"
+
+#: src/templates/view-edit-template.html:33
+#: src/templates/view-edit-toolbar.html:186
+msgid "Duplicate"
+msgstr "Kopioi"
+
+#: src/templates/show-item.html:79 src/templates/show.html:320
+#: src/templates/view.html:94
+msgid "Next step"
+msgstr "Seuraava askel"
+
+#: src/templates/steps-links-edit.html:86
+#: src/templates/steps-links-edit.html:88
+msgid "Add a step"
+msgstr "Lisää askel"
+
+#: src/templates/edit.html:132
+msgid "Draw something"
+msgstr "Piirrä jotakin"
+
+#: src/templates/edit.html:164 src/templates/filter-input-snippet.html:6
+#: src/templates/json-editor.html:44 src/templates/sysconfig.html:276
+#: src/templates/sysconfig.html:290 src/templates/sysconfig.html:469
+#: src/templates/sysconfig.html:475 src/templates/sysconfig.html:503
+msgid "Clear"
+msgstr "Tyhjennä"
+
+#: src/templates/sysconfig.html:358 src/templates/sysconfig.html:897
+msgid "A password is already set."
+msgstr "Salasana on jo asetettu."
+
+#: src/templates/sysconfig.html:359 src/templates/sysconfig.html:898
+msgid "%sClear it%s or change it below:"
+msgstr "%sTyhjennä se%s tai muuta sitä alla:"
+
+#: src/templates/ucp.html:105
+msgid "Use default"
+msgstr "Käytä oletusta"
+
+#: src/templates/pdf.html:122 src/templates/team.html:267
+#: src/templates/team.html:290 src/templates/ucp.html:97
+#: src/templates/uploads.html:64
+msgid "Comment"
+msgid_plural "Comments"
+msgstr[0] "Kommentti"
+msgstr[1] "Kommentit"
+
+#: src/templates/ucp.html:167
+msgid "Only lowercase letters are allowed."
+msgstr "Vain pienet kirjaimet ovat sallittuja."
+
+#: src/templates/ucp.html:237
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "Poista Rich Text Editor käytöstä ja kirjoita suoraan Markdownilla"
+
+#: src/templates/ucp.html:255
+msgid "Default visibility for new experiments"
+msgstr "Uusien kokeiden oletusnäkyvyys"
+
+#: src/Enums/Usergroup.php:26 src/templates/changelog-block.html:7
+#: src/templates/editusers.html:81 src/templates/field-builder-modal.html:53
+#: src/templates/pdf.html:157 src/templates/todolist-panel.html:28
+msgid "User"
+msgstr "Käyttäjä"
+
+#: src/templates/sysconfig.html:89
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "Jos olet palomuurin/välityspalvelimen takana, kirjoita osoite tähän. Esimerkki: http://proxy.example.com:3128"
+
+#: src/templates/sysconfig.html:152
+msgid "You can still show the local login form by appending ?letmein to the login page URL."
+msgstr "Voit silti näyttää paikallisen kirjautumislomakkeen liittämällä ?letmein kirjautumissivun URL-osoitteeseen."
+
+#: src/templates/admin.html:278 src/templates/view-edit-template.html:7
+#: src/templates/view-edit-toolbar.html:163
+msgid "Back to listing"
+msgstr "Takaisin listaukseen"
+
+#: src/templates/create-new-item-modal.html:25 src/templates/create-new.html:23
+msgid "Manage templates"
+msgstr "Hallinnoi mallipohjia"
+
+#: src/templates/show.html:205
+msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
+msgstr "Tervetuloa eLabFTW:hen. Aloita käyttämällä Luo uusi -painiketta!"
+
+#: src/templates/show.html:25
+msgid "Select all"
+msgstr "Valitse kaikki"
+
+#: src/templates/show.html:27
+msgid "Clear selection"
+msgstr "Tyhjennä valinta"
+
+#: src/templates/show.html:28
+msgid "Invert selection"
+msgstr "Käänteinen valinta"
+
+#: src/templates/show.html:210
+msgid "With selected:"
+msgstr "Valitun kanssa:"
+
+#: src/templates/show.html:222 src/templates/show.html:224
+msgid "Change status"
+msgstr "Vaihda tilaa"
+
+#: src/templates/profile.html:85
+msgid "Make Zip"
+msgstr "Tee Zip"
+
+#: src/templates/profile.html:86
+msgid "Make Csv"
+msgstr "Tee Csv"
+
+#: src/models/Uploads.php:287
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "Muista poistaa kaikki viittaukset tähän tiedostoon!"
+
+#: src/templates/upload-dropdown-menu.html:13
+#: src/templates/upload-dropdown-menu.html:20
+msgid "Insert in text at cursor position"
+msgstr "Lisää tekstiin kursorin kohdalle"
+
+#. Translation depends if it's "To archive a user" or "User that uses archive"
+#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:239
+msgid "Archive user"
+msgstr "Arkistoi käyttäjä"
+
+#: src/templates/login.html:206
+msgid "Login as anonymous visitor"
+msgstr "Kirjaudu sisään anonyyminä vierailijana"
+
+#: src/templates/view-edit-template.html:42
+msgid "Import to your profile"
+msgstr "Tuo profiiliisi"
+
+#: src/templates/ucp.html:182
+msgid "PDF configuration"
+msgstr "PDF-kokoonpano"
+
+#: src/templates/ucp.html:185
+msgid "Select paper format for PDF"
+msgstr "Valitse PDF-paperimuoto"
+
+#: src/templates/show.html:232 src/templates/show.html:233
+msgid "Change visibility"
+msgstr "Muuta näkyvyyttä"
+
+#: src/templates/upload-dropdown-menu.html:58 src/templates/uploads.html:106
+msgid "Upload a new version of this file"
+msgstr "Lataa uusi versio tästä tiedostosta"
+
+#: src/templates/uploads.html:186
+msgid "Cartoon (proteins only)"
+msgstr "Sarjakuva (vain proteiinit)"
+
+#: src/templates/uploads.html:189
+msgid "Cross"
+msgstr "Ylittää"
+
+#: src/templates/uploads.html:192
+msgid "Line"
+msgstr "Viiva"
+
+#: src/templates/uploads.html:195
+msgid "Sphere"
+msgstr "Pallo"
+
+#: src/templates/sysconfig.html:190
+msgid "Maximum file size for uploaded files"
+msgstr "Ladattujen tiedostojen enimmäiskoko"
+
+#: src/templates/sysconfig.html:192
+msgid "Timezone"
+msgstr "Aikavyöhyke"
+
+#: src/templates/json-editor.html:65 src/templates/sysconfig.html:180
+#: src/templates/team.html:6
+msgid "Information"
+msgstr "Tiedot"
+
+#: src/templates/steps-links-edit.html:29
+#: src/templates/steps-links-view.html:12
+msgid "completed"
+msgstr "valmiiksi"
+
+#: src/templates/view.html:152
+msgid "commented"
+msgstr "kommentoi"
+
+#: src/templates/archive-user-modal.html:15
+#: src/templates/booking-params-modal.html:7
+#: src/templates/booking-params-modal.html:65
+#: src/templates/create-idp-modal.html:7
+#: src/templates/create-new-item-modal.html:14
+#: src/templates/create-statuslike-modal.html:7
+#: src/templates/create-statuslike-modal.html:25
+#: src/templates/editusers.html:64 src/templates/editusers.html:111
+#: src/templates/favtags-panel.html:2 src/templates/field-builder-modal.html:11
+#: src/templates/field-builder-modal.html:143
+#: src/templates/field-builder-modal.html:156
+#: src/templates/field-builder-modal.html:191 src/templates/footer.html:54
+#: src/templates/footer.html:104 src/templates/footer.html:111
+#: src/templates/head.html:187 src/templates/head.html:226
+#: src/templates/login.html:11 src/templates/login.html:25
+#: src/templates/onboarding-email-modal.html:6
+#: src/templates/ownership-transfer-modal.html:7
+#: src/templates/ownership-transfer-modal.html:23
+#: src/templates/permissions-edit-modal.html:30
+#: src/templates/permissions-edit-modal.html:102
+#: src/templates/procurement-params-modal.html:7
+#: src/templates/procurement-params-modal.html:47
+#: src/templates/register.html:14 src/templates/register.html:22
+#: src/templates/search-syntax-doc-modal.html:6
+#: src/templates/search-syntax-doc-modal.html:197
+#: src/templates/show-view-edit.html:9 src/templates/sysconfig.html:13
+#: src/templates/team.html:23 src/templates/team.html:97
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:31
+#: src/templates/uploads.html:8 src/templates/uploads.html:16
+#: src/templates/view-edit-toolbar.html:7
+#: src/templates/view-edit-toolbar.html:30
+#: src/templates/view-edit-toolbar.html:42
+#: src/templates/view-edit-toolbar.html:65
+#: src/templates/view-edit-toolbar.html:89
+#: src/templates/view-edit-toolbar.html:134
+msgid "Close"
+msgstr "Sulje"
+
+#: src/templates/head.html:135 src/templates/todolist-panel.html:4
+msgid "Todolist"
+msgstr "Tehtävälista"
+
+#: src/templates/json-editor.html:51 src/templates/show-view-edit.html:56
+#: src/templates/steps-links-edit.html:124
+#: src/templates/steps-links-edit.html:184
+msgid "Import"
+msgstr "Tuo"
+
+#. This might be better as is than translated directly.
+#: src/templates/admin.html:28
+msgid "Tag manager"
+msgstr "Tag manager"
+
+#: src/templates/admin.html:545
+msgid "Manage tags of the team"
+msgstr "Hallinnoi joukkueen tunnisteita"
+
+#: src/templates/search.html:104 src/templates/search.html:116
+msgid "Select status"
+msgstr "Valitse tila"
+
+#: src/templates/search.html:198
+msgid "Select number of stars"
+msgstr "Valitse tähtien määrä"
+
+#: src/templates/head.html:197
+msgid "You can use a TODOlist by pressing '%s'."
+msgstr "Voit käyttää TODO-listaa painamalla '%s'."
+
+#: src/templates/login.html:48 src/templates/login.html:50
+#: src/templates/login.html:72 src/templates/login.html:74
+#: src/templates/login.html:212 src/templates/login.html:215
+#: src/templates/register.html:44 src/templates/register.html:45
+msgid "Select a team"
+msgstr "Valitse tiimi"
+
+#: src/templates/register.html:13
+msgid "Privacy policy"
+msgstr "Tietosuojakäytäntö"
+
+#: src/templates/sysconfig.html:67
+msgid "Generate report"
+msgstr "Luo raportti"
+
+#: src/templates/sysconfig.html:134
+msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
+msgstr "Näin hakukoneet voivat indeksoida sivuston. Vierailijat kirjautuvat automaattisesti sisään määritettyyn tiimiin."
+
+#: src/templates/sysconfig.html:144
+msgid "This has no effect if open science mode is disabled."
+msgstr "Tällä ei ole vaikutusta, jos avoin tiedetila on poistettu käytöstä."
+
+#: src/templates/sysconfig.html:329
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
+msgstr "Ilman kelvollista tapaa lähettää sähköposteja käyttäjät eivät voi nollata salasanaansa. On suositeltavaa luoda %ssmtp2go.com%s-tili ja lisätä tiedot tähän."
+
+#: src/templates/sysconfig.html:493
+msgid "Note: the text below is a template and must be edited and saved."
+msgstr "Huomaa: alla oleva teksti on malli, ja sitä on muokattava ja tallennettava."
+
+#: src/templates/editusers.html:1 src/templates/editusers.html:4
+msgid "Search users"
+msgstr "Etsi käyttäjiä"
+
+#: src/templates/editusers.html:122 src/templates/editusers.html:139
+msgid "User ID"
+msgstr "käyttäjätunnus"
+
+#: src/templates/editusers.html:248
+msgid "Delete user"
+msgstr "Poista käyttäjä"
+
+#: src/templates/editusers.html:258
+msgid "No user found!"
+msgstr "Käyttäjää ei löytynyt!"
+
+#: src/templates/login.html:184
+msgid "Select an identity provider"
+msgstr "Valitse identiteetin tarjoaja"
+
+#: src/classes/i18n4Js.php:47
+msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
+msgstr "Valitut kohteet ja kaikki niihin liittyvät tiedot poistetaan pysyvästi. Tätä ei voi peruuttaa. Oletko varma?"
+
+#: src/classes/i18n4Js.php:68
+msgid "Delete this tag?"
+msgstr "Poistetaanko tämä tunniste?"
+
+#: src/templates/revisions.html:34 src/templates/show-item.html:69
+msgid "by"
+msgstr "kirjoittaja"
+
+#: src/templates/view-edit-toolbar.html:191
+msgid "Book item"
+msgstr "Varaa kohde"
+
+#: src/templates/ucp.html:292
+msgid "Enter your password to edit your profile."
+msgstr "Anna salasanasi muokataksesi profiiliasi."
+
+#: src/templates/ucp.html:16
+msgid "API keys"
+msgstr "API-avaimet"
+
+#: src/templates/ucp.html:446
+msgid "Existing keys"
+msgstr "Olemassa olevat avaimet"
+
+#: src/templates/admin.html:82 src/templates/ucp.html:432
+#: src/templates/ucp.html:452 src/templates/ucp.html:463
+msgid "Permissions"
+msgstr "Käyttöoikeudet"
+
+#: src/templates/sysconfig.html:216 src/templates/ucp.html:453
+#: src/templates/ucp.html:464 src/templates/uploads.html:65
+msgid "Creation date"
+msgstr "Luomispäivä"
+
+#: src/templates/ucp.html:435 src/templates/ucp.html:463
+msgid "Read/Write"
+msgstr "Lukea/kirjoittaa"
+
+#: src/templates/ucp.html:434 src/templates/ucp.html:463
+msgid "Read Only"
+msgstr "Vain lukuoikeus"
+
+#: src/templates/ucp.html:421
+msgid "Create new key"
+msgstr "Luo uusi avain"
+
+#: src/templates/show-view-edit.html:30
+msgid "2. Select a visibility:"
+msgstr "2. Valitse näkyvyys:"
+
+#: src/templates/team.html:179
+msgid "You belong to the %s team."
+msgstr "Kuulut %s-tiimiin."
+
+#: src/templates/onboarding-email.html:13
+#: src/templates/onboarding-email.html:56 src/templates/team.html:236
+msgid "Subject"
+msgstr "Aihe"
+
+#: src/templates/onboarding-email.html:25
+#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1054
+#: src/templates/team.html:238
+msgid "Content"
+msgstr "Sisältö"
+
+#: web/app/controllers/TeamController.php:64
+msgid "Email sent to %d users"
+msgstr "Sähköposti lähetetty %d käyttäjille"
+
+#: web/app/controllers/RegisterController.php:31
+msgid "Registration is disabled."
+msgstr "Rekisteröinti on poistettu käytöstä."
+
+#: web/app/controllers/ResetPasswordController.php:61
+msgid "Email provided is invalid."
+msgstr "Annettu sähköpostiosoite on virheellinen."
+
+#: src/controllers/AbstractEntityController.php:239
+msgid "This item is locked. You cannot edit it!"
+msgstr "Tämä kohde on lukittu. Et voi muokata sitä!"
+
+#: src/classes/ContentParams.php:37 src/classes/StepParams.php:45
+#: src/classes/TagParam.php:33
+msgid "Input is too short! (minimum: %d)"
+msgstr "Syöte on liian lyhyt! (vähintään: %d)"
+
+#: src/models/AbstractEntity.php:188
+msgid "This experiment was locked by %s. You don't have the rights to unlock this."
+msgstr "%s lukitsi tämän kokeen. Sinulla ei ole oikeutta avata tätä."
+
+#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:235
+msgid "Unarchive user"
+msgstr "Palauta käyttäjä arkistosta"
+
+#: src/templates/upload-dropdown-menu.html:37
+msgid "Annotate this image"
+msgstr "Merkitse tämä kuva"
+
+#: src/templates/edit.html:186 src/templates/upload-dropdown-menu.html:51
+msgid "Save as image"
+msgstr "Tallenna kuvana"
+
+#: src/templates/view-edit-toolbar.html:200
+#: src/templates/view-edit-toolbar.html:203
+msgid "Share"
+msgstr "Jaa"
+
+#: src/templates/admin.html:51 src/templates/sysconfig.html:267
+msgid "Announcement"
+msgstr "Ilmoitus"
+
+#: src/templates/admin.html:54 src/templates/sysconfig.html:269
+msgid "The following text will be displayed to all users on all pages while it's active."
+msgstr "Seuraava teksti näytetään kaikille käyttäjille kaikilla sivuilla sen ollessa aktiivinen."
+
+#: src/templates/pdf.html:86 src/templates/steps-links-edit.html:4
+#: src/templates/steps-links-view.html:4
+msgid "Steps"
+msgstr "Askeleet"
+
+#: src/templates/show.html:138 src/templates/show.html:139
+msgid "Results per page"
+msgstr "Tulosta per sivu"
+
+#: src/templates/edit.html:148
+msgid "Stroke width"
+msgstr "Vedon leveys"
+
+#: src/templates/edit.html:155
+msgid "Eraser"
+msgstr "Pyyhekumi"
+
+#: src/classes/i18n4Js.php:66
+msgid "Delete this step?"
+msgstr "Poistetaanko tämä vaihe?"
+
+#: src/classes/i18n4Js.php:52
+msgid "Delete this link?"
+msgstr "Poistetaanko tämä linkki?"
+
+#: src/templates/json-editor.html:6
+msgid "JSON Editor"
+msgstr "JSON-editori"
+
+#: src/templates/view-edit-template.html:28
+msgid "Create experiment from template"
+msgstr "Luo kokeilu mallista"
+
+#: src/templates/admin.html:198 src/templates/permissions-edit-modal.html:77
+msgid "Add user"
+msgstr "Lisää käyttäjä"
+
+#: src/templates/show.html:24
+msgid "Expand all"
+msgstr "Laajenna kaikki"
+
+#: src/templates/head.html:96 src/templates/search.html:279
+msgid "Clear all"
+msgstr "Tyhjennä"
+
+#: src/templates/sysconfig.html:406
+msgid "Enforce a domain name for emails"
+msgstr "Pakota verkkotunnuksen nimi sähköposteille"
+
+#: src/templates/sysconfig.html:409
+msgid "Only email addresses at this domain will be allowed to register an account."
+msgstr "Vain tämän verkkotunnuksen sähköpostiosoitteet voivat rekisteröidä tilin."
+
+#: src/templates/editusers.html:266
+msgid "Add account"
+msgstr "Lisää tili"
+
+#: src/templates/team.html:22
+msgid "Edit event"
+msgstr "Muokkaa tapahtumaa"
+
+#: src/templates/team.html:42 src/templates/team.html:58
+msgid "Unbind"
+msgstr "Pura"
+
+#: src/templates/team.html:40
+msgid "Bind an experiment"
+msgstr "Sido kokeilu"
+
+#: src/templates/team.html:49 src/templates/team.html:65
+msgid "Attach"
+msgstr "Liittää"
+
+#: src/templates/upload-dropdown-menu.html:44
+msgid "Load into JSON Editor"
+msgstr "Lataa JSON-editoriin"
+
+#: src/templates/ucp.html:268
+msgid "Default write permission for new experiments"
+msgstr "Oletusarvoinen kirjoitusoikeus uusille kokeiluille"
+
+#: src/templates/register.html:60
+msgid "Only emails @%s are authorized to register"
+msgstr "Vain sähköpostit @%s voivat rekisteröidä"
+
+#: src/templates/show.html:24
+msgid "Collapse all"
+msgstr "Kutista kaikki"
+
+#: src/services/Check.php:45 src/services/PasswordValidator.php:32
+msgid "Password must contain at least %d characters."
+msgstr "Salasanassa on oltava vähintään %d merkkiä."
+
+#: src/templates/editusers.html:194 src/templates/steps-links-edit.html:33
+#: src/templates/ucp.html:370 src/templates/upload-dropdown-menu.html:3
+#: src/templates/view-edit-template.html:69
+#: src/templates/view-edit-toolbar.html:268
+msgid "More options"
+msgstr "Lisää vaihtoehtoja"
+
+#: src/templates/view-edit-template.html:84
+msgid "Manage Permissions"
+msgstr "Hallinnoi käyttöoikeuksia"
+
+#: src/templates/editusers.html:123 src/templates/editusers.html:140
+msgid "Team(s)"
+msgstr "joukkue(et)"
+
+#: src/templates/login.html:10
+msgid "Reset your password"
+msgstr "Nollaa salasana"
+
+#: src/templates/login.html:20
+msgid "Send reset link"
+msgstr "Lähetä nollauslinkki"
+
+#: src/templates/login.html:124
+msgid "Login to your account"
+msgstr "Kirjaudu tilillesi"
+
+#: src/templates/login.html:146
+msgid "Forgot password?"
+msgstr "Unohtuiko salasana?"
+
+#: src/templates/login.html:171
+msgid "Don't have an account? %sRegister%s now!"
+msgstr "Eikö sinulla ole tiliä? %sRekisteröidy%s nyt!"
+
+#: src/templates/login.html:99
+msgid "Your account is linked to several teams. Select in which team you want to log in"
+msgstr "Tilisi on linkitetty useisiin tiimeihin. Valitse mihin tiimiin haluat kirjautua"
+
+#: src/Auth/Local.php:51 src/Auth/Local.php:138
+#: src/controllers/LoginController.php:222
+#: src/exceptions/InvalidCredentialsException.php:24
+msgid "Invalid email/password combination."
+msgstr "Virheellinen sähköpostiosoite/salasana-yhdistelmä."
+
+#: src/templates/editusers.html:99
+msgid "Add team"
+msgstr "Lisää tiimi"
+
+#: src/exceptions/InvalidCsrfTokenException.php:24 web/login.php:108
+msgid "Your session expired."
+msgstr "Istunto on vanhentunut."
+
+#: src/templates/footer.html:7
+msgid "Code repository on GitHub"
+msgstr "Koodivarasto GitHubissa"
+
+#: src/templates/footer.html:11
+msgid "Join the discussion on Gitter"
+msgstr "Liity keskusteluun Gitteristä"
+
+#: src/templates/sysconfig.html:129
+msgid "Registration and authentication configuration"
+msgstr "Rekisteröinnin ja todennuksen määritys"
+
+#: web/make.php:28 src/templates/admin.html:27 src/templates/admin.html:475
+#: src/templates/admin.html:506 src/templates/admin.html:527
+#: src/templates/export-menu.html:3 src/templates/show.html:240
+#: src/templates/show.html:241
+msgid "Export"
+msgstr "Vie"
+
+#: web/app/controllers/ResetPasswordController.php:85 web/change-pass.php:28
+#: src/templates/login.html:16
+msgid "Reset password"
+msgstr "Nollaa salasana"
+
+#: web/register.php:25
+msgid "Register"
+msgstr "Rekisteröidy"
+
+#: web/register.php:37
+msgid "Please %slogout%s before you register another account."
+msgstr "Ole hyvä ja Ole hyvä ja kirjaudu ulos %s ennen kuin rekisteröit toisen tilin.kirjaudu ulos%s ennen kuin rekisteröit toisen tilin."
+
+#: web/register.php:45
+msgid "No local account creation is allowed!"
+msgstr "Paikallisen tilin luominen ei ole sallittua!"
+
+#: web/profile.php:24
+msgid "Profile"
+msgstr "Profiili"
+
+#: web/sysconfig.php:38
+msgid "eLabFTW Configuration"
+msgstr "eLabFTW-kokoonpano"
+
+#: web/revisions.php:29
+msgid "Revisions"
+msgstr "Tarkistukset"
+
+#: src/templates/ucp.html:93
+msgid "Last modified"
+msgstr "Viimeksi muokattu"
+
+#: src/templates/register.html:94
+msgid "I agree with the %sPrivacy Policy%s"
+msgstr "Hyväksyn %stietosuojakäytännön%s"
+
+#: src/templates/view-edit-template.html:76
+#: src/templates/view-edit-toolbar.html:285
+msgid "Switch editor"
+msgstr "Vaihda editori"
+
+#: src/templates/related-snippet.html:46
+msgid "Related items"
+msgstr "Vastaavia tuotteita"
+
+#: src/templates/related-snippet.html:6
+msgid "Related experiments"
+msgstr "Aiheeseen liittyvät kokeet"
+
+#: src/templates/view-edit-template.html:15
+#: src/templates/view-edit-toolbar.html:171
+msgid "View mode"
+msgstr "Katselutila"
+
+#: src/templates/related-snippet.html:26 src/templates/related-snippet.html:61
+#: src/templates/revisions.html:31 src/templates/show-item-table.html:28
+#: src/templates/show-item.html:119 src/templates/steps-links-edit.html:119
+#: src/templates/steps-links-edit.html:179
+#: src/templates/steps-links-view.html:48
+#: src/templates/steps-links-view.html:77
+msgid "Toggle content"
+msgstr "Vaihda sisältö"
+
+#: src/templates/sysconfig.html:52
+msgid "External auth"
+msgstr "Ulkoinen todennus"
+
+#: src/templates/sysconfig.html:98
+msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
+msgstr "Tämän arvon asettaminen pieneksi auttaa pitämään tietokannan koon pienenä. Asettamalla tämä arvo nollaan, sallit äärettömän määrän versioita tallennettavaksi."
+
+#: src/templates/sysconfig.html:969
+msgid "External authentication mapping"
+msgstr "Ulkoinen todennuskartoitus"
+
+#: src/templates/profile.html:87
+msgid "Make PDF"
+msgstr "Tee PDF"
+
+#: src/templates/profile.html:89
+msgid "Make JSON"
+msgstr "Tee JSON"
+
+#: src/templates/related-snippet.html:6 src/templates/related-snippet.html:46
+#: src/templates/search.html:33 src/templates/steps-links-view.html:4
+#: src/templates/steps-links-view.html:30
+#: src/templates/steps-links-view.html:66 src/templates/templates-view.html:27
+#: src/templates/todolist-panel.html:4 src/templates/todolist-panel.html:38
+#: src/templates/todolist-panel.html:45 src/templates/uploads.html:27
+#: src/templates/view.html:131 src/templates/view.html:147
+msgid "Toggle visibility"
+msgstr "Näkyvyys päälle/pois"
+
+#: src/templates/show-item.html:112 src/templates/view-edit-template.html:69
+#: src/templates/view-edit-toolbar.html:244
+#: src/templates/view-edit-toolbar.html:268
+msgid "Toggle pin"
+msgstr "Vaihda kiinnitys"
+
+#: src/templates/view.html:122
+msgid "Last modified on %s"
+msgstr "Viimeksi muokattu %s"
+
+#: src/classes/i18n4Js.php:72
+msgid "File comment"
+msgstr "Tiedoston kommentti"
+
+#: src/models/notifications/SelfNeedValidation.php:31
+msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
+msgstr "Hei. Tilisi on luotu, mutta se ei ole tällä hetkellä aktiivinen (et voi kirjautua sisään). Tiimin järjestelmänvalvojalle on ilmoitettu, ja hän vahvistaa tilisi. Saat sähköpostin, kun se on valmis."
+
+#: src/templates/editusers.html:268
+msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
+msgstr "Huomautus: uuden käyttäjän tulee käyttää \"Unohditko salasanasi\" -painiketta kirjautumissivulla salasanan asettamiseksi."
+
+#: src/templates/sysconfig.html:410
+msgid "You can add several domains by separating them with a comma."
+msgstr "Voit lisätä useita verkkotunnuksia erottamalla ne pilkulla."
+
+#: src/templates/sysconfig.html:974
+msgid "Remote user"
+msgstr "Etäkäyttäjä"
+
+#: src/templates/sysconfig.html:1005
+msgid "Logout URL"
+msgstr "Uloskirjautumisen URL-osoite"
+
+#: src/templates/view-edit-template.html:92
+msgid "Destroy template"
+msgstr "Tuhoa mallipohja"
+
+#: src/templates/admin.html:88
+msgid "Enforce read permissions?"
+msgstr "Pakotetaanko lukuoikeudet?"
+
+#: src/templates/admin.html:89
+msgid "Select if you want to enforce read permissions on experiments"
+msgstr "Valitse, jos haluat pakottaa lukuoikeudet kokeisiin"
+
+#: src/templates/admin.html:92
+msgid "Enforced read permissions on experiments"
+msgstr "Kokeiden pakotetut lukuoikeudet"
+
+#: src/templates/admin.html:99
+msgid "Enforce the read permission for all experiments of users in this team."
+msgstr "Pakota lukuoikeus kaikille tämän tiimin käyttäjien kokeisin."
+
+#: src/templates/admin.html:104
+msgid "Enforce write permissions?"
+msgstr "Pakotetaanko kirjoitusoikeudet?"
+
+#: src/templates/admin.html:105
+msgid "Select if you want to enforce write permissions on experiments"
+msgstr "Valitse, jos haluat pakottaa kirjoitusoikeudet kokeisiin"
+
+#: src/templates/admin.html:108
+msgid "Enforced write permissions on experiments"
+msgstr "Kokeiden pakotetut kirjoitusoikeudet"
+
+#: src/templates/admin.html:115
+msgid "Enforce the write permission for all experiments of users in this team."
+msgstr "Pakota kirjoitusoikeus tämän ryhmän käyttäjien kaikkiin kokeiluihin."
+
+#: src/templates/editusers.html:106 src/templates/show.html:174
+msgid "Go"
+msgstr "Mene"
+
+#: src/templates/todolist-panel.html:23
+msgid "Unfinished steps"
+msgstr "Keskeneräisiä vaiheita"
+
+#: src/models/AbstractEntity.php:708
+msgid "Read permissions enforced by admin. Aborting change."
+msgstr "Järjestelmänvalvojan määräämät lukuoikeudet. Muutoksen keskeyttäminen."
+
+#: src/classes/i18n4Js.php:59 src/templates/create-idp-modal.html:11
+#: src/templates/footer.html:58 src/templates/head.html:191
+#: src/templates/login.html:15 src/templates/search-syntax-doc-modal.html:10
+#: src/templates/sysconfig.html:17 src/templates/team.html:27
+#: src/templates/ucp.html:35 src/templates/view-edit-toolbar.html:46
+#: src/templates/view-edit-toolbar.html:69
+#: src/templates/view-edit-toolbar.html:93
+msgid "Please wait…"
+msgstr "Odota…"
+
+#: src/templates/create-new.html:8
+msgid "Toggle create new menu"
+msgstr "Luo uusi valikko päälle/pois"
+
+#: src/templates/create-new.html:33 src/templates/json-editor.html:20
+#: src/templates/show-templates-select.html:7
+#: src/templates/show-view-edit.html:8
+msgid "Import from file"
+msgstr "Tuo tiedostosta"
+
+#: src/templates/show-view-edit.html:19
+msgid "Import in database"
+msgstr "Tuo tietokantaan"
+
+#: src/templates/show-view-edit.html:23
+msgid "Import in experiments"
+msgstr "Tuo kokeeseen"
+
+#: src/classes/i18n4Js.php:50 src/templates/uploads.html:63
+msgid "Filename"
+msgstr "Tiedoston nimi"
+
+#: src/classes/i18n4Js.php:61
+msgid "Enter name of the file"
+msgstr "Anna tiedoston nimi"
+
+#: src/templates/view-edit-toolbar.html:309
+msgid "Owned by %s"
+msgstr "%s:n omistama"
+
+#: src/templates/admin.html:548
+msgid "Deduplicate"
+msgstr "Poista kaksoiskappale"
+
+#: web/login.php:58 src/templates/mfa.html:7 src/templates/ucp.html:325
+msgid "Two Factor Authentication"
+msgstr "Kaksivaiheinen todennus"
+
+#: src/templates/mfa.html:20
+msgid "Open your authenticator application and scan the QR code."
+msgstr "Avaa todennussovellus ja skannaa QR-koodi."
+
+#: src/templates/mfa.html:25
+msgid "Secret for manual setup"
+msgstr "Manuaalisen asennuksen salaisuus"
+
+#: src/templates/mfa.html:37
+msgid "Authentication code"
+msgstr "Todennuskoodi"
+
+#: src/templates/mfa.html:36
+msgid "Open the authenticator app on your device to get your authentication code and verify your identity."
+msgstr "Avaa laitteesi todennussovellus saadaksesi todennuskoodisi ja vahvistaaksesi henkilöllisyytesi."
+
+#: src/templates/mfa.html:40
+msgid "Verify"
+msgstr "Vahvista"
+
+#: src/templates/ucp.html:84
+msgid "Item list (default)"
+msgstr "Tuoteluettelo (oletus)"
+
+#: src/templates/ucp.html:85
+msgid "Tabular"
+msgstr "Taulukkomainen"
+
+#: src/templates/ucp.html:328
+msgid "Use two-factor authentication?"
+msgstr "Käytä kaksivaiheista todennusta?"
+
+#: src/templates/sysconfig.html:861
+msgid "Toggle LDAP login"
+msgstr "Vaihda LDAP-kirjautuminen"
+
+#: src/templates/sysconfig.html:864
+msgid "LDAP Host"
+msgstr "LDAP-isäntä"
+
+#: src/templates/sysconfig.html:867
+msgid "Domain name or IP address"
+msgstr "Verkkotunnuksen nimi tai IP-osoite"
+
+#: src/templates/sysconfig.html:871
+msgid "LDAP Port"
+msgstr "LDAP-portti"
+
+#: src/templates/sysconfig.html:874
+msgid "Default: 389 LDAPS: 636"
+msgstr "Oletus: 389 LDAPS: 636"
+
+#: src/templates/sysconfig.html:886
+msgid "Username"
+msgstr "Käyttäjätunnus"
+
+#: src/templates/sysconfig.html:877
+msgid "Use TLS"
+msgstr "Käytä TLS:ää"
+
+#: src/templates/login.html:114
+msgid "You are already authenticated"
+msgstr "Olet jo todennettu"
+
+#: src/templates/login.html:88 src/templates/login.html:116
+msgid "Continue"
+msgstr "Jatka"
+
+#: src/templates/login.html:156
+msgid "Local"
+msgstr "Paikallinen"
+
+#: src/templates/show.html:279
+msgid "Lock"
+msgstr "Lukita"
+
+#: src/templates/editusers.html:132 src/templates/editusers.html:177
+#: src/templates/sysconfig.html:218 src/templates/team.html:270
+#: src/templates/team.html:297 src/templates/uploads.html:67
+msgid "Actions"
+msgstr "Toiminnot"
+
+#: src/models/notifications/UserCreated.php:34
+#: src/models/notifications/UserNeedValidation.php:36
+msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
+msgstr "Hei. Uusi käyttäjä rekisteröi tilin eLabFTW:hen: %s (%s)."
+
+#: src/models/notifications/UserNeedValidation.php:41
+msgid "Head to the admin panel to validate the account: %s"
+msgstr "Siirry hallintapaneeliin vahvistamaan tili: %s"
+
+#: src/exceptions/UnauthorizedException.php:25
+msgid "Authentication required"
+msgstr "Todennus vaaditaan"
+
+#: src/controllers/LoginController.php:360
+msgid "Two Factor Authentication was not enabled!"
+msgstr "Kaksivaiheinen todennus ei ollut käytössä!"
+
+#: src/controllers/LoginController.php:371
+msgid "The code you entered is not valid!"
+msgstr "Antamasi koodi ei kelpaa!"
+
+#: src/controllers/LoginController.php:379
+msgid "Two Factor Authentication is now enabled!"
+msgstr "Kaksivaiheinen todennus on nyt käytössä!"
+
+#: src/classes/i18n4Js.php:56
+msgid "Nothing selected!"
+msgstr "Ei valittu mitään!"
+
+#: src/classes/i18n4Js.php:60
+msgid "Do you want to replace the file on the server with this edit?"
+msgstr "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?"
+
+#: src/templates/sysconfig.html:105
+msgid "Setting this to a high value will help keeping the database size small."
+msgstr "Tämän arvon asettaminen suureksi auttaa pitämään tietokannan koon pienenä."
+
+#: src/templates/sysconfig.html:424 src/templates/sysconfig.html:461
+msgid "Set to 0 to disable this feature."
+msgstr "Aseta arvoksi 0, jos haluat poistaa tämän ominaisuuden käytöstä."
+
+#: src/templates/pdf.html:41
+msgid "Created by"
+msgstr "Luonut"
+
+#: src/templates/pdf.html:71
+msgid "Linked item"
+msgid_plural "Linked items"
+msgstr[0] "Linkitetty kohde"
+msgstr[1] "Linkitetyt kohteet"
+
+#: src/services/EmailValidator.php:64
+msgid "This email domain is not allowed. Allowed domains: %s"
+msgstr "Tämä sähköpostin verkkotunnus ei ole sallittu. Sallitut verkkotunnukset: %s"
+
+#: src/classes/i18n4Js.php:49 src/templates/edit.html:111
+#: src/templates/templates-view.html:27
+#: src/templates/view-edit-template.html:154 src/templates/view.html:131
+msgid "Extra fields"
+msgstr "Ylimääräiset kentät"
+
+#: src/classes/i18n4Js.php:69
+msgid "Template title"
+msgstr "Malliotsikko"
+
+#: src/templates/edit.html:43 src/templates/view.html:38
+msgid "Started on"
+msgstr "Alkoi"
+
+#: src/templates/view-edit-toolbar.html:221
+msgid "Add to blockchain"
+msgstr "Lisää lohkoketjuun"
+
+#: src/templates/sysconfig.html:281
+msgid "Login page announcement"
+msgstr "Kirjautumissivun ilmoitus"
+
+#: src/templates/sysconfig.html:283
+msgid "The following text will be displayed only on the login page."
+msgstr "Seuraava teksti näkyy vain kirjautumissivulla."
+
+#: src/templates/admin.html:60
+msgid "An admin account will always be able to create tags."
+msgstr "Järjestelmänvalvojan tili voi aina luoda tunnisteita."
+
+#: src/templates/upload-dropdown-menu.html:28 src/templates/uploads.html:102
+msgid "Edit filename"
+msgstr "Muokkaa tiedostonimeä"
+
+#: src/services/Email.php:187
+msgid "Sent from eLabFTW"
+msgstr "Lähetetty eLabFTW:stä"
+
+#: src/models/Tags.php:137
+msgid "Users cannot create tags."
+msgstr "Käyttäjät eivät voi luoda tunnisteita."
+
+#: src/templates/ucp.html:246
+msgid "Use ISO datetime in the text editor instead of localized one"
+msgstr "Käytä ISO-päivämäärää tekstieditorissa lokalisoinnin sijaan"
+
+#: src/templates/ownership-transfer-modal.html:6
+#: src/templates/view-edit-template.html:84
+#: src/templates/view-edit-toolbar.html:281
+msgid "Transfer ownership"
+msgstr "Siirrä omistajuus"
+
+#: src/templates/ownership-transfer-modal.html:13
+msgid "New owner"
+msgstr "Uusi omistaja"
+
+#: src/templates/edit.html:90 src/templates/edit.html:96
+#: src/templates/view-edit-template.html:142
+msgid "Main content"
+msgstr "Pääsisältö"
+
+#: src/templates/steps-links-edit.html:22 src/templates/steps-links-view.html:9
+msgid "Toggle completion"
+msgstr "Vaihda valmistumista"
+
+#: src/templates/head.html:125
+msgid "User menu"
+msgstr "Käyttäjävalikko"
+
+#: src/templates/head.html:194
+msgid "Make sure to read the %suser guide%s."
+msgstr "Muista lukea %suser-opas%s."
+
+#: src/Enums/Usergroup.php:25 src/templates/editusers.html:80
+#: src/templates/editusers.html:381 src/templates/team.html:201
+msgid "Admin"
+msgstr "Admin"
+
+#: src/templates/show-templates-select.html:22 src/templates/show.html:346
+msgid "Owner"
+msgstr "Omistaja"
+
+#: src/templates/edit.html:102
+msgid "Save and go back"
+msgstr "Tallenna ja palaa takaisin"
+
+#: src/templates/editusers.html:27
+msgid "Show all"
+msgstr "Näytä kaikki"
+
+#: src/templates/upload-replace-form.html:7
+msgid "OK"
+msgstr "OK"
+
+#: src/templates/sysconfig.html:112
+msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
+msgstr "Jos viimeisin muutos on vähintään tämän päivän ikäinen, versio luodaan riippumatta merkkien vähimmäisasetuksesta."
+
+#: src/templates/sysconfig.html:468
+msgid "%d users are currently prevented from logging in from unknown devices."
+msgstr "%d käyttäjää on tällä hetkellä estetty kirjautumasta sisään tuntemattomilta laitteilta."
+
+#: src/templates/sysconfig.html:474
+msgid "%d devices are currently denied authentication."
+msgstr "%d laitteen todennus on tällä hetkellä estetty."
+
+#: src/templates/ucp.html:93 src/templates/ucp.html:116
+msgid "(default)"
+msgstr "(oletus)"
+
+#: web/app/controllers/ResetPasswordController.php:71
+#: web/app/controllers/ResetPasswordController.php:105
+msgid "If the account exists, an email has been sent."
+msgstr "Jos tili on olemassa, sähköposti on lähetetty."
+
+#: src/controllers/LoginController.php:187
+#: web/app/controllers/ResetPasswordController.php:78 web/index.php:82
+msgid "Your account is not validated. An admin of your team needs to validate it!"
+msgstr "Tiliäsi ei ole vahvistettu. Tiimisi järjestelmänvalvojan on vahvistettava se!"
+
+#: web/app/controllers/ResetPasswordController.php:87
+msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
+msgstr "Hei. Joku (luultavasti sinä) pyysi uutta salasanaa eLabFTW:hen.%s Nollaa salasanasi seuraamalla tätä linkkiä: %s %sTämä linkki on voimassa vain %s minuuttia."
+
+#: src/services/ResetPasswordKey.php:68
+msgid "This link has expired! Password reset links are only valid for %s minutes."
+msgstr "Tämä linkki on vanhentunut! Salasanan palautuslinkit ovat voimassa vain %s minuuttia."
+
+#: src/exceptions/InvalidDeviceTokenException.php:24
+msgid "This browser cannot login anymore because of too many failed attempts."
+msgstr "Tämä selain ei voi enää kirjautua sisään liian monen epäonnistuneen yrityksen takia."
+
+#: src/models/Experiments.php:78
+msgid "Experiments must use a template!"
+msgstr "Kokeissa on käytettävä mallia!"
+
+#: src/templates/edit.html:32
+msgid "Warning: this entry was modified %s seconds ago by %s."
+msgstr "Varoitus: %s muokkasi tätä merkintää %s sekuntia sitten."
+
+#: src/templates/profile.html:88
+msgid "Make QR codes PDF"
+msgstr "Tee QR-koodit PDF-muodossa"
+
+#: src/templates/search.html:218 src/templates/search.html:224
+msgid "Name of field"
+msgstr "Kentän nimi"
+
+#: src/templates/search.html:235 src/templates/search.html:240
+msgid "Value"
+msgstr "Arvo"
+
+#: src/templates/admin.html:449
+msgid "Export database items"
+msgstr "Vie tietokantakohteita"
+
+#: src/templates/ts-config.html:11
+msgid "Custom TSA"
+msgstr "Mukautettu TSA"
+
+#: src/templates/favtags-panel.html:4 src/templates/ucp.html:137
+#: src/templates/ucp.html:153
+msgid "Favorite tags"
+msgstr "Suosikkitunnisteet"
+
+#: src/templates/filter-input-snippet.html:4
+msgid "Filter"
+msgstr "Suodattaa"
+
+#: src/templates/favtags-panel.html:21
+msgid "Add a tag as favorite"
+msgstr "Lisää tunniste suosikiksi"
+
+#: src/templates/show.html:258 src/templates/steps-links-edit.html:205
+msgid "Any category"
+msgstr "Mikä tahansa kategoria"
+
+#: src/classes/i18n4Js.php:67
+msgid "Are you sure you want to undo this step?"
+msgstr "Haluatko varmasti kumota tämän vaiheen?"
+
+#: src/services/Email.php:73
+msgid "Test email"
+msgstr "Testisähköposti"
+
+#: src/models/notifications/CommentCreated.php:42
+msgid "New comment posted"
+msgstr "Uusi kommentti lähetetty"
+
+#: src/services/Transform.php:62
+msgid "New user added to your team"
+msgstr "Uusi käyttäjä lisätty tiimiisi"
+
+#: src/models/notifications/UserNeedValidation.php:33
+msgid "[ACTION REQUIRED]"
+msgstr "[VAATII TOIMENPITEITÄ]"
+
+#: src/models/notifications/SelfNeedValidation.php:30
+msgid "Your account has been created"
+msgstr "Sinun tilisi on luotu"
+
+#: src/models/notifications/SelfIsValidated.php:29
+msgid "Account validated"
+msgstr "Tili vahvistettu"
+
+#: src/models/notifications/StepDeadline.php:62
+msgid "Hello. A step deadline is approaching: "
+msgstr "Hei. Vaiheen määräaika lähestyy: "
+
+#: src/services/Transform.php:69
+msgid "A user needs account validation."
+msgstr "Käyttäjä tarvitsee tilin vahvistuksen."
+
+#: src/services/Transform.php:76
+msgid "There was a problem during PDF creation."
+msgstr "PDF:n luomisen aikana ilmeni ongelma."
+
+#: src/services/Transform.php:85
+msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
+msgstr "Tex-renderöinti epäonnistui PDF:n luomisen aikana. Raakatex-komennot säilytetään, mutta sinun kannattaa tarkistaa luotu PDF huolellisesti."
+
+#: src/services/Transform.php:94
+msgid "Some attached PDFs could not be appended."
+msgstr "Joitakin liitettyjä PDF-tiedostoja ei voitu liittää."
+
+#: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:22
+msgid "Query is too complex!"
+msgstr "Kysely on liian monimutkainen!"
+
+#: web/ucp.php:80
+msgid "New comment notification"
+msgstr "Ilmoitus uudesta kommentista"
+
+#: web/ucp.php:84
+msgid "Step deadline"
+msgstr "Vaiheen määräaika"
+
+#: web/ucp.php:92
+msgid "New user created"
+msgstr "Uusi käyttäjä luotu"
+
+#: web/ucp.php:97
+msgid "New user need validation"
+msgstr "Uusi käyttäjä tarvitsee vahvistuksen"
+
+#: src/templates/admin.html:479
+msgid "Export experiments of user"
+msgstr "Vie käyttäjän kokeet"
+
+#: src/templates/head.html:89 src/templates/head.html:90
+#: src/templates/ucp.html:17
+msgid "Notifications"
+msgstr "Ilmoitukset"
+
+#: src/templates/head.html:98
+msgid "No new notifications to show."
+msgstr "Ei uusia näytettäviä ilmoituksia."
+
+#: src/templates/head.html:101 src/templates/ucp.html:475
+msgid "Notifications settings"
+msgstr "Ilmoitusasetukset"
+
+#: src/templates/login.html:42 src/templates/login.html:66
+msgid "Request access to a team"
+msgstr "Pyydä pääsyä tiimiin"
+
+#: src/templates/login.html:60 src/templates/login.html:79
+msgid "Request access"
+msgstr "Pyydä käyttöoikeutta"
+
+#: src/templates/login.html:85
+msgid "Your account has been created and will need to be validated by an admin."
+msgstr "Tilisi on luotu ja järjestelmänvalvojan on vahvistettava se."
+
+#: src/templates/search-syntax-doc-modal.html:5
+msgid "Search Syntax"
+msgstr "Hakusyntaksi"
+
+#: src/services/AdvancedSearchQuery.php:64
+#: src/services/AdvancedSearchQuery.php:66 src/templates/search.html:14
+msgid "Search query"
+msgstr "Hakulauseke"
+
+#: src/templates/search.html:167
+msgid "Select author"
+msgstr "Valitse kirjoittaja"
+
+#: src/templates/admin.html:515 src/templates/search.html:129
+msgid "Date from"
+msgstr "Päivämäärä alkaen"
+
+#: src/templates/search.html:133
+msgid "less than"
+msgstr "vähemmän kuin"
+
+#: src/templates/search.html:134
+msgid "less than or equal to"
+msgstr "pienempi tai yhtäsuuri kuin"
+
+#: src/templates/search.html:135
+msgid "equal to"
+msgstr "yhtä kuin"
+
+#: src/templates/search.html:136
+msgid "greater than or equal to"
+msgstr "suurempi tai yhtä suuri kuin"
+
+#: src/templates/search.html:137
+msgid "greater than"
+msgstr "suurempi kuin"
+
+#: src/templates/search.html:138
+msgid "not equal to"
+msgstr "ei ole yhtä suuri kuin"
+
+#: src/templates/search.html:145
+msgid "Date to (optional)"
+msgstr "Päivämäärä (valinnainen)"
+
+#: src/templates/search.html:252
+msgid "Locked"
+msgstr "Lukittu"
+
+#: src/templates/search.html:254
+msgid "Select lock status"
+msgstr "Valitse lukituksen tila"
+
+#: src/templates/search.html:263
+msgid "Timestamped"
+msgstr "Aikaleimattu"
+
+#: src/templates/search.html:265
+msgid "Select timestamp status"
+msgstr "Valitse aikaleiman tila"
+
+#: src/templates/search.html:78 src/templates/search.html:90
+msgid "And category is"
+msgstr "Ja luokka on"
+
+#: src/templates/search.html:80 src/templates/search.html:92
+msgid "Select category"
+msgstr "Valitse kategoria"
+
+#: src/templates/steps-links-edit.html:37
+msgid "Completion time:"
+msgstr "Valmistumisaika:"
+
+#: src/templates/steps-links-edit.html:41
+msgid "Not finished"
+msgstr "Keskeneräinen"
+
+#: src/templates/steps-links-edit.html:47
+#: src/templates/steps-links-view.html:17
+msgid "Deadline:"
+msgstr "Määräaika:"
+
+#: src/templates/steps-links-edit.html:52
+msgid "Toggle notifications"
+msgstr "Ota ilmoitukset käyttöön"
+
+#: src/templates/steps-links-edit.html:56
+msgid "Clear deadline"
+msgstr "Tyhjennä määräaika"
+
+#: src/templates/steps-links-edit.html:63
+msgid "Set deadline in"
+msgstr "Aseta määräaika sisään"
+
+#: src/templates/sysconfig.html:48
+msgid "Uploads"
+msgstr "Lataukset"
+
+#: src/templates/sysconfig.html:567
+msgid "Blockchain timestamp configuration"
+msgstr "Lohkoketjun aikaleiman määritys"
+
+#: src/templates/sysconfig.html:522
+msgid "Where user uploaded files are stored:"
+msgstr "Mihin käyttäjien lataamat tiedostot tallennetaan:"
+
+#: src/templates/sysconfig.html:524 src/templates/upload-more-info.html:2
+msgid "Local filesystem"
+msgstr "Paikallinen tiedostojärjestelmä"
+
+#: src/templates/sysconfig.html:525
+msgid "S3 bucket"
+msgstr "S3 ämpäri"
+
+#: src/templates/sysconfig.html:528
+msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
+msgstr "Voit valita, mihin ladatut tiedostot tallennetaan. Oletusasetus on paikallinen tallennustila, mutta voit määrittää minkä tahansa S3-yhteensopivan objektitallennustilan."
+
+#: src/templates/ucp.html:482
+msgid "Web"
+msgstr "Web"
+
+#: src/templates/upload-dropdown-menu.html:81 src/templates/uploads.html:74
+msgid "More information"
+msgstr "Lisää tietoa"
+
+#: src/templates/upload-more-info.html:2
+msgid "Storage:"
+msgstr "Varastointi:"
+
+#: src/models/Scheduler.php:478
+msgid "Creation/modification of events in the past is not allowed!"
+msgstr "Menneiden tapahtumien luominen/muokkaus ei ole sallittua!"
+
+#: src/models/notifications/EventDeleted.php:82 src/services/Transform.php:54
+msgid "A booked slot was deleted from the scheduler."
+msgstr "Varattu paikka poistettiin aikataulusta."
+
+#: src/models/notifications/EventDeleted.php:84
+msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
+msgstr "Hei. %s (%s). Katso kohde: %s. Se oli varattu %s - %s."
+
+#: web/ucp.php:102
+msgid "Booking event cancelled"
+msgstr "Varaustapahtuma peruttu"
+
+#: src/templates/admin.html:511
+msgid "Export bookings"
+msgstr "Vie varaukset"
+
+#: src/templates/admin.html:521
+msgid "Date to"
+msgstr "Päivämäärä"
+
+#: src/templates/editusers.html:15
+msgid "All teams"
+msgstr "Kaikki tiimit"
+
+#: src/templates/search.html:160
+msgid "And author is"
+msgstr "Ja kirjoittaja on"
+
+#: src/templates/search.html:160
+msgid "belongs to group:"
+msgstr "kuuluu ryhmään:"
+
+#: src/templates/search.html:167 src/templates/search.html:175
+msgid "group"
+msgstr "ryhmä"
+
+#: src/templates/search.html:170
+msgid "author"
+msgstr "kirjoittaja"
+
+#: src/templates/steps-links-edit.html:122
+#: src/templates/steps-links-edit.html:182
+msgid "Import links"
+msgstr "Tuo linkit"
+
+#: src/Make/AbstractMakeTimestamp.php:109
+msgid "Number of timestamps this past month reached the limit!"
+msgstr "Aikaleimojen määrä kuluneen kuukauden aikana saavutti rajan!"
+
+#: src/templates/show-view-edit.html:39
+msgid "2b. Select write access:"
+msgstr "2b. Valitse kirjoitusoikeus:"
+
+#: src/templates/admin.html:556 src/templates/admin.html:566
+#: src/templates/admin.html:567
+msgid "Show tagged experiments"
+msgstr "Näytä tunnisteella merkityt kokeilut"
+
+#: src/templates/admin.html:557 src/templates/admin.html:571
+#: src/templates/admin.html:572
+msgid "Show tagged items"
+msgstr "Näytä merkityt kohteet"
+
+#: src/templates/edit.html:160
+msgid "Use %sCtrl%s + click to add text"
+msgstr "Käytä %sCtrl%s + napsauta lisätäksesi tekstiä"
+
+#: src/templates/json-editor.html:65
+msgid "See documentation about extra fields."
+msgstr "Katso lisäkenttien dokumentaatio."
+
+#: src/templates/sysconfig.html:186
+msgid "MySQL Version"
+msgstr "MySQL-versio"
+
+#: src/templates/ts-config.html:47
+msgid "Number of allowed timestamps per month (0 means no limit):"
+msgstr "Sallittujen aikaleimojen määrä kuukaudessa (0 tarkoittaa, ettei rajoitusta):"
+
+#: src/controllers/ImportController.php:96
+msgid "Error: invalid file extension for import. Allowed extensions: %s."
+msgstr "Virhe: virheellinen tiedostopääte tuontia varten. Sallitut laajennukset: %s."
+
+#: src/models/AbstractEntity.php:712
+msgid "Write permissions enforced by admin. Aborting change."
+msgstr "Järjestelmänvalvojan pakottamat kirjoitusoikeudet. Muutoksen keskeyttäminen."
+
+#: src/models/AbstractStatus.php:66
+msgid "Running"
+msgstr "Käynnissä"
+
+#: src/models/AbstractStatus.php:67
+msgid "Success"
+msgstr "Menestys"
+
+#: src/models/AbstractStatus.php:68
+msgid "Need to be redone"
+msgstr "Pitää tehdä uusiksi"
+
+#: src/models/AbstractStatus.php:69
+msgid "Fail"
+msgstr "Epäonnistua"
+
+#: src/Make/MakeBloxberg.php:93 src/models/AbstractConcreteEntity.php:114
+msgid "Timestamp archive by %s"
+msgstr "Aikaleima-arkisto, %s"
+
+#: src/Import/Eln.php:68 src/Import/Zip.php:50
+msgid "Error: could not read archive file properly! (missing %s)"
+msgstr "Virhe: arkistotiedostoa ei voitu lukea kunnolla! (puuttuu %s)"
+
+#: src/Import/Eln.php:151
+msgid "Links"
+msgstr "Linkit"
+
+#: src/services/LoginHelper.php:112
+msgid "Your account has expired. Contact your team Admin to extend its validity."
+msgstr "Tilisi on vanhentunut. Ota yhteyttä tiimisi järjestelmänvalvojaan sen voimassaolon jatkamiseksi."
+
+#: src/templates/admin.html:464 src/templates/admin.html:495
+#: src/templates/export-menu.html:11 src/templates/show.html:242
+msgid "ELN Archive"
+msgstr "ELN-arkisto"
+
+#: src/templates/admin.html:465 src/templates/admin.html:496
+#: src/templates/export-menu.html:9 src/templates/show.html:243
+msgid "ZIP Archive"
+msgstr "ZIP-arkisto"
+
+#: src/templates/admin.html:466 src/templates/admin.html:497
+#: src/templates/export-menu.html:12 src/templates/show.html:244
+msgid "CSV File"
+msgstr "CSV-tiedosto"
+
+#: src/templates/admin.html:467 src/templates/admin.html:498
+#: src/templates/export-menu.html:7 src/templates/show.html:245
+msgid "PDF File"
+msgstr "PDF-tiedosto"
+
+#: src/templates/admin.html:468 src/templates/admin.html:499
+#: src/templates/show.html:246
+msgid "QR codes PDF"
+msgstr "QR-koodit PDF"
+
+#: src/templates/admin.html:469 src/templates/admin.html:500
+#: src/templates/show.html:247
+msgid "JSON"
+msgstr "JSON"
+
+#: src/templates/create-new.html:13
+msgid "Experiments templates"
+msgstr "Kokeiden mallipohjat"
+
+#: src/templates/create-new.html:20
+msgid "No pinned templates found"
+msgstr "Kiinnitettyjä mallipohjia ei löytynyt"
+
+#: src/templates/edit.html:185
+msgid "Save as JSON"
+msgstr "Tallenna JSON-muodossa"
+
+#: src/templates/editusers.html:176
+msgid "2FA enabled"
+msgstr "2FA käytössä"
+
+#: src/templates/editusers.html:283
+msgid "Permission group"
+msgstr "Luparyhmä"
+
+#: src/templates/editusers.html:128 src/templates/editusers.html:157
+msgid "Valid until"
+msgstr "Voimassa asti"
+
+#: src/templates/show.html:112 src/templates/show.html:113
+msgid "Filter owner"
+msgstr "Suodattimen omistaja"
+
+#: src/templates/show.html:122 src/templates/show.html:123
+msgid "Filter visibility"
+msgstr "Suodattimen näkyvyys"
+
+#: src/templates/footer.html:15 src/templates/head.html:118
+msgid "Submit feedback"
+msgstr "Lähetä palautetta"
+
+#: src/templates/head.html:108
+msgid "Help menu"
+msgstr "Ohje-valikko"
+
+#: src/templates/head.html:110
+msgid "What's new"
+msgstr "Mikä on uutta"
+
+#: src/templates/head.html:114
+msgid "Support"
+msgstr "Tuki"
+
+#: src/templates/head.html:115
+msgid "Community forum"
+msgstr "Yhteisön foorumi"
+
+#: src/templates/head.html:116
+msgid "Chat room"
+msgstr "Chattihuone"
+
+#: src/templates/head.html:119
+msgid "Contribute to eLabFTW"
+msgstr "Osallistu eLabFTW:hen"
+
+#: src/templates/head.html:126
+msgid "Logged in as %s in:"
+msgstr "Kirjautunut sisään käyttäjänä %s sisään:"
+
+#: src/templates/head.html:128
+msgid "Switch team"
+msgstr "Vaihda tiimiä"
+
+#: src/templates/head.html:134
+msgid "My profile"
+msgstr "Profiilini"
+
+#: src/templates/login.html:87
+msgid "Your account has been created and is now active. Try logging in again."
+msgstr "Tilisi on luotu ja on nyt aktiivinen. Yritä kirjautua sisään uudelleen."
+
+#: src/templates/pdf.html:56 src/templates/steps-links-edit.html:100
+#: src/templates/steps-links-view.html:31
+msgid "Linked experiment"
+msgid_plural "Linked experiments"
+msgstr[0] "Linkitetty koe"
+msgstr[1] "Linkitetyt kokeet"
+
+#: src/templates/profile.html:79
+msgid "Export all your experiments"
+msgstr "Vie kaikki kokeesi"
+
+#: src/templates/profile.html:84
+msgid "Make an ELN"
+msgstr "Tee ELN"
+
+#: src/templates/show-view-edit.html:14
+msgid "You can import data from a .eln archive, a .zip archive (created by eLabFTW) or a .csv file. %sSee documentation %s%s."
+msgstr "Voit tuoda tietoja .eln-arkistosta, .zip-arkistosta (eLabFTW:n luoma) tai .csv-tiedostosta. %sKatso dokumentaatio %s%s."
+
+#: src/templates/show-view-edit.html:48
+msgid "3. Select a file to import:"
+msgstr "3. Valitse tuotava tiedosto:"
+
+#: src/templates/show-view-edit.html:51
+msgid "Allowed extensions: .eln, .zip, .csv"
+msgstr "Sallitut laajennukset: .eln, .zip, .csv"
+
+#: src/templates/show.html:48
+msgid "Newest"
+msgstr "Uusin"
+
+#: src/templates/show.html:49
+msgid "Oldest"
+msgstr "Vanhin"
+
+#: src/templates/show.html:50
+msgid "Recently modified"
+msgstr "Äskettäin muokattu"
+
+#: src/templates/show.html:51
+msgid "Least recently modified"
+msgstr "Viimeksi muokattu"
+
+#: src/templates/show.html:53
+msgid "Category (inverted)"
+msgstr "Kategoria (käänteinen)"
+
+#: src/templates/show.html:56
+msgid "Highest ID"
+msgstr "Korkein ID"
+
+#: src/templates/show.html:57
+msgid "Lowest ID"
+msgstr "Alin ID"
+
+#: src/templates/show.html:60
+msgid "Recently commented"
+msgstr "Äskettäin kommentoitu"
+
+#: src/templates/show.html:61
+msgid "Title (alphabetical)"
+msgstr "Otsikko (aakkosjärjestyksessä)"
+
+#: src/templates/show.html:62
+msgid "Title (inverted)"
+msgstr "Otsikko (käänteinen)"
+
+#: src/templates/show.html:63
+msgid "User (alphabetical)"
+msgstr "Käyttäjä (aakkosjärjestyksessä)"
+
+#: src/templates/show.html:64
+msgid "User (inverted)"
+msgstr "Käyttäjä (käänteinen)"
+
+#: src/templates/show.html:65
+msgid "Highest rating"
+msgstr "Korkein arvosana"
+
+#: src/templates/show.html:66
+msgid "Lowest rating"
+msgstr "Alin arvosana"
+
+#: src/templates/show.html:200
+msgid "Search in %s"
+msgstr "Etsi %s"
+
+#: src/templates/show.html:268
+msgid "Link to an experiment"
+msgstr "Linkki kokeeseen"
+
+#: src/templates/show.html:271 src/templates/steps-links-edit.html:145
+msgid "Any author"
+msgstr "Mikä tahansa kirjoittaja"
+
+#: src/templates/team.html:32
+msgid "Start time"
+msgstr "Aloitusaika"
+
+#: src/templates/team.html:34
+msgid "End time"
+msgstr "Lopetusaika"
+
+#: src/templates/ts-config.html:50
+msgid "Number of timestamps over the last 30 days: %d"
+msgstr "Aikaleimojen määrä viimeisten 30 päivän aikana: %d"
+
+#: src/templates/upload-comment.html:6
+msgid "Click to add a comment"
+msgstr "Lisää kommentti napsauttamalla"
+
+#: src/templates/upload-dropdown-menu.html:67
+msgid "Show content of file"
+msgstr "Näytä tiedoston sisältö"
+
+#: src/templates/upload-more-info.html:6
+msgid "Uploaded by %s"
+msgstr "Lähettäjä %s"
+
+#: src/templates/view.html:155
+msgid "edited"
+msgstr "muokattu"
+
+#: src/models/notifications/StepDeadline.php:71 src/services/Transform.php:104
+msgid "A step deadline is approaching."
+msgstr "Vaiheen määräaika lähestyy."
+
+#: src/templates/edit.html:174
+msgid "Molecule editor"
+msgstr "Molekyylieditori"
+
+#: src/templates/head.html:112 src/templates/head.html:113
+msgid "Documentation"
+msgstr "Dokumentaatio"
+
+#: src/templates/steps-links-edit.html:76
+msgid "Copy step to cursor position"
+msgstr "Kopioi vaihe kohdistimen sijaintiin"
+
+#: src/templates/upload-dropdown-menu.html:74
+msgid "Open in NMRium"
+msgstr "Avaa NMRiumissa"
+
+#: src/templates/export-menu.html:8
+msgid "Long term storage PDF"
+msgstr "Pitkäaikainen säilytys PDF"
+
+#: src/templates/export-menu.html:10
+msgid "Long term storage ZIP"
+msgstr "Pitkäaikainen säilytys ZIP"
+
+#: src/models/FavTags.php:91
+msgid "Could not find tag. Please enter an existing tag."
+msgstr "Tunnistetta ei löytynyt. Anna olemassa oleva tunniste."
+
+#: src/templates/changelog-block.html:1 src/templates/pdf.html:152
+msgid "Changelog"
+msgstr "Muutosloki"
+
+#: src/templates/changelog-block.html:8 src/templates/pdf.html:158
+msgid "Property changed"
+msgstr "Arvo vaihtui"
+
+#: src/templates/changelog-block.html:9 src/templates/pdf.html:159
+msgid "New value"
+msgstr "Uusi arvo"
+
+#: src/templates/show-templates-select.html:37
+#: src/templates/view-edit-template.html:49
+msgid "Toggle pin (add to create button menu)"
+msgstr "Vaihda nasta (lisää luodaksesi painikevalikko)"
+
+#: src/templates/sysconfig.html:31
+msgid "Latest stable version:"
+msgstr "Uusin vakaa versio:"
+
+#: src/templates/admin.html:161 src/templates/sysconfig.html:603
+#: src/templates/sysconfig.html:856 src/templates/ucp.html:420
+msgid "Link to documentation"
+msgstr "Linkki dokumentaatioon"
+
+#: src/templates/view-edit-template.html:81
+#: src/templates/view-edit-toolbar.html:290
+msgid "See changelog"
+msgstr "Katso muutosloki"
+
+#: src/templates/admin.html:534
+msgid "From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags."
+msgstr "Täältä voit lisätä, muokata tai poistaa tiimisi tunnisteita. Napsauta tunnistetta muokataksesi sitä. Napsauta sitten duplikaattien poistamispainiketta yhdistääksesi samanlaiset tunnisteet."
+
+#: src/templates/field-builder-modal.html:10
+msgid "Add an extra field"
+msgstr "Lisää ylimääräinen kenttä"
+
+#: src/templates/field-builder-modal.html:40
+msgid "Field type"
+msgstr "Kentän tyyppi"
+
+#: src/templates/field-builder-modal.html:42
+msgid "Text"
+msgstr "Teksti"
+
+#: src/templates/field-builder-modal.html:43
+msgid "Dropdown menu"
+msgstr "Pudotusvalikosta"
+
+#: src/templates/field-builder-modal.html:44
+msgid "Radio buttons"
+msgstr "Radiopainikkeet"
+
+#: src/templates/field-builder-modal.html:49
+msgid "Checkbox"
+msgstr "Valintaruutu"
+
+#: src/templates/field-builder-modal.html:50
+msgid "Number"
+msgstr "Määrä"
+
+#: src/templates/field-builder-modal.html:58
+msgid "required"
+msgstr "edellytetään"
+
+#: src/templates/field-builder-modal.html:63
+msgid "Description"
+msgstr "Kuvaus"
+
+#: src/templates/field-builder-modal.html:64
+msgid "Enter a description for this field"
+msgstr "Kirjoita kuvaus tälle kentälle"
+
+#: src/templates/field-builder-modal.html:67
+#: src/templates/field-builder-modal.html:102
+msgid "Default value"
+msgstr "Oletusarvo"
+
+#: src/templates/field-builder-modal.html:68
+msgid "Enter a default value"
+msgstr "Anna oletusarvo"
+
+#: src/templates/field-builder-modal.html:73
+msgid "Choices"
+msgstr "Valinnat"
+
+#: src/templates/field-builder-modal.html:79
+#: src/templates/field-builder-modal.html:97
+msgid "Add another choice"
+msgstr "Lisää toinen vaihtoehto"
+
+#: src/templates/field-builder-modal.html:104
+msgid "Unchecked"
+msgstr "Ei valittu"
+
+#: src/templates/field-builder-modal.html:105
+msgid "Checked"
+msgstr "Valittu"
+
+#: src/templates/admin.html:336 src/templates/edit.html:116
+#: src/templates/json-editor.html:13 src/templates/view-edit-template.html:159
+msgid "Add field"
+msgstr "Lisää kenttä"
+
+#: src/templates/permissions-edit-modal.html:36
+msgid "Base"
+msgstr "Pohja"
+
+#: src/templates/permissions-edit-modal.html:37
+msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below."
+msgstr "Tämä asetus määrittää perustan, jonka perusteella voit lisätä käyttöoikeuksia valitsemalla alta tiimejä, ryhmäryhmiä tai käyttäjiä."
+
+#: src/templates/permissions-edit-modal.html:46
+#: src/templates/permissions-edit-modal.html:56
+msgid "(hold %sctrl%s key to select multiple entries)"
+msgstr "(Valitse useita merkintöjä pitämällä %sctrl%s-näppäintä painettuna)"
+
+#: src/templates/permissions-edit-modal.html:47
+msgid "Selecting a team here will give access to all members of this team."
+msgstr "Valitsemalla tiimin tästä antaa oikeudet kaikille tiimin jäsenille."
+
+#: src/templates/permissions-edit-modal.html:56
+msgid "Teamgroups"
+msgstr "Tiimiryhmät"
+
+#: src/templates/permissions-edit-modal.html:57
+msgid "Selecting a teamgroup here will give access to all users part of this teamgroup."
+msgstr "Valitsemalla tiimiryhmän tästä pääsevät kaikki tähän tiimiryhmään kuuluvat käyttäjät."
+
+#: src/templates/permissions-edit-modal.html:62
+msgid "Teamgroup"
+msgstr "Tiimiryhmä"
+
+#: src/templates/permissions-edit-modal.html:88
+msgid "Allow read access for anonymous users"
+msgstr "Salli anonyymien käyttäjien lukuoikeus"
+
+#: src/templates/permissions-edit-modal.html:93
+msgid "Copy to clipboard"
+msgstr "Kopioi leikepöydälle"
+
+#: src/templates/permissions-edit-modal.html:97
+msgid "Anyone following this link can access this entry."
+msgstr "Kaikki tätä linkkiä seuraavat pääsevät tähän."
+
+#: src/templates/field-builder-modal.html:85
+msgid "Allow selection of multiple values?"
+msgstr "Sallitaanko useiden arvojen valinta?"
+
+#: src/templates/ts-config.html:55
+msgid "Available timestamps left (0 means no balance):"
+msgstr "Käytettävissä olevat aikaleimat jäljellä (0 tarkoittaa, että saldoa ei ole):"
+
+#: src/templates/ts-config.html:58
+msgid "You can set a number of available timestamps here and it will be decremented by 1 on every timestamp."
+msgstr "Voit asettaa käytettävissä olevien aikaleimojen määrän tässä, ja sitä pienennetään yhdellä jokaisella aikaleimalla."
+
+#: src/classes/Metadata.php:80 src/classes/Metadata.php:100
+#: src/classes/i18n4Js.php:71 src/templates/field-builder-modal.html:34
+msgid "Undefined group"
+msgstr "Määrittelemätön ryhmä"
+
+#: src/Enums/EnforceMfa.php:30
+msgid "Disabled"
+msgstr "Pois käytöstä"
+
+#: src/Enums/EnforceMfa.php:31
+msgid "Sysadmins"
+msgstr "Sysadminit"
+
+#: src/Enums/EnforceMfa.php:32
+msgid "Admins"
+msgstr "Järjestelmänvalvojat"
+
+#: src/Enums/EnforceMfa.php:33
+msgid "Everyone"
+msgstr "Kaikki"
+
+#: src/Enums/Usergroup.php:24
+msgid "Sysadmin"
+msgstr "Sysadmin"
+
+#: src/exceptions/DatabaseErrorException.php:23
+msgid "Something went wrong! Try refreshing the page."
+msgstr "Jotain meni pieleen! Yritä päivittää sivu."
+
+#: src/exceptions/InvalidMfaCodeException.php:25
+msgid "Invalid authentication code."
+msgstr "Virheellinen todennuskoodi."
+
+#: src/classes/i18n4Js.php:44
+msgid "File size limit:"
+msgstr "Tiedoston kokorajoitus:"
+
+#: src/classes/i18n4Js.php:45
+msgid "You are currently editing the metadata attached to this entry."
+msgstr "Muokkaat tällä hetkellä tähän merkintään liitettyjä metatietoja."
+
+#: src/models/Teams.php:114 src/templates/admin.html:247
+#: src/templates/admin.html:381 src/templates/admin.html:428
+msgid "Default"
+msgstr "Oletus"
+
+#: src/models/notifications/UserCreated.php:39
+#: src/models/notifications/UserNeedValidation.php:33
+msgid "New user added to team: %s"
+msgstr "Uusi käyttäjä lisätty tiimiin: %s"
+
+#: web/admin.php:104 web/sysconfig.php:91
+msgid "No users found. Try another search."
+msgstr "Käyttäjiä ei löytynyt. Kokeile toista hakua."
+
+#: web/search.php:36
+msgid "Advanced search"
+msgstr "Tarkennettu haku"
+
+#: src/templates/admin.html:59
+msgid "Users can create tags"
+msgstr "Käyttäjät voivat luoda tunnisteita"
+
+#: src/templates/admin.html:64
+msgid "Force experiment template use"
+msgstr "Pakota kokeen mallipohjan käyttö"
+
+#: src/templates/admin.html:66
+msgid "Menu link"
+msgstr "Menulinkki"
+
+#: src/templates/admin.html:70
+msgid "Name of the link in the top menu"
+msgstr "Linkin nimi ylävalikossa"
+
+#: src/templates/admin.html:76
+msgid "Address where this link should point"
+msgstr "Osoite, johon tämän linkin tulee osoittaa"
+
+#: src/templates/admin.html:119
+msgid "Common templates"
+msgstr "Yleisiä mallipohjia"
+
+#: src/templates/admin.html:167
+msgid "Add a group"
+msgstr "Lisää ryhmä"
+
+#: src/templates/admin.html:196 src/templates/editusers.html:22
+msgid "User name"
+msgstr "Käyttäjänimi"
+
+#: src/templates/admin.html:286
+msgid "Use the handles to adjust the order in which the categories appear in the application."
+msgstr "Käytä kahvoja säätääksesi järjestystä, jossa luokat näkyvät sovelluksessa."
+
+#: src/templates/admin.html:452
+msgid "Select what to export"
+msgstr "Valitse, mitä viedään"
+
+#: src/templates/admin.html:462 src/templates/admin.html:493
+#: src/templates/profile.html:80
+msgid "Select an export format"
+msgstr "Valitse vientimuoto"
+
+#: src/templates/admin.html:483
+msgid "Select user"
+msgstr "Valitse käyttäjä"
+
+#: src/templates/admin.html:554 src/templates/admin.html:564
+msgid "Tag"
+msgstr "Tag"
+
+#: src/templates/admin.html:555 src/templates/admin.html:565
+msgid "Occurence"
+msgstr "Esiintyminen"
+
+#: src/templates/create-idp-modal.html:6 src/templates/sysconfig.html:731
+msgid "Add new IDP"
+msgstr "Lisää uusi IDP"
+
+#: src/templates/create-idp-modal.html:13 src/templates/sysconfig.html:756
+msgid "Friendly name"
+msgstr "Ystävällinen nimi"
+
+#: src/templates/edit.html:18
+msgid "Editing an entry"
+msgstr "Merkinnän muokkaaminen"
+
+#: src/templates/edit.html:187
+msgid "Save as RXN"
+msgstr "Tallenna nimellä RXN"
+
+#: src/templates/editusers.html:22
+msgid "Search for user"
+msgstr "Etsi käyttäjä"
+
+#: src/templates/editusers.html:31
+msgid "Include archived"
+msgstr "Sisällytä arkistoitu"
+
+#: src/templates/editusers.html:53
+msgid "Users list"
+msgstr "Käyttäjäluettelo"
+
+#: src/templates/editusers.html:63 src/templates/editusers.html:201
+msgid "Manage teams for user"
+msgstr "Hallitse käyttäjän tiimejä"
+
+#: src/templates/editusers.html:87
+msgid "Is Owner"
+msgstr "On omistaja"
+
+#: src/templates/editusers.html:127 src/templates/editusers.html:156
+msgid "Last login"
+msgstr "Viimeinen kirjautuminen"
+
+#: src/templates/editusers.html:129 src/templates/editusers.html:165
+#: src/templates/editusers.html:354 src/templates/editusers.html:364
+msgid "Internal ID"
+msgstr "Sisäinen tunnus"
+
+#: src/templates/editusers.html:130 src/templates/editusers.html:168
+msgid "Is Sysadmin"
+msgstr "On Sysadmin"
+
+#: src/templates/editusers.html:156 src/templates/ucp.html:465
+msgid "never"
+msgstr "ei koskaan"
+
+#: src/templates/editusers.html:183
+msgid "Set new password"
+msgstr "Aseta uusi salasana"
+
+#: src/templates/editusers.html:325
+msgid "Add account from external directory"
+msgstr "Lisää tili ulkoisesta hakemistosta"
+
+#: src/templates/editusers.html:350 src/templates/editusers.html:360
+msgid "Selection"
+msgstr "Valinta"
+
+#: src/templates/editusers.html:384
+msgid "Add selected"
+msgstr "Lisää valitut"
+
+#: src/templates/favtags-panel.html:9
+msgid "No favorite tags are present. Add an existing tag with the form below."
+msgstr "Suosikkitunnisteita ei ole. Lisää olemassa oleva tunniste alla olevalla lomakkeella."
+
+#: src/templates/field-builder-modal.html:16
+msgid "Group"
+msgstr "Ryhmä"
+
+#: src/templates/field-builder-modal.html:17
+#: src/templates/field-builder-modal.html:22
+msgid "Add group"
+msgstr "Lisää ryhmä"
+
+#: src/templates/field-builder-modal.html:24
+msgid "New group name"
+msgstr "Ryhmän uusi nimi"
+
+#: src/templates/field-builder-modal.html:113
+msgid "Blank value on duplicate"
+msgstr "Tyhjä arvo kaksoiskappaleessa"
+
+#: src/templates/head.html:162
+msgid "Toggle favorite tags"
+msgstr "Vaihda suosikkitunnisteet"
+
+#: src/templates/head.html:168
+msgid "Toggle todolist"
+msgstr "Todolist päälle/pois"
+
+#: src/templates/json-editor.html:25
+msgid "Save as…"
+msgstr "Tallenna nimellä…"
+
+#: src/templates/json-editor.html:32
+msgid "Save as attachment"
+msgstr "Tallenna liitteenä"
+
+#: src/templates/json-editor.html:58
+msgid "Display main text"
+msgstr "Näytä pääteksti"
+
+#: src/templates/mfa.html:17
+msgid "It is mandatory to activate 2FA."
+msgstr "2FA on aktivoitava."
+
+#: src/templates/permissions-edit-modal.html:66
+msgid "Allow individual users to access this entry."
+msgstr "Salli yksittäisten käyttäjien käyttää tätä merkintää."
+
+#: src/templates/revisions.html:5
+msgid "This server is configured to store %d revisions per entry maximum."
+msgstr "Tämä palvelin on määritetty tallentamaan %d versiota enintään merkintää kohti."
+
+#: src/templates/search.html:22
+msgid "Enter search query, e.g.: %s"
+msgstr "Syötä hakulauseke, esim.: %s"
+
+#: src/templates/search.html:27
+msgid "Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both."
+msgstr "Kirjoita hakusana etsiäksesi otsikossa, tekstissä, päivämäärässä ja elabid:ssä; tai käytä syntaksia tai molempien yhdistelmää."
+
+#: src/templates/search.html:62
+msgid "Show full syntax"
+msgstr "Näytä koko syntaksi"
+
+#: src/templates/search.html:286
+msgid "Results"
+msgstr "Tulokset"
+
+#: src/templates/show-item.html:25 src/templates/show-templates-select.html:31
+msgid "View"
+msgstr "Näytä"
+
+#: src/templates/show-templates-select.html:23
+msgid "Last modification date"
+msgstr "Viimeisin muokkauspäivä"
+
+#: src/templates/show.html:40
+msgid "Toggle filters"
+msgstr "Vaihda suodattimet"
+
+#: src/templates/show.html:41
+msgid "Filters"
+msgstr "Suodattimet"
+
+#: src/templates/steps-links-edit.html:60
+msgid "Add a deadline"
+msgstr "Lisää määräaika"
+
+#: src/templates/steps-links-edit.html:64
+msgid "%d hour"
+msgstr "%d tunti"
+
+#: src/templates/steps-links-edit.html:65
+msgid "%d day"
+msgstr "%d päivä"
+
+#: src/templates/steps-links-edit.html:66
+msgid "%d week"
+msgstr "%d viikko"
+
+#: src/templates/steps-links-edit.html:67
+msgid "%d month"
+msgstr "%d kuukausi"
+
+#: src/templates/steps-links-edit.html:68
+msgid "%d year"
+msgstr "%d vuosi"
+
+#: src/templates/steps-links-edit.html:151
+msgid "Search in experiments"
+msgstr "Hae kokeista"
+
+#: src/templates/sysconfig.html:12
+msgid "Create team"
+msgstr "Luo tiimi"
+
+#: src/templates/sysconfig.html:19
+msgid "Enter team name"
+msgstr "Kirjoita tiimin nimi"
+
+#: src/templates/sysconfig.html:44
+msgid "Communication"
+msgstr "Viestintä"
+
+#: src/templates/sysconfig.html:47
+msgid "Policies"
+msgstr "Käytännöt"
+
+#: src/templates/sysconfig.html:86
+msgid "Address of the Proxy"
+msgstr "Välityspalvelimen osoite"
+
+#: src/templates/sysconfig.html:95
+msgid "Maximum number of stored revisions per entry"
+msgstr "Tallennettujen versioiden enimmäismäärä merkintää kohti"
+
+#: src/templates/sysconfig.html:102
+msgid "Minimum number of characters that need to be changed in order to create a new revision per entry"
+msgstr "Vähimmäismäärä merkkejä, jotka on muutettava uuden version luomiseksi merkintää kohti"
+
+#: src/templates/sysconfig.html:109
+msgid "Number of days between changes to automatically create a revision"
+msgstr "Päivien määrä muutosten välillä, jotta versio luodaan automaattisesti"
+
+#: src/templates/sysconfig.html:116
+msgid "URL where the Support menu entry from Help dropdown points"
+msgstr "URL-osoite, johon Tuki-valikon kohta Ohje-pudotusvalikosta osoittaa"
+
+#: src/templates/sysconfig.html:132
+msgid "Allow anonymous visitors to login and see Public experiments"
+msgstr "Salli anonyymien vierailijoiden kirjautua sisään ja nähdä julkisia kokeiluja"
+
+#: src/templates/sysconfig.html:134
+msgid "Switch this instance in open science mode"
+msgstr "Vaihda tämä ilmentymä avoimen tieteen tilaan"
+
+#: src/templates/sysconfig.html:137
+msgid "Select which team will be open to the world in open science mode"
+msgstr "Valitse, mikä tiimi on avoin maailmalle avoimen tieteen tilassa"
+
+#: src/templates/sysconfig.html:147
+msgid "Enable local account creation"
+msgstr "Ota paikallinen tilin luominen käyttöön"
+
+#: src/templates/sysconfig.html:148
+msgid "Admins can create local accounts"
+msgstr "Järjestelmänvalvojat voivat luoda paikallisia tilejä"
+
+#: src/templates/sysconfig.html:152
+msgid "Show local login form"
+msgstr "Näytä paikallinen kirjautumislomake"
+
+#: src/templates/sysconfig.html:161 src/templates/sysconfig.html:172
+msgid "Remote directory configuration"
+msgstr "Etähakemiston määritys"
+
+#: src/templates/sysconfig.html:163
+msgid "Admins can create local accounts from remote directory"
+msgstr "Järjestelmänvalvojat voivat luoda paikallisia tilejä etähakemistosta"
+
+#: src/templates/sysconfig.html:166
+msgid "Remote directory service"
+msgstr "Etähakemistopalvelu"
+
+#: src/templates/sysconfig.html:175
+msgid "Use a JSON string for configuration. This setting is stored encrypted."
+msgstr "Käytä määritykseen JSON-merkkijonoa. Tämä asetus tallennetaan salattuna."
+
+#: src/templates/sysconfig.html:184
+msgid "Docker image version"
+msgstr "Docker-kuvaversio"
+
+#: src/templates/sysconfig.html:187
+msgid "MySQL database structure version"
+msgstr "MySQL-tietokantarakenteen versio"
+
+#: src/templates/sysconfig.html:200
+msgid "Teams list"
+msgstr "Tiimilista"
+
+#: src/templates/sysconfig.html:203
+msgid "This page allows you to edit the teams present on this instance."
+msgstr "Tällä sivulla voit muokata tässä tapauksessa läsnä olevia tiimejä."
+
+#: src/templates/sysconfig.html:206
+msgid "Create a team"
+msgstr "Luo tiimi"
+
+#: src/templates/sysconfig.html:215
+msgid "Organisation ID"
+msgstr "Organisaation tunnus"
+
+#: src/templates/sysconfig.html:217 src/templates/sysconfig.html:241
+msgid "Visible"
+msgstr "Näkyy"
+
+#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:55
+#: src/templates/catstat-edit.html:8 src/templates/catstat-edit.html:30
+#: src/templates/catstat-view.html:14 src/templates/catstat-view.html:22
+#: src/templates/sysconfig.html:235
+msgid "Not set"
+msgstr "Ei valittu"
+
+#: src/templates/sysconfig.html:334
+msgid "Address of the SMTP server"
+msgstr "SMTP-palvelimen osoite"
+
+#: src/templates/sysconfig.html:340
+msgid "SMTP Port"
+msgstr "SMTP-portti"
+
+#: src/templates/sysconfig.html:347
+msgid "SMTP username"
+msgstr "SMTP-käyttäjänimi"
+
+#: src/templates/sysconfig.html:368
+msgid "Sender address"
+msgstr "Lähettäjän osoite"
+
+#: src/templates/sysconfig.html:373 src/templates/sysconfig.html:555
+msgid "Verify TLS certificate"
+msgstr "Tarkista TLS-varmenne"
+
+#: src/templates/sysconfig.html:393
+msgid "Users need validation by admin after registration"
+msgstr "Käyttäjät tarvitsevat järjestelmänvalvojan vahvistuksen rekisteröinnin jälkeen"
+
+#: src/templates/sysconfig.html:396
+msgid "Enforce 2FA"
+msgstr "Ota käyttöön 2FA"
+
+#: src/templates/sysconfig.html:421
+msgid "Time after which inactive sessions are invalidated (force logout) (in seconds)"
+msgstr "Aika, jonka jälkeen ei-aktiiviset istunnot mitätöidään (pakota uloskirjautuminen) (sekunteina)"
+
+#: src/templates/sysconfig.html:465
+msgid "Bruteforce login protection"
+msgstr "Bruteforce-kirjautumissuojaus"
+
+#: src/templates/sysconfig.html:517
+msgid "Uploaded files configuration"
+msgstr "Ladattujen tiedostojen määritykset"
+
+#: src/templates/sysconfig.html:570
+msgid "Enable blockchain timestamping with Bloxberg"
+msgstr "Ota lohkoketjun aikaleima käyttöön Bloxbergin avulla"
+
+#: src/templates/sysconfig.html:571
+msgid "Anonymize author for GDPR compliance"
+msgstr "Muuta kirjoittaja nimettömäksi GDPR:n noudattamiseksi"
+
+#: src/templates/sysconfig.html:576
+msgid "Keeex configuration"
+msgstr "Keeex-kokoonpano"
+
+#: src/templates/sysconfig.html:578
+msgid "Requires a Keeex Fusion daemon running. %sSee documentation%s."
+msgstr "Edellyttää Keeex Fusion -demonia käynnissä. %sKatso dokumentaatio%s."
+
+#: src/templates/sysconfig.html:580
+msgid "Enable Keeex"
+msgstr "Ota Keeex käyttöön"
+
+#: src/templates/sysconfig.html:583
+msgid "Keeex host"
+msgstr "Keeex-isäntä"
+
+#: src/templates/sysconfig.html:586
+msgid "Address (hostname or IP) of the Keeex service."
+msgstr "Keeex-palvelun osoite (isäntänimi tai IP)."
+
+#: src/templates/sysconfig.html:590
+msgid "Keeex port"
+msgstr "Keeexin satama"
+
+#: src/templates/sysconfig.html:593
+msgid "Default port is 8080."
+msgstr "Oletusportti on 8080."
+
+#: src/templates/sysconfig.html:606
+msgid "View metadata.xml"
+msgstr "Näytä metadata.xml"
+
+#: src/templates/sysconfig.html:610
+msgid "General settings"
+msgstr "Yleiset asetukset"
+
+#: src/templates/sysconfig.html:613
+msgid "Enable SAML authentication"
+msgstr "Ota SAML-todennus käyttöön"
+
+#: src/templates/sysconfig.html:614
+msgid "Strict mode"
+msgstr "Tiukka tila"
+
+#: src/templates/sysconfig.html:615
+msgid "Debug mode"
+msgstr "Debug-tilassa"
+
+#: src/templates/sysconfig.html:619
+msgid "Service provider"
+msgstr "Palveluntarjoaja"
+
+#: src/templates/sysconfig.html:623
+msgid "Base URL"
+msgstr "Perus-URL-osoite"
+
+#: src/templates/sysconfig.html:687
+msgid "Teams settings"
+msgstr "Tiimin asetukset"
+
+#: src/templates/sysconfig.html:690
+msgid "Fallback to internal id if existing user cannot be matched with email"
+msgstr "Varaa sisäiseen tunnukseen, jos olemassa olevaa käyttäjää ei voida yhdistää sähköpostiin"
+
+#: src/templates/sysconfig.html:691
+msgid "If user is matched with internal id, update the email sent by IDP?"
+msgstr "Jos käyttäjä löytää sisäisen tunnuksen, päivitetäänkö IDP:n lähettämä sähköposti?"
+
+#: src/templates/sysconfig.html:692
+msgid "Synchronize the local teams with the teams sent by IDP"
+msgstr "Synkronoi paikalliset tiimit IDP:n lähettämien ryhmien kanssa"
+
+#: src/templates/sysconfig.html:693
+msgid "Create team sent by IDP if it doesn't exist already"
+msgstr "Luo IDP:n lähettämä tiimi, jos sitä ei vielä ole olemassa"
+
+#: src/templates/sysconfig.html:696 src/templates/sysconfig.html:927
+#: src/templates/sysconfig.html:1011
+msgid "If no team attribute is found, to which team user is assigned?"
+msgstr "Jos tiimimääritettä ei löydy, mille tiimin käyttäjälle on määritetty?"
+
+#: src/templates/sysconfig.html:701 src/templates/sysconfig.html:932
+#: src/templates/sysconfig.html:1016
+msgid "Throw error"
+msgstr "Heitä virhe"
+
+#: src/templates/sysconfig.html:702 src/templates/sysconfig.html:933
+msgid "Let user select a team"
+msgstr "Anna käyttäjän valita tiimi"
+
+#: src/templates/sysconfig.html:708 src/templates/sysconfig.html:939
+#: src/templates/sysconfig.html:1022
+msgid "If the user doesn't exist yet, what to do?"
+msgstr "Jos käyttäjää ei ole vielä olemassa, mitä tehdään?"
+
+#: src/templates/sysconfig.html:710 src/templates/sysconfig.html:941
+#: src/templates/sysconfig.html:1024
+msgid "Create the user on the fly"
+msgstr "Luo käyttäjä lennossa"
+
+#: src/templates/sysconfig.html:711 src/templates/sysconfig.html:942
+#: src/templates/sysconfig.html:1025
+msgid "Throw error, allowing a sysadmin to create the user"
+msgstr "Heitä virhe, jolloin järjestelmänvalvoja voi luoda käyttäjän"
+
+#: src/templates/sysconfig.html:717
+msgid "Security settings"
+msgstr "Turvallisuusasetukset"
+
+#: src/templates/sysconfig.html:725
+msgid "Identity Providers list"
+msgstr "Henkilöllisyyden tarjoajien luettelo"
+
+#: src/templates/sysconfig.html:728
+msgid "It is possible to configure several identity providers for your instance."
+msgstr "Instanssillesi on mahdollista määrittää useita identiteetin tarjoajia."
+
+#: src/templates/sysconfig.html:747
+msgid "Enabled"
+msgstr "Käytössä"
+
+#: src/templates/sysconfig.html:857
+msgid "LDAP server configuration"
+msgstr "LDAP-palvelimen määritykset"
+
+#: src/templates/sysconfig.html:908
+msgid "eLabFTW LDAP configuration"
+msgstr "eLabFTW LDAP -määritys"
+
+#: src/templates/sysconfig.html:912
+msgid "By which LDAP attribute the user will be found (default is 'mail')."
+msgstr "Millä LDAP-attribuutilla käyttäjä löydetään (oletus on 'mail')."
+
+#: src/templates/sysconfig.html:915
+msgid "You can search for several attributes by separating them with a comma (e.g. uid,mail)."
+msgstr "Voit etsiä useita määritteitä erottamalla ne pilkulla (esim. uid,mail)."
+
+#: src/templates/sysconfig.html:919
+msgid "What attribute to look for the team name"
+msgstr "Mitä määritettä etsiä joukkueen nimelle"
+
+#: src/templates/sysconfig.html:924 src/templates/sysconfig.html:1030
+msgid "Create team sent by server if it doesn't exist already"
+msgstr "Luo palvelimen lähettämä tiimi, jos sitä ei vielä ole olemassa"
+
+#: src/templates/sysconfig.html:948
+msgid "What attribute to look for the email"
+msgstr "Mitä määritettä etsiä sähköpostissa"
+
+#: src/templates/sysconfig.html:954
+msgid "What attribute to look for the firstname"
+msgstr "Mitä määritettä etsitään etunimelle"
+
+#: src/templates/sysconfig.html:960
+msgid "What attribute to look for the lastname"
+msgstr "Mitä määritettä etsitään sukunimelle"
+
+#: src/templates/sysconfig.html:971
+msgid "If authentication is handled by an upstream server, configure here the request headers mappings and behaviors."
+msgstr "Jos todennusta käsittelee ylävirran palvelin, määritä tässä pyyntöotsikoiden kartoitukset ja käyttäytyminen."
+
+#: src/templates/sysconfig.html:977
+msgid "Use this to detect if the user is logged in from upstream server (value is not used, only presence)."
+msgstr "Käytä tätä havaitaksesi, onko käyttäjä kirjautunut sisään ylävirran palvelimelta (arvoa ei käytetä, vain läsnäolo)."
+
+#: src/templates/team.html:222
+msgid "Send an email to users"
+msgstr "Lähetä sähköpostia käyttäjille"
+
+#: src/templates/sysconfig.html:303 src/templates/team.html:77
+#: src/templates/team.html:226
+msgid "Send to"
+msgstr "Lähetä"
+
+#: src/templates/team.html:82 src/templates/team.html:228
+msgid "Members of team %s"
+msgstr "Tiimin %s jäsenet"
+
+#: src/templates/team.html:86 src/templates/team.html:232
+msgid "Members of teamgroup %s"
+msgstr "Tiimiryhmän %s jäsenet"
+
+#: src/templates/todolist-panel.html:8
+msgid "Add a new task"
+msgstr "Lisää uusi tehtävä"
+
+#: src/templates/todolist-panel.html:30
+msgid "Show steps for team"
+msgstr "Näytä vaiheet tiimille"
+
+#: src/templates/ts-config.html:3
+msgid "Select timestamping authority (TSA)"
+msgstr "Valitse aikaleima-auktoriteetti (TSA)"
+
+#: src/templates/ts-config.html:19
+msgid "Login for external timestamping service"
+msgstr "Kirjaudu ulkoiseen aikaleimapalveluun"
+
+#: src/templates/ts-config.html:26
+msgid "Password for external timestamping service"
+msgstr "Salasana ulkoiselle aikaleimapalvelulle"
+
+#: src/templates/ucp.html:13
+msgid "General"
+msgstr "Yleinen"
+
+#: src/templates/ucp.html:68
+msgid "Help us translate eLabFTW!"
+msgstr "Auta meitä kääntämään eLabFTW!"
+
+#: src/templates/ucp.html:76
+msgid "Items per page"
+msgstr "Kohteita per sivu"
+
+#: src/templates/ucp.html:82
+msgid "Display mode"
+msgstr "Näyttötila"
+
+#: src/templates/ucp.html:91
+msgid "Order by"
+msgstr "Järjestä"
+
+#: src/templates/ucp.html:196
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation"
+msgstr "Ota käyttöön kiinalaiset, japanilaiset ja korealaiset fontit PDF:n luonnissa"
+
+#: src/templates/ucp.html:197
+msgid "WARNING: this will dramatically increase the file size unless you disable PDF/A"
+msgstr "VAROITUS: tämä suurentaa dramaattisesti tiedostokokoa, ellet poista PDF/A:ta käytöstä"
+
+#: src/templates/ucp.html:207 src/templates/ucp.html:208
+msgid "Add attached files summary to the PDF"
+msgstr "Lisää liitetiedostojen yhteenveto PDF-tiedostoon"
+
+#: src/templates/ucp.html:216
+msgid "Append attached PDFs to exported PDF"
+msgstr "Liitä liitetyt PDF-tiedostot vietyihin PDF-tiedostoihin"
+
+#: src/templates/ucp.html:225
+msgid "Enable french style signature block in PDF Export"
+msgstr "Ota käyttöön ranskalaistyylinen allekirjoituslohko PDF-viennissä"
+
+#: src/templates/ucp.html:342
+msgid "Your identity"
+msgstr "Sinun henkilöllisyytesi"
+
+#: src/templates/export-menu.html:13
+msgid "QR Code"
+msgstr "QR koodi"
+
+#: src/templates/view.html:9
+msgid "Viewing an entry"
+msgstr "Tarkastelee merkintää"
+
+#: src/templates/view.html:29
+msgid "Locked by %s on %s at %s"
+msgstr "Lukitsi %s %s klo %s"
+
+#: src/Auth/External.php:61 src/Auth/Ldap.php:67 src/Auth/Saml.php:305
+msgid "Could not find an existing user. Ask a Sysadmin to create your account."
+msgstr "Olemassa olevaa käyttäjää ei löytynyt. Pyydä järjestelmänvalvojaa luomaan tili."
+
+#: src/classes/i18n4Js.php:39
+msgid "Click to edit"
+msgstr "Muokkaa napsauttamalla"
+
+#: src/classes/i18n4Js.php:57
+msgid "Now"
+msgstr "Nyt"
+
+#: src/classes/i18n4Js.php:70
+msgid "Today"
+msgstr "Tänään"
+
+#: src/Enums/BasePermissions.php:29
+msgid "Only owner and admins"
+msgstr "Vain omistaja ja ylläpitäjät"
+
+#: src/Enums/BasePermissions.php:30
+msgid "Only owner"
+msgstr "Vain omistaja"
+
+#: src/models/Revisions.php:110
+msgid "Revisions cannot be deleted."
+msgstr "Versioita ei voi poistaa."
+
+#: src/models/notifications/SelfIsValidated.php:31
+msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s"
+msgstr "Hei. Järjestelmänvalvoja vahvisti tilisi eLabFTW:ssä. Kirjaudu sisään tästä linkistä: %s"
+
+#: web/dashboard.php:25 src/templates/head.html:132 src/templates/ucp.html:116
+msgid "Dashboard"
+msgstr "Kojelauta"
+
+#: web/database.php:29 src/templates/dashboard.html:55
+#: src/templates/field-builder-modal.html:52 src/templates/team.html:261
+#: src/templates/team.html:277
+msgid "Resource"
+msgid_plural "Resources"
+msgstr[0] "Resurssi"
+msgstr[1] "Resurssit"
+
+#: src/templates/admin.html:264
+msgid "Resources categories"
+msgstr "Resurssikategoriat"
+
+#: src/templates/admin.html:268
+msgid "This menu allows you to define categories for your resources. A resource category is similar to an experiment template but for resources entries."
+msgstr "Tämän valikon avulla voit määrittää resursseillesi luokkia. Resurssiluokka on samanlainen kuin kokeen mallipohja, mutta resurssimerkintöjä varten."
+
+#: src/templates/admin.html:337 src/templates/edit.html:117
+#: src/templates/view-edit-template.html:160
+msgid "Load fields"
+msgstr "Lataa kentät"
+
+#: src/templates/dashboard.html:12
+msgid "Welcome %s"
+msgstr "Tervetuloa %s"
+
+#: src/templates/edit-tags.html:16
+msgid "Suggested tags"
+msgstr "Ehdotetut tunnisteet"
+
+#: src/templates/editusers.html:43
+msgid "Show only Admins"
+msgstr "Näytä vain järjestelmänvalvojat"
+
+#: src/templates/editusers.html:159
+msgid "Unvalidated"
+msgstr "Vahvistamaton"
+
+#: src/templates/editusers.html:210
+msgid "Promote to Admin"
+msgstr "Ylennä järjestelmänvalvojaksi"
+
+#: src/templates/editusers.html:216
+msgid "Demote from Admin"
+msgstr "Alenna järjestelmänvalvojasta"
+
+#: src/templates/editusers.html:244
+msgid "Validate user"
+msgstr "Vahvista käyttäjä"
+
+#: src/templates/field-builder-modal.html:48
+msgid "Time"
+msgstr "Aika"
+
+#: src/templates/field-builder-modal.html:155
+msgid "Load extra fields"
+msgstr "Lataa ylimääräiset kentät"
+
+#: src/templates/field-builder-modal.html:161
+msgid "Load from a database category"
+msgstr "Lataa tietokantakategoriasta"
+
+#: src/templates/field-builder-modal.html:169
+#: src/templates/field-builder-modal.html:181
+msgid "Load"
+msgstr "Lataa"
+
+#: src/templates/field-builder-modal.html:173
+msgid "Load from an experiment template"
+msgstr "Lataa kokeen mallipohjasta"
+
+#: src/templates/field-builder-modal.html:185
+msgid "Metadata preview"
+msgstr "Metatietojen esikatselu"
+
+#: src/templates/field-builder-modal.html:187
+msgid "Warning: clicking Apply will completely replace any existing metadata!"
+msgstr "Varoitus: Napsauttamalla Käytä korvaa kaikki olemassa olevat metatiedot!"
+
+#: src/templates/field-builder-modal.html:192
+msgid "Apply"
+msgstr "Käytä"
+
+#: src/templates/head.html:52
+msgid "Go to dashboard"
+msgstr "Siirry kojelautaan"
+
+#: src/templates/head.html:62 src/templates/search.html:73
+#: src/templates/team.html:180 src/templates/todolist-panel.html:45
+msgid "Resources"
+msgstr "Resurssit"
+
+#: src/templates/revisions.html:6
+msgid "A change of at least %d characters is required to trigger a revision save."
+msgstr "Vähintään %d merkin muutos vaaditaan, jotta versio tallennetaan."
+
+#: src/templates/revisions.html:17 src/templates/revisions.html:18
+msgid "Compare revisions"
+msgstr "Vertaa versioita"
+
+#: src/templates/revisions.html:30
+msgid "Revision ID"
+msgstr "Version tunnus"
+
+#: src/templates/show.html:33 src/templates/uploads.html:37
+msgid "Switch layout"
+msgstr "Vaihda asettelua"
+
+#: src/templates/show.html:169 src/templates/uploads.html:41
+msgid "Show archived"
+msgstr "Näytä arkistoitu"
+
+#: src/templates/sysconfig.html:92
+msgid "Allow the base permission setting «Only owner»"
+msgstr "Salli peruskäyttöoikeusasetus \"Vain omistaja\""
+
+#: src/templates/sysconfig.html:155
+msgid "Message shown to user after successful external auth but local account provisioning is required"
+msgstr "Viesti näytetään käyttäjälle onnistuneen ulkoisen todennuksen jälkeen, mutta paikallista tiliä tarvitaan"
+
+#: src/templates/sysconfig.html:250
+msgid "None available"
+msgstr "Ei yhtään saatavilla"
+
+#: src/templates/sysconfig.html:306
+msgid "All active users"
+msgstr "Kaikki aktiiviset käyttäjät"
+
+#: src/templates/sysconfig.html:310
+msgid "All active admins"
+msgstr "Kaikki aktiiviset ylläpitäjät"
+
+#: src/templates/sysconfig.html:314
+msgid "All active sysadmins"
+msgstr "Kaikki aktiiviset järjestelmänvalvojat"
+
+#: src/templates/sysconfig.html:427
+msgid "Allow setting an authentication cookie"
+msgstr "Salli todennusevästeen asettaminen"
+
+#: src/templates/sysconfig.html:427
+msgid "Disabling this setting will hide the \"remember me\" checkbox on login page."
+msgstr "Tämän asetuksen poistaminen käytöstä piilottaa \"muista minut\" -valintaruudun kirjautumissivulla."
+
+#: src/templates/sysconfig.html:429
+msgid "Check the \"remember me\" box on login page by default"
+msgstr "Valitse oletusarvoisesti \"Muista minut\" -ruutu kirjautumissivulla"
+
+#: src/templates/sysconfig.html:432
+msgid "Validity period of an authentication cookie (in minutes)"
+msgstr "Todennusevästeen voimassaoloaika (minuutteina)"
+
+#: src/templates/sysconfig.html:488
+msgid "Link name"
+msgstr "Linkin nimi"
+
+#: src/templates/ucp.html:113
+msgid "Which page will be loaded first"
+msgstr "Mikä sivu latautuu ensin"
+
+#: src/templates/ucp.html:172
+msgid "Disable all shortcuts"
+msgstr "Poista kaikki pikakuvakkeet käytöstä"
+
+#: src/templates/upload-dropdown-menu.html:89 src/templates/uploads.html:113
+#: src/templates/view-edit-toolbar.html:294
+msgid "Archive/Unarchive"
+msgstr "Arkistoi/Poista arkistosta"
+
+#: src/Enums/ProcurementState.php:30 src/templates/uploads.html:82
+#: src/templates/uploads.html:139
+msgid "Archived"
+msgstr "Arkistoitu"
+
+#: src/templates/view-edit-template.html:79
+#: src/templates/view-edit-toolbar.html:288
+msgid "See revisions"
+msgstr "Katso tarkistukset"
+
+#: src/templates/view-edit.html:14
+msgid "This entry is archived: it will not appear in the listings by default."
+msgstr "Tämä merkintä on arkistoitu: se ei näy oletusarvoisesti luettelossa."
+
+#: src/classes/i18n4Js.php:53
+msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"
+msgstr "Tämä on ainoa kerta, kun avain näytetään! Muista kopioida se turvalliseen paikkaan, koska et näe sitä enää:"
+
+#: src/Enums/BasePermissions.php:26
+msgid "Everyone including anonymous users"
+msgstr "Kaikki mukaan lukien nimettömät käyttäjät"
+
+#: src/Enums/BasePermissions.php:27
+msgid "Everyone with an account"
+msgstr "Kaikki, joilla on tili"
+
+#: src/models/Scheduler.php:85
+msgid "You do not have the permission to book this entry."
+msgstr "Sinulla ei ole lupaa varata tätä merkintää."
+
+#: src/models/Scheduler.php:206
+msgid "Event cancellation is not permitted."
+msgstr "Tapahtuman peruuttaminen ei ole sallittua."
+
+#: src/models/Scheduler.php:214
+msgid "Cannot cancel slot less than %d minutes before its start."
+msgstr "Aikaa ei voi peruuttaa alle %d minuuttia ennen sen alkua."
+
+#: src/models/Scheduler.php:410
+msgid "Slot time is limited to %d minutes."
+msgstr "Aika on rajoitettu %d minuuttiin."
+
+#: src/models/Scheduler.php:427
+msgid "You cannot book any more slots. Maximum of %d reached."
+msgstr "Et voi varata enempää paikkoja. Maksimi %d saavutettu."
+
+#: src/models/Scheduler.php:459
+msgid "Overlapping booking slots is not permitted."
+msgstr "Päällekkäiset varausajat eivät ole sallittuja."
+
+#: src/models/notifications/EventDeleted.php:86
+msgid "Message:"
+msgstr "Viesti:"
+
+#: src/templates/booking-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:275
+msgid "Modify booking parameters"
+msgstr "Muokkaa varausparametreja"
+
+#: src/templates/booking-params-modal.html:14
+#: src/templates/booking-params-modal.html:15
+msgid "Allow booking this resource"
+msgstr "Salli tämän resurssin varaus"
+
+#: src/templates/booking-params-modal.html:22
+#: src/templates/booking-params-modal.html:23
+msgid "Allow overlapping slots"
+msgstr "Salli päällekkäiset paikat"
+
+#: src/templates/booking-params-modal.html:31
+msgid "Maximum slot time (in minutes)"
+msgstr "Aikavälin enimmäisaika (minuutteina)"
+
+#: src/templates/booking-params-modal.html:37
+msgid "Maximum per-user future slot allowed"
+msgstr "Suurin sallittu tulevaisuuden käyttäjäkohtainen paikka"
+
+#: src/templates/booking-params-modal.html:52
+#: src/templates/booking-params-modal.html:53
+msgid "Allow cancelling a booking slot"
+msgstr "Salli varausajan peruuttaminen"
+
+#: src/templates/booking-params-modal.html:59
+msgid "Minimum time before a slot can be cancelled (in minutes)"
+msgstr "Vähimmäisaika ennen kuin paikka voidaan peruuttaa (minuutteina)"
+
+#: src/templates/edit.html:86 src/templates/view.html:113
+msgid "Main text"
+msgstr "Pääteksti"
+
+#: src/templates/field-builder-modal.html:46
+msgid "Date and time"
+msgstr "Päivämäärä ja aika"
+
+#: src/templates/field-builder-modal.html:123
+msgid "Required"
+msgstr "Edellytetään"
+
+#: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:15
+msgid "Select who can book this entry"
+msgstr "Valitse, kuka voi varata tämän merkinnän"
+
+#: src/templates/team.html:74
+msgid "Cancel booking slot"
+msgstr "Peruuta varauspaikka"
+
+#: src/templates/team.html:75
+msgid "Add a custom message"
+msgstr "Lisää mukautettu viesti"
+
+#: src/templates/team.html:79
+msgid "Past and future users who booked this resource"
+msgstr "Tämän resurssin varanneet entiset ja tulevat käyttäjät"
+
+#: src/templates/team.html:90
+msgid "Send message and cancel"
+msgstr "Lähetä viesti ja peruuta"
+
+#: src/templates/team.html:113
+msgid "Start by selecting a resource below"
+msgstr "Aloita valitsemalla resurssi alta"
+
+#: src/templates/permissions-edit-modal.html:21
+#: src/templates/view-permissions.html:14
+msgid "Can book"
+msgstr "Voi varata"
+
+#: src/templates/dashboard.html:89
+msgid "Scheduled bookings"
+msgstr "Aikataulutetut varaukset"
+
+#: src/templates/field-builder-modal.html:92
+msgid "Available units"
+msgstr "Saatavilla olevat yksiköt"
+
+#: src/templates/json-editor.html:41
+msgid "You have unsaved changes"
+msgstr "Sinulla on tallentamattomia muutoksia"
+
+#: src/templates/permissions-edit-modal.html:13
+#: src/templates/view-permissions.html:6
+msgid "Visibility"
+msgstr "Näkyvyys"
+
+#: src/templates/permissions-edit-modal.html:14
+#: src/templates/view-permissions.html:7
+msgid "Select who can see this entry"
+msgstr "Valitse, ketkä voivat nähdä tämän merkinnän"
+
+#: src/templates/permissions-edit-modal.html:17
+#: src/templates/view-permissions.html:10
+msgid "Can write"
+msgstr "Voi kirjoittaa"
+
+#: src/templates/permissions-edit-modal.html:18
+#: src/templates/view-permissions.html:11
+msgid "Select who can edit this entry"
+msgstr "Valitse, kuka voi muokata tätä merkintää"
+
+#: src/templates/sysconfig.html:82
+msgid "The default language of this instance. It can be overridden by each user."
+msgstr "Tämän esiintymän oletuskieli. Jokainen käyttäjä voi ohittaa sen."
+
+#: src/Make/MakeMultiPdf.php:29
+msgid "Multientry eLabFTW PDF"
+msgstr "Moniosainen eLabFTW PDF"
+
+#: src/templates/admin.html:25
+msgid "Categories"
+msgstr "Luokat"
+
+#: src/templates/admin.html:36
+msgid "Create new experiments category"
+msgstr "Luo uusi koeluokka"
+
+#: src/templates/admin.html:37
+msgid "Create new experiments status"
+msgstr "Luo uusi koetila"
+
+#: src/templates/admin.html:38
+msgid "Create new resources status"
+msgstr "Luo uusien resurssien tila"
+
+#: src/templates/admin.html:216
+msgid "Experiments categories"
+msgstr "Koeluokat"
+
+#: src/templates/admin.html:219
+msgid "Create and modify the categories available to experiments."
+msgstr "Luo ja muokkaa kokeissa käytettävissä olevia luokkia."
+
+#: src/templates/admin.html:350
+msgid "Experiments Status"
+msgstr "Kokeiden tila"
+
+#: src/templates/admin.html:397
+msgid "Resources Status"
+msgstr "Resurssien tila"
+
+#: src/templates/editusers.html:229
+msgid "Disable 2FA"
+msgstr "Poista 2FA käytöstä"
+
+#: src/templates/field-builder-modal.html:133
+msgid "Read-only"
+msgstr "Lukuoikeus"
+
+#: src/templates/show.html:90 src/templates/show.html:91
+msgid "Filter category"
+msgstr "Suodatinluokka"
+
+#: src/templates/show.html:213 src/templates/show.html:215
+msgid "Change category"
+msgstr "Vaihda luokkaa"
+
+#: src/templates/steps-links-edit.html:163
+#: src/templates/steps-links-view.html:66
+msgid "Linked resources"
+msgstr "Linkitetyt resurssit"
+
+#: src/templates/team.html:56
+msgid "Bind a resource"
+msgstr "Sido resurssi"
+
+#: src/templates/ucp.html:454 src/templates/ucp.html:465
+msgid "Last used"
+msgstr "Viimeksi käytetty"
+
+#: src/classes/i18n4Js.php:48
+msgid "A category is required to fetch the next Custom ID"
+msgstr "Seuraavan mukautetun tunnuksen hakemiseen tarvitaan luokka"
+
+#: src/templates/admin.html:353
+msgid "Create and modify the status available to experiments."
+msgstr "Luo ja muokkaa kokeiden käytettävissä olevaa tilaa."
+
+#: src/templates/admin.html:400
+msgid "Create and modify the status available to resources."
+msgstr "Luo ja muokkaa resurssien käytettävissä olevaa tilaa."
+
+#: src/templates/archive-user-modal.html:5
+msgid "Unarchiving a user means their account will be restored. This action is reversible."
+msgstr "Käyttäjän arkistoinnin poistaminen tarkoittaa, että hänen tilinsä palautetaan. Tämä toiminto on peruutettava."
+
+#: src/templates/archive-user-modal.html:8
+msgid "Archiving a user means their account will be disabled. This action is reversible."
+msgstr "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava."
+
+#: src/templates/archive-user-modal.html:24
+msgid "Lock and archive all experiments"
+msgstr "Lukitse ja arkistoi kaikki kokeilut"
+
+#: src/templates/create-new-item-modal.html:13
+msgid "Select template"
+msgstr "Valitse malli"
+
+#: src/templates/create-new-item-modal.html:38
+msgid "Add category…"
+msgstr "Lisää kategoria…"
+
+#: src/templates/create-new-item-modal.html:22
+msgid "Default template"
+msgstr "Oletusmalli"
+
+#: src/templates/dashboard.html:24 src/templates/dashboard.html:59
+msgid "Browse by category"
+msgstr "Selaa luokittain"
+
+#: src/templates/dashboard.html:33 src/templates/dashboard.html:67
+msgid "Browse by status"
+msgstr "Selaa tilan mukaan"
+
+#: src/templates/dashboard.html:41
+msgid "Last modified experiments"
+msgstr "Viimeksi muokatut kokeet"
+
+#: src/templates/dashboard.html:75
+msgid "Last modified resources"
+msgstr "Viimeksi muokatut resurssit"
+
+#: src/templates/edit.html:58
+msgid "ID"
+msgstr "ID"
+
+#: src/templates/edit.html:60 src/templates/related-snippet.html:18
+#: src/templates/show-item.html:61 src/templates/steps-links-edit.html:115
+#: src/templates/steps-links-edit.html:175
+#: src/templates/steps-links-view.html:44 src/templates/view.html:52
+msgid "Custom ID"
+msgstr "Muokattu tunnus"
+
+#: src/templates/edit.html:63
+msgid "Get next"
+msgstr "Hae seuraava"
+
+#: src/templates/editusers.html:37
+msgid "Include users not in this team"
+msgstr "Sisällytä käyttäjät, jotka eivät kuulu tähän tiimiin"
+
+#: src/templates/editusers.html:222
+msgid "Add to team"
+msgstr "Lisää tiimiin"
+
+#: src/templates/editusers.html:333
+msgid "Search user"
+msgstr "Etsi käyttäjä"
+
+#: src/templates/footer.html:3
+msgid "Follow eLabFTW on X!"
+msgstr "Seuraa eLabFTW:tä X:ssä!"
+
+#: src/templates/search.html:28
+msgid "Press %sctrl + enter%s or %s⌘ + enter%s to submit search."
+msgstr "Lähetä haku painamalla %sctrl + enter%s tai %s⌘ + enter%s."
+
+#: src/templates/search.html:35
+msgid "Allowed Fields"
+msgstr "Sallitut kentät"
+
+#: src/templates/search.html:35
+msgid "field"
+msgstr "kenttä"
+
+#: src/templates/search.html:35
+msgid "value"
+msgstr "arvo"
+
+#: src/templates/search.html:39
+msgid "yes, no, simple or quoted term"
+msgstr "kyllä, ei, yksinkertainen tai lainattu termi"
+
+#: src/templates/search.html:40 src/templates/search.html:41
+#: src/templates/search.html:42 src/templates/search.html:45
+#: src/templates/search.html:46 src/templates/search.html:52
+#: src/templates/search.html:55 src/templates/search.html:57
+#: src/templates/search.html:58
+msgid "simple or quoted term"
+msgstr "yksinkertainen tai lainattu termi"
+
+#: src/templates/search.html:44
+msgid "see date format"
+msgstr "katso päivämäärän muoto"
+
+#: src/templates/search.html:53 src/templates/search.html:56
+msgid "yes or no"
+msgstr "kyllä vai ei"
+
+#: src/templates/search.html:54
+msgid "1, 2, 3, 4, 5, or unrated or 0"
+msgstr "1, 2, 3, 4, 5 tai luokittelematon tai 0"
+
+#: src/templates/show.html:55
+msgid "Status (inverted)"
+msgstr "Tila (käänteinen)"
+
+#: src/templates/show.html:58
+msgid "Highest Custom ID"
+msgstr "Korkein ID"
+
+#: src/templates/show.html:59
+msgid "Lowest Custom ID"
+msgstr "Pienin ID"
+
+#: src/templates/sysconfig.html:149
+msgid "Allow Admins to add existing users to their team"
+msgstr "Salli järjestelmänvalvojien lisätä olemassa olevia käyttäjiä tiimiinsä"
+
+#: src/classes/i18n4Js.php:65
+msgid "Sort by column"
+msgstr "Lajittele sarakkeen mukaan"
+
+#: src/classes/i18n4Js.php:42 src/models/AbstractEntity.php:641
+msgid "Custom ID is already used! Try another one."
+msgstr "ID on jo käytössä! Kokeile toista."
+
+#: src/services/ExpirationNotifier.php:41
+msgid "Account expiration warning"
+msgstr "Varoitus tilin vanhenemisesta"
+
+#: src/services/ExpirationNotifier.php:46
+msgid "Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account."
+msgstr "Tilisi osoitteessa %s vanhenee %s, eikä sitä voi käyttää (arkistoitu) tämän päivämäärän jälkeen. Kaikki tietosi näkyvät edelleen muille, mutta et voi käyttää niitä tämän tilin kautta."
+
+#: src/services/ExpirationNotifier.php:66
+msgid "Account expiration information"
+msgstr "Tilin vanhenemistiedot"
+
+#: src/services/ExpirationNotifier.php:76
+msgid "One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others."
+msgstr "Yksi tai useampi tiimisi käyttäjätili vanhenee pian. Heidän tilinsä tulee käyttökelvottomaksi (arkistoitu). Kaikki heidän tietonsa näkyvät edelleen muille."
+
+#: src/services/Transform.php:111
+msgid "A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message."
+msgstr "Uusi eLabFTW-versio on asennettu edellisen vierailusi jälkeen.%sLue julkaisutiedot napsauttamalla tätä viestiä."
+
+#: src/services/UserArchiver.php:54
+msgid "You are trying to archive an unvalidated user. Maybe you want to delete the account?"
+msgstr "Yrität arkistoida vahvistamattoman käyttäjän. Ehkä haluat poistaa tilin?"
+
+#: src/services/UserArchiver.php:57
+msgid "A sysadmin account cannot be archived."
+msgstr "Sysadmin-tiliä ei voi arkistoida."
+
+#: src/services/UserArchiver.php:60
+msgid "This instance configuration only permits Sysadmin users to archive a user."
+msgstr "Tämä ilmentymän määritys sallii vain Sysadmin-käyttäjien arkistoida käyttäjän."
+
+#: src/templates/admin.html:309
+msgid "Permissions for the resource category"
+msgstr "Resurssiluokan käyttöoikeudet"
+
+#: src/templates/admin.html:312
+msgid "Permissions for the derived resource"
+msgstr "Johdetun resurssin käyttöoikeudet"
+
+#: src/templates/admin.html:551
+msgid "Tags of the team"
+msgstr "Tiimin tunnisteet"
+
+#: src/templates/create-new-item-modal.html:23
+msgid "Blank experiment"
+msgstr "Tyhjä koe"
+
+#: src/templates/editusers.html:14
+msgid "Filter teams"
+msgstr "Suodata tiimit"
+
+#: src/templates/editusers.html:87
+msgid "Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only."
+msgstr "Käytä tätä attribuuttia määrittääksesi, onko käyttäjällä ensisijainen järjestelmänvalvojan rooli tiimissä. Huomaa, että tämä nimitys on tarkoitettu vain tiedoksi."
+
+#: src/templates/editusers.html:119
+msgid "Users table"
+msgstr "Käyttäjien taulukko"
+
+#: src/templates/editusers.html:347
+msgid "Remote directory users list"
+msgstr "Etähakemiston käyttäjien luettelo"
+
+#: src/templates/footer.html:15
+msgid "Report bug"
+msgstr "Ilmoita virheestä"
+
+#: src/templates/footer.html:53 src/templates/head.html:153
+msgid "Select language"
+msgstr "Valitse kieli"
+
+#: src/templates/head.html:44
+msgid "Main menu"
+msgstr "Päävalikko"
+
+#: src/templates/head.html:47
+msgid "Toggle navigation"
+msgstr "Vaihda navigointi"
+
+#: src/templates/head.html:81
+msgid "Quicksearch"
+msgstr "Pikahaku"
+
+#: src/templates/login.html:132
+msgid "Show password"
+msgstr "Näytä salasana"
+
+#: src/templates/profile.html:92 src/templates/team.html:253
+#: src/templates/uploads.html:96
+msgid "Download"
+msgstr "Lataa"
+
+#: src/templates/register.html:58
+msgid "Display allowed email domains"
+msgstr "Näytä sallitut sähköpostin verkkotunnukset"
+
+#: src/templates/revisions.html:29 src/templates/show-item-table.html:7
+#: src/templates/show-item.html:9
+msgid "Select"
+msgstr "Valitse"
+
+#: src/templates/scope-button.html:5
+msgid "Scope"
+msgstr "Laajuus"
+
+#: src/templates/scope-button.html:8
+msgid "Self"
+msgstr "Itse"
+
+#: src/templates/scope-button.html:16
+msgid "Everything"
+msgstr "Kaikki"
+
+#: src/templates/search.html:132
+msgid "Date operator"
+msgstr "Päivämääräoperaattori"
+
+#: src/templates/show-item-table.html:2 src/templates/show-item.html:4
+msgid "Entry"
+msgstr "Sisäänpääsy"
+
+#: src/templates/show-view-edit.html:15
+msgid "Import file"
+msgstr "Tuo tiedosto"
+
+#: src/templates/show.html:80
+msgid "Query filters"
+msgstr "Kyselysuodattimet"
+
+#: src/templates/show.html:257 src/templates/steps-links-edit.html:204
+msgid "Limit category"
+msgstr "Rajoitusluokka"
+
+#: src/templates/show.html:270
+msgid "Limit author"
+msgstr "Rajoita kirjoittajaa"
+
+#: src/templates/show.html:362
+msgid "Load more"
+msgstr "Lataa lisää"
+
+#: src/templates/steps-links-edit.html:11
+msgid "Drag to reorder"
+msgstr "Järjestä uudelleen vetämällä"
+
+#: src/templates/sysconfig.html:35
+msgid "Email configuration is required. Consult the documentation (%slink%s) for help."
+msgstr "Sähköpostiasetukset vaaditaan. Katso ohjeita dokumentaatiosta (%slink%s)."
+
+#: src/templates/sysconfig.html:53 src/templates/sysconfig.html:1040
+msgid "Audit Logs"
+msgstr "Tarkastuslokit"
+
+#: src/templates/sysconfig.html:122
+msgid "URL where the Chat room menu entry from Help dropdown points"
+msgstr "URL-osoite, johon Ohje-pudotusvalikon Chat-huonevalikkokohta osoittaa"
+
+#: src/templates/sysconfig.html:150
+msgid "Allow Admins to archive users"
+msgstr "Salli järjestelmänvalvojien arkistoida käyttäjiä"
+
+#: src/templates/sysconfig.html:380
+msgid "Email address"
+msgstr "Sähköpostiosoite"
+
+#: src/templates/sysconfig.html:1035
+msgid "Audit Logs configuration"
+msgstr "Tarkastuslokien määritys"
+
+#: src/templates/sysconfig.html:1037
+msgid "Emit audit logs with PHP error log"
+msgstr "Lähettää tarkastuslokit PHP-virhelokin kanssa"
+
+#: src/templates/sysconfig.html:1042
+msgid "This table lists the most recent events recorded in the application and worth keeping a trace of."
+msgstr "Tämä taulukko listaa viimeisimmät sovellukseen tallennetut tapahtumat, joista kannattaa seurata."
+
+#: src/templates/sysconfig.html:1045
+msgid "Refresh"
+msgstr "Päivitä"
+
+#: src/templates/sysconfig.html:1053
+msgid "Created at"
+msgstr "Luotu klo"
+
+#: src/templates/sysconfig.html:1055
+msgid "Actor"
+msgstr "Näyttelijä"
+
+#: src/templates/sysconfig.html:1056
+msgid "Target user"
+msgstr "Kohdekäyttäjä"
+
+#: src/templates/team.html:117
+msgid "Filter by category"
+msgstr "Suodata luokan mukaan"
+
+#: src/templates/team.html:139
+msgid "Select a resource"
+msgstr "Valitse resurssi"
+
+#: src/templates/team.html:223
+msgid "Mass email form"
+msgstr "Joukkosähköpostilomake"
+
+#: src/templates/ucp.html:284
+msgid "User information"
+msgstr "Käyttäjän tiedot"
+
+#: src/templates/upload-more-info.html:4
+msgid "Not calculated"
+msgstr "Ei laskettu"
+
+#: src/templates/uploads.html:60
+msgid "Attached files"
+msgstr "Liitetyt tiedostot"
+
+#: src/templates/uploads.html:66
+msgid "Filesize"
+msgstr "Tiedoston koko"
+
+#: src/templates/view-edit-template.html:120
+msgid "Permissions for the template"
+msgstr "Mallin käyttöoikeudet"
+
+#: src/templates/view-edit-template.html:123
+msgid "Permissions for the derived experiment"
+msgstr "Johdetun kokeilun käyttöoikeudet"
+
+#: src/templates/view-edit-toolbar.html:41
+#: src/templates/view-edit-toolbar.html:64
+msgid "Timestamp Entry"
+msgstr "Aikaleiman merkintä"
+
+#: src/templates/view-edit-toolbar.html:47
+#: src/templates/view-edit-toolbar.html:71
+msgid "Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment."
+msgstr "Merkinnän aikaleima luo kiistattoman todisteen siitä, että tiedot olivat läsnä tällä hetkellä. Voit merkitä merkinnän aikaleiman niin monta kertaa kuin on tarpeen: muuttumaton aikaleima-arkisto luodaan joka kerta ja tallennetaan liitteenä."
+
+#: src/templates/view-edit-toolbar.html:48
+msgid "With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key."
+msgstr "Luotettavan aikaleiman (RFC3161) avulla tietojesi salaustiiviste (hash) lähetetään luotettavalle kolmannelle osapuolelle. He vastaavat tunnuksella, joka sisältää nykyisen ajan, ja allekirjoittavat tunnuksen yksityisellä avaimellaan."
+
+#: src/templates/view-edit-toolbar.html:72
+msgid "With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum."
+msgstr "Lohkoketjun aikaleimalla tietojesi kryptografinen sormenjälki lisätään lohkoketjuun, jota on mahdotonta muokata. Tämä toiminto käyttää Ethereumiin perustuvaa Bloxberg Consortium -lohkoketjua."
+
+#: src/templates/view.html:24
+msgid "Entry was timestamped by %s on %s at %s"
+msgstr "Merkin aikaleima %s %s klo %s"
+
+#: src/classes/i18n4Js.php:54 src/models/AbstractEntity.php:674
+msgid "Linking an item to itself is not allowed. Please select a different target."
+msgstr "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde."
+
+#: src/Enums/BasePermissions.php:28
+msgid "Only members of the team"
+msgstr "Vain tiimin jäsenet"
+
+#: src/Enums/PasswordComplexity.php:29 src/templates/sysconfig.html:441
+msgid "Minimum password length"
+msgstr "Salasanan vähimmäispituus"
+
+#: src/Enums/PasswordComplexity.php:30
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows"
+msgstr "Siinä on oltava vähintään yksi iso ja yksi pieni kirjain, jos aakkosesi sallii"
+
+#: src/Enums/PasswordComplexity.php:31
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, and one digit"
+msgstr "Siinä on oltava vähintään yksi iso ja yksi pieni kirjain, jos aakkosesi sallii, sekä yksi numero"
+
+#: src/Enums/PasswordComplexity.php:32
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit"
+msgstr "Siinä on oltava vähintään yksi iso ja yksi pieni kirjain, jos aakkosesi sallii, yksi erikoismerkki ja yksi numero"
+
+#: src/models/Users.php:476
+msgid "New password must not be the same as the current one."
+msgstr "Uusi salasana ei saa olla sama kuin nykyinen."
+
+#: src/services/PasswordValidator.php:36
+msgid "Password does not match requirement: %s"
+msgstr "Salasana ei vastaa vaatimusta: %s"
+
+#: src/templates/change-pass.html:19 src/templates/editusers.html:183
+#: src/templates/register.html:69 src/templates/ucp.html:314
+msgid "Minimum password length: %d."
+msgstr "Salasanan vähimmäispituus: %d."
+
+#: src/templates/search.html:43
+msgid "number"
+msgstr "numero"
+
+#: src/templates/search.html:212
+msgid "And extra field is"
+msgstr "Ja lisäkenttä on"
+
+#: src/templates/search.html:225
+msgid "All fields"
+msgstr "Kaikki kentät"
+
+#: src/templates/search.html:246
+msgid "Tip: you can use '%' as wildcard in value"
+msgstr "Vinkki: voit käyttää '%' jokerimerkkinä"
+
+#: src/templates/related-snippet.html:39
+msgid "Show related experiments"
+msgstr "Näytä liittyvät kokeet"
+
+#: src/templates/related-snippet.html:74
+msgid "Show related items"
+msgstr "Näytä liittyvät kohteet"
+
+#: src/templates/sysconfig.html:438
+msgid "Password policy"
+msgstr "Salasanakäytännöt"
+
+#: src/templates/sysconfig.html:447
+msgid "Password complexity requirement"
+msgstr "Salasanan monimutkaisuusvaatimus"
+
+#: src/templates/sysconfig.html:454
+msgid "The minimum password length is always enforced."
+msgstr "Salasanan vähimmäispituus on aina pakollinen."
+
+#: src/templates/sysconfig.html:458
+msgid "Maximum number of days since last password change"
+msgstr "Päivien enimmäismäärä edellisestä salasanan vaihdosta"
+
+#: src/templates/ucp.html:302
+msgid "Personal information"
+msgid_plural "Personal information"
+msgstr[0] "Henkilökohtaisia tietoja"
+msgstr[1] "Henkilökohtaisia tietoja"
+
+#: src/Enums/Currency.php:31
+msgid "Canadian Dollar (CAD)"
+msgstr "Kanadan dollari (CAD)"
+
+#: src/Enums/Currency.php:32
+msgid "Swiss Franc (CHF)"
+msgstr "Sveitsin frangi (CHF)"
+
+#: src/Enums/Currency.php:33
+msgid "Chinese Yuan (CNY)"
+msgstr "Kiinan juan (CNY)"
+
+#: src/Enums/Currency.php:34
+msgid "Danish Krone (DKK)"
+msgstr "Tanskan kruunu (DKK)"
+
+#: src/Enums/Currency.php:35
+msgid "Euro (EUR)"
+msgstr "Euro (EUR)"
+
+#: src/Enums/Currency.php:36
+msgid "British Pound Sterling (GBP)"
+msgstr "Englannin punta (GBP)"
+
+#: src/Enums/Currency.php:37
+msgid "Japanese Yen (JPY)"
+msgstr "Japanin jeni (JPY)"
+
+#: src/Enums/Currency.php:38
+msgid "United States Dollar (USD)"
+msgstr "Yhdysvaltain dollari (USD)"
+
+#: src/Enums/Currency.php:39
+msgid "Swedish Krona (SEK)"
+msgstr "Ruotsin kruunu (SEK)"
+
+#: src/Enums/Currency.php:40
+msgid "Norwegian Krone (NOK)"
+msgstr "Norjan kruunu (NOK)"
+
+#: src/Enums/ProcurementState.php:26
+msgid "Pending"
+msgstr "Odottaa"
+
+#: src/Enums/ProcurementState.php:27
+msgid "Validated"
+msgstr "Vahvistettu"
+
+#: src/Enums/ProcurementState.php:28
+msgid "Partially received"
+msgstr "Osittain vastaanotettu"
+
+#: src/Enums/ProcurementState.php:29
+msgid "Received"
+msgstr "Otettu vastaan"
+
+#: src/Import/Eln.php:257
+msgid "Author"
+msgstr "Tekijä"
+
+#: src/Make/MakeProcurementRequestsCsv.php:32
+msgid "Nothing to export!"
+msgstr "Ei mitään vientiä!"
+
+#: src/classes/MinisignKeys.php:104
+msgid "Invalid secret key format!"
+msgstr "Virheellinen salaisen avaimen muoto!"
+
+#: src/classes/MinisignKeys.php:132
+msgid "Could not decrypt private key. Are you certain of the passphrase?"
+msgstr "Yksityistä avainta ei voitu purkaa. Oletko varma tunnuslauseesta?"
+
+#: src/classes/TwigFilters.php:129
+msgid "User could not be found."
+msgstr "Käyttäjää ei löytynyt."
+
+#: src/classes/i18n4Js.php:58
+msgid "Onboarding email(s) will soon be sent."
+msgstr "Aloitussähköposti(t) lähetetään pian."
+
+#: src/controllers/LoginController.php:332
+msgid "Your account has been associated successfully to a team. Please authenticate again."
+msgstr "Tilisi on yhdistetty tiimiin. Todennus uudelleen."
+
+#: src/models/AbstractConcreteEntity.php:139
+msgid "Signed by %s (%s)"
+msgstr "Allekirjoittanut %s (%s)"
+
+#: src/models/AbstractConcreteEntity.php:143
+msgid "Signature archive by %s (%s)"
+msgstr "Allekirjoitusarkisto, %s (%s)"
+
+#: src/models/SigKeys.php:46
+msgid "The mandatory \"passphrase\" parameter was not provided!"
+msgstr "Pakollista \"salalause\"-parametria ei annettu!"
+
+#: src/models/notifications/CommentCreated.php:37
+msgid "Hi. %s left a comment on your entry. Have a look: %s"
+msgstr "Hei. %s jätti kommentin kirjoitukseesi. Katso: %s"
+
+#: src/services/Transform.php:46
+msgid "New comment on your entry."
+msgstr "Uusi kommentti kirjoituksellesi."
+
+#: src/templates/booking-params-modal.html:43
+#: src/templates/booking-params-modal.html:44
+msgid "Allow users booking in past"
+msgstr "Salli käyttäjien tehdä varaus aiemmin"
+
+#: src/templates/edit.html:86
+msgid "Last saved:"
+msgstr "Viimeksi tallennettu:"
+
+#: src/templates/onboarding-email-modal.html:5
+msgid "Resend onboarding email"
+msgstr "Lähetä liittymissähköposti uudelleen"
+
+#: src/templates/onboarding-email-modal.html:11
+msgid "Select users to whom the onboarding email will be sent."
+msgstr "Valitse käyttäjät, joille aloitussähköposti lähetetään."
+
+#: src/templates/onboarding-email-modal.html:12
+msgid "Search users..."
+msgstr "Hae käyttäjiä..."
+
+#: src/templates/onboarding-email.html:1
+msgid "Onboarding email"
+msgstr "Perehdytyssähköposti"
+
+#: src/templates/onboarding-email.html:4
+msgid "This email will be sent to new users."
+msgstr "Tämä sähköposti lähetetään uusille käyttäjille."
+
+#: src/templates/onboarding-email.html:10
+msgid "Send onboarding emails"
+msgstr "Lähetä perehdytyssähköposteja"
+
+#: src/templates/onboarding-email.html:41
+msgid "Resend email to selected users"
+msgstr "Lähetä sähköposti uudelleen valituille käyttäjille"
+
+#: src/templates/onboarding-email.html:51
+msgid "Send a different email for (sys)admins."
+msgstr "Lähetä eri sähköposti (sys)järjestelmänvalvojille."
+
+#: src/templates/onboarding-email.html:54
+msgid "This email will be sent to new (sys)admins."
+msgstr "Tämä sähköposti lähetetään uusille (sys)järjestelmänvalvojille."
+
+#: src/templates/procurement-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:277
+msgid "Modify procurement parameters"
+msgstr "Muokkaa hankintaparametreja"
+
+#: src/templates/procurement-params-modal.html:14
+#: src/templates/procurement-params-modal.html:15
+msgid "Allow procurement of this resource"
+msgstr "Salli tämän resurssin hankinta"
+
+#: src/templates/procurement-params-modal.html:22
+msgid "Packaging quantity"
+msgstr "Pakkauksen määrä"
+
+#: src/templates/procurement-params-modal.html:27
+msgid "Price without taxes"
+msgstr "Hinta ilman veroja"
+
+#: src/templates/procurement-params-modal.html:32
+msgid "Price with taxes"
+msgstr "Hinta veroineen"
+
+#: src/templates/procurement-params-modal.html:37
+msgid "Currency"
+msgstr "Valuutta"
+
+#: src/templates/show.html:281
+msgid "Archive"
+msgstr "Arkisto"
+
+#: src/templates/sysconfig.html:132
+msgid "This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link."
+msgstr "Näin käyttäjät, joilla ei ole tiliä, voivat kirjautua tiimiin ja nähdä kokeet julkisesti. Sen avulla käyttäjät voivat myös jakaa tiettyjä merkintöjä erityisen linkin avulla."
+
+#: src/templates/team.html:9 src/templates/team.html:258
+msgid "Procurement requests"
+msgstr "Hankintapyynnöt"
+
+#: src/templates/team.html:262 src/templates/team.html:282
+msgid "Requester"
+msgstr "Pyytäjä"
+
+#: src/templates/team.html:263 src/templates/team.html:284
+msgid "Ordered"
+msgstr "Tilattu"
+
+#: src/templates/team.html:264 src/templates/team.html:286
+msgid "Quantity ordered"
+msgstr "Tilattu määrä"
+
+#: src/templates/team.html:265 src/templates/team.html:288
+msgid "Total"
+msgstr "Kaikki yhteensä"
+
+#: src/templates/team.html:266 src/templates/team.html:289
+msgid "Quantity received"
+msgstr "Vastaanotettu määrä"
+
+#: src/templates/team.html:268 src/templates/team.html:291
+msgid "Quote"
+msgstr "Lainaa"
+
+#: src/templates/team.html:269 src/templates/team.html:296
+msgid "State"
+msgstr "Tila"
+
+#: src/templates/team.html:290
+msgid "unset"
+msgstr "pois päältä"
+
+#: src/templates/team.html:298
+msgid "Cancel order"
+msgstr "Peruuta tilaus"
+
+#: src/templates/team.html:308
+msgid "No procurement requests have been made yet."
+msgstr "Hankintapyyntöjä ei ole vielä tehty."
+
+#: src/templates/ts-config.html:5 src/templates/ts-config.html:8
+#: src/templates/ts-config.html:9 src/templates/ts-config.html:10
+msgid "(free, no account required)"
+msgstr "(ilmainen, ei vaadi tiliä)"
+
+#: src/templates/ts-config.html:6 src/templates/ts-config.html:7
+msgid "(requires account)"
+msgstr "(vaatii tilin)"
+
+#: src/templates/ucp.html:30 src/templates/ucp.html:47
+#: src/templates/ucp.html:382
+msgid "Regenerate signature keys"
+msgstr "Luo allekirjoitusavaimet uudelleen"
+
+#: src/templates/ucp.html:36
+msgid "Warning: regenerating your signature keys means the current key will be archived and will not be available anymore."
+msgstr "Varoitus: allekirjoitusavainten luominen uudelleen tarkoittaa, että nykyinen avain arkistoidaan, eikä se ole enää käytettävissä."
+
+#: src/templates/ucp.html:37
+msgid "Enter a passphrase:"
+msgstr "Anna tunnuslause:"
+
+#: src/templates/ucp.html:367
+msgid "Signature keys"
+msgstr "Allekirjoitusavaimet"
+
+#: src/templates/ucp.html:375
+msgid "Download private key"
+msgstr "Lataa yksityinen avain"
+
+#: src/templates/ucp.html:378
+msgid "Download public key"
+msgstr "Lataa julkinen avain"
+
+#: src/templates/ucp.html:386
+msgid "Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive."
+msgstr "Allekirjoitusavaimet ovat erittäin turvallinen julkisen avaimen allekirjoitusjärjestelmä, jonka avulla voit allekirjoittaa kokeet tai resurssit kryptografisesti. Merkinnän allekirjoittaminen luo muuttumattoman arkiston."
+
+#: src/templates/ucp.html:387
+msgid "To learn more about signature keys, have a look at the %scomplete documentation%s."
+msgstr "Saat lisätietoja allekirjoitusavaimista tutustumalla %stäydelliseen dokumentaatioon%s."
+
+#: src/templates/ucp.html:389
+msgid "You do not have a key pair associated with your account yet."
+msgstr "Sinulla ei ole vielä tiliisi liitetty avainparia."
+
+#: src/templates/ucp.html:390
+msgid "To generate a key pair, enter a passphrase below and click the button:"
+msgstr "Luo avainpari kirjoittamalla salasana alla ja napsauttamalla painiketta:"
+
+#: src/templates/ucp.html:394
+msgid "Generate signature keys"
+msgstr "Luo allekirjoitusavaimia"
+
+#: src/templates/ucp.html:397
+msgid "Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s."
+msgstr "Vinkki: käytä salasanan hallintaa tai salasanaa, jonka voit muistaa, katso %sthis XKCD-sarjakuva%s."
+
+#: src/templates/ucp.html:399
+msgid "Your account is already associated with a keypair."
+msgstr "Tilisi on jo liitetty avainpariin."
+
+#: src/templates/ucp.html:400
+msgid "Here is your public key. You can share it with the world:"
+msgstr "Tässä on julkinen avaimesi. Voit jakaa sen maailman kanssa:"
+
+#: src/templates/view-edit-toolbar.html:6
+#: src/templates/view-edit-toolbar.html:261
+#: src/templates/view-edit-toolbar.html:262
+msgid "Request action"
+msgstr "Pyydä toimenpiteitä"
+
+#: src/templates/view-edit-toolbar.html:13
+msgid "Select action"
+msgstr "Valitse toiminto"
+
+#: src/templates/view-edit-toolbar.html:20
+msgid "Select collaborator"
+msgstr "Valitse yhteistyökumppani"
+
+#: src/templates/view-edit-toolbar.html:88
+#: src/templates/view-edit-toolbar.html:208
+msgid "Add signature"
+msgstr "Lisää allekirjoitus"
+
+#: src/templates/view-edit-toolbar.html:94
+msgid "Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived)."
+msgstr "Allekirjoituksen lisääminen allekirjoittaa tämän merkinnän sisällön kryptografisesti, ja allekirjoitus tallennetaan allekirjoitushetkellä sisällön rinnalle arkistoon, joka näkyy liitteenä (oletusarvoisesti peitetty, koska arkistoitu)."
+
+#: src/templates/view-edit-toolbar.html:96
+msgid "Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry."
+msgstr "Tililtäsi puuttuu allekirjoitukseen tarvittava salausavainpari. Sinun on luotava sellainen käyttäjän ohjauspaneelista, ennen kuin voit allekirjoittaa merkinnän."
+
+#: src/templates/view-edit-toolbar.html:100
+msgid "Select a meaning for this signature"
+msgstr "Valitse tälle allekirjoitukselle merkitys"
+
+#: src/templates/view-edit-toolbar.html:107
+msgid "Enter your passphrase to unlock your secret key:"
+msgstr "Avaa salainen avaimesi kirjoittamalla salasanasi:"
+
+#: src/templates/view-edit-toolbar.html:119
+msgid "Add your signature"
+msgstr "Lisää allekirjoituksesi"
+
+#: src/templates/view-edit-toolbar.html:121
+msgid "Go to Settings"
+msgstr "Mene asetuksiin"
+
+#: src/templates/view-edit-toolbar.html:133
+msgid "Create procurement request"
+msgstr "Luo hankintapyyntö"
+
+#: src/templates/view-edit-toolbar.html:140
+msgid "Enter a quantity to purchase"
+msgstr "Anna ostettava määrä"
+
+#: src/templates/view-edit-toolbar.html:145
+#: src/templates/view-edit-toolbar.html:228
+msgid "Place order"
+msgstr "Tee tilaus"

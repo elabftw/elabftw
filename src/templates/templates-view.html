@@ -14,12 +14,7 @@
 {% endif %}
 
 <hr>
-{% if (Entity.entityData.content_type == constant('Elabftw\\Models\\AbstractEntity::CONTENT_MD')) and Entity.entityData.body is not null %}
-  {% set body = Entity.entityData.body|md2html %}
-{% else %}
-  {% set body = Entity.entityData.body %}
-{% endif %}
-<div id='body_view'>{{ body|raw }}</div>
+<div id='body_view'>{{ Entity.entityData.body_html|raw }}</div>
 
 {# METADATA view #}
 {% if Entity.entityData.metadata and Entity.entityData.metadata != '{}' %}
@@ -31,4 +26,5 @@
   <hr>
 {% endif %}
 {% include 'steps-links-view.html' %}
+{% include 'uploads.html' %}
 <div id='info' data-page='template-view' data-team='{{ App.Users.userData.team }}' data-type='experiments_templates' data-id='{{ Entity.id }}'></div>

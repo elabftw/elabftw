@@ -7,41 +7,41 @@
  */
 
 .rating {
-    .cancel-button {
-        cursor: pointer;
-        /* important to get a good alignment with the stars */
-        vertical-align: sub;
+  .cancel-button {
+    cursor: pointer;
+    /* important to get a good alignment with the stars */
+    vertical-align: sub;
 
-        &:hover {
-            i {
-                color: $dangerred !important;
-            }
-        }
+    &:hover {
+      i {
+        color: $dangerred !important;
+      }
+    }
+  }
+
+  label {
+    cursor: pointer;
+    float: right;
+    position: relative;
+
+    &:not(:first-of-type) {
+      padding-right: 3px;
     }
 
-    label {
-        cursor: pointer;
-        float: right;
-        position: relative;
-
-        &:not(:first-of-type) {
-            padding-right: 3px;
-        }
-
-        &::before {
-            color: $medium;
-            content: '\f005';
-            font: var(--fa-font-solid);
-        }
+    &::before {
+      color: $medium;
+      content: '\f005';
+      font: var(--fa-font-solid);
     }
+  }
 
-    input {
-        display: none;
-    }
+  input {
+    display: none;
+  }
 
-    input:checked ~ label::before,
-    &:not(:checked) > label:hover::before,
-    &:not(:checked) > label:hover ~ label::before {
-        color: $gold;
-    }
+  input:checked ~ label::before,
+  &:not(:checked) > label:hover::before,
+  &:not(:checked) > label:hover ~ label::before {
+    color: $gold;
+  }
 }

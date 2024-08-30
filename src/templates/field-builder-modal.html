@@ -30,7 +30,7 @@
               <hr>
             </div>
             <select id='newFieldGroupSelect' class='form-control' autocomplete='off'>
-              {% if metadataGroups[0].id == -1 %}
+              {% if not metadataGroups or metadataGroups[0].id == -1 %}
                 <option value='-1'>{{ 'Undefined group'|trans }}</option>
               {% endif %}
               {% for group in metadataGroups %}
@@ -184,7 +184,6 @@
         {% endif %}
         <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
         <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
-        <p id='loadMetadataWarning' hidden class='mt-1 text-right smallgray'>{{ 'Warning: clicking Apply will completely replace any existing metadata!'|trans }}</p>
       </div>
 
       <div class='modal-footer'>

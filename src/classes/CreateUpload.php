@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012, 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -17,13 +20,13 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
-    protected int $immutable = 0;
-
-    protected State $state = State::Normal;
-
-    public function __construct(private string $realName, private string $filePath, private ?string $comment = null)
-    {
-    }
+    public function __construct(
+        private readonly string $realName,
+        protected readonly string $filePath,
+        private readonly ?string $comment = null,
+        private readonly int $immutable = 0,
+        private readonly State $state = State::Normal,
+    ) {}
 
     public function getFilename(): string
     {
@@ -33,6 +36,11 @@ class CreateUpload implements CreateUploadParamsInterface
     public function getFilePath(): string
     {
         return $this->filePath;
+    }
+
+    public function getTmpFilePath(): string
+    {
+        return basename($this->filePath);
     }
 
     public function getComment(): ?string

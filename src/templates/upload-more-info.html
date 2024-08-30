@@ -1,6 +1,4 @@
-<i class='fas fa-fw fa-hdd mr-1'></i>
-<p class='d-inline'>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</p><br>
-<i class='fas fa-fw fa-fingerprint mr-1'></i>
-<p class='d-inline' style='word-break: break-all;'>{{ upload.hash_algorithm }}: {{ upload.hash|default('Not calculated'|trans) }}</p><br>
-<i class='fas fa-user mr-1'></i>
-<p class='d-inline'>{{ 'Uploaded by %s'|trans|format(upload.fullname) }}</p><br>
+<div><i class='fas fa-fw fa-hdd mr-1'></i>{{ 'Storage:'|trans }} {% if upload.storage == '1' %} {{ 'Local filesystem'|trans }} {% endif %} {% if upload.storage == '2' %} S3 bucket {% endif %}</div>
+<div style='word-break: break-all;'><i class='fas fa-fw fa-fingerprint mr-1'></i>{{ upload.hash_algorithm }}: {{ upload.hash|default('Not calculated'|trans) }}</div>
+<div><i class='fas fa-user mr-1'></i>{{ 'Uploaded by %s'|trans|format(upload.fullname) }}</div>
+<div><i class='fas fa-hashtag mr-1'></i>{{ 'ID'|trans }} <a href='/api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads/{{ upload.id }}'>{{ upload.id }}</a></div>

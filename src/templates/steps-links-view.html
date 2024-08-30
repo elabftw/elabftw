@@ -1,12 +1,12 @@
 {# STEPS #}
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }}</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
   <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
     <div class='ml-3 mt-3 col-md-12'>
       {% for step in Entity.entityData.steps %}
-        <div id='step_view_{{ step.id }}' class='mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
-          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.type == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-2' id='stepCheckbox_{{ step.id }}' />{{ step.body }}
+        <div id='step_view_{{ step.id }}' class='countable mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
+          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.entityType.value == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-2' id='stepCheckbox_{{ step.id }}' />{{ step.body }}
         {% if step.finished %}
         <span class='mr-2 text-muted'>
             {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
@@ -27,32 +27,14 @@
 
 {# EXPERIMENTS LINKS #}
 {% if Entity.entityData.experiments_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkExpDiv' id='linksExpDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
     Linked experiment
     {% plural 2 %}
     Linked experiments
-    {% endtrans %}</h3>
-  <div class='row mt-2' id='linkedExperimentsDiv' data-save-hidden='linkedExperimentsDiv'>
+    {% endtrans %} ({{ Entity.entityData.experiments_links|length }})</h3>
+  <div class='row mt-2' id='linksExpDiv' data-save-hidden='linksExpDiv'>
     {% for link in Entity.entityData.experiments_links %}
-      <div class='ml-3 mt-3 col-md-12'>
-        {% set randomId = random() %}
-        <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
-          <i class='fas fa-link fa-fw mr-2'></i>
-          {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-          <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span>
-          <a href='experiments.php?mode=view&amp;id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title }}</a>
-          {# toggle body #}
-          <button type='button' data-type='experiments' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
-            <i class='fas fa-fw fa-square-plus'></i>
-          </button>
-        </div>
-        {# container to hold the body of the entity if it is toggled with the +/- icon #}
-        {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-        <div hidden id='{{ randomId }}'>
-          {# this div will hold the content #}
-          <div></div>
-        </div>
-      </div>
+      {% include 'link-view-one.html' %}
     {% endfor %}
   </div>
   <hr>
@@ -60,106 +42,13 @@
 
 {# ITEMS LINKS #}
 {% if Entity.entityData.items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }}</h3>
-  <div class='row mt-2' id='linkedItemsDiv' data-save-hidden='linkedItemsDiv'>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv' id='linksDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }} ({{ Entity.entityData.items_links|length }})</h3>
+  <div class='row mt-2' id='linksDiv' data-save-hidden='linksDiv'>
     {% for link in Entity.entityData.items_links %}
-      <div class='ml-3 mt-3 col-md-12'>
-        {% set randomId = random() %}
-        <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
-          <i class='fas fa-link fa-fw mr-2'></i>
-          {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-          <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span>
-          <a href='database.php?mode=view&amp;id={{ link.itemid }}' class='text-dark mr-auto'>{{ link.title }}</a>
-          {# toggle body #}
-          <button type='button' data-type='items' data-action='toggle-body' data-id='{{ link.itemid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
-            <i class='fas fa-fw fa-square-plus'></i>
-          </button>
-        </div>
-        {# container to hold the body of the entity if it is toggled with the +/- icon #}
-        {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-        <div hidden id='{{ randomId }}'>
-          {# this div will hold the content #}
-          <div></div>
-        </div>
-      </div>
+      {% include 'link-view-one.html' %}
     {% endfor %}
   </div>
   <hr>
 {% endif %}
 
-{# RELATED ITEMS/EXPERIMENTS #}
-{% if Entity.type == 'items' or Entity.type == 'experiments' %}
-
-  {# RELATED EXPERIMENTS #}
-  {% if Entity.entityData.related_experiments_links %}
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }}</h3>
-    <div class='row mt-2' id='relatedExperimentsDiv' data-save-hidden='relatedExperimentsDiv'>
-      {% for link in Entity.entityData.related_experiments_links %}
-        <div class='ml-3 mt-3 col-md-12'>
-          {% set randomId = random() %}
-          <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
-              <i class='fas fa-link fa-fw mr-2'></i>
-              {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-              {% if link.category_title %}
-                <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title }}</span>
-              {% endif %}
-              <a href='experiments.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title }}</a>
-            {# delete link #}
-            <button data-action='destroy-related-link' type='button' data-endpoint='experiments_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
-              <i class='fas fa-fw fa-trash-alt'></i>
-            </button>
-            {# toggle body #}
-            <button type='button' data-type='experiments' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
-              <i class='fas fa-fw fa-square-plus'></i>
-            </button>
-          </div>
-          <div hidden id='{{ randomId }}'>
-            <div></div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class='ml-3 mt-3'>
-      <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related experiments'|trans }}</a>
-    </div>
-    <hr>
-  {% endif %}
-
-  {# RELATED ITEMS #}
-  {% if Entity.entityData.related_items_links %}
-    <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related items'|trans }}</h3>
-    <div class='row mt-2' id='relatedItemsDiv' data-save-hidden='relatedItemsDiv'>
-      {% for link in Entity.entityData.related_items_links %}
-        <div class='ml-3 mt-3 col-md-12'>
-          {% set randomId = random() %}
-          <div class='d-flex mb-4 align-items-center' id='parent_{{ randomId }}'>
-            <i class='fas fa-link fa-fw mr-2'></i>
-            {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
-            <span class='catstat-btn category-btn mr-1' style='--bg:#{{ link.category_color }}'>{{ link.category_title }}</span>
-            <a href='database.php?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>{{ link.title }}</a>
-            {# delete link #}
-            <button data-action='destroy-related-link' type='button' data-endpoint='items_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 ny-n2'>
-              <i class='fas fa-trash-alt'></i>
-            </button>
-            {# toggle body #}
-            <button type='button' data-type='items' data-action='toggle-body' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 ny-n2'>
-              <i class='fas fa-square-plus'></i>
-            </button>
-          </div>
-          <div hidden id='{{ randomId }}'>
-            <div></div>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <div class='ml-3 mt-3'>
-      <i class='fas fa-list mr-1 fa-fw'></i>
-      <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.type }}'>{{ 'Show related items'|trans }}</a>
-    </div>
-    <hr>
-  {% endif %}
-
-{% endif %}
+{% include 'related-snippet.html' %}

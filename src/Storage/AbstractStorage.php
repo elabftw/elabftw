@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Storage;
 
@@ -18,7 +21,7 @@ use League\Flysystem\FilesystemAdapter;
  */
 abstract class AbstractStorage implements StorageInterface
 {
-    protected const FOLDER = '';
+    protected const string FOLDER = '';
 
     public function getFs(): Filesystem
     {
@@ -30,7 +33,7 @@ abstract class AbstractStorage implements StorageInterface
      * @param string $relativePath A relative path or filename. e.g. folder/file.txt or file.txt
      * @return string The absolute path of a resource
      */
-    public function getPath(string $relativePath=''): string
+    public function getPath(string $relativePath = ''): string
     {
         return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }

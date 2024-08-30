@@ -28,10 +28,19 @@ config:
   # increase this a bit
   login_tries: 10
   s3_region: fr-par-42
+  onboarding_email_subject: test email subject
+  onboarding_email_body: <p>Test email body for <strong>users</strong>.</p>
+  onboarding_email_active: 1
+  onboarding_email_different_for_admins: 1
+  onboarding_email_admins_subject: subject for admins
+  onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
 
 teams:
   - name: Alpha
     default_category_name: Generated
+    onboarding_email_subject: test email subject
+    onboarding_email_body: <p>Test email body <strong>with</strong> HTML.</p>
+    onboarding_email_active: 1
   - name: Bravo
   - name: Charlie
   - name: Delta
@@ -55,12 +64,14 @@ users:
       cjk_fonts: 1
 
   - email: titi@yopmail.com
+    firstname: Titi
     team: Alpha
     create_experiments: true
     create_templates: true
     create_mfa_secret: false
 
   - email: tutu@yopmail.com
+    firstname: Tutu
     team: Alpha
     create_experiments: true
     create_mfa_secret: true
@@ -71,6 +82,7 @@ users:
     create_experiments: true
 
   - email: tata@yopmail.com
+    firstname: Tata
     team: Bravo
     create_experiments: true
     create_items: true
@@ -83,6 +95,13 @@ users:
     team: Bravo
     create_experiments: false
     orgid: internal_id_42
+
+  - email: notyetvalidateduser@yopmail.com
+    team: Bravo
+    validated: false
+    create_experiments: true
+    create_items: true
+    create_templates: true
 
   - team: Charlie
 
@@ -146,6 +165,7 @@ templates:
     tags:
       - ants
       - pheromones
+      - generated from yml
     category: 3
 
   - title: High-Speed Insect Flight Analysis
@@ -210,15 +230,20 @@ templates:
         </ul>
     tags:
       - high-speed
+      - Project FLYMORR
+      - generated from yml
     category: 2
     status: 1
 
   - title: Western Blot
+    body: No category for this one.
     tags:
       - western blot
+      - generated from yml
 
   - title: Videomicroscopy
     tags:
+      - generated from yml
       - microscopy
     category: 1
     metadata: |
@@ -226,6 +251,7 @@ templates:
 
   - title: Electronic Microscopy
     tags:
+      - generated from yml
       - microscopy
     category: 4
 
@@ -284,6 +310,7 @@ experiments:
   - title: Test the grouped extra fields
     date: 20241231
     tags:
+      - generated from yml
       - dev
       - extra fields
     metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Group with id 1, first position"},{"id":2,"name":"Group with id 2, second position"},{"id":3,"name":"Group with id 3, third position"}],"display_main_text":false},"extra_fields":{"Has group_id 3 as number":{"type":"text","value":"","group_id":3},"Has group_id 3 as string":{"type":"text","value":"","group_id":"3"},"Has no group_id property":{"type":"text","value":""},"Group_id 1 and position 1":{"type":"checkbox","value":"","group_id":1,"position":1,"description":"This is a checkbox custom input"},"Group_id 2 and position 1":{"type":"url","value":"","group_id":2,"position":1},"Group_id 2 and position 2":{"type":"url","value":"https://datalake.example.com/experiments/3921","group_id":2,"position":2},"Group_id 2 and position 3":{"type":"url","value":"","group_id":2,"position":3},"Another one without group_id property":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"this element has no group property defined"},"Has group_id that is not in elabftw.groups":{"type":"text","value":"I am lost!","group_id":"19"}}}'
@@ -292,6 +319,7 @@ experiments:
     body: This is the content of the experiment
     date: 20250101
     tags:
+      - generated from yml
       - example
       - demo
     comments:
@@ -302,11 +330,59 @@ experiments:
     body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
     date: 20250102
     tags:
+      - generated from yml
       - transfection
       - biocell
       - RPE-1
     items_links:
       - 173
+
+  - title: Gold master experiment
+    date: 20250103
+    tags:
+      - generated from yml
+      - test-data
+      - eln
+      - tag with space
+      - "special chars {[éèÀ®]}:*\\<>×÷±"
+    items_links:
+      - 173
+    experiments_links:
+      - 32
+    comments:
+      - "Great results on the DNA extraction. The yield and purity look good. For the wash steps, consider extending the final centrifugation to 3 minutes to ensure no residual buffer. Nice work!"
+    metadata: '{"elabftw": {"display_main_text": true,"extra_fields_groups": [{"id": 1,"name": "Group 1"},{"id": 2,"name": "Group 2"},{"id": 3,"name": "Last group"}]},"extra_fields": {"Number": {"type": "number","unit": "","units": [],"value": "","group_id": 2,"description": "no units"},"Type URL": {"type": "url","value": "https://www.elabftw.net","group_id": 2,"readonly": true,"description": "a link (readonly)"},"Just time": {"type": "time","value": "17:00","group_id": 2,"description": "tea time"},"Some date": {"type": "date","value": "2024-07-14","group_id": 2,"description": "is a date"},"Type user": {"type": "users","value": 1,"group_id": 3,"description": "this is a link to a user"},"A checkbox": {"type": "checkbox","value": "on","group_id": 2,"description": "is checked"},"Email input": {"type": "email","value": "louis@example.com","group_id": 2,"description": "type email"},"Date and time": {"type": "datetime-local","value": "2024-07-14T13:37","group_id": 2,"description": "datetime description"},"Radio buttons": {"type": "radio","value": "Oui","options": ["Oui","Non","Peut-être"],"group_id": 1,"description": "radio description"},"Type resource": {"type": "items","value": 208,"group_id": 3,"description": "This is a link to a resource"},"A dropdown menu": {"type": "select","value": "Choice 1","options": ["Choice 1","Choice 2","Choice 3"],"group_id": 1,"description": "Single select"},"Text input name": {"type": "text","value": "some text","group_id": 1,"readonly": true,"required": true,"description": "type text + all attributes","blank_value_on_duplicate": true},"Type experiment": {"type": "experiments","value": 373,"group_id": 3,"description": "This is a link to an experiment"},"Number with units": {"type": "number","unit": "mM","units": ["mM","μM","nM"],"value": "","group_id": 2,"description": "this one has units"},"Unchecked checkbox": {"type": "checkbox","value": "","group_id": 2,"description": "this one is not checked"},"Multi dropdown menu": {"type": "select","value": "Option 1","options": ["Option 1","Option 2","Option 3"],"group_id": 1,"description": "Allows multiple selection","allow_multi_values": true}}}'
+    body: |
+        <h1>Level 1 title</h1>
+        <h2>Level 2 title</h2>
+        <p>The <strong>goal</strong> of this <em>experiment</em> is to have <span style="text-decoration: underline;">all</span> <span style="background-color: rgb(241, 196, 15); color: rgb(224, 62, 45);">attributes</span>:</p>
+        <ul>
+        <li>all extra fields types</li>
+        <li>links to experiments and items</li>
+        <li>links from experiments and items</li>
+        <li>status, category, tags and uploaded files</li>
+        </ul>
+        <h3>Here is a table</h3>
+        <table style="border-collapse: collapse; width: 100%;" border="1"><colgroup><col style="width: 33.3137%;"><col style="width: 33.3137%;"><col style="width: 33.3137%;"></colgroup>
+        <tbody>
+        <tr>
+        <td>Something</td>
+        <td>in H<sub>2</sub></td>
+        <td>the</td>
+        </tr>
+        <tr>
+        <td>table</td>
+        <td style="background-color: rgb(185, 106, 217); border: 2px dashed rgb(224, 62, 45);">31<sup>321</sup></td>
+        <td>there</td>
+        </tr>
+        </tbody>
+        </table>
+        <p>an emoji: 🤪</p>
+        <p>&infin; &sum;</p>
+        <h4>An image</h4>
+        <p><img src="app/download.php?name=example.jpg&amp;f=78/7834c99a3af687a043d7e9c5bec5e4877469748dca1e898892962ab769be562e069204c19f3bf4663dd2f036cd2a9673b8db53702405ad5298a6e1fd78d6d7da.jpg&amp;storage=1" width="173" height="260"></p>
+        <p><a href="https://www.elabftw.net/">A link to elabftw.net</a>.</p>
+        <p>&nbsp;</p>
 
   - title: Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
     body: |
@@ -333,6 +409,7 @@ experiments:
     items_links:
       - 50
     tags:
+      - generated from yml
       - synthesis
       - antimicrobial
       - chemistry
@@ -350,6 +427,7 @@ experiments:
       <p>結論： フルーツフライは、バナナ、マンゴー、パイナップルを好んで食べることが明らかになりました。この結果は、果物生産業にとって重要な情報となります。</p>
     date: 20250102
     tags:
+      - generated from yml
       - CJK
       - ショウジョウバエ
 
@@ -383,6 +461,7 @@ experiments:
     date: 20250102
     status: 3
     tags:
+      - generated from yml
       - enzymology
       - test
       - Project ENZYTEMP
@@ -403,6 +482,7 @@ experiments:
       </p>
     date: 20250102
     tags:
+      - generated from yml
       - has-mathjax
       - physics
 
@@ -444,6 +524,7 @@ experiments:
       </p>
     date: 20250102
     tags:
+      - generated from yml
       - has-mathjax
       - chemistry
 
@@ -453,6 +534,7 @@ experiments:
     status: 1
     rating: 5
     tags:
+      - generated from yml
       - test
       - demo
     metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
@@ -487,177 +569,177 @@ items_types:
 
 items:
   - title: Spinning Disk 2
-    category: 5
-    rating: 5
+    category: 3
+    rating: 4
   - title: Video microscope Bravo
-    category: 5
+    category: 3
   - title: Scanning Electron Microscope
-    category: 5
+    category: 3
   - title: Light sheet 1
-    category: 5
+    category: 3
   - title: TIRF microscope
-    category: 5
+    category: 3
   - title: STORM/PALM
-    category: 5
+    category: 3
     # Chemical compounds
   - title: Sodium chloride - NaCl
-    category: 6
+    category: 4
   - title: Methane - CH4
-    category: 6
-  - title: Ethanol - C2H5OH
-    category: 6
+    category: 4
+  - title: Ethanol - C2H4OH
+    category: 4
   - title: Ammonia - NH3
-    category: 6
+    category: 4
   - title: Hydrogen peroxide - H2O2
-    category: 6
+    category: 4
   - title: Sulfuric acid - H2SO4
-    category: 6
+    category: 4
   - title: Nitric acid - HNO3
-    category: 6
+    category: 4
   - title: Acetic acid - CH3COOH
-    category: 6
-  - title: Glucose - C6H12O6
-    category: 6
+    category: 4
+  - title: Glucose - C5H12O6
+    category: 4
   - title: Calcium carbonate - CaCO3
-    category: 6
+    category: 4
   - title: Sodium bicarbonate - NaHCO3
-    category: 6
+    category: 4
   - title: Potassium chloride - KCl
-    category: 6
+    category: 4
   - title: Magnesium sulfate - MgSO4
-    category: 6
+    category: 4
   - title: Aluminum oxide - Al2O3
-    category: 6
+    category: 4
   - title: Methanol - CH3OH
-    category: 6
+    category: 4
   - title: Hydrochloric acid - HCl
-    category: 6
+    category: 4
   - title: Formaldehyde - CH2O
-    category: 6
-  - title: Ethylene glycol - C2H6O2
-    category: 6
+    category: 4
+  - title: Ethylene glycol - C2H5O2
+    category: 4
   # PLASMIDS
   - title: pBR322
-    category: 7
+    category: 5
   - title: pUC19
-    category: 7
+    category: 5
   - title: pGEM-T Easy
-    category: 7
+    category: 5
   - title: pBluescript II KS+
-    category: 7
+    category: 5
   - title: pET-28a(+)
-    category: 7
+    category: 5
   - title: pET-32a(+)
-    category: 7
+    category: 5
   - title: pACYC184
-    category: 7
+    category: 5
   - title: pET-15b
-    category: 7
+    category: 5
   - title: pBAD/Thio-TOPO
-    category: 7
+    category: 5
   - title: pEGFP-N1
-    category: 7
+    category: 5
   - title: pCMV-Tag2B
-    category: 7
+    category: 5
   - title: pCR2.1-TOPO
-    category: 7
-  - title: pACYC177
-    category: 7
+    category: 5
+  - title: pACYC167
+    category: 5
   - title: pRS415
-    category: 7
+    category: 5
   - title: pET-41a(+)
-    category: 7
+    category: 5
   - title: pQE-30
-    category: 7
+    category: 5
   - title: pGEX-4T-1
-    category: 7
+    category: 5
   - title: pRSF-Duet-1
-    category: 7
+    category: 5
   - title: pMAL-c2x
-    category: 7
+    category: 5
   - title: pET-28b(+)
-    category: 7
+    category: 5
   # ANTIBODIES
   - title: Anti-Actin
-    category: 8
+    category: 6
   - title: Anti-GAPDH
-    category: 8
+    category: 6
   - title: Anti-Tubulin
-    category: 8
+    category: 6
   - title: Anti-Histone H3
-    category: 8
+    category: 6
   - title: Anti-FLAG
-    category: 8
+    category: 6
   - title: Anti-HA
-    category: 8
+    category: 6
   - title: Anti-Myc
-    category: 8
+    category: 6
   - title: Anti-RFP
-    category: 8
+    category: 6
   - title: Anti-V5
-    category: 8
+    category: 6
   - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
-    category: 8
+    category: 6
   - title: Anti-Phospho-AKT (Ser473)
-    category: 8
+    category: 6
   - title: Anti-Phospho-STAT3 (Tyr705)
-    category: 8
-  - title: Anti-Phospho-p38 MAPK (Thr180/Tyr182)
-    category: 8
+    category: 6
+  - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
+    category: 6
   - title: Anti-Cleaved PARP (Asp214)
-    category: 8
+    category: 6
   - title: Anti-Caspase-3
-    category: 8
+    category: 6
   - title: Anti-Ki-67
-    category: 8
+    category: 6
   - title: Anti-CD45
-    category: 8
+    category: 6
   - title: "Anti-CD4"
-    category: 8
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+    category: 6
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
     body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
   - title: "Anti-GFP"
-    category: 8
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-80°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
+    category: 6
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
     body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
   - title: "Anti-CD11b"
-    category: 8
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+    category: 6
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
   - title: "Anti-BrdU"
-    category: 8
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+    category: 6
+    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
     body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
   - title: "Anti-CD3ε"
-    category: 8
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
+    category: 6
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
     body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
   - title: "Anti-CD4"
-    category: 8
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
+    category: 6
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
     body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
   - title: "Anti-GAPDH"
-    category: 8
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-80°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
+    category: 6
+    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
     body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
   # YEASTS
   - title: BY4741
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
   - title: W303
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
   - title: BY4742
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
   - title: S288C
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
   - title: CEN.PK113-7D
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: JK9-3d
-    category: 9
+  - title: JK8-3d
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
   - title: DBY746
-    category: 9
+    category: 7
     metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'

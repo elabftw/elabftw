@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -10,17 +12,21 @@
 namespace Elabftw\Make;
 
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
 use Elabftw\Services\MpdfQrProvider;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeQrPngTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private MakeQrPng $Maker;
+
+    private Experiments $Entity;
 
     protected function setUp(): void
     {
-        $Entity = new Experiments(new Users(1, 1), 1);
-        $this->Maker = new MakeQrPng(new MpdfQrProvider(), $Entity, 1, 250);
+        $this->Entity = $this->getFreshExperiment();
+        $this->Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250);
     }
 
     public function testGetFileContent(): void
@@ -30,9 +36,13 @@ class MakeQrPngTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileContentSmallsize(): void
     {
-        $Entity = new Experiments(new Users(1, 1), 1);
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250);
+        $this->assertIsString($Maker->getFileContent());
+    }
 
-        $Maker = new MakeQrPng(new MpdfQrProvider(), $Entity, 1, 4);
+    public function testGetFileContentNotitle(): void
+    {
+        $Maker = new MakeQrPng(new MpdfQrProvider(), $this->Entity, 250, false);
         $this->assertIsString($Maker->getFileContent());
     }
 

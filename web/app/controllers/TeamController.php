@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,9 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
-use function dirname;
-
 use Elabftw\Enums\EmailTarget;
+
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,6 +23,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Address;
+
+use function dirname;
 
 /**
  * Actions from team.php
@@ -57,6 +60,7 @@ try {
             $App->Request->request->getString('subject'),
             $App->Request->request->getString('body'),
             $replyTo,
+            (bool) $App->Config->configArr['email_send_grouped'],
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }

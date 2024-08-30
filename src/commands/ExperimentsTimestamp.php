@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2023 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
@@ -63,14 +66,12 @@ class ExperimentsTimestamp extends Command
             return 0;
         }
         $userid = (int) $input->getArgument('user');
-        $Experiments = new Experiments(new Users($userid));
-        $Experiments->bypassWritePermission = true;
+        $Experiments = new Experiments(new Users($userid), bypassReadPermission: true, bypassWritePermission: true);
         foreach ($expArr as $exp) {
             if ($output->isVerbose()) {
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            // use AutoTimestamp action so the archive will be Archived and invisible to users
             $Experiments->patch(Action::Timestamp, array());
         }
 

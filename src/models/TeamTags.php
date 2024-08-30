@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2022 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Models;
 
@@ -15,7 +18,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,9 +37,9 @@ class TeamTags implements RestInterface
         $this->setId($id);
     }
 
-    public function getPage(): string
+    public function getApiPath(): string
     {
-        return 'api/v2/team_tags/';
+        return sprintf('api/v2/teams/%d/tags/%d', $this->Users->userData['team'], $this->id ?? '');
     }
 
     /**
@@ -54,7 +56,7 @@ class TeamTags implements RestInterface
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+        $req->bindValue(':tag', $tag);
         $this->Db->execute($req);
         $res = $req->fetch();
         // insert the tag if it doesn't exist
@@ -62,7 +64,7 @@ class TeamTags implements RestInterface
             $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindValue(':tag', $tag, PDO::PARAM_STR);
+            $req->bindValue(':tag', $tag);
             $this->Db->execute($req);
             return $this->Db->lastInsertId();
         }
@@ -97,7 +99,7 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
+        $req->bindValue(':query', '%' . $query . '%');
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -160,7 +162,7 @@ class TeamTags implements RestInterface
         // first get the ids of all the tags that are duplicated in the team
         $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
             SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) GROUP BY tag;';
+        ) AND team = :team GROUP BY tag;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -210,7 +212,7 @@ class TeamTags implements RestInterface
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent(), PDO::PARAM_STR);
+        $req->bindValue(':tag', $params->getContent());
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         $this->Db->execute($req);

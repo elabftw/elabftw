@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -6,6 +7,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
@@ -15,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -48,9 +52,12 @@ try {
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allItemsTypes = $ItemsTypes->readAll();
-    $bookableItemsTypes = array_filter($allItemsTypes, function ($a) use ($categoriesOfBookableItems) {
-        return in_array($a['id'], $categoriesOfBookableItems, true);
-    });
+    $bookableItemsTypes = array_filter(
+        $allItemsTypes,
+        fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),
+    );
+
+    $ProcurementRequests = new ProcurementRequests($Teams);
 
     $template = 'team.html';
     $renderArr = array(
@@ -59,7 +66,8 @@ try {
         'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
-        'teamsStats' => $Teams->getStats((int) $App->Users->userData['team']),
+        'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
+        'teamsStats' => $Teams->getStats($App->Users->userData['team']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

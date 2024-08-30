@@ -6,7 +6,7 @@ describe('UCP', () => {
 
   it('Show UCP page', () => {
     cy.visit('/ucp.php');
-    cy.get('h1#pageTitle').should('have.text', 'User Control Panel');
+    cy.get('h1#pageTitle').should('have.text', 'Settings');
     cy.get('#loading-spinner').should('not.exist');
     cy.htmlvalidate();
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
@@ -7,9 +8,11 @@
  * @see       https://www.elabftw.net Official website
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 
 /**
@@ -19,8 +22,7 @@ class AuthResponse
 {
     public int $userid;
 
-    /** @var array<int, array<int, string>> don't use an array of Team but just the ids and name */
-    public $selectableTeams = array();
+    public array $selectableTeams = array();
 
     public int $selectedTeam;
 
@@ -28,6 +30,10 @@ class AuthResponse
 
     // when user needs to request access to a team
     public bool $initTeamRequired = false;
+
+    public bool $teamSelectionRequired = false;
+
+    public bool $teamRequestSelectionRequired = false;
 
     public bool $isValidated = false;
 
@@ -42,17 +48,21 @@ class AuthResponse
 
     public bool $mustRenewPassword = false;
 
-    public function setTeams(): void
+    public function setTeams(UsersHelper $usersHelper): void
     {
-        $UsersHelper = new UsersHelper($this->userid);
-        $this->selectableTeams = $UsersHelper->getTeamsFromUserid();
+        $this->selectableTeams = $usersHelper->getTeamsFromUserid();
 
         // if the user only has access to one team, use this one directly
         $teamCount = count($this->selectableTeams);
         if ($teamCount === 1) {
-            $this->selectedTeam = (int) $this->selectableTeams[0]['id'];
+            $this->selectedTeam = $this->selectableTeams[0]['id'];
         } elseif ($teamCount === 0) {
-            throw new ImproperActionException('Could not find a team!');
+            $Users = new Users($this->userid);
+            $this->teamSelectionRequired = true;
+            $this->teamRequestSelectionRequired = true;
+            $this->initTeamUserInfo = array(
+                'userid' => $Users->userData['userid'],
+            );
         } else {
             $this->isInSeveralTeams = true;
         }

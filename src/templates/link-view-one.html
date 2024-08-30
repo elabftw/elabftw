@@ -21,12 +21,12 @@
       <i class='fas fa-fw fa-square-plus'></i>
     </button>
     {% if mode == 'edit' %}
-      <button type='button' data-action='import-links' data-target='{{ link.entityid }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+      <button type='button' data-action='import-links' data-target='{{ link.entityid }}' aria-label='{{ 'Import links'|trans }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
         <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
-      <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+      <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' aria-label='{{ 'Import'|trans }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
         <i class='fas fa-fw fa-lg fa-file-import'></i></button>
     {% endif %}
-    <button type='button' data-action='destroy-{{ isRelated|default(false) ? 'related-' }}link' data-endpoint='{{ link.type }}_links' data-target='{{ link.entityid }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+    <button type='button' data-action='destroy-{{ isRelated|default(false) ? 'related-' }}link' data-endpoint='{{ link.type }}_links' data-target='{{ link.entityid }}' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
       <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
   </div>
   {# container to hold the body of the entity if it is toggled with the +/- icon #}

@@ -291,18 +291,12 @@ abstract class AbstractConcreteEntity extends AbstractEntity
             return $category;
         }
         $sql = sprintf(
-            'SELECT custom_id FROM experiments
-                WHERE custom_id IS NOT NULL AND category = :category %s
+            'SELECT custom_id FROM %s WHERE custom_id IS NOT NULL AND category = :category
                 ORDER BY custom_id DESC LIMIT 1',
-            $this instanceof Items
-                ? 'AND team = :team'
-                : '',
+            $this->entityType->value
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
-        if ($this instanceof Items) {
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        }
         $this->Db->execute($req);
         $res = $req->fetch();
         if ($res === false || $res['custom_id'] === null) {

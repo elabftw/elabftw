@@ -24,7 +24,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     {
         return match ($action) {
             Action::Create => $this->create(title: $reqBody['title'] ?? null),
-            Action::Duplicate => $this->duplicate(),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }

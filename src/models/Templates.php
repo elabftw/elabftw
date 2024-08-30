@@ -13,14 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Services\Filter;
-use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -57,6 +59,7 @@ class Templates extends AbstractTemplateEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -71,16 +74,14 @@ class Templates extends AbstractTemplateEntity
         if (isset($this->Users->userData['default_write'])) {
             $canwrite = $this->Users->userData['default_write'];
         }
-        $contentType = self::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown'] === 1) {
-            $contentType = self::CONTENT_MD;
-        }
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO experiments_templates(team, title, userid, canread, canwrite, canread_target, canwrite_target, content_type, rating)
-            VALUES(:team, :title, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite, canread_target, canwrite_target, content_type, rating)
+            VALUES(:team, :title, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindValue(':title', $title);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -92,35 +93,35 @@ class Templates extends AbstractTemplateEntity
         $id = $this->Db->lastInsertId();
 
         // now pin the newly created template so it directly appears in Create menu
-        $this->setId($id);
-        $Pins = new Pins($this);
+        $fresh = new self($this->Users, $id);
+        $Pins = new Pins($fresh);
         $Pins->togglePin();
         return $id;
     }
 
     /**
-     * Duplicate a template from someone else in the team
+     * Duplicate a template from someone else
      */
     public function duplicate(bool $copyFiles = false): int
     {
-        $template = $this->readOne();
-
-        $sql = 'INSERT INTO experiments_templates(team, title, category, status, body, userid, canread, canwrite, canread_target, canwrite_target, metadata)
-            VALUES(:team, :title, :category, :status, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :metadata)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':title', $template['title']);
-        $req->bindParam(':body', $template['body']);
-        $req->bindParam(':category', $template['category']);
-        $req->bindParam(':status', $template['status']);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':canread', $template['canread']);
-        $req->bindParam(':canwrite', $template['canwrite']);
-        $req->bindParam(':canread_target', $template['canread_target']);
-        $req->bindParam(':canwrite_target', $template['canwrite_target']);
-        $req->bindParam(':metadata', $template['metadata']);
-        $req->execute();
-        $newId = $this->Db->lastInsertId();
+        $this->canOrExplode('read');
+        $title = $this->entityData['title'] . ' I';
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            status: $this->entityData['status'],
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $this->entityData['metadata'],
+            contentType: $this->entityData['content_type'],
+        );
+        // add missing can*_target
+        $fresh = new self($this->Users, $newId);
+        $fresh->patch(Action::Update, array(
+            'canread_target' => $this->entityData['canread_target'],
+            'canwrite_target' => $this->entityData['canwrite_target'],
+        ));
 
         // copy tags
         $Tags = new Tags($this);
@@ -128,15 +129,18 @@ class Templates extends AbstractTemplateEntity
 
         // copy links and steps too
         $ItemsLinks = new ExperimentsTemplates2ItemsLinks($this);
-        $ItemsLinks->duplicate($template['id'], $newId, true);
+        /** @psalm-suppress PossiblyNullArgument */
+        $ItemsLinks->duplicate($this->id, $newId, true);
         $ExperimentsLinks = new ExperimentsTemplates2ExperimentsLinks($this);
-        $ExperimentsLinks->duplicate($template['id'], $newId, true);
+        $ExperimentsLinks->duplicate($this->id, $newId, true);
         $Steps = new Steps($this);
-        $Steps->duplicate($template['id'], $newId, true);
+        $Steps->duplicate($this->id, $newId, true);
+        if ($copyFiles) {
+            $this->Uploads->duplicate($fresh);
+        }
 
         // now pin the newly created template so it directly appears in Create menu
-        $this->setId($newId);
-        $Pins = new Pins($this);
+        $Pins = new Pins($fresh);
         $Pins->togglePin();
 
         return $newId;
@@ -144,33 +148,17 @@ class Templates extends AbstractTemplateEntity
 
     public function readOne(): array
     {
-        $sql = "SELECT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-                experiments_templates.created_at, experiments_templates.modified_at, experiments_templates.content_type,
-                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite,
-                experiments_templates.canread_target, experiments_templates.canwrite_target,
-                experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.state,
-                users.firstname, users.lastname, users.orcid,
-                experiments_templates.category,experiments_templates.status,
-                categoryt.title AS category_title, categoryt.color AS category_color, statust.title AS status_title, statust.color AS status_color,
-                GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
-            FROM experiments_templates
-            LEFT JOIN users
-                ON (experiments_templates.userid = users.userid)
-            LEFT JOIN tags2entity
-                ON (experiments_templates.id = tags2entity.item_id
-                    AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags
-                ON (tags2entity.tag_id = tags.id)
-            LEFT JOIN experiments_categories AS categoryt
-                ON (experiments_templates.category = categoryt.id)
-            LEFT JOIN experiments_status AS statust
-                ON (experiments_templates.status = statust.id)
-            WHERE experiments_templates.id = :id";
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        $builder = new TemplatesSqlBuilder($this);
+        $sql = $builder->getReadSqlBeforeWhere(getTags: true, fullSelect: true);
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->entityData = $this->Db->fetch($req);
+        // this is needed because the query will return something with everything null instead of throwing the exception at fetch()
         if ($this->entityData['id'] === null) {
             throw new ResourceNotFoundException();
         }
@@ -205,102 +193,25 @@ class Templates extends AbstractTemplateEntity
      */
     public function readAll(): array
     {
-        $sql = array();
-        $sql[] = "SELECT DISTINCT experiments_templates.id, experiments_templates.title, experiments_templates.body,
-                experiments_templates.userid, experiments_templates.canread, experiments_templates.canwrite, experiments_templates.content_type,
-                experiments_templates.locked, experiments_templates.lockedby, experiments_templates.locked_at,
-                experiments_templates.canread_target, experiments_templates.canwrite_target,
-                CONCAT(users.firstname, ' ', users.lastname) AS fullname, experiments_templates.metadata, experiments_templates.modified_at,
-                users2teams.teams_id, teams.name AS team_name,
-                (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned,
-                experiments_templates.category,experiments_templates.status,
-                categoryt.title AS category_title, categoryt.color AS category_color, statust.title AS status_title, statust.color AS status_color,
-                GROUP_CONCAT(tags.tag SEPARATOR '|') AS tags, GROUP_CONCAT(tags.id) AS tags_id
-            FROM experiments_templates
-            LEFT JOIN users ON (experiments_templates.userid = users.userid)
-            LEFT JOIN users2teams
-                ON (users2teams.users_id = users.userid
-                    AND users2teams.teams_id = :team)
-            LEFT JOIN teams ON (teams.id = experiments_templates.team)
-            LEFT JOIN tags2entity
-                ON (experiments_templates.id = tags2entity.item_id
-                    AND tags2entity.item_type = 'experiments_templates')
-            LEFT JOIN tags
-                ON (tags2entity.tag_id = tags.id)
-            LEFT JOIN experiments_categories AS categoryt
-                ON (experiments_templates.category = categoryt.id)
-            LEFT JOIN experiments_status AS statust
-                ON (experiments_templates.status = statust.id)
-            LEFT JOIN pin_experiments_templates2users
-                ON (experiments_templates.id = pin_experiments_templates2users.entity_id
-                    AND pin_experiments_templates2users.users_id = :userid)
-            WHERE experiments_templates.userid != 0
-                AND experiments_templates.state = :state";
-
-        $canSql = array();
-        $canSql[] = sprintf(
-            "experiments_templates.canread->'$.base' = %d",
-            BasePermissions::Full->value,
-        );
-        $canSql[] = sprintf(
-            "experiments_templates.canread->'$.base' = %d",
-            BasePermissions::Organization->value,
-        );
-        $canSql[] = sprintf(
-            "experiments_templates.canread->'$.base' = %d AND users2teams.users_id = experiments_templates.userid",
-            BasePermissions::Team->value,
-        );
-        $canSql[] = sprintf(
-            "experiments_templates.canread->'$.base' = %d AND experiments_templates.userid = :userid",
-            BasePermissions::User->value,
-        );
-        $canSql[] = sprintf(
-            "experiments_templates.canread->'$.base' = %d AND experiments_templates.userid = :userid",
-            BasePermissions::UserOnly->value,
-        );
-        // look for teams
-        $teamsOfUser = (new UsersHelper($this->Users->userData['userid']))->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
-            // JSON_OVERLAPS checks for the intersection of two arrays
-            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
-            $canSql[] = sprintf(
-                "JSON_OVERLAPS(experiments_templates.canread->'$.teams', CAST('[%s]' AS JSON))",
-                implode(', ', $teamsOfUser),
-            );
-        }
-        // look for teamgroups
-        $teamgroupsOfUser = array_column((new TeamGroups($this->Users))->readGroupsFromUser(), 'id');
-        if (!empty($teamgroupsOfUser)) {
-            $canSql[] = sprintf(
-                "JSON_OVERLAPS(experiments_templates.canread->'$.teamgroups', CAST('[%s]' AS JSON))",
-                implode(', ', $teamgroupsOfUser),
-            );
-        }
-        // look for our userid in users part of the json
-        $canSql[] = ':userid MEMBER OF (experiments_templates.canread->>"$.users")';
-
-        $sql[] = sprintf(
-            ' AND (%s)',
-            implode(' OR ', $canSql),
-        );
-
+        $builder = new TemplatesSqlBuilder($this);
+        $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);
+        // first WHERE is the state, possibly including archived
+        // also add a check for no userid 0 which is the common template (this will need to go away!!)
+        $sql .= sprintf(' WHERE entity.state = %d AND entity.userid != 0', State::Normal->value);
+        // add the json permissions
+        $sql .= $builder->getCanFilter('canread');
         if ($this->Users->userData['scope_experiments_templates'] === Scope::User->value) {
-            $sql[] = 'AND experiments_templates.userid = :userid';
+            $sql .= 'AND entity.userid = :userid';
         }
         if ($this->Users->userData['scope_experiments_templates'] === Scope::Team->value) {
-            $sql[] = 'AND experiments_templates.team = :team';
+            $sql .= 'AND entity.team = :team';
         }
 
-        $sql[] = $this->filterSql;
+        $sql .= ' GROUP BY id ORDER BY entity.created_at DESC, fullname DESC, is_pinned DESC, entity.ordering ASC';
 
-        $sql[] = str_replace('entity', 'experiments_templates', $this->idFilter);
-
-        $sql[] = 'GROUP BY id ORDER BY experiments_templates.created_at DESC, fullname DESC, is_pinned DESC, experiments_templates.ordering ASC';
-
-        $req = $this->Db->prepare(implode(' ', $sql));
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

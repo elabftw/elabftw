@@ -140,18 +140,6 @@ class Permissions
     }
 
     /**
-     * For ItemType write permission check for metadata
-     */
-    public function forItemType(): array
-    {
-        if ($this->Users->isAdmin && ($this->item['team'] === $this->Users->userData['team'])) {
-            return array('read' => true, 'write' => true);
-        }
-        // everyone has read access
-        return array('read' => true, 'write' => false);
-    }
-
-    /**
      * Get the write permission for an exp/item
      */
     private function getWrite(): bool

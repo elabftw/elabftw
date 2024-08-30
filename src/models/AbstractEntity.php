@@ -133,6 +133,7 @@ abstract class AbstractEntity implements RestInterface
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -417,6 +418,9 @@ abstract class AbstractEntity implements RestInterface
      */
     public function canOrExplode(string $rw): void
     {
+        if ($this->id === null) {
+            throw new ImproperActionException('Cannot check permissions without an id!');
+        }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;
         }
@@ -578,12 +582,9 @@ abstract class AbstractEntity implements RestInterface
     }
 
     /**
-     * Verify we can read/write an item
-     * Here be dragons! Cognitive load > 9000
-     *
-     * @param array<string, mixed>|null $item one item array
+     * @return array<string, bool>
      */
-    protected function getPermissions(?array $item = null): array
+    protected function getPermissions(): array
     {
         if ($this->bypassWritePermission) {
             return array('read' => true, 'write' => true);
@@ -591,29 +592,16 @@ abstract class AbstractEntity implements RestInterface
         if ($this->bypassReadPermission) {
             return array('read' => true, 'write' => false);
         }
-        if (empty($this->entityData) && !isset($item)) {
+        // make sure entityData is filled
+        if (empty($this->entityData)) {
             $this->readOne();
         }
-        // don't try to read() again if we have the item (for show where there are several items to check)
-        if (!isset($item)) {
-            $item = $this->entityData;
-        }
-
         // if it has the deleted state, don't show it.
-        if ($item['state'] === State::Deleted->value) {
+        if ($this->entityData['state'] === State::Deleted->value) {
             return array('read' => false, 'write' => false);
         }
 
-        $Permissions = new Permissions($this->Users, $item);
-
-        if ($this instanceof Experiments || $this instanceof Items || $this instanceof Templates) {
-            return $Permissions->forEntity();
-        }
-        if ($this instanceof ItemsTypes) {
-            return $Permissions->forItemType();
-        }
-
-        return array('read' => false, 'write' => false);
+        return (new Permissions($this->Users, $this->entityData))->forEntity();
     }
 
     /**

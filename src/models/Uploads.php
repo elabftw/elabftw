@@ -181,6 +181,10 @@ class Uploads implements RestInterface
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
             // replace links in body with the new long_name
+            // don't bother if body is null
+            if ($entity->entityData['body'] === null) {
+                return;
+            }
             $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
             $entity->patch(Action::Update, array('body' => $newBody));
         }

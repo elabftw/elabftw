@@ -45,6 +45,7 @@ class Experiments extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
+        ?int $contentType = null,
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
@@ -61,10 +62,7 @@ class Experiments extends AbstractConcreteEntity
             $body = null;
         }
         $metadata = null;
-        $contentType = AbstractEntity::CONTENT_HTML;
-        if ($this->Users->userData['use_markdown'] ?? 0) {
-            $contentType = AbstractEntity::CONTENT_MD;
-        }
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
@@ -79,7 +77,7 @@ class Experiments extends AbstractConcreteEntity
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
             $metadata = $templateArr['metadata'];
-            $contentType = (int) $templateArr['content_type'];
+            $contentType = $templateArr['content_type'];
         }
 
         // we don't use a proper template (use of common tpl or blank)
@@ -150,35 +148,28 @@ class Experiments extends AbstractConcreteEntity
     {
         $this->canOrExplode('read');
 
+        $Teams = new Teams($this->Users);
+        $Status = new ExperimentsStatus($Teams);
+
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
         $title = $this->entityData['title'] . ' I';
 
-        $Teams = new Teams($this->Users);
-        $Status = new ExperimentsStatus($Teams);
-
         // handle the blank_value_on_duplicate attribute on extra fields
         $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
-        // figure out the custom id
-        $customId = $this->getNextCustomId($this->entityData['category']);
 
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, userid, metadata, custom_id, content_type)
-            VALUES(:team, :title, CURDATE(), :body, :category, :status, :elabid, :canread, :canwrite, :userid, :metadata, :custom_id, :content_type)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':title', $title);
-        $req->bindParam(':body', $this->entityData['body']);
-        $req->bindValue(':category', $this->entityData['category']);
-        $req->bindValue(':status', $Status->getDefault(), PDO::PARAM_INT);
-        $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread', $this->entityData['canread']);
-        $req->bindParam(':canwrite', $this->entityData['canwrite']);
-        $req->bindParam(':metadata', $metadata);
-        $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':content_type', $this->entityData['content_type'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $newId = $this->Db->lastInsertId();
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            // use default status instead of copying the current one
+            status: $Status->getDefault(),
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $metadata,
+            contentType: $this->entityData['content_type'],
+        );
+
         $fresh = new self($this->Users, $newId);
         /** @psalm-suppress PossiblyNullArgument
          * this->id cannot be null here, checked during canOrExplode */

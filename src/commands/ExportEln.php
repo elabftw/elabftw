@@ -2,7 +2,7 @@
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2024 Nicolas CARPi
+ * @copyright 2023 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -23,10 +23,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use ZipStream\ZipStream;
 
 /**
- * Export a full team
+ * Export data in .eln format
  */
-#[AsCommand(name: 'teams:export')]
-class ExportTeams extends Command
+#[AsCommand(name: 'export:eln')]
+class ExportEln extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {
@@ -35,8 +35,8 @@ class ExportTeams extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Export all experiments and resources from a team')
-            ->setHelp('This command will generate a ELN archive with all the experiments and resources bound to a particular team.')
+        $this->setDescription('Export data in ELN file format')
+            ->setHelp('This command allows you to create a .eln file containing data from a whole team. Use verbose flags (-v or -vv) to get more information about what is happening.')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID');
     }
 
@@ -44,7 +44,7 @@ class ExportTeams extends Command
     {
         $teamid = (int) $input->getArgument('teamid');
         $absolutePath = $this->Fs->getPath(sprintf(
-            'export-%s-teamid-%d.eln',
+            'export-elabftw-%s-team-%d.eln',
             date('Y-m-d_H-i-s'),
             $teamid,
         ));

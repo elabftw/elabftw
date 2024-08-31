@@ -14,7 +14,6 @@ namespace Elabftw\Commands;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Import\Eln;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\UltraAdmin;

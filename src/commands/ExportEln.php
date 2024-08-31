@@ -44,7 +44,7 @@ class ExportEln extends Command
     {
         $teamid = (int) $input->getArgument('teamid');
         $absolutePath = $this->Fs->getPath(sprintf(
-            'export-team-%d-%s.eln',
+            'export-elabftw-%s-team-%d.eln',
             date('Y-m-d_H-i-s'),
             $teamid,
         ));

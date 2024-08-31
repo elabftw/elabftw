@@ -51,7 +51,8 @@
     "webpack-cli": "^5.1.4"
   },
   "resolutions": {
-    "fast-xml-parser": "^4.4.1"
+    "fast-xml-parser": "^4.4.1",
+    "micromatch": "^4.0.8"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",

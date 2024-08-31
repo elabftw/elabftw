@@ -9,7 +9,7 @@
     "3dmol": "^2.3.0",
     "@deltablot/chemdoodle-web-mini": "^9.5.1",
     "@deltablot/dropzone": "^7.1.5",
-    "@deltablot/malle": "^2.6.0",
+    "@deltablot/malle": "^2.6.1",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.15",
     "@fullcalendar/core": "^6.1.15",
@@ -47,7 +47,7 @@
     "tom-select": "^2.3.1",
     "ts-loader": "^9.5.1",
     "typescript": "5.2.2",
-    "webpack": "^5.93.0",
+    "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4"
   },
   "resolutions": {

@@ -29,6 +29,8 @@ class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.title,
             entity.status,
             entity.body,
+            entity.category,
+            entity.status,
             entity.ordering,
             entity.canread,
             entity.canwrite,

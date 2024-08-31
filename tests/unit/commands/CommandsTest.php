@@ -200,20 +200,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testExecuteExportUser(): void
+    public function testExecuteExportEln(): void
     {
-        $commandTester = new CommandTester(new ExportUser(new Memory()));
+        $commandTester = new CommandTester(new ExportEln(new Memory()));
         $commandTester->execute(array(
-            'userid' => '1',
             'teamid' => '1',
-        ));
-
-        $commandTester->assertCommandIsSuccessful();
-        // now test with the skip resources flag
-        $commandTester->execute(array(
-            'userid' => '1',
-            'teamid' => '1',
-            '--skip-resources' => true,
         ));
 
         $commandTester->assertCommandIsSuccessful();

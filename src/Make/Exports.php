@@ -236,7 +236,7 @@ class Exports implements RestInterface
         $entitySlugs = $builder->getAllEntitySlugs();
         $entityArr = array();
         foreach ($entitySlugs as $slug) {
-            $entityArr[] = $slug->EntityType->toInstance($this->requester, $slug->id);
+            $entityArr[] = $slug->type->toInstance($this->requester, $slug->id);
         }
 
         switch ($format) {

@@ -53,8 +53,9 @@ class Items extends AbstractConcreteEntity
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
     ): int {
+        // TODO maybe allow creating an Item without any template, like for experiments
         $ItemsTypes = new ItemsTypes($this->Users);
-        if ($template < 0) {
+        if ($template < 0 || $template === null) {
             $template = $ItemsTypes->getDefault();
         }
         $ItemsTypes->setId($template);

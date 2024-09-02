@@ -61,6 +61,7 @@
 
 {% include('view-edit-toolbar.html') %}
 
+
 <section id='main_section' aria-label='main section'>
 
   {# DATE and RATING #}
@@ -189,23 +190,11 @@
 
 <hr>
 
-{# CHEM EDITOR #}
+{# MOLECULE EDITOR #}
 <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='chemDiv'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
-<div id='chemDiv' hidden data-save-hidden='chemDiv' class='mt-2 mb-2 chemdoodle'>
-  {# chemdoodle #}
-  <div>
-    {% if App.Config.configArr.debug -%}
-      {# set no-unused-disable and text-content and wcag/h37 because removing or leaving text-content and wcag/h37 brings up error #}
-      <!-- [html-validate-disable-block deprecated, element-permitted-content, no-missing-references, prefer-native-element, wcag/h37, wcag/h67, text-content, no-implicit-button-type, no-redundant-role, no-unused-disable: suppress errors from sketcher] -->
-    {%- endif %}
-    <canvas id='sketcher'></canvas>
-  </div>
-  <div class='mt-3'>
-    <button class='btn btn-primary mr-3' type='button' data-filetype='chemjson' data-action='save-chem-as-file'>{{ 'Save as JSON'|trans }}</button>
-    <button class='btn btn-primary mr-3' type='button' data-filetype='png' data-action='save-chem-as-file'>{{ 'Save as image'|trans }}</button>
-    <button class='btn btn-primary mr-3' type='button' data-filetype='rxn' data-action='save-chem-as-file'>{{ 'Save as RXN'|trans }}</button>
-  </div>
-</div>
+
+
+<div id="ketcher-root" hidden data-save-hidden='ketcher-root' class='my-2'></div>
 
 <div id='info'
     data-page='edit'

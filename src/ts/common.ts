@@ -614,6 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = now.toFormat(format);
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

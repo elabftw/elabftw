@@ -25,6 +25,8 @@ module.exports = (env) => {
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
+        './src/ts/ketcher.jsx',
+        './src/ts/ketcher-editor.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -106,7 +108,10 @@ module.exports = (env) => {
       ),
     ],
     resolve: {
-      extensions: ['.ts', '.js'],
+      extensions: ['.ts', '.js', '.jsx'],
+      fallback: {
+        util: require.resolve('util/'),
+      },
     },
     module: {
       rules:[
@@ -126,6 +131,10 @@ module.exports = (env) => {
             MiniCssExtractPlugin.loader,
             'css-loader',
           ],
+        },
+        {
+        test: /\.jsx?$/,
+        use: ["babel-loader"]
         },
         { // SASS loader
           test: /\.scss$/,

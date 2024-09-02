@@ -37,7 +37,7 @@ $text-muted: $medium;
 
 @import 'animations';
 @import 'autocomplete';
-@import 'chemdoodle';
+/** @import 'chemdoodle'; */
 @import 'footer';
 @import 'header';
 @import 'star-rating';
@@ -1547,4 +1547,26 @@ input:checked + .slider::before {
       top: 4px;
     }
   }
+}
+#ketcher-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;   /* Make the editor fill the entire width */
+}
+
+.ketcher-editor-container {
+  /*flex-grow: 1; /* Make the editor grow to fill available space */
+  flex: 0 1 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ketcher-editor-container .editor {
+  /*flex-grow: 1; /* Allow the drawing area to take up all remaining space */
+  flex: 0 1 500px;
+  min-height: 500px; /* Ensure a minimum height */
+}
+
+.ketcher-editor-container .toolbar {
+  flex-shrink: 0; /* Ensure toolbars do not shrink */
 }

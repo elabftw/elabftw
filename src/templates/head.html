@@ -69,6 +69,15 @@
             <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
             <a class='nav-item nav-link' href='{{ App.teamArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamArr.link_name }}</a>
+            <li class='nav-item dropdown'>
+              <a class='nav-link dropdown-toggle' href='#' role='button' data-toggle='dropdown' aria-expanded='false'>
+              {{ 'Tools'|trans }}
+              </a>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item' href='chem-editor.php'>{{ 'Chemical Structure Editor'|trans }}</a>
+                <a class='dropdown-item disabled' href='#'>{{ 'DNA Cloning'|trans }}</a>
+            </li>
+
 
         </div>
 

@@ -16,7 +16,7 @@ import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
+//import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/dist/esm/tom-select';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
@@ -222,6 +222,9 @@ export function notif(info: ResponseMsg): void {
 
 // DISPLAY 2D MOL FILES
 export function displayMolFiles(): void {
+  return;
+}
+/*
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to
@@ -235,6 +238,7 @@ export function displayMolFiles(): void {
     });
   });
 }
+*/
 
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: string, value: string): void {

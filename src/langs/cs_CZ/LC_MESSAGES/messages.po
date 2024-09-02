@@ -4393,7 +4393,7 @@ msgstr "Imzo kalitlari tajribalar yoki resurslarni kriptografik tarzda imzolash 
 
 #: src/templates/ucp.html:410
 msgid "To learn more about signature keys, have a look at the %scomplete documentation%s."
-msgstr "Imzo kalitlari haqida koʻproq maʼlumot olish uchun %toʻliq hujjatlarni koʻring%s."
+msgstr "Imzo kalitlari haqida koʻproq maʼlumot olish uchun %stoʻliq hujjatlarni koʻring%s."
 
 #: src/templates/ucp.html:412
 msgid "You do not have a key pair associated with your account yet."

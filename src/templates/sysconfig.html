@@ -503,7 +503,7 @@
     {% if uploadsStats.count_null_filesize > 0 %}
       {{ 'Warning: %d files are missing a filesize value. Fix it with %sbin/console uploads:check%s command.'|format(uploadsStats.count_null_filesize, '<code>', '</code>')|msg('warning', false) }}
     {% endif %}
-    {{ 'This instance has %d files uploaded using %s of disk space.'|trans|format(uploadsStats.count_all, uploadsStats.filesize_all|formatBytes) }}
+    {{ 'This instance has %d files uploaded using %s of disk space.'|trans|format(uploadsStats.count_all, uploadsStats.filesize_all|default(0)|formatBytes) }}
   </div>
 
   <h3 class='p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>

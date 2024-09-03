@@ -2,7 +2,7 @@
  import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
 import KetcherEditor from './ketcher';
-import { StandaloneStructServiceProvider, FormatterFactory } from 'ketcher-standalone';
+//import { StandaloneStructServiceProvider, FormatterFactory } from 'ketcher-standalone';
 import { Ketcher, ketcherProvider } from 'ketcher-core';
 const RootComponent = () => {
   useEffect(() => {
@@ -23,6 +23,8 @@ const RootComponent = () => {
 
         // Append the custom button to the toolbar
         toolbar.appendChild(customButton);
+  const ketcher = ketcherProvider.getKetcher();
+  window.ketcher = ketcherProvider.getKetcher();
         clearInterval(checkForToolbar);
         // Your logic here
       }
@@ -58,6 +60,9 @@ const formatterFactory = new FormatterFactory(structServiceProvider);
   if (el.matches('[data-action="search-from-editor"]')) {
     console.log('clicked');
     const ketcher = ketcherProvider.getKetcher();
+    //const smiles = async () => {await ketcher.getSmiles()};
+    ketcher.getInchi().then(s => console.log(s));
+    //console.log(smiles());
     /*
     const getInchi = async () => {
       return ketcher.getInchi();
@@ -66,6 +71,7 @@ const formatterFactory = new FormatterFactory(structServiceProvider);
       return ketcher.getMolfile();
     }
     */
+    /*
     (async () => {
       try {
         const [inchi, smiles, mol] = await Promise.all([ketcher.getSmiles(), ketcher.getInchi(), ketcher.getMolfile()]);
@@ -76,6 +82,7 @@ const formatterFactory = new FormatterFactory(structServiceProvider);
         console.error('Error:', error);
       }
     })();
+    */
   }
 });
 

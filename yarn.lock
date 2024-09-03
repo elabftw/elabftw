@@ -5821,6 +5821,7 @@ __metadata:
     postcss: "npm:^8.4.39"
     postcss-scss: "npm:^4.0.9"
     prismjs: "npm:^1.29.0"
+    process: "npm:^0.11.10"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     sass: "npm:^1.77.8"

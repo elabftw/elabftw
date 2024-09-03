@@ -106,10 +106,16 @@ module.exports = (env) => {
           filename: 'vendor.min.css',
         }
       ),
+      // required to make process work in the browser
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
     ],
     resolve: {
       extensions: ['.ts', '.js', '.jsx'],
       fallback: {
+        // required by react 18
+        process: require.resolve('process/browser'),
         util: require.resolve('util/'),
       },
     },

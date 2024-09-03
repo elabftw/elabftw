@@ -125,7 +125,7 @@
       {% endtrans %}
     </h3>
     {% for comment in entityData.comments %}
-      <p class='pdf-ul'>On {{ comment.datetime }} {{ comment.fullname }} wrote:<br>{{ comment.comment|nl2br }}</p>
+      <p class='pdf-ul'>On {{ comment.created_at }} {{ comment.fullname }} wrote:<br>{{ comment.comment|nl2br }}</p>
     {% endfor %}
   </section>
 {% endif %}

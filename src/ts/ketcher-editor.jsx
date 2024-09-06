@@ -61,7 +61,7 @@ const formatterFactory = new FormatterFactory(structServiceProvider);
     console.log('clicked');
     const ketcher = ketcherProvider.getKetcher();
     //const smiles = async () => {await ketcher.getSmiles()};
-    ketcher.getInchi().then(s => console.log(s));
+    ketcher.getSmiles().then(s => console.log(s));
     //console.log(smiles());
     /*
     const getInchi = async () => {

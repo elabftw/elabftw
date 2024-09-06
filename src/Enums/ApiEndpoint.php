@@ -25,6 +25,7 @@ enum ApiEndpoint: string
     case Info = 'info';
     case Experiments = 'experiments';
     case Export = 'exports';
+    case Fingerprints = 'fingerprints';
     case Items = 'items';
     case ExperimentsTemplates = 'experiments_templates';
     case ItemsTypes = 'items_types';

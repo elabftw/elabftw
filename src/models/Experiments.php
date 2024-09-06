@@ -122,7 +122,6 @@ class Experiments extends AbstractConcreteEntity
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
-        $this->setId($newId);
 
         // insert the tags, steps and links from the template
         if ($template > 0) {

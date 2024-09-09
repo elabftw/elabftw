@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // initialize the file uploader
   const uploader = new Uploader();
-  const dropZone = uploader.init();
+  const dropZone = await uploader.init();
 
   ////////////////
   // DATA RECOVERY

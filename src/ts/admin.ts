@@ -14,15 +14,17 @@ import {
   updateCatStat,
   notifNothingSelected,
   permissionsToJson,
+  getEntity,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
-import { MdEditor } from './Editor.class';
+import { MdEditor, getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
-import { EntityType, Model, Action, Selected } from './interfaces';
+import { EntityType, Model, Action, Selected, Target } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
+import EntityClass from './Entity.class';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,10 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  // activate editor for common template
-  tinymce.init(getTinymceBaseConfig('admin'));
-  // and for md
-  (new MdEditor()).init();
+  const editor = getEditor();
+  if (editor.type === 'tiny') {
+    tinymce.init(getTinymceBaseConfig('admin'));
+  } else {
+    (new MdEditor()).init();
+  }
 
   function collectSelectable(name: string) {
     const collected = [];
@@ -110,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-    const body = tinymce.get('itemsTypesBody').getContent();
+    const body = editor.getContent();
     const params = {'title': name, 'color': color, 'body': body};
     return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
   }
@@ -173,6 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
         count -= 1;
       }
       counterValue.textContent = String(count);
+    // SWITCH EDITOR TODO FIXME duplicated code from edit.ts
+    } else if (el.matches('[data-action="switch-editor"]')) {
+      const entity = getEntity();
+      const EntityC = new EntityClass(entity.type);
+      const target = el.dataset.type === 'tiny' ? 'md' : 'tiny';
+      EntityC.update(entity.id, Target.ContentType, target).then(() => editor.switch());
 
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {

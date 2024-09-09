@@ -138,7 +138,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
-      EntityC.update(entity.id, Target.ContentType, editor.switch() === 'tiny' ? '1' : '2');
+      const target = el.dataset.type === 'tiny' ? 'md' : 'tiny';
+      EntityC.update(entity.id, Target.ContentType, target).then(() => editor.switch());
 
     // GET NEXT CUSTOM ID
     } else if (el.matches('[data-action="get-next-custom-id"]')) {

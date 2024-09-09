@@ -537,7 +537,7 @@ abstract class AbstractEntity implements RestInterface
         $this->canOrExplode('write');
         $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        foreach($params->ordering as $ordering => $name) {
+        foreach ($params->ordering as $ordering => $name) {
             // build jsonPath to field
             $field = sprintf(
                 '$.%s.%s.%s',

@@ -46,7 +46,7 @@ class UserRequestActions implements RestInterface
             ),
         );
         $sql = array();
-        foreach($tables as $table) {
+        foreach ($tables as $table) {
             $sql[] = sprintf(
                 '(SELECT "%1$s" AS entity_page, entity.title AS entity_title, %2$s_request_actions.id,
                         %2$s_request_actions.created_at, requester_userid, target_userid, entity_id, action,

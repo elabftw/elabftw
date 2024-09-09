@@ -66,16 +66,16 @@ class ExpirationNotifier extends EmailNotifications
         $emailSubject = _('Account expiration information');
         $cnt = 0;
         // loop on each team
-        foreach($targets as $team => $users) {
+        foreach ($targets as $team => $users) {
             $TeamsHelper = new TeamsHelper($team);
             $adminsids = $TeamsHelper->getAllAdminsUserid();
             // and for each admin, send an email listing the users that are expiring
-            foreach($adminsids as $adminid) {
+            foreach ($adminsids as $adminid) {
                 $targetUser = new Users($adminid);
                 $this->setLang($targetUser->userData['lang']);
                 $emailBody = _('One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others.') . "\n";
                 // display a list of the users that will get archived
-                foreach($users as $user) {
+                foreach ($users as $user) {
                     $emailBody .= "\n− " . implode(', ', $user);
                 }
                 $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);

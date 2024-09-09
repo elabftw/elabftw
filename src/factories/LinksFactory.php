@@ -29,7 +29,7 @@ class LinksFactory
 {
     public static function getExperimentsLinks(AbstractEntity $entity, ?int $id = null): AbstractExperimentsLinks
     {
-        return match($entity->entityType) {
+        return match ($entity->entityType) {
             EntityType::Experiments => new Experiments2ExperimentsLinks($entity, $id),
             EntityType::Items => new Items2ExperimentsLinks($entity, $id),
             EntityType::Templates => new ExperimentsTemplates2ExperimentsLinks($entity, $id),
@@ -39,7 +39,7 @@ class LinksFactory
 
     public static function getItemsLinks(AbstractEntity $entity, ?int $id = null): AbstractItemsLinks
     {
-        return match($entity->entityType) {
+        return match ($entity->entityType) {
             EntityType::Experiments => new Experiments2ItemsLinks($entity, $id),
             EntityType::Items => new Items2ItemsLinks($entity, $id),
             EntityType::Templates => new ExperimentsTemplates2ItemsLinks($entity, $id),

@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
-
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Elabftw\Services\TeamsHelper;

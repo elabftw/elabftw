@@ -111,7 +111,7 @@ class Email
         }
 
         // send emails one by one
-        foreach($addresses as $address) {
+        foreach ($addresses as $address) {
             $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
         }
         return $addressesCount;
@@ -204,7 +204,7 @@ class Email
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array
     {
         $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
-        switch($target) {
+        switch ($target) {
             case EmailTarget::Team:
                 $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
                 $filter = 'AND users2teams.teams_id = :id';

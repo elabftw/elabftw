@@ -22,7 +22,6 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
-
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -52,7 +52,7 @@ class Batch implements RestInterface
             $model = new Experiments($this->requester);
             $Tags2Entity = new Tags2Entity($model->entityType);
             $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-            foreach($targetIds as $id) {
+            foreach ($targetIds as $id) {
                 try {
                     $model->setId($id);
                     $model->patch($action, $reqBody);
@@ -102,7 +102,7 @@ class Batch implements RestInterface
             $DisplayParams->limit = 100000;
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);
-            foreach($entries as $entry) {
+            foreach ($entries as $entry) {
                 try {
                     $model->setId($entry['id']);
                     $model->patch($action, $params);

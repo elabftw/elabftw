@@ -77,8 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       EntityC.update(entity.id, Target.Body, editor.getContent());
     // SWITCH EDITOR TODO duplicated code from edit.ts
     } else if (el.matches('[data-action="switch-editor"]')) {
-      const target = el.dataset.type === 'tiny' ? 'md' : 'tiny';
-      EntityC.update(entity.id, Target.ContentType, target).then(() => editor.switch());
+      editor.switch(entity).then(() => window.location.reload());
 
     // INSERT IMAGE AT CURSOR POSITION IN TEXT FIXME TODO duplicated code from edit.ts
     } else if (el.matches('[data-action="insert-image-in-body"]')) {

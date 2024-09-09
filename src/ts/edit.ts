@@ -138,8 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
-      const target = el.dataset.type === 'tiny' ? 'md' : 'tiny';
-      EntityC.update(entity.id, Target.ContentType, target).then(() => editor.switch());
+      editor.switch(entity).then(() => window.location.reload());
 
     // GET NEXT CUSTOM ID
     } else if (el.matches('[data-action="get-next-custom-id"]')) {

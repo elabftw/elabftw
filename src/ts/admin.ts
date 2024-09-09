@@ -19,12 +19,11 @@ import {
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
-import { MdEditor, getEditor } from './Editor.class';
+import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
-import { EntityType, Model, Action, Selected, Target } from './interfaces';
+import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
-import EntityClass from './Entity.class';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (editor.type === 'tiny') {
     tinymce.init(getTinymceBaseConfig('admin'));
   } else {
-    (new MdEditor()).init();
+    editor.init();
   }
 
   function collectSelectable(name: string) {
@@ -179,10 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       counterValue.textContent = String(count);
     // SWITCH EDITOR TODO FIXME duplicated code from edit.ts
     } else if (el.matches('[data-action="switch-editor"]')) {
-      const entity = getEntity();
-      const EntityC = new EntityClass(entity.type);
-      const target = el.dataset.type === 'tiny' ? 'md' : 'tiny';
-      EntityC.update(entity.id, Target.ContentType, target).then(() => editor.switch());
+      editor.switch(getEntity()).then(() => window.location.reload());
 
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {

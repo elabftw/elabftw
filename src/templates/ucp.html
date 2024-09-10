@@ -1,13 +1,4 @@
 {% extends 'base.html' %}
-{# tinymce or markdown? #}
-{% set editor = 'tiny' %}
-{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' or Entity.entityData.content_type == '2' %}
-  {% set editor = 'md' %}
-{% endif %}
-{% if App.Request.query.get('editor') == 'tiny' or Entity.entityData.content_type == '1' %}
-  {% set editor = 'tiny' %}
-{% endif %}
-
 {% block body %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>

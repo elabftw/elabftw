@@ -1,15 +1,6 @@
 {% extends 'base.html' %}
 
 {% block body %}
-{# tinymce or markdown? #}
-{% set editor = 'tiny' %}
-{% if Entity.Users.userData.use_markdown or App.Request.query.get('editor') == 'md' or Entity.entityData.content_type == '2' %}
-  {% set editor = 'md' %}
-{% endif %}
-{% if App.Request.query.get('editor') == 'tiny' or Entity.entityData.content_type == '1' %}
-  {% set editor = 'tiny' %}
-{% endif %}
-
 
 {% embed 'view-edit.html' %}
   {% block createnew %}
@@ -104,8 +95,9 @@
   <div {{ not displayMainText ? 'hidden' }}>
     <h3 data-action='toggle-next' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3><span class='ml-4 smallgray'>{{ 'Last saved:'|trans }}</span><span id='lastSavedAt' class='ml-2 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
     <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
-      <div class='mt-4'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-        {% if editor == 'md' %}
+      <div class='mt-4' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+        {# tinymce or markdown? #}
+        {% if Entity.entityData.content_type == '2' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
         {% else %}
         {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
@@ -114,6 +106,10 @@
           {%- endif %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
+      </div>
+      {# SWITCH EDITOR #}
+      <div class='float-right'>
+        <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
       </div>
 
       <div class='mt-4 text-center'>

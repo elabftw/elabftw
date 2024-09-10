@@ -414,8 +414,16 @@
       </div>
       <hr>
 
-      <div>
-        <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
+      <div id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>
+        {% if Entity.entityData.content_type == '2' %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% else %}
+          <textarea class='mceditable' id='itemsTypesBody'>{{ Entity.entityData.body }}</textarea>
+        {% endif %}
+        {# SWITCH EDITOR #}
+        <div class='float-right'>
+          <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
+        </div>
         <div class='text-center mt-3'>
           <button type='button' class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
         </div>

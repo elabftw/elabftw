@@ -50,6 +50,7 @@ import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
+import {getEditor} from './Editor.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // HEARTBEAT
@@ -300,6 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-reload-on-click]')) {
       reloadElements([el.dataset.reloadOnClick]).then(() => relativeMoment());
+
+    // SWITCH EDITOR
+    } else if (el.matches('[data-action="switch-editor"]')) {
+      getEditor().switch(getEntity()).then(() => window.location.reload());
+
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));

@@ -14,7 +14,6 @@ import {
   updateCatStat,
   notifNothingSelected,
   permissionsToJson,
-  getEntity,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -176,10 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         count -= 1;
       }
       counterValue.textContent = String(count);
-    // SWITCH EDITOR TODO FIXME duplicated code from edit.ts
-    } else if (el.matches('[data-action="switch-editor"]')) {
-      editor.switch(getEntity()).then(() => window.location.reload());
-
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));

@@ -16,7 +16,7 @@ use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
+use Elabftw\Elabftw\UserParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -194,12 +194,12 @@ class Saml implements AuthInterface
         $firstname = $this->getName();
         $lastname = $this->getName(true);
         if ($firstname !== self::UNKNOWN_VALUE && $lastname !== self::UNKNOWN_VALUE) {
-            $Users->patch(Action::Update, array(
-                'firstname' => $firstname,
-                'lastname' => $lastname,
-            ));
+            $Users->update(new UserParams('firstname', $firstname));
+            $Users->update(new UserParams('lastname', $lastname));
         }
-        $Users->patch(Action::Update, array('orgid' => $orgid));
+        if ($orgid !== null) {
+            $Users->update(new UserParams('orgid', $orgid));
+        }
 
         // load the teams from db
         $UsersHelper = new UsersHelper($this->AuthResponse->userid);
@@ -307,7 +307,7 @@ class Saml implements AuthInterface
                     $Users = ExistingUser::fromOrgid($orgid);
                     // ok we found our user thanks to the orgid, maybe we want to update our stored email?
                     if ($this->configArr['saml_sync_email_idp'] === '1') {
-                        $Users->patch(Action::Update, array('email' => $email));
+                        $Users->update(new UserParams('email', $email));
                     }
                     return $Users;
                 } catch (ResourceNotFoundException) {

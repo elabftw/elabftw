@@ -98,7 +98,7 @@ class ItemsTypes extends AbstractTemplateEntity
         $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
         // add the json permissions
         $sql .= $builder->getCanFilter('canread');
-        $sql .= ' GROUP BY id';
+        $sql .= ' GROUP BY id ORDER BY ordering ASC';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);

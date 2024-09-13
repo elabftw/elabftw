@@ -58,7 +58,7 @@ class TwigFilters
         }
 
         // "status" role: see WCAG2.1 4.1.3
-        return sprintf("<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, $message);
+        return sprintf("<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>", $alert, $icon, $alert, $crossLink, Tools::eLabHtmlspecialchars($message));
     }
 
     public static function toIcon(int $scope): string

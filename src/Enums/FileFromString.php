@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 enum FileFromString: string
 {
+    use EnumsTrait;
+
     case Png = 'png';
     case Mol = 'mol';
     case Json = 'json';

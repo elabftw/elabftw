@@ -25,4 +25,11 @@ trait EnumsTrait
         }
         return $all;
     }
+
+    // create a comma separated list of values
+    public static function toCsList(): string
+    {
+        $values = array_map(fn($case) => $case->value, self::cases());
+        return implode(', ', $values);
+    }
 }

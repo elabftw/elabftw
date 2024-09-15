@@ -52,7 +52,8 @@
   },
   "resolutions": {
     "fast-xml-parser": "^4.4.1",
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "path-to-regexp": "^1.9.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",

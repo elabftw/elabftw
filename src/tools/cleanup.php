@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\DatabaseErrorException;
-
 use Elabftw\Exceptions\FilesystemErrorException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;

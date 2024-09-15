@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
-
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;

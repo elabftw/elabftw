@@ -95,36 +95,37 @@ class IdpsHelper
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and
                 // friendlyName can be omitted. Otherwise remove this section.
+                // Important: requestedAttributes.name cannot be empty or some IDP software will choke on it when reading SP metadata
                 'attributeConsumingService' => array(
                     'ServiceName' => 'eLabFTW',
                     'serviceDescription' => 'Electronic Lab Notebook',
                     'requestedAttributes' => array(
                         array(
-                            'name' => $idp['email_attr'] ?? 'urn:oid:0.9.2342.19200300.100.1.3',
+                            'name' => empty($idp['email_attr']) ? 'urn:oid:0.9.2342.19200300.100.1.3' : $idp['email_attr'],
                             'isRequired' => true,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'mail',
                         ),
                         array(
-                            'name' => $idp['fname_attr'] ?? 'urn:oid:2.5.4.42',
+                            'name' => empty($idp['fname_attr']) ? 'urn:oid:2.5.4.42' : $idp['fname_attr'],
                             'isRequired' => false,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'givenName',
                         ),
                         array(
-                            'name' => $idp['lname_attr'] ?? 'urn:oid:2.5.4.4',
+                            'name' => empty($idp['lname_attr']) ? 'urn:oid:2.5.4.4' : $idp['lname_attr'],
                             'isRequired' => false,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'sn',
                         ),
                         array(
-                            'name' => $idp['team_attr'] ?? 'urn:oid:1.3.6.1.4.1.5923.1.1.1.7',
+                            'name' => empty($idp['team_attr']) ? 'urn:oid:1.3.6.1.4.1.5923.1.1.1.7' : $idp['team_attr'],
                             'isRequired' => false,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'team',
                         ),
                         array(
-                            'name' => $idp['orgid_attr'] ?? 'urn:oid:0.9.2342.19200300.100.1.1',
+                            'name' => empty($idp['orgid_attr']) ? 'urn:oid:0.9.2342.19200300.100.1.1' : $idp['orgid_attr'],
                             'isRequired' => false,
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'uid',

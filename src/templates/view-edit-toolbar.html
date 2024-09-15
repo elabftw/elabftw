@@ -303,10 +303,6 @@
         {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
         {% endif %}
-        {% if mode == 'edit' %}
-          {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
-          <button type='button' class='dropdown-item' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-        {% endif %}
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}

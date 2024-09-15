@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use function dirname;

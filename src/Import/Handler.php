@@ -21,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AuditLogs;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -41,6 +42,8 @@ class Handler implements RestInterface
         return array(
             'allowed_extensions' => self::ALLOWED_EXTENSIONS,
             'max_filesize' => UploadedFile::getMaxFilesize(),
+            'max_upload_size' => Config::fromEnv('MAX_UPLOAD_SIZE'),
+            'max_upload_time' => (int) Config::fromEnv('MAX_UPLOAD_TIME'),
         );
     }
 

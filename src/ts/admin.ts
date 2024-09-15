@@ -18,7 +18,7 @@ import {
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from 'i18next';
-import { MdEditor } from './Editor.class';
+import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
@@ -35,10 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  // activate editor for common template
-  tinymce.init(getTinymceBaseConfig('admin'));
-  // and for md
-  (new MdEditor()).init();
+  const editor = getEditor();
+  if (editor.type === 'tiny') {
+    tinymce.init(getTinymceBaseConfig('admin'));
+  } else {
+    editor.init();
+  }
 
   function collectSelectable(name: string) {
     const collected = [];
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-    const body = tinymce.get('itemsTypesBody').getContent();
+    const body = editor.getContent();
     const params = {'title': name, 'color': color, 'body': body};
     return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
   }
@@ -173,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
         count -= 1;
       }
       counterValue.textContent = String(count);
-
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
       itemsTypesUpdate(parseInt(el.dataset.id, 10));

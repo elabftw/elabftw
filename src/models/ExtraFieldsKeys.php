@@ -59,7 +59,7 @@ class ExtraFieldsKeys implements RestInterface
     public function readAll(): array
     {
         $sql = array();
-        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+        foreach (array(EntityType::Items, EntityType::Experiments) as $entityType) {
             $sql[] = sprintf(
                 'SELECT JSON_UNQUOTE(`extra_fields_key`) AS `extra_fields_key`, COUNT(`id`) as `frequency`
                     FROM %s AS `entity`

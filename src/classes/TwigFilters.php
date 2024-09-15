@@ -141,7 +141,7 @@ class TwigFilters
                 // multi select will be an array of options
                 elseif (is_array($value)) {
                     $html = '';
-                    foreach($value as $option) {
+                    foreach ($value as $option) {
                         $html .= sprintf('<p>%s</p>', Tools::eLabHtmlspecialchars($option));
                     }
                     $value = $html;

@@ -53,7 +53,7 @@ class IdpsSources implements RestInterface
         if ($this->id === null) {
             throw new ImproperActionException('No id was set!');
         }
-        return match($action) {
+        return match ($action) {
             // currently only one aspect is modifiable, the auto_refresh
             Action::Update => $this->toggleAutoRefresh(),
             Action::Replace => (

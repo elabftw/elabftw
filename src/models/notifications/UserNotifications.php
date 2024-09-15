@@ -18,7 +18,6 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Users;
 use Elabftw\Traits\SetIdTrait;
-
 use PDO;
 
 use function json_decode;

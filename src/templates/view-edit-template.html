@@ -143,10 +143,6 @@
     </button>
 
     <div class='dropdown-menu dropdown-menu-right'>
-      {% if mode == 'edit' %}
-        {# SWITCH EDITOR the data-editor is here to indicate which is the current editor #}
-        <button class='dropdown-item' type='button' id='iHazEditor' data-action='switch-editor' data-editor='{{ editor }}'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-      {% endif %}
       {# REVISIONS #}
       <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
       {# CHANGELOG #}
@@ -207,15 +203,19 @@
     <hr>
 
     {# MAIN CONTENT #}
-    <div class='mt-4'>
-      {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
-      {% if editor == 'md' %}
+    <div class='mt-4' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>
+      {% if Entity.entityData.content_type == '2' %}
         <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' style='height:500px;' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
       {% else %}
         <div>{# << this div is added around the textarea to fix an issue on mobile editor. See #3107 #}
+          {# the id begins with an 'e' because of this https://github.com/tinymce/tinymce/issues/3011#issuecomment-227993762 #}
           <textarea id='e{{ Entity.entityData.id }}' class='mceditable'>{{ Entity.entityData.body }}</textarea>
         </div>
       {% endif %}
+      {# SWITCH EDITOR #}
+      <div class='float-right'>
+        <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
+      </div>
       <div class='text-center mt-4'>
         <button type='button' data-action='update-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
       </div>

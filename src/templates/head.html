@@ -107,7 +107,7 @@
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
-            <a class='dropdown-item' href='{{ App.getWhatsnewLink() }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
+            <a class='dropdown-item' href='{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' href='#' data-action='toggle-modal' data-target='helpModal'><i class='fas fa-question-circle fa-fw'></i> {{ 'Help'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net/api.html' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>

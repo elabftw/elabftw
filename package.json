@@ -52,7 +52,8 @@
   },
   "resolutions": {
     "fast-xml-parser": "^4.4.1",
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "path-to-regexp": "^1.9.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
@@ -81,9 +82,9 @@
     "apidocv2": "docker run --name swagger --rm -e SWAGGER_JSON=/c/openapi.yaml -v $(pwd)/apidoc/v2/:/c -p 8085:8080 -d swaggerapi/swagger-ui && echo 'APIv2 Doc: http://localhost:8085' && echo 'Run docker stop swagger to remove it.'",
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",
     "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",
-    "build": "webpack-cli --env MAX_UPLOAD_SIZE=$MAX_UPLOAD_SIZE --env MAX_UPLOAD_TIME=$MAX_UPLOAD_TIME --progress --config builder.js",
-    "build:dev": "webpack-cli --env MAX_UPLOAD_SIZE=$MAX_UPLOAD_SIZE --env MAX_UPLOAD_TIME=$MAX_UPLOAD_TIME --config builder.js",
-    "build:prod": "webpack-cli --env MAX_UPLOAD_SIZE=$MAX_UPLOAD_SIZE --env MAX_UPLOAD_TIME=$MAX_UPLOAD_TIME --mode production --env production --config builder.js",
+    "build": "webpack-cli --progress --config builder.js",
+    "build:dev": "webpack-cli --config builder.js",
+    "build:prod": "webpack-cli --mode production --env production --config builder.js",
     "buildnode": "webpack-cli --progress --config node-builder.js",
     "buildnode:dev": "webpack-cli --config node-builder.js",
     "buildall": "CYPRESS_INSTALL_BINARY=0 yarn install --immutable && yarn buildjs && yarn buildcss && yarn buildparser && yarn brotli && yarn zopfli",
@@ -120,7 +121,7 @@
     "unit": "tests/run.sh unit",
     "unit-ci": "php vendor/bin/codecept run unit",
     "watchpdfcss": "sass --quiet-deps --watch src/scss/pdf.scss:web/assets/pdf.min.css",
-    "watchjs": "webpack-cli --env MAX_UPLOAD_SIZE=$MAX_UPLOAD_SIZE --env MAX_UPLOAD_TIME=$MAX_UPLOAD_TIME  --config builder.js --mode=development --watch --progress",
+    "watchjs": "webpack-cli --config builder.js --mode=development --watch --progress",
     "watchnode": "webpack-cli --config node-builder.js --mode=development --watch --progress"
   },
   "repository": "git+https://github.com/elabftw/elabftw.git",

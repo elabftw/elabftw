@@ -148,7 +148,7 @@ class Eln extends AbstractZip
         }
         // otherwise try looking into "genre" attribute
         if (!empty($dataset['genre'])) {
-            return match($dataset['genre']) {
+            return match ($dataset['genre']) {
                 'experiment', 'experiments' => EntityType::Experiments,
                 'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
                 'resource template' => EntityType::ItemsTypes,
@@ -268,7 +268,7 @@ class Eln extends AbstractZip
         // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected
         $bodyAppend = '';
         foreach ($dataset as $attributeName => $value) {
-            switch($attributeName) {
+            switch ($attributeName) {
                 // CATEGORY
                 case 'about':
                     $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
@@ -314,7 +314,7 @@ class Eln extends AbstractZip
                     break;
                     // LINKS
                 case 'mentions':
-                    foreach($value as $mention) {
+                    foreach ($value as $mention) {
                         // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
                         // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
                         // after 5.1 the "mention" will point to a Dataset contained in the .eln

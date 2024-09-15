@@ -94,11 +94,6 @@ module.exports = (env) => {
       ],
     },
     plugins: [
-      // https://webpack.js.org/plugins/define-plugin/
-      new webpack.DefinePlugin({
-            '__MAX_UPLOAD_SIZE__': JSON.stringify(env.MAX_UPLOAD_SIZE),
-            '__MAX_UPLOAD_TIME__': JSON.stringify(env.MAX_UPLOAD_TIME),
-        }),
       new MiniCssExtractPlugin(
         {
           filename: 'vendor.min.css',

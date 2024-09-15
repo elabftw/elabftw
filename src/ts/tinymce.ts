@@ -212,6 +212,8 @@ export function getTinymceBaseConfig(page: string): object {
     mobile: {
       plugins: [ 'save', 'lists', 'link', 'autolink' ],
     },
+    // use a custom function for the save button in toolbar
+    save_onsavecallback: (): Promise<void> => updateEntityBody(),
     // keyboard shortcut to insert today's date at cursor in editor
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function

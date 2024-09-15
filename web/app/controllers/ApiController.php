@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\Apiv1Controller;
-
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;

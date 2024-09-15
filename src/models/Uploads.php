@@ -269,9 +269,23 @@ class Uploads implements RestInterface
         if ($this->id !== null) {
             $action = Action::Replace;
         }
+        if (empty($reqBody['real_name'])) {
+            throw new ImproperActionException('Cannot create an upload with an empty real_name value.');
+        }
         return match ($action) {
             Action::Create => $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'], $reqBody['comment'])),
-            Action::CreateFromString => $this->createFromString(FileFromString::from($reqBody['file_type']), $reqBody['real_name'], $reqBody['content']),
+            Action::CreateFromString => (
+                function () use ($reqBody) {
+                    $fileType = FileFromString::tryFrom($reqBody['file_type']);
+                    if ($fileType === null) {
+                        throw new ImproperActionException(sprintf('Invalid file_type parameter. Valid values are: %s.', FileFromString::toCsList()));
+                    }
+                    if (empty($reqBody['content'])) {
+                        throw new ImproperActionException('Cannot create file from string with empty content!');
+                    }
+                    return $this->createFromString($fileType, $reqBody['real_name'], $reqBody['content']);
+                }
+            )(),
             Action::Replace => $this->replace(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };

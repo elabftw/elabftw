@@ -35,6 +35,7 @@ use function basename;
 use function bindtextdomain;
 use function dirname;
 use function in_array;
+use function intdiv;
 use function putenv;
 use function setlocale;
 use function textdomain;
@@ -46,12 +47,12 @@ class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.1.4';
+    public const string INSTALLED_VERSION = '5.1.5';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const int INSTALLED_VERSION_INT = 50104;
+    public const int INSTALLED_VERSION_INT = 50105;
 
     public Users $Users;
 
@@ -191,9 +192,11 @@ class App
         return $Language->toCalendar();
     }
 
-    public static function getWhatsnewLink(): string
+    public static function getWhatsnewLink(int $installedVersionInt): string
     {
-        return sprintf('https://www.deltablot.com/posts/release-%d', self::INSTALLED_VERSION_INT);
+        // we want to have a version number like 50100 for 5.1, we do not care about the patch number
+        $baseVersion = intdiv($installedVersionInt, 100) * 100;
+        return sprintf('https://www.deltablot.com/posts/release-%d', $baseVersion);
     }
 
     /**

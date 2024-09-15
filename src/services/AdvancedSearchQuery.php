@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Services\AdvancedSearchQuery\Exceptions\LimitDepthIsExceededException;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\OrExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\Parser;
@@ -67,7 +68,7 @@ class AdvancedSearchQuery
             $errorMessage = sprintf(
                 "%s<pre class='alert-danger pb-3'>%s</pre>",
                 $errorElements[0],
-                implode("\n", array_slice($errorElements, 1)),
+                Tools::eLabHtmlspecialchars(implode("\n", array_slice($errorElements, 1))),
             );
 
             $this->exception = $errorMessage;

@@ -222,7 +222,7 @@ class MakePdf extends AbstractMakePdf
         $Changelog = new Changelog($this->Entity);
 
         $baseUrls = array();
-        foreach(array(EntityType::Items, EntityType::Experiments) as $entityType) {
+        foreach (array(EntityType::Items, EntityType::Experiments) as $entityType) {
             $baseUrls[$entityType->value] = sprintf('%s/%s', Config::fromEnv('SITE_URL'), $entityType->toPage());
         }
 

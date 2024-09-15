@@ -53,7 +53,7 @@ class ExportEln extends Command
             throw new RuntimeException('Could not open output stream!');
         }
 
-        $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
+        $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
         $Maker = new MakeTeamEln($ZipStream, $teamid);
         $Maker->getStreamZip();
 

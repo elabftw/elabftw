@@ -47,7 +47,7 @@ class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.1.5';
+    public const string INSTALLED_VERSION = '5.1.6';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each

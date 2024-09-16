@@ -84,6 +84,20 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('no_extension.mol', $this->Entity->Uploads->uploadData['real_name']);
     }
 
+    public function testDuplicate(): void
+    {
+        $source = new Experiments(new Users(1, 1));
+        $source->setId($source->create());
+        $source->Uploads->createFromString(FileFromString::Json, 'test.json', '{}');
+
+        $target = new Experiments(new Users(1, 1));
+        $target->setId($target->create());
+        $source->Uploads->duplicate($target);
+
+        $targetArr = $target->Uploads->readAll();
+        $this->assertEquals('test.json', $targetArr[0]['real_name']);
+    }
+
     public function testUploadingPhpFile(): void
     {
         $this->expectException(ImproperActionException::class);

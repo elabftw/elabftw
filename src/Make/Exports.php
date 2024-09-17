@@ -20,6 +20,7 @@ use Elabftw\Elabftw\Invoker;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Interfaces\StorageInterface;
@@ -236,7 +237,12 @@ class Exports implements RestInterface
         $entitySlugs = $builder->getAllEntitySlugs();
         $entityArr = array();
         foreach ($entitySlugs as $slug) {
-            $entityArr[] = $slug->type->toInstance($this->requester, $slug->id);
+            try {
+                $entityArr[] = $slug->type->toInstance($this->requester, $slug->id);
+            } catch (IllegalActionException) {
+                // TODO figure out why we encounter instances with no read access in the first place
+                continue;
+            }
         }
 
         switch ($format) {

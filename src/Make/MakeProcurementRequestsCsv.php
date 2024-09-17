@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Exceptions\ImproperActionException;
-
 use Elabftw\Models\ProcurementRequests;
 
 use function date;

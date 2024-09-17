@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
-
 use Elabftw\Models\Config;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;

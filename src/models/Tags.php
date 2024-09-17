@@ -44,7 +44,7 @@ class Tags implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create(new TagParam($reqBody['tag']));
+        return $this->create(new TagParam($reqBody['tag'] ?? ''));
     }
 
     public function readOne(): array

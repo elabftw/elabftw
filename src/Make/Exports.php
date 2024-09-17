@@ -246,7 +246,7 @@ class Exports implements RestInterface
                 if ($fileStream === false) {
                     throw new RuntimeException('Could not open output stream!');
                 }
-                $ZipStream = new ZipStream(sendHttpHeaders:false, outputStream: $fileStream);
+                $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
                     $Maker = new MakeEln($ZipStream, $this->requester, $entityArr);
                 } else {

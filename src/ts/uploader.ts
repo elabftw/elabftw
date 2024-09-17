@@ -8,21 +8,23 @@
 import Dropzone from '@deltablot/dropzone';
 import { reloadElements, sizeToMb } from './misc';
 import i18next from 'i18next';
+import { Api } from './Apiv2.class';
 
 export class Uploader
 {
   // holds the resolve function of tinymce image handler
   tinyImageSuccess: (value: string | PromiseLike<string>) => void;
 
-  getOptions() {
+  async getOptions() {
     /* eslint-disable-next-line @typescript-eslint/no-this-alias */
     const that = this;
-    const sizeInMb = sizeToMb(__MAX_UPLOAD_SIZE__);
+    const importInfo = await (new Api()).getJson('import');
+    const sizeInMb = sizeToMb(importInfo.max_upload_size);
     return {
       // i18n message to user
       dictDefaultMessage: `<i class='fas fa-upload'></i> ${i18next.t('dropzone-upload-area')}<br> ${i18next.t('dropzone-filesize-limit')} ${sizeInMb} MB`,
       maxFilesize: sizeInMb,
-      timeout: __MAX_UPLOAD_TIME__,
+      timeout: importInfo.max_upload_time,
       init: function(): void {
         // once upload is finished
         this.on('complete', function() {
@@ -39,7 +41,7 @@ export class Uploader
                 // The 'undefined' check is not enough. That is just for before any file was pasted.
                 that.tinyImageSuccess = null;
               }
-              that.init();
+              this.init();
             });
           }
         });
@@ -47,7 +49,7 @@ export class Uploader
     };
   }
 
-  init(): Dropzone {
+  async init(): Promise<Dropzone> {
     // FIXME just added "as any" for now
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
@@ -56,7 +58,7 @@ export class Uploader
       if (Object.prototype.hasOwnProperty.call(dropzoneEl, 'dropzone')) {
         return dropzoneEl.dropzone;
       }
-      return new Dropzone(dropzoneEl, this.getOptions());
+      return new Dropzone(dropzoneEl, await this.getOptions());
     }
   }
 }

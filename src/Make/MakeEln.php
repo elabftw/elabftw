@@ -146,7 +146,7 @@ class MakeEln extends AbstractMakeEln
         // this array will be added to the "mentions" attribute of the main dataset
         $mentions = array();
         $linkTypes = array('experiments', 'items');
-        foreach($linkTypes as $type) {
+        foreach ($linkTypes as $type) {
             foreach ($e[$type . '_links'] as $link) {
                 try {
                     if ($type === 'items') {

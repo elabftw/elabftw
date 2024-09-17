@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
@@ -49,6 +50,10 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $newValue = 'new idp name';
         $response = $this->Idps->patch(Action::Update, array('name' => $newValue));
         $this->assertEquals($newValue, $response['name']);
+        $helper = new IdpsHelper(Config::getConfig(), $this->Idps);
+        $settings = $helper->getSettings($id);
+        // check orgid requested attribute is not empty
+        $this->assertEquals('urn:oid:0.9.2342.19200300.100.1.1', $settings['sp']['attributeConsumingService']['requestedAttributes'][4]['name']);
     }
 
     public function testRead(): void

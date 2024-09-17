@@ -37,6 +37,7 @@ final class AnonymousUser extends Users
         $this->userData['scope_experiments'] = Scope::Team->value;
         $this->userData['scope_items'] = Scope::Team->value;
         $this->userData['scope_experiments_templates'] = Scope::Team->value;
+        $this->userData['scope_teamgroups'] = Scope::Team->value;
         $this->userData['fullname'] = 'Anon Ymous';
         $this->userData['is_sysadmin'] = 0;
         $this->userData['lang'] = $this->lang;

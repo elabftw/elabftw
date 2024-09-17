@@ -141,11 +141,13 @@ class Tex2Svg
                 } else {
                     // resize remaining MathJax SVGs
                     $this->contentWithMathJaxSVG = str_replace(
+                        // @phpstan-ignore-next-line
                         'width="' . $width['mathJax'] . '"',
                         'width="' . $width['mpdf'] . '"',
                         $this->contentWithMathJaxSVG
                     );
                     $this->contentWithMathJaxSVG = str_replace(
+                        // @phpstan-ignore-next-line
                         'height="' . $height['mathJax'] . '"',
                         'height="' . $height['mpdf'] . '"',
                         $this->contentWithMathJaxSVG

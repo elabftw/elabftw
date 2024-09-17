@@ -365,7 +365,15 @@ class Users implements RestInterface
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
+                    $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
+                        // prevent modification of identity fields if we are not sysadmin
+                        if (in_array($target, array('email', 'firstname', 'lastname'), true)
+                            && $Config->configArr['allow_users_change_identity'] === '0'
+                            && $this->requester->userData['is_sysadmin'] === 0
+                        ) {
+                            throw new ImproperActionException('Identity information can only be modified by Sysadmin.');
+                        }
                         $this->update(new UserParams($target, (string) $content));
                     }
                 }
@@ -493,6 +501,50 @@ class Users implements RestInterface
         }
     }
 
+    public function update(UserParams $params): bool
+    {
+        if ($params->getTarget() === 'password') {
+            throw new ImproperActionException('Use action:updatepassword to update the password');
+        }
+        // email is filtered here because otherwise the check for existing email will throw exception
+        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+            // we can only edit our own email, or be sysadmin
+            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
+                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
+            }
+            Filter::email($params->getContent());
+        }
+        // special case for is_sysadmin: only a sysadmin can affect this column
+        if ($params->getTarget() === 'is_sysadmin') {
+            if ($this->requester->userData['is_sysadmin'] === 0) {
+                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+            }
+        }
+
+        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $params->getContent());
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $res = $this->Db->execute($req);
+
+        $auditLoggableTargets = array(
+            'email',
+            'orgid',
+            'is_sysadmin',
+        );
+
+        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->userid ?? 0,
+                $params->getTarget(),
+                (string) $this->userData[$params->getTarget()],
+                $params->getContent(),
+            ));
+        }
+        return $res;
+    }
+
     protected static function search(string $column, string $term, bool $validated = false): self
     {
         $Db = Db::getConnection();
@@ -562,58 +614,6 @@ class Users implements RestInterface
         if ($this->userid !== null && !$this->requester->isAdminOf($this->userid)) {
             throw new IllegalActionException('User tried to access user from other team.');
         }
-    }
-
-    private function update(UserParams $params): bool
-    {
-        if ($params->getTarget() === 'password') {
-            throw new ImproperActionException('Use action:updatepassword to update the password');
-        }
-        // email is filtered here because otherwise the check for existing email will throw exception
-        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
-            // we can only edit our own email, or be sysadmin
-            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
-                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
-            }
-            Filter::email($params->getContent());
-        }
-        $Config = Config::getConfig();
-        // prevent modification of identity fields if we are not sysadmin
-        if (in_array($params->getTarget(), array('email', 'firstname', 'lastname'), true)
-            && $Config->configArr['allow_users_change_identity'] === '0'
-            && $this->requester->userData['is_sysadmin'] === 0
-        ) {
-            throw new ImproperActionException('Identity information can only be modified by Sysadmin.');
-        }
-        // special case for is_sysadmin: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin') {
-            if ($this->requester->userData['is_sysadmin'] === 0) {
-                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
-            }
-        }
-
-        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
-
-        $auditLoggableTargets = array(
-            'email',
-            'orgid',
-            'is_sysadmin',
-        );
-
-        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
-            AuditLogs::create(new UserAttributeChanged(
-                $this->requester->userid ?? 0,
-                $this->userid ?? 0,
-                $params->getTarget(),
-                (string) $this->userData[$params->getTarget()],
-                $params->getContent(),
-            ));
-        }
-        return $res;
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool

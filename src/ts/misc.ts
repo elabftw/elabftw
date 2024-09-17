@@ -678,7 +678,7 @@ export function sizeToMb(size: string): number {
   };
 
   const regex = /^(\d+(?:\.\d+)?)([BKMGTPE]?)$/i;
-  const match = size.match(regex);
+  const match = size.toString().match(regex);
 
   if (!match) {
     throw new Error('Invalid size format');

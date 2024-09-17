@@ -58,7 +58,7 @@
   </div>
   <div class='text-center'>
     {% if App.Session.has('enable_mfa') %}
-      <button type='submit' class='btn btn-danger mr-2' name='Submit' value='cancel'>{{ 'Cancel'|trans }}</button>
+      <button type='submit' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
   </div>

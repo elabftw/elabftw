@@ -63,6 +63,9 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         // enforce the permissions if the admin has set them
         $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : BasePermissions::Team->toJson();
         $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : BasePermissions::User->toJson();
+        // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
+        $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
+        $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
@@ -71,11 +74,11 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 canread: $canread,
                 canwrite: $canwrite,
                 tags: $reqBody['tags'] ?? array(),
-                category: $reqBody['category'] ?? null,
-                status: $reqBody['status'] ?? null,
+                category: $category,
+                status: $status,
                 forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
-                defaultTemplateHtml: $teamConfigArr['common_template'],
-                defaultTemplateMd: $teamConfigArr['common_template_md'],
+                defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
+                defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
             ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),
@@ -278,6 +281,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
+        // allow uploading a file to that entity because sign action only requires read access
+        $this->Uploads->Entity->bypassWritePermission = true;
         $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);

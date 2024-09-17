@@ -171,7 +171,7 @@ class MakeController extends AbstractController
                 explode(' ', $this->Request->query->getString('id')),
             );
         }
-        foreach($idArr as $id) {
+        foreach ($idArr as $id) {
             $this->entityArr[] = $entityType->toInstance($this->requester, $id);
         }
 
@@ -184,7 +184,7 @@ class MakeController extends AbstractController
 
     private function getZipStreamLib(): ZipStream
     {
-        return new ZipStream(sendHttpHeaders:false);
+        return new ZipStream(sendHttpHeaders: false);
     }
 
     private function makePdf(): Response

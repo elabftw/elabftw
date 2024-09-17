@@ -20,7 +20,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\ActionRequested;
 use Elabftw\Traits\SetIdTrait;
-
 use PDO;
 
 /**

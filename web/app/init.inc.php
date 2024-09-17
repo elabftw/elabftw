@@ -12,7 +12,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
@@ -20,16 +19,13 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use Monolog\Logger;
 use PDOException;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use function basename;
 use function dirname;
-
 use function header;
 use function in_array;
-
 use function setcookie;
 use function stripos;
 

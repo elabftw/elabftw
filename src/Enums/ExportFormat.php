@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 enum ExportFormat: string
 {
+    use EnumsTrait;
+
     case Binary = 'binary';
     case Csv = 'csv';
     case Eln = 'eln';
@@ -27,11 +31,4 @@ enum ExportFormat: string
     case TeamReport = 'teamReport';
     case Zip = 'zip';
     case ZipA = 'zipa';
-
-    // create a comma separated list of values
-    public static function toCsList(): string
-    {
-        $values = array_map(fn($case) => $case->value, self::cases());
-        return implode(', ', $values);
-    }
 }

@@ -140,7 +140,7 @@ class EntitySqlBuilder
         $this->joinsSql[] = sprintf(
             'LEFT JOIN %s AS categoryt
                 ON (categoryt.id = entity.category)',
-            $this->entity->entityType === EntityType::Experiments
+            $this->entity->entityType === EntityType::Experiments || $this->entity->entityType === EntityType::Templates
                 ? 'experiments_categories'
                 : 'items_types',
         );

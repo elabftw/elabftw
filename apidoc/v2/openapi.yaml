@@ -1715,13 +1715,23 @@ paths:
                 type: object
                 properties:
                   allowed_extensions:
+                    description: allowlist of file extensions accepted for import
                     type: array
                     items:
                       type: string
                     example: [".eln", ".csv"]
                   max_filesize:
+                    description: maximum size of an uploaded file in bytes
                     type: integer
                     example: 2147483648
+                  max_upload_size:
+                    description: value of MAX_UPLOAD_SIZE env parameter
+                    type: string
+                    example: 3G
+                  max_upload_time:
+                    description: value of MAX_UPLOAD_TIME env parameter
+                    type: integer
+                    example: 900000
     post:
       tags: ['Import']
       summary: Send a file to import

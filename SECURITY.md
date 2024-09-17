@@ -129,3 +129,4 @@ These users reported vulnerabilities responsibly:
 - Rafal Lykowski (@mgrRaf)
 - Piyush Patil (@xoffense).
 - @xskullboyx
+- Harinder Singh

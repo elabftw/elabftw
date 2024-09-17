@@ -18,7 +18,6 @@ use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Meaning;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
-
 use ParagonIE\ConstantTime\Base64;
 
 use function sodium_crypto_generichash;

@@ -194,12 +194,11 @@
     {% if count == 0 and App.Request.query.all|length > 0 %}
     <div class='row display-flex' id='itemList'>
       {% set otherPage = Entity.entityType.value == 'experiments' ? 'database' : 'experiments' %}
-      {% set otherCategory = Entity.entityType.value == 'experiments' ? 'items' : 'experiments' %}
       {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
     </div>
     <div class='row d-flex'>
       <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|trim|e('url') }}'>
-        <button class='btn btn-primary' type='button'>{{ 'Search in %s'|trans|format(otherCategory) }}</button>
+        <button class='btn btn-primary' type='button'>{{ Entity.entityType.value == 'items' ? 'Search in experiments'|trans : 'Search in resources'|trans }}</button>
       </a>
     </div>
   {% elseif count == 0 and (App.Request.query.all|length == 0) and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}

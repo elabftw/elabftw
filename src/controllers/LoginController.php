@@ -340,6 +340,7 @@ class LoginController implements ControllerInterface
         $Users2Teams = new Users2Teams(new Users($userid));
         $Users2Teams->create($userid, $teamId);
         $this->App->Session->remove('teaminit_userid');
+        $this->App->Session->remove('team_request_selection_required');
         // TODO avoid re-login
         $this->App->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
         $location = '/login.php';

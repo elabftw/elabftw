@@ -6,7 +6,7 @@
  * @package elabftw
  */
 /**
- * This file is a yarn plugin that hooks into the afterAllInstalled hook to execute. Its purpose is to extract two css files from the tinymce folder.
+ * This file is a yarn plugin that hooks into the afterAllInstalled hook to execute. Its purpose is to extract css and js files from the tinymce folder.
  * But because of PnP this is much more difficult to do than previously, when a simple "cp" was enough.
  * doc: https://yarnpkg.com/advanced/pnpapi
  */
@@ -48,7 +48,9 @@ module.exports = {
               crossFs.writeFileSync(destinationPath, fileContent, 'utf8');
             };
 
-            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css');
+            crossFs.mkdirSync('web/assets/tiny_skins', { recursive: true });
+            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tiny_skins/skin.min.css');
+            extractFile('tinymce/skins/content/default/', 'content.min.css', 'tiny_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
             extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
           },

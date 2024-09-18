@@ -334,9 +334,9 @@ class Scheduler implements RestInterface
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = substr((string) $delta['milliseconds'], 0, -3);
         }
-        $newStart = $oldStart->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newStart);
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
         $this->checkConstraints($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
 
@@ -362,7 +362,7 @@ class Scheduler implements RestInterface
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = substr((string) $delta['milliseconds'], 0, -3);
         }
-        $newEnd = $oldEnd->modify('+' . $delta['days'] . ' day')->modify('+' . $seconds . ' seconds'); // @phpstan-ignore-line
+        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
         $this->checkConstraints($event['start'], $newEnd->format(DateTime::ATOM));
 

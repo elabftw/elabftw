@@ -130,7 +130,8 @@ class Experiments extends AbstractConcreteEntity
             $this->Steps->duplicate($template, $newId, true);
             $this->ItemsLinks->duplicate($template, $newId, true);
             $this->ExperimentsLinks->duplicate($template, $newId, true);
-            $Templates->Uploads->duplicate($this);
+            $freshSelf = new self($this->Users, $newId);
+            $Templates->Uploads->duplicate($freshSelf);
         }
 
         $this->insertTags($tags, $newId);

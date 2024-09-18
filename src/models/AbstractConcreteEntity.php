@@ -281,6 +281,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
+        // allow uploading a file to that entity because sign action only requires read access
+        $this->Uploads->Entity->bypassWritePermission = true;
         $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);

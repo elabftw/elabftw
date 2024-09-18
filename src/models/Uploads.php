@@ -168,6 +168,7 @@ class Uploads implements RestInterface
         return $this->Db->lastInsertId();
     }
 
+    // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
         $uploads = $this->readAll();

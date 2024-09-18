@@ -131,7 +131,7 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $Teams->readAll(),
         'metadataGroups' => $metadataGroups,
-        'allTeamgroupsArr' => $TeamGroups->readGroupsFromUser(),
+        'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),

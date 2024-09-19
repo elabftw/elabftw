@@ -48,7 +48,7 @@ module.exports = {
               crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 
-            crossFs.mkdirSync('${pathToAssets}tinymce_skins', { recursive: true });
+            crossFs.mkdirSync(`${pathToAssets}tinymce_skins`, { recursive: true });
             extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tinymce_skins/skin.min.css');
             extractFile('tinymce/skins/content/default/', 'content.min.css', 'tinymce_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');

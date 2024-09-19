@@ -12,7 +12,7 @@ import 'tinymce/models/dom';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
 // Note about tinymce css stuff: this page https://www.tiny.cloud/docs/tinymce/6/webpack-es6-npm/ just doesn't work as advertised
-// so it's easier to simply copy/extract the css files to web/assets/tiny_skins instead via the yarn-plugin-tinymce.js
+// so it's easier to simply copy/extract the css files to web/assets/tinymce_skins instead via the yarn-plugin-tinymce.js
 import 'tinymce/plugins/accordion';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/anchor';
@@ -121,7 +121,7 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     browser_spellcheck: true,
     // location of the skin directory
-    skin_url: '/assets/tiny_skins',
+    skin_url: '/assets/tinymce_skins',
     content_css: '/assets/tinymce_content.min.css',
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button

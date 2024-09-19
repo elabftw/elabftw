@@ -6,7 +6,7 @@
  * @package elabftw
  */
 /**
- * This file is a yarn plugin that hooks into the afterAllInstalled hook to execute. Its purpose is to extract two css files from the tinymce folder.
+ * This file is a yarn plugin that hooks into the afterAllInstalled hook to execute. Its purpose is to extract css and js files from the tinymce folder.
  * But because of PnP this is much more difficult to do than previously, when a simple "cp" was enough.
  * doc: https://yarnpkg.com/advanced/pnpapi
  */
@@ -37,6 +37,7 @@ module.exports = {
             }
             const checksum = project.storedChecksums.get(tinymceLocator.locatorHash) ?? null;
             const locatorPath = cache.getLocatorPath(tinymceLocator, checksum);
+            const pathToAssets = 'web/assets/';
 
             const extractFile = (nodeModulesPath, sourceName, targetName) => {
               targetName = typeof targetName === 'string' && targetName !== ''
@@ -44,11 +45,12 @@ module.exports = {
                 : sourceName;
               const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;
               const fileContent = crossFs.readFileSync(requestedFile);
-              const destinationPath = `web/assets/${targetName}`;
-              crossFs.writeFileSync(destinationPath, fileContent, 'utf8');
+              crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 
-            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css');
+            crossFs.mkdirSync(`${pathToAssets}tinymce_skins`, { recursive: true });
+            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tinymce_skins/skin.min.css');
+            extractFile('tinymce/skins/content/default/', 'content.min.css', 'tinymce_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
             extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
           },

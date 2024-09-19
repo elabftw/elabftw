@@ -26,7 +26,7 @@ class EntitySlugsSqlBuilder
     public function __construct(
         private Users $targetUser,
         private DateTimeImmutable $start = new DateTimeImmutable('500 years ago'),
-        private DateTimeImmutable $end = new DateTimeImmutable('now'),
+        private DateTimeImmutable $end = new DateTimeImmutable('tomorrow'),
         private bool $withExperiments = true,
         private bool $withItems = false,
         private bool $withTemplates = false,

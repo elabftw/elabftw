@@ -37,6 +37,7 @@ module.exports = {
             }
             const checksum = project.storedChecksums.get(tinymceLocator.locatorHash) ?? null;
             const locatorPath = cache.getLocatorPath(tinymceLocator, checksum);
+            const pathToAssets = 'web/assets/';
 
             const extractFile = (nodeModulesPath, sourceName, targetName) => {
               targetName = typeof targetName === 'string' && targetName !== ''
@@ -44,13 +45,12 @@ module.exports = {
                 : sourceName;
               const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;
               const fileContent = crossFs.readFileSync(requestedFile);
-              const destinationPath = `web/assets/${targetName}`;
-              crossFs.writeFileSync(destinationPath, fileContent, 'utf8');
+              crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 
-            crossFs.mkdirSync('web/assets/tiny_skins', { recursive: true });
-            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tiny_skins/skin.min.css');
-            extractFile('tinymce/skins/content/default/', 'content.min.css', 'tiny_skins/content.min.css');
+            crossFs.mkdirSync('${pathToAssets}tinymce_skins', { recursive: true });
+            extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tinymce_skins/skin.min.css');
+            extractFile('tinymce/skins/content/default/', 'content.min.css', 'tinymce_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
             extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
           },

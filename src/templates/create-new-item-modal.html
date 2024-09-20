@@ -26,8 +26,9 @@
           </div>
           <hr>
         {% endif %}
-        {% include 'scope-button.html' with {'btnId': 'createNewTemplates', 'reload': 'tplCreateNewDiv,createNewTemplates', 'target': 'scope_experiments_templates'} %}
-        <div id='tplCreateNewDiv'>
+        {% set btnId = 'createNewTemplates_' ~ entityType %}
+        {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityType, 'target': 'scope_experiments_templates'} %}
+        <div id='tplCreateNewDiv_{{ entityType }}'>
           {% for category in createNewCategoryArr %}
             <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>
             {% if category.category %}

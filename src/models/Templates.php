@@ -206,6 +206,7 @@ class Templates extends AbstractTemplateEntity
         if ($this->Users->userData['scope_experiments_templates'] === Scope::Team->value) {
             $sql .= 'AND entity.team = :team';
         }
+        $sql .= $this->idFilter;
 
         $sql .= ' GROUP BY id ORDER BY entity.created_at DESC, fullname DESC, is_pinned DESC, entity.ordering ASC';
 

@@ -26,13 +26,17 @@
           </div>
           <hr>
         {% endif %}
-        {% for category in createNewCategoryArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>
-          {% if category.category %}
-            <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
-          {% endif %}
-          {{ category.title }}</a>
-        {% endfor %}
+        {% set btnId = 'createNewTemplates_' ~ entityType %}
+        {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityType, 'target': 'scope_experiments_templates'} %}
+        <div id='tplCreateNewDiv_{{ entityType }}'>
+          {% for category in createNewCategoryArr %}
+            <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityType }}' data-tplid='{{ category.id }}'>
+            {% if category.category %}
+              <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
+            {% endif %}
+            {{ category.title }}</a>
+          {% endfor %}
+        </div>
         {# show add button to admin, for items #}
         {% if entityType == 'items' and App.Users.isAdmin %}
           <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityType }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>

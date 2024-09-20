@@ -317,10 +317,10 @@ class Teams implements RestInterface
             throw new RuntimeException('Cannot check permissions in team because the team id is null.');
         }
 
-        if ($this->Users->userData['is_sysadmin'] === 1) {
+        if ($this->Users->requester->userData['is_sysadmin'] === 1) {
             return;
         }
-        if ($this->hasCommonTeamWithCurrent($this->Users->userData['userid'], $this->id)) {
+        if ($this->hasCommonTeamWithCurrent($this->Users->requester->userData['userid'], $this->id)) {
             return;
         }
         throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');

@@ -1,7 +1,9 @@
 {# need var:
 - reload for the data-reload content
-- target: scope_experiments, scope_items, etc... #}
-<div id='scopeBtn' class='btn-group'>
+- target: scope_experiments, scope_items, etc...
+- optional btnId: to change the id attr of main div
+#}
+<div id='{{ btnId|default('scopeBtn') }}' class='btn-group'>
   <button class='btn btn-secondary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-{{ App.Users.userData[target]|toIcon }} fa-fw mr-1 color-white'></i>{{ 'Scope'|trans }}</button>
   <div class='dropdown-menu'>
     <button type='button' data-trigger='click' data-model='users/me' data-target='{{ target }}' data-reload='{{ reload }}' value='1' class='btn btn-dropdown-item dropdown-item {{ App.Users.userData.scope == 1 ? 'active' }}'>

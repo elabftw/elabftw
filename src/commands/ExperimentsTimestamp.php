@@ -54,7 +54,7 @@ class ExperimentsTimestamp extends Command
             $output->writeln(sprintf('Computed origin date: %s', $dateTimeImmutable->format('Y-m-d H:i:s')));
         }
         $Db = Db::getConnection();
-        $sql = 'SELECT id FROM experiments WHERE modified_at > :m';
+        $sql = 'SELECT id FROM experiments WHERE modified_at > :m AND timestamped_at != modified_at';
         $req = $Db->prepare($sql);
         $req->bindValue(':m', $dateTimeImmutable->format('Y-m-d H:i:s'));
         $req->execute();

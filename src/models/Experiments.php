@@ -61,7 +61,6 @@ class Experiments extends AbstractConcreteEntity
         if (empty($body)) {
             $body = null;
         }
-        $metadata = null;
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         // do we want template ?

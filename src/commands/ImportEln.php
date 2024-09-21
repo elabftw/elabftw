@@ -42,7 +42,7 @@ class ImportEln extends Command
     protected function configure(): void
     {
         $this->setDescription('Import everything from a .eln')
-            ->setHelp('Every node of type Dataset is created. If the .eln has been produced by eLabFTW, everything will be imported, otherwise the results may vary. Use verbose flags (-v or -vv) to get more information about what is happening. If a userid is provided through the --userid option, all entries will be created with that user as the author.')
+            ->setHelp('Every node of type Dataset is created. If the .eln has been produced by eLabFTW, everything will be imported, otherwise the results may vary. Use verbose flags (-v or -vv) to get more information about what is happening. If a userid is provided through the --userid option, all entries will be created with that user as the author.  Otherwise, entry ownership will be determined by user account email addresses and userid values mapped accordingly. Any users in the .eln that do not exist on this server will be created as needed.')
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in cache/elab folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')

@@ -5807,9 +5807,9 @@ __metadata:
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.14.0"
     jsoneditor: "npm:^10.1.0"
-    ketcher-core: "npm:^2.21.0"
-    ketcher-react: "npm:^2.21.0"
-    ketcher-standalone: "npm:^2.21.0"
+    ketcher-core: "npm:^2.24.0"
+    ketcher-react: "npm:^2.24.0"
+    ketcher-standalone: "npm:^2.24.0"
     lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
     marked: "npm:^14.0.0"
@@ -7225,10 +7225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.20.0":
-  version: 1.20.0
-  resolution: "indigo-ketcher@npm:1.20.0"
-  checksum: 10c0/5f0eb555eed44ebb0238dd12f769ed99cb238822e430264af4378992c1a669597d2a457db1634ea21783d00feadfdf6a638aa12b3603d4f5bb1b88a710dbf1e9
+"indigo-ketcher@npm:1.23.0":
+  version: 1.23.0
+  resolution: "indigo-ketcher@npm:1.23.0"
+  checksum: 10c0/0fd5371dd6a5e25e46cd7f2731396d62f4d1d4115045fb3288298b32f78d872e53c870a33163cf273f25cbe2f4cc1427d8908c041e90c202566bde7742261c10
   languageName: node
   linkType: hard
 
@@ -7898,7 +7898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ketcher-core@npm:*, ketcher-core@npm:^2.21.0":
+"ketcher-core@npm:*":
   version: 2.21.0
   resolution: "ketcher-core@npm:2.21.0"
   dependencies:
@@ -7915,9 +7915,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ketcher-react@npm:^2.21.0":
-  version: 2.21.0
-  resolution: "ketcher-react@npm:2.21.0"
+"ketcher-core@npm:^2.24.0":
+  version: 2.24.0
+  resolution: "ketcher-core@npm:2.24.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.17.9"
+    ajv: "npm:^8.10.0"
+    assert: "npm:^2.0.0"
+    d3: "npm:^7.8.5"
+    file-saver: "npm:^2.0.5"
+    lodash: "npm:^4.17.21"
+    raphael: "npm:^2.3.0"
+    react-device-detect: "npm:^2.2.2"
+    svgpath: "npm:^2.3.1"
+  checksum: 10c0/eb4488b5b952e168d717bd840a00f03bc3f1fb579aa499ef85be5c5fa36549e57b3dfb904e2673e1b7784e87c089957bd6f4224e8ee5cec919a49fa816434137
+  languageName: node
+  linkType: hard
+
+"ketcher-react@npm:^2.24.0":
+  version: 2.24.0
+  resolution: "ketcher-react@npm:2.24.0"
   dependencies:
     "@babel/runtime": "npm:^7.17.9"
     "@emotion/react": "npm:^11.7.1"
@@ -7959,18 +7976,18 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/2cf581a76e5082314fb7655826d12fd823161a57f36c8e398e0aa0f9e1986e84857372bef62c75ba528355616684fce74c30e46ad54f5c93f20282f6bd407eb0
+  checksum: 10c0/8fc5558331664740ab545010e8bb46d00c71409cce7ed58e0917336c05741f9fa8a8d1ba646f7076ab21353fda4b0ca084b26af9d5da1ee1786d4fd0411a803f
   languageName: node
   linkType: hard
 
-"ketcher-standalone@npm:^2.21.0":
-  version: 2.21.0
-  resolution: "ketcher-standalone@npm:2.21.0"
+"ketcher-standalone@npm:^2.24.0":
+  version: 2.24.0
+  resolution: "ketcher-standalone@npm:2.24.0"
   dependencies:
     "@babel/runtime": "npm:^7.17.9"
-    indigo-ketcher: "npm:1.20.0"
+    indigo-ketcher: "npm:1.23.0"
     ketcher-core: "npm:*"
-  checksum: 10c0/8c01e7c972ab31bf05db1353cc7282fc2f2620044e90d5537fcb66486ecb59a82cc6bf645342e186c7784318402b9e1e760464280ce371dcc9ccf6b250cd84ca
+  checksum: 10c0/3703102a49d29accb5511f80accbc2d983b6ba2434e6f0dfa633faf30c81b09d637e79b18b28b262f8d199f2486042d6afd09b4d85d2d0579c348cb6bab89d0a
   languageName: node
   linkType: hard
 

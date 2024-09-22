@@ -66,6 +66,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+        $metadata = null;
+        if (!empty($reqBody['metadata'])) {
+            $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
@@ -76,6 +80,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 tags: $reqBody['tags'] ?? array(),
                 category: $category,
                 status: $status,
+                metadata: $metadata,
                 forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
                 defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
                 defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',

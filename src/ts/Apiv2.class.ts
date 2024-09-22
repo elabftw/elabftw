@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Method } from './interfaces';
-import { notifSaved, notifError } from './misc';
+import { notifSaved, notifError, getNewIdFromPostRequest } from './misc';
 
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up
@@ -28,6 +28,11 @@ export class Api {
   post(query: string, params = {}): Promise<Response> {
     return this.send(Method.POST, query, params);
   }
+
+  post2location(query: string, params = {}): Promise<Number> {
+    return this.send(Method.POST, query, params).then(res => getNewIdFromPostRequest(res));
+  }
+
 
   delete(query: string): Promise<Response> {
     return this.send(Method.DELETE, query);

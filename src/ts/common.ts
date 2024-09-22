@@ -636,7 +636,9 @@ document.addEventListener('DOMContentLoaded', () => {
           title: title,
           metadata: compound,
         }
-        ApiC.post(`items`, params);
+        ApiC.post2location(`items`, params).then(newId => {
+          window.location.href = `/database.php?mode=edit&id=${newId}`;
+        });
       });
 
     // TOGGLE BODY

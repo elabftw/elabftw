@@ -621,6 +621,24 @@ document.addEventListener('DOMContentLoaded', () => {
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
 
+    // IMPORT CID
+    } else if (el.matches('[data-action="import-cid"]')) {
+      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${inputEl.value}/json`).then(res => res.json()).then(json => {
+        const compound = json.PC_Compounds[0];
+        let title= 'Unknown';
+        for (const prop of compound.props) {
+          if (prop.urn.label === "IUPAC Name" && prop.urn.name === "Traditional") {
+            title = prop.value.sval || title;
+          }
+        }
+        const params = {
+          title: title,
+          metadata: compound,
+        }
+        ApiC.post(`items`, params);
+      });
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

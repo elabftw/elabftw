@@ -41,6 +41,20 @@
         {% if entityType == 'items' and App.Users.isAdmin %}
           <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityType }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
         {% endif %}
+        <hr>
+        <button type='button' class='btn btn-secondary btn-sm' data-action='toggle-next'>{{ 'Import compound'|trans }}</button>
+        <div hidden class='my-2'>
+          <label for='pubchem-cid'>{{ 'Import from CID'|trans }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text' id='pubchem-cid-descriptor'>CID</span>
+            </div>
+            <input type='text' class='form-control' id='pubchem-cid' aria-describedby='pubchem-cid-descriptor'>
+            <div class='input-group-append'>
+              <button type='button' class='btn btn-primary' data-action='import-cid'>{{ 'Import'|trans }}</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

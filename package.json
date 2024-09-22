@@ -142,5 +142,5 @@
     "url": "https://github.com/elabftw/elabftw/issues"
   },
   "homepage": "https://www.elabftw.net",
-  "packageManager": "yarn@4.2.2"
+  "packageManager": "yarn@4.5.0"
 }

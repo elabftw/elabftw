@@ -35,6 +35,7 @@
     "jsoneditor": "^10.1.0",
     "ketcher-core": "^2.24.0",
     "ketcher-react": "^2.24.0",
+    "ketcher-standalone": "^2.24.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "marked": "^14.0.0",

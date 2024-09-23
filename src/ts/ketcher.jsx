@@ -31,7 +31,7 @@ const KetcherEditor = () => {
   return (
   <div className="ketcher-editor-container">
     <Editor
-      staticResourcesUrl={JSON.stringify('/')}
+      staticResourcesUrl={JSON.stringify('https://elab.local:3148')}
       structServiceProvider={structServiceProvider}
     />
   </div>

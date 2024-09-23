@@ -1,6 +1,6 @@
-import { StrictMode, useEffect, useState } from 'react';
+//import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client'
-import { Ketcher, ketcherProvider, reStruct, Atom } from 'ketcher-core';
+//import { Ketcher, ketcherProvider } from 'ketcher-core';
 import KetcherEditor from './ketcher';
 
 /*
@@ -9,6 +9,7 @@ const RootComponent = () => {
 };
 */
 
+document.addEventListener('DOMContentLoaded', () => {
 if (document.getElementById('ketcher-root')) {
 
   const root = createRoot(document.getElementById('ketcher-root'));
@@ -24,6 +25,8 @@ if (document.getElementById('ketcher-root')) {
   );
   */
 }
+});
+/*
 document.getElementById('container').addEventListener('click', event => {
   const el = event.target;
   if (el.matches('[data-action="search-from-editor"]')) {
@@ -52,6 +55,8 @@ document.getElementById('container').addEventListener('click', event => {
       }
     })();
     */
+/*
   }
 });
 
+*/

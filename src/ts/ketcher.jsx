@@ -1,14 +1,33 @@
-//import { StandaloneStructServiceProvider } from 'ketcher-standalone';
-import { Editor } from 'ketcher-react'; // Ensure you have this installed
-import "ketcher-react/dist/index.css";
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+import { Editor } from 'ketcher-react';
+import 'ketcher-react/dist/index.css';
+
+/**
+ * The structServiceProvider is remote but using a proxied server on eLab main URL
+ * Using the WASM Standalone version did not work well: either you include a 50 Mb base64'd wasm
+ * or webpack has issue with including a working wasm or something. So for now the best approach is to require a separate Indigo service
+ * but eventually, using the wasm standalone could be a good solution.
+*/
 import { RemoteStructServiceProvider } from 'ketcher-core';
 const structServiceProvider = new RemoteStructServiceProvider(
   '/indigo/v2',
 );
 
-//const structServiceProvider = new StandaloneStructServiceProvider();
-
 const KetcherEditor = () => {
+/*
+    useEffect(() => {
+       console.log('Component has mounted');
+       return () => {
+      console.log('Component is unmounting');
+    };
+  }, []); // The empty array ensures this effect runs only once when the component mounts
+*/
   return (
   <div className="ketcher-editor-container">
     <Editor

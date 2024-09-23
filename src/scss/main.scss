@@ -1556,14 +1556,14 @@ input:checked + .slider::before {
 
 .ketcher-editor-container {
   /*flex-grow: 1; /* Make the editor grow to fill available space */
-  flex: 0 1 500px;
+  flex: 0 1 620px;
   display: flex;
   flex-direction: column;
 }
 
 .ketcher-editor-container .editor {
   /*flex-grow: 1; /* Allow the drawing area to take up all remaining space */
-  flex: 0 1 500px;
+  flex: 0 1 620px;
   min-height: 500px; /* Ensure a minimum height */
 }
 

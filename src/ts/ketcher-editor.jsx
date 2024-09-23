@@ -1,7 +1,8 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
 import { Ketcher, ketcherProvider } from 'ketcher-core';
 import KetcherEditor from './ketcher';
+
 
 /*
 const RootComponent = () => {
@@ -42,16 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const root = createRoot(document.getElementById('ketcher-root'));
     // Note: <StrictMode> makes everything fail for now, so it has been removed
-    /*
     root.render(
-        <RootComponent />
+        <KetcherEditor />
     );
-    */
+    /*
     root.render(
       <StrictMode>
         <KetcherEditor />
       </StrictMode>
     );
+    */
   }
 });
 /*

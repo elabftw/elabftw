@@ -7,7 +7,8 @@
  */
 import { Editor } from 'ketcher-react';
 import 'ketcher-react/dist/index.css';
-import { StrictMode, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { Ketcher, ketcherProvider } from 'ketcher-core';
 
 /**
  * The structServiceProvider is remote but using a proxied server on eLab main URL
@@ -19,18 +20,27 @@ import { RemoteStructServiceProvider } from 'ketcher-core';
 const structServiceProvider = new RemoteStructServiceProvider(
   '/indigo/v2',
 );
+/*
 import { StandaloneStructServiceProvider } from 'ketcher-standalone';
 const standalone = new StandaloneStructServiceProvider();
+*/
 
 const KetcherEditor = () => {
   useEffect(() => {
     console.log('yep');
+/*
+  const ketcher = ketcherProvider.getKetcher();
+  window.ketcher = ketcher;
+*/
   }, []);
   return (
   <div className="ketcher-editor-container">
     <Editor
       staticResourcesUrl={JSON.stringify('/')}
       structServiceProvider={structServiceProvider}
+onInit={(ketcher) => {
+          window.ketcher = ketcher;
+}}
     />
   </div>
   );

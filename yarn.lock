@@ -3398,9 +3398,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "@yarnpkg/core@npm:4.1.2"
+"@yarnpkg/core@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "@yarnpkg/core@npm:4.1.3"
   dependencies:
     "@arcanis/slice-ansi": "npm:^1.1.1"
     "@types/semver": "npm:^7.1.0"
@@ -3408,7 +3408,7 @@ __metadata:
     "@yarnpkg/fslib": "npm:^3.1.0"
     "@yarnpkg/libzip": "npm:^3.1.0"
     "@yarnpkg/parsers": "npm:^3.0.2"
-    "@yarnpkg/shell": "npm:^4.0.2"
+    "@yarnpkg/shell": "npm:^4.1.0"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^3.0.0"
     ci-info: "npm:^4.0.0"
@@ -3428,11 +3428,11 @@ __metadata:
     treeify: "npm:^1.1.0"
     tslib: "npm:^2.4.0"
     tunnel: "npm:^0.0.6"
-  checksum: 10c0/c92941a58fa492b169ba6c4f20f49212306b0233d1d721533e40c78f7056b8738f00fd7142807e7418388d2c91f15b0f463ab033f48dacecaab75b7993c743c7
+  checksum: 10c0/8eb95b540095dba04a777fbeb32895b0426d5ab29b1fa7311c88f11ac2acf0baf508fd2ebde5163ac9c656cd249583a5be96d01a1573540dce9f69b420ee5c4a
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.2, @yarnpkg/fslib@npm:^3.1.0":
+"@yarnpkg/fslib@npm:^3.1.0":
   version: 3.1.0
   resolution: "@yarnpkg/fslib@npm:3.1.0"
   dependencies:
@@ -3464,11 +3464,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/shell@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@yarnpkg/shell@npm:4.0.2"
+"@yarnpkg/shell@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@yarnpkg/shell@npm:4.1.0"
   dependencies:
-    "@yarnpkg/fslib": "npm:^3.0.2"
+    "@yarnpkg/fslib": "npm:^3.1.0"
     "@yarnpkg/parsers": "npm:^3.0.2"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^4.0.0-rc.2"
@@ -3478,7 +3478,7 @@ __metadata:
     tslib: "npm:^2.4.0"
   bin:
     shell: ./lib/cli.js
-  checksum: 10c0/b78b6a00a68173052429bf19c625490d9d48c1f876acb25c56da2b75ad50acfe8f7fe14466be40b061698015d6aacdef5b217c6dece0dc2cc01e3bb4b4cefa23
+  checksum: 10c0/409544717d1144497ef917506d53268e866c3868eb81a8ef8af61c0913c674e0e7a90a0b394d73cf90d7d96544a3cb6975963f5eb9de9533e685143816f27bb3
   languageName: node
   linkType: hard
 
@@ -3873,16 +3873,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^9.1.3":
-  version: 9.1.3
-  resolution: "babel-loader@npm:9.1.3"
+"babel-loader@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "babel-loader@npm:9.2.1"
   dependencies:
     find-cache-dir: "npm:^4.0.0"
     schema-utils: "npm:^4.0.0"
   peerDependencies:
     "@babel/core": ^7.12.0
     webpack: ">=5"
-  checksum: 10c0/e3fc3c9e02bd908b37e8e8cd4f3d7280cf6ac45e33fc203aedbb615135a0fecc33bf92573b71a166a827af029d302c0b060354985cd91d510320bd70a2f949eb
+  checksum: 10c0/efb82faff4c7c27e9c15bb28bf11c73200e61cf365118a9514e8d74dd489d0afc2a0d5aaa62cb4254eefc2ab631579224d95a03fd245410f28ea75e24de54ba4
   languageName: node
   linkType: hard
 
@@ -5788,10 +5788,10 @@ __metadata:
     "@types/marked": "npm:^6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
     "@typescript-eslint/parser": "npm:^6.21.0"
-    "@yarnpkg/core": "npm:^4.1.2"
+    "@yarnpkg/core": "npm:^4.1.3"
     "@yarnpkg/fslib": "npm:^3.1.0"
     "@yarnpkg/libzip": "npm:^3.1.0"
-    babel-loader: "npm:^9.1.3"
+    babel-loader: "npm:^9.2.1"
     bootstrap: "npm:^4.6.2"
     bootstrap-markdown-fa5: "npm:^2.10.2"
     css-loader: "npm:^6.11.0"

@@ -7,6 +7,7 @@
  */
 import { Editor } from 'ketcher-react';
 import 'ketcher-react/dist/index.css';
+import { StrictMode, useEffect, useState } from 'react';
 
 /**
  * The structServiceProvider is remote but using a proxied server on eLab main URL
@@ -18,20 +19,17 @@ import { RemoteStructServiceProvider } from 'ketcher-core';
 const structServiceProvider = new RemoteStructServiceProvider(
   '/indigo/v2',
 );
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+const standalone = new StandaloneStructServiceProvider();
 
 const KetcherEditor = () => {
-/*
-    useEffect(() => {
-       console.log('Component has mounted');
-       return () => {
-      console.log('Component is unmounting');
-    };
-  }, []); // The empty array ensures this effect runs only once when the component mounts
-*/
+  useEffect(() => {
+    console.log('yep');
+  }, []);
   return (
   <div className="ketcher-editor-container">
     <Editor
-      staticResourcesUrl={JSON.stringify('https://elab.local:3148')}
+      staticResourcesUrl={JSON.stringify('/')}
       structServiceProvider={structServiceProvider}
     />
   </div>

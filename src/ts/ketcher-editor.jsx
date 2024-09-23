@@ -1,6 +1,6 @@
-import { StrictMode, useEffect } from 'react';
+//import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
-import { Ketcher, ketcherProvider } from 'ketcher-core';
+//import { Ketcher, ketcherProvider } from 'ketcher-core';
 import KetcherEditor from './ketcher';
 
 
@@ -38,7 +38,7 @@ const RootComponent = () => {
 };
 */
 
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('ketcher-root')) {
 
     const root = createRoot(document.getElementById('ketcher-root'));
@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     */
   }
-});
+//});
+
 /*
 document.getElementById('container').addEventListener('click', event => {
   const el = event.target;

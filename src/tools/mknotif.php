@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use DateTimeImmutable;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 
@@ -24,4 +26,7 @@ $Notifications->create(1);
 $Notifications = new UserCreated(3, 'Some team name');
 $Notifications->create(1);
 $Notifications = new UserNeedValidation(3, 'Some team name');
+$Notifications->create(1);
+$d = new DateTimeImmutable();
+$Notifications = new StepDeadline(1, 1, EntityType::Items->toPage(), $d->format('Y-m-d H:i:s'));
 $Notifications->create(1);

@@ -139,7 +139,7 @@ class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            category: $this->entityData['category'],
+            template: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
             metadata: $metadata,

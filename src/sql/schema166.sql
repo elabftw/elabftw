@@ -4,5 +4,5 @@
 -- also in schema152.sql as the backend changes happened between 151 and 152
 UPDATE `notifications`
   SET `body` = JSON_SET(`body`, '$.entity_page', CONCAT(`body`->>'$.entity_page', '.php'))
-  WHERE `body`->>'$.entity_page' NOT LIKE '%.php';
+  WHERE `body`->>'$.entity_page' NOT LIKE '%.php%';
 UPDATE config SET conf_value = 166 WHERE conf_name = 'schema';

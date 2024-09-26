@@ -528,6 +528,8 @@ abstract class AbstractEntity implements RestInterface
     public function destroy(): bool
     {
         $this->canOrExplode('write');
+        // remove the custom_id upon deletion
+        $this->update(new EntityParams('custom_id', ''));
         // set state to deleted
         return $this->update(new EntityParams('state', (string) State::Deleted->value));
     }

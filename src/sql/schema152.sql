@@ -106,4 +106,9 @@ CREATE TABLE `items_types_request_actions` (
   CONSTRAINT `fk_items_types_request_actions_target_users_userid`
     FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
     ON DELETE CASCADE ON UPDATE CASCADE);
+
+-- also in schema166.sql
+UPDATE `notifications`
+  SET `body` = JSON_SET(`body`, '$.entity_page', CONCAT(`body`->>'$.entity_page', '.php'))
+  WHERE `body`->>'$.entity_page' NOT LIKE '%.php';
 UPDATE config SET conf_value = 152 WHERE conf_name = 'schema';

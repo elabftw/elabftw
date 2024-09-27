@@ -137,7 +137,7 @@
         </button>
       </div>
       <div class='modal-body'>
-        <p>{{ 'This resource can be purchased. It costs %.2f %s for %d units.'|format(Entity.entityData.proc_price_tax, Entity.entityData.proc_currency|toSymbol, Entity.entityData.proc_pack_qty_ordered)|trans }}</p>
+        <p>{{ 'This resource can be purchased. It costs %.2f %s for %d units.'|format(Entity.entityData.proc_price_tax, Entity.entityData.proc_currency|toSymbol, Entity.entityData.proc_pack_qty)|trans }}</p>
         <label for='procurementRequestQtyInput'>{{ 'Enter a quantity to purchase'|trans }}</label>
         <input class='form-control' type='number' min='0' value='1' id='procurementRequestQtyInput' />
       </div>

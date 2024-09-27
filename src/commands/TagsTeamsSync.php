@@ -15,7 +15,7 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Models\TeamTags;
-use Elabftw\Models\Users;
+use Elabftw\Models\UltraAdmin;
 use PDO;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -40,12 +40,16 @@ class TagsTeamsSync extends Command
     {
         $teams = $input->getArgument('teams');
         $allTags = $this->getTags($teams);
-        $TeamTags = new TeamTags(new Users());
+        $TeamTags = new TeamTags(new UltraAdmin());
         $inserted = 0;
         foreach ($teams as $team) {
-            $TeamTags->setId((int) $team);
+            $teamId = (int) $team;
+            $TeamTags->Users->userData['team'] = $teamId;
+            $TeamTags->setId($teamId);
             foreach ($allTags as $tag) {
-                $inserted += $TeamTags->postAction(Action::Create, array('tag' => $tag));
+                if ($TeamTags->postAction(Action::Create, array('tag' => $tag)) > 0) {
+                    $inserted += 1;
+                }
             }
         }
         // only be verbose if we did something

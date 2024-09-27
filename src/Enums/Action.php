@@ -31,6 +31,7 @@ enum Action: string
     case Lock = 'lock';
     case Finish = 'finish';
     case Notif = 'notif';
+    case NotifDestroy = 'notifdestroy';
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
     case Replace = 'replace';

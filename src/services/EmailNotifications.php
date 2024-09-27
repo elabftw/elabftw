@@ -87,18 +87,16 @@ class EmailNotifications
 
     protected function getNotificationsToSend(): array
     {
-        // for step deadline only select notifications where deadline is in the next 30 min
+        // for step deadline only select notifications where deadline is in the next hour
         $sql = 'SELECT id, userid, category, body
             FROM notifications
             WHERE send_email = 1
                 AND email_sent = 0
-                AND (category <> :deadline
-                    OR (category = :deadline
-                        AND CAST(NOW() AS DATETIME) > CAST(DATE_ADD(CAST(body->"$.deadline" AS DATETIME), INTERVAL - 30 MINUTE) AS DATETIME)
-                    )
-                )';
+                AND (category <> :step_deadline
+                    -- select step deadlines due in the next hour
+                    OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL 1 HOUR)) >= body->>"$.deadline")';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
+        $req->bindValue(':step_deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

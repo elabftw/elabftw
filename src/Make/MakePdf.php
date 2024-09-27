@@ -211,7 +211,8 @@ class MakePdf extends AbstractMakePdf
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
-            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $storageEnum = Storage::tryFrom($upload['storage']) ?? Storage::LOCAL;
+            $storageFs = $storageEnum->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
@@ -331,7 +332,8 @@ class MakePdf extends AbstractMakePdf
         }
 
         foreach ($uploadsArr as $upload) {
-            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $storageEnum = Storage::tryFrom($upload['storage']) ?? Storage::LOCAL;
+            $storageFs = $storageEnum->getStorage()->getFs();
             if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 // the real_name is used in case of error appending it
                 // the content is stored in a temporary file so it can be read with appendPdfs()

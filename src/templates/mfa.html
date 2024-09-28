@@ -7,38 +7,38 @@
   <h1 class='mt-4'><i class='mr-2 fas fa-mobile-screen'></i>{{ 'Two Factor Authentication'|trans }}</h1>
 </section>
 
-  <form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
-    <input type='hidden' name='auth_type' value='mfa'>
-    {% if App.Session.get('rememberme') == '1' %}
-      <input type='hidden' name='rememberme' value='on'>
-    {% endif %}
-    {{ App.Session.get('csrf')|csrf }}
-    {% if App.Session.has('enable_mfa') %} {# SETUP MFA #}
-      <div class='col-md-6 text-center mx-auto my-4'>
-        <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
-        <p class='my-3'>
-          {% if App.Session.has('enforce_mfa') %}
-            {{ 'It is mandatory to activate 2FA.'|trans }}
-            <br>
-          {% endif %}
-          <span class='border rounded p-2'><i class='fas fa-1'></i></span>
-          {{ 'Open your authenticator application and scan the QR code'|trans }}
-        </p>
-        <div class='text-center'>
-          <div class='mb-2'>
-            <img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' />
-          </div>
-          <button type='button' class='btn btn-sm btn-secondary' data-action='toggle-next'>{{ 'Display secret for manual setup'|trans }}</button>
-          <div class='text-center col-md-8 mx-auto mt-2' hidden>
-            <div class='input-group'>
-              <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
-              </div>
-              <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' readonly />
+<form method='post' action='app/controllers/LoginController.php' autocomplete='off'>
+  <input type='hidden' name='auth_type' value='mfa'>
+  {% if App.Session.get('rememberme') == '1' %}
+    <input type='hidden' name='rememberme' value='on'>
+  {% endif %}
+  {{ App.Session.get('csrf')|csrf }}
+  {% if App.Session.has('enable_mfa') %} {# SETUP MFA #}
+    <div class='col-md-6 text-center mx-auto my-4'>
+      <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
+      <p class='my-3'>
+        {% if App.Session.has('enforce_mfa') %}
+          {{ 'It is mandatory to activate 2FA.'|trans }}
+          <br>
+        {% endif %}
+        <span class='border rounded p-2'><i class='fas fa-1'></i></span>
+        {{ 'Open your authenticator application and scan the QR code'|trans }}
+      </p>
+      <div class='text-center'>
+        <div class='mb-2'>
+          <img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' />
+        </div>
+        <button type='button' class='btn btn-sm btn-secondary' data-action='toggle-next'>{{ 'Display secret for manual setup'|trans }}</button>
+        <div class='text-center col-md-8 mx-auto mt-2' hidden>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
             </div>
+            <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' readonly />
           </div>
         </div>
       </div>
+    </div>
 
   {% else %} {# MFA LOGIN #}
     <div class='col-md-3 mx-auto my-4'>
@@ -55,10 +55,9 @@
     <div class='mx-auto text-center col-md-3 mb-4'>
       <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
     </div>
-  </div>
   <div class='text-center'>
     {% if App.Session.has('enable_mfa') %}
-      <button type='submit' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
+      <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
   </div>

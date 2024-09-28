@@ -19,6 +19,11 @@ use PDO;
 
 class StepDeadline extends AbstractNotifications implements MailableInterface
 {
+    /**
+     * Time in minutes before the deadline to send/show notifications
+     */
+    public const int NOTIFLEADTIME = 30;
+
     protected const PREF = 'notif_step_deadline';
 
     protected Notifications $category = Notifications::StepDeadline;

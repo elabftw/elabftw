@@ -16,6 +16,7 @@ use Elabftw\AuditEvent\OnboardingEmailSent;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
 use Elabftw\Factories\NotificationsFactory;
+use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
 use PDO;
@@ -87,16 +88,15 @@ class EmailNotifications
 
     protected function getNotificationsToSend(): array
     {
-        // for step deadline only select notifications where deadline is in the next hour
         $sql = 'SELECT id, userid, category, body
             FROM notifications
             WHERE send_email = 1
                 AND email_sent = 0
                 AND (category <> :step_deadline
-                    -- select step deadlines due in the next hour
-                    OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL 1 HOUR)) >= body->>"$.deadline")';
+                    OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL :notif_lead_time MINUTE)) >= body->>"$.deadline")';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':step_deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
+        $req->bindValue(':notif_lead_time', StepDeadline::NOTIFLEADTIME, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

@@ -211,7 +211,8 @@ class MakePdf extends AbstractMakePdf
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
-            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $storageEnum = Storage::tryFrom($upload['storage']) ?? Storage::LOCAL;
+            $storageFs = $storageEnum->getStorage()->getFs();
             $thumbnail = $upload['long_name'] . '_th.jpg';
             // no need to filter on extension, just insert the thumbnail if it exists
             if ($storageFs->fileExists($thumbnail)) {
@@ -289,7 +290,8 @@ class MakePdf extends AbstractMakePdf
             $longname = (string) $res['f'];
             // there might be no storage value. In this case get it from the uploads table via the long name
             $storage = (int) ($res['storage'] ?? $this->Entity->Uploads->getStorageFromLongname($longname));
-            $storageFs = Storage::from($storage)->getStorage()->getFs();
+            $storageEnum = Storage::tryFrom($storage) ?? Storage::LOCAL;
+            $storageFs = $storageEnum->getStorage()->getFs();
             // pass image data to mpdf via variable. See https://mpdf.github.io/what-else-can-i-do/images.html#image-data-as-a-variable
             // avoid using data URLs (data:...) because it adds too many characters to $body, see https://github.com/elabftw/elabftw/issues/3627
             $this->mpdf->imageVars[$longname] = $storageFs->read($longname);
@@ -330,7 +332,8 @@ class MakePdf extends AbstractMakePdf
         }
 
         foreach ($uploadsArr as $upload) {
-            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $storageEnum = Storage::tryFrom($upload['storage']) ?? Storage::LOCAL;
+            $storageFs = $storageEnum->getStorage()->getFs();
             if ($storageFs->fileExists($upload['long_name']) && strtolower(Tools::getExt($upload['real_name'])) === 'pdf') {
                 // the real_name is used in case of error appending it
                 // the content is stored in a temporary file so it can be read with appendPdfs()

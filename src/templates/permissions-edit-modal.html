@@ -34,7 +34,7 @@
       <div class='modal-body'>
         <div data-rw={{ rw }}>
           <label for='{{ identifier }}_select_base'>{{ 'Base'|trans }}</label>
-          <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below.'|trans }}</p>
+          <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
           <select id='{{ identifier }}_select_base' class='form-control'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
@@ -45,6 +45,7 @@
           {# TEAMS #}
           <label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
+          {% include 'filter-input-snippet.html' with {'target': identifier ~ '_select_teams', targetType: 'option'} %}
           <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
             {% for team in teamsArr|filter(t => t.visible == '1') %}
               <option value='team:{{ team.id }}'
@@ -52,8 +53,8 @@
               >{{ 'Team'|trans }} - {{ team.name }}</option>
             {% endfor %}
           </select>
-          {# TEAMGROUPS #}
-          <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label>
+          {# USER GROUPS #}
+          <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'User Groups'|trans }}</label>
           <div class='d-flex'>
             <p class='smallgray'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
             <div class='ml-auto'>
@@ -68,12 +69,12 @@
               </details>
             </div>
           </div>
-          <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
+          <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
           <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
             {% for tg in scopedTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}
-                      >{{ 'Teamgroup'|trans }} - {{ tg.name }}</option>
+                      >{{ tg.team_name }} - {{ tg.name }}</option>
             {% endfor %}
           </select>
           {# USERS #}

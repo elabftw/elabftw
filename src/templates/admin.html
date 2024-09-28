@@ -20,7 +20,7 @@
 {# ADMIN PANEL MAIN MENU #}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Groups'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'User Groups'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Categories'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{% trans %}Status{% plural 2 %}Status{% endtrans %}</button></li>
@@ -200,10 +200,11 @@
   </div>
 </div>
 
-{# TAB 2 TEAM GROUPS #}
+{# TAB 2 USER GROUPS #}
 <div data-tabcontent='2' hidden>
+  <p>{{ 'A User Group can contain users from different teams. Its main use is to later allow giving permissions to this group.'|trans }}</p>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/admin-guide.html#groups-tab'>{{ 'Link to documentation'|trans }}</a></p>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Create a group'|trans }}</h3>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Create user group'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
     {# CREATE A GROUP #}
@@ -216,9 +217,9 @@
     {# END CREATE GROUP #}
   </div>
 
-  {# SHOW EXISTING GROUPS #}
+  {# SHOW EXISTING USER GROUPS #}
   <div id='team_groups_div'>
-    <h3 class='p-2 pl-3 section-title'>{{ 'Existing groups'|trans }}</h3>
+    <h3 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h3>
     <div class='pl-3'>
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
@@ -247,7 +248,7 @@
     </div>
   </div>
 </div>
-{# END TEAM GROUPS #}
+{# END USER GROUPS #}
 
 {# TAB 3 USERS #}
 <div data-tabcontent='3' hidden>
@@ -785,7 +786,7 @@
   <div class='row'>
     <div class='col-md-6 mb-3'>
       <label for='masscan_select_base'>{{ 'Base'|trans }}</label>
-      <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below.'|trans }}</p>
+      <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
       <select id='masscan_select_base' class='form-control'>
         {% for key, value in visibilityArr %}
           <option value='{{ key }}'>{{ value|trans }}</option>
@@ -799,8 +800,8 @@
           <option value='team:{{ team.id }}'>{{ 'Team'|trans }} - {{ team.name }}</option>
         {% endfor %}
       </select>
-      {# TEAMGROUPS #}
-      <label for='masscan_select_teamgroups' class='mt-2'>+ {{ 'Teamgroups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
+      {# USERGROUPS #}
+      <label for='masscan_select_teamgroups' class='mt-2'>+ {{ 'User Groups'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
       <p class='smallgray'>{{ 'Selecting a teamgroup here will give access to all users part of this teamgroup.'|trans }}</p>
       <select {{ allTeamgroupsArr|length == 0 ? 'disabled' }} id='masscan_select_teamgroups' multiple class='form-control' autocomplete='off'>
         {% for tg in allTeamgroupsArr %}

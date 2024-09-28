@@ -85,8 +85,6 @@ class Scheduler implements RestInterface
         if (!$this->Items->canBook()) {
             throw new ImproperActionException(_('You do not have the permission to book this entry.'));
         }
-        $title = Filter::title($reqBody['title'] ?? '');
-
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);
         $this->checkConstraints($start, $end);
@@ -106,7 +104,7 @@ class Scheduler implements RestInterface
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
-        $req->bindParam(':title', $title);
+        $req->bindValue(':title', $this->filterTitle($reqBody['title']));
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -290,6 +288,16 @@ class Scheduler implements RestInterface
         return $this->Db->execute($req);
     }
 
+    // the title (comment) can be an empty string
+    private function filterTitle(?string $title): string
+    {
+        $filteredTitle = '';
+        if (!empty($title)) {
+            $filteredTitle = Filter::title($title);
+        }
+        return $filteredTitle;
+    }
+
     private function readOneEvent(): array
     {
         $sql = 'SELECT
@@ -376,11 +384,10 @@ class Scheduler implements RestInterface
 
     private function updateTitle(string $title): bool
     {
-        $title = Filter::title($title);
         $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':title', $title);
+        $req->bindValue(':title', $this->filterTitle($title));
         return $this->Db->execute($req);
     }
 

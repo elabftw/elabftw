@@ -26,7 +26,15 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# "placeholder" will be replaced with real title by js #}
-        <h3 id='eventTitle' class='editable hl-hover'>placeholder</h3>
+        <label for='eventTitle'>{{ 'Comment'|trans }}</label>
+        <div class='input-group'>
+          {# a data-eventid will get added to this element by js #}
+          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
+          </div>
+        </div>
+        <hr>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
@@ -269,7 +277,7 @@
             <th scope='col'>{{ 'Total'|trans }}</th>
             <th scope='col'>{{ 'Quantity received'|trans }}</th>
             <th scope='col'>{{ 'Comment'|trans }}</th>
-            <th scope='col'>{{ 'Quote'|trans }}</th>
+            <!--th scope='col'>{{ 'Quote'|trans }}</th-->
             <th scope='col'>{{ 'State'|trans }}</th>
             <th scope='col'>{{ 'Actions'|trans }}</th>
           </tr>
@@ -292,11 +300,13 @@
               <td data-label='{{ 'Total'|trans }}'>{{ req.total }} {{ req.symbol }}</td>
               <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
               <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
+              {# hide quote column until it is actually implemented
               <td data-label='{{ 'Quote'|trans }}'>
                 <a target='_blank' href='/api/v2/uploads/{{ req.quote }}?format=binary'>
                   <span class='hl-hover-gray p-1 mr-2 rounded'>{{ req.quote ? "<i class='fas fa-download'></i>" }}</span>
                 </a>
               </td>
+              #}
               <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
               <td data-label='{{ 'Actions'|trans }}'>
                 <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>

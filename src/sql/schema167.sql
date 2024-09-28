@@ -1,4 +1,4 @@
--- schema 166
+-- schema 167
 CREATE TABLE IF NOT EXISTS fingerprints (
   `id` int unsigned not null auto_increment,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -38,4 +38,4 @@ CREATE TABLE IF NOT EXISTS fingerprints (
   primary key(`id`)
 );
 
-UPDATE config SET conf_value = 166 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 167 WHERE conf_name = 'schema';

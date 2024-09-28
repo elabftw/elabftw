@@ -26,7 +26,15 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# "placeholder" will be replaced with real title by js #}
-        <h3 id='eventTitle' class='editable hl-hover'>placeholder</h3>
+        <label for='eventTitle'>{{ 'Comment'|trans }}</label>
+        <div class='input-group'>
+          {# a data-eventid will get added to this element by js #}
+          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
+          </div>
+        </div>
+        <hr>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>

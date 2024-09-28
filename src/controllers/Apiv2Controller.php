@@ -51,6 +51,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
 use Elabftw\Models\Steps;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -286,6 +287,7 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            ApiEndpoint::StorageUnits => new StorageUnits($this->requester),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),

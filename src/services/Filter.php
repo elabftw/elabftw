@@ -139,6 +139,15 @@ class Filter
         return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
     }
 
+    public static function intOrNull(string|int $input): ?int
+    {
+        $res = (int) $input;
+        if ($res === 0) {
+            return null;
+        }
+        return $res;
+    }
+
     /**
      * An hexit is an hexadecimal digit: 0 to 9 and a to f
      */

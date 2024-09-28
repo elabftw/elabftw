@@ -33,6 +33,7 @@ enum ApiEndpoint: string
     case Events = 'events';
     case ExtraFieldsKeys = 'extra_fields_keys';
     case FavTags = 'favtags';
+    case StorageUnits = 'storage_units';
 
     // @deprecated
     case TeamTags = 'team_tags';

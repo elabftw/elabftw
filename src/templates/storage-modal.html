@@ -1,0 +1,28 @@
+{# Modal for storage #}
+<div class='modal fade' id='storageModal' tabindex='-1' role='dialog' aria-labelledby='storageModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='storageModalLabel'><i class='fas fa-fw fa-warehouse'></i> {{ 'Modify storage'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# STORAGE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='storage_select' class='col-form-label'>{{ 'Primary storage'|trans }}</label>
+          <select id='storage_select' class='form-control col-md-4' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='storage_select'>
+            {% for value, text in currencyArr %}
+              <option value='{{ value }}' {{ value == Entity.entityData.proc_currency ? 'selected' }}>{{ text }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

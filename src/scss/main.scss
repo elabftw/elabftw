@@ -1570,3 +1570,10 @@ input:checked + .slider::before {
 .ketcher-editor-container .toolbar {
   flex-shrink: 0; /* Ensure toolbars do not shrink */
 }
+
+#storageDiv {
+  details,
+  summary {
+    margin: 10px 0;
+  }
+}

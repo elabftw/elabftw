@@ -484,6 +484,34 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(targetKey, value);
       }
 
+    } else if (el.matches('[data-action="expand-all-storage"]')) {
+      const root = document.getElementById('storageDiv');
+      if (root) {
+        const detailsElements = root.querySelectorAll('details');
+        detailsElements.forEach((details: HTMLDetailsElement) => {
+            details.open = true;
+        });
+      }
+    } else if (el.matches('[data-action="add-storage"]')) {
+      const name = prompt('Name');
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['level_name'] = el.dataset.levelName;
+      params['unit_name'] = name;
+      ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
+
+    } else if (el.matches('[data-action="add-storage-children"]')) {
+      const levelName = prompt('Unit Name');
+      const unitName = prompt('Level Name');
+      if (!unitName.length || !levelName.length) {
+        return;
+      }
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['level_name'] = levelName;
+      params['unit_name'] = unitName;
+      ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
+
     // REPLACE WITH NEXT ACTION
     } else if (el.matches('[data-action="replace-with-next"]')) {
       const targetEl = el.nextElementSibling as HTMLElement;

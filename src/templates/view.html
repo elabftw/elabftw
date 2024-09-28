@@ -87,6 +87,16 @@
   </div>
 
   <hr>
+  <div class='d-flex mb-2 align-items-center'>
+    <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-warehouse mr-1' title='{{ 'Storage'|trans }}'></i>{{ 'Storage'|trans }}</label>
+    {% if not Entity.isReadOnly %}
+      <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn border-0 lh-normal' data-action='toggle-modal' data-target='storageModal'>
+        <i class='fas fa-fw fa-square-plus fa-2x'></i>
+      </button>
+    {% endif %}
+    <div class='vertical-separator'></div>
+    Some storage place
+  </div>
   {% include('edit-permissions.html') %}
 
   {# SHOW EVENTS #}

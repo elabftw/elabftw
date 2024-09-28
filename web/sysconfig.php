@@ -22,6 +22,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -152,6 +153,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,

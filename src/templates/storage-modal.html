@@ -10,17 +10,14 @@
       </div>
       <div class='modal-body'>
         {# STORAGE #}
-        <div class='d-flex justify-content-between mb-2'>
-          <label for='storage_select' class='col-form-label'>{{ 'Primary storage'|trans }}</label>
-          <select id='storage_select' class='form-control col-md-4' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='storage_select'>
-            {% for value, text in currencyArr %}
-              <option value='{{ value }}' {{ value == Entity.entityData.proc_currency ? 'selected' }}>{{ text }}</option>
-            {% endfor %}
-          </select>
+        <div class='mb-2'>
+          <h6>{{ 'Primary storage'|trans }}</h6>
+          {% include 'storage-list.html' with {'storage_editable': false} %}
         </div>
       </div>
 
       <div class='modal-footer'>
+        <button type='button' class='btn btn-danger' data-action='clear-storage' data-id='{{ Entity.id }}' data-dismiss='modal'>{{ 'Clear storage'|trans }}</button>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>
     </div>

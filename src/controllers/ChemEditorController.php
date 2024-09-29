@@ -18,9 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ChemEditorController implements ControllerInterface
 {
-    public function __construct(protected App $app)
-    {
-    }
+    public function __construct(protected App $app) {}
 
     public function getResponse(): Response
     {
@@ -29,7 +27,6 @@ class ChemEditorController implements ControllerInterface
         $Response = new Response();
         $Response->prepare($this->app->Request);
         $Response->setContent($this->app->render($template, array()));
-        //var_dump($Response->getContent());die;
 
         return $Response;
     }

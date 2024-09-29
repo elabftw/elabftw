@@ -287,7 +287,7 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
-            ApiEndpoint::StorageUnits => new StorageUnits($this->requester),
+            ApiEndpoint::StorageUnits => new StorageUnits($this->requester, $this->id),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),

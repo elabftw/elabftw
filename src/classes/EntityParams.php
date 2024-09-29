@@ -31,7 +31,7 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => Check::Visibility($this->content),
             'color' => Check::color($this->content),
             'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid', 'state' => $this->getInt(),
-            'custom_id', 'status', 'category' => $this->getIntOrNull(),
+            'custom_id', 'status', 'category', 'storage' => $this->getIntOrNull(),
             default => throw new ImproperActionException('Invalid update target.'),
         };
     }

@@ -501,16 +501,22 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {
-      const levelName = prompt('Unit Name');
-      const unitName = prompt('Level Name');
-      if (!unitName.length || !levelName.length) {
+      const unitName = prompt('Unit Name');
+      if (!unitName.length) {
         return;
       }
       const params = {};
       params['parent_id'] = el.dataset.parentId;
-      params['level_name'] = levelName;
       params['unit_name'] = unitName;
       ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
+    } else if (el.matches('[data-action="add-to-storage"]')) {
+      const entity = getEntity();
+      ApiC.patch(`${entity.type}/${entity.id}`, {storage: el.dataset.id}).then(() => reloadElements(['entityStoragePath']));
+    } else if (el.matches('[data-action="destroy-storage"]')) {
+      ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
+    } else if (el.matches('[data-action="clear-storage"]')) {
+      const entity = getEntity();
+      ApiC.patch(`${entity.type}/${entity.id}`, {storage: ''}).then(() => reloadElements(['entityStoragePath']));
 
     // REPLACE WITH NEXT ACTION
     } else if (el.matches('[data-action="replace-with-next"]')) {

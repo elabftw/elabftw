@@ -30,19 +30,68 @@ class StorageUnits implements RestInterface
 
     protected Db $Db;
 
-    public function __construct(private Users $requester)
+    public function __construct(private Users $requester, ?int $id = null)
     {
+        $this->setId($id);
         $this->Db = Db::getConnection();
     }
 
     public function getApiPath(): string
     {
-        return sprintf('api/v2/storage_units');
+        return sprintf('api/v2/storage_units/%d', $this->id ?? 0);
     }
 
     public function readOne(): array
     {
-        return array();
+        // Recursive CTE to find the full path of a specific id
+        $sql = "
+            WITH RECURSIVE storage_hierarchy AS (
+                -- Base case: Start with the given id
+                SELECT
+                    id,
+                    unit_name,
+                    parent_id,
+                    CAST(unit_name AS CHAR(1000)) AS full_path,
+                    0 AS level_depth
+                FROM
+                    storage_units
+                WHERE
+                    id = :id  -- Use the provided id as the base case
+
+                UNION ALL
+
+                -- Recursive case: Trace the path upwards by finding parent units
+                SELECT
+                    parent.id,
+                    child.unit_name,
+                    parent.parent_id,
+                    CAST(CONCAT(parent.unit_name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
+                    child.level_depth + 1
+                FROM
+                    storage_units AS parent
+                INNER JOIN
+                    storage_hierarchy AS child ON parent.id = child.parent_id
+            )
+
+            -- Get the full path from the root to the given id
+            SELECT
+                id,
+                unit_name,
+                full_path,
+                parent_id,
+                level_depth
+            FROM
+                storage_hierarchy
+            ORDER BY
+                level_depth DESC LIMIT 1;  -- This ensures the path is ordered from root to the given id
+        ";
+
+        // Prepare and execute the query with the specific id
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);  // Bind the given id to the SQL query
+        $req->execute();
+
+        return $this->Db->fetch($req);
     }
 
     public function readAll(): array
@@ -52,10 +101,10 @@ class StorageUnits implements RestInterface
             SELECT
                 id,
                 unit_name,
-                level_name,
                 parent_id,
-                CONCAT(level_name, ': ', unit_name) AS full_path,
-                0 AS level_depth
+                unit_name AS full_path,
+                0 AS level_depth,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
             FROM
                 storage_units
             WHERE
@@ -67,13 +116,13 @@ class StorageUnits implements RestInterface
             SELECT
                 child.id,
                 child.unit_name,
-                child.level_name,
                 child.parent_id,
-                CONCAT(parent.full_path, ' > ', child.level_name, ': ', child.unit_name) AS full_path,
-                parent.level_depth + 1
+                CONCAT(parent.full_path, ' > ', child.unit_name) AS full_path,
+                parent.level_depth + 1,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
             FROM
                 storage_units AS child
-            INNER JOIN 
+            INNER JOIN
                 storage_hierarchy AS parent
             ON
                 child.parent_id = parent.id
@@ -83,10 +132,10 @@ class StorageUnits implements RestInterface
         SELECT
             id,
             unit_name,
-            level_name,
             full_path,
             parent_id,
-            level_depth
+            level_depth,
+            children_count
         FROM
             storage_hierarchy
         ORDER BY
@@ -95,11 +144,22 @@ class StorageUnits implements RestInterface
         $this->Db->execute($req);
 
         $all = $req->fetchAll();
-        $groupedItems = [];
+        $groupedItems = array();
         foreach ($all as $item) {
             $groupedItems[$item['parent_id']][] = $item;
         }
         return $groupedItems;
+    }
+
+    public function readAllForCsv(): array
+    {
+        $sql = 'SELECT su.id, su.unit_name, su.parent_id, items.title, items.id AS item_id
+            FROM storage_units AS su
+            LEFT JOIN items ON (items.storage = su.id)';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
     }
 
     public function patch(Action $action, array $params): array
@@ -110,15 +170,14 @@ class StorageUnits implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create(Filter::intOrNull($reqBody['parent_id']), $reqBody['level_name'], $reqBody['unit_name']);
+        return $this->create($reqBody['unit_name'], Filter::intOrNull($reqBody['parent_id']));
     }
 
-    public function create(?int $parentId, string $levelName, string $unitName): int
+    public function create(string $unitName, ?int $parentId = null): int
     {
-        $sql = 'INSERT INTO storage_units(parent_id, level_name, unit_name) VALUES(:parent_id, :level_name, :unit_name)';
+        $sql = 'INSERT INTO storage_units(parent_id, unit_name) VALUES(:parent_id, :unit_name)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
-        $req->bindParam(':level_name', $levelName);
         $req->bindParam(':unit_name', $unitName);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
@@ -145,17 +204,12 @@ class StorageUnits implements RestInterface
 
     public function destroy(): bool
     {
-        return true;
-        /*
         $this->canWriteOrExplode();
-        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
+        $sql = 'DELETE FROM storage_units WHERE id = :id OR parent_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
-         */
     }
 
     protected function canWriteOrExplode(): void
@@ -168,5 +222,4 @@ class StorageUnits implements RestInterface
         }
          */
     }
-
 }

@@ -31,11 +31,13 @@ use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
 use Elabftw\Make\MakeReport;
 use Elabftw\Make\MakeSchedulerReport;
+use Elabftw\Make\MakeStorageUnitsCsv;
 use Elabftw\Make\MakeStreamZip;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
@@ -75,6 +77,10 @@ class MakeController extends AbstractController
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
                     return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
+                }
+                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/storage_units')) {
+                    $StorageUnits = new StorageUnits($this->requester);
+                    return $this->getFileResponse(new MakeStorageUnitsCsv($StorageUnits));
                 }
                 return $this->getFileResponse(new MakeCsv($this->entityArr));
 

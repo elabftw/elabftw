@@ -131,6 +131,9 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        if ($this->entityData['storage'] !== null) {
+            $this->entityData['storage_path'] = (new StorageUnits($this->Users, $this->entityData['storage']))->readOne()['full_path'];
+        }
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),

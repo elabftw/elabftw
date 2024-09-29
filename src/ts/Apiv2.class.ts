@@ -21,6 +21,31 @@ export class Api {
     return this.get(query).then(resp => resp.json());
   }
 
+  // fetch a binary file from a GET request, and make client download it
+  async getBlob(query: string, filename: string): Promise<void> {
+    this.get(query).then(async resp => {
+      const disposition = resp.headers.get('Content-Disposition');
+      if (disposition && disposition.includes('filename=')) {
+        const filenameMatch = disposition.match(/filename="(.+)"/);
+        if (filenameMatch.length > 1) {
+          filename = filenameMatch[1];
+        }
+      }
+      return resp.blob().then(blob => ({ blob, filename }));
+    }).then(({ blob, filename }) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }).catch(error => {
+      console.error('Error fetching the file:', error);
+    });
+  }
+
   patch(query: string, params = {}): Promise<Response> {
     return this.send(Method.PATCH, query, params);
   }

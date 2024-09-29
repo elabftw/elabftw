@@ -37,13 +37,36 @@ CREATE TABLE IF NOT EXISTS fingerprints (
   fp31 INT UNSIGNED NOT NULL,
   primary key(`id`)
 );
-CREATE TABLE storage_units (
+CREATE TABLE IF NOT EXISTS storage_units (
     id INT unsigned NOT NULL AUTO_INCREMENT,
-    level_name VARCHAR(255),  -- Describes the level, e.g., Building, Room
-    unit_name VARCHAR(255),   -- Describes the name of the specific unit, e.g., Building A, Room 101
-    parent_id INT unsigned,            -- Refers to the parent storage unit
+    level_name VARCHAR(255),
+    unit_name VARCHAR(255),
+    parent_id INT unsigned,
     FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
     PRIMARY KEY(`id`)
 );
+-- EXPERIMENTS STORAGE
+ALTER TABLE `experiments` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments` ADD CONSTRAINT `fk_experiments_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- EXPERIMENTS TEMPLATES STORAGE
+ALTER TABLE `experiments_templates` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD CONSTRAINT `fk_experiments_templates_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- ITEMS STORAGE
+ALTER TABLE `items` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items` ADD CONSTRAINT `fk_items_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- ITEMS TYPES STORAGE
+ALTER TABLE `items_types` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
 
 UPDATE config SET conf_value = 167 WHERE conf_name = 'schema';

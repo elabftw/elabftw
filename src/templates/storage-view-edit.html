@@ -8,6 +8,6 @@
       </button>
     {% endif %}
     <div class='vertical-separator'></div>
-    <span id='entityStoragePath'>{{ Entity.entityData.storage_path|default('Not set'|trans) }}</span>
+    <span id='entityStoragePath'>{% if Entity.entityData.qty_stored > 0 %}{{ Entity.entityData.qty_stored }} {{ Entity.entityData.qty_unit }} {{ 'in'|trans }} {% endif %}{{ Entity.entityData.storage_path|default('Not set'|trans) }}</span>
   </div>
 {% endif %}

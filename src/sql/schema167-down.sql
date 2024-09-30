@@ -1,8 +1,20 @@
 -- revert schema 167
-DROP TABLE fingerprints;
+DROP TABLE IF EXISTS fingerprints;
+ALTER TABLE `experiments` DROP FOREIGN KEY `fk_experiments_storage`;
 ALTER TABLE experiments DROP COLUMN storage;
+ALTER TABLE experiments DROP COLUMN qty_stored;
+ALTER TABLE experiments DROP COLUMN qty_unit;
+ALTER TABLE `experiments_templates` DROP FOREIGN KEY `fk_experiments_templates_storage`;
 ALTER TABLE experiments_templates DROP COLUMN storage;
+ALTER TABLE experiments_templates DROP COLUMN qty_stored;
+ALTER TABLE experiments_templates DROP COLUMN qty_unit;
+ALTER TABLE `items` DROP FOREIGN KEY `fk_items_storage`;
 ALTER TABLE items DROP COLUMN storage;
+ALTER TABLE items DROP COLUMN qty_stored;
+ALTER TABLE items DROP COLUMN qty_unit;
+ALTER TABLE `items_types` DROP FOREIGN KEY `fk_items_types_storage`;
 ALTER TABLE items_types DROP COLUMN storage;
-DROP TABLE storage_units;
+ALTER TABLE items_types DROP COLUMN qty_stored;
+ALTER TABLE items_types DROP COLUMN qty_unit;
+DROP TABLE IF EXISTS storage_units;
 UPDATE config SET conf_value = 166 WHERE conf_name = 'schema';

@@ -11,7 +11,23 @@
       <div class='modal-body'>
         {# STORAGE #}
         <div class='mb-2'>
-          <h6>{{ 'Primary storage'|trans }}</h6>
+          <h6>{{ 'Quantity stored'|trans }}</h6>
+          <div class='input-group'>
+            <input type='number' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='qty_stored' value='{{ Entity.entityData.qty_stored|default(0) }}' class='form-control' />
+            <div class='input-group-append'>
+              <select data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='qty_unit' class='custom-select brl-none brr-none' name='qty_unit' aria-label='{{ 'Quantity unit'|trans }}'>
+                <option value='•' {{ Entity.entityData.qty_unit == '•' ? 'selected' }}>•</option>
+                <option value='μL' {{ Entity.entityData.qty_unit == 'μL' ? 'selected' }}>μL</option>
+                <option value='mL' {{ Entity.entityData.qty_unit == 'mL' ? 'selected' }}>mL</option>
+                <option value='L' {{ Entity.entityData.qty_unit == 'L' ? 'selected' }}>L</option>
+                <option value='mg' {{ Entity.entityData.qty_unit == 'μg' ? 'selected' }}>μg</option>
+                <option value='mg' {{ Entity.entityData.qty_unit == 'mg' ? 'selected' }}>mg</option>
+                <option value='g' {{ Entity.entityData.qty_unit == 'g' ? 'selected' }}>g</option>
+                <option value='kg' {{ Entity.entityData.qty_unit == 'kg' ? 'selected' }}>kg</option>
+              </select>
+            </div>
+          </div>
+          <h6>{{ 'Storage location'|trans }}</h6>
           {% include 'storage-list.html' with {'storage_editable': false} %}
         </div>
       </div>

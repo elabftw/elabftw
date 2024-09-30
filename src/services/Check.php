@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Units;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -90,6 +91,15 @@ class Check
             'flags' => FILTER_NULL_ON_FAILURE,
         );
         return filter_var($limit, FILTER_VALIDATE_INT, $filterOptions);
+    }
+
+    public static function unit(string $unit): string
+    {
+        $value = Units::tryFrom($unit);
+        if ($value === null) {
+            throw new ImproperActionException('Invalid unit');
+        }
+        return $value->value;
     }
 
     /**

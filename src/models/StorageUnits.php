@@ -153,7 +153,7 @@ class StorageUnits implements RestInterface
 
     public function readAllForCsv(): array
     {
-        $sql = 'SELECT su.id, su.unit_name, su.parent_id, items.title, items.id AS item_id
+        $sql = 'SELECT su.id, su.unit_name, su.parent_id, items.title, items.id AS item_id, items.qty_stored, items.qty_unit
             FROM storage_units AS su
             LEFT JOIN items ON (items.storage = su.id)';
         $req = $this->Db->prepare($sql);

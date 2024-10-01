@@ -97,10 +97,12 @@ class Transform
                 ),
             Notifications::StepDeadline =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="%s?mode=view&amp;id=%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
+                    (int) $notif['body']['step_id'],
+                    (int) $notif['body']['step_id'],
                     _('A step deadline is approaching.'),
                     $notif['created_at'],
                 ),

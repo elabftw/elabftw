@@ -143,7 +143,7 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(bool $copyFiles = false, bool $linkToPrevious = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -176,8 +176,8 @@ class Experiments extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous experiment if requested
-        if ($linkToPrevious) {
+        // also add a link to the original experiment if requested
+        if ($linkToOriginal) {
             $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
             $ExperimentsLinks->setId($this->id);
             $ExperimentsLinks->postAction(Action::Create, array());

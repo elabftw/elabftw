@@ -80,7 +80,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
                 defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
             ),
-            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? ''), (bool) ($reqBody['linkToPrevious'] ?? '')),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? ''), (bool) ($reqBody['linkToOriginal'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }

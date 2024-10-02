@@ -50,8 +50,8 @@ export default class Entity {
     return this.api.patch(`${this.model}/${id}`, params);
   }
 
-  duplicate(id: number, copyFiles: boolean, linkToPrevious: boolean): Promise<Response> {
-    return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate, 'copyFiles': copyFiles, 'linkToPrevious': linkToPrevious});
+  duplicate(id: number, copyFiles: boolean, linkToOriginal: boolean): Promise<Response> {
+    return this.api.post(`${this.model}/${id}`, {'action': Action.Duplicate, 'copyFiles': copyFiles, 'linkToOriginal': linkToOriginal});
   }
 
   destroy(id: number): Promise<Response> {

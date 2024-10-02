@@ -129,7 +129,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToPrevious = false): int
     {
         // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');

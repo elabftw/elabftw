@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
       const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
+      const linkToPreviousExperiment = (document.getElementById('duplicateLinkToPrevious') as HTMLInputElement);
       let queryString = '';
       let page = '';
       if (about.page.startsWith('template-')) {
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         page = '/ucp.php';
       }
 
-      EntityC.duplicate(entity.id, Boolean(copyFiles.checked))
+      EntityC.duplicate(entity.id, Boolean(copyFiles.checked), Boolean(linkToPreviousExperiment.checked))
         .then(resp => {
           const newId = getNewIdFromPostRequest(resp);
           window.location.href = `${page}?mode=edit&${queryString}id=${newId}`;

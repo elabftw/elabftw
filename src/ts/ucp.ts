@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // IMPORT TPL
     } else if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id), false);
+      TemplateC.duplicate(parseInt(el.dataset.id), false, false);
 
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {

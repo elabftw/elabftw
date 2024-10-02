@@ -17,6 +17,8 @@
             <span class='slider'></span>
           </label>
         </div>
+
+      {% if Entity.entityType.value != 'experiments_templates' %}
         <div class='d-flex justify-content-between'>
           <label for='duplicateLinkToOriginal' class='col-form-label'>{{ 'Link to original experiment'|trans }}</label>
           <label class='switch ucp-align'>
@@ -24,6 +26,8 @@
             <span class='slider'></span>
           </label>
         </div>
+      {% endif %}
+
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

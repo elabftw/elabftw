@@ -102,7 +102,7 @@ class Templates extends AbstractTemplateEntity
     /**
      * Duplicate a template from someone else
      */
-    public function duplicate(bool $copyFiles = false, bool $linkToPrevious = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
         $title = $this->entityData['title'] . ' I';

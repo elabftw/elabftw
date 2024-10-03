@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         page = '/ucp.php';
       }
 
-      EntityC.duplicate(entity.id, Boolean(copyFiles.checked), Boolean(linkToOriginalExperiment.checked))
+      EntityC.duplicate(entity.id, Boolean(copyFiles.checked), (linkToOriginalExperiment ? Boolean(linkToOriginalExperiment.checked) : false))
         .then(resp => {
           const newId = getNewIdFromPostRequest(resp);
           window.location.href = `${page}?mode=edit&${queryString}id=${newId}`;

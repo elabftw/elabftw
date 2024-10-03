@@ -144,7 +144,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @return int the new item id
      */
-    abstract public function duplicate(bool $copyFiles = false): int;
+    abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     abstract public function readOne(): array;
 

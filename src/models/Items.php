@@ -129,7 +129,7 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -153,10 +153,12 @@ class Items extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous resource
-        $ItemsLinks = new Items2ItemsLinks($fresh);
-        $ItemsLinks->setId($this->id);
-        $ItemsLinks->postAction(Action::Create, array());
+        // also add a link to the original resource
+        if ($linkToOriginal) {
+            $ItemsLinks = new Items2ItemsLinks($fresh);
+            $ItemsLinks->setId($this->id);
+            $ItemsLinks->postAction(Action::Create, array());
+        }
         if ($copyFiles) {
             $this->Uploads->duplicate($fresh);
         }

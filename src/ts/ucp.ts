@@ -17,11 +17,10 @@ import {
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
-import { Action, Model, Target, EntityType } from './interfaces';
+import { Action, Model, Target } from './interfaces';
 import Templates from './Templates.class';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
-import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
 import { Uploader } from './uploader';
@@ -58,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    const TemplateC = new EntityClass(EntityType.Template);
     // CREATE TEMPLATE
     if (el.matches('[data-action="create-template"]')) {
       const title = prompt(i18next.t('template-title'));
@@ -102,10 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         delete params['orcid'];
       }
       ApiC.patch(`${Model.User}/me`, params);
-
-    // IMPORT TPL
-    } else if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id), false);
 
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {

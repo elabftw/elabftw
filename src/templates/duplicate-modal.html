@@ -18,7 +18,7 @@
           </label>
         </div>
 
-      {% if Entity.entityType.value == 'items' or Entity.entityType.value == 'experiments' %}
+      {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
         <div class='d-flex justify-content-between'>
           <label for='duplicateLinkToOriginal' class='col-form-label'>{{ 'Link to original experiment'|trans }}</label>
           <label class='switch ucp-align'>

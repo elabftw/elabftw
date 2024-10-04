@@ -199,16 +199,12 @@ class MakePdf extends AbstractMakePdf
         $lockDate = '';
         $lockerName = '';
 
-        // check if entity has been timestamped
-        $timestamped = $this->Entity->entityData['timestamped'] == 1;
-        $timestampedBy = $this->Entity->entityData['timestampedby'] == 1;
+        $timestamped = $this->Entity->entityData['timestamped'];
         $timestampedAt = '';
-        $timestamperName = '';
+        $timestamperName = $this->Entity->getTimestamperFullname();
 
-        if ($timestamped && $timestampedBy) {
-            $timestamperName = $this->Entity->getTimestamperFullname();
-
-            // separate date and time
+        // separate date and time if entity has been timestamped
+        if ($timestamped) {
             $timestampDate = explode(' ', $this->Entity->entityData['timestamped_at']);
             $timestampedAt = sprintf('%s at %s', $timestampDate[0], $timestampDate[1]);
         }

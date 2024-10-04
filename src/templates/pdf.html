@@ -144,6 +144,9 @@
         {% if locked %}
           <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
         {% endif %}
+        {% if timestamped %}
+          <p class='elabid'>Timestamped by {{ timestamperName }} on {{ timestampedAt }}</p>
+        {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
         {% if classification != 'None' %}
           <p class='elabid'>Classification: {{ classification }}</p>

@@ -2277,7 +2277,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/experiment_template'
   /experiments_templates/{id}:
-    summary: Actions on an experiment template
+    summary: Actions on a specific experiment template
     parameters:
       - name: id
         in: path
@@ -2285,6 +2285,47 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Experiments templates']
+      summary: Duplicate an experiment template with its ID
+      operationId: post-experiment_template-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the experiment template to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an experiment template
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: >-
+                    The "duplicate" action creates a new entity based from the given entity id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  description: >-
+                    If "true", the action will import the files of the original entity.
+                  default: false
+                linkToOriginal:
+                  type: boolean
+                  description: >-
+                    This action does not apply to experiment templates, as there is no link between templates.
+                  default: false
+      responses:
+        '201':
+          description: The experiment template has been duplicated.
+          headers:
+            location:
+              description: An URL to the experiment template that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template

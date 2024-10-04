@@ -199,6 +199,20 @@ class MakePdf extends AbstractMakePdf
         $lockDate = '';
         $lockerName = '';
 
+        // check if entity has been timestamped
+        $timestamped = $this->Entity->entityData['timestamped'] == 1;
+        $timestampedBy = $this->Entity->entityData['timestampedby'] == 1;
+        $timestampedAt = '';
+        $timestamperName = '';
+
+        if ($timestamped && $timestampedBy) {
+            $timestamperName = $this->Entity->getTimestamperFullname();
+
+            // separate date and time
+            $timestampDate = explode(' ', $this->Entity->entityData['timestamped_at']);
+            $timestampedAt = sprintf('%s at %s', $timestampDate[0], $timestampDate[1]);
+        }
+
         if ($locked) {
             // get info about the locker
             $Locker = new Users($this->Entity->entityData['lockedby']);
@@ -240,6 +254,9 @@ class MakePdf extends AbstractMakePdf
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
+            'timestamped' => $timestamped,
+            'timestampedAt' => $timestampedAt,
+            'timestamperName' => $timestamperName,
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,

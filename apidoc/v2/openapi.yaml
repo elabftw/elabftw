@@ -1214,7 +1214,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/experiment'
   /experiments/{id}:
-    summary: Actions on an experiment
+    summary: Actions on a specific experiment
     parameters:
       - name: id
         in: path
@@ -1222,6 +1222,46 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Experiments']
+      summary: Duplicate an experiment with its ID
+      operationId: post-experiment-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the experiment to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an experiment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: >-
+                    The "duplicate" action creates a new entity based from the given entity id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  description: >-
+                    If "true", the action will import the files of the original entity.
+                  default: false
+                linkToOriginal:
+                  type: boolean
+                  description: >-
+                    If "true", the action will create a link to the original entity.
+      responses:
+        '201':
+          description: The experiment has been duplicated.
+          headers:
+            location:
+              description: An URL to the experiment that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -1571,7 +1611,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/item'
   /items/{id}:
-    summary: Actions on an item
+    summary: Actions on a specific item
     parameters:
       - name: id
         in: path
@@ -1579,6 +1619,46 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Items']
+      summary: Duplicate an item with its ID
+      operationId: post-item-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the item to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: >-
+                    The "duplicate" action creates a new item based from the given item id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  description: >-
+                    If "true", the action will import the files of the original item.
+                  default: false
+                linkToOriginal:
+                  type: boolean
+                  description: >-
+                    If "true", the action will create a link to the original item.
+      responses:
+        '201':
+          description: The item has been duplicated.
+          headers:
+            location:
+              description: An URL to the item that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Items']
       summary: Read an item

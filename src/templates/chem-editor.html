@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <div id='ketcher-root' class='my-2'></div>
-<button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search molecule'|trans }}</button>
+<div id='ketcher-actions'>
+  <button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search molecule'|trans }}</button>
+</div>
 {% endblock body %}

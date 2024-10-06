@@ -38,8 +38,9 @@ const RootComponent = () => {
 };
 */
 
+/*
 //document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('ketcher-root')) {
+if (document.getElementById('ketcher-root')) {
 
     const root = createRoot(document.getElementById('ketcher-root'));
     // Note: <StrictMode> makes everything fail for now, so it has been removed
@@ -53,40 +54,38 @@ const RootComponent = () => {
       </StrictMode>
     );
     */
-  }
 //});
 
-/*
-document.getElementById('container').addEventListener('click', event => {
-  const el = event.target;
-  if (el.matches('[data-action="search-from-editor"]')) {
-    console.log('clicked');
-    const ketcher = ketcherProvider.getKetcher();
-    //const smiles = async () => {await ketcher.getSmiles()};
-    ketcher.getSmiles().then(s => console.log(s));
-    //console.log(smiles());
-    /*
-    const getInchi = async () => {
-      return ketcher.getInchi();
-    };
-    const getSmiles = async() => {
-      return ketcher.getMolfile();
-    }
-    */
-    /*
-    (async () => {
-      try {
-        const [inchi, smiles, mol] = await Promise.all([ketcher.getSmiles(), ketcher.getInchi(), ketcher.getMolfile()]);
-        console.log('Smiles: ', smiles);
-        console.log('Mol: ', mol);
-        console.log('InChI: ', inchi);
-      } catch (error) {
-        console.error('Error:', error);
+  /*
+  document.getElementById('ketcher-actions').addEventListener('click', event => {
+    const el = event.target;
+    if (el.matches('[data-action="search-from-editor"]')) {
+      console.log('clicked');
+      const ketcher = ketcherProvider.getKetcher();
+      //const smiles = async () => {await ketcher.getSmiles()};
+      ketcher.getSmiles().then(s => console.log(s));
+      //console.log(smiles());
+      const getInchi = async () => {
+        return ketcher.getInchi();
+      };
+      const getSmiles = async() => {
+        return ketcher.getMolfile();
       }
-    })();
-    */
-/*
-  }
-});
+      /*
+      (async () => {
+        try {
+          const [inchi, smiles, mol] = await Promise.all([ketcher.getSmiles(), ketcher.getInchi(), ketcher.getMolfile()]);
+          console.log('Smiles: ', smiles);
+          console.log('Mol: ', mol);
+          console.log('InChI: ', inchi);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      })();
+      */
+  /*
+    }
+  });
 
+}
 */

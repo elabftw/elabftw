@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
-      });
+      }).then(() => document.getElementById('metadataDiv').scrollIntoView());
     }
   });
 

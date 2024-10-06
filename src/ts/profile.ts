@@ -37,8 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
       input.parentNode.appendChild(errorDiv);
     }
     // toggle the eln/csv options depending on file extension
+    const isEln = input.files[0].name.endsWith('.eln');
     document.querySelectorAll('[data-showif="eln"]')
-      .forEach((el: HTMLElement) => input.files[0].name.endsWith('.eln') ? el.removeAttribute('hidden') : el.hidden = true);
+      .forEach((el: HTMLElement) => isEln ? el.removeAttribute('hidden') : el.hidden = true);
+    // we want to let the .eln file decide which kind of entry it is by default
+    const targetElement = 'entityTypeRadio' + (isEln ? 'None' : 'Experiments');
+    (document.getElementById(targetElement) as HTMLInputElement).checked = true;
   });
 
   // when selecting the target type, change the category listing

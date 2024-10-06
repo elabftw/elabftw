@@ -19,6 +19,11 @@ use PDO;
 
 class StepDeadline extends AbstractNotifications implements MailableInterface
 {
+    /**
+     * Time in minutes before the deadline to send/show notifications
+     */
+    public const int NOTIFLEADTIME = 30;
+
     protected const PREF = 'notif_step_deadline';
 
     protected Notifications $category = Notifications::StepDeadline;
@@ -32,26 +37,14 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         parent::__construct();
     }
 
-    /**
-     * For step notification, we first need to check if there isn't one already existing before creating a new one for this step
-     */
     public function create(int $userid): int
     {
-        // check if a similar notification is not already there
-        $sql = 'SELECT id FROM notifications WHERE category = :category AND JSON_EXTRACT(body, "$.step_id") = :step_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
-        $req->bindValue(':step_id', $this->stepId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // if there is a notification for this step id, delete it
-        if ($req->rowCount() > 0) {
-            $sql = 'DELETE FROM notifications WHERE id = :id';
-            $reqDel = $this->Db->prepare($sql);
-            $reqDel->bindValue(':id', $req->fetch()['id'], PDO::PARAM_INT);
-            $reqDel->execute();
+        // try to delete already existing notification for this step and return if there was one
+        if ($this->destroy()) {
             return 0;
         }
-        // otherwise, create a notification for it
+
+        // otherwise, create a notification
         return parent::create($userid);
     }
 
@@ -71,6 +64,21 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
             'subject' => _('A step deadline is approaching.'),
             'body' => $body,
         );
+    }
+
+    public function destroy(): bool
+    {
+        // need to distinguish between items and experiments based on entity_page
+        $sql = 'DELETE FROM notifications
+            WHERE category = :category
+                AND body->"$.step_id" = :step_id
+                AND body->"$.entity_page" = :entity_page';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
+        $req->bindValue(':step_id', $this->stepId, PDO::PARAM_INT);
+        $req->bindValue(':entity_page', $this->entityPage);
+        $this->Db->execute($req);
+        return (bool) $req->rowCount();
     }
 
     protected function getBody(): array

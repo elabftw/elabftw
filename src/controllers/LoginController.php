@@ -373,7 +373,7 @@ class LoginController implements ControllerInterface
     {
         $flashBag = $this->App->Session->getFlashBag();
 
-        if ($this->App->Request->request->get('Submit') === 'cancel') {
+        if ($this->App->Request->request->get('Cancel') === 'cancel') {
             $this->App->Session->clear();
             $flashBag->add('ko', _('Two Factor Authentication was not enabled!'));
             return '/login.php';

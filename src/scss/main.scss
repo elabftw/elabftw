@@ -1252,7 +1252,8 @@ the form-control fails to do that so we do the border ourselves */
   margin: 8px 8px 0;
 }
 
-.image figcaption {
+.image figcaption,
+figure figcaption {
   margin: 6px 8px;
   text-align: center;
 }

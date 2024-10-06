@@ -137,12 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     eventBackgroundColor: '#' + eventBackgroundColor,
     // selection
     select: function(info): void {
-      const title = prompt(i18next.t('comment-add'));
-      if (!title) {
-        // make the selected area disappear
-        calendar.unselect();
-        return;
-      }
       // get the item id from url
       const params = new URLSearchParams(document.location.search.slice(1));
       const itemid = parseInt(params.get('item'), 10);
@@ -152,12 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const postParams = {
-        'start': info.startStr,
-        'end': info.endStr,
-        'title': title,
+        start: info.startStr,
+        end: info.endStr,
       };
       ApiC.post(`events/${itemid}`, postParams).then(()=> {
-        // note: here the event is shown without a title, until the user clicks somewhere. Still better than a full page reload.
+        // note: here the event is shown empty (without title), until the user clicks somewhere. Still better than a full page reload.
+        // FIXME: this should be addressed eventually
         calendar.refetchEvents();
       }).catch(() => {
         calendar.unselect();
@@ -179,8 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // FILL THE BOUND DIV
 
       // title
-      const eventTitle = document.getElementById('eventTitle');
-      eventTitle.innerText = info.event.extendedProps.title_only;
+      const eventTitle = document.getElementById('eventTitle') as HTMLInputElement;
+      eventTitle.value = info.event.extendedProps.title_only;
       // set the event id on the title
       eventTitle.dataset.eventid = info.event.id;
 
@@ -249,22 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.render();
     calendar.updateSize();
   }
-  // UPDATE MALLEABLE event title
-  new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
-    inputClasses: ['form-control'],
-    fun: async (value, original) => {
-      const params = {'target': 'title', 'content': value};
-      return ApiC.patch(`event/${original.dataset.eventid}`, params)
-        .then(resp => resp.json()).then(json => json.title);
-    },
-    listenOn: '#eventTitle',
-    returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
 
   // transform the enum into the kind of object we want
   const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)
@@ -339,6 +317,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
 
+    // SAVE EVENT TITLE
+    } else if (el.matches('[data-action="save-event-title"]')) {
+      const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
+    // REMOVE BIND
     } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
       const bindType = el.dataset.type;
       ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {

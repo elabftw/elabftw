@@ -106,7 +106,7 @@
         {# NOTE: it is currently not practical to use enums in twig. So we hardcode the value for now. FIXME. See: https://github.com/twigphp/Twig/issues/3681 #}
         <option value='0' {{ App.Users.userData.entrypoint == '0' ? ' selected' }}>{{ 'Dashboard'|trans }} {{ '(default)'|trans }}</option>
         <option value='1' {{ App.Users.userData.entrypoint == '1' ? ' selected' }}>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</option>
-        <option value='2' {{ App.Users.userData.entrypoint == '2' ? ' selected' }}>{{ 'Database'|trans }}</option>
+        <option value='2' {{ App.Users.userData.entrypoint == '2' ? ' selected' }}>{{ 'Resources'|trans }}</option>
         <option value='3' {{ App.Users.userData.entrypoint == '3' ? ' selected' }}>{{ 'Scheduler'|trans }}</option>
       </select>
     </div>

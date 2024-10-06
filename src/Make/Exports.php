@@ -272,7 +272,7 @@ class Exports implements RestInterface
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:
-                $Maker = new MakeFullJson(array($entityArr));
+                $Maker = new MakeFullJson($entityArr);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             default:

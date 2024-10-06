@@ -77,7 +77,13 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Items->setId(1);
         $this->Items->canOrExplode('read');
-        $this->assertIsInt($this->Items->postAction(Action::Duplicate, array()));
+        $ItemsTypes = new ItemsTypes($this->Items->Users);
+        $category = $ItemsTypes->create(title: 'Used in tests');
+        $this->Items->patch(Action::Update, array('category' => $category));
+        $newId = $this->Items->postAction(Action::Duplicate, array());
+        $this->assertIsInt($newId);
+        $this->Items->setId($newId);
+        $this->assertEquals($category, $this->Items->entityData['category']);
     }
 
     public function testToggleLock(): void

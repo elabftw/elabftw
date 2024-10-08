@@ -24,7 +24,6 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,7 +82,6 @@ class App
             $this->warning = $flashBag->get('warning');
         }
 
-        $this->Log->pushHandler(new ErrorLogHandler());
         $this->Users = new Users();
         // Show helpful screen if database schema needs update
         $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));

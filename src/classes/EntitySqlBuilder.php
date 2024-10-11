@@ -256,7 +256,12 @@ class EntitySqlBuilder
                 DISTINCT team_events.start
                 ORDER BY team_events.start
                 SEPARATOR '|'
-            ) AS events_start";
+            ) AS events_start,
+            GROUP_CONCAT(
+                DISTINCT team_events.item
+                ORDER BY team_events.start
+                SEPARATOR '|'
+            ) AS events_start_itemid";
 
 
         // only select events from the future

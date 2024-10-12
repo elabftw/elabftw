@@ -30,6 +30,7 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/preview';
 import 'tinymce/plugins/save';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
@@ -61,6 +62,8 @@ import { EntityType } from './interfaces';
 import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 
 const ApiC = new Api();
@@ -105,8 +108,8 @@ function doneTyping(): void {
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons';
-  let toolbar1 = 'custom-save | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
+  let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit') {
     plugins += ' autosave';
@@ -331,5 +334,23 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
+    // specifying custom CSS for properly rendering MathJax in TinyMCE instance
+    content_style: 'mjx-assistive-mml { position: absolute !important; top: 0px; left: 0px; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0px 0px 0px !important; border: 0px !important; display: block !important; width: auto !important; overflow: hidden !important; user-select: none; } g[data-mml-node="merror"] > rect[data-background] { fill: yellow; stroke: none; } g[data-mml-node="merror"] > g { fill: red; stroke: red; }',
+    // render MathJax for TinyMCE preview
+    init_instance_callback: (editor) => {
+      editor.on('ExecCommand', (e) => {
+        if (e.command == "mcePreview") {
+          const iframe = (document.querySelector("iframe.tox-dialog__iframe") as HTMLIFrameElement);
+          if (iframe) {
+            const htmlString = iframe.srcdoc;
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(htmlString);
+            iframeDoc.close();
+            MathJax.typeset([iframeDoc.body]);
+          }
+        }
+      });
+    },
   };
 }

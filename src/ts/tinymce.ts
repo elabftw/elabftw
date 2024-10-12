@@ -339,8 +339,8 @@ export function getTinymceBaseConfig(page: string): object {
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {
-        if (e.command == "mcePreview") {
-          const iframe = (document.querySelector("iframe.tox-dialog__iframe") as HTMLIFrameElement);
+        if (e.command == 'mcePreview') {
+          const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
           if (iframe) {
             const htmlString = iframe.srcdoc;
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;

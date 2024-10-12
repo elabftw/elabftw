@@ -1,3 +1,10 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2024 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 //import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
 //import { Ketcher, ketcherProvider } from 'ketcher-core';
@@ -38,23 +45,22 @@ const RootComponent = () => {
 };
 */
 
-/*
-//document.addEventListener('DOMContentLoaded', () => {
-if (document.getElementById('ketcher-root')) {
-
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('ketcher-root')) {
     const root = createRoot(document.getElementById('ketcher-root'));
-    // Note: <StrictMode> makes everything fail for now, so it has been removed
+    // Note: use <StrictMode> in dev to spot errors
     root.render(
-        <KetcherEditor />
+      <KetcherEditor />
     );
     /*
     root.render(
-      <StrictMode>
-        <KetcherEditor />
-      </StrictMode>
+    <StrictMode>
+      <KetcherEditor />
+    </StrictMode>
     );
     */
-//});
+  }
+});
 
   /*
   document.getElementById('ketcher-actions').addEventListener('click', event => {

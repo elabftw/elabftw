@@ -35,9 +35,11 @@ $Response->prepare($Request);
 $template = 'error.html';
 
 // tmp code
+/*
 $HttpGetter = new HttpGetter(new Client());
 $fp = new Fingerprints($HttpGetter, 'http://fingerprinter:8000');
 $fp->calculate('CC(OC1C(C(O)=O)=CC=CC=1)=O');
+ */
 
 try {
     $Controller = new ChemEditorController($App);

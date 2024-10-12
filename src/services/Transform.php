@@ -97,17 +97,19 @@ class Transform
                 ),
             Notifications::StepDeadline =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="%s?mode=view&amp;id=%d">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="%s?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
                     $notif['body']['entity_page'],
                     (int) $notif['body']['entity_id'],
+                    (int) $notif['body']['step_id'],
+                    (int) $notif['body']['step_id'],
                     _('A step deadline is approaching.'),
                     $notif['created_at'],
                 ),
             Notifications::NewVersionInstalled =>
                 sprintf(
-                    '<a class="color-white" href="https://www.deltablot.com/posts/release-%d" target="_blank">%s</a>' . $relativeMoment,
-                    App::INSTALLED_VERSION_INT,
+                    '<a class="color-white" href="%s" target="_blank">%s</a>' . $relativeMoment,
+                    App::getWhatsnewLink(App::INSTALLED_VERSION_INT),
                     sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],
                 ),

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Services\LoginHelper;
 use Exception;
+use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,11 +48,16 @@ $Session->start();
 $Request->setSession($Session);
 
 try {
+    // this allows us to write to stdout/stderr aka access/error logs of nginx
+    $Logger = new Logger('elabftw');
+    $Logger->pushHandler(new ErrorLogHandler());
+
     // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
         $Config = Config::getConfig();
     } catch (DatabaseErrorException | PDOException $e) {
+        $Logger->critical('', array('Exception' => $e));
         throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error encountered during MySQL initialization</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure credentials for MySQL are correct in the YAML config file</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
     }
     if (Config::fromEnv('SITE_URL') === '') {
@@ -73,7 +79,7 @@ try {
     }
     // END CSRF
 
-    $App = new App($Request, $Session, $Config, new Logger('elabftw'));
+    $App = new App($Request, $Session, $Config, $Logger);
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
     //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //

@@ -22,6 +22,6 @@ jobs:
         uses: actions/setup-python@v4
       - name: Install codespell
         run: |
-            python -m pip install codespell
+            python -m pip install --break-system-packages codespell
       - name: Run codespell
         run: codespell --config src/tools/codespellrc

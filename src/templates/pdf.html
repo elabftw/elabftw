@@ -42,6 +42,12 @@
     </p>
   </div>
 
+  {% if timestamped %}
+  <div class="timestamped-block">
+    <p>{{ 'This document has been timestamped'|trans }} by {{ timestamperName }} on {{ localDate }}.</p>
+  </div>
+  {% endif %}
+
 {{ body|raw }}
 
 {% if entityData.metadata %}

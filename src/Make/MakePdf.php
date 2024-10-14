@@ -202,11 +202,13 @@ class MakePdf extends AbstractMakePdf
         $timestamped = $this->Entity->entityData['timestamped'];
         $timestampedAt = '';
         $timestamperName = $this->Entity->getTimestamperFullname();
+        $localDate = '';
 
         // separate date and time if entity has been timestamped
         if ($timestamped) {
             $timestampDate = explode(' ', $this->Entity->entityData['timestamped_at']);
             $timestampedAt = sprintf('%s at %s', $timestampDate[0], $timestampDate[1]);
+            $localDate = $this->formatLocalDateTime($this->Entity->entityData['timestamped_at']);
         }
 
         if ($locked) {
@@ -253,6 +255,7 @@ class MakePdf extends AbstractMakePdf
             'timestamped' => $timestamped,
             'timestampedAt' => $timestampedAt,
             'timestamperName' => $timestamperName,
+            'localDate' => $localDate,
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,
@@ -328,6 +331,16 @@ class MakePdf extends AbstractMakePdf
             $i += 1;
         }
         return $body;
+    }
+
+    /**
+     * @param string $date
+     * @return string Local date formatted for headers
+     */
+    private function formatLocalDateTime(string $date): string
+    {
+        $dateTime = new DateTimeImmutable($date);
+        return $dateTime->format('l, F j');
     }
 
     /**

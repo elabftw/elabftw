@@ -521,6 +521,11 @@ class Users implements RestInterface
             }
         }
 
+        // early bail out if existing and new values are the same
+        if ($params->getContent() === $this->userData[$params->getColumn()]) {
+            return true;
+        }
+
         $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());

@@ -35,6 +35,9 @@ export default class Step {
         editor.replaceContent(editor.getContent().replace(json.body, content));
       });
     }
+    if (target === Target.Deadline && content === null) {
+      this.notifDestroy(id);
+    }
     return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
   }
 
@@ -44,6 +47,10 @@ export default class Step {
 
   notif(id: number): Promise<Response> {
     return this.genericPatch(id, Action.Notif);
+  }
+
+  notifDestroy(id: number): Promise<Response> {
+    return this.genericPatch(id, Action.NotifDestroy);
   }
 
   genericPatch(id: number, action: Action): Promise<Response> {

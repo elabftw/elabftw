@@ -23,6 +23,7 @@ use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\IdpsHelper;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -95,6 +96,10 @@ class LoginController implements ControllerInterface
 
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
+
+        if ($this->App->Session->get('mfa_auth_required') === true && !$AuthResponse->hasVerifiedMfa) {
+            throw new IllegalActionException('MFA auth is required');
+        }
 
         /////////////////
         // ENFORCE MFA //

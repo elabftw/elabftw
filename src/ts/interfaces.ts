@@ -85,6 +85,7 @@ enum Action {
   Finish = 'finish',
   Lock = 'lock',
   Notif = 'notif',
+  NotifDestroy = 'notifdestroy',
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
   RemoveExclusiveEditMode = 'removeexclusiveeditmode',

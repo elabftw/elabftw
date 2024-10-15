@@ -943,7 +943,7 @@ paths:
     post:
       tags: ['Api keys']
       summary: Create an API key
-      description: >-
+      description: |
         Create an API key. The cleartext key is sent back in the location
         header.
       operationId: post-apikeys
@@ -1059,13 +1059,13 @@ paths:
               properties:
                 category_id:
                   type: integer
-                  description: >-
+                  description: |
                     The template id to use, or 0 to use the common team
                     template, or -1 to have an empty body.
                   default: -1
                 tags:
                   type: array
-                  description: >-
+                  description: |
                     An array of tags to assign to the created entry.
                   items:
                     type: string
@@ -1242,17 +1242,18 @@ paths:
               properties:
                 action:
                   type: string
-                  description: >-
+                  description: |
                     The "duplicate" action creates a new entity based from the given entity id.
                   default: 'duplicate'
                 copyFiles:
                   type: boolean
-                  description: >-
-                    If "true", the action will import the files of the original entity.
                   default: false
+                  description: |
+                    If "true", the action will import the files of the original entity.
                 linkToOriginal:
                   type: boolean
-                  description: >-
+                  default: true
+                  description: |
                     If "true", the action will create a link to the original entity.
       responses:
         '201':
@@ -1286,6 +1287,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1299,6 +1301,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1323,6 +1326,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -1639,17 +1643,18 @@ paths:
               properties:
                 action:
                   type: string
-                  description: >-
+                  description: |
                     The "duplicate" action creates a new item based from the given item id.
                   default: 'duplicate'
                 copyFiles:
                   type: boolean
-                  description: >-
-                    If "true", the action will import the files of the original item.
                   default: false
+                  description: |
+                    If "true", the action will import the files of the original item.
                 linkToOriginal:
                   type: boolean
-                  description: >-
+                  default: true
+                  description: |
                     If "true", the action will create a link to the original item.
       responses:
         '201':
@@ -1684,6 +1689,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1697,6 +1703,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1721,6 +1728,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -2305,19 +2313,19 @@ paths:
               properties:
                 action:
                   type: string
-                  description: >-
+                  description: |
                     The "duplicate" action creates a new entity based from the given entity id.
                   default: 'duplicate'
                 copyFiles:
                   type: boolean
-                  description: >-
-                    If "true", the action will import the files of the original entity.
                   default: false
+                  description: |
+                    If "true", the action will import the files of the original entity.
                 linkToOriginal:
                   type: boolean
-                  description: >-
-                    This action does not apply to experiment templates, as there is no link between templates.
                   default: false
+                  description: |
+                    This action does not apply to experiment templates, as there is no link between templates.
       responses:
         '201':
           description: The experiment template has been duplicated.

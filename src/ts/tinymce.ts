@@ -335,6 +335,7 @@ export function getTinymceBaseConfig(page: string): object {
     ],
     toolbar_sticky: true,
     // specifying custom CSS for properly rendering MathJax in TinyMCE instance
+    // CSS properties obtained from inspecting the inline CSS for MathJax elements displayed in view mode (MathJax 3.2.2)
     content_style: 'mjx-assistive-mml { position: absolute !important; top: 0px; left: 0px; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0px 0px 0px !important; border: 0px !important; display: block !important; width: auto !important; overflow: hidden !important; user-select: none; }' +
       'g[data-mml-node="merror"] > rect[data-background] { fill: yellow; stroke: none; }' +
       'g[data-mml-node="merror"] > g { fill: red; stroke: red; }',

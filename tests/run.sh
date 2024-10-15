@@ -81,17 +81,22 @@ if ($ci); then
 fi
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
 if [ "${1:-}" = "unit" ]; then
-    # Run a specified test file
-    TEST_FILE=${2:-}
-    if [ -n "$TEST_FILE" ]; then
-      echo "Running unit tests. Test file: ${TEST_FILE:-none}"
-      # Run one specific test file if path is provided
-      docker exec -it elabtmp php vendor/bin/codecept run "$TEST_FILE" --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+    # Remove "unit" from the list of arguments, we are going to allow multiple arguments (test files) so this one should be excluded from the list.
+    shift
+    # Run one or multiple specific tests if the path is specified.
+    TEST_FILES=("$@")
+    if [ ${#TEST_FILES[@]} -gt 0 ]; then
+        echo "Running unit tests. Test file(s): ${TEST_FILES[*]}"
+        # Loop through each test file and run it individually
+        for TEST_FILE in "${TEST_FILES[@]}"; do
+          echo "Running test: $TEST_FILE"
+          # verbose flag allows to see fwrite debug statements
+          docker exec -it elabtmp php vendor/bin/codecept run "$TEST_FILE" --verbose --skip apiv2 --skip cypress
+        done
     else
-      echo "Running all unit tests."
-      # Run all tests if no file is specified
-      # verbose flag allows to see fwrite debug statements
-      docker exec -it elabtmp php vendor/bin/codecept run --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+        echo "Running all unit tests."
+        # Run all tests if no file is specified
+        docker exec -it elabtmp php vendor/bin/codecept run --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
     fi
 elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml

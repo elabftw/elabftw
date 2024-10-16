@@ -85,17 +85,13 @@ class PinsTest extends \PHPUnit\Framework\TestCase
     private function duplicateEntity(Experiments | Items | Templates $entity): Experiments | Items | Templates
     {
         $duplicated = $entity->duplicate();
-        $fresh = null;
 
-        if ($entity->entityType === EntityType::Experiments) {
-            $fresh = new Experiments($this->Users, $duplicated);
-        }
-        if ($entity->entityType === EntityType::Items) {
-            $fresh = new Items($this->Users, $duplicated);
-        }
-        if ($entity->entityType === EntityType::Templates) {
-            $fresh = new Templates($this->Users, $duplicated);
-        }
+        $fresh = match ($entity->entityType) {
+            EntityType::Experiments => new Experiments($this->Users, $duplicated),
+            EntityType::Items => new Items($this->Users, $duplicated),
+            EntityType::Templates => new Templates($this->Users, $duplicated),
+            default => null
+        };
 
         if ($fresh === null) {
             $message = sprintf('Invalid entity type: %s', $entity->entityType->value);

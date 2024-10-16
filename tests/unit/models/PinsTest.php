@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ImproperActionException;
+
 class PinsTest extends \PHPUnit\Framework\TestCase
 {
     private Experiments $Experiments;
@@ -52,50 +55,53 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(count($this->Templates->Pins->readAll()) > 0);
     }
 
-    /**
-     * ensure that duplicated entry is not pinned
-     * @return void
-     */
     public function testDuplicateIsNotPinned(): void
     {
-        // duplicate existing experiment
-        $source = $this->Experiments;
-        $duplicate = $source->duplicate();
-        $freshSource = new Experiments($this->Users, $duplicate);
-        $this->assertNotEquals($source->entityData['id'], $freshSource->entityData['id']);
-
-        // ensure the duplicate experiment is not pinned
-        $this->assertCount(0, $freshSource->Pins->readAll());
-        $this->assertCount(0, $freshSource->Pins->readAllSimple());
-
-        // duplicate existing item
-        $sourceItem = $this->Items;
-        $duplicateItem = $sourceItem->duplicate();
-        $freshItem = new Items($this->Users, $duplicateItem);
-        $this->assertNotEquals($sourceItem->entityData['id'], $freshItem->entityData['id']);
-
-        // ensure the duplicate item is not pinned
-        $this->assertCount(0, $freshItem->Pins->readAll());
-        $this->assertCount(0, $freshItem->Pins->readAllSimple());
+        $this->checkDuplicateIsNotPinned($this->Experiments);
+        $this->checkDuplicateIsNotPinned($this->Items);
     }
 
-    /**
-     * ensure that duplicating a pinned/non-pinned template results in a new pinned template in both cases
-     * @return void
-     */
     public function testTemplateIsAlwaysPinnedWhenCreated(): void
     {
-        // create a new template and ensure it is pinned
-        $source = new Templates($this->Users, 1);
-        $this->assertTrue($source->Pins->isPinned());
-        $this->assertTrue(count($source->Pins->readAll()) > 0);
+        // Confirm the created template is pinned
+        $this->assertTrue($this->Templates->Pins->isPinned());
+        $this->assertTrue(count($this->Templates->Pins->readAll()) > 0);
 
-        // duplicate the template
-        $duplicate = $source->duplicate();
-        $fresh = new Templates($this->Users, $duplicate);
-        $this->assertNotEquals($source->entityData['id'], $fresh->entityData['id']);
-
-        // ensure the duplicate is pinned on creation
+        // Duplicate the template and ensure it is pinned on creation
+        $fresh = $this->duplicateEntity($this->Templates);
+        $this->assertNotEquals($this->Templates->id, $fresh->id);
         $this->assertTrue($fresh->Pins->isPinned());
+        $this->assertTrue(count($fresh->Pins->readAll()) > 0);
+    }
+
+    private function checkDuplicateIsNotPinned(Experiments | Items $entity): void
+    {
+        $fresh = $this->duplicateEntity($entity);
+        $this->assertNotEquals($entity->id, $fresh->id);
+        $this->assertCount(0, $fresh->Pins->readAll());
+        $this->assertCount(0, $fresh->Pins->readAllSimple());
+    }
+
+    private function duplicateEntity(Experiments | Items | Templates $entity): Experiments | Items | Templates
+    {
+        $duplicated = $entity->duplicate();
+        $fresh = null;
+
+        if ($entity->entityType === EntityType::Experiments) {
+            $fresh = new Experiments($this->Users, $duplicated);
+        }
+        if ($entity->entityType === EntityType::Items) {
+            $fresh = new Items($this->Users, $duplicated);
+        }
+        if ($entity->entityType === EntityType::Templates) {
+            $fresh = new Templates($this->Users, $duplicated);
+        }
+
+        if ($fresh === null) {
+            $message = sprintf('Invalid entity type: %s', $entity->entityType->value);
+            throw new ImproperActionException($message);
+        }
+
+        return $fresh;
     }
 }

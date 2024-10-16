@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -74,6 +75,15 @@ class Filter
             return date('Y-m-d');
         }
         return $input;
+    }
+
+    /**
+     * Return the date in a readable format
+     * example: 2014-01-12 -> Sunday, January 12, 2014
+     */
+    public static function formatLocalDate(DateTimeImmutable $input): string
+    {
+        return date('l, F j, Y', $input->getTimestamp());
     }
 
     /**

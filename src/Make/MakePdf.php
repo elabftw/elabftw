@@ -200,12 +200,12 @@ class MakePdf extends AbstractMakePdf
         $lockerName = '';
 
         $timestamped = $this->Entity->entityData['timestamped'];
+        $timestamperName = $this->Entity->getTimestamperFullname();
 
-        if ($timestamped) {
+        if ($this->Entity->entityData['timestamped'] === 1) {
             // Separate date and time if entity has been timestamped
             $timestampDate = explode(' ', $this->Entity->entityData['timestamped_at']);
             $timestampedAt = sprintf('%s at %s', $timestampDate[0], $timestampDate[1]);
-            $timestamperName = $this->Entity->getTimestamperFullname();
 
             // Format date for pdf title
             $localDate = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
@@ -254,7 +254,7 @@ class MakePdf extends AbstractMakePdf
             'lockerName' => $lockerName,
             'timestamped' => $timestamped,
             'timestampedAt' => $timestampedAt ?? '',
-            'timestamperName' => $timestamperName ?? '',
+            'timestamperName' => $timestamperName,
             'localDate' => $localDate ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates

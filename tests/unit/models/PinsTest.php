@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\ImproperActionException;
-
 class PinsTest extends \PHPUnit\Framework\TestCase
 {
     private Experiments $Experiments;
@@ -82,21 +79,11 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $fresh->Pins->readAllSimple());
     }
 
-    private function duplicateEntity(Experiments | Items | Templates $entity): Experiments | Items | Templates
+    private function duplicateEntity(AbstractEntity $entity): AbstractEntity
     {
-        $duplicated = $entity->duplicate();
-
-        $fresh = match ($entity->entityType) {
-            EntityType::Experiments => new Experiments($this->Users, $duplicated),
-            EntityType::Items => new Items($this->Users, $duplicated),
-            EntityType::Templates => new Templates($this->Users, $duplicated),
-            default => null
-        };
-
-        if ($fresh === null) {
-            $message = sprintf('Invalid entity type: %s', $entity->entityType->value);
-            throw new ImproperActionException($message);
-        }
+        $newId = $entity->duplicate();
+        $fresh = clone $entity;
+        $fresh->setId($newId);
 
         return $fresh;
     }

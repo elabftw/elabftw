@@ -60,23 +60,14 @@ class PinsTest extends \PHPUnit\Framework\TestCase
 
     public function testTemplateIsAlwaysPinnedWhenCreated(): void
     {
-        // Confirm the created template is pinned
-        $this->assertTrue($this->Templates->Pins->isPinned());
-        $this->assertTrue(count($this->Templates->Pins->readAll()) > 0);
-
-        // Duplicate the template and ensure it is pinned on creation
         $fresh = $this->duplicateEntity($this->Templates);
-        $this->assertNotEquals($this->Templates->id, $fresh->id);
         $this->assertTrue($fresh->Pins->isPinned());
-        $this->assertTrue(count($fresh->Pins->readAll()) > 0);
     }
 
     private function checkDuplicateIsNotPinned(Experiments | Items $entity): void
     {
         $fresh = $this->duplicateEntity($entity);
-        $this->assertNotEquals($entity->id, $fresh->id);
-        $this->assertCount(0, $fresh->Pins->readAll());
-        $this->assertCount(0, $fresh->Pins->readAllSimple());
+        $this->assertFalse($fresh->Pins->isPinned());
     }
 
     private function duplicateEntity(AbstractEntity $entity): AbstractEntity

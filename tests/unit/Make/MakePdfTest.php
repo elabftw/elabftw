@@ -91,5 +91,9 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
         $fresh->unlock();
         $this->assertEquals(0, $fresh->entityData['locked']);
         $this->assertEquals('Unknown', $fresh->getLockerFullname());
+
+        // Destroy fresh experiment to keep the timestamp count stable for other tests
+        // Refer to testGetTimestampThisMonth()
+        $fresh->destroy();
     }
 }

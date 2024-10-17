@@ -196,17 +196,16 @@ class MakePdf extends AbstractMakePdf
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
-        $lockDate = '';
-        $lockerName = '';
+        $lockerName = $this->Entity->getLockerFullname();
+        $lockDate = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
 
-        if ($locked) {
-            // get info about the locker
-            $Locker = new Users($this->Entity->entityData['lockedby']);
-            $lockerName = $Locker->userData['fullname'];
+        $timestamped = $this->Entity->entityData['timestamped'];
+        $timestamperName = $this->Entity->getTimestamperFullname();
+        $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
 
-            // separate the date and time
-            $ldate = explode(' ', $this->Entity->entityData['locked_at']);
-            $lockDate = $ldate[0] . ' at ' . $ldate[1];
+        // Format date for pdf title
+        if ($this->Entity->entityData['timestamped'] === 1) {
+            $localDate = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
         }
 
         // read the content of the thumbnail here to feed the template
@@ -240,6 +239,10 @@ class MakePdf extends AbstractMakePdf
             'locked' => $locked,
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
+            'timestamped' => $timestamped,
+            'timestampedAt' => $timestampedAt,
+            'timestamperName' => $timestamperName,
+            'localDate' => $localDate ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,

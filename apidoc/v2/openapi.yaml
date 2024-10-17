@@ -1301,7 +1301,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: false
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1703,7 +1703,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: false
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -2321,11 +2321,6 @@ paths:
                   default: false
                   description: |
                     If "true", the action will import the files of the original entity.
-                linkToOriginal:
-                  type: boolean
-                  default: false
-                  description: |
-                    This action does not apply to experiment templates, as there is no link between templates.
       responses:
         '201':
           description: The experiment template has been duplicated.

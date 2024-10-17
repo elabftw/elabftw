@@ -79,11 +79,21 @@ class Filter
 
     /**
      * Return the date in a readable format
-     * example: 2014-01-12 -> Sunday, January 12, 2014
+     * example: 2014-01-12 -> "Sunday, January 12, 2014"
      */
     public static function formatLocalDate(DateTimeImmutable $input): string
     {
-        return date('l, F j, Y', $input->getTimestamp());
+        return $input->format('l, F j, Y');
+    }
+
+    /**
+     * Return the date and time in full sentence
+     * example : "2024-10-16 17:12:47" -> "2024-10-16 at 11:24:36"
+     */
+    public static function separateDateAndTime(string $input): string
+    {
+        $date = explode(' ', $input);
+        return sprintf('%s at %s', $date[0], $date[1]);
     }
 
     /**

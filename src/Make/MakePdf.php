@@ -196,29 +196,16 @@ class MakePdf extends AbstractMakePdf
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
-        $lockDate = '';
-        $lockerName = '';
+        $lockerName = $this->Entity->getLockerFullname();
+        $lockDate = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
 
         $timestamped = $this->Entity->entityData['timestamped'];
         $timestamperName = $this->Entity->getTimestamperFullname();
+        $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
 
+        // Format date for pdf title
         if ($this->Entity->entityData['timestamped'] === 1) {
-            // Separate date and time if entity has been timestamped
-            $timestampDate = explode(' ', $this->Entity->entityData['timestamped_at']);
-            $timestampedAt = sprintf('%s at %s', $timestampDate[0], $timestampDate[1]);
-
-            // Format date for pdf title
             $localDate = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
-        }
-
-        if ($locked) {
-            // get info about the locker
-            $Locker = new Users($this->Entity->entityData['lockedby']);
-            $lockerName = $Locker->userData['fullname'];
-
-            // separate the date and time
-            $ldate = explode(' ', $this->Entity->entityData['locked_at']);
-            $lockDate = $ldate[0] . ' at ' . $ldate[1];
         }
 
         // read the content of the thumbnail here to feed the template
@@ -253,7 +240,7 @@ class MakePdf extends AbstractMakePdf
             'lockDate' => $lockDate,
             'lockerName' => $lockerName,
             'timestamped' => $timestamped,
-            'timestampedAt' => $timestampedAt ?? '',
+            'timestampedAt' => $timestampedAt,
             'timestamperName' => $timestamperName,
             'localDate' => $localDate ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],

@@ -1287,7 +1287,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1301,7 +1301,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1326,7 +1326,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -1689,7 +1689,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1703,7 +1703,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1728,7 +1728,7 @@ paths:
           in: query
           schema:
             type: boolean
-            default: true
+            default: false
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:

@@ -49,6 +49,8 @@ interface Selected {
   items_types: number[];
   tags: number[];
   users: number[];
+  owners: number[];
+  newOwner: number;
   can: string;
 }
 

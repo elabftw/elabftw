@@ -782,6 +782,26 @@
     <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
   </div>
 
+   {# Transfer ownership #}
+  <div class='row'>
+    <div class='col-md-6 mb-3'>
+      <div>
+        {# SELECT USER #}
+        <label for='newOwner'>{{ 'New owner'|trans }}</label>
+        <select id='newOwner' class='form-control'>
+          {% for user in Entity.Users.readAllFromTeam %}
+          <option value='{{ user.userid }}'
+            {{ Entity.entityData.userid == user.userid ? ' selected' }}
+            >{{ user.fullname }}
+          </option>
+          {% endfor %}
+        </select>
+        <button data-action='run-action-selected' data-what='transferOwnership' type='button' class='btn btn-primary mt-3 mx-0'>{{ 'Transfer ownership'|trans }}</button>
+
+      </div>
+    </div>
+  </div>
+
   <h4>{{ 'Set permissions'|trans }}</h4>
   <div class='row'>
     <div class='col-md-6 mb-3'>

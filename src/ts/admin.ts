@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return collected;
   }
 
+  function collectNewOwner(): number {
+    const collected = document.getElementById('newOwner') as HTMLInputElement;
+    // Convert it to an int
+    return collected ? parseInt(collected.value, 10) || 0 : 0;
+  }
+
   function collectCan(): string {
     // Warning: copy pasta from common.ts save-permissions action
     // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
@@ -75,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
       experiments_categories: collectSelectable('experiments_categories'),
       tags: collectSelectable('tags'),
       users: collectSelectable('users'),
+      owners: collectSelectable('users'),
+      newOwner: collectNewOwner(),
       can: collectCan(),
     };
   }

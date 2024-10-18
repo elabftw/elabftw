@@ -392,6 +392,7 @@ abstract class AbstractEntity implements RestInterface
                 }
             )(),
             Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
+            Action::TransferOwnership => $this->transferOwnership($params),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -665,6 +666,25 @@ abstract class AbstractEntity implements RestInterface
             return 'User not found!';
         }
         return $user->userData['fullname'];
+    }
+
+    private function transferOwnership(array $params): void
+    {
+        $newOwner = $params['newOwner'];
+        // Get owners array from parameters
+        $owners = $params['owners'];
+
+        // Transfer ownership of each owner to the requester
+        foreach ($owners as $owner) {
+            $experiments = $this->getIdFromUser($owner);
+            foreach ($experiments as $experiment) {
+                $sql = 'UPDATE `experiments` SET userid = :newOwner WHERE id = :id';
+                $req = $this->Db->prepare($sql);
+                $req->bindParam(':newOwner', $newOwner, PDO::PARAM_INT);
+                $req->bindParam(':id', $experiment, PDO::PARAM_INT);
+                $this->Db->execute($req);
+            }
+        }
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

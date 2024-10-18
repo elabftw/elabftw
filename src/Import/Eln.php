@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -358,10 +359,7 @@ class Eln extends AbstractZip
                     }
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            $this->Entity->Tags->postAction(
-                                Action::Create,
-                                array('tag' => $this->transformIfNecessary($tag)),
-                            );
+                            $this->Entity->Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
                     }
                     break;

@@ -301,10 +301,14 @@
               </td>
               #}
               <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+              {# delete will actually cancel it #}
               <td data-label='{{ 'Actions'|trans }}'>
-                <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
-                  <i class='fas fa-trash-alt'></i>
-                </button>
+                {# TODO hardcoded enum value #}
+                {% if req.state != 60 %}
+                  <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                    <i class='fas fa-trash-alt'></i>
+                  </button>
+              {% endif %}
               </td>
             </tr>
           {% endfor %}

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ProcurementState;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 {
@@ -49,5 +50,6 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->assertTrue($this->pr->destroy());
+        $this->assertEquals(ProcurementState::Cancelled->value, $this->pr->readOne()['state']);
     }
 }

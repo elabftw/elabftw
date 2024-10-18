@@ -121,13 +121,11 @@ class ProcurementRequests implements RestInterface
         return 'api/v2/teams/current/procurement_requests/';
     }
 
+    // destroy is soft delete to prevent destructive actions on procurement requests so we can trust its log
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        $sql = 'DELETE FROM procurement_requests WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));
     }
 
     private function update(ProcurementRequestParams $params): bool

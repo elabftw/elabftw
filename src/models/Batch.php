@@ -68,31 +68,9 @@ class Batch implements RestInterface
             $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
         }
 
-        if ($reqBody['owners']) {
-            $newOwner = (int) $reqBody['newOwner'];
-            // only process experiments to change their owner
+        if ($reqBody['new_owner']) {
             $model = new Experiments($this->requester);
-
-            $previousOwners = $reqBody['owners'];
-
-            foreach ($previousOwners as $id) {
-                $column = FilterableColumn::Owner;
-                $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
-                $DisplayParams->limit = 100000;
-                $DisplayParams->appendFilterSql($column, $id);
-                $entries = $model->readShow($DisplayParams, false);
-
-                foreach ($entries as $entry) {
-                    try {
-                        $entry['userid'] = $newOwner;
-                        $model->setId($id);
-                        $model->patch($action, $reqBody);
-                        $this->processed++;
-                    } catch (IllegalActionException) {
-                        continue;
-                    }
-                }
-            }
+            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
         }
         return $this->processed;
     }

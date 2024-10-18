@@ -104,7 +104,7 @@ class Scheduler implements RestInterface
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
-        $req->bindValue(':title', $this->filterTitle($reqBody['title']));
+        $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -289,7 +289,7 @@ class Scheduler implements RestInterface
     }
 
     // the title (comment) can be an empty string
-    private function filterTitle(?string $title): string
+    private function filterTitle(string $title): string
     {
         $filteredTitle = '';
         if (!empty($title)) {

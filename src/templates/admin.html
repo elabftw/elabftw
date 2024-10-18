@@ -71,11 +71,6 @@
     <hr>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'user_create_tag',
-      'label': 'Users can create tags'|trans,
-      'help': 'An admin account will always be able to create tags.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
       'label': 'Force experiment template use'|trans,
       'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
@@ -631,8 +626,17 @@
 {# TAB 7 TAG MANAGER #}
 <div data-tabcontent='7' hidden>
   <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'user_create_tag',
+      'label': 'Allow users to create new tags'|trans,
+      'help': 'An admin account will always be able to create new tags.'|trans} %}
+  </div>
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add a tag'|trans }}</h3>
   <div class='pl-3 mb-5'>
+
     <div class='input-group'>
       <input type='text' id='adminAddTagInput' class='form-control' placeholder='{{ 'Add a tag'|trans }}' aria-label='{{ 'Add a tag'|trans }}'>
       <div class='input-group-append'>

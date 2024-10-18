@@ -248,7 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const params = collectForm(document.getElementById('idpForm'));
         if (el.dataset.id) { // PATCH IDP
+          // remove the id from the modal so clicking "Add new" won't edit the previously edited IDP
           ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {
+            document.getElementById('idpModalSaveButton').dataset.id = '';
             reloadElements(['idpsDiv']);
           });
         } else { // CREATE IDP

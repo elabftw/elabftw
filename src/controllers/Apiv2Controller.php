@@ -190,10 +190,16 @@ class Apiv2Controller extends AbstractApiController
     {
         // special case for POST/uploads where we get the information from the "files" attribute
         if (($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) && $this->action === Action::Create) {
-            $this->reqBody['real_name'] = $this->Request->files->get('file')->getClientOriginalName();
-            $this->reqBody['file'] = $this->Request->files->get('file');
+            $file = $this->Request->files->get('file');
+            // this was added to prevent: Uncaught Error: Call to a member function getClientOriginalName() on null
+            // not sure what triggers it though
+            if ($file === null) {
+                throw new ImproperActionException('Error reading file!');
+            }
+            $this->reqBody['real_name'] = $file->getClientOriginalName();
+            $this->reqBody['file'] = $file;
             $this->reqBody['target'] = $this->Request->request->getString('target');
-            $this->reqBody['filePath'] = $this->Request->files->get('file')->getPathname();
+            $this->reqBody['filePath'] = $file->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
             $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
             $this->reqBody['category'] = $this->Request->request->get('category'); // can be null

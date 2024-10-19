@@ -119,6 +119,7 @@ export function listenTrigger(elementId: string = ''): void {
 /**
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
+ * Add data-ignore='1' to elements that should not be considered
  */
 export function collectForm(form: HTMLElement, blank = true): object {
   let params = {};

@@ -71,13 +71,9 @@
     <hr>
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'user_create_tag',
-      'label': 'Users can create tags'|trans,
-      'help': 'An admin account will always be able to create tags.'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
-      'label': 'Force experiment template use'|trans} %}
+      'label': 'Force experiment template use'|trans,
+      'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
   </div>
   <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
 
@@ -98,6 +94,7 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Permissions'|trans }}</h3>
 
   <div class='pl-3 mt-2'>
+    {{ 'This feature is deprecated and will be removed in the next version. Use templates permissions instead.'|msg('warning', false) }}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'do_force_canread',
@@ -132,10 +129,11 @@
     <hr>
 
   </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Common templates'|trans }}</h3>
+  <h3 class='p-2 pl-3 section-title'>{{ 'Default Template main text'|trans }}</h3>
 
   <div class='pl-3 mt-2'>
-    <label for='common_template'>{{ 'Common Experiment Template'|trans }}</label>
+    <p>{{ 'Set the text included in the main body of an Experiment when the Default Template is selected.'|trans }}</p>
+    <label for='common_template'>{{ 'HTML version'|trans }}</label>
     <div>
       {% if App.Config.configArr.debug -%}
       {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
@@ -145,20 +143,18 @@
         {{ App.teamArr.common_template|raw }}
       </textarea>
     </div>
-    <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
       <button type='button' data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
     <hr>
 
-    <label for='common_template_md'>{{ 'Common Experiment Template'|trans }} (Markdown)</label>
+    <label for='common_template_md'>{{ 'Markdown version'|trans }}</label>
     <div>
       {% if App.Config.configArr.debug -%}
         <!-- [html-validate-disable-block text-content, no-unused-disable: suppress errors from tinymce] -->
       {%- endif %}
       <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.teamArr.common_template_md|raw }}</textarea>
     </div>
-    <p class='smallgray'>{{ 'This is the default text when someone creates an experiment.'|trans }}</p>
     <div class='mt-2 text-center'>
       <button type='button' data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
@@ -631,8 +627,17 @@
 {# TAB 7 TAG MANAGER #}
 <div data-tabcontent='7' hidden>
   <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'user_create_tag',
+      'label': 'Allow users to create new tags'|trans,
+      'help': 'An admin account will always be able to create new tags.'|trans} %}
+  </div>
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add a tag'|trans }}</h3>
   <div class='pl-3 mb-5'>
+
     <div class='input-group'>
       <input type='text' id='adminAddTagInput' class='form-control' placeholder='{{ 'Add a tag'|trans }}' aria-label='{{ 'Add a tag'|trans }}'>
       <div class='input-group-append'>

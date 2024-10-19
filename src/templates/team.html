@@ -4,9 +4,8 @@
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Members'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Email'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
 </ul>
 
 {# loading spinner #}
@@ -222,14 +221,8 @@
   </table>
 </div>
 
-{# TAB 3 TEMPLATE #}
+{# TAB 3 EMAIL #}
 <div data-tabcontent='3' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Experiments Templates'|trans }}</h3>
-  <p class='mt-3'>All the experiments templates are now visible at one place: the <a href='/ucp.php?tab=3'>Settings</a>.</p>
-</div>
-
-{# TAB 4 EMAIL #}
-<div data-tabcontent='4' hidden>
   <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Send an email to users'|trans }}</h3>
   <form class='pl-3' method='post' action='app/controllers/TeamController.php' aria-label='{{ 'Mass email form'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
@@ -255,8 +248,8 @@
   </form>
 </div>
 
-{# TAB 5 PROCUREMENT REQUESTS #}
-<div data-tabcontent='5' hidden>
+{# TAB 4 PROCUREMENT REQUESTS #}
+<div data-tabcontent='4' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Procurement requests'|trans }}</h3>
   <div class='pl-3 my-2'>
     {% if teamProcurementRequestsArr %}
@@ -308,10 +301,14 @@
               </td>
               #}
               <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+              {# delete will actually cancel it #}
               <td data-label='{{ 'Actions'|trans }}'>
-                <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
-                  <i class='fas fa-trash-alt'></i>
-                </button>
+                {# TODO hardcoded enum value #}
+                {% if req.state != 60 %}
+                  <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                    <i class='fas fa-trash-alt'></i>
+                  </button>
+              {% endif %}
               </td>
             </tr>
           {% endfor %}

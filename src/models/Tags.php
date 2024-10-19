@@ -44,7 +44,11 @@ class Tags implements RestInterface
 
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create(new TagParam($reqBody['tag'] ?? ''));
+        // check if we can actually create tags (for non-admins)
+        $teamConfigArr = (new Teams($this->Entity->Users, $this->Entity->Users->team))->readOne();
+        $TeamsHelper = new TeamsHelper($this->Entity->Users->team ?? 0);
+        $canCreate = $teamConfigArr['user_create_tag'] === 1 || $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']);
+        return $this->create(new TagParam($reqBody['tag'] ?? ''), $canCreate);
     }
 
     public function readOne(): array
@@ -114,7 +118,7 @@ class Tags implements RestInterface
     /**
      * Create a tag
      */
-    private function create(TagParam $params): int
+    public function create(TagParam $params, bool $canCreate): int
     {
         $this->Entity->canOrExplode('write');
 
@@ -130,11 +134,8 @@ class Tags implements RestInterface
 
         // tag doesn't exist already
         if (!$tagId) {
-            // check if we can actually create tags (for non-admins)
-            $Teams = new Teams($this->Entity->Users, $this->Entity->Users->team);
-            $teamConfigArr = $Teams->readOne();
-            $TeamsHelper = new TeamsHelper($this->Entity->Users->team ?? 0);
-            if ($teamConfigArr['user_create_tag'] === 0 && $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']) === false) {
+            // throw an Exception if we cannot create a tag
+            if ($canCreate === false) {
                 throw new ImproperActionException(_('Users cannot create tags.'));
             }
 

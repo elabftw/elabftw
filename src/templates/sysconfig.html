@@ -687,7 +687,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509' class='col-form-label'>x509 Certificate in PEM format</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
+        <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='x509' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
       </div>
       <textarea class='form-control col-md-3' id='x509' data-trigger='blur' data-model='config' data-target='saml_x509'>{{ App.Config.configArr.saml_x509 }}</textarea>
     </div>
@@ -696,7 +696,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='saml_privatekey' class='col-form-label'>x509 Certificate private key</label>
-        <input type='file' data-action='load-file-on-change' data-target='saml_privatekey' class='form-control' aria-label='File upload: x509 Certificate private key' />
+        <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='saml_privatekey' class='form-control' aria-label='File upload: x509 Certificate private key' />
       </div>
       <textarea class='form-control col-md-3' id='saml_privatekey' data-trigger='blur' data-model='config' data-target='saml_privatekey'>{{ App.Config.configArr.saml_privatekey }}</textarea>
     </div>
@@ -705,7 +705,7 @@
     <div class='d-flex justify-content-between'>
       <div>
         <label for='x509_new' class='col-form-label'>Rollover x509 Certificate in PEM format (only published in metadata, not used)</label>
-        <input type='file' data-action='load-file-on-change' data-target='x509_new' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
+        <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='x509_new' class='form-control' aria-label='File upload: Rollover x509 Certificate in PEM format' />
       </div>
       <textarea class='form-control col-md-3' id='x509_new' data-trigger='blur' data-model='config' data-target='saml_x509_new'>{{ App.Config.configArr.saml_x509_new }}</textarea>
     </div>

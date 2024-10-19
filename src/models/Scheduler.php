@@ -413,7 +413,7 @@ class Scheduler implements RestInterface
         $start = new DateTimeImmutable($start);
         $end = new DateTimeImmutable($end);
         $interval = $start->diff($end);
-        $totalMinutes = ($interval->h * 60) + $interval->i;
+        $totalMinutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
         if ($totalMinutes > $this->Items->entityData['book_max_minutes']) {
             throw new ImproperActionException(sprintf(_('Slot time is limited to %d minutes.'), $this->Items->entityData['book_max_minutes']));
         }

@@ -87,13 +87,16 @@ class Filter
     }
 
     /**
-     * Return the date and time in full sentence
-     * example : "2024-10-16 17:12:47" -> "2024-10-16 at 11:24:36"
+     * Returns an array (key => value) containing date and time
+     * example : "2024-10-16 17:12:47" -> ["date" => "2024-10-16", "time" => "17:12:47"]
      */
-    public static function separateDateAndTime(string $input): string
+    public static function separateDateAndTime(string $input): array
     {
         $date = explode(' ', $input);
-        return sprintf('%s at %s', $date[0], $date[1]);
+        return array(
+            'date' => $date[0],
+            'time' => $date[1] ?? '',
+        );
     }
 
     /**

@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function str_repeat;
@@ -28,9 +27,26 @@ class FilterTest extends \PHPUnit\Framework\TestCase
 
     public function testFormatLocalDate(): void
     {
-        $this->assertEquals('Wednesday, October 16, 2024', Filter::formatLocalDate(new DateTimeImmutable('2024-10-16')));
-        $this->assertEquals('Wednesday, October 16, 2024', Filter::formatLocalDate(new DateTimeImmutable('16-10-2024')));
-        $this->assertEquals('Friday, December 21, 2012', Filter::formatLocalDate(new DateTimeImmutable('21-12-2012 11:23:48')));
+        $input = '2024-10-16 17:12:47';
+        $expected = array(
+            'date' => '2024-10-16',
+            'time' => '17:12:47',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
+
+        $input = '2024-10-16';
+        $expected = array(
+            'date' => '2024-10-16',
+            'time' => '',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
+
+        $input = '';
+        $expected = array(
+            'date' => '',
+            'time' => '',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
     }
 
     public function testTitle(): void

@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return collected;
   }
 
-  function collectNewOwner(): number {
-    const collected = document.getElementById('new_owner') as HTMLInputElement;
+  function collectTargetOwner(): number {
+    const collected = document.getElementById('target_owner') as HTMLInputElement;
     // Convert element to an int
     return collected ? parseInt(collected.value, 10) || 0 : 0;
   }
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       experiments_categories: collectSelectable('experiments_categories'),
       tags: collectSelectable('tags'),
       users: collectSelectable('users'),
-      new_owner: collectNewOwner(),
+      target_owner: collectTargetOwner(),
       can: collectCan(),
     };
   }

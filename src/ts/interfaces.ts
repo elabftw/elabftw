@@ -49,7 +49,7 @@ interface Selected {
   items_types: number[];
   tags: number[];
   users: number[];
-  new_owner: number;
+  target_owner: number;
   can: string;
 }
 

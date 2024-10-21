@@ -671,14 +671,14 @@ abstract class AbstractEntity implements RestInterface
     private function transferOwnership(array $params): void
     {
         $previousOwners = $params['users'];
-        $newOwner = $params['new_owner'];
+        $target = $params['target_owner'];
         // Transfer ownership to the new target owner
         foreach ($previousOwners as $owner) {
             $experiments = $this->getIdFromUser($owner);
             foreach ($experiments as $experiment) {
-                $sql = 'UPDATE `experiments` SET userid = :new_owner WHERE id = :id';
+                $sql = 'UPDATE `experiments` SET userid = :target_owner WHERE id = :id';
                 $req = $this->Db->prepare($sql);
-                $req->bindParam(':new_owner', $newOwner, PDO::PARAM_INT);
+                $req->bindParam(':target_owner', $target, PDO::PARAM_INT);
                 $req->bindParam(':id', $experiment, PDO::PARAM_INT);
                 $this->Db->execute($req);
             }

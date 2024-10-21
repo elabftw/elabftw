@@ -68,7 +68,7 @@ class Batch implements RestInterface
             $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
         }
 
-        if ($reqBody['new_owner']) {
+        if ($reqBody['target_owner']) {
             $model = new Experiments($this->requester);
             $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
         }

@@ -943,7 +943,7 @@ paths:
     post:
       tags: ['Api keys']
       summary: Create an API key
-      description: >-
+      description: |
         Create an API key. The cleartext key is sent back in the location
         header.
       operationId: post-apikeys
@@ -1059,13 +1059,13 @@ paths:
               properties:
                 category_id:
                   type: integer
-                  description: >-
+                  description: |
                     The template id to use, or 0 to use the common team
                     template, or -1 to have an empty body.
                   default: -1
                 tags:
                   type: array
-                  description: >-
+                  description: |
                     An array of tags to assign to the created entry.
                   items:
                     type: string
@@ -1214,7 +1214,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/experiment'
   /experiments/{id}:
-    summary: Actions on an experiment
+    summary: Actions on a specific experiment
     parameters:
       - name: id
         in: path
@@ -1222,6 +1222,47 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Experiments']
+      summary: Duplicate an experiment with its ID
+      operationId: post-experiment-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the experiment to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an experiment
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: |
+                    The "duplicate" action creates a new entity based from the given entity id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    If "true", the action will import the files of the original entity.
+                linkToOriginal:
+                  type: boolean
+                  default: true
+                  description: |
+                    If "true", the action will create a link to the original entity.
+      responses:
+        '201':
+          description: The experiment has been duplicated.
+          headers:
+            location:
+              description: An URL to the experiment that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -1246,6 +1287,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: false
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1259,6 +1301,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1283,6 +1326,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: false
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -1571,7 +1615,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/item'
   /items/{id}:
-    summary: Actions on an item
+    summary: Actions on a specific item
     parameters:
       - name: id
         in: path
@@ -1579,6 +1623,47 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Items']
+      summary: Duplicate an item with its ID
+      operationId: post-item-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the item to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an item
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: |
+                    The "duplicate" action creates a new item based from the given item id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    If "true", the action will import the files of the original item.
+                linkToOriginal:
+                  type: boolean
+                  default: true
+                  description: |
+                    If "true", the action will create a link to the original item.
+      responses:
+        '201':
+          description: The item has been duplicated.
+          headers:
+            location:
+              description: An URL to the item that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Items']
       summary: Read an item
@@ -1604,6 +1689,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: false
           description: |
             Include a full JSON export in the ZIP archive. Only applicable if format is zip(a).
           examples:
@@ -1617,6 +1703,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: true
           description: |
             Include the title in the QR code. Only applicable if format is qrpng.
           examples:
@@ -1641,6 +1728,7 @@ paths:
           in: query
           schema:
             type: boolean
+            default: false
           description: |
             Toggles if the changelog should be included in PDF exports (pdf, pdfa, zip, zipa). Changelog is by default included if the export provides PDF/A, otherwise not.
           examples:
@@ -2197,7 +2285,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/experiment_template'
   /experiments_templates/{id}:
-    summary: Actions on an experiment template
+    summary: Actions on a specific experiment template
     parameters:
       - name: id
         in: path
@@ -2205,6 +2293,42 @@ paths:
         required: true
         schema:
           type: integer
+    post:
+      tags: ['Experiments templates']
+      summary: Duplicate an experiment template with its ID
+      operationId: post-experiment_template-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the experiment template to duplicate.
+          schema:
+            type: integer
+      requestBody:
+        description: Parameters for duplicating an experiment template
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: |
+                    The "duplicate" action creates a new entity based from the given entity id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    If "true", the action will import the files of the original entity.
+      responses:
+        '201':
+          description: The experiment template has been duplicated.
+          headers:
+            location:
+              description: An URL to the experiment template that was duplicated.
+              schema:
+                type: string
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template

@@ -386,7 +386,7 @@ abstract class AbstractEntity implements RestInterface
             )(),
             Action::Update => (
                 function () use ($params) {
-                    if ($params['target_owner'] && $params['users']) {
+                    if (isset($params['target_owner']) && isset($params['users'])) {
                         $this->patch(Action::Update, array('userid' => $params['target_owner']));
                     } else {
                         foreach ($params as $key => $value) {

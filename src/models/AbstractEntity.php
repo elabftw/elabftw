@@ -391,11 +391,7 @@ abstract class AbstractEntity implements RestInterface
                     }
                 }
             )(),
-            Action::UpdateOwner => (
-                function () use ($params) {
-                    $this->patch(Action::Update, array('userid' => $params['target_owner']));
-                }
-            )(),
+            Action::UpdateOwner => $this->patch(Action::Update, array('userid' => $params['target_owner'])),
             Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

@@ -42,6 +42,12 @@
     </p>
   </div>
 
+  {% if timestamped %}
+  <div class="timestamped-block">
+    <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, localDate) }}</p>
+  </div>
+  {% endif %}
+
 {{ body|raw }}
 
 {% if entityData.metadata %}
@@ -142,7 +148,14 @@
           <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
         {% endif %}
         {% if locked %}
-          <p class='elabid'>Locked by {{ lockerName }} on {{ lockDate }}</p>
+          <p class='elabid'>
+            {{ 'Locked by %s on %s at %s'|trans|format(lockerName, lockDate, lockTime) }}
+          </p>
+        {% endif %}
+        {% if timestamped %}
+          <p class='elabid'>
+            {{ 'Timestamped by %s on %s at %s'|trans|format(timestamperName, timestampDate, timestampTime) }}
+          </p>
         {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>
         {% if classification != 'None' %}

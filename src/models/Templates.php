@@ -95,7 +95,7 @@ class Templates extends AbstractTemplateEntity
         // now pin the newly created template so it directly appears in Create menu
         $fresh = new self($this->Users, $id);
         $Pins = new Pins($fresh);
-        $Pins->togglePin();
+        $Pins->addToPinned();
         return $id;
     }
 
@@ -139,9 +139,9 @@ class Templates extends AbstractTemplateEntity
             $this->Uploads->duplicate($fresh);
         }
 
-        // now pin the newly created template so it directly appears in Create menu
+        // pin the newly created template so it directly appears in Create menu
         $Pins = new Pins($fresh);
-        $Pins->togglePin();
+        $Pins->addToPinned();
 
         return $newId;
     }

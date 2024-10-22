@@ -145,6 +145,7 @@ class Steps implements RestInterface
         match ($action) {
             Action::Finish => $this->toggleFinished(),
             Action::Notif => $this->toggleNotif(),
+            Action::NotifDestroy => $this->destroyNotif(),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -177,6 +178,8 @@ class Steps implements RestInterface
         /** @psalm-suppress PossiblyNullArgument */
         $Changelog->create(new ContentParams('steps', sprintf('Removed step with id: %d', $this->id)));
 
+        $this->getStepDeadline()->destroy();
+
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -186,7 +189,11 @@ class Steps implements RestInterface
 
     private function update(StepParams $params): bool
     {
-        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET ' . $params->getColumn() . ' = :content WHERE id = :id AND item_id = :item_id';
+        $sql = sprintf(
+            'UPDATE %s_steps SET %s = :content WHERE id = :id AND item_id = :item_id',
+            $this->Entity->entityType->value,
+            $params->getColumn(),
+        );
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -213,37 +220,68 @@ class Steps implements RestInterface
 
     private function toggleFinished(): bool
     {
-        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET finished = !finished,
-            finished_time = NOW(), deadline = null, deadline_notif = 0 WHERE id = :id AND item_id = :item_id';
+        $sql = sprintf(
+            'UPDATE %s_steps
+                SET finished = !finished,
+                    finished_time = NOW(),
+                    deadline = null,
+                    deadline_notif = 0
+                WHERE id = :id
+                    AND item_id = :item_id',
+            $this->Entity->entityType->value
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $res = $this->Db->execute($req);
+
+        // delete potential notification if step is finished
+        if ($this->readOne()['finished'] === 1) {
+            $this->getStepDeadline()->destroy();
+        }
+
+        return $res;
+    }
+
+    private function toggleNotif(): bool
+    {
+        $this->getStepDeadline($this->readOne()['deadline'])
+            ->create($this->Entity->Users->userData['userid']);
+
+        return $this->setDeadlineNotif('!deadline_notif');
+    }
+
+    private function destroyNotif(): bool
+    {
+        $this->getStepDeadline()->destroy();
+
+        return $this->setDeadlineNotif('0');
+    }
+
+    /**
+     * set the deadline_notif column so we know whether this step has a notif set for the deadline
+     */
+    private function setDeadlineNotif(string $value): bool
+    {
+        $sql = sprintf(
+            'UPDATE %s_steps SET deadline_notif = %s WHERE id = :id AND item_id = :item_id',
+            $this->Entity->entityType->value,
+            $value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
-    private function toggleNotif(): bool
+    private function getStepDeadline(string $deadline = ''): StepDeadline
     {
-        // get the current deadline value so we can insert it in the notification
-        $sql = 'SELECT deadline FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-        $step = $req->fetch();
-
-        // now create a notification if none exist for this step id already
-        $Notifications = new StepDeadline(
+        /** @psalm-suppress PossiblyNullArgument */
+        return new StepDeadline(
             $this->id,
-            $this->Entity->entityData['id'],
+            $this->Entity->id,
             $this->Entity->entityType->toPage(),
-            $step['deadline'],
+            $deadline,
         );
-        $Notifications->create($this->Entity->Users->userData['userid']);
-
-        // update the deadline_notif column so we now if this step has a notif set for deadline or not
-        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_steps SET deadline_notif = !deadline_notif WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
     }
 }

@@ -24,7 +24,6 @@ use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,12 +46,12 @@ class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.1.8';
+    public const string INSTALLED_VERSION = '5.1.9';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const int INSTALLED_VERSION_INT = 50108;
+    public const int INSTALLED_VERSION_INT = 50109;
 
     public Users $Users;
 
@@ -83,7 +82,6 @@ class App
             $this->warning = $flashBag->get('warning');
         }
 
-        $this->Log->pushHandler(new ErrorLogHandler());
         $this->Users = new Users();
         // Show helpful screen if database schema needs update
         $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));

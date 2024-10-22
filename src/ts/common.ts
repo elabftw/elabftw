@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('keyup', () => {
       target.querySelectorAll(`#${input.dataset.filterTarget} ${targetType}`).forEach((row: HTMLTableRowElement|HTMLUListElement) => {
         // show or hide the row if it matches the query
-        if (row.innerText.toLowerCase().includes(input.value)) {
+        if (row.innerText.toLowerCase().includes(input.value.toLowerCase())) {
           row.removeAttribute('hidden');
         } else {
           row.hidden = true;

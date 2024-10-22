@@ -56,10 +56,11 @@
       <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
     </div>
   <div class='text-center'>
+    <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
+    {# IMPORTANT: set cancel button after submit button so Enter key submits the form #}
     {% if App.Session.has('enable_mfa') %}
       <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
-    <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
   </div>
 </form>
 {% endblock body %}

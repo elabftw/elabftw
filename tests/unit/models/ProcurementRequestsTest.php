@@ -29,7 +29,7 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($id);
         $this->pr->setId($id);
         $this->assertIsArray($this->pr->readOne());
-        $this->assertIsArray($this->pr->readForEntity($entityId));
+        $this->assertIsArray($this->pr->readActiveForEntity($entityId));
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
     }
 

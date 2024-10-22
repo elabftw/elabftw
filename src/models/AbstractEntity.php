@@ -386,13 +386,16 @@ abstract class AbstractEntity implements RestInterface
             )(),
             Action::Update => (
                 function () use ($params) {
-                    foreach ($params as $key => $value) {
-                        $this->update(new EntityParams($key, (string) $value));
+                    if ($params['target_owner'] && $params['users']) {
+                        $this->patch(Action::Update, array('userid' => $params['target_owner']));
+                    } else {
+                        foreach ($params as $key => $value) {
+                            $this->update(new EntityParams($key, (string) $value));
+                        }
                     }
                 }
             )(),
             Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
-            Action::TransferOwnership => $this->transferOwnership($params),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -666,23 +669,6 @@ abstract class AbstractEntity implements RestInterface
             return 'User not found!';
         }
         return $user->userData['fullname'];
-    }
-
-    private function transferOwnership(array $params): void
-    {
-        $previousOwners = $params['users'];
-        $target = $params['target_owner'];
-        // Transfer ownership to the new target owner
-        foreach ($previousOwners as $owner) {
-            $experiments = $this->getIdFromUser($owner);
-            foreach ($experiments as $experiment) {
-                $sql = 'UPDATE `experiments` SET userid = :target_owner WHERE id = :id';
-                $req = $this->Db->prepare($sql);
-                $req->bindParam(':target_owner', $target, PDO::PARAM_INT);
-                $req->bindParam(':id', $experiment, PDO::PARAM_INT);
-                $this->Db->execute($req);
-            }
-        }
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

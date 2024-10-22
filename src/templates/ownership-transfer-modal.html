@@ -22,7 +22,7 @@
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
         {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
-          <button type='button' class='btn btn-primary' data-action='run-action-selected' data-what='transferownership'>{{ 'Transfer ownership'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-action='run-action-selected' data-what='update'>{{ 'Transfer ownership'|trans }}</button>
         {% else %}
           <button type='button' class='btn btn-primary' data-action='transfer-ownership'>{{ 'Save'|trans }}</button>
         {% endif %}

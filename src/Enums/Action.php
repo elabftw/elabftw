@@ -40,7 +40,6 @@ enum Action: string
     case SetCanread = 'setcanread';
     case SetCanwrite = 'setcanwrite';
     case Timestamp = 'timestamp';
-    case TransferOwnership = 'transferownership';
     case Update = 'update';
     case UpdatePassword = 'updatepassword';
     case UpdateTag = 'updatetag';

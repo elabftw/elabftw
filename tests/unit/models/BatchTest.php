@@ -38,6 +38,22 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
     }
 
+    public function testInvalidPostAction(): void
+    {
+        $reqBody = array(
+            'action' => Action::UpdateOwner->value,
+            'items_types' => array(),
+            'items_status' => array(),
+            'experiments_categories' => array(),
+            'experiments_status' => array(),
+            'tags' => array(),
+            'users' => array(1, 2),
+        );
+        // On batch, cannot update owner action without 'target_owner'
+        $this->expectException(ImproperActionException::class);
+        $this->Batch->postAction(Action::Update, $reqBody);
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/', $this->Batch->getApiPath());

@@ -38,7 +38,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
     }
 
-    public function testCanUpdateOwner(): void
+    public function testInvalidPostAction(): void
     {
         $reqBody = array(
             'action' => Action::Update->value,
@@ -49,6 +49,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'tags' => array(),
             'users' => array(1, 2),
         );
+        // on batch, cannot update action without 'target_owner' in the body
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::Update, $reqBody);
     }

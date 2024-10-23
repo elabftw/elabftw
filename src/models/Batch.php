@@ -97,6 +97,11 @@ class Batch implements RestInterface
 
     private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
     {
+        // in case we update ownership, the param sent will contain only the target owner
+        if ($action === Action::Update) {
+            $params = array('userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'));
+        }
+
         foreach ($idArr as $id) {
             $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
             $DisplayParams->limit = 100000;

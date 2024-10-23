@@ -42,7 +42,6 @@ enum Action: string
     case SetCanwrite = 'setcanwrite';
     case Timestamp = 'timestamp';
     case Update = 'update';
-    case UpdateOwner = 'updateowner';
     case UpdatePassword = 'updatepassword';
     case UpdateTag = 'updatetag';
     case UpdateMetadataField = 'updatemetadatafield';

@@ -41,7 +41,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     public function testInvalidPostAction(): void
     {
         $reqBody = array(
-            'action' => Action::Update->value,
+            'action' => Action::UpdateOwner->value,
             'items_types' => array(),
             'items_status' => array(),
             'experiments_categories' => array(),
@@ -49,7 +49,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'tags' => array(),
             'users' => array(1, 2),
         );
-        // on batch, cannot update action without 'target_owner' in the body
+        // On batch, cannot update owner action without 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::Update, $reqBody);
     }

@@ -119,9 +119,13 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
-
   return {
     selector: '.mceditable',
+    table_default_styles: {
+      'min-width':'25%',
+      'width': 'auto',
+      'table-layout': 'auto',
+    },
     browser_spellcheck: true,
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',

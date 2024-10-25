@@ -52,15 +52,10 @@ class Batch implements RestInterface
             $model = new Experiments($this->requester);
             $Tags2Entity = new Tags2Entity($model->entityType);
             $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-            foreach ($targetIds as $id) {
-                try {
-                    $model->setId($id);
-                    $model->patch($action, $reqBody);
-                    $this->processed++;
-                } catch (IllegalActionException) {
-                    continue;
-                }
-            }
+            // On transfer of ownership, only the target owner is required in params
+            // Use local action & reqBody and keep the original for other cases
+            [$tagAction, $tagReqBody] = $this->prepareParamsForOwnershipUpdate($action, $reqBody);
+            $this->loopOverEntries($targetIds, $model, $tagAction, $tagReqBody, isTag: true);
         }
         if ($reqBody['users']) {
             // only process experiments
@@ -98,25 +93,37 @@ class Batch implements RestInterface
     private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
     {
         // On transfer of ownership, only the target owner is required in params
-        if ($params['action'] === Action::UpdateOwner->value) {
-            $params = array('userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'));
-            $action = Action::Update;
-        }
-
+        [$action, $params] = $this->prepareParamsForOwnershipUpdate($action, $params);
         foreach ($idArr as $id) {
             $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
             $DisplayParams->limit = 100000;
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);
-            foreach ($entries as $entry) {
-                try {
-                    $model->setId($entry['id']);
-                    $model->patch($action, $params);
-                    $this->processed++;
-                } catch (IllegalActionException) {
-                    continue;
-                }
+            $this->loopOverEntries($entries, $model, $action, $params);
+        }
+    }
+
+    private function loopOverEntries(array $entries, AbstractConcreteEntity $model, Action $action, array $params, bool $isTag = false): void
+    {
+        foreach ($entries as $entry) {
+            try {
+                $isTag ? $model->setId($entry) : $model->setId($entry['id']);
+                $model->patch($action, $params);
+                $this->processed++;
+            } catch (IllegalActionException) {
+                continue;
             }
         }
+    }
+
+    private function prepareParamsForOwnershipUpdate(Action $action, array $params): array
+    {
+        if ($action === Action::UpdateOwner) {
+            $params = array(
+                'userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'),
+            );
+            $action = Action::Update;
+        }
+        return array($action, $params);
     }
 }

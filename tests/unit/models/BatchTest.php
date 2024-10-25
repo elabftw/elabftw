@@ -14,44 +14,78 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use ReflectionClass;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
     private Batch $Batch;
 
+    private array $baseReqBody;
+
     protected function setUp(): void
     {
         $this->Batch = new Batch(new Users(1, 1));
-    }
-
-    public function testPostAction(): void
-    {
-        $reqBody = array(
-            'action' => Action::ForceUnlock->value,
-            'items_types' => array(1, 2),
-            'items_status' => array(1, 2),
-            'experiments_categories' => array(1, 2),
-            'experiments_status' => array(1, 2),
-            'tags' => array(1, 2),
-            'users' => array(1, 2),
-        );
-        $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
-    }
-
-    public function testInvalidPostAction(): void
-    {
-        $reqBody = array(
-            'action' => Action::UpdateOwner->value,
+        // Default values for $reqBody
+        $this->baseReqBody = array(
+            'action' => Action::Create->value,
             'items_types' => array(),
             'items_status' => array(),
             'experiments_categories' => array(),
             'experiments_status' => array(),
             'tags' => array(),
-            'users' => array(1, 2),
+            'users' => array(),
+            // Only used if Action::UpdateOwner
+            'target_owner' => null,
         );
+    }
+
+    public function testPostAction(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::ForceUnlock->value;
+        $reqBody['items_types'] = array(1, 2);
+        $reqBody['items_status'] = array(1, 2);
+        $reqBody['experiments_categories'] = array(1, 2);
+        $reqBody['experiments_status'] = array(1, 2);
+        $reqBody['tags'] = array(1, 2);
+        $reqBody['users'] = array(1, 2);
+        $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
+    }
+
+    public function testPostActionWithOwnershipUpdate(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['target_owner'] = 2;
+
+        $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
+    }
+
+    public function testInvalidPostAction(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['users'] = array(1, 2);
+
         // On batch, cannot update owner action without 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::Update, $reqBody);
+    }
+
+    public function testPrepareParamsForOwnershipUpdate(): void
+    {
+        $reqBody = array(
+            'action' => Action::UpdateOwner->value,
+            'target_owner' => 2,
+        );
+        // Create a reflection so we can access private methods
+        $reflection = new ReflectionClass($this->Batch);
+        $method = $reflection->getMethod('prepareParamsForOwnershipUpdate');
+        $method->setAccessible(true);
+
+        [$action, $params] = $method->invoke($this->Batch, Action::UpdateOwner, $reqBody);
+        $this->assertEquals(Action::Update, $action);
+        $this->assertEquals(array('userid' => 2), $params);
     }
 
     public function testGetApiPath(): void

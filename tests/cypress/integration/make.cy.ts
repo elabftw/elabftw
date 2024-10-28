@@ -70,7 +70,9 @@ describe('Make', () => {
   });
 
   it('scheduler report', () => {
-    cy.visit('/make.php?format=schedulerReport');
-    cy.get('div.alert.alert-danger').should('contain', 'There are no events to report');
+    cy.request('/make.php?format=schedulerReport').then(resp => {
+      expect(resp.status).to.eq(200);
+      expect(resp.headers['content-type']).to.eq('text/csv; charset=UTF-8');
+    });
   });
 });

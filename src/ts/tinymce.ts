@@ -123,8 +123,6 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     table_default_styles: {
       'min-width':'25%',
-      'width': 'auto',
-      'table-layout': 'auto',
     },
     browser_spellcheck: true,
     // location of the skin directory

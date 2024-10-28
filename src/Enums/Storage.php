@@ -16,6 +16,7 @@ use Aws\Credentials\Credentials;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
 use Elabftw\Storage\Cache;
+use Elabftw\Storage\Exports;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Local;
 use Elabftw\Storage\Memory;
@@ -31,6 +32,7 @@ enum Storage: int
     case MEMORY = 3;
     case CACHE = 4;
     case FIXTURES = 5;
+    case EXPORTS = 6;
 
     public function getStorage(): StorageInterface
     {
@@ -40,6 +42,7 @@ enum Storage: int
             $this::MEMORY => new Memory(),
             $this::CACHE => new Cache(),
             $this::FIXTURES => new Fixtures(),
+            $this::EXPORTS => new Exports(),
         };
     }
 }

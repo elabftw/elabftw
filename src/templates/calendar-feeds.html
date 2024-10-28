@@ -1,0 +1,97 @@
+{% set page = App.Request.getScriptName|split('/')|last %}
+  <h3 class='p-2 pl-3 section-title'>{{ 'calendar feeds'|trans }}</h3>
+  <div class='pl-3 mt-2 d-flex'>
+    <p class='smallgrey'>
+      {% if page == 'admin.php' %}
+        {{ 'This page allows you to view and revoke your teams calendar feeds.'|trans }}
+      {% else %}
+        {{ 'This page allows you to view and revoke your calendar feeds.'|trans }}
+      {% endif %}
+    </p>
+    {% if page == 'profile.php' %}
+        <button type='button' class='btn btn-primary ml-auto mb-2'
+          data-action='toggle-modal' data-target='calendarModal'
+        >
+          <i class='far fa-calendar' style='color:#fff;'></i>
+          {{ 'Generate a new calendar'|trans }}
+        </button>
+    {% endif %}
+  </div>
+  <table class='table' aria-describedby='todo' data-table-sort='true'>
+    <thead>
+      <tr>
+        <th scope='col'>{{ 'Id'|trans }}</th>
+        <th scope='col'>{{ 'Title'|trans }}</th>
+        <th scope='col'>{{ 'URL'|trans }}</th>
+        <th scope='col'>{{ 'Content'|trans }}</th>
+        <th scope='col'>{{ 'Creation date'|trans }}</th>
+        {% if page == 'admin.php' %}
+          <th scope='col'>{{ 'User'|trans }}</th>
+        {% endif %}
+        <th scope='col'>{{ 'Action'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody id='calendarTable'>
+      {% for calendar in calendars %}
+        <tr>
+          <td data-label='{{ 'Id'|trans }}'>{{ calendar.id }}</td>
+          <td data-label='{{ 'Title'|trans }}'>{{ calendar.title }}</td>
+          <td data-label='{{ 'URL'|trans }}'>
+            {% if page == 'admin.php' and calendar.todo == 1 and App.Users.userid != calendar.created_by %}
+              <span class='smallgray'>{{ 'Not shown, as it contains the users todolist.'|trans }}</span>
+            {% else %}
+              <div class='input-group input-group-sm'>
+                <div class='input-group-prepend'>
+                  <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='calendarFeedUrl{{ calendar.id }}'>
+                    <i class='fas fa-clone'></i>
+                  </button>
+                </div>
+                {% set feedUrl = App.Config.fromEnv('SITE_URL') ~ '/calendar.php?token=' ~ calendar.token %}
+                <input type='text' class='form-control' readonly id='calendarFeedUrl{{ calendar.id }}'
+                  value='{{ feedUrl }}' title='{{ feedUrl }}'>
+              </div>
+            {% endif %}
+          </td>
+          <td data-label='{{ 'Calendar Content'|trans }}'>
+            <div class='d-flex flex-wrap align-items-baseline'>
+              {% if calendar.all_events %}
+                <span class='p-1 rounded smallgray border mr-1 mb-1'>{{ 'All events of your team'|trans }}</span>
+              {% endif %}
+              {% if calendar.todo %}
+                <span class='p-1 rounded smallgray border mr-1 mb-1'>{{ 'Todolist'|trans }}</span>
+              {% endif %}
+              {% if calendar.unfinished_steps_scope == 1 %}
+                <span class='p-1 rounded smallgray border mr-1 mb-1'>{{ 'Unfinished steps of your experiments and resources'|trans }}</span>
+              {% elseif calendar.unfinished_steps_scope == 2 %}
+                <span class='p-1 rounded smallgray border mr-1 mb-1'>{{ 'All unfinished steps of your team'|trans }}</span>
+              {% endif %}
+              {% if calendar.items %}
+                <span style='flex-basis:100%;height:0;'></span>
+                <span class='mr-1'>{{ 'Items:'|trans }}</span>
+                {% for item in calendar.items %}
+                  <span class='p-1 rounded smallgray border mr-1 mb-1'><a href='database.php?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a></span>
+                {% endfor %}
+              {% endif %}
+              {% if calendar.categories %}
+                <span style='flex-basis:100%;height:0;'></span>
+                <span class='mr-1'>{{ 'Categories:'|trans }}</span>
+                {% for category in calendar.categories %}
+                  <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </td>
+          <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ calendar.created_at }}'></span></td>
+          {% if page == 'admin.php' %}
+            <td data-label='{{ 'User'|trans }}'>{{ calendar.fullname }}</td>
+          {% endif %}
+          <td data-label='{{ 'Action'|trans }}'>
+            <button type='button' class='btn hover-danger lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'
+              data-action='destroy-calendar' data-calendarid='{{ calendar.id }}'>
+              <i class='fas fa-trash-alt fa-fw'></i>
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>

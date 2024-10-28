@@ -405,6 +405,8 @@ button:disabled {
   thead {
     position: sticky;
     top: 0;
+    /* hide input group below header */
+    z-index: 3;
 
     /* thead with no filter on top need to have this class to have a top border */
     /* stylelint-disable-next-line selector-no-qualifying-type */
@@ -693,6 +695,12 @@ tr:nth-child(odd) {
 /* make the text of buttons in bold to increase readability because contrast ratio is not great */
 .btn {
   font-weight: bold;
+
+  /* invert icon color on hover for copy-to-clipboard btn */
+  &[data-action=copy-to-clipboard]:hover .fas {
+    color: $firstlevel;
+    transition: color 0.15s ease-in-out;
+  }
 }
 
 .btn-dropdown-item {
@@ -1231,7 +1239,8 @@ the form-control fails to do that so we do the border ourselves */
  */
 .far,
 .fas,
-.fab {
+.fab,
+.fa-stack {
   color: $medium;
   pointer-events: none;
 }

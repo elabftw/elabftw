@@ -120,7 +120,7 @@ class Filter
     }
 
     /**
-     * Sanitize title with a filter_var and remove the line breaks.
+     * Sanitize title and remove line breaks.
      *
      * @param string $input The title to sanitize
      * @return string Will return Untitled if there is no input.

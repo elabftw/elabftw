@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Services\Check;
+use Symfony\Component\HttpFoundation\Request;
 
 use function date;
 
@@ -56,7 +57,9 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadBookable(): void
     {
-        $this->assertIsArray($this->Items->readBookable());
+        // Mock a request with canbook parameter
+        $Request = Request::create('/database.php', 'GET', array('canbook' => '1'));
+        $this->assertIsArray($this->Items->readBookable($Request));
     }
 
     public function testCanBookInPast(): void

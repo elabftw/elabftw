@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
+use Symfony\Component\HttpFoundation\Request;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,5 +54,13 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/items_types/', $this->ItemsTypes->getApiPath());
+    }
+
+    public function testReadBookable(): void
+    {
+        // Mock a request with canbook parameter
+        $Request = Request::create('/database.php', 'GET', array('canbook' => '1'));
+        $bookableItemsArr = (new Items(new Users(1, 1)))->readBookable($Request);
+        $this->assertIsArray($this->ItemsTypes->readBookable($bookableItemsArr));
     }
 }

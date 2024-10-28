@@ -36,7 +36,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $this->Todolist->setId(1);
+        $this->Todolist->setId(2);
         $this->assertIsArray($this->Todolist->patch(Action::Update, array('content' => 'write way more tests')));
     }
 
@@ -45,7 +45,7 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->Todolist->postAction(Action::Create, array('content' => 'item 2'));
         $this->Todolist->postAction(Action::Create, array('content' => 'item 3'));
         $this->Todolist->postAction(Action::Create, array('content' => 'item 4'));
-        $OrderingParams = new OrderingParams(array('ordering' => array('test_3', 'test_2', 'test_1'), 'table' => 'todolist'));
+        $OrderingParams = new OrderingParams(array('ordering' => array('test_4', 'test_3', 'test_2'), 'table' => 'todolist'));
         $this->Todolist->updateOrdering($OrderingParams);
         $all = $this->Todolist->readAll();
         $this->assertEquals('item 4', $all[0]['body']);

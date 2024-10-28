@@ -35,6 +35,58 @@ components:
           type: integer
         team_name:
           type: string
+    calendar:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        token:
+          type: string
+        team:
+          type: integer
+        created_by:
+          type: integer
+        fullname:
+          type: string
+        created_at:
+          type: string
+        state:
+          type: integer
+        all_events:
+          type: integer
+          enum: [0, 1]
+        todo:
+          type: integer
+          enum: [0, 1]
+        unfinished_steps_scope:
+          type: integer
+          enum: [0, 1, 2]
+          description: >-
+            0: do not include unfinished steps, 1: unfinished steps of the calendar creator, 2: unfinished steps of the team
+        items:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+        categories:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              color:
+                type: string
+              title:
+                type: string
     comment:
       type: object
       properties:
@@ -1004,6 +1056,115 @@ paths:
       responses:
         '204':
           description: The key was deleted
+  /calendars:
+    summary: Actions on calendars
+    post:
+      tags: ['Calendars']
+      summary: Create a calendar
+      operationId: post-calendar
+      requestBody:
+        description: >-
+          Parameters for creating a calendar feed
+          to which you can subscribe via https://eln.example.org/calendar.php?token={token}
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the calendar.
+                  nullable: true
+                all_events:
+                  type: boolean
+                  description: >-
+                    Whether to include all events of a team in the calendar.
+                    "categories" and "items" can be used for fine control.
+                  default: null
+                  nullable: true
+                categories:
+                  type: array
+                  description: >-
+                    An array of category ids of categories with bookable items
+                    to include in the calendar. Should not be used with all_events.
+                  items:
+                    type: integer
+                  default: null
+                  nullable: true
+                items:
+                  type: array
+                  description: >-
+                    An array of item ids of bookabale items to include in the calendar.
+                    Should not be used with all_events.
+                  items:
+                    type: integer
+                  default: null
+                  nullable: true
+                todo:
+                  type: boolean
+                  description: Whether to include your todo items in the calendar.
+                  default: null
+                  nullable: true
+                unfinished_steps_scope:
+                  type: string
+                  description: >-
+                    Unfinished steps of experiments and resources. Either "user" for your unfinished steps
+                    or "team" for all unfinished steps of the team.
+                  enum: ['user', 'team']
+                  default: null
+                  nullable: true
+      responses:
+        '201':
+          description: The calendar has been created.
+          headers:
+            location:
+              description: An URL to the calendar that was created.
+              schema:
+                type: string
+    get:
+      tags: ['Calendars']
+      summary: Read all calendars
+      operationId: read-calendars
+      responses:
+        '200':
+          description: A list of calendars
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/calendar'
+  /calendars/{id}:
+    summary: Actions on a calendar
+    parameters:
+      - name: id
+        in: path
+        description: ID of the calendar
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Calendars']
+      summary: Read a calendar
+      operationId: read-calendar
+      responses:
+        '200':
+          description: A calendar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/calendar'
+    delete:
+      tags: ['Calendars']
+      summary: Delete a calendar.
+      description: The calendar gets soft-deleted.
+      requestBody:
+        content:
+          application/json: {}
+      operationId: delete-calendar
+      responses:
+        '204':
+          description: The calendar was deleted
   /config:
     summary: The general instance configuration settings
     get:

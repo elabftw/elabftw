@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\UserParams;
+use DateTime;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
@@ -23,6 +24,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
@@ -179,12 +181,33 @@ class Populate
             if ($this->faker->randomDigit() > 8) {
                 // put two words so it's long enough
                 $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
-                $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+
+                // with deadline and request notification
+                $stepId = $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+                $Entity->Steps->setId($stepId);
+                $Entity->Steps->patch(Action::Update, array('deadline' => $this->faker->dateTimeBetween('now', '+2 month')->format(DateTime::ATOM)));
+                $Entity->Steps->patch(Action::Notif, array());
+
+                // finish one step
+                $stepId = $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+                $Entity->Steps->setId($stepId);
+                $Entity->Steps->patch(Action::Finish, array());
+
             }
 
             // maybe make it bookable
             if ($Entity instanceof Items && $this->faker->randomDigit() > 6) {
                 $Entity->patch(Action::Update, array('is_bookable' => '1'));
+
+                // create a few events
+                $Scheduler = new Scheduler($Entity);
+                for ($j = 0; $j <= mt_rand(0, 1); $j++) {
+                    $Scheduler->postAction(Action::Create, array(
+                        'title' => $this->faker->sentence(4, true),
+                        'start' => $this->faker->dateTimeBetween('now', '+5 hour')->format(DateTime::ATOM),
+                        'end' => $this->faker->dateTimeBetween('+6 hour', '+12 hour')->format(DateTime::ATOM),
+                    ));
+                }
             }
         }
     }

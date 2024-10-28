@@ -18,7 +18,10 @@ use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Make\Exports;
+use Elabftw\Models\Calendar;
 use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
@@ -59,6 +62,9 @@ try {
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
+    $bookableItemsArr = (new Items($App->Users))->readBookable($App->Request);
+    $bookableItemsTypes = (new ItemsTypes($App->Users))->readBookable($bookableItemsArr);
+
     $renderArr = array(
         'attachedFiles' => $UserUploads->readAll(),
         'count' => $count,
@@ -72,6 +78,9 @@ try {
         'uploadsTotal' => $UserUploads->countAll(),
         'usersArr' => $App->Users->readAllActiveFromTeam(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+        'bookableItemsTypes' => $bookableItemsTypes,
+        'itemsArr' => $bookableItemsArr,
+        'calendars' => (new Calendar($App->Users))->readAll(),
     );
     $Response->setContent($App->render($template, $renderArr));
 } catch (ImproperActionException $e) {

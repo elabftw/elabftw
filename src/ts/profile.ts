@@ -7,7 +7,14 @@
  */
 import { Api } from './Apiv2.class';
 import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements, notif, notifError } from './misc';
+import Calendar from './Calendar.class';
+import {
+  collectForm,
+  notif,
+  notifError,
+  relativeMoment,
+  reloadElements,
+} from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const ApiC = new Api();
+  const CalendarC = new Calendar();
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
@@ -131,11 +139,23 @@ document.addEventListener('DOMContentLoaded', () => {
         changelog: urlParams.get('changelog'),
         pdfa: urlParams.get('pdfa'),
         json: urlParams.get('json'),
-      }).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
+      }).then(() => reloadElements(['exportedFilesTable'])).then(() => relativeMoment());
 
     // DESTROY EXPORT
     } else if (el.matches('[data-action="destroy-export"]')) {
-      ApiC.delete(`exports/${el.dataset.id}`).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
+      ApiC.delete(`exports/${el.dataset.id}`)
+        .then(() => reloadElements(['exportedFilesTable']))
+        .then(() => relativeMoment());
+
+    // DESTROY CALENDAR
+    } else if (el.matches('[data-action="destroy-calendar"]')) {
+      ApiC.delete(`calendars/${el.dataset.calendarid}`)
+        .then(() => reloadElements(['calendarTable']))
+        .then(() => relativeMoment());
+
+    // CREATE CALENDAR
+    } else if (el.matches('[data-action="create-calendar"]')) {
+      CalendarC.create();
     }
   });
 });

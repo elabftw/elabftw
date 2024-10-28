@@ -11,7 +11,7 @@ import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
-import { Calendar } from '@fullcalendar/core';
+import { Calendar as FullCalendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';
 import csLocale from '@fullcalendar/core/locales/cs';
 import deLocale from '@fullcalendar/core/locales/de';
@@ -37,8 +37,9 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Action, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { TomSelect, reloadElements } from './misc';
+import { reloadElements, TomSelect } from './misc';
 import Tab from './Tab.class';
+import Calendar from './Calendar.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/team.php') {
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   const ApiC = new Api();
+  const CalendarC = new Calendar();
 
   // start and end inputs
   const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // SCHEDULER
-  const calendar = new Calendar(calendarEl, {
+  const fullCalendar = new FullCalendar(calendarEl, {
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     headerToolbar: {
       left: 'prev,next today',
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(document.location.search.slice(1));
       const itemid = parseInt(params.get('item'), 10);
       if (!Number.isSafeInteger(itemid)) {
-        calendar.unselect();
+        fullCalendar.unselect();
         return;
       }
 
@@ -152,9 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`events/${itemid}`, postParams).then(()=> {
         // note: here the event is shown empty (without title), until the user clicks somewhere. Still better than a full page reload.
         // FIXME: this should be addressed eventually
-        calendar.refetchEvents();
+        fullCalendar.refetchEvents();
       }).catch(() => {
-        calendar.unselect();
+        fullCalendar.unselect();
         return;
       });
     },
@@ -162,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     eventClick: function(info): void {
       if (!editable) {
         // load page with selected item + correct start depending on current view
-        window.location.replace(`team.php?tab=1&item=${info.event.extendedProps.items_id}&start=${calendar.view.activeStart.toISOString()}`);
+        window.location.replace(`team.php?tab=1&item=${info.event.extendedProps.items_id}&start=${fullCalendar.view.activeStart.toISOString()}`);
         return;
       }
 
@@ -208,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const entityid = parseInt((inputEl.val() as string), 10);
         if (entityid > 0) {
           ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(res => res.json()).then(json => {
-            calendar.refetchEvents();
+            fullCalendar.refetchEvents();
             refreshBoundDivs(json);
             inputEl.val('');
           });
@@ -240,8 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // only try to render if we actually have some bookable items
   if (calendarEl.dataset.render === 'true') {
-    calendar.render();
-    calendar.updateSize();
+    fullCalendar.render();
+    fullCalendar.updateSize();
   }
 
   // transform the enum into the kind of object we want
@@ -278,8 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Note: valueAsDate was not working on Chromium
       const dt = DateTime.fromMillis(input.valueAsNumber);
       ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-        calendar.refetchEvents();
-      }).catch(() => calendar.refetchEvents());
+        fullCalendar.refetchEvents();
+      }).catch(() => fullCalendar.refetchEvents());
     });
   });
 
@@ -308,19 +310,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CANCEL EVENT ACTION
     } else if (el.matches('[data-action="cancel-event"]')) {
-      ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+      ApiC.delete(`event/${el.dataset.id}`).then(() => fullCalendar.refetchEvents()).catch();
     // CANCEL EVENT ACTION WITH MESSAGE
     } else if (el.matches('[data-action="cancel-event-with-message"]')) {
       const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
       const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+        ApiC.delete(`event/${el.dataset.id}`).then(() => fullCalendar.refetchEvents()).catch();
       });
 
     // SAVE EVENT TITLE
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-      ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
+      ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => fullCalendar.refetchEvents());
     // REMOVE BIND
     } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
       const bindType = el.dataset.type;
@@ -328,8 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBoundDiv(bindType);
         // clear the inputs
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
-        calendar.refetchEvents();
+        fullCalendar.refetchEvents();
       });
+    } else if (el.matches('[data-action="create-calendar"]')) {
+      CalendarC.create();
     }
   });
 

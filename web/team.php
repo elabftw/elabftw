@@ -48,14 +48,8 @@ try {
         $bookableItemData = $Scheduler->Items->readOne();
     }
 
-    // only the bookable categories
-    $bookableItemsArr = $Items->readBookable();
-    $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
-    $allItemsTypes = $ItemsTypes->readAll();
-    $bookableItemsTypes = array_filter(
-        $allItemsTypes,
-        fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),
-    );
+    $bookableItemsArr = $Items->readBookable($App->Request);
+    $bookableItemsTypes = $ItemsTypes->readBookable($bookableItemsArr);
 
     $ProcurementRequests = new ProcurementRequests($Teams);
 

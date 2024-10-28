@@ -9,6 +9,7 @@ import {
   getNewIdFromPostRequest,
   notif,
   notifError,
+  relativeMoment,
   reloadElements,
   TomSelect,
   updateCatStat,
@@ -319,6 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
           notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
         }
       });
+
+    // DESTROY CALENDAR
+    } else if (el.matches('[data-action="destroy-calendar"]')) {
+      ApiC.delete(`calendars/${el.dataset.calendarid}`)
+        .then(() => reloadElements(['calendarTable']))
+        .then(() => relativeMoment());
     }
   });
 });

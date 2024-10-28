@@ -27,6 +27,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Batch actions'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='9'>{{ 'Calendar feeds'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -833,6 +834,11 @@
       </div>
     </div>
   </div>
+</div>
+
+{# TAB 9 CALENDAR FEEDS #}
+<div data-tabcontent='9' hidden>
+  {% include 'calendar-feeds.html' %}
 </div>
 
 <div id='info' data-page='template-edit' data-type='items_types' data-id='{{ App.Request.query.get('templateid') }}'></div>

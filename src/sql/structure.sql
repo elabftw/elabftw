@@ -1085,6 +1085,12 @@ CREATE TABLE `team_events` (
 --       `teams` -> `id`
 --   `userid`
 --       `users` -> `userid`
+--   `item`
+--       `items` -> `id`
+--   `experiment`
+--       `experiments` -> `id`
+--   `item_link`
+--       `items` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -1346,6 +1352,71 @@ CREATE TABLE `items_types2experiments` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `calendars`
+--
+CREATE TABLE `calendars` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `token` varchar(60) NOT NULL,
+  `team` int UNSIGNED NOT NULL,
+  `created_by` int UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `state` tinyint UNSIGNED NOT NULL DEFAULT '1',
+  `all_events` tinyint UNSIGNED NOT NULL DEFAULT '0',
+  `todo` tinyint UNSIGNED NOT NULL DEFAULT '0',
+  `unfinished_steps_scope` tinyint UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `calendars`:
+--   `team`
+--       `teams` -> `id`
+--   `created_by`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `calendar2items`
+--
+CREATE TABLE `calendar2items` (
+  `calendar` int UNSIGNED NOT NULL,
+  `item` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`calendar`, `item`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `calendar2items`:
+--   `calendar`
+--       `calendars` -> `id`
+--   `item`
+--       `items` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `calendar2items_types`
+--
+CREATE TABLE `calendar2items_types` (
+  `calendar` int UNSIGNED NOT NULL,
+  `category` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`calendar`, `category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `calendar2items_types`:
+--   `calendar`
+--       `calendars` -> `id`
+--   `category`
+--       `items_types` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Indexes for table `api_keys`
 --
 ALTER TABLE `api_keys`
@@ -1519,7 +1590,10 @@ ALTER TABLE `tags`
 --
 ALTER TABLE `team_events`
   ADD KEY `fk_team_events_teams_id` (`team`),
-  ADD KEY `fk_team_events_users_userid` (`userid`);
+  ADD KEY `fk_team_events_users_userid` (`userid`),
+  ADD KEY `fk_team_events_items_id` (`item`),
+  ADD KEY `fk_team_events_experiments_id` (`experiment`),
+  ADD KEY `fk_team_events_item_link_id` (`item_link`);
 
 --
 -- Indexes for table `team_groups`
@@ -1793,7 +1867,16 @@ ALTER TABLE `tags`
 --
 ALTER TABLE `team_events`
   ADD CONSTRAINT `fk_team_events_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_team_events_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_events_items_id`
+    FOREIGN KEY (`item`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_events_experiments_id`
+    FOREIGN KEY (`experiment`) REFERENCES `experiments` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_events_item_link_id`
+    FOREIGN KEY (`item_link`) REFERENCES `items` (`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `team_groups`
@@ -2000,6 +2083,64 @@ ALTER TABLE `procurement_requests`
 ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `calendars`
+--
+ALTER TABLE `calendars`
+  ADD UNIQUE `unique_calendars_token` (`token`) USING HASH,
+  ADD KEY `fk_calendars_team` (`team`),
+  ADD KEY `idx_calendars_state` (`state`),
+  ADD KEY `idx_calendars_todo` (`todo`),
+  ADD KEY `idx_calendars_unfinished_steps_scope` (`unfinished_steps_scope`),
+  ADD KEY `fk_calendars_created_by` (`created_by`);
+
+--
+-- Constraints for table `calendars`
+--
+ALTER TABLE `calendars`
+  ADD CONSTRAINT `fk_calendars_team`
+    FOREIGN KEY (`team`) REFERENCES `teams` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_calendars_created_by`
+    FOREIGN KEY (`created_by`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `calendar2items`
+--
+ALTER TABLE `calendar2items`
+  ADD KEY `fk_calendar2items_calendar` (`calendar`),
+  ADD KEY `fk_calendar2items_item` (`item`);
+
+--
+-- Constraints for table `calendar2items`
+--
+ALTER TABLE `calendar2items`
+  ADD CONSTRAINT `fk_calendar2items_calendar`
+    FOREIGN KEY (`calendar`) REFERENCES `calendars` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_calendar2items_item`
+    FOREIGN KEY (`item`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Indexes for table `calendar2items_types`
+--
+ALTER TABLE `calendar2items_types`
+  ADD KEY `fk_calendar2items_types_calendar` (`calendar`),
+  ADD KEY `fk_calendar2items_types_category` (`category`);
+
+--
+-- Constraints for table `calendar2items_types`
+--
+ALTER TABLE `calendar2items_types`
+  ADD CONSTRAINT `fk_calendar2items_types_calendar`
+    FOREIGN KEY (`calendar`) REFERENCES `calendars` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_calendar2items_types_category`
+    FOREIGN KEY (`category`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE;
 
 COMMIT;
 

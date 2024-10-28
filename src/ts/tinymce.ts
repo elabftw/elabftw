@@ -119,11 +119,15 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
+
   return {
     selector: '.mceditable',
     table_default_styles: {
-      'min-width':'25%',
+      'table-layout': 'auto',
+      'min-width':'fit-content',
     },
+    // allow resizing on images only, because table resizing induces width % that adapts to window
+    object_resizing: 'img',
     browser_spellcheck: true,
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',

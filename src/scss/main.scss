@@ -402,9 +402,6 @@ button:disabled {
 }
 
 .table {
-  width: auto;
-  table-layout: fixed;
-
   thead {
     position: sticky;
     top: 0;
@@ -428,10 +425,11 @@ button:disabled {
   td {
     width: fit-content;
     height: auto;
+  }
 
-    img {
-      object-fit: contain;
-    }
+  img {
+    object-fit: contain;
+    height: auto;
   }
 
   th {

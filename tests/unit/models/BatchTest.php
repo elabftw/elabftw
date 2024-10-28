@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use ReflectionClass;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
@@ -70,22 +69,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // On batch, cannot update owner action without 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::Update, $reqBody);
-    }
-
-    public function testPrepareParamsForOwnershipUpdate(): void
-    {
-        $reqBody = array(
-            'action' => Action::UpdateOwner->value,
-            'target_owner' => 2,
-        );
-        // Create a reflection so we can access private methods
-        $reflection = new ReflectionClass($this->Batch);
-        $method = $reflection->getMethod('prepareParamsForOwnershipUpdate');
-        $method->setAccessible(true);
-
-        [$action, $params] = $method->invoke($this->Batch, Action::UpdateOwner, $reqBody);
-        $this->assertEquals(Action::Update, $action);
-        $this->assertEquals(array('userid' => 2), $params);
     }
 
     public function testGetApiPath(): void

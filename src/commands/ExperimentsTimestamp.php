@@ -14,10 +14,10 @@ namespace Elabftw\Commands;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -72,7 +72,12 @@ class ExperimentsTimestamp extends Command
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            $Experiments->patch(Action::Timestamp, array());
+            try {
+                $Experiments->timestamp();
+            } catch (Exception $e) {
+                $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
+            }
+
         }
 
         return 0;

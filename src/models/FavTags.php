@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\TagParam;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 

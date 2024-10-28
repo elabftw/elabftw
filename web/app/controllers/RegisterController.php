@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\TeamsHelper;
 use Exception;

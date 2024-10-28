@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
@@ -21,6 +20,7 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Users;
+use Elabftw\Params\ContentParams;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;

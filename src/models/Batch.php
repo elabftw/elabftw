@@ -99,10 +99,10 @@ class Batch implements RestInterface
     {
         $allEntries = array();
         foreach ($idArr as $id) {
-            $displayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
-            $displayParams->limit = 100000;
-            $displayParams->appendFilterSql($column, $id);
-            $entries = $model->readShow($displayParams, false);
+            $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
+            $DisplayParams->limit = 100000;
+            $DisplayParams->appendFilterSql($column, $id);
+            $entries = $model->readShow($DisplayParams, false);
             $allEntries = array_merge($allEntries, $entries);
         }
         return $allEntries;

@@ -124,7 +124,8 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     table_default_styles: {
       'table-layout': 'auto',
-      'min-width':'fit-content',
+      'min-width':'25%',
+      'width':'fit-content',
     },
     // allow resizing on images only, because table resizing induces width % that adapts to window
     object_resizing: 'img',

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Enums\Action;
+use Elabftw\Params\EntityParams;
 
 class ChangelogTest extends \PHPUnit\Framework\TestCase
 {

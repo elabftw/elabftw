@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Params;
 
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;

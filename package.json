@@ -96,7 +96,7 @@
     "buildparser": "mkdir -p ./cache/advancedSearchQuery && yarn peggy --extra-options-file ./src/node/grammar/peggy-config.js",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",
-    "clean": "rm -rvf web/assets/*.min.css* web/assets/*.bundle.js*",
+    "clean": "rm -rvf web/assets/*.min.css* web/assets/*.bundle.js* web/assets/tinymce_emojis.js web/assets/*.{ttf,svg} web/assets/tinymce_skins",
     "codespell": "codespell --config src/tools/codespellrc",
     "csslint": "yarn run stylelint src/scss/*.scss",
     "cy": "tests/run.sh cy",

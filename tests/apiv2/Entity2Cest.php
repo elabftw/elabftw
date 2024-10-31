@@ -202,4 +202,12 @@ class Entity2Cest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('description' => 'Linking an item to itself is not allowed. Please select a different target.'));
     }
+
+    public function includeArchivedUploads(Apiv2Tester $I)
+    {
+        $I->wantTo('Include archived uploads in the response');
+        $I->sendGet('/experiments/1/uploads?archived=on');
+        $I->seeResponseCodeIs(HttpCode::OK);
+        $I->seeResponseIsJson();
+    }
 }

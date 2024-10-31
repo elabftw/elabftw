@@ -27,6 +27,7 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\Exports;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
@@ -314,7 +315,16 @@ class Apiv2Controller extends AbstractApiController
                 ),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
-                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
+                ApiSubModels::Uploads => (function () {
+                    // Todo: Why is this check necessary to satisfy phpstan and psalm? Outside of the closure it works without
+                    if ($this->Model instanceof AbstractConcreteEntity) {
+                        $Uploads = new Uploads($this->Model, $this->subId);
+                        if ($this->Request->query->has('archived')) {
+                            $Uploads->includeArchived = true;
+                        }
+                        return $Uploads;
+                    }
+                })(),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };
         }

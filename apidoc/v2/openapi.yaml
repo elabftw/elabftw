@@ -4090,6 +4090,12 @@ paths:
         required: true
         schema:
           type: integer
+      - name: archived
+        in: query
+        description: Include archived uploads in the response.
+        required: false
+        schema:
+          type: string
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.

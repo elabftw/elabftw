@@ -146,10 +146,16 @@
     </p>
     <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
-      <label class='d-block' for='importFileInput'>{{ 'Select a file to import'|trans }}</label>
       <div class='d-flex'>
         <div>
-          <input id='importFileInput' required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <input id='importFileInput' style="display: none;" required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <div class='mb-4 d-flex flex-row'>
+            <button type='button' class='btn btn-primary' data-action='import-file-input' >{{ 'Select a file to import'|trans }}</button>
+          </div>
+          <div class="mb-4" id="attachedFile" hidden>
+            {{ 'Attached file'|trans }} :
+            <span id="fileName" class="font-weight-bold"></span>
+          </div>
           <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
           {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
         </div>

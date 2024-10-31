@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // loop over it and lock entities
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.Lock));
+        results.push(EntityC.patchAction(chk.id, Action.ForceLock));
       });
 
       Promise.all(results).then(() => {
@@ -368,7 +368,26 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
 
-    // THE TIMESTAMP BUTTON FOR CHECKED BOXES
+      // THE UNLOCK BUTTON FOR CHECKED BOXES
+    } else if (el.matches('[data-action="unlock-selected-entities"]')) {
+      // get the item id of all checked boxes
+      const checked = getCheckedBoxes();
+      if (checked.length === 0) {
+        notifNothingSelected();
+        return;
+      }
+
+      // loop over it and lock entities
+      const results = [];
+      checked.forEach(chk => {
+        results.push(EntityC.patchAction(chk.id, Action.ForceUnlock));
+      });
+
+      Promise.all(results).then(() => {
+        reloadEntitiesShow();
+      });
+
+      // THE TIMESTAMP BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {

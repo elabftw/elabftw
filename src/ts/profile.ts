@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
 
-    if (el.matches('[data-action="import-file-input"]')) {
+    if (el.matches('[data-action="show-file-input"]')) {
       document.getElementById('importFileInput').click();
     }
     // CREATE EXPORT

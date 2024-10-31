@@ -347,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
-
     // THE LOCK BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="lock-selected-entities"]')) {
       // get the item id of all checked boxes
@@ -367,7 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
 
-
       // THE UNLOCK BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="unlock-selected-entities"]')) {
       // get the item id of all checked boxes
@@ -377,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // loop over it and lock entities
+      // loop over it and unlock entities
       const results = [];
       checked.forEach(chk => {
         results.push(EntityC.patchAction(chk.id, Action.ForceUnlock));

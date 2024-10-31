@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
 
-      // THE UNLOCK BUTTON FOR CHECKED BOXES
+    // THE UNLOCK BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="unlock-selected-entities"]')) {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
 
-      // THE TIMESTAMP BUTTON FOR CHECKED BOXES
+    // THE TIMESTAMP BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {

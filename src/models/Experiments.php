@@ -50,8 +50,8 @@ class Experiments extends AbstractConcreteEntity
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
     ): int {
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::User->toJson();
+        $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
+        $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
         $Templates = new Templates($this->Users);
 
         // defaults
@@ -79,16 +79,11 @@ class Experiments extends AbstractConcreteEntity
             $contentType = $templateArr['content_type'];
         }
 
-        // we don't use a proper template (use of common tpl or blank)
-        if ($template === 0 || $template === -1) {
-            // if admin forced template use, throw error
-            if ($forceExpTpl) {
-                throw new ImproperActionException(_('Experiments must use a template!'));
-            }
-            // use user settings for permissions
-            $canread = $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
-            $canwrite = $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
+        // throw error if no template is used and template is required by admin
+        if ($template <= 0 && $forceExpTpl) {
+            throw new ImproperActionException(_('Experiments must use a template!'));
         }
+
         // load common template
         if ($template === 0) {
             $body = $defaultTemplateHtml;
@@ -143,7 +138,7 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(bool $copyFiles = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -176,10 +171,12 @@ class Experiments extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous experiment
-        $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
-        $ExperimentsLinks->setId($this->id);
-        $ExperimentsLinks->postAction(Action::Create, array());
+        // also add a link to the original experiment if requested
+        if ($linkToOriginal) {
+            $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
+            $ExperimentsLinks->setId($this->id);
+            $ExperimentsLinks->postAction(Action::Create, array());
+        }
         if ($copyFiles) {
             $this->Uploads->duplicate($fresh);
         }

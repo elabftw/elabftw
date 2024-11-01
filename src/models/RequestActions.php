@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
@@ -41,7 +40,7 @@ class RequestActions implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = sprintf(
             'SELECT "%s" AS entity_page, id, created_at, requester_userid, target_userid, entity_id, action
@@ -73,7 +72,7 @@ class RequestActions implements RestInterface
             /** @psalm-suppress PossiblyNullArgument */
             $action['action'] = _(preg_replace('/([a-z])([A-Z])/', '${1} ${2}', RequestableAction::from($action['action'])->name));
             return $action;
-        }, $this->readAll(new BaseQueryParams()));
+        }, $this->readAll());
     }
 
     public function readOne(): array

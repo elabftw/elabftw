@@ -43,7 +43,7 @@ class UserNotifications implements RestInterface
         $this->setId($id);
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications

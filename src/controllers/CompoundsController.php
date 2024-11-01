@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\CompoundsQueryParams;
+use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Compounds;
 use Symfony\Component\HttpFoundation\Response;

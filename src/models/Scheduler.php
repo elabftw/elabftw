@@ -107,7 +107,7 @@ class Scheduler implements RestInterface
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
-        $req->bindValue(':title', $this->filterTitle($reqBody['title']));
+        $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
@@ -129,7 +129,7 @@ class Scheduler implements RestInterface
     /**
      * Return an array with events for all items of the team
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -292,7 +292,7 @@ class Scheduler implements RestInterface
     }
 
     // the title (comment) can be an empty string
-    private function filterTitle(?string $title): string
+    private function filterTitle(string $title): string
     {
         $filteredTitle = '';
         if (!empty($title)) {
@@ -416,7 +416,7 @@ class Scheduler implements RestInterface
         $start = new DateTimeImmutable($start);
         $end = new DateTimeImmutable($end);
         $interval = $start->diff($end);
-        $totalMinutes = ($interval->h * 60) + $interval->i;
+        $totalMinutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
         if ($totalMinutes > $this->Items->entityData['book_max_minutes']) {
             throw new ImproperActionException(sprintf(_('Slot time is limited to %d minutes.'), $this->Items->entityData['book_max_minutes']));
         }

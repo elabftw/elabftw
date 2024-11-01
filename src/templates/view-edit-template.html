@@ -89,13 +89,6 @@
   {# DOWNLOAD / EXPORT MENU #}
   {% include 'export-menu.html' %}
 
-  {# IMPORT #}
-  {% if Entity.entityData.userid != App.Users.userid -%}
-    <button type='button' title='{{ 'Import to your profile'|trans }}' aria-label='{{ 'Import to your profile'|trans }}' data-action='import-template' data-id='{{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
-      <i class='fas fa-file-import fa-fw'></i>
-    </button>
-  {% endif %}
-
   {# RIGHT PART #}
   {# TOGGLE PIN #}
   <button type='button' title='{{ 'Toggle pin (add to create button menu)'|trans }}' aria-label='{{ 'Toggle pin (add to create button menu)'|trans }}' data-action='toggle-pin' data-id='{{ Entity.id }}' class='btn {{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 lh-normal border-0 ml-auto mr-2'>

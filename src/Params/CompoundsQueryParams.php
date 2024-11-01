@@ -10,14 +10,14 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Params;
 
 use Elabftw\Enums\Orderby;
 use Symfony\Component\HttpFoundation\InputBag;
 
-class OrderableQueryParams extends BaseQueryParams
+class CompoundsQueryParams extends BaseQueryParams
 {
-    public Orderby $orderby = Orderby::Ordering;
+    public Orderby $orderby = Orderby::Lastchange;
 
     public function __construct(InputBag $query)
     {

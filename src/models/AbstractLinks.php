@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -58,7 +57,7 @@ abstract class AbstractLinks implements RestInterface
     /**
      * Get links for an entity
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // main category table
         $sql = 'SELECT entity.id AS entityid,
@@ -91,7 +90,7 @@ abstract class AbstractLinks implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     /**

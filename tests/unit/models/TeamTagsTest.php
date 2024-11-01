@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Params\BaseQueryParams;
 
 class TeamTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,7 +42,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->TeamTags->readAll());
+        $this->assertIsArray($this->TeamTags->readAll(new BaseQueryParams()));
         // TODO test with query
     }
 
@@ -74,7 +75,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->Tags->postAction(Action::Create, array('tag' => 'duplicated'));
         $this->TeamTags->setId($this->Tags->postAction(Action::Create, array('tag' => 'duplikated')));
         $this->TeamTags->patch(Action::UpdateTag, array('tag' => 'duplicated'));
-        $beforeCnt = count($this->TeamTags->readAll());
+        $beforeCnt = count($this->TeamTags->readAll(new BaseQueryParams(limit: 9000)));
         $after = $this->TeamTags->patch(Action::Deduplicate, array());
         $this->assertEquals($beforeCnt - 1, count($after));
     }

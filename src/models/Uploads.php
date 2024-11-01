@@ -13,13 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\UploadParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -30,6 +28,7 @@ use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
 use Elabftw\Traits\QueryParamsTrait;
 use ImagickException;
@@ -176,7 +175,7 @@ class Uploads implements RestInterface
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->readAll(new BaseQueryParams());
+        $uploads = $this->readAll();
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
@@ -239,7 +238,7 @@ class Uploads implements RestInterface
     /**
      * Read only the normal ones (not archived/deleted)
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         if ($this->includeArchived) {
             return $this->readNormalAndArchived();
@@ -332,7 +331,7 @@ class Uploads implements RestInterface
     public function destroyAll(): bool
     {
         // this will include the archived/deleted ones
-        $uploadArr = $this->readAll(new BaseQueryParams());
+        $uploadArr = $this->readAll();
 
         foreach ($uploadArr as $upload) {
             $this->setId($upload['id']);

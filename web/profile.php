@@ -22,6 +22,7 @@ use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
+use Elabftw\Params\UserUploadsQueryParams;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,7 +64,7 @@ try {
         'attachedFiles' => $UserUploads->readAll(new UserUploadsQueryParams($App->Request->query)),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
-        'experimentsCategoryArr' => $ExperimentsCategories->readAll(new BaseQueryParams()),
+        'experimentsCategoryArr' => $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams($App->Request->query)),
         'maxUploadSizeRaw' => ini_get('post_max_size'),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),

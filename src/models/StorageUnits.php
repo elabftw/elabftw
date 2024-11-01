@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CommentParam;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
@@ -96,7 +96,7 @@ class StorageUnits implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)

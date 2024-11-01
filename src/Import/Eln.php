@@ -25,6 +25,7 @@ use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Params\TagParam;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
@@ -358,10 +359,7 @@ class Eln extends AbstractZip
                     }
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            $this->Entity->Tags->postAction(
-                                Action::Create,
-                                array('tag' => $this->transformIfNecessary($tag)),
-                            );
+                            $this->Entity->Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
                     }
                     break;

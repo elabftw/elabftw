@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -100,7 +99,7 @@ class Revisions implements RestInterface
     /**
      * Read all revisions for an item
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->Entity->canOrExplode('read');
         $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
@@ -126,7 +125,7 @@ class Revisions implements RestInterface
     public function prune(): int
     {
         $numberToRemove = 0;
-        $current = count($this->readAll(new BaseQueryParams()));
+        $current = count($this->readAll());
         if ($current > $this->maxRevisions) {
             $numberToRemove = $this->maxRevisions - $current;
             $this->destroyOld($numberToRemove);
@@ -174,7 +173,7 @@ class Revisions implements RestInterface
      */
     private function destroyOld(int $num = 1): void
     {
-        $oldestRevisions = array_slice(array_reverse($this->readAll(new BaseQueryParams())), 0, $num);
+        $oldestRevisions = array_slice(array_reverse($this->readAll()), 0, $num);
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($oldestRevisions as $revision) {

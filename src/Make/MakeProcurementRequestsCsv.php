@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
 
@@ -27,7 +26,7 @@ class MakeProcurementRequestsCsv extends AbstractMakeCsv
 
     public function __construct(ProcurementRequests $procurementRequests)
     {
-        $this->rows = $procurementRequests->readAll(new BaseQueryParams());
+        $this->rows = $procurementRequests->readAll();
         if (empty($this->rows)) {
             throw new ImproperActionException(_('Nothing to export!'));
         }

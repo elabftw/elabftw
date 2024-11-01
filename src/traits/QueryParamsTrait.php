@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\InputBag;
 
 trait QueryParamsTrait

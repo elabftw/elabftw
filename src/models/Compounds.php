@@ -13,16 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
-use Elabftw\Elabftw\CompoundsQueryParams;
+use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Fingerprinter;
@@ -96,7 +92,6 @@ class Compounds implements RestInterface
         // add the json permissions
         $builder = new CanSqlBuilder($this->requester, AccessType::Read);
         $sql .= $builder->getCanFilter();
-        //$queryParams = new CompoundsQueryParams($queryParams->getQuery());
         $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);

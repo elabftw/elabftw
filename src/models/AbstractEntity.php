@@ -13,13 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\BaseQueryParams;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -35,6 +30,11 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\DisplayParams;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
@@ -148,7 +148,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @return int the new item id
      */
-    abstract public function duplicate(bool $copyFiles = false): int;
+    abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     abstract public function readOne(): array;
 

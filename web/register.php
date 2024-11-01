@@ -47,7 +47,7 @@ try {
 
     $Teams = new Teams($App->Users);
     $Teams->bypassReadPermission = true;
-    $teamsArr = $Teams->readAll(new BaseQueryParams());
+    $teamsArr = $Teams->readAll();
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 

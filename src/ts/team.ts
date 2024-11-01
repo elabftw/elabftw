@@ -37,7 +37,7 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Action, ProcurementState } from './interfaces';
 import { Api } from './Apiv2.class';
-import { TomSelect } from './misc';
+import { TomSelect, reloadElements } from './misc';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CANCEL PROCUREMENT REQUEST
     } else if (el.matches('[data-action="cancel-procurement-request"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
+        ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElements(['procurementRequestsTable']));
       }
 
     // CANCEL EVENT ACTION

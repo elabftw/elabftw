@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
@@ -53,11 +52,11 @@ final class Config implements RestInterface
     private function __construct()
     {
         $this->Db = Db::getConnection();
-        $this->configArr = $this->readAll(new BaseQueryParams());
+        $this->configArr = $this->readAll();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
             $this->create();
-            $this->configArr = $this->readAll(new BaseQueryParams());
+            $this->configArr = $this->readAll();
         }
     }
 
@@ -228,7 +227,7 @@ final class Config implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     public function decrementTsBalance(): array
@@ -240,7 +239,7 @@ final class Config implements RestInterface
         return $this->readOne();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
@@ -296,7 +295,7 @@ final class Config implements RestInterface
             }
         }
 
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     public function getApiPath(): string
@@ -340,7 +339,7 @@ final class Config implements RestInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $createResult = $this->create();
-        $this->configArr = $this->readAll(new BaseQueryParams());
+        $this->configArr = $this->readAll();
         return $createResult;
     }
 }

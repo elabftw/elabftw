@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\OrderingParams;
+use Elabftw\Params\OrderingParams;
 use PDO;
 
 /**

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CommentParam;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -21,6 +20,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Traits\QueryParamsTrait;
+use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 

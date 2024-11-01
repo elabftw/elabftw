@@ -46,7 +46,7 @@ class MakeEln extends AbstractMakeEln
         // add the description of root with hasPart property
         $this->dataEntities[] = array(
             '@id' => './',
-            '@type' => array('Dataset'),
+            '@type' => 'Dataset',
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',

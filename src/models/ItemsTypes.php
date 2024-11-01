@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
-use Elabftw\Elabftw\OrderableQueryParams;
-use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\OrderingParams;
+use Elabftw\Params\OrderableQueryParams;
 use Elabftw\Services\Filter;
 use Override;
 use PDO;
@@ -137,7 +137,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');

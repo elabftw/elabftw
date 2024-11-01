@@ -25,9 +25,9 @@ enum Currency: int
     case SEK = 8;
     case NOK = 9;
 
-    public static function toHuman(self $value): string
+    public function toHuman(): string
     {
-        return match ($value) {
+        return match ($this) {
             self::CAD => _('Canadian Dollar (CAD)'),
             self::CHF => _('Swiss Franc (CHF)'),
             self::CNY => _('Chinese Yuan (CNY)'),
@@ -57,7 +57,7 @@ enum Currency: int
     {
         $all = array();
         foreach (self::cases() as $case) {
-            $all[$case->value] = self::toHuman($case);
+            $all[$case->value] = $case->toHuman();
         }
         return $all;
     }

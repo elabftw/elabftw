@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -38,7 +37,7 @@ class UserRequestActions implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $tables = array(
             array(
@@ -80,7 +79,7 @@ class UserRequestActions implements RestInterface
             $action['requester_firstname'] = $Requester->userData['firstname'];
             $action['action'] = RequestableAction::from($action['action'])->toHuman();
             return $action;
-        }, $this->readAll(new BaseQueryParams()));
+        }, $this->readAll());
     }
 
     public function readOne(): array

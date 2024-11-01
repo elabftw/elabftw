@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\QueryParamsTrait;
+use Elabftw\Params\TagParam;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -68,7 +67,7 @@ class FavTags implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     public function destroy(): bool

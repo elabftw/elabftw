@@ -30,6 +30,7 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
+use Elabftw\Params\BaseQueryParams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -125,7 +126,7 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
-        'categoryArr' => $Category->readAll($baseQueryParams),
+        'categoryArr' => $Category->readAll($Category->getQueryParams($App->Request->query)),
         'changes' => $changelogData,
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,

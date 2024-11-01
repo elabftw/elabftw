@@ -13,13 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ProcurementRequestParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\ProcurementRequestParams;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
@@ -49,7 +49,7 @@ class ProcurementRequests implements RestInterface
             pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.qty_received,
             pr.body, pr.quote, pr.email_sent, pr.state, items.title AS entity_title,
             pr.qty_ordered * items.proc_price_tax AS total,
-            items.proc_currency
+            items.proc_currency, items.proc_pack_qty, items.proc_price_notax, items.proc_price_tax
             FROM procurement_requests AS pr
             LEFT JOIN users ON (pr.requester_userid = users.userid)
             LEFT JOIN items ON (pr.entity_id = items.id)
@@ -60,10 +60,10 @@ class ProcurementRequests implements RestInterface
         $this->Db->execute($req);
         return array_map(function ($request) {
             $ProcurementState = ProcurementState::from($request['state']);
-            var_dump($ProcurementState);
             $request['state_human'] = $ProcurementState->toHuman();
             $Currency = Currency::from($request['proc_currency']);
-            $request['symbol'] = $Currency->toSymbol();
+            $request['currency_symbol'] = $Currency->toSymbol();
+            $request['currency_human'] = $Currency->toHuman();
             return $request;
         }, $req->fetchAll());
     }
@@ -125,13 +125,11 @@ class ProcurementRequests implements RestInterface
         return 'api/v2/teams/current/procurement_requests/';
     }
 
+    // destroy is soft delete to prevent destructive actions on procurement requests so we can trust its log
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        $sql = 'DELETE FROM procurement_requests WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));
     }
 
     private function update(ProcurementRequestParams $params): bool

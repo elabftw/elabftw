@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
+use Elabftw\Params\OrderingParams;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
 {

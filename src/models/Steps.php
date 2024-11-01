@@ -12,15 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\StepParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\StepDeadline;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
@@ -94,7 +94,7 @@ class Steps implements RestInterface
         $this->import($stepArr);
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE item_id = :id ORDER BY ordering';
         $req = $this->Db->prepare($sql);

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -52,7 +51,7 @@ class UnfinishedSteps implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     public function readOne(): array
@@ -61,7 +60,7 @@ class UnfinishedSteps implements RestInterface
         return array();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $experimentsSteps = $this->cleanUpResult($this->getSteps(EntityType::Experiments));
         $itemsSteps = $this->cleanUpResult($this->getSteps(EntityType::Items));

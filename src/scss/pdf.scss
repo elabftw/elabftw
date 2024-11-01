@@ -128,6 +128,17 @@ tr:nth-child(odd) {
   text-align: right;
 }
 
+.timestamped-block {
+  background-color: #f2f2f2;
+  border: 1px solid #797979;
+  color: #797979;
+  border-radius: 5px;
+  margin: 7px 0;
+  padding-left: 7px;
+  font-size: 80%;
+  width: 100%;
+}
+
 .signatures {
   margin-top: 10px;
   padding-left: 10px;

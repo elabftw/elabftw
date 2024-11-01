@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Params\BaseQueryParams;
 use PDO;
 
 /**
@@ -102,13 +102,13 @@ class Pins
     }
 
     /**
-     * Remove current entity from pinned of current user
+     * Add current entity to pinned of current user
      */
-    private function rmFromPinned(): bool
+    public function addToPinned(): bool
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'DELETE FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
+        $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->entityType->value . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
@@ -117,13 +117,13 @@ class Pins
     }
 
     /**
-     * Add current entity to pinned of current user
+     * Remove current entity from pinned of current user
      */
-    private function addToPinned(): bool
+    private function rmFromPinned(): bool
     {
         $this->Entity->canOrExplode('read');
 
-        $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->entityType->value . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
+        $sql = 'DELETE FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);

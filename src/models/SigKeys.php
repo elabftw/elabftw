@@ -78,7 +78,7 @@ class SigKeys implements RestInterface
     /**
      * Read all keys for current user, including the archived ones, with the active one first
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
             FROM sig_keys WHERE userid = :userid ORDER BY state ASC';

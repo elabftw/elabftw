@@ -100,7 +100,7 @@ try {
 
     $Teams = new Teams($App->Users);
     $Teams->bypassReadPermission = true;
-    $teamsArr = $Teams->readAll(new BaseQueryParams());
+    $teamsArr = $Teams->readAll();
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason

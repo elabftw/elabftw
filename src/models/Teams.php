@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
@@ -22,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
+use Elabftw\Params\TeamParam;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
@@ -147,7 +147,7 @@ class Teams implements RestInterface
     /**
      * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';

@@ -22,6 +22,7 @@ enum Orderby: string
     case Filesize = 'filesize';
     case Id = 'id';
     case Lastchange = 'lastchange';
+    case Ordering = 'ordering';
     case Rating = 'rating';
     case Status = 'status';
     case Title = 'title';
@@ -38,6 +39,7 @@ enum Orderby: string
             self::Filesize => 'filesize',
             self::Id => 'entity.id',
             self::Lastchange => 'entity.modified_at',
+            self::Ordering => 'ordering',
             self::Rating => 'entity.rating',
             self::Status => 'statust.title',
             self::Title => 'entity.title',

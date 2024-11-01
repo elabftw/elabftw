@@ -15,6 +15,8 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
@@ -72,7 +74,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
+        $sql = sprintf('SELECT id, title, color, is_default, ordering
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -85,8 +87,12 @@ abstract class AbstractStatus extends AbstractCategory
      */
     public function readAll(QueryParamsInterface $queryParams): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
-            FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);
+        $sql = sprintf('SELECT id, title, color, is_default, ordering
+            FROM %s WHERE team = :team AND state = :state', $this->table);
+        $queryParams->orderby = Orderby::Ordering;
+        $queryParams->sort = Sort::Asc;
+        $sql .= $queryParams->getSql();
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);

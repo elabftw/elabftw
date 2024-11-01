@@ -7,6 +7,7 @@
  */
 //import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client'
+import { Api } from './Apiv2.class'
 //import { Ketcher, ketcherProvider } from 'ketcher-core';
 import KetcherEditor from './ketcher';
 
@@ -59,39 +60,46 @@ document.addEventListener('DOMContentLoaded', () => {
     </StrictMode>
     );
     */
+    document.getElementById('ketcher-actions').addEventListener('click', async (event) => {
+      const el = event.target;
+      if (el.matches('[data-action="search-from-editor"]')) {
+        console.log('clicked');
+        const ketcher = ketcherProvider.getKetcher();
+        //const smiles = async () => {await ketcher.getSmiles()};
+        ketcher.getSmiles().then(s => console.log(s));
+        //console.log(smiles());
+        const getInchi = async () => {
+          return ketcher.getInchi();
+        };
+        const getSmiles = async() => {
+          return ketcher.getMolfile();
+        }
+      } else if (el.matches('[data-action="create-item-from-editor"]')) {
+        const inchi = await ketcher.getInchi();
+        console.log(inchi);
+        console.log('clicked create item');
+        const ApiC = new Api();
+        ApiC.post('/items/', {template: 1, body: inchi});
+      }
+    });
   }
 });
 
-  /*
-  document.getElementById('ketcher-actions').addEventListener('click', event => {
-    const el = event.target;
-    if (el.matches('[data-action="search-from-editor"]')) {
-      console.log('clicked');
-      const ketcher = ketcherProvider.getKetcher();
-      //const smiles = async () => {await ketcher.getSmiles()};
-      ketcher.getSmiles().then(s => console.log(s));
-      //console.log(smiles());
-      const getInchi = async () => {
-        return ketcher.getInchi();
-      };
-      const getSmiles = async() => {
-        return ketcher.getMolfile();
+    /*
+    (async () => {
+      try {
+        const [inchi, smiles, mol] = await Promise.all([ketcher.getSmiles(), ketcher.getInchi(), ketcher.getMolfile()]);
+        console.log('Smiles: ', smiles);
+        console.log('Mol: ', mol);
+        console.log('InChI: ', inchi);
+      } catch (error) {
+        console.error('Error:', error);
       }
-      /*
-      (async () => {
-        try {
-          const [inchi, smiles, mol] = await Promise.all([ketcher.getSmiles(), ketcher.getInchi(), ketcher.getMolfile()]);
-          console.log('Smiles: ', smiles);
-          console.log('Mol: ', mol);
-          console.log('InChI: ', inchi);
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      })();
-      */
-  /*
-    }
-  });
+    })();
+    */
+/*
+  }
+});
 
 }
 */

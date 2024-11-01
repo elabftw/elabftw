@@ -31,12 +31,12 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
-use Elabftw\Models\Fingerprints;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
@@ -62,9 +62,7 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Models\UserUploads;
-use Elabftw\Services\HttpGetter;
 use Exception;
-use GuzzleHttp\Client;
 use JsonException;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -253,20 +251,16 @@ class Apiv2Controller extends AbstractApiController
     private function getModel(): RestInterface
     {
         $logger = new Logger('elabftw');
-        $Config = Config::getConfig();
-        $HttpGetter = new HttpGetter(new Client(), $Config->configArr['proxy']);
-        // tmp code while we add it in config
-        $Config->configArr['fpaas_url'] = 'http://fingerprinter:8000';
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Batch => new Batch($this->requester),
-            ApiEndpoint::Config => $Config,
+            ApiEndpoint::Compounds => new Compounds($this->requester, $this->id),
+            ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
-            ApiEndpoint::Fingerprints => new Fingerprints($HttpGetter, $Config->configArr['fpaas_url'], $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
@@ -307,6 +301,7 @@ class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::Compounds => new Compounds($this->requester, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(

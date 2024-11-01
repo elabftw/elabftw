@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block body %}
+Here be compounds
+{% for compound in compoundsArr %}
+{{ compound.name }}<br>
+{% endfor %}
+{% endblock body %}

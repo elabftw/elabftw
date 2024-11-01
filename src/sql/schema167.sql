@@ -1,8 +1,67 @@
 -- schema 167
-CREATE TABLE IF NOT EXISTS fingerprints (
+CREATE TABLE IF NOT EXISTS compounds (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `item_id` INT UNSIGNED NOT NULL,
+  `created_by` INT UNSIGNED NOT NULL,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_by` INT UNSIGNED NOT NULL,
+  `owner` INT UNSIGNED NOT NULL,
+  `team` INT UNSIGNED NOT NULL,
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
+  `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
+  `cas_number` VARCHAR(20) NULL DEFAULT NULL,
+  `ec_number` VARCHAR(20) NULL DEFAULT NULL,
+  `chebi_id` VARCHAR(20) NULL DEFAULT NULL,
+  `chembl_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dea_number` VARCHAR(20) NULL DEFAULT NULL,
+  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL,
+  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `inchi` MEDIUMTEXT NULL DEFAULT NULL,
+  `inchi_key` CHAR(27) NULL DEFAULT NULL,
+  `iupac_name` TEXT NULL DEFAULT NULL,
+  `kegg_id` VARCHAR(20) NULL DEFAULT NULL,
+  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `molecular_weight` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `nci_code` VARCHAR(20) NULL DEFAULT NULL,
+  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL,
+  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL,
+  `rxcui` VARCHAR(20) NULL DEFAULT NULL,
+  `smiles` MEDIUMTEXT NULL DEFAULT NULL,
+  `unii` VARCHAR(20) NULL DEFAULT NULL,
+  `wikidata` VARCHAR(20) NULL DEFAULT NULL,
+  `wikipedia` VARCHAR(20) NULL DEFAULT NULL,
+  primary key(`id`)
+);
+
+CREATE TABLE `compounds2experiments` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2experiments_templates` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2items` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2items_types` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+
+CREATE TABLE IF NOT EXISTS compounds_fingerprints (
+  id   INT UNSIGNED NOT NULL,
   fp0  INT UNSIGNED NOT NULL,
   fp1  INT UNSIGNED NOT NULL,
   fp2  INT UNSIGNED NOT NULL,
@@ -35,8 +94,10 @@ CREATE TABLE IF NOT EXISTS fingerprints (
   fp29 INT UNSIGNED NOT NULL,
   fp30 INT UNSIGNED NOT NULL,
   fp31 INT UNSIGNED NOT NULL,
-  primary key(`id`)
+  primary key(`id`),
+  FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS storage_units (
     id INT unsigned NOT NULL AUTO_INCREMENT,
     level_name VARCHAR(255),

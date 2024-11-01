@@ -18,6 +18,7 @@ enum ApiEndpoint: string
 {
     case ApiKeys = 'apikeys';
     case Batch = 'batch';
+    case Compounds = 'compounds';
     case Config = 'config';
     case Idps = 'idps';
     case IdpsSources = 'idps_sources';
@@ -25,7 +26,6 @@ enum ApiEndpoint: string
     case Info = 'info';
     case Experiments = 'experiments';
     case Export = 'exports';
-    case Fingerprints = 'fingerprints';
     case Items = 'items';
     case ExperimentsTemplates = 'experiments_templates';
     case ItemsTypes = 'items_types';

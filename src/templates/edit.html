@@ -124,6 +124,51 @@
 
 </section>
 
+{# COMPOUNDS #}
+<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }}</h3>
+<div data-save-hidden='compoundDiv' class='col-md-12 mt-4'>
+  <div class='mt-3 row' id='compoundDiv'>
+    {% if Entity.entityData.compounds %}
+      {% macro fpList(key, label, value) %}
+        <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
+            </div>
+            <input readonly class='form-control' id='{{ key }}' value='{{ value }}'></input>
+          </div>
+        </li>
+      {% endmacro %}
+        {% for fp in Entity.entityData.compounds %}
+        <div class='col-md-12 mt-3'>
+        <details open>
+          <summary><h5 class='d-inline togglable-section-title'>{{ fp.name }}</h5></summary>
+          <ul class='list-group'>
+          {{ _self.fpList('cas' ~ fp.id, 'CAS', fp.cas_number) }}
+          {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
+          {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}
+          {{ _self.fpList('inchi_key' ~ fp.id, 'InChIKey', fp.inchi_key) }}
+          {{ _self.fpList('smiles' ~ fp.id, 'SMILES', fp.smiles) }}
+          {{ _self.fpList('molecular_formula' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
+          {% if fp.pubchem_cid %}
+          <li class='list-group-item'>
+            <button class='btn btn-ghost' type='button'><a target='_blank' class='external-link' rel='noopener' href='https://pubchem.ncbi.nlm.nih.gov/compound/{{ fp.pubchem_cid }}'>{{ 'View on PubChem'|trans }}</a></button>
+          </li>
+          {% endif %}
+          </ul>
+        </details>
+        </div>
+      {% endfor %}
+
+    {% endif %}
+  </div>
+  <div class='mt-3 row'>
+    <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-secondary'>{{ 'Add from PubChem'|trans }}</button>
+  </div>
+</div>
+<hr>
+
+
 {# EXTRA FIELDS #}
 <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
 <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
@@ -133,8 +178,8 @@
     <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
     <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
   </div>
-  <hr>
 </div>
+<hr>
 
 {% include 'steps-links-edit.html' %}
 
@@ -186,12 +231,6 @@
 </div>
 
 <hr>
-
-{# MOLECULE EDITOR #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='chemDiv'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Molecule editor'|trans }}</h3>
-
-
-<div id="ketcher-root" hidden data-save-hidden='ketcher-root' class='my-2'></div>
 
 <div id='info'
     data-page='edit'

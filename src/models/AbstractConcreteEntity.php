@@ -28,6 +28,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
@@ -74,6 +75,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
                 template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                body: $reqBody['body'] ?? null,
                 title: $reqBody['title'] ?? null,
                 canread: $canread,
                 canwrite: $canwrite,
@@ -131,6 +133,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
         if ($this->entityData['storage'] !== null) {
             $this->entityData['storage_path'] = (new StorageUnits($this->Users, $this->entityData['storage']))->readOne()['full_path'];
         }

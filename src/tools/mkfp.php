@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Fingerprints;
-use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 
@@ -103,21 +104,14 @@ $smiles = array(
     ),
 );
 $startTime = microtime(true);
-$Items = new Items(new Users(1, 1));
-/*
+$requester = new Users(1, 1);
 foreach ($smiles as $mol) {
-    $fp = new Fingerprints(new HttpGetter(new Client()), 'http://fingerprinter:8000');
-    $fingerprint = $fp->calculate($mol['smiles']);
-    $id = $Items->create(1, title: $mol['name'], body: $mol['smiles']);
-    $fp->create($id, $fingerprint['data']);
-}
- */
-foreach ($smiles as $mol) {
-    $fp = new Fingerprints(new HttpGetter(new Client()), 'http://fingerprinter:8000');
-    $fingerprint = $fp->calculate($mol['smiles']);
-    echo $mol['name'] . "\n";
-    echo $mol['smiles'] . "\n";
-    var_dump($fp->search($fingerprint['data']));
+    $fp = new Fingerprinter(new HttpGetter(new Client(), verifyTls: false));
+    $fingerprint = $fp->calculate('smi', $mol['smiles']);
+    $Compounds = new Compounds($requester);
+    $compound = $Compounds->create(smiles: $mol['smiles'], name: $mol['name']);
+    $Fingerprints = new Fingerprints($compound);
+    $Fingerprints->create($fingerprint['data']);
 }
 $endTime = microtime(true);
 $executionTime = $endTime - $startTime;

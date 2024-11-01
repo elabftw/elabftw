@@ -531,6 +531,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
 
+    // IMPORT FROM PUBCHEM
+    } else if (el.matches('[data-action="import-cid"]')) {
+      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      const params = {cid: parseInt(inputEl.value, 10), action: Action.Duplicate};
+      const entity = getEntity();
+      ApiC.post2location(`${entity.type}/${entity.id}/fingerprints`, params).then(() => {
+        reloadElements(['compoundDiv']);
+      });
+
+
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
       // toggle eye icon
@@ -654,26 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = now.toFormat(format);
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
-
-    // IMPORT CID
-    } else if (el.matches('[data-action="import-cid"]')) {
-      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-      fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${inputEl.value}/json`).then(res => res.json()).then(json => {
-        const compound = json.PC_Compounds[0];
-        let title= 'Unknown';
-        for (const prop of compound.props) {
-          if (prop.urn.label === "IUPAC Name" && prop.urn.name === "Traditional") {
-            title = prop.value.sval || title;
-          }
-        }
-        const params = {
-          title: title,
-          metadata: compound,
-        }
-        ApiC.post2location(`items`, params).then(newId => {
-          window.location.href = `/database.php?mode=edit&id=${newId}`;
-        });
-      });
 
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {

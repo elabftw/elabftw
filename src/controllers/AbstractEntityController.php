@@ -16,6 +16,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
+use Elabftw\Elabftw\OrderableQueryParams;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
@@ -147,7 +148,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll($baseQueryParams);
+        $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($this->App->Request->query));
 
         $template = 'show.html';
         $UserRequestActions = new UserRequestActions($this->App->Users);
@@ -208,7 +209,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll($baseQueryParams);
+        $queryParams = $ItemsTypes->getQueryParams($this->App->Request->query);
+        $itemsCategoryArr = $ItemsTypes->readAll($queryParams);
 
         $Teams = new Teams($this->Entity->Users);
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);

@@ -42,7 +42,7 @@ class ProcurementRequests implements RestInterface
         $this->setId($id);
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "SELECT
             CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname,
@@ -60,6 +60,7 @@ class ProcurementRequests implements RestInterface
         $this->Db->execute($req);
         return array_map(function ($request) {
             $ProcurementState = ProcurementState::from($request['state']);
+            var_dump($ProcurementState);
             $request['state_human'] = $ProcurementState->toHuman();
             $Currency = Currency::from($request['proc_currency']);
             $request['symbol'] = $Currency->toSymbol();

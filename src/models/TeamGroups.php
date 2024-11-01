@@ -62,7 +62,7 @@ class TeamGroups implements RestInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "SELECT team_groups.id,
                 team_groups.name,

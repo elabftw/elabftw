@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
@@ -28,10 +27,11 @@ class DatabaseController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $baseQueryParams = new BaseQueryParams();
         $Category = new ItemsTypes($this->App->Users);
-        $this->categoryArr = $Category->readAll($baseQueryParams);
+        $queryParams = $Category->getQueryParams($this->App->Request->query);
+        $this->categoryArr = $Category->readAll($queryParams);
         $Status = new ItemsStatus(new Teams($this->App->Users, $this->App->Users->team));
-        $this->statusArr = $Status->readAll($baseQueryParams);
+        $queryParams = $Status->getQueryParams($this->App->Request->query);
+        $this->statusArr = $Status->readAll($queryParams);
     }
 }

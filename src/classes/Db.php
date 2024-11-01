@@ -104,6 +104,7 @@ final class Db
         try {
             $res = $req->execute();
         } catch (PDOException $e) {
+            //debug_print_backtrace();die;
             throw new DatabaseErrorException($e);
         }
         if (!$res) {

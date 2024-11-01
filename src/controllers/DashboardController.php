@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\DisplayParams;
+use Elabftw\Elabftw\OrderableQueryParams;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
@@ -64,14 +65,16 @@ class DashboardController implements ControllerInterface
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
         $UserRequestActions = new UserRequestActions($this->App->Users);
 
+        $itemsTypesQueryParams = $ItemsTypes->getQueryParams($this->App->Request->query);
+        $itemsStatusQueryParams = $ItemsStatus->getQueryParams($this->App->Request->query);
         $baseQueryParams = new BaseQueryParams();
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll($baseQueryParams),
-            'itemsCategoryArr' => $ItemsTypes->readAll($baseQueryParams),
-            'itemsStatusArr' => $ItemsStatus->readAll($baseQueryParams),
+            'itemsCategoryArr' => $ItemsTypes->readAll($itemsTypesQueryParams),
+            'itemsStatusArr' => $ItemsStatus->readAll($itemsStatusQueryParams),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-            'experimentsCategoryArr' => $ExperimentsCategory->readAll($baseQueryParams),
-            'experimentsStatusArr' => $ExperimentsStatus->readAll($baseQueryParams),
+            'experimentsCategoryArr' => $ExperimentsCategory->readAll($itemsTypesQueryParams),
+            'experimentsStatusArr' => $ExperimentsStatus->readAll($itemsStatusQueryParams),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),

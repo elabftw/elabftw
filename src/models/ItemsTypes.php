@@ -15,17 +15,18 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
+use Elabftw\Elabftw\OrderableQueryParams;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Override;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * The kind of items you can have in the database for a team
@@ -92,15 +93,19 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
+    public function getQueryParams(InputBag $query): QueryParamsInterface
+    {
+        return new OrderableQueryParams($query);
+    }
+
     public function readAll(QueryParamsInterface $queryParams): array
     {
         $builder = new ItemsTypesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false);
-        // first WHERE is the state, possibly including archived
-        $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
+        $sql .= ' WHERE 1=1';
         // add the json permissions
         $sql .= $builder->getCanFilter('canread');
-        $sql .= ' GROUP BY id ORDER BY ordering ASC';
+        $sql .= $queryParams->getSql();
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);

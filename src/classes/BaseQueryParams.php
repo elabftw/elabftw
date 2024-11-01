@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -31,6 +32,7 @@ class BaseQueryParams implements QueryParamsInterface
         public int $limit = 15,
         public int $offset = 0,
         public bool $includeArchived = false,
+        public array $states = array(State::Normal),
     ) {
         if ($query !== null) {
             // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
@@ -46,19 +48,43 @@ class BaseQueryParams implements QueryParamsInterface
         }
     }
 
+    public function setStates(array $states): QueryParamsInterface
+    {
+        $this->states = $states;
+        return $this;
+    }
+
     public function getQuery(): InputBag
     {
         return $this->query ?? throw new ValueError('Query is null here.');
     }
 
+    public function setSort(Sort $sort): QueryParamsInterface
+    {
+        $this->sort = $sort;
+        return $this;
+    }
+
+    public function setOrderby(Orderby $orderby): QueryParamsInterface
+    {
+        $this->orderby = $orderby;
+        return $this;
+    }
+
     public function getSql(): string
     {
         return sprintf(
-            ' ORDER BY %s %s LIMIT %d OFFSET %d',
+            '%s ORDER BY %s %s LIMIT %d OFFSET %d',
+            $this->getStatesSql(),
             $this->orderby->toSql(),
             $this->sort->value,
             $this->limit,
             $this->offset,
         );
+    }
+
+    protected function getStatesSql(): string
+    {
+        return ' AND entity.state IN (' . implode(', ', array_map(fn($state) => $state->value, $this->states)) . ')';
     }
 }

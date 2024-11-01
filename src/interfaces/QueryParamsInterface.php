@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Symfony\Component\HttpFoundation\InputBag;
 
 interface QueryParamsInterface
@@ -19,4 +21,10 @@ interface QueryParamsInterface
     public function getSql(): string;
 
     public function getQuery(): InputBag;
+
+    public function setSort(Sort $sort): self;
+
+    public function setStates(array $states): self;
+
+    public function setOrderby(Orderby $orderby): self;
 }

@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\OrderableQueryParams;
 use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\Orderby;
-use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * Status for experiments or items
@@ -74,7 +74,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -82,20 +82,22 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
+    public function getQueryParams(InputBag $query): QueryParamsInterface
+    {
+        return new OrderableQueryParams($query);
+    }
+
     /**
      * Get all status from team
      */
     public function readAll(QueryParamsInterface $queryParams): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering
-            FROM %s WHERE team = :team AND state = :state', $this->table);
-        $queryParams->orderby = Orderby::Ordering;
-        $queryParams->sort = Sort::Asc;
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
+            FROM %s AS entity WHERE team = :team', $this->table);
         $sql .= $queryParams->getSql();
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }

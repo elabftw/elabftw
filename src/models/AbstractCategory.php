@@ -14,8 +14,10 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
@@ -26,6 +28,7 @@ abstract class AbstractCategory implements RestInterface
 {
     use SortableTrait;
     use EntityTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -40,7 +43,7 @@ abstract class AbstractCategory implements RestInterface
     /**
      * Get all the things
      */
-    abstract public function readAll(): array;
+    abstract public function readAll(QueryParamsInterface $queryParams): array;
 
     /**
      * Get an id of an existing one or create it and get its id

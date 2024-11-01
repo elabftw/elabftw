@@ -17,8 +17,10 @@ use Elabftw\AuditEvent\ApiKeyDeleted;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -33,6 +35,7 @@ use function random_bytes;
 class ApiKeys implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     private Db $Db;
 
@@ -75,7 +78,7 @@ class ApiKeys implements RestInterface
     /**
      * Read all keys for current user
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.hash, ak.can_write, ak.team, teams.name AS team_name
             FROM api_keys AS ak

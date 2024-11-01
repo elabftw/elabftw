@@ -16,7 +16,9 @@ use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -28,6 +30,7 @@ class Todolist implements RestInterface
 {
     use SetIdTrait;
     use SortableTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -58,7 +61,7 @@ class Todolist implements RestInterface
     /**
      * Select all the todoitems for a user
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = 'SELECT * FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);

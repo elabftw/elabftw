@@ -15,8 +15,10 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Xml2Idps;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -26,6 +28,7 @@ use PDO;
 class Idps implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     public const string SSO_BINDING = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
 
@@ -84,7 +87,7 @@ class Idps implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT idps.*, idps_sources.url AS source_url
             FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';

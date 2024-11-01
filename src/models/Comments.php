@@ -17,8 +17,10 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -28,6 +30,7 @@ use PDO;
 class Comments implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -60,7 +63,7 @@ class Comments implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->Entity->canOrExplode('read');
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,

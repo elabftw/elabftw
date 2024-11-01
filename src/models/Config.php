@@ -15,13 +15,16 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 use function array_map;
@@ -32,6 +35,8 @@ use function urlencode;
  */
 final class Config implements RestInterface
 {
+    use QueryParamsTrait;
+
     // the array with all config
     public array $configArr = array();
 
@@ -48,11 +53,11 @@ final class Config implements RestInterface
     private function __construct()
     {
         $this->Db = Db::getConnection();
-        $this->configArr = $this->readAll();
+        $this->configArr = $this->readAll(new BaseQueryParams());
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
             $this->create();
-            $this->configArr = $this->readAll();
+            $this->configArr = $this->readAll(new BaseQueryParams());
         }
     }
 
@@ -223,7 +228,7 @@ final class Config implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     public function decrementTsBalance(): array
@@ -235,7 +240,7 @@ final class Config implements RestInterface
         return $this->readOne();
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
@@ -291,7 +296,7 @@ final class Config implements RestInterface
             }
         }
 
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     public function getApiPath(): string
@@ -335,7 +340,7 @@ final class Config implements RestInterface
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $createResult = $this->create();
-        $this->configArr = $this->readAll();
+        $this->configArr = $this->readAll(new BaseQueryParams());
         return $createResult;
     }
 }

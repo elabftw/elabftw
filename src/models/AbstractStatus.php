@@ -16,6 +16,7 @@ use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
@@ -82,7 +83,7 @@ abstract class AbstractStatus extends AbstractCategory
     /**
      * Get all status from team
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = sprintf('SELECT id, title, color, is_default
             FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);

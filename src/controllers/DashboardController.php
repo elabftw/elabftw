@@ -14,6 +14,7 @@ namespace Elabftw\Controllers;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
@@ -63,13 +64,14 @@ class DashboardController implements ControllerInterface
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
         $UserRequestActions = new UserRequestActions($this->App->Users);
 
+        $baseQueryParams = new BaseQueryParams();
         $renderArr = array(
-            'bookingsArr' => $Scheduler->readAll(),
-            'itemsCategoryArr' => $ItemsTypes->readAll(),
-            'itemsStatusArr' => $ItemsStatus->readAll(),
+            'bookingsArr' => $Scheduler->readAll($baseQueryParams),
+            'itemsCategoryArr' => $ItemsTypes->readAll($baseQueryParams),
+            'itemsStatusArr' => $ItemsStatus->readAll($baseQueryParams),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-            'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
-            'experimentsStatusArr' => $ExperimentsStatus->readAll(),
+            'experimentsCategoryArr' => $ExperimentsCategory->readAll($baseQueryParams),
+            'experimentsStatusArr' => $ExperimentsStatus->readAll($baseQueryParams),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),

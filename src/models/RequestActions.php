@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\ActionRequested;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -28,6 +31,7 @@ use PDO;
 class RequestActions implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -37,7 +41,7 @@ class RequestActions implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = sprintf(
             'SELECT "%s" AS entity_page, id, created_at, requester_userid, target_userid, entity_id, action
@@ -69,7 +73,7 @@ class RequestActions implements RestInterface
             /** @psalm-suppress PossiblyNullArgument */
             $action['action'] = _(preg_replace('/([a-z])([A-Z])/', '${1} ${2}', RequestableAction::from($action['action'])->name));
             return $action;
-        }, $this->readAll());
+        }, $this->readAll(new BaseQueryParams()));
     }
 
     public function readOne(): array

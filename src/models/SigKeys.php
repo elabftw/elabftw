@@ -18,7 +18,9 @@ use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -28,6 +30,7 @@ use PDO;
 class SigKeys implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     private Db $Db;
 
@@ -75,7 +78,7 @@ class SigKeys implements RestInterface
     /**
      * Read all keys for current user, including the archived ones, with the active one first
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
             FROM sig_keys WHERE userid = :userid ORDER BY state ASC';

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
@@ -139,13 +140,14 @@ abstract class AbstractEntityController implements ControllerInterface
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->getQueryString());
 
+        $baseQueryParams = new BaseQueryParams();
         // FAVTAGS
         $FavTags = new FavTags($this->App->Users);
-        $favTagsArr = $FavTags->readAll();
+        $favTagsArr = $FavTags->readAll($baseQueryParams);
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
+        $itemsCategoryArr = $ItemsTypes->readAll($baseQueryParams);
 
         $template = 'show.html';
         $UserRequestActions = new UserRequestActions($this->App->Users);
@@ -202,10 +204,11 @@ abstract class AbstractEntityController implements ControllerInterface
             }
         }
         $this->Entity->setId($id);
+        $baseQueryParams = new BaseQueryParams();
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
+        $itemsCategoryArr = $ItemsTypes->readAll($baseQueryParams);
 
         $Teams = new Teams($this->Entity->Users);
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
@@ -224,7 +227,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'hideTitle' => true,
-            'teamsArr' => $Teams->readAll(),
+            'teamsArr' => $Teams->readAll($baseQueryParams),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             ...$this->Entity instanceof AbstractConcreteEntity
@@ -233,7 +236,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll($baseQueryParams),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -273,7 +276,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
+        $itemsCategoryArr = $ItemsTypes->readAll(new BaseQueryParams());
 
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
@@ -282,6 +285,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $ProcurementRequests = new ProcurementRequests($Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
+        $baseQueryParams = new BaseQueryParams();
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
@@ -298,12 +302,12 @@ abstract class AbstractEntityController implements ControllerInterface
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'statusArr' => $this->statusArr,
-            'teamsArr' => $Teams->readAll(),
-            'teamTagsArr' => $TeamTags->readAll(),
+            'teamsArr' => $Teams->readAll($baseQueryParams),
+            'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll($baseQueryParams),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

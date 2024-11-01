@@ -29,6 +29,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
@@ -42,6 +43,7 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -52,6 +54,8 @@ use function trim;
  */
 class Users implements RestInterface
 {
+    use QueryParamsTrait;
+
     public bool $needValidation = false;
 
     public array $userData = array();
@@ -273,7 +277,7 @@ class Users implements RestInterface
     /**
      * This can be called from api and only contains "safe" values
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Request = Request::createFromGlobals();
         return $this->readFromQuery(

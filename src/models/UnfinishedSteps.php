@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 /**
@@ -28,6 +31,8 @@ use PDO;
  */
 class UnfinishedSteps implements RestInterface
 {
+    use QueryParamsTrait;
+
     private Db $Db;
 
     public function __construct(private Users $Users, private bool $teamScoped = false)
@@ -47,7 +52,7 @@ class UnfinishedSteps implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     public function readOne(): array
@@ -56,7 +61,7 @@ class UnfinishedSteps implements RestInterface
         return array();
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $experimentsSteps = $this->cleanUpResult($this->getSteps(EntityType::Experiments));
         $itemsSteps = $this->cleanUpResult($this->getSteps(EntityType::Items));

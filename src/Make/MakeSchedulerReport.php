@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Scheduler;
@@ -32,7 +33,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
     public function __construct(Scheduler $scheduler)
     {
         $this->Db = Db::getConnection();
-        $this->rows = $scheduler->readAll();
+        $this->rows = $scheduler->readAll(new BaseQueryParams());
         if (empty($this->rows)) {
             throw(new ImproperActionException('There are no events to report'));
         }

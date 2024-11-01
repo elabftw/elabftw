@@ -14,36 +14,41 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
+use ValueError;
 
 /**
  * This class holds the values for limit, offset, order and sort
  */
-class BaseQueryParams
+class BaseQueryParams implements QueryParamsInterface
 {
-    public Orderby $orderby = Orderby::Date;
+    public function __construct(
+        protected ?InputBag $query = null,
+        public Orderby $orderby = Orderby::Date,
+        public Sort $sort = Sort::Desc,
+        public int $limit = 15,
+        public int $offset = 0,
+        public bool $includeArchived = false,
+    ) {
+        if ($query !== null) {
+            // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
+            $this->includeArchived = $query->has('archived');
+            if ($query->has('limit')) {
+                $this->limit = Check::limit($query->getInt('limit'));
+            }
+            if ($query->has('offset') && Check::id($query->getInt('offset')) !== false) {
+                $this->offset = $query->getInt('offset');
+            }
+            $this->sort = Sort::tryFrom($query->getAlpha('sort')) ?? $this->sort;
+            $this->orderby = Orderby::tryFrom($query->getAlpha('order')) ?? $this->orderby;
+        }
+    }
 
-    public Sort $sort = Sort::Desc;
-
-    public int $limit = 15;
-
-    public int $offset = 0;
-
-    public bool $includeArchived = false;
-
-    public function __construct(protected Request $Request)
+    public function getQuery(): InputBag
     {
-        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
-        $this->includeArchived = $this->Request->query->has('archived');
-        if ($this->Request->query->has('limit')) {
-            $this->limit = Check::limit($this->Request->query->getInt('limit'));
-        }
-        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
-            $this->offset = $this->Request->query->getInt('offset');
-        }
-        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
-        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
+        return $this->query ?? throw new ValueError('Query is null here.');
     }
 
     public function getSql(): string

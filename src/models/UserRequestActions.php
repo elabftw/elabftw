@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 /**
@@ -26,6 +29,8 @@ use PDO;
  */
 class UserRequestActions implements RestInterface
 {
+    use QueryParamsTrait;
+
     protected Db $Db;
 
     public function __construct(protected Users $requester)
@@ -33,7 +38,7 @@ class UserRequestActions implements RestInterface
         $this->Db = Db::getConnection();
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $tables = array(
             array(
@@ -75,7 +80,7 @@ class UserRequestActions implements RestInterface
             $action['requester_firstname'] = $Requester->userData['firstname'];
             $action['action'] = RequestableAction::from($action['action'])->toHuman();
             return $action;
-        }, $this->readAll());
+        }, $this->readAll(new BaseQueryParams()));
     }
 
     public function readOne(): array

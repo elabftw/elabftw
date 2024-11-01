@@ -51,7 +51,7 @@ try {
     // only the bookable categories
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
-    $allItemsTypes = $ItemsTypes->readAll();
+    $allItemsTypes = $ItemsTypes->readAll(new BaseQueryParams());
     $bookableItemsTypes = array_filter(
         $allItemsTypes,
         fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),
@@ -65,8 +65,8 @@ try {
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
         'teamArr' => $Teams->readOne(),
-        'teamGroupsArr' => $TeamGroups->readAll(),
-        'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
+        'teamGroupsArr' => $TeamGroups->readAll(new BaseQueryParams()),
+        'teamProcurementRequestsArr' => $ProcurementRequests->readAll(new BaseQueryParams()),
         'teamsStats' => $Teams->getStats($App->Users->userData['team']),
     );
 

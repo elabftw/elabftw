@@ -18,8 +18,10 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use RuntimeException;
@@ -30,6 +32,7 @@ use RuntimeException;
 class ProcurementRequests implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -39,7 +42,7 @@ class ProcurementRequests implements RestInterface
         $this->setId($id);
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = "SELECT
             CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname,

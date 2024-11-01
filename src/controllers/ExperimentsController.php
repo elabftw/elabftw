@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
@@ -32,8 +33,9 @@ class ExperimentsController extends AbstractEntityController
 
         $Teams = new Teams($this->App->Users, $this->App->Users->team);
         $Category = new ExperimentsCategories($Teams);
-        $this->categoryArr = $Category->readAll();
+        $baseQueryParams = new BaseQueryParams();
+        $this->categoryArr = $Category->readAll($baseQueryParams);
         $Status = new ExperimentsStatus($Teams);
-        $this->statusArr = $Status->readAll();
+        $this->statusArr = $Status->readAll($baseQueryParams);
     }
 }

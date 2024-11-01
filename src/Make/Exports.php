@@ -22,11 +22,13 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use Exception;
 use League\Flysystem\Filesystem;
@@ -46,6 +48,7 @@ use function hash_file;
 class Exports implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     private const string HASH_ALGO = 'sha256';
 
@@ -63,7 +66,7 @@ class Exports implements RestInterface
         $this->setId($id);
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM exports
             WHERE requester_userid = :requester_userid

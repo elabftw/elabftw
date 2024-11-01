@@ -17,7 +17,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -25,6 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Batch implements RestInterface
 {
+    use QueryParamsTrait;
+
     private int $processed = 0;
 
     public function __construct(private Users $requester) {}
@@ -80,7 +84,7 @@ class Batch implements RestInterface
         return 'api/v2/';
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         throw new ImproperActionException('No GET action for batch.');
     }

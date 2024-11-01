@@ -20,8 +20,10 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -35,6 +37,7 @@ use function json_decode;
 class TeamGroups implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     private Db $Db;
 
@@ -59,7 +62,7 @@ class TeamGroups implements RestInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = "SELECT team_groups.id,
                 team_groups.name,

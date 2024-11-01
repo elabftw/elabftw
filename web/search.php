@@ -56,12 +56,13 @@ $PermissionsHelper = new PermissionsHelper();
 $usersArr = $App->Users->readAllFromTeam();
 
 // RENDER THE FIRST PART OF THE PAGE (search form)
+$baseQueryParams = new BaseQueryParams();
 $renderArr = array(
     'Request' => $App->Request,
-    'experimentsCategoriesArr' => $ExperimentsCategories->readAll(),
-    'experimentsStatusArr' => $ExperimentsStatus->readAll(),
-    'itemsTypesArr' => $ItemsTypes->readAll(),
-    'itemsStatusArr' => $ItemsStatus->readAll(),
+    'experimentsCategoriesArr' => $ExperimentsCategories->readAll($baseQueryParams),
+    'experimentsStatusArr' => $ExperimentsStatus->readAll($baseQueryParams),
+    'itemsTypesArr' => $ItemsTypes->readAll($baseQueryParams),
+    'itemsStatusArr' => $ItemsStatus->readAll($baseQueryParams),
     'tagsArr' => $TeamTags->readFull(),
     'usersArr' => $usersArr,
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),

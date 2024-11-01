@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -28,6 +31,7 @@ use PDO;
 class Tags implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -52,7 +56,7 @@ class Tags implements RestInterface
         return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT DISTINCT tag, tags2entity.tag_id, (tags_id IS NOT NULL) AS is_favorite FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id) LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE item_id = :item_id AND item_type = :item_type ORDER BY tag';
@@ -72,7 +76,7 @@ class Tags implements RestInterface
      */
     public function copyTags(int $newId, bool $toExperiments = false): void
     {
-        $tags = $this->readAll();
+        $tags = $this->readAll(new BaseQueryParams());
         $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $insertReq = $this->Db->prepare($insertSql);
         $entityType = $this->Entity->entityType;

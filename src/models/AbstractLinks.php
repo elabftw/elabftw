@@ -12,13 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -31,6 +34,7 @@ use function json_encode;
 abstract class AbstractLinks implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -54,7 +58,7 @@ abstract class AbstractLinks implements RestInterface
     /**
      * Get links for an entity
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         // main category table
         $sql = 'SELECT entity.id AS entityid,
@@ -87,7 +91,7 @@ abstract class AbstractLinks implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     /**

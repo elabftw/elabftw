@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -30,6 +31,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -124,13 +126,14 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         if ($this->entityData['id'] === null) {
             throw new ResourceNotFoundException();
         }
+        $baseQueryParams = new BaseQueryParams();
         $this->canOrExplode('read');
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['steps'] = $this->Steps->readAll(new BaseQueryParams());
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll($baseQueryParams);
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll($baseQueryParams);
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
-        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAll(new BaseQueryParams());
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
@@ -162,8 +165,9 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->entityData;
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // TODO use $queryParams
         return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
     }
 

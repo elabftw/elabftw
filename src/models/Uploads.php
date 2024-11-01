@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\Db;
@@ -27,8 +28,10 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Check;
+use Elabftw\Traits\QueryParamsTrait;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
@@ -42,6 +45,8 @@ use function hash_file;
  */
 class Uploads implements RestInterface
 {
+    use QueryParamsTrait;
+
     public const string HASH_ALGORITHM = 'sha256';
 
     // size of a file in bytes above which we don't process it (50 Mb)
@@ -171,7 +176,7 @@ class Uploads implements RestInterface
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->readAll();
+        $uploads = $this->readAll(new BaseQueryParams());
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
@@ -234,7 +239,7 @@ class Uploads implements RestInterface
     /**
      * Read only the normal ones (not archived/deleted)
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         if ($this->includeArchived) {
             return $this->readNormalAndArchived();
@@ -327,7 +332,7 @@ class Uploads implements RestInterface
     public function destroyAll(): bool
     {
         // this will include the archived/deleted ones
-        $uploadArr = $this->readAll();
+        $uploadArr = $this->readAll(new BaseQueryParams());
 
         foreach ($uploadArr as $upload) {
             $this->setId($upload['id']);

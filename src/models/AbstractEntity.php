@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\DisplayParams;
@@ -32,12 +33,14 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 use PDOStatement;
 
@@ -58,6 +61,7 @@ use const JSON_THROW_ON_ERROR;
 abstract class AbstractEntity implements RestInterface
 {
     use EntityTrait;
+    use QueryParamsTrait;
 
     public const int CONTENT_HTML = 1;
 
@@ -148,7 +152,7 @@ abstract class AbstractEntity implements RestInterface
 
     abstract public function readOne(): array;
 
-    abstract public function readAll(): array;
+    abstract public function readAll(QueryParamsInterface $queryParams): array;
 
     public function getApiPath(): string
     {
@@ -246,8 +250,8 @@ abstract class AbstractEntity implements RestInterface
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->query) || !empty($displayParams->extendedQuery)) {
-            $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
+        if (!empty($displayParams->queryString) || !empty($displayParams->extendedQuery)) {
+            $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
@@ -403,7 +407,7 @@ abstract class AbstractEntity implements RestInterface
         $base = $this->readOne();
         // items types don't have this yet
         if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
-            $base['revisions'] = (new Revisions($this))->readAll();
+            $base['revisions'] = (new Revisions($this))->readAll(new BaseQueryParams());
             $base['changelog'] = (new Changelog($this))->readAll();
         }
         ksort($base);

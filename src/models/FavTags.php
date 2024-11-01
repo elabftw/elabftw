@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -26,6 +29,7 @@ use PDO;
 class FavTags implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -50,7 +54,7 @@ class FavTags implements RestInterface
         return array();
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
            LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
@@ -64,7 +68,7 @@ class FavTags implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     public function destroy(): bool

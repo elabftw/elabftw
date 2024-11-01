@@ -19,10 +19,12 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Traits\QueryParamsTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -31,6 +33,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Handler implements RestInterface
 {
+    use QueryParamsTrait;
+
     private const array ALLOWED_EXTENSIONS = array('.eln', '.csv');
 
     private const int AUDIT_THRESHOLD = 12;
@@ -47,7 +51,7 @@ class Handler implements RestInterface
         );
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return $this->readOne();
     }

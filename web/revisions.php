@@ -43,7 +43,7 @@ try {
         (int) $App->Config->configArr['min_delta_revisions'],
         (int) $App->Config->configArr['min_days_revisions'],
     );
-    $revisionsArr = $Revisions->readAll();
+    $revisionsArr = $Revisions->readAll(new BaseQueryParams());
 
     $template = 'revisions.html';
     $renderArr = array(

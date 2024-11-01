@@ -15,7 +15,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -25,6 +27,7 @@ use PDO;
 abstract class AbstractCompoundsLinks implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -48,7 +51,7 @@ abstract class AbstractCompoundsLinks implements RestInterface
     /**
      * Get links for an entity
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT compound_id AS id FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
         $req = $this->Db->prepare($sql);

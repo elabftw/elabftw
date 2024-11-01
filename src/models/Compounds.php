@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Elabftw\CompoundsQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
@@ -22,6 +23,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
@@ -29,6 +31,7 @@ use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * Read chemical compounds from linked with an entity
@@ -67,8 +70,7 @@ class Compounds implements RestInterface
     }
      */
 
-    // TODO have optional param for readall that is a base query param interface
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = sprintf('SELECT entity.*,
             CONCAT(
@@ -94,13 +96,18 @@ class Compounds implements RestInterface
         // add the json permissions
         $builder = new CanSqlBuilder($this->requester, AccessType::Read);
         $sql .= $builder->getCanFilter();
-        $sql .= ' GROUP BY id ORDER BY modified_at DESC';
+        //$queryParams = new CompoundsQueryParams($queryParams->getQuery());
+        $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
-        //$req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
 
+    }
+
+    public function getQueryParams(InputBag $query): QueryParamsInterface
+    {
+        return new CompoundsQueryParams($query);
     }
 
     public function readOne(): array

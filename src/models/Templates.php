@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -22,6 +23,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -163,10 +165,11 @@ class Templates extends AbstractTemplateEntity
             throw new ResourceNotFoundException();
         }
         $this->canOrExplode('read');
+        $baseQueryParams = new BaseQueryParams();
         // add steps and links in there too
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['steps'] = $this->Steps->readAll(new BaseQueryParams());
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll($baseQueryParams);
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll($baseQueryParams);
         $this->entityData['sharelink'] = sprintf(
             '%s/%s&mode=view&templateid=%d',
             Config::fromEnv('SITE_URL'),
@@ -182,7 +185,7 @@ class Templates extends AbstractTemplateEntity
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
-        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAll(new BaseQueryParams());
         $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }
@@ -191,7 +194,7 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $builder = new TemplatesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);

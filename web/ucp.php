@@ -81,7 +81,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->readAll();
+    $itemsCategoryArr = $ItemsTypes->readAll(new BaseQueryParams());
 
     // Notifications
     $notificationsSettings = array(
@@ -121,23 +121,24 @@ try {
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     $template = 'ucp.html';
+    $baseQueryParams = new BaseQueryParams();
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
-        'categoryArr' => $Category->readAll(),
+        'categoryArr' => $Category->readAll($baseQueryParams),
         'changes' => $changelogData,
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
-        'teamsArr' => $Teams->readAll(),
+        'teamsArr' => $Teams->readAll($baseQueryParams),
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
-        'statusArr' => $Status->readAll(),
-        'teamTagsArr' => $TeamTags->readAll(),
-        'templatesArr' => $Templates->readAll(),
+        'statusArr' => $Status->readAll($baseQueryParams),
+        'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
+        'templatesArr' => $Templates->readAll($baseQueryParams),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),

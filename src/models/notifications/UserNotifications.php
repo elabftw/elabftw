@@ -15,8 +15,10 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Notifications;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Users;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -28,6 +30,7 @@ use function json_decode;
 class UserNotifications implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -40,7 +43,7 @@ class UserNotifications implements RestInterface
         $this->setId($id);
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications

@@ -59,7 +59,8 @@ try {
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
     $Teams = new Teams($App->Users);
-    $teamsArr = $Teams->readAll();
+    $baseQueryParams = new BaseQueryParams();
+    $teamsArr = $Teams->readAll($baseQueryParams);
     $Experiments = new Experiments($App->Users);
 
     // Users search
@@ -153,7 +154,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
-        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll(),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll($baseQueryParams),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,

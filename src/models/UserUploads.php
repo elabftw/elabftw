@@ -17,12 +17,16 @@ use Elabftw\Elabftw\UserUploadsQueryParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
+use ValueError;
 
 class UserUploads implements RestInterface
 {
+    use QueryParamsTrait;
+
     protected Db $Db;
 
     public function __construct(private Users $owner, private ?int $id = null)
@@ -32,7 +36,7 @@ class UserUploads implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll();
+        return $this->readAll(new UserUploadsQueryParams());
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -55,9 +59,11 @@ class UserUploads implements RestInterface
         throw new ImproperActionException('No DELETE action for this endpoint');
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
-        $queryParams = new UserUploadsQueryParams(Request::createFromGlobals());
+        if (!$queryParams instanceof UserUploadsQueryParams) {
+            throw new ValueError('Incorrect query params type. Must be UserUploadsQueryParams.');
+        }
         $idFilter = '';
         if ($this->id) {
             $idFilter = sprintf('AND uploads.id = %d', $this->id);

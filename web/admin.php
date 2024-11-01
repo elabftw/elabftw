@@ -58,16 +58,17 @@ try {
     $PermissionsHelper = new PermissionsHelper();
     $teamStats = $Teams->getStats($App->Users->userData['team']);
 
-    $itemsCategoryArr = $ItemsTypes->readAll();
+    $baseQueryParams = new BaseQueryParams();
+    $itemsCategoryArr = $ItemsTypes->readAll($baseQueryParams);
     $ExperimentsCategories = new ExperimentsCategories($Teams);
-    $experimentsCategoriesArr = $ExperimentsCategories->readAll();
+    $experimentsCategoriesArr = $ExperimentsCategories->readAll($baseQueryParams);
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
     }
-    $statusArr = $Status->readAll();
-    $teamGroupsArr = $TeamGroups->readAll();
-    $teamsArr = $Teams->readAll();
+    $statusArr = $Status->readAll($baseQueryParams);
+    $teamGroupsArr = $TeamGroups->readAll($baseQueryParams);
+    $teamsArr = $Teams->readAll($baseQueryParams);
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter(
@@ -123,7 +124,7 @@ try {
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
-        'itemsStatusArr' => $ItemsStatus->readAll(),
+        'itemsStatusArr' => $ItemsStatus->readAll($baseQueryParams),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'teamGroupsArr' => $teamGroupsArr,

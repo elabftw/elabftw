@@ -19,11 +19,13 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use RuntimeException;
@@ -37,6 +39,7 @@ use function trim;
 class Teams implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     public bool $bypassWritePermission = false;
 
@@ -144,7 +147,7 @@ class Teams implements RestInterface
     /**
      * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';

@@ -35,7 +35,7 @@ class DisplayParams extends BaseQueryParams
     public string $filterSql = '';
 
     // the search from the top right search bar on experiments/database
-    public string $query = '';
+    public string $queryString = '';
 
     // the extended search query
     public string $extendedQuery = '';
@@ -49,7 +49,7 @@ class DisplayParams extends BaseQueryParams
         $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
         $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
         // then load from query
-        parent::__construct($Request);
+        parent::__construct($Request->query);
         $this->adjust();
     }
 
@@ -76,24 +76,25 @@ class DisplayParams extends BaseQueryParams
      */
     private function adjust(): void
     {
-        if (!empty($this->Request->query->get('q'))) {
-            $this->query = trim($this->Request->query->getString('q'));
+        $query = $this->getQuery();
+        if (!empty($query->get('q'))) {
+            $this->queryString = trim($query->getString('q'));
         }
-        if (!empty($this->Request->query->get('extended'))) {
-            $this->extendedQuery = trim($this->Request->query->getString('extended'));
+        if (!empty($query->get('extended'))) {
+            $this->extendedQuery = trim($query->getString('extended'));
         }
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param
         $scope = $this->Users->userData['scope_' . $this->entityType->value];
-        if (Check::id($this->Request->query->getInt('scope')) !== false) {
-            $scope = $this->Request->query->getInt('scope');
+        if (Check::id($query->getInt('scope')) !== false) {
+            $scope = $query->getInt('scope');
         }
 
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
+        if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
         }
@@ -101,31 +102,30 @@ class DisplayParams extends BaseQueryParams
             $this->appendFilterSql(FilterableColumn::Team, $this->Users->team ?? 0);
         }
         // TAGS SEARCH
-        if (!empty(($this->Request->query->all('tags'))[0])) {
+        if (!empty(($query->all('tags'))[0])) {
             // get all the ids with that tag
-            $tags = $this->Request->query->all('tags');
+            $tags = $query->all('tags');
             $Tags2Entity = new Tags2Entity($this->entityType);
             $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags));
         }
 
         // RELATED FILTER
-        if (Check::id($this->Request->query->getInt('related')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
-            $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
+        if (Check::id($query->getInt('related')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Related, $query->getInt('related'));
+            $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
-        if (Check::id($this->Request->query->getInt('cat')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
+        if (Check::id($query->getInt('cat')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Category, $query->getInt('cat'));
         }
         // STATUS FILTER
-        if (Check::id($this->Request->query->getInt('status')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
+        if (Check::id($query->getInt('status')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Status, $query->getInt('status'));
         }
 
         // OWNER (USERID) FILTER
-        if (Check::id($this->Request->query->getInt('owner')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
+        if (Check::id($query->getInt('owner')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Owner, $query->getInt('owner'));
         }
-
     }
 }

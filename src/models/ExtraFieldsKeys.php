@@ -17,7 +17,9 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 /**
@@ -25,6 +27,8 @@ use PDO;
  */
 class ExtraFieldsKeys implements RestInterface
 {
+    use QueryParamsTrait;
+
     private Db $Db;
 
     public function __construct(private Users $Users, private string $searchTerm, private int $limit = 0)
@@ -56,7 +60,7 @@ class ExtraFieldsKeys implements RestInterface
     /**
      * Get all exta fields keys of a team from experiments and items
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = array();
         foreach (array(EntityType::Items, EntityType::Experiments) as $entityType) {

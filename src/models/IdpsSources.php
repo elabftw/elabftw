@@ -17,10 +17,12 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
 use PDO;
@@ -31,6 +33,7 @@ use PDO;
 class IdpsSources implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     private Db $Db;
 
@@ -79,7 +82,7 @@ class IdpsSources implements RestInterface
         return sprintf('api/v2/idps_sources/%s', $this->id ?? '');
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,

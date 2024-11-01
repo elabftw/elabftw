@@ -79,7 +79,7 @@
     {% endif %}
       class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
       {% if not searchPage %}
-        <input type='hidden' name='q' value='{{ DisplayParams.query|e('html_attr') }}' />
+        <input type='hidden' name='q' value='{{ DisplayParams.queryString|e('html_attr') }}' />
       {% endif %}
       {% if App.Request.query.get('related') %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />

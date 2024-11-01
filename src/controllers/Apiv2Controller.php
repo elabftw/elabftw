@@ -212,7 +212,8 @@ class Apiv2Controller extends AbstractApiController
         if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
         }
-        return $this->Model->readAll();
+        $queryParams = $this->Model->getQueryParams($this->Request->query);
+        return $this->Model->readAll($queryParams);
     }
 
     private function handleGet(): Response

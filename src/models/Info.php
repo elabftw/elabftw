@@ -18,7 +18,9 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 /**
@@ -26,6 +28,8 @@ use PDO;
  */
 class Info implements RestInterface
 {
+    use QueryParamsTrait;
+
     private Db $Db;
 
     public function __construct()
@@ -48,7 +52,7 @@ class Info implements RestInterface
         return 'api/v2/info/';
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Config = Config::getConfig();
         $Uploads = new Uploads(new Experiments(new Users()));

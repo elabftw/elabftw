@@ -208,7 +208,7 @@ class App
         $this->teamArr = $Teams->readOne();
         // Notifs
         $Notifications = new UserNotifications($this->Users);
-        $this->notifsArr = $Notifications->readAll();
+        $this->notifsArr = $Notifications->readAll(new BaseQueryParams());
     }
 
     /**

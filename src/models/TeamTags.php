@@ -12,15 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the tag but seen from a team perspective, not an entity
@@ -28,6 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TeamTags implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -88,10 +91,9 @@ class TeamTags implements RestInterface
     /**
      * Read all the tags from team. This one can be called from api and will filter based on q param in query
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
-        // TODO move this out of here
-        $query = (Request::createFromGlobals())->query->getString('q');
+        $query = $queryParams->getQuery()->getString('q');
         $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
@@ -173,7 +175,7 @@ class TeamTags implements RestInterface
             $this->deduplicateFromIdsList($idsList['id_list']);
         }
 
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 
     /**
@@ -216,6 +218,6 @@ class TeamTags implements RestInterface
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-        return $this->readAll();
+        return $this->readAll(new BaseQueryParams());
     }
 }

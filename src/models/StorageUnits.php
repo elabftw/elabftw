@@ -15,9 +15,10 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CommentParam;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -27,6 +28,7 @@ use PDO;
 class StorageUnits implements RestInterface
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     protected Db $Db;
 
@@ -94,7 +96,7 @@ class StorageUnits implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams): array
     {
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)

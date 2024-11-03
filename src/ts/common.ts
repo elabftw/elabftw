@@ -535,8 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="import-cid"]')) {
       const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
       const params = {cid: parseInt(inputEl.value, 10), action: Action.Duplicate};
-      const entity = getEntity();
-      ApiC.post2location(`${entity.type}/${entity.id}/fingerprints`, params).then(() => {
+      ApiC.post2location('compounds', params).then(() => {
         reloadElements(['compoundDiv']);
       });
 

@@ -94,7 +94,7 @@ class CanSqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.owner = %s
+                AND entity.userid = %s
                 AND users2teams.teams_id = entity.team)",
             $this->accessType->value,
             BasePermissions::User->value,
@@ -112,7 +112,7 @@ class CanSqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.owner = %d
+                AND entity.userid = %d
                 AND users2teams.teams_id = entity.team)",
             $this->accessType->value,
             BasePermissions::UserOnly->value,

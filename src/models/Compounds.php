@@ -15,10 +15,14 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Fingerprinter;
@@ -49,22 +53,20 @@ class Compounds implements RestInterface
         return sprintf('api/v2/fingerprints/%d', $this->id ?? 0);
     }
 
-    /*
     protected function canOrExplode(AccessType $accessType): bool
     {
         if ($this->id === null) {
             throw new ImproperActionException('No id is set!');
         }
-        $sql = sprintf('SELECT %s FROM compounds WHERE id = :id', $accessType->value);
+        $sql = 'SELECT canread, canwrite, team, userid FROM compounds WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $can = $req->fetchColumn();
+        $compound = $req->fetch();
         $Permissions = new Permissions($this->requester, $compound);
         $perms = $Permissions->forEntity();
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
     }
-     */
 
     public function readAll(QueryParamsInterface $queryParams): array
     {
@@ -78,11 +80,13 @@ class Compounds implements RestInterface
                 TO_BASE64(fp20), TO_BASE64(fp21), TO_BASE64(fp22), TO_BASE64(fp23),
                 TO_BASE64(fp24), TO_BASE64(fp25), TO_BASE64(fp26), TO_BASE64(fp27),
                 TO_BASE64(fp28), TO_BASE64(fp29), TO_BASE64(fp30), TO_BASE64(fp31)
-            ) AS fp2_base64
+            ) AS fp2_base64,
+            CONCAT(users.firstname, " ", users.lastname) AS userid_human,
+            CASE WHEN compounds_fingerprints.id IS NOT NULL THEN 1 ELSE 0 END AS has_fingerprint
             FROM compounds AS entity
             LEFT JOIN compounds_fingerprints ON (compounds_fingerprints.id = entity.id)
             LEFT JOIN users
-            ON (users.userid = entity.owner)
+            ON (users.userid = entity.userid)
             LEFT JOIN users2teams
                 ON (users2teams.users_id = users.userid
                     AND users2teams.teams_id = %d)', $this->requester->team ?? 0);
@@ -118,8 +122,20 @@ class Compounds implements RestInterface
 
     public function patch(Action $action, array $params): array
     {
-        //$this->update(new CommentParam($params['comment']));
+        $this->canOrExplode(AccessType::Write);
+        $this->update(name: $params['name'] ?? null);
         return $this->readOne();
+    }
+
+    public function update(
+        ?string $name = null,
+    ): bool {
+        $sql = 'UPDATE compounds SET name = :name WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':name', $name);
+
+        return $this->Db->execute($req);
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -129,6 +145,7 @@ class Compounds implements RestInterface
         return match ($action) {
             Action::Duplicate => $this->createFromCid((int) $reqBody['cid']),
             default => $this->create(
+                name: $reqBody['name'] ?? null,
                 inchi: $reqBody['inchi'] ?? null,
                 inchiKey: $reqBody['inchi_key'] ?? null,
                 smiles: $reqBody['smiles'] ?? null,
@@ -183,7 +200,7 @@ class Compounds implements RestInterface
             created_by, modified_by, name, canread, canwrite,
             inchi, inchi_key,
             smiles, molecular_formula,
-            cas_number, iupac_name, pubchem_cid, owner, team
+            cas_number, iupac_name, pubchem_cid, userid, team
             ) VALUES (
             :requester, :requester, :name, :canread, :canwrite,
             :inchi, :inchi_key,

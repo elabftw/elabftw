@@ -1,0 +1,31 @@
+{# Modal for adding a compound #}
+<div class='modal fade' id='addCompoundModal' tabindex='-1' role='dialog' aria-labelledby='importFromPubChemModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='importFromPubChemModalLabel'><i class='fas fa-fw fa-cloud-arrow-down'></i> {{ 'Add compound'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2'>
+          <label for='pubchem-cid'>{{ 'Import from CID'|trans }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text' id='pubchem-cid-descriptor'>CID</span>
+            </div>
+            <input type='text' class='form-control' id='pubchem-cid' aria-describedby='pubchem-cid-descriptor'>
+            <div class='input-group-append'>
+              <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='import-cid'>{{ 'Import'|trans }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

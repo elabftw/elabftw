@@ -17,6 +17,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ag-grid-community/client-side-row-model@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "@ag-grid-community/client-side-row-model@npm:32.3.2"
+  dependencies:
+    "@ag-grid-community/core": "npm:32.3.2"
+    tslib: "npm:^2.3.0"
+  checksum: 10c0/01e28fbeb726a2e3ad38f94332a5ba7f3ec1deba673876ff8c8794c43dab5544ea64c82e045a2311137df578ef1e2aece90e2842410364b2115dcf1927f1e383
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/core@npm:32.3.2, @ag-grid-community/core@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "@ag-grid-community/core@npm:32.3.2"
+  dependencies:
+    ag-charts-types: "npm:10.3.1"
+    tslib: "npm:^2.3.0"
+  checksum: 10c0/95524abffed4df11128bea8789b12ae67660cb3acc4a2f66164e3ecb425deb22d21fff8329b60d93c0de3a3e57b79931d3d09eb0eaa3794fb61606140e1e2776
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/infinite-row-model@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "@ag-grid-community/infinite-row-model@npm:32.3.2"
+  dependencies:
+    "@ag-grid-community/core": "npm:32.3.2"
+    tslib: "npm:^2.3.0"
+  checksum: 10c0/95c29a0a509adbbd5b6af794766a0b9a5803cde1f22e40b2c5defe38e669af0d08a41792c9cbaa34fa877f97a4b49ac9a3a6e1b437d2649a91b1a88606fa3daa
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/react@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "@ag-grid-community/react@npm:32.3.2"
+  dependencies:
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    "@ag-grid-community/core": 32.3.2
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/ae043b7bcf3a78026119a7754e794b2b9d45ec0edc19df43897b197c90acea8debe056c94a04c711554a35a8be9c243636ab3a45c2296dfd2766d36351c57f0f
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/styles@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "@ag-grid-community/styles@npm:32.3.2"
+  checksum: 10c0/5d8fbf19f6080b03e315f1218a2e47a8c30b3d19104382b61eb00d0d3508d4b621616120a9ce5b600ea715c69722a4b7e575755d9d5940ebb9d546b3441e6cf5
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:^2.2.0":
   version: 2.3.0
   resolution: "@ampproject/remapping@npm:2.3.0"
@@ -2462,6 +2512,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/react-table@npm:^8.20.5":
+  version: 8.20.5
+  resolution: "@tanstack/react-table@npm:8.20.5"
+  dependencies:
+    "@tanstack/table-core": "npm:8.20.5"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10c0/574fa62fc6868a3b1113dbd043323f8b73aeb60555609caa164d5137a14636d4502784a961191afde2ec46f33f8c2bbfc4561d27a701c3d084e899a632dda3c8
+  languageName: node
+  linkType: hard
+
+"@tanstack/table-core@npm:8.20.5":
+  version: 8.20.5
+  resolution: "@tanstack/table-core@npm:8.20.5"
+  checksum: 10c0/3c27b5debd61b6bd9bfbb40bfc7c5d5af90873ae1a566b20e3bf2d2f4f2e9a78061c081aacc5259a00e256f8df506ec250eb5472f5c01ff04baf9918b554982b
+  languageName: node
+  linkType: hard
+
 "@teselagen/bio-parsers@npm:0.4.15":
   version: 0.4.15
   resolution: "@teselagen/bio-parsers@npm:0.4.15"
@@ -3541,6 +3610,35 @@ __metadata:
   version: 1.3.1
   resolution: "adler-32@npm:1.3.1"
   checksum: 10c0/c1b7185526ee1bbe0eac8ed414d5226af4cd02a0540449a72ec1a75f198c5e93352ba4d7b9327231eea31fd83c2d080d13baf16d8ed5710fb183677beb85f612
+  languageName: node
+  linkType: hard
+
+"ag-charts-types@npm:10.3.1":
+  version: 10.3.1
+  resolution: "ag-charts-types@npm:10.3.1"
+  checksum: 10c0/b81f60a83c3f023596102b65d83c28567f17117e5d653d4d4a00e0bd0269c9d4a7b41d9d98c6138e082c045a46f24d4ca1a24a61bad0efe659b818c557701768
+  languageName: node
+  linkType: hard
+
+"ag-grid-community@npm:32.3.2, ag-grid-community@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "ag-grid-community@npm:32.3.2"
+  dependencies:
+    ag-charts-types: "npm:10.3.1"
+  checksum: 10c0/5fa43b7bc1c78172da8eb763c9d3096a60c906efe7a8c523cee054e1bc2eca679f523c3cf0561da73de2322e3fd1c8145b04193e4069e245141301e82f3b0292
+  languageName: node
+  linkType: hard
+
+"ag-grid-react@npm:^32.3.2":
+  version: 32.3.2
+  resolution: "ag-grid-react@npm:32.3.2"
+  dependencies:
+    ag-grid-community: "npm:32.3.2"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/442623849c86a36ddf9ad6f124e0322859e1b35cead097b5d15f09324d7c7b1aa3584ab2af782113ae3a9b3db3fc0fec66faf739aa016c42b68c81b4cb30279a
   languageName: node
   linkType: hard
 
@@ -5771,6 +5869,11 @@ __metadata:
   resolution: "elabftw@workspace:."
   dependencies:
     3dmol: "npm:^2.3.0"
+    "@ag-grid-community/client-side-row-model": "npm:^32.3.2"
+    "@ag-grid-community/core": "npm:^32.3.2"
+    "@ag-grid-community/infinite-row-model": "npm:^32.3.2"
+    "@ag-grid-community/react": "npm:^32.3.2"
+    "@ag-grid-community/styles": "npm:^32.3.2"
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.4"
     "@babel/preset-react": "npm:^7.24.7"
@@ -5784,6 +5887,7 @@ __metadata:
     "@fullcalendar/interaction": "npm:^6.1.15"
     "@fullcalendar/list": "npm:^6.1.15"
     "@fullcalendar/timegrid": "npm:^6.1.15"
+    "@tanstack/react-table": "npm:^8.20.5"
     "@teselagen/bio-parsers": "npm:^0.4.22"
     "@teselagen/ove": "npm:^0.4.12"
     "@types/bootstrap": "npm:^5.2.10"
@@ -5798,6 +5902,8 @@ __metadata:
     "@yarnpkg/core": "npm:^4.1.3"
     "@yarnpkg/fslib": "npm:^3.1.0"
     "@yarnpkg/libzip": "npm:^3.1.0"
+    ag-grid-community: "npm:^32.3.2"
+    ag-grid-react: "npm:^32.3.2"
     babel-loader: "npm:^9.2.1"
     bootstrap: "npm:^4.6.2"
     bootstrap-markdown-fa5: "npm:^2.10.2"
@@ -12670,6 +12776,13 @@ __metadata:
   version: 2.6.3
   resolution: "tslib@npm:2.6.3"
   checksum: 10c0/2598aef53d9dbe711af75522464b2104724d6467b26a60f2bdac8297d2b5f1f6b86a71f61717384aa8fd897240467aaa7bcc36a0700a0faf751293d1331db39a
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.3.0":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 

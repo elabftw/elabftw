@@ -277,7 +277,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll(new BaseQueryParams());
+        $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($this->App->Request->query));
 
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
@@ -286,7 +286,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $ProcurementRequests = new ProcurementRequests($Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
-        $baseQueryParams = new BaseQueryParams();
+        $baseQueryParams = new BaseQueryParams($this->App->Request->query);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
@@ -308,7 +308,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll($baseQueryParams),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
-Here be compounds
-{% for compound in compoundsArr %}
-{{ compound.name }}<br>
-{% endfor %}
+{# IMPORT FROM PUBCHEM #}
+{% include('import-pubchem-modal.html') %}
+{% include('add-compound-modal.html') %}
+  <div class='my-3'>
+    <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-secondary'>{{ 'Add from PubChem'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='addCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
+  </div>
+  <div id='compounds-table'></div>
 {% endblock body %}

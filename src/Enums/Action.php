@@ -42,6 +42,7 @@ enum Action: string
     case Sign = 'sign';
     case Timestamp = 'timestamp';
     case Update = 'update';
+    case UpdateOwner = 'updateowner';
     case UpdatePassword = 'updatepassword';
     case UpdateTag = 'updatetag';
     case UpdateMetadataField = 'updatemetadatafield';

@@ -43,7 +43,7 @@ class Fingerprints
 
         $req = $this->Db->prepare($sql);
         for ($i = 0; $i < 32; $i++) {
-            $req->bindParam(":fp$i", $fp['data'][$i], PDO::PARAM_INT);
+            $req->bindParam(":fp$i", $fp[$i], PDO::PARAM_INT);
         }
         $req->bindParam(':id', $this->compound, PDO::PARAM_INT);
         $req->execute();

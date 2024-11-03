@@ -247,6 +247,6 @@ class Compounds implements RestInterface
         $Fingerprinter = new Fingerprinter($HttpGetter);
         $fp = $Fingerprinter->calculate('smi', $compound->smiles ?? '');
         $Fingerprints = new Fingerprints($id);
-        return $Fingerprints->create($fp);
+        return $Fingerprints->create($fp['data']);
     }
 }

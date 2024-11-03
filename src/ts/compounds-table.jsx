@@ -7,82 +7,72 @@ import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-const rowSelection = {
-    mode: 'multiRow',
-    headerCheckbox: false,
-};
-
-const ApiC = new Api();
-const compounds = await ApiC.getJson('compounds?limit=9000');
-console.log(compounds);
-
-const GridExample = () => {
-    const [rowData, setRowData] = useState(compounds);
-
-    const [columnDefs, setColumnDefs] = useState([
-      /*
-        {
-            field: 'make',
-            editable: true,
-            cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
-                values: ['Tesla', 'Ford', 'Toyota', 'Mercedes', 'Fiat', 'Nissan', 'Vauxhall', 'Volvo', 'Jaguar'],
-            },
-        },
-        */
-        { field: 'id', type: 'numericColumn' },
-        {
-          field: 'name',
-          editable: true,
-          cellEditor: 'agTextCellEditor',
-          pinned: 'left',
-        },
-        { field: 'smiles' },
-        { field: 'inchi' },
-        { field: 'has_fingerprint', headerName: 'Has fingerprint' },
-        { field: 'created_by', headerName: 'Created by' },
-        { field: 'modified_at', headerName: 'Modified at' },
-        { field: 'modified_by', headerName: 'Modified by' },
-        { field: 'userid_human', headerName: 'Owner' },
-        { field: 'team' },
-    ]);
-
-    const defaultColDef = useMemo(() => {
-        return {
-            filter: 'agTextColumnFilter',
-            floatingFilter: true,
-            onCellValueChanged: (event) => {
-              console.log(event);
-              const params = {};
-              params[event.column.colId] = event.newValue;
-              ApiC.patch(`compounds/${event.data.id}`, params);
-            }
-        };
-    }, []);
-
-    return (
-        <div
-            className={
-                "ag-theme-quartz-dark"
-            }
-            style={{ height: 650 }}
-        >
-            <AgGridReact
-                rowData={rowData}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                rowSelection={rowSelection}
-                pagination={true}
-                paginationPageSize={15}
-                paginationPageSizeSelector={[15, 50, 100, 500]}
-            />
-        </div>
-    );
-};
-
 if (document.getElementById('compounds-table')) {
+  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+  const rowSelection = {
+      mode: 'multiRow',
+      headerCheckbox: false,
+  };
+
+  const ApiC = new Api();
+  // all the compounds are loaded in the table, which does client side pagination
+  const compounds = await ApiC.getJson('compounds?limit=999999');
+
+  const GridExample = () => {
+      const [rowData, setRowData] = useState(compounds);
+
+      const [columnDefs, setColumnDefs] = useState([
+          { field: 'id', type: 'numericColumn' },
+          {
+            field: 'name',
+            editable: true,
+            cellEditor: 'agTextCellEditor',
+            pinned: 'left',
+          },
+          { field: 'smiles' },
+          { field: 'inchi' },
+          { field: 'has_fingerprint', headerName: 'Has fingerprint' },
+          { field: 'created_by', headerName: 'Created by' },
+          { field: 'modified_at', headerName: 'Modified at' },
+          { field: 'modified_by', headerName: 'Modified by' },
+          { field: 'userid_human', headerName: 'Owner' },
+          { field: 'team' },
+      ]);
+
+      const defaultColDef = useMemo(() => {
+          return {
+              filter: 'agTextColumnFilter',
+              floatingFilter: true,
+              onCellValueChanged: (event) => {
+                console.log(event);
+                const params = {};
+                params[event.column.colId] = event.newValue;
+                ApiC.patch(`compounds/${event.data.id}`, params);
+              }
+          };
+      }, []);
+
+      return (
+          <div
+              className={
+                  "ag-theme-quartz-dark"
+              }
+              style={{ height: 650 }}
+          >
+              <AgGridReact
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  rowSelection={rowSelection}
+                  pagination={true}
+                  paginationPageSize={15}
+                  paginationPageSizeSelector={[15, 50, 100, 500]}
+              />
+          </div>
+      );
+  };
+
   const root = createRoot(document.getElementById('compounds-table'));
   root.render(
         <GridExample />

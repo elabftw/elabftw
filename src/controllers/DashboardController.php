@@ -14,7 +14,6 @@ namespace Elabftw\Controllers;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
@@ -29,6 +28,7 @@ use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
+use Elabftw\Params\DisplayParams;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

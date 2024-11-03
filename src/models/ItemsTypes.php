@@ -14,13 +14,13 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
-use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
 use Override;
 use PDO;

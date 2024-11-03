@@ -29,6 +29,7 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
+use Elabftw\Params\UserParams;
 
 /**
  * This is used to generate data for dev purposes

@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CommentParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\CommentParam;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {

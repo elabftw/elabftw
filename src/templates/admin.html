@@ -38,6 +38,7 @@
 {% include 'create-statuslike-modal.html' with {'target': 'experiments_categories', 'title': 'Create new experiments category'|trans} %}
 {% include 'create-statuslike-modal.html' with {'target': 'experiments_status', 'title': 'Create new experiments status'|trans} %}
 {% include 'create-statuslike-modal.html' with {'target': 'items_status', 'title': 'Create new resources status'|trans} %}
+{% include('ownership-transfer-modal.html') %}
 {% include 'onboarding-email-modal.html' %}
 
 {# set variables for binary-settings template and other inputs with a data-model #}
@@ -784,6 +785,7 @@
     {# Action buttons #}
     <button data-action='run-action-selected' data-what='forceLock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
     <button data-action='run-action-selected' data-what='forceUnlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
+    <button data-action='toggle-modal' type='button' class='btn btn-primary mr-1 mb-2' data-target='ownerModal'>{{ 'Transfer ownership'|trans }}</button>
     <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
     <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
   </div>

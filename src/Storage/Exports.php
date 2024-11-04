@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Storage;
 
 /**
- * For local cache folder, used by many processes that need to write files at some point
+ * For local export folder, used to store user exports of experiments and resources
  */
 class Exports extends Local
 {

@@ -52,15 +52,9 @@ class Batch implements RestInterface
             $model = new Experiments($this->requester);
             $Tags2Entity = new Tags2Entity($model->entityType);
             $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-            foreach ($targetIds as $id) {
-                try {
-                    $model->setId($id);
-                    $model->patch($action, $reqBody);
-                    $this->processed++;
-                } catch (IllegalActionException) {
-                    continue;
-                }
-            }
+            // Format tags as associative array to be processed same way as other entries
+            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
         }
         if ($reqBody['users']) {
             // only process experiments
@@ -97,19 +91,37 @@ class Batch implements RestInterface
 
     private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
     {
+        $entries = $this->getEntriesByIds($idArr, $model, $column);
+        $this->loopOverEntries($entries, $model, $action, $params);
+    }
+
+    private function getEntriesByIds(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column): array
+    {
+        $allEntries = array();
         foreach ($idArr as $id) {
             $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
             $DisplayParams->limit = 100000;
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);
-            foreach ($entries as $entry) {
-                try {
-                    $model->setId($entry['id']);
-                    $model->patch($action, $params);
-                    $this->processed++;
-                } catch (IllegalActionException) {
-                    continue;
-                }
+            $allEntries = array_merge($allEntries, $entries);
+        }
+        return $allEntries;
+    }
+
+    private function loopOverEntries(array $entries, AbstractConcreteEntity $model, Action $action, array $params): void
+    {
+        // On transfer of ownership, only the target owner is required in params
+        if ($params['action'] === Action::UpdateOwner->value) {
+            $params = array('userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'));
+            $action = Action::Update;
+        }
+        foreach ($entries as $entry) {
+            try {
+                $model->setId($entry['id']);
+                $model->patch($action, $params);
+                $this->processed++;
+            } catch (IllegalActionException) {
+                continue;
             }
         }
     }

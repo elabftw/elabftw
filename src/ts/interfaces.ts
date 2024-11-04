@@ -84,6 +84,8 @@ enum Action {
   Duplicate = 'duplicate',
   ExclusiveEditMode = 'exclusiveeditmode',
   Finish = 'finish',
+  ForceLock = 'forcelock',
+  ForceUnlock = 'forceunlock',
   Lock = 'lock',
   Notif = 'notif',
   NotifDestroy = 'notifdestroy',

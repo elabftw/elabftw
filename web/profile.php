@@ -57,7 +57,7 @@ try {
     $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
 
     // get the exported files
-    $Export = new Exports($App->Users, Storage::CACHE->getStorage());
+    $Export = new Exports($App->Users, Storage::EXPORTS->getStorage());
 
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();

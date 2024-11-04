@@ -347,8 +347,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
-    // THE LOCK & UNLOCK BUTTONS FOR CHECKED BOXES
-    } else if (el.matches('[data-action="lock-unlock-selected-entities"]')) {
+    // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
+    } else if (el.matches('[data-action="patch-selected-entities"]')) {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
@@ -356,46 +356,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // loop over it and patch with either lock or unlock action
+      // loop over it and patch with selected action
       const results = [];
       checked.forEach(chk => {
         results.push(EntityC.patchAction(chk.id, action));
       });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
-
-    // THE TIMESTAMP BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notifNothingSelected();
-        return;
-      }
-      // loop on it and timestamp it
-      checked.forEach(chk => {
-        EntityC.patchAction(chk.id, Action.Timestamp).then(() => reloadEntitiesShow());
-      });
-
-    // THE ARCHIVE BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="archive-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notifNothingSelected();
-        return;
-      }
-
-      // loop over it and lock entities
-      const results = [];
-      checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.Archive));
-      });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
+      Promise.all(results).then(() => reloadEntitiesShow());
 
     // THE DELETE BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="destroy-selected-entities"]')) {

@@ -347,38 +347,19 @@ document.addEventListener('DOMContentLoaded', () => {
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
 
-    // THE LOCK BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="lock-selected-entities"]')) {
+    // THE LOCK & UNLOCK BUTTONS FOR CHECKED BOXES
+    } else if (el.matches('[data-action="lock-unlock-selected-entities"]')) {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
         notifNothingSelected();
         return;
       }
-
-      // loop over it and lock entities
+      const action = <Action>el.dataset.what;
+      // loop over it and patch with either lock or unlock action
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.ForceLock));
-      });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
-
-    // THE UNLOCK BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="unlock-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notifNothingSelected();
-        return;
-      }
-
-      // loop over it and unlock entities
-      const results = [];
-      checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.ForceUnlock));
+        results.push(EntityC.patchAction(chk.id, action));
       });
 
       Promise.all(results).then(() => {

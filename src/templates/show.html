@@ -222,8 +222,8 @@
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
           {# Action buttons #}
-          <button data-action='lock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='unlock-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
+          <button data-action='lock-unlock-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
+          <button data-action='lock-unlock-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
           <button data-action='timestamp-selected-entities' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
           <button data-action='archive-selected-entities' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
           <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>

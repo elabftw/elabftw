@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ProcurementRequestParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\ProcurementRequestParams;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
 use PDO;

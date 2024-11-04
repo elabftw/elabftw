@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Elabftw\StatusParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
+use Elabftw\Params\OrderingParams;
+use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;

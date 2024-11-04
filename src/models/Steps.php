@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\StepParams;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\StepDeadline;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;

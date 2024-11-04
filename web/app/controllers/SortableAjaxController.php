@@ -26,6 +26,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
+use Elabftw\Params\ExtraFieldsOrderingParams;
+use Elabftw\Params\OrderingParams;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;

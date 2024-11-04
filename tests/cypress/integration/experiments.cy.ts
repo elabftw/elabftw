@@ -13,7 +13,7 @@ describe('Import tab on profile page', () => {
     cy.get('#import_modal_canwrite').should('exist');
     // check if custom button exists and make form input visible
     cy.get('[data-action="show-file-input"]').should('exist').click();
-    cy.get('#importFileInput').should('exist').invoke('show').selectFile('tests/_data/multiple-experiments.eln').invoke('hide');
+    cy.get('#importFileInput').should('exist').selectFile('tests/_data/multiple-experiments.eln', { force: true });
     // Check that the file name is displayed
     cy.get('#fileName').should('be.visible').and('have.text','multiple-experiments.eln');
     /*
@@ -28,7 +28,7 @@ describe('Import tab on profile page', () => {
     cy.get('#overlay').should('contain', 'File imported successfully');
     // now CSV
     cy.get('[data-action="show-file-input"]').should('exist').click();
-    cy.get('#importFileInput').should('exist').invoke('show').selectFile('tests/_data/importable.csv').invoke('hide');
+    cy.get('#importFileInput').should('exist').selectFile('tests/_data/importable.csv', { force: true });
     cy.get('#fileName').should('be.visible').and('have.text','importable.csv');
     /*
     cy.intercept('api/v2/import', req => {

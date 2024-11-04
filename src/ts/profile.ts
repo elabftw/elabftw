@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // make sure previous error message is removed first
     document.getElementById(errorDivId)?.remove();
     // display the selected file name on screen
-    const fileName = input.files[0] ? input.files[0].name : '';
+    const fileName = input.files[0]?.name || '';
     document.getElementById('fileName').textContent = fileName;
     const maxsize = await ApiC.getJson('import').then(json => json.max_filesize);
     if (input.files[0].size > maxsize) {

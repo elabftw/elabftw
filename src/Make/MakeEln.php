@@ -169,6 +169,7 @@ class MakeEln extends AbstractMakeEln
             'author' => array('@id' => $this->getAuthorId(new Users((int) $e['userid']))),
             'dateCreated' => (new DateTimeImmutable($e['created_at']))->format(DateTimeImmutable::ATOM),
             'dateModified' => (new DateTimeImmutable($e['modified_at']))->format(DateTimeImmutable::ATOM),
+            'temporal' => (new DateTimeImmutable($e['date'] ?? date('Y-m-d')))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
             'encodingFormat' => ($e['content_type'] ?? 1) === 1 ? 'text/html' : 'text/markdown',
             'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . '.php?mode=view&id=' . $e['id'],

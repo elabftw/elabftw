@@ -424,12 +424,12 @@ button:disabled {
 
   td {
     width: fit-content;
-    height: auto;
-  }
 
-  img {
-    object-fit: contain;
-    height: auto;
+    img {
+      object-fit: contain;
+      max-width: 100%;
+      height: auto;
+    }
   }
 
   th {

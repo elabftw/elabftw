@@ -123,12 +123,11 @@ export function getTinymceBaseConfig(page: string): object {
   return {
     selector: '.mceditable',
     table_default_styles: {
-      'table-layout': 'auto',
       'min-width':'25%',
-      'width':'fit-content',
+      'width':'auto',
     },
-    // allow resizing on images only, because table resizing induces width % that adapts to window
-    object_resizing: 'img',
+    // The table width is changed when manipulating columns, the size of other columns is maintained.
+    table_column_resizing: 'resizetable',
     browser_spellcheck: true,
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',

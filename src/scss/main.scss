@@ -422,6 +422,16 @@ button:disabled {
     }
   }
 
+  td {
+    width: fit-content;
+
+    img {
+      object-fit: contain;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
   th {
     border-top: 0;
     white-space: nowrap;

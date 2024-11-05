@@ -76,13 +76,16 @@ class Templates extends AbstractTemplateEntity
         }
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, canread, canwrite, canread_target, canwrite_target, content_type, rating)
-            VALUES(:team, :title, :body, :userid, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $req->bindParam(':status', $status, PDO::PARAM_INT);
+        $req->bindParam(':metadata', $metadata);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_target', $canread);

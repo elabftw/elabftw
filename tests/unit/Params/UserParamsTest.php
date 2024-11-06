@@ -35,7 +35,7 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($orcid, $params->getContent());
     }
 
-    public function testInvalidOrcidForamt(): void
+    public function testInvalidOrcidFormat(): void
     {
         $orcid = '1234-5678-1212-001';
         $params = new UserParams('orcid', $orcid);
@@ -49,5 +49,12 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $params = new UserParams('orcid', $orcid);
         $this->expectException(ImproperActionException::class);
         $params->getContent();
+    }
+
+    public function testClearOrcid(): void
+    {
+        $orcid = '';
+        $params = new UserParams('orcid', $orcid);
+        $this->assertSame('', $params->getContent());
     }
 }

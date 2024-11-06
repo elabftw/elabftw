@@ -307,7 +307,7 @@ class MakeEln extends AbstractMakeEln
             'email' => $author->userData['email'],
         );
         // only add an identifier property if there is an orcid
-        if ($author->userData['orcid'] !== null) {
+        if (!empty($author->userData['orcid'])) {
             $node['identifier'] = 'https://orcid.org/' . $author->userData['orcid'];
         }
         // only add it if it doesn't exist yet in our list of authors

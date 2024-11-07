@@ -3668,16 +3668,6 @@ paths:
                     content:
                       type: integer
                       description: Binary value for `is_owner`, integer for `group` (2 for Admin, 4 for User)
-                - type: object
-                  description: Modify identity for user or `me`
-                  properties:
-                    firstname:
-                      type: string
-                    lastname:
-                      type: string
-                    orcid:
-                      type: string
-                      description: The ORCID of the user. It will be cleared if an empty string is provided.
       responses:
         '200':
           description: Public properties of a user.

@@ -3677,7 +3677,7 @@ paths:
                       type: string
                     orcid:
                       type: string
-                      description: The orcid of the user. Is cleared when empty string is sent
+                      description: The ORCID of the user. It will be cleared if an empty string is provided.
       responses:
         '200':
           description: Public properties of a user.

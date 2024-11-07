@@ -77,6 +77,16 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, array('orcid' => 'blah'));
     }
 
+    public function testClearOrcid(): void
+    {
+        $this->assertEmpty($this->Users->userData['orcid']);
+        $this->Users->patch(Action::Update, array('orcid' => '0000-0002-7494-5555'));
+        $this->assertEquals('0000-0002-7494-5555', $this->Users->userData['orcid']);
+
+        $this->Users->patch(Action::Update, array('orcid' => null));
+        $this->assertEmpty($this->Users->userData['orcid'], message: 'Orcid is not empty.');
+    }
+
     public function testUpdatePreferences(): void
     {
         $prefsArr = array(

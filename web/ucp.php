@@ -31,6 +31,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\OrderableQueryParams;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,7 +83,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->readAll(new BaseQueryParams());
+    $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query));
 
     // Notifications
     $notificationsSettings = array(
@@ -137,8 +138,8 @@ try {
         'notificationsSettings' => $notificationsSettings,
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
-        'statusArr' => $Status->readAll($baseQueryParams),
-        'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
+        'statusArr' => $Status->readAll($Status->getQueryParams($App->Request->query)),
+        'teamTagsArr' => $TeamTags->readAll($TeamTags->getQueryParams($App->Request->query)),
         'templatesArr' => $Templates->readAll($baseQueryParams),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,

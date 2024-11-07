@@ -1,6 +1,10 @@
 -- revert schema 167
 DROP TABLE IF EXISTS compounds_fingerprints;
 DROP TABLE IF EXISTS compounds;
+DROP TABLE IF EXISTS compounds2experiments;
+DROP TABLE IF EXISTS compounds2experiments_templates;
+DROP TABLE IF EXISTS compounds2items;
+DROP TABLE IF EXISTS compounds2items_types;
 ALTER TABLE `experiments` DROP FOREIGN KEY `fk_experiments_storage`;
 ALTER TABLE experiments DROP COLUMN storage;
 ALTER TABLE experiments DROP COLUMN qty_stored;

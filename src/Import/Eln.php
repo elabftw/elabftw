@@ -252,9 +252,8 @@ class Eln extends AbstractZip
 
             // set the date if we can
             $date = date('Y-m-d');
-            if (isset($dataset['dateCreated'])) {
-                $dateCreated = new DateTimeImmutable($dataset['dateCreated']);
-                $date = $dateCreated->format('Y-m-d');
+            if (isset($dataset['temporal'])) {
+                $date = (new DateTimeImmutable($dataset['temporal']))->format('Y-m-d');
             }
             $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {

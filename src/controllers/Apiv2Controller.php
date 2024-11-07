@@ -267,7 +267,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
             ApiEndpoint::Info => new Info(),
-            ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
+            ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,

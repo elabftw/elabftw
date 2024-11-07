@@ -10,8 +10,8 @@
       </div>
       <div class='modal-body'>
         {# SELECT USER #}
-        <label for='new_owner'>{{ 'New owner'|trans }}</label>
-        <select id='new_owner' class='form-control'>
+        <label for='target_owner'>{{ 'New owner'|trans }}</label>
+        <select id='target_owner' class='form-control'>
           {% for user in Entity.Users.readAllFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}
@@ -21,7 +21,11 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-action='transfer-ownership'>{{ 'Save'|trans }}</button>
+        {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
+          <button type='button' class='btn btn-primary' data-action='run-action-selected' data-what='updateowner' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+        {% else %}
+          <button type='button' class='btn btn-primary' data-action='transfer-ownership' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+        {% endif %}
       </div>
     </div>
   </div>

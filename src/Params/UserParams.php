@@ -48,7 +48,7 @@ final class UserParams extends ContentParams implements ContentParamsInterface
             )(),
             // return the hash of the password
             'password' => $this->validateAndHashPassword(),
-            'orcid' => $this->filterOrcid(),
+            'orcid' => $this->getOrcid(),
             'limit_nb' => (string) Check::limit((int) $this->content),
             'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
@@ -73,6 +73,15 @@ final class UserParams extends ContentParams implements ContentParamsInterface
         $PasswordValidator->validate($this->content);
 
         return password_hash($this->content, PASSWORD_DEFAULT);
+    }
+
+    private function getOrcid(): string
+    {
+        if (empty($this->content)) {
+            return '';
+        }
+
+        return $this->filterOrcid();
     }
 
     private function filterOrcid(): string

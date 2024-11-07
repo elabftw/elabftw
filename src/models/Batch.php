@@ -49,12 +49,17 @@ class Batch implements RestInterface
             $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
         if ($reqBody['tags']) {
-            $model = new Experiments($this->requester);
-            $Tags2Entity = new Tags2Entity($model->entityType);
-            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-            // Format tags as associative array to be processed same way as other entries
-            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
-            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+            $models = array(
+                'Experiments' => new Experiments($this->requester),
+                'Items' => new Items($this->requester),
+            );
+            foreach ($models as $model) {
+                $Tags2Entity = new Tags2Entity($model->entityType);
+                $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
+                // Format tags as associative array to be processed same way as other entries
+                $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+                $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+            }
         }
         if ($reqBody['users']) {
             // only process experiments

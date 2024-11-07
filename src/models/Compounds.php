@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Elabftw\Compound;
 use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
@@ -42,10 +43,14 @@ class Compounds implements RestInterface
 
     protected Db $Db;
 
+    protected HttpGetter $httpGetter;
+
     public function __construct(private Users $requester, ?int $id = null)
     {
         $this->Db = Db::getConnection();
         $this->setId($id);
+        $Config = Config::getConfig();
+        $this->httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
     }
 
     public function getApiPath(): string
@@ -53,23 +58,17 @@ class Compounds implements RestInterface
         return sprintf('api/v2/fingerprints/%d', $this->id ?? 0);
     }
 
-    protected function canOrExplode(AccessType $accessType): bool
+    public function searchPubChem(int $cid): Compound
     {
-        if ($this->id === null) {
-            throw new ImproperActionException('No id is set!');
-        }
-        $sql = 'SELECT canread, canwrite, team, userid FROM compounds WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $compound = $req->fetch();
-        $Permissions = new Permissions($this->requester, $compound);
-        $perms = $Permissions->forEntity();
-        return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
+        $Importer = new PubChemImporter($this->httpGetter);
+        return $Importer->fromPugView($cid);
     }
 
     public function readAll(QueryParamsInterface $queryParams): array
     {
+        if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
+            return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
+        }
         $sql = sprintf('SELECT entity.*,
             CONCAT(
                 TO_BASE64(fp0), TO_BASE64(fp1), TO_BASE64(fp2), TO_BASE64(fp3),
@@ -226,12 +225,24 @@ class Compounds implements RestInterface
         return $this->Db->lastInsertId();
     }
 
+    protected function canOrExplode(AccessType $accessType): bool
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('No id is set!');
+        }
+        $sql = 'SELECT canread, canwrite, team, userid FROM compounds WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $compound = $req->fetch();
+        $Permissions = new Permissions($this->requester, $compound);
+        $perms = $Permissions->forEntity();
+        return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
+    }
+
     private function createFromCid(int $cid): int
     {
-        $Config = Config::getConfig();
-        $HttpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
-        $Importer = new PubChemImporter($HttpGetter);
-        $compound = $Importer->fromPugView($cid);
+        $compound = $this->searchPubChem($cid);
         // idea: create from Compound
         $id = $this->create(
             casNumber: $compound->cas,
@@ -244,7 +255,7 @@ class Compounds implements RestInterface
             molecularFormula: $compound->molecularFormula,
         );
         // Now calculate fingerprint
-        $Fingerprinter = new Fingerprinter($HttpGetter);
+        $Fingerprinter = new Fingerprinter($this->httpGetter);
         $fp = $Fingerprinter->calculate('smi', $compound->smiles ?? '');
         $Fingerprints = new Fingerprints($id);
         return $Fingerprints->create($fp['data']);

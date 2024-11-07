@@ -86,7 +86,7 @@ class Check
             'options' => array(
                 'default' => 15,
                 'min_range' => 1,
-                'max_range' => 9999,
+                'max_range' => 9999999,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,
         );

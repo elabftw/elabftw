@@ -164,8 +164,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.disabled = false;
       });
 
-    // SAVE CHEM CANVAS AS FILE: chemjson or png
-    /*
+      // SAVE CHEM CANVAS AS FILE: chemjson or png
+      /*
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));
       if (realName === null || realName === '') {

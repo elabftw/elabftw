@@ -54,7 +54,7 @@ export class Api {
     return this.send(Method.POST, query, params);
   }
 
-  post2location(query: string, params = {}): Promise<Number> {
+  post2location(query: string, params = {}): Promise<number> {
     return this.send(Method.POST, query, params).then(res => getNewIdFromPostRequest(res));
   }
 

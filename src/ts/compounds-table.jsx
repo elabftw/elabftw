@@ -3,9 +3,11 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
+
+const ApiC = new Api();
 
 if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -15,12 +17,9 @@ if (document.getElementById('compounds-table')) {
       headerCheckbox: false,
   };
 
-  const ApiC = new Api();
-  // all the compounds are loaded in the table, which does client side pagination
-  const compounds = await ApiC.getJson('compounds?limit=999999');
 
   const GridExample = () => {
-      const [rowData, setRowData] = useState(compounds);
+      const [rowData, setRowData] = useState([]);
 
       const [columnDefs, setColumnDefs] = useState([
           { field: 'id', type: 'numericColumn' },
@@ -39,6 +38,17 @@ if (document.getElementById('compounds-table')) {
           { field: 'userid_human', headerName: 'Owner' },
           { field: 'team' },
       ]);
+
+    // Load data on component mount
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    // all the compounds are loaded in the table, which does client side pagination
+    const fetchData = async () => {
+        const compounds = await ApiC.getJson('compounds?limit=999999');
+        setRowData(compounds);
+    };
 
       const defaultColDef = useMemo(() => {
           return {
@@ -73,8 +83,17 @@ if (document.getElementById('compounds-table')) {
       );
   };
 
+  // In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
+  // This change will trigger a full remount of the element, and the table will be updated
+  const App = () => {
+    const [reloadKey, setReloadKey] = useState(0);
+    // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
+    document.addEventListener('dataReload', () => setReloadKey(prevKey => prevKey + 1));
+    return <GridExample key={reloadKey} />;
+  };
+
   const root = createRoot(document.getElementById('compounds-table'));
   root.render(
-        <GridExample />
+        <App />
   );
 }

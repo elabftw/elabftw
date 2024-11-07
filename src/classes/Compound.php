@@ -30,6 +30,22 @@ class Compound
         public ?string $smiles = null,
     ) {}
 
+    public function toArray(): array
+    {
+        return array(
+            'cas' => $this->cas,
+            'cid' => $this->cid,
+            'inChI' => $this->inChI,
+            'inChIKey' => $this->inChIKey,
+            'isPublic' => $this->isPublic,
+            'iupacName' => $this->iupacName,
+            'molecularFormula' => $this->molecularFormula,
+            'name' => $this->name,
+            'safetyIcons' => $this->safetyIcons,
+            'smiles' => $this->smiles,
+        );
+    }
+
     public static function fromPugView(string $json): self
     {
         $all = json_decode($json, true, 42)['Record'];

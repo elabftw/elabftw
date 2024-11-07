@@ -242,6 +242,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function generateTable(data: Record<string, string | null>) {
+    const table = document.createElement('table');
+    table.classList.add('table');
+    const tbody = document.createElement('tbody');
+
+    for (const [key, value] of Object.entries(data)) {
+      const row = document.createElement('tr');
+      const cellKey = document.createElement('td');
+      cellKey.textContent = key;
+      row.appendChild(cellKey);
+      const cellValue: HTMLTableCellElement = document.createElement('td');
+      cellValue.textContent = value !== null ? value : 'N/A';
+      row.appendChild(cellValue);
+      tbody.appendChild(row);
+    }
+
+    table.appendChild(tbody);
+    return table;
+  }
+
   /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
@@ -489,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (root) {
         const detailsElements = root.querySelectorAll('details');
         detailsElements.forEach((details: HTMLDetailsElement) => {
-            details.open = true;
+          details.open = true;
         });
       }
     } else if (el.matches('[data-action="add-storage"]')) {
@@ -498,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
       params['parent_id'] = el.dataset.parentId;
       params['level_name'] = el.dataset.levelName;
       params['unit_name'] = name;
-      ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {
       const unitName = prompt('Unit Name');
@@ -508,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = {};
       params['parent_id'] = el.dataset.parentId;
       params['unit_name'] = unitName;
-      ApiC.post(`storage_units`, params).then(() => reloadElements(['storageDiv']));
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
     } else if (el.matches('[data-action="add-to-storage"]')) {
       const entity = getEntity();
       ApiC.patch(`${entity.type}/${entity.id}`, {storage: el.dataset.id}).then(() => reloadElements(['entityStoragePath']));
@@ -531,12 +551,40 @@ document.addEventListener('DOMContentLoaded', () => {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
 
+    // SEARCH PUBCHEM
+    } else if (el.matches('[data-action="search-cid"]')) {
+      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      if (!inputEl.checkValidity()) {
+        inputEl.reportValidity();
+        return;
+      }
+      const resultDiv = document.getElementById('pubChemSearchResultDiv');
+      const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+      const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
+      ApiC.getJson(`compounds?search_pubchem_cid=${inputEl.value}`).then(json => {
+        const table = generateTable(json);
+        resultDiv.removeAttribute('hidden');
+        viewOnPubChemLink.href = viewOnPubChemLink.href + json.cid;
+        // clear any previous result
+        resultTableDiv.innerHTML = '';
+        resultTableDiv.appendChild(table);
+        const importBtn = document.querySelector('[data-action="import-cid"]');
+        importBtn.removeAttribute('disabled');
+      });
+
     // IMPORT FROM PUBCHEM
     } else if (el.matches('[data-action="import-cid"]')) {
-      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      const inputEl = document.getElementById('pubchem-cid') as HTMLInputElement;
       const params = {cid: parseInt(inputEl.value, 10), action: Action.Duplicate};
       ApiC.post2location('compounds', params).then(() => {
-        reloadElements(['compoundDiv']);
+        document.dispatchEvent(new CustomEvent('dataReload'));
+        inputEl.value = '';
+        const resultDiv = document.getElementById('pubChemSearchResultDiv');
+        resultDiv.setAttribute('hidden', 'hidden');
+        const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+        resultTableDiv.innerHTML = '';
+        const importBtn = document.querySelector('[data-action="import-cid"]');
+        importBtn.setAttribute('disabled', 'disabled');
       });
 
 

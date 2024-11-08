@@ -33,12 +33,7 @@ class Batch implements RestInterface
     {
         $action = Action::from($reqBody['action']);
         if ($reqBody['items_tags']) {
-            $model = new Items($this->requester);
-            $Tags2Entity = new Tags2Entity($model->entityType);
-            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['items_tags']);
-            // Format tags as associative array to be processed same way as other entries
-            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
-            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+            $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
         }
         if ($reqBody['items_types']) {
             $model = new Items($this->requester);
@@ -57,11 +52,7 @@ class Batch implements RestInterface
             $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
         if ($reqBody['experiments_tags']) {
-            $model = new Experiments($this->requester);
-            $Tags2Entity = new Tags2Entity($model->entityType);
-            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['experiments_tags']);
-            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
-            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+            $this->processTags($reqBody['experiments_tags'], new Experiments($this->requester), $action, $reqBody);
         }
         if ($reqBody['users']) {
             // only process experiments
@@ -100,6 +91,15 @@ class Batch implements RestInterface
     {
         $entries = $this->getEntriesByIds($idArr, $model, $column);
         $this->loopOverEntries($entries, $model, $action, $params);
+    }
+
+    private function processTags(array $tags, AbstractConcreteEntity $model, Action $action, array $params): void
+    {
+        $Tags2Entity = new Tags2Entity($model->entityType);
+        $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $tags);
+        // Format tags as associative array to be processed the same way as other entries
+        $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+        $this->loopOverEntries($tagEntries, $model, $action, $params);
     }
 
     private function getEntriesByIds(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column): array

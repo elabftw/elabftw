@@ -46,7 +46,7 @@ export default defineConfig({
     supportFile: 'tests/cypress/support/index.ts',
   },
   // give more time because Xdebug slows down php a bit
-  defaultCommandTimeout: 8000,
+  defaultCommandTimeout: 15000,
   requestTimeout: 10000,
   responseTimeout: 130000,
   taskTimeout: 300000,

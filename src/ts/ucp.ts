@@ -96,8 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else if (el.matches('[data-action="patch-account"]')) {
       const params = collectForm(document.getElementById('ucp-account-form'), false);
-      if (params['orcid'] === '') {
-        delete params['orcid'];
+      // Allow clearing the field when sending empty orcid param
+      if (!params['orcid']) {
+        params['orcid'] = null;
       }
       ApiC.patch(`${Model.User}/me`, params);
 

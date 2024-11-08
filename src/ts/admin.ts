@@ -77,9 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       items_types: collectSelectable('items_types'),
       items_status: collectSelectable('items_status'),
+      items_tags: collectSelectable('items_tags'),
       experiments_status: collectSelectable('experiments_status'),
       experiments_categories: collectSelectable('experiments_categories'),
-      tags: collectSelectable('tags'),
+      experiments_tags: collectSelectable('experiments_tags'),
       users: collectSelectable('users'),
       target_owner: collectTargetOwner(),
       can: collectCan(),

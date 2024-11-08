@@ -32,6 +32,14 @@ class Batch implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         $action = Action::from($reqBody['action']);
+        if ($reqBody['items_tags']) {
+            $model = new Items($this->requester);
+            $Tags2Entity = new Tags2Entity($model->entityType);
+            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['items_tags']);
+            // Format tags as associative array to be processed same way as other entries
+            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+        }
         if ($reqBody['items_types']) {
             $model = new Items($this->requester);
             $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody);
@@ -48,18 +56,12 @@ class Batch implements RestInterface
             $model = new Experiments($this->requester);
             $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
-        if ($reqBody['tags']) {
-            $models = array(
-                'Experiments' => new Experiments($this->requester),
-                'Items' => new Items($this->requester),
-            );
-            foreach ($models as $model) {
-                $Tags2Entity = new Tags2Entity($model->entityType);
-                $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-                // Format tags as associative array to be processed same way as other entries
-                $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
-                $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
-            }
+        if ($reqBody['experiments_tags']) {
+            $model = new Experiments($this->requester);
+            $Tags2Entity = new Tags2Entity($model->entityType);
+            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['experiments_tags']);
+            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
         }
         if ($reqBody['users']) {
             // only process experiments

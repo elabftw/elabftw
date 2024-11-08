@@ -66,6 +66,12 @@ try {
         $ItemsTypes->canOrExplode('write');
     }
     $statusArr = $Status->readAll();
+    $sortedTags = (function () use ($TeamTags) {
+        $tagsArr = $TeamTags->readFull();
+        // return array sorted alphabetically, case-insensitive
+        usort($tagsArr, fn($a, $b) => strcasecmp($a['tag'], $b['tag']));
+        return $tagsArr;
+    })();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -116,7 +122,7 @@ try {
         'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
         // all the tags for the team
-        'tagsArr' => $TeamTags->readFull(),
+        'tagsArr' => $sortedTags,
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,

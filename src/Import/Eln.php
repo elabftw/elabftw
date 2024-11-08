@@ -58,6 +58,8 @@ class Eln extends AbstractZip
 
     private AbstractEntity $Entity;
 
+    private int $count;
+
     public function __construct(
         protected Users $requester,
         // TODO nullable and have it in .eln export so it is not lost on import
@@ -67,7 +69,6 @@ class Eln extends AbstractZip
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
-        private bool $dryRun = false,
         protected ?int $category = null,
     ) {
         parent::__construct(
@@ -75,28 +76,25 @@ class Eln extends AbstractZip
             $UploadedFile,
             $fs,
         );
-        if ($dryRun) {
-            $this->logger->info('Running in dry-mode: nothing will be imported.');
-        }
+        $this->count = $this->preProcess();
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
         }
     }
 
+    public function getCount(): int
+    {
+        return $this->count;
+    }
+
     public function import(): int
     {
-        $count = $this->preProcess();
-        $this->logger->info(sprintf('Crate is composed of %d parts', $count));
-        if ($this->dryRun) {
-            return $count;
-        }
-
         // loop over each hasPart of the root node
         // this is the main import loop
         $current = 1;
         foreach ($this->crateNodeHasPart as $part) {
-            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $count));
+            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
             $current++;
         }

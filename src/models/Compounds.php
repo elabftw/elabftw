@@ -191,6 +191,7 @@ class Compounds implements RestInterface
         ?string $casNumber = null,
         ?string $iupacName = null,
         ?int $pubchemCid = null,
+        bool $withFingerprint = true,
     ): int {
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::Team->toJson();
@@ -222,7 +223,12 @@ class Compounds implements RestInterface
 
         $this->Db->execute($req);
 
-        return $this->Db->lastInsertId();
+        $compoundId = $this->Db->lastInsertId();
+
+        if ($withFingerprint && !empty($smiles)) {
+            return $this->fingerprintCompound($smiles, $compoundId);
+        }
+        return $compoundId;
     }
 
     protected function canOrExplode(AccessType $accessType): bool
@@ -240,6 +246,14 @@ class Compounds implements RestInterface
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
     }
 
+    private function fingerprintCompound(string $smiles, int $compoundId): int
+    {
+        $Fingerprinter = new Fingerprinter($this->httpGetter);
+        $fp = $Fingerprinter->calculate('smi', $smiles);
+        $Fingerprints = new Fingerprints($compoundId);
+        return $Fingerprints->create($fp['data']);
+    }
+
     private function createFromCid(int $cid): int
     {
         $compound = $this->searchPubChem($cid);
@@ -254,10 +268,6 @@ class Compounds implements RestInterface
             pubchemCid: $cid,
             molecularFormula: $compound->molecularFormula,
         );
-        // Now calculate fingerprint
-        $Fingerprinter = new Fingerprinter($this->httpGetter);
-        $fp = $Fingerprinter->calculate('smi', $compound->smiles ?? '');
-        $Fingerprints = new Fingerprints($id);
-        return $Fingerprints->create($fp['data']);
+        return $this->fingerprintCompound($compound->smiles ?? '', $id);
     }
 }

@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\EntityType;
-use Elabftw\Import\TrustedEln;
+use Elabftw\Import\CompoundsCsv;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
@@ -30,10 +28,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Import an ELN archive
+ * Import a CSV into compounds
  */
-#[AsCommand(name: 'import:eln')]
-class ImportEln extends Command
+#[AsCommand(name: 'import:compounds')]
+class ImportCompoundsCsv extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {
@@ -42,14 +40,12 @@ class ImportEln extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Import everything from a .eln')
-            ->setHelp('Every node of type Dataset is created. If the .eln has been produced by eLabFTW, everything will be imported, otherwise the results may vary. Use verbose flags (-v or -vv) to get more information about what is happening. If a userid is provided through the --userid option, all entries will be created with that user as the author.  Otherwise, entry ownership will be determined by user account email addresses and userid values mapped accordingly. Any users in the .eln that do not exist on this server will be created as needed.')
-            ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in cache/elab folder in the container')
+        $this->setDescription('Import compounds from a CSV file')
+            ->setHelp('Column names that will match: name, smiles, inchi, inchikey, cas, pubchemcid, molecularformula, iupacname')
+            ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /elabftw/exports folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
-            ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Force entity type. Values: ' . implode(', ', array_map(fn($case) => $case->value, EntityType::cases())))
-            ->addOption('category', 'c', InputOption::VALUE_REQUIRED, 'Force category: provide a category ID that belongs to the team')
-            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done');
+            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -58,30 +54,16 @@ class ImportEln extends Command
         $filePath = $this->Fs->getPath((string) $input->getArgument('file'));
 
         $logger = new ConsoleLogger($output);
-        $UploadedFile = new UploadedFile($filePath, 'input.eln', test: true);
+        $UploadedFile = new UploadedFile($filePath, 'input.csv', test: true);
         $user = new UltraAdmin(team: $teamid);
         $infoTrailer = '';
         if ($input->getOption('userid')) {
             $user = new Users((int) $input->getOption('userid'), $teamid);
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
         }
-        $entityType = null;
-        if ($input->getOption('type')) {
-            $entityType = EntityType::tryFrom((string) $input->getOption('type'));
-        }
-        $defaultCategory = null;
-        if ($input->getOption('category')) {
-            $defaultCategory = (int) $input->getOption('category');
-        }
-        $Importer = new TrustedEln(
+        $Importer = new CompoundsCsv(
             $user,
-            BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
             $UploadedFile,
-            $this->Fs->getFs(),
-            $logger,
-            $entityType,
-            category: $defaultCategory,
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info
@@ -89,10 +71,12 @@ class ImportEln extends Command
             $logger->info(sprintf('%d records found', $Importer->getCount()));
             return Command::SUCCESS;
         }
-        $Importer->import();
+
+        $count = $Importer->import();
+        $logger->info(sprintf('Done importing %d records', $count));
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('[*] Delete ELN file? (y/N) ', false);
+        $question = new ConfirmationQuestion('[*] Delete imported file? (y/N) ', false);
         /** @phpstan-ignore-next-line ask method is part of QuestionHelper which extends HelperInterface */
         if ($helper->ask($input, $output, $question)) {
             $this->Fs->getFs()->delete((string) $input->getArgument('file'));

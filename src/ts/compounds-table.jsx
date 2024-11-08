@@ -55,7 +55,6 @@ if (document.getElementById('compounds-table')) {
               filter: 'agTextColumnFilter',
               floatingFilter: true,
               onCellValueChanged: (event) => {
-                console.log(event);
                 const params = {};
                 params[event.column.colId] = event.newValue;
                 ApiC.patch(`compounds/${event.data.id}`, params);
@@ -63,24 +62,32 @@ if (document.getElementById('compounds-table')) {
           };
       }, []);
 
-      return (
-          <div
-              className={
-                  "ag-theme-quartz-dark"
-              }
-              style={{ height: 650 }}
-          >
-              <AgGridReact
-                  rowData={rowData}
-                  columnDefs={columnDefs}
-                  defaultColDef={defaultColDef}
-                  rowSelection={rowSelection}
-                  pagination={true}
-                  paginationPageSize={15}
-                  paginationPageSizeSelector={[15, 50, 100, 500]}
-              />
-          </div>
-      );
+    const rowClicked = (event) => {
+      console.log(event.data);
+    };
+    const selectionChanged = (event) => {
+      console.log(event);
+      console.log(event.api.getSelectedRows());
+    };
+
+    return (
+      <div
+        className={'ag-theme-quartz-dark'}
+        style={{ height: 650 }}
+      >
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        rowSelection={rowSelection}
+        onRowClicked={rowClicked}
+        onSelectionChanged={selectionChanged}
+        pagination={true}
+        paginationPageSize={15}
+        paginationPageSizeSelector={[15, 50, 100, 500]}
+      />
+      </div>
+    );
   };
 
   // In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
@@ -94,6 +101,6 @@ if (document.getElementById('compounds-table')) {
 
   const root = createRoot(document.getElementById('compounds-table'));
   root.render(
-        <App />
+    <App />
   );
 }

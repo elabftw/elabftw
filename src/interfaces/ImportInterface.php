@@ -19,5 +19,7 @@ interface ImportInterface
 {
     public function import(): int;
 
+    public function getCount(): int;
+
     public function getInserted(): int;
 }

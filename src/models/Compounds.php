@@ -64,10 +64,37 @@ class Compounds implements RestInterface
         return $Importer->fromPugView($cid);
     }
 
+    public function searchFingerprintFromSmiles(string $smiles): array
+    {
+        $fp = $this->getFingerprintFromSmiles($smiles);
+        $sql = 'SELECT id, (BIT_COUNT(';
+
+        // Calculate A ∩ B (bitwise AND) and A + B (bitwise OR) in SQL
+        foreach ($fp['data'] as $key => $value) {
+            if ($value == 0) continue;
+            $sql .= sprintf('(fp%d & %d) | ', $key, $value);
+        }
+        $sql = rtrim($sql, '| ') . ')) AS similarity_score ';
+
+        $sql .= 'FROM compounds_fingerprints WHERE 1=1';
+        foreach ($fp['data'] as $key => $value) {
+            if ($value == 0) continue;
+            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
+        }
+
+        $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        return $req->fetchAll();
+    }
+
     public function readAll(QueryParamsInterface $queryParams): array
     {
         if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
+        }
+        if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
+            return $this->searchFingerprintFromSmiles($queryParams->getQuery()->getString('search_fp_smi'));
         }
         $sql = sprintf('SELECT entity.*,
             CONCAT(
@@ -246,10 +273,15 @@ class Compounds implements RestInterface
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
     }
 
-    private function fingerprintCompound(string $smiles, int $compoundId): int
+    private function getFingerprintFromSmiles(string $smiles): array
     {
         $Fingerprinter = new Fingerprinter($this->httpGetter);
-        $fp = $Fingerprinter->calculate('smi', $smiles);
+        return $Fingerprinter->calculate('smi', $smiles);
+    }
+
+    private function fingerprintCompound(string $smiles, int $compoundId): int
+    {
+        $fp = $this->getFingerprintFromSmiles($smiles);
         $Fingerprints = new Fingerprints($compoundId);
         return $Fingerprints->create($fp['data']);
     }
@@ -258,7 +290,7 @@ class Compounds implements RestInterface
     {
         $compound = $this->searchPubChem($cid);
         // idea: create from Compound
-        $id = $this->create(
+        return $this->create(
             casNumber: $compound->cas,
             name: $compound->name,
             inchi: $compound->inChI,
@@ -268,6 +300,5 @@ class Compounds implements RestInterface
             pubchemCid: $cid,
             molecularFormula: $compound->molecularFormula,
         );
-        return $this->fingerprintCompound($compound->smiles ?? '', $id);
     }
 }

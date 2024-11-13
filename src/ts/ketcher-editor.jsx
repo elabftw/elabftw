@@ -63,17 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('ketcher-actions').addEventListener('click', async (event) => {
       const el = event.target;
       if (el.matches('[data-action="search-from-editor"]')) {
-        console.log('clicked');
-        const ketcher = ketcherProvider.getKetcher();
         //const smiles = async () => {await ketcher.getSmiles()};
-        ketcher.getSmiles().then(s => console.log(s));
-        //console.log(smiles());
-        const getInchi = async () => {
-          return ketcher.getInchi();
-        };
-        const getSmiles = async() => {
-          return ketcher.getMolfile();
-        }
+        window.ketcher.getSmiles().then(s => {
+          const ApiC = new Api();
+          const json = ApiC.getJson(`compounds?search_fp_smi=${encodeURIComponent(s)}`);
+          console.log(json);
+        });
       } else if (el.matches('[data-action="create-item-from-editor"]')) {
         const inchi = await ketcher.getInchi();
         console.log(inchi);

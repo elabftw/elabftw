@@ -53,6 +53,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // start and end inputs
   const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
   const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+  const startTimeSelect = (document.getElementById('startTime') as HTMLInputElement);
+  const endTimeSelect = (document.getElementById('endTime') as HTMLInputElement);
+
+  function populateTimeSelect(selectElement: HTMLInputElement): void {
+    for (let hour:number = 0; hour < 24; hour++) {
+      const time:string = hour.toString().padStart(2, '0') + ':00:00';
+      const option = document.createElement('option') as HTMLOptionElement;
+      option.value = time;
+      option.text = hour.toString().padStart(2, '0') + ':00';
+      selectElement.appendChild(option);
+    }
+  }
+  // Populate the dropdowns
+  populateTimeSelect(startTimeSelect);
+  populateTimeSelect(endTimeSelect);
+  // Default values
+  startTimeSelect.value = '00:00:00';
+  endTimeSelect.value = '23:00:00';
+
+  startTimeSelect.addEventListener('change', function() {
+    calendar.setOption('slotMinTime', startTimeSelect.value);
+  });
+
+  endTimeSelect.addEventListener('change', function() {
+    calendar.setOption('slotMaxTime', endTimeSelect.value);
+  });
 
   // transform a Date object into something we can put as a value of an input of type datetime-local
   function toDateTimeInputValueNumber(datetime: Date): number {
@@ -98,11 +124,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
+    height: 'auto',
+    customButtons: {
+      toggleWeekends: {
+        text: 'W/E',
+        hint: 'week view, display/hide week end days',
+        click: function() {
+          // Returns a boolean. Set it to opposite value
+          calendar.setOption('weekends', !calendar.getOption('weekends'));
+        },
+      },
+    },
+    // EO PR TESTS
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridWeek,listWeek,dayGridMonth',
+      right: 'timeGridWeek,listWeek,dayGridMonth toggleWeekends',
     },
     themeSystem: 'bootstrap',
     // i18n

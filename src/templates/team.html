@@ -179,6 +179,23 @@
     </div>
     {% endif %}
   </div>
+
+  {# WORKING HOURS START-END TIME #}
+  <div class='row mb-3 ml-auto'>
+    <!-- Hours for the select will be populated in js -->
+    <div class='mr-2'>
+      <label for='startTime'>
+        {{ 'Start Time'|trans }}
+      </label>
+      <select class='form-control' id='startTime'></select>
+    </div>
+    <div>
+      <label for='endTime'>
+        {{ 'End Time'|trans }}
+      </label>
+      <select class='form-control' id='endTime'></select>
+    </div>
+  </div>
   <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>
 

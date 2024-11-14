@@ -110,9 +110,20 @@
         <option value='3' {{ App.Users.userData.entrypoint == '3' ? ' selected' }}>{{ 'Scheduler'|trans }}</option>
       </select>
     </div>
-    <hr>
+  </div>
 
+  {# SCHEDULER DEFAULT SETTINGS #}
+  <h2 id='schedulerSettings' class='p-2 pl-3 section-title'>{{ 'Scheduler'|trans }}</h2>
 
+  <div class='pl-3 mt-2 mb-5'>
+    <div class='d-flex justify-content-between'>
+      {# setting to toggle the display of week-ends on teams scheduler tab https://fullcalendar.io/docs/weekends #}
+      <label for='show_weekends' class='col-form-label'>{{ 'Show week ends'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_weekends' {{ App.Users.userData.show_weekends == 1 ? 'checked="checked"' }} id='show_weekends'>
+        <span class='slider'></span>
+      </label>
+    </div>
   </div>
 
   {# KEYBOARD SHORTCUTS #}

@@ -111,7 +111,10 @@
 <div data-tabcontent='1' hidden>
   <div class='d-flex mb-2'>
     <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
-    <div class='ml-auto'>
+    <div class='ml-auto row'>
+      <a href='ucp.php?tab=1' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+        <i class='fas fa-cogs fa-fw'></i>
+      </a>
       {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
     </div>
   </div>
@@ -178,23 +181,6 @@
       {% endif %}
     </div>
     {% endif %}
-  </div>
-
-  {# WORKING HOURS START-END TIME #}
-  <div class='row mb-3 ml-auto'>
-    <!-- Hours for the select will be populated in js -->
-    <div class='mr-2'>
-      <label for='startTime'>
-        {{ 'Start Time'|trans }}
-      </label>
-      <select class='form-control' id='startTime'></select>
-    </div>
-    <div>
-      <label for='endTime'>
-        {{ 'End Time'|trans }}
-      </label>
-      <select class='form-control' id='endTime'></select>
-    </div>
   </div>
   <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
 </div>

@@ -193,8 +193,7 @@ final class Config implements RestInterface
             ('onboarding_email_different_for_admins', '0'),
             ('onboarding_email_admins_subject', NULL),
             ('onboarding_email_admins_body', NULL),
-            ('allow_users_change_identity', '1'),
-            ('show_weekends', '1')";
+            ('allow_users_change_identity', '1')";
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':schema', $schema);

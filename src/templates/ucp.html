@@ -118,9 +118,9 @@
   <div class='pl-3 mt-2 mb-5'>
     <div class='d-flex justify-content-between'>
       {# setting to toggle the display of week-ends on teams scheduler tab https://fullcalendar.io/docs/weekends #}
-      <label for='show_weekends' class='col-form-label'>{{ 'Show week ends'|trans }}</label>
+      <label for='showWeekends' class='col-form-label'>{{ 'Show week ends'|trans }}</label>
       <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='show_weekends' {{ App.Users.userData.show_weekends == 1 ? 'checked="checked"' }} id='show_weekends'>
+        <input id='showWeekends' type='checkbox' data-trigger='change' data-model='users/me' data-target='show_weekends' {{ App.Users.userData.show_weekends == 1 ? 'checked="checked"' }}>
         <span class='slider'></span>
       </label>
     </div>

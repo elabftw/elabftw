@@ -117,6 +117,9 @@
       </a>
       {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
     </div>
+    {% if App.Users.userData.show_weekends == 1 -%}
+     <div id='showWeekends' hidden></div>
+    {% endif %}
   </div>
 
   <div id='mainSchedulerContent'>

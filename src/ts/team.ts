@@ -95,14 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
+  const weekends = !!document.getElementById('showWeekends');
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     height: '70vh',
     // Determines how far forward the scroll pane is initially scrolled.
     scrollTime: '08:00:00',
-    // wip
-    weekends: false,
+    weekends: weekends,
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     headerToolbar: {
       left: 'prev,next today',

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -91,8 +90,9 @@ class TeamTags implements RestInterface
     /**
      * Read all the tags from team. This one can be called from api and will filter based on q param in query
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $queryParams ??= $this->getQueryParams();
         $query = $queryParams->getQuery()->getString('q');
         $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
@@ -175,7 +175,7 @@ class TeamTags implements RestInterface
             $this->deduplicateFromIdsList($idsList['id_list']);
         }
 
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 
     /**
@@ -218,6 +218,6 @@ class TeamTags implements RestInterface
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-        return $this->readAll(new BaseQueryParams());
+        return $this->readAll();
     }
 }

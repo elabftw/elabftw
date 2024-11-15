@@ -29,7 +29,6 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
-use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -66,9 +65,8 @@ class DashboardController implements ControllerInterface
 
         $itemsTypesQueryParams = $ItemsTypes->getQueryParams($this->App->Request->query);
         $itemsStatusQueryParams = $ItemsStatus->getQueryParams($this->App->Request->query);
-        $baseQueryParams = new BaseQueryParams();
         $renderArr = array(
-            'bookingsArr' => $Scheduler->readAll($baseQueryParams),
+            'bookingsArr' => $Scheduler->readAll(),
             'itemsCategoryArr' => $ItemsTypes->readAll($itemsTypesQueryParams),
             'itemsStatusArr' => $ItemsStatus->readAll($itemsStatusQueryParams),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),

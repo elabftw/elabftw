@@ -140,10 +140,9 @@ abstract class AbstractEntityController implements ControllerInterface
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->getQueryString());
 
-        $baseQueryParams = new BaseQueryParams();
         // FAVTAGS
         $FavTags = new FavTags($this->App->Users);
-        $favTagsArr = $FavTags->readAll($baseQueryParams);
+        $favTagsArr = $FavTags->readAll();
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
@@ -204,7 +203,6 @@ abstract class AbstractEntityController implements ControllerInterface
             }
         }
         $this->Entity->setId($id);
-        $baseQueryParams = new BaseQueryParams();
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
@@ -228,7 +226,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
             'hideTitle' => true,
-            'teamsArr' => $Teams->readAll($baseQueryParams),
+            'teamsArr' => $Teams->readAll(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             ...$this->Entity instanceof AbstractConcreteEntity
@@ -237,7 +235,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll($baseQueryParams),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );

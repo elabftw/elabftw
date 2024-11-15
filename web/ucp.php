@@ -122,7 +122,6 @@ try {
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     $template = 'ucp.html';
-    $baseQueryParams = new BaseQueryParams();
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
@@ -131,7 +130,7 @@ try {
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
-        'teamsArr' => $Teams->readAll($baseQueryParams),
+        'teamsArr' => $Teams->readAll(),
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
@@ -139,7 +138,7 @@ try {
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'statusArr' => $Status->readAll($Status->getQueryParams($App->Request->query)),
         'teamTagsArr' => $TeamTags->readAll($TeamTags->getQueryParams($App->Request->query)),
-        'templatesArr' => $Templates->readAll($baseQueryParams),
+        'templatesArr' => $Templates->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),

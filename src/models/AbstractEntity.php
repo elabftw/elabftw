@@ -30,7 +30,6 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -152,7 +151,7 @@ abstract class AbstractEntity implements RestInterface
 
     abstract public function readOne(): array;
 
-    abstract public function readAll(QueryParamsInterface $queryParams): array;
+    abstract public function readAll(?QueryParamsInterface $queryParams = null): array;
 
     public function getApiPath(): string
     {
@@ -407,7 +406,7 @@ abstract class AbstractEntity implements RestInterface
         $base = $this->readOne();
         // items types don't have this yet
         if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
-            $base['revisions'] = (new Revisions($this))->readAll(new BaseQueryParams());
+            $base['revisions'] = (new Revisions($this))->readAll();
             $base['changelog'] = (new Changelog($this))->readAll();
         }
         ksort($base);

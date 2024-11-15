@@ -195,7 +195,7 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $builder = new TemplatesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);

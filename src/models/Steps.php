@@ -18,7 +18,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\StepDeadline;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
@@ -210,7 +209,7 @@ class Steps implements RestInterface
         $body = Filter::title($body);
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
-        $ordering = count($this->readAll(new BaseQueryParams())) + 1;
+        $ordering = count($this->readAll()) + 1;
 
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
         $req = $this->Db->prepare($sql);

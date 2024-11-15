@@ -18,8 +18,8 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 trait QueryParamsTrait
 {
-    public function getQueryParams(InputBag $query): QueryParamsInterface
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        return new BaseQueryParams($query);
+        return new BaseQueryParams($query ?? new InputBag());
     }
 }

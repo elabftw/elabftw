@@ -14,8 +14,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
-use Elabftw\Params\OrderableQueryParams;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
@@ -82,18 +83,19 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
-    public function getQueryParams(InputBag $query): QueryParamsInterface
+    public function getQueryParams(InputBag $query = null): QueryParamsInterface
     {
-        return new OrderableQueryParams($query);
+        return new BaseQueryParams(query: $query ?? new InputBag(), orderby: Orderby::Ordering);
     }
 
     /**
      * Get all status from team
      */
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(QueryParamsInterface $queryParams = null): array
     {
         $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
             FROM %s AS entity WHERE team = :team', $this->table);
+        $queryParams ??= $this->getQueryParams();
         $sql .= $queryParams->getSql();
 
         $req = $this->Db->prepare($sql);

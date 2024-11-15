@@ -24,7 +24,6 @@ use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UploadsChecker;
@@ -154,7 +153,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
-        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll(new BaseQueryParams()),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,

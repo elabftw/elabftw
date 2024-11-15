@@ -22,7 +22,7 @@ interface RestInterface
 {
     public function readOne(): array;
 
-    public function getQueryParams(InputBag $query): QueryParamsInterface;
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface;
 
     public function readAll(QueryParamsInterface $queryParams): array;
 

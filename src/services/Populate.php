@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
@@ -62,15 +61,14 @@ class Populate
         } else {
             $Category = new ItemsTypes($Entity->Users);
             $Category->bypassWritePermission = true;
-            if (empty($Category->readAll(new BaseQueryParams()))) {
+            if (empty($Category->readAll())) {
                 $Category->create();
             }
             $Status = new ItemsStatus($Teams);
-            $tpl = (int) $Category->readAll(new BaseQueryParams())[0]['id'];
+            $tpl = (int) $Category->readAll()[0]['id'];
         }
-        $baseQueryParams = new BaseQueryParams();
-        $categoryArr = $Category->readAll($baseQueryParams);
-        $statusArr = $Status->readAll($baseQueryParams);
+        $categoryArr = $Category->readAll();
+        $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(

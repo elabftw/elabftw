@@ -43,7 +43,7 @@ abstract class AbstractCategory implements RestInterface
     /**
      * Get all the things
      */
-    abstract public function readAll(QueryParamsInterface $queryParams): array;
+    abstract public function readAll(QueryParamsInterface $queryParams = null): array;
 
     /**
      * Get an id of an existing one or create it and get its id

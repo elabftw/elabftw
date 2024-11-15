@@ -17,12 +17,12 @@ use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Orderby;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
-use Elabftw\Params\OrderableQueryParams;
 use Elabftw\Services\Filter;
 use Override;
 use PDO;
@@ -82,7 +82,7 @@ class ItemsTypes extends AbstractTemplateEntity
     public function getDefault(): int
     {
         // there might be none, so create one if needed
-        if (empty($this->readAll(new BaseQueryParams()))) {
+        if (empty($this->readAll())) {
             return $this->create();
         }
         // there are no default items_types, so just pick the first one from the team
@@ -93,13 +93,14 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
-    public function getQueryParams(InputBag $query): QueryParamsInterface
+    public function getQueryParams(InputBag $query = null): QueryParamsInterface
     {
-        return new OrderableQueryParams($query);
+        return new BaseQueryParams(query: $query ?? new InputBag(), orderby: Orderby::Ordering);
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(QueryParamsInterface $queryParams = null): array
     {
+        $queryParams ??= $this->getQueryParams();
         $builder = new ItemsTypesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false);
         $sql .= ' WHERE 1=1';
@@ -128,11 +129,10 @@ class ItemsTypes extends AbstractTemplateEntity
 
         $this->entityData = $this->Db->fetch($req);
         $this->canOrExplode('read');
-        $baseQueryParams = new BaseQueryParams();
         // add steps and links in there too
-        $this->entityData['steps'] = $this->Steps->readAll(new BaseQueryParams());
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll($baseQueryParams);
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll($baseQueryParams);
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }

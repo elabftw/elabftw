@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Params\BaseQueryParams;
 use PDO;
 
 /**
@@ -69,7 +68,7 @@ class Pins
         $entity = clone $this->Entity;
         $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
-        return $entity->readAll(new BaseQueryParams());
+        return $entity->readAll();
     }
 
     /**
@@ -86,7 +85,7 @@ class Pins
         $entity = clone $this->Entity;
         $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'entity_id'));
-        return $entity->readAll(new BaseQueryParams());
+        return $entity->readAll();
     }
 
     /**

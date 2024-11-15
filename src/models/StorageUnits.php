@@ -40,7 +40,7 @@ class StorageUnits implements RestInterface
 
     public function getApiPath(): string
     {
-        return sprintf('api/v2/storage_units/%d', $this->id ?? 0);
+        return 'api/v2/storage_units/';
     }
 
     public function readOne(): array

@@ -77,6 +77,108 @@ CREATE TABLE `authfail` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `compounds`
+--
+CREATE TABLE compounds (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` INT UNSIGNED NOT NULL,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_by` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  `team` INT UNSIGNED NOT NULL,
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
+  `metadata` JSON NULL DEFAULT NULL,
+  `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
+  `cas_number` VARCHAR(20) NULL DEFAULT NULL,
+  `ec_number` VARCHAR(20) NULL DEFAULT NULL,
+  `chebi_id` VARCHAR(20) NULL DEFAULT NULL,
+  `chembl_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dea_number` VARCHAR(20) NULL DEFAULT NULL,
+  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL,
+  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `inchi` MEDIUMTEXT NULL DEFAULT NULL,
+  `inchi_key` CHAR(27) NULL DEFAULT NULL,
+  `iupac_name` TEXT NULL DEFAULT NULL,
+  `kegg_id` VARCHAR(20) NULL DEFAULT NULL,
+  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `molecular_weight` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `nci_code` VARCHAR(20) NULL DEFAULT NULL,
+  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL,
+  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL,
+  `rxcui` VARCHAR(20) NULL DEFAULT NULL,
+  `smiles` MEDIUMTEXT NULL DEFAULT NULL,
+  `unii` VARCHAR(20) NULL DEFAULT NULL,
+  `wikidata` VARCHAR(20) NULL DEFAULT NULL,
+  `wikipedia` VARCHAR(20) NULL DEFAULT NULL,
+  primary key(`id`)
+);
+
+CREATE TABLE `compounds2experiments` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2experiments_templates` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2items` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+CREATE TABLE `compounds2items_types` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`compound_id`, `entity_id`)
+);
+
+CREATE TABLE IF NOT EXISTS compounds_fingerprints (
+  id   INT UNSIGNED NOT NULL,
+  fp0  INT UNSIGNED NOT NULL,
+  fp1  INT UNSIGNED NOT NULL,
+  fp2  INT UNSIGNED NOT NULL,
+  fp3  INT UNSIGNED NOT NULL,
+  fp4  INT UNSIGNED NOT NULL,
+  fp5  INT UNSIGNED NOT NULL,
+  fp6  INT UNSIGNED NOT NULL,
+  fp7  INT UNSIGNED NOT NULL,
+  fp8  INT UNSIGNED NOT NULL,
+  fp9  INT UNSIGNED NOT NULL,
+  fp10 INT UNSIGNED NOT NULL,
+  fp11 INT UNSIGNED NOT NULL,
+  fp12 INT UNSIGNED NOT NULL,
+  fp13 INT UNSIGNED NOT NULL,
+  fp14 INT UNSIGNED NOT NULL,
+  fp15 INT UNSIGNED NOT NULL,
+  fp16 INT UNSIGNED NOT NULL,
+  fp17 INT UNSIGNED NOT NULL,
+  fp18 INT UNSIGNED NOT NULL,
+  fp19 INT UNSIGNED NOT NULL,
+  fp20 INT UNSIGNED NOT NULL,
+  fp21 INT UNSIGNED NOT NULL,
+  fp22 INT UNSIGNED NOT NULL,
+  fp23 INT UNSIGNED NOT NULL,
+  fp24 INT UNSIGNED NOT NULL,
+  fp25 INT UNSIGNED NOT NULL,
+  fp26 INT UNSIGNED NOT NULL,
+  fp27 INT UNSIGNED NOT NULL,
+  fp28 INT UNSIGNED NOT NULL,
+  fp29 INT UNSIGNED NOT NULL,
+  fp30 INT UNSIGNED NOT NULL,
+  fp31 INT UNSIGNED NOT NULL,
+  primary key(`id`),
+  FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
+);
+--
 -- Table structure for table `config`
 --
 
@@ -985,6 +1087,15 @@ CREATE TABLE IF NOT EXISTS `sig_keys` (
   `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `type` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS storage_units (
+    id INT unsigned NOT NULL AUTO_INCREMENT,
+    level_name VARCHAR(255),
+    unit_name VARCHAR(255),
+    parent_id INT unsigned,
+    FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
 );
 
 --
@@ -2001,6 +2112,37 @@ ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- EXPERIMENTS STORAGE
+ALTER TABLE `experiments` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
+ALTER TABLE `experiments` ADD CONSTRAINT `fk_experiments_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- EXPERIMENTS TEMPLATES STORAGE
+ALTER TABLE `experiments_templates` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates` ADD CONSTRAINT `fk_experiments_templates_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- ITEMS STORAGE
+ALTER TABLE `items` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
+ALTER TABLE `items` ADD CONSTRAINT `fk_items_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
+
+-- ITEMS TYPES STORAGE
+ALTER TABLE `items_types` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
+ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_storage`
+FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
+ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

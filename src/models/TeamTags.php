@@ -41,7 +41,7 @@ class TeamTags implements RestInterface
 
     public function getApiPath(): string
     {
-        return sprintf('api/v2/teams/%d/tags/%d', $this->Users->userData['team'], $this->id ?? '');
+        return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);
     }
 
     /**
@@ -49,9 +49,6 @@ class TeamTags implements RestInterface
      */
     public function postAction(Action $action, array $reqBody): int
     {
-        if ($action !== Action::Create) {
-            throw new ImproperActionException('Invalid action');
-        }
         $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
 
         // look if the tag exists already
@@ -63,23 +60,19 @@ class TeamTags implements RestInterface
         $res = $req->fetch();
         // insert the tag if it doesn't exist
         if ($res === false) {
-            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindValue(':tag', $tag);
-            $this->Db->execute($req);
-            return $this->Db->lastInsertId();
+            return $this->create(new TagParam($tag));
         }
-        return 0;
+        return $res['id'];
     }
 
     public function readOne(): array
     {
-        $sql = 'SELECT tag, id
-            FROM tags
-            WHERE team = :team
-            AND id = :id';
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag
+            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
+            WHERE team = :team AND tags.id = :id';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -94,7 +87,7 @@ class TeamTags implements RestInterface
     {
         $queryParams ??= $this->getQueryParams();
         $query = $queryParams->getQuery()->getString('q');
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY tag';
@@ -153,6 +146,16 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function create(TagParam $params): int
+    {
+        $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
     /**

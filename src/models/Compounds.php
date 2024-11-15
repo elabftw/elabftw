@@ -56,7 +56,7 @@ class Compounds implements RestInterface
 
     public function getApiPath(): string
     {
-        return sprintf('api/v2/fingerprints/%d', $this->id ?? 0);
+        return 'api/v2/compounds/';
     }
 
     public function searchPubChem(int $cid): Compound

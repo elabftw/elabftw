@@ -736,6 +736,10 @@ components:
       properties:
         id:
           type: integer
+        item_count:
+          type: integer
+        is_favorite:
+          type: integer
         tag:
           type: string
     team:
@@ -2683,14 +2687,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tag:
-                    type: string
-                  id:
-                    type: integer
-                  item_count:
-                    type: integer
+                type: array
+                items:
+                  $ref: '#/components/schemas/tag'
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -2763,12 +2762,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tag:
-                    type: string
-                  id:
-                    type: integer
+                $ref: '#/components/schemas/tag'
     patch:
       tags: ['Team tags']
       summary: |

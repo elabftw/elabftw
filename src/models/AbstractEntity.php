@@ -28,7 +28,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
@@ -148,10 +147,6 @@ abstract class AbstractEntity implements RestInterface
      * @return int the new item id
      */
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
-
-    abstract public function readOne(): array;
-
-    abstract public function readAll(?QueryParamsInterface $queryParams = null): array;
 
     public function getApiPath(): string
     {

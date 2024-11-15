@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\QueryParamsTrait;
@@ -39,11 +38,6 @@ abstract class AbstractCategory implements RestInterface
         $this->Db = Db::getConnection();
         $this->setId($id);
     }
-
-    /**
-     * Get all the things
-     */
-    abstract public function readAll(QueryParamsInterface $queryParams = null): array;
 
     /**
      * Get an id of an existing one or create it and get its id

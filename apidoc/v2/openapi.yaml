@@ -742,6 +742,8 @@ components:
           type: integer
         tag:
           type: string
+        team:
+          type: integer
     team:
       type: object
       properties:

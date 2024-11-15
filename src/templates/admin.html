@@ -664,7 +664,8 @@
           </tr>
         </thead>
         <tbody id='tagManagerTable'>
-          {% for tag in tagsArr %}
+          {# for this table, sort the tags by popularity (item_count) #}
+          {% for tag in tagsArr|sort((a, b) => b.item_count <=> a.item_count) %}
             <tr>
               <th data-label='{{ 'Tag'|trans }}' scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
               <td data-label='{{ 'Occurence'|trans }}' class='align-middle'>{{ tag.item_count }}</td>

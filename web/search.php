@@ -24,7 +24,6 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
-use Elabftw\Models\TeamTags;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,7 +39,6 @@ $Response = new Response();
 $Response->prepare($App->Request);
 
 $Teams = new Teams($App->Users, $App->Users->team);
-$TeamTags = new TeamTags($App->Users, $App->Users->userData['team']);
 
 $ExperimentsCategories = new ExperimentsCategories($Teams);
 $ExperimentsStatus = new ExperimentsStatus($Teams);
@@ -62,7 +60,6 @@ $renderArr = array(
     'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams($App->Request->query)),
     'itemsTypesArr' => $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query)),
     'itemsStatusArr' => $ItemsStatus->readAll($ItemsStatus->getQueryParams($App->Request->query)),
-    'tagsArr' => $TeamTags->readFull(),
     'usersArr' => $usersArr,
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     'teamGroups' => array_column($teamGroupsArr, 'name'),

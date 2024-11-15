@@ -44,30 +44,45 @@ class TeamTags implements RestInterface
         return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);
     }
 
+    // look if the tag exists already
+    public function exists(TagParam $params): bool
+    {
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
+        $this->Db->execute($req);
+        return (bool) $req->fetch();
+    }
+
+    /**
+     * This will return the id of an existing tag in the team if it exists already
+     */
+    public function create(TagParam $params): int
+    {
+        $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team) ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
+    }
+
     /**
      * Create a new tag in that team
      */
     public function postAction(Action $action, array $reqBody): int
     {
-        $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
-
-        // look if the tag exists already
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $tag);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        // insert the tag if it doesn't exist
-        if ($res === false) {
-            return $this->create(new TagParam($tag));
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException('Only an admin can do this!');
         }
-        return $res['id'];
+        $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
+        return $this->create(new TagParam($tag));
     }
 
     public function readOne(): array
     {
-        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.id = :id';
@@ -87,7 +102,7 @@ class TeamTags implements RestInterface
     {
         $queryParams ??= $this->getQueryParams();
         $query = $queryParams->getQuery()->getString('q');
-        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY tag';
@@ -95,21 +110,6 @@ class TeamTags implements RestInterface
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%');
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
-    /**
-     * This is to get the full list of the tags in the team no matter what
-     */
-    public function readFull(): array
-    {
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
-            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
-            WHERE team = :team GROUP BY tags.id ORDER BY item_count DESC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -146,16 +146,6 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    private function create(TagParam $params): int
-    {
-        $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent());
-        $this->Db->execute($req);
-        return $this->Db->lastInsertId();
     }
 
     /**

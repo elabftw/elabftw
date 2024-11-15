@@ -22,4 +22,5 @@ ALTER TABLE items_types DROP COLUMN storage;
 ALTER TABLE items_types DROP COLUMN qty_stored;
 ALTER TABLE items_types DROP COLUMN qty_unit;
 DROP TABLE IF EXISTS storage_units;
+ALTER TABLE `tags` DROP INDEX `unique_tags_team_tag`;
 UPDATE config SET conf_value = 166 WHERE conf_name = 'schema';

@@ -125,35 +125,20 @@ class Tags implements RestInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
-        $insertReq2 = $this->Db->prepare($insertSql2);
-        // check if the tag doesn't exist already for the team
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':tag', $params->getContent());
-        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $tagId = $req->fetchColumn();
+        $TeamTags = new TeamTags($this->Entity->Users);
 
-        // tag doesn't exist already
-        if (!$tagId) {
-            // throw an Exception if we cannot create a tag
-            if ($canCreate === false) {
-                throw new ImproperActionException(_('Users cannot create tags.'));
-            }
-
-            $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
-            $insertReq = $this->Db->prepare($insertSql);
-            $insertReq->bindValue(':tag', $params->getContent());
-            $insertReq->bindParam(':team', $this->Entity->Users->team, PDO::PARAM_INT);
-            $this->Db->execute($insertReq);
-            $tagId = $this->Db->lastInsertId();
+        // make sure we can create a new tag in this team
+        if ($TeamTags->exists($params) === false && $canCreate === false) {
+            throw new ImproperActionException(_('Users cannot create tags.'));
         }
-        // now reference it
-        $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $insertReq2->bindValue(':item_type', $this->Entity->entityType->value);
-        $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        $this->Db->execute($insertReq2);
+        $tagId = $TeamTags->create($params);
+        // now link the tag with the entity
+        $sql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':item_type', $this->Entity->entityType->value);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
         return $tagId;
     }

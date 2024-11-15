@@ -139,4 +139,15 @@ ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_storage`
 FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
 ON DELETE SET NULL;
 
+WITH cte AS (
+    SELECT id, ROW_NUMBER() OVER (PARTITION BY team, tag ORDER BY id) AS rn
+    FROM tags
+)
+DELETE FROM tags
+WHERE id IN (
+    SELECT id FROM cte WHERE rn > 1
+);
+ALTER TABLE `tags`
+  ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
+
 UPDATE config SET conf_value = 167 WHERE conf_name = 'schema';

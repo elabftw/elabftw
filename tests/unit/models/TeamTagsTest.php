@@ -45,11 +45,6 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         // TODO test with query
     }
 
-    public function testReadFull(): void
-    {
-        $this->assertIsArray($this->TeamTags->readFull());
-    }
-
     public function testNoAdmin(): void
     {
         $Users = new Users(2, 1);

@@ -69,6 +69,7 @@ class Eln extends AbstractZip
         protected ?EntityType $entityType = null,
         private bool $dryRun = false,
         protected ?int $category = null,
+        private bool $verifyChecksum = true,
     ) {
         parent::__construct(
             $requester,
@@ -431,8 +432,9 @@ class Eln extends AbstractZip
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         // checksum is mandatory for import
-        if (empty($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256']) {
-            throw new ImproperActionException(sprintf('Error during import: %s has incorrect sha256 sum.', basename($filepath)));
+        if ($this->verifyChecksum && (empty($file['sha256']) || hash_file('sha256', $filepath) !== $file['sha256'])) {
+            $this->logger->error(sprintf('Error: %s has incorrect sha256 sum. File was not imported.', basename($filepath)));
+            return;
         }
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
             $file['name'] ?? basename($file['@id']),

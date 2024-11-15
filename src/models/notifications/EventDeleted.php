@@ -42,7 +42,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         return array();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return array();
     }

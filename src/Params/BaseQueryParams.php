@@ -18,7 +18,6 @@ use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\InputBag;
-use ValueError;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -56,7 +55,7 @@ class BaseQueryParams implements QueryParamsInterface
 
     public function getQuery(): InputBag
     {
-        return $this->query ?? throw new ValueError('Query is null here.');
+        return $this->query ?? new InputBag();
     }
 
     public function setSort(Sort $sort): QueryParamsInterface

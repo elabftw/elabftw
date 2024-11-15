@@ -24,7 +24,6 @@ use function arsort;
  */
 abstract class AbstractCsv extends AbstractImport
 {
-
     /**
      * @var Reader<array> $reader
      */

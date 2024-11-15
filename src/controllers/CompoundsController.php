@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Compounds;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +28,8 @@ class CompoundsController implements ControllerInterface
 
         $Response = new Response();
         $Response->prepare($this->app->Request);
-        $queryParams = new CompoundsQueryParams($this->app->Request->query);
         $Response->setContent($this->app->render($template, array(
-            'compoundsArr' => $Compounds->readAll($queryParams),
+            'compoundsArr' => $Compounds->readAll($Compounds->getQueryParams($this->app->Request->query)),
         )));
 
         return $Response;

@@ -20,6 +20,6 @@ trait QueryParamsTrait
 {
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        return new BaseQueryParams($query ?? new InputBag());
+        return new BaseQueryParams(query: $query);
     }
 }

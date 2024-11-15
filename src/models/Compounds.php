@@ -14,18 +14,19 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Compound;
-use Elabftw\Params\CompoundsQueryParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\PubChemImporter;
@@ -71,14 +72,18 @@ class Compounds implements RestInterface
 
         // Calculate A ∩ B (bitwise AND) and A + B (bitwise OR) in SQL
         foreach ($fp['data'] as $key => $value) {
-            if ($value == 0) continue;
+            if ($value == 0) {
+                continue;
+            }
             $sql .= sprintf('(fp%d & %d) | ', $key, $value);
         }
         $sql = rtrim($sql, '| ') . ')) AS similarity_score ';
 
         $sql .= 'FROM compounds_fingerprints WHERE 1=1';
         foreach ($fp['data'] as $key => $value) {
-            if ($value == 0) continue;
+            if ($value == 0) {
+                continue;
+            }
             $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
         }
 
@@ -88,8 +93,9 @@ class Compounds implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $queryParams ??= $this->getQueryParams();
         if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
         }
@@ -130,9 +136,9 @@ class Compounds implements RestInterface
 
     }
 
-    public function getQueryParams(InputBag $query): QueryParamsInterface
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        return new CompoundsQueryParams($query);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Lastchange);
     }
 
     public function readOne(): array

@@ -85,7 +85,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     public function getQueryParams(InputBag $query = null): QueryParamsInterface
     {
-        return new BaseQueryParams(query: $query ?? new InputBag(), orderby: Orderby::Ordering);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
     }
 
     /**

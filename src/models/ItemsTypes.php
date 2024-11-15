@@ -95,7 +95,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public function getQueryParams(InputBag $query = null): QueryParamsInterface
     {
-        return new BaseQueryParams(query: $query ?? new InputBag(), orderby: Orderby::Ordering);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
     }
 
     public function readAll(QueryParamsInterface $queryParams = null): array

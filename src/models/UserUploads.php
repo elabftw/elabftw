@@ -14,19 +14,17 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Traits\QueryParamsTrait;
-use Elabftw\Params\UserUploadsQueryParams;
+use Elabftw\Params\BaseQueryParams;
 use PDO;
-use ValueError;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class UserUploads implements RestInterface
 {
-    use QueryParamsTrait;
-
     protected Db $Db;
 
     public function __construct(private Users $owner, private ?int $id = null)
@@ -36,7 +34,7 @@ class UserUploads implements RestInterface
 
     public function readOne(): array
     {
-        return $this->readAll(new UserUploadsQueryParams());
+        return $this->readAll();
     }
 
     public function postAction(Action $action, array $reqBody): int
@@ -59,11 +57,14 @@ class UserUploads implements RestInterface
         throw new ImproperActionException('No DELETE action for this endpoint');
     }
 
-    public function readAll(QueryParamsInterface $queryParams): array
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        if (!$queryParams instanceof UserUploadsQueryParams) {
-            throw new ValueError('Incorrect query params type. Must be UserUploadsQueryParams.');
-        }
+        return new BaseQueryParams(query: $query, orderby: Orderby::CreatedAt, limit: 42);
+    }
+
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
         $idFilter = '';
         if ($this->id) {
             $idFilter = sprintf('AND uploads.id = %d', $this->id);

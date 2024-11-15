@@ -24,7 +24,7 @@ interface RestInterface
 
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface;
 
-    public function readAll(QueryParamsInterface $queryParams): array;
+    public function readAll(?QueryParamsInterface $queryParams = null): array;
 
     public function postAction(Action $action, array $reqBody): int;
 

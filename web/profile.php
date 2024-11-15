@@ -22,7 +22,6 @@ use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
-use Elabftw\Params\UserUploadsQueryParams;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,7 +60,7 @@ try {
     $PermissionsHelper = new PermissionsHelper();
 
     $renderArr = array(
-        'attachedFiles' => $UserUploads->readAll(new UserUploadsQueryParams($App->Request->query)),
+        'attachedFiles' => $UserUploads->readAll($UserUploads->getQueryParams($App->Request->query)),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams($App->Request->query)),

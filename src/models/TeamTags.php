@@ -85,7 +85,7 @@ class TeamTags implements RestInterface
         $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE team = :team AND tags.id = :id';
+            WHERE team = :team AND tags.id = :id HAVING tags.id IS NOT NULL';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);

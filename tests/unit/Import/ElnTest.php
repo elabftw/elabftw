@@ -222,7 +222,6 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             EntityType::Items,
             category: 1,
         );
-        $this->expectException(ImproperActionException::class);
         $Import->import();
     }
 

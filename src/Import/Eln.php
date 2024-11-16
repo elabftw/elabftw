@@ -24,6 +24,7 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
 use JsonException;
@@ -258,7 +259,13 @@ class Eln extends AbstractZip
             }
             $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            $this->Entity->setId($this->Entity->create(title: $title));
+            if ($this->Entity instanceof ItemsTypes) {
+                // we need to check if an existing items_types exists with same name, and avoid recreating one
+                $cat = new ItemsTypes($Author);
+                $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
+            } else {
+                $this->Entity->setId($this->Entity->create(title: $title));
+            }
         }
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);

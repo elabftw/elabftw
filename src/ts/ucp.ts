@@ -14,8 +14,6 @@ import {
   saveStringAsFile,
   updateCatStat,
 } from './misc';
-import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Action, Model, Target, EntityType } from './interfaces';
 import Templates from './Templates.class';
@@ -48,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
-  editor.init();
+  editor.init('ucp');
 
   // CATEGORY SELECT
   $(document).on('change', '.catstatSelect', function() {
@@ -151,7 +149,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-
-  // TinyMCE
-  tinymce.init(getTinymceBaseConfig('ucp'));
 });

@@ -56,7 +56,7 @@ class ExperimentsTimestamp extends Command
         }
         $Db = Db::getConnection();
         $sql = 'SELECT id FROM experiments WHERE modified_at > :m AND IFNULL(timestamped_at, NOW()) != modified_at';
-        $teams = array_map('intval', $input->getOption('teams'));
+        $teams = $input->getOption('teams');
         if ($teams) {
             $sql .= sprintf(' AND team IN (%s)', implode(',', $teams));
         }

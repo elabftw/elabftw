@@ -314,7 +314,7 @@ class Apiv2Controller extends AbstractApiController
                 ),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
-                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
+                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId, includeArchived: $this->Request->query->getBoolean('archived')),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };
         }

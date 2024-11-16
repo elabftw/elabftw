@@ -49,11 +49,9 @@ class Uploads implements RestInterface
 
     public array $uploadData = array();
 
-    public bool $includeArchived = false;
-
     protected Db $Db;
 
-    public function __construct(public AbstractEntity $Entity, public ?int $id = null)
+    public function __construct(public AbstractEntity $Entity, public ?int $id = null, public bool $includeArchived = false)
     {
         $this->Db = Db::getConnection();
         if ($this->id !== null) {

@@ -273,10 +273,6 @@ abstract class AbstractEntity implements RestInterface
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
 
-        if ($this->alwaysShowOwned) {
-            $sql .= ' OR entity.userid = :userid';
-        }
-
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,

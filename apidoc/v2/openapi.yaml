@@ -3966,6 +3966,12 @@ paths:
         required: true
         schema:
           type: integer
+      - name: archived
+        in: query
+        description: Include archived uploads in the response if the value is truthy.
+        required: false
+        schema:
+          type: string
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.

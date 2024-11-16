@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
-  editor.init();
+  editor.init('edit');
   // initialize the file uploader
   (new Uploader()).init();
 

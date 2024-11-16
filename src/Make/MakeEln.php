@@ -46,10 +46,13 @@ class MakeEln extends AbstractMakeEln
         // add the description of root with hasPart property
         $this->dataEntities[] = array(
             '@id' => './',
+            'identifier' => Tools::getUuidv4(),
             '@type' => 'Dataset',
+            'datePublished' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',
+            'license' => array('@id' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/'),
         );
 
         // merge all, including authors

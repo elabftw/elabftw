@@ -22,7 +22,6 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string) {
@@ -99,11 +98,7 @@ if (window.location.pathname === '/admin.php') {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   const editor = getEditor();
-  if (editor.type === 'tiny') {
-    tinymce.init(getTinymceBaseConfig('admin'));
-  } else {
-    editor.init();
-  }
+  editor.init('admin');
 
   // edit the team group name
   const malleableGroupname = new Malle({

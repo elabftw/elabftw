@@ -46,10 +46,13 @@ class MakeEln extends AbstractMakeEln
         // add the description of root with hasPart property
         $this->dataEntities[] = array(
             '@id' => './',
+            'identifier' => Tools::getUuidv4(),
             '@type' => 'Dataset',
+            'datePublished' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',
+            'license' => array('@id' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/'),
         );
 
         // merge all, including authors
@@ -307,7 +310,7 @@ class MakeEln extends AbstractMakeEln
             'email' => $author->userData['email'],
         );
         // only add an identifier property if there is an orcid
-        if ($author->userData['orcid'] !== null) {
+        if (!empty($author->userData['orcid'])) {
             $node['identifier'] = 'https://orcid.org/' . $author->userData['orcid'];
         }
         // only add it if it doesn't exist yet in our list of authors

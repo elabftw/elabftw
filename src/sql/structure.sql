@@ -1361,10 +1361,10 @@ CREATE TABLE `calendars` (
   `team` int UNSIGNED NOT NULL,
   `created_by` int UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `state` tinyint UNSIGNED NOT NULL DEFAULT '1',
-  `all_events` tinyint UNSIGNED NOT NULL DEFAULT '0',
-  `todo` tinyint UNSIGNED NOT NULL DEFAULT '0',
-  `unfinished_steps_scope` tinyint UNSIGNED NOT NULL DEFAULT '0',
+  `state` tinyint UNSIGNED NOT NULL DEFAULT 1,
+  `all_events` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `todo` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `unfinished_steps_scope` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

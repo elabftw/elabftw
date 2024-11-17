@@ -25,12 +25,9 @@ import { Api } from './Apiv2.class';
 import $ from 'jquery';
 import { Uploader } from './uploader';
 
-const ApiC = new Api();
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/ucp.php') {
-    return;
-  }
+// only run on ucp page
+if (window.location.pathname === '/ucp.php') {
+  const ApiC = new Api();
 
   // show the handles to reorder when the menu entry is clicked
   $('#toggleReorder').on('click', function() {
@@ -148,4 +145,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // TinyMCE
   tinymce.init(getTinymceBaseConfig('ucp'));
-});
+}

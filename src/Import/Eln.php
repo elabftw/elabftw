@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -264,7 +265,7 @@ class Eln extends AbstractZip
                 $cat = new ItemsTypes($Author);
                 $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
             } else {
-                $this->Entity->setId($this->Entity->create(title: $title));
+                $this->Entity->setId($this->Entity->create(title: $title, category: $categoryId));
             }
         }
         // keep a reference between the `@id` and the fresh id to resolve links later
@@ -279,7 +280,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+                    $this->Entity->update(new EntityParams('category', (string) $categoryId));
                     break;
                     // CUSTOM ID
                 case 'alternateName':
@@ -338,7 +339,7 @@ class Eln extends AbstractZip
                     foreach ($value ?? array() as $propval) {
                         // we look for the special elabftw_metadata property and that's what we import
                         if ($propval['propertyID'] === 'elabftw_metadata') {
-                            $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));
+                            $this->Entity->update(new EntityParams('metadata', $propval['value']));
                         }
                         break;
                     }
@@ -346,11 +347,11 @@ class Eln extends AbstractZip
 
                     // RATING
                 case 'aggregateRating':
-                    $this->Entity->patch(Action::Update, array('rating' => $value['ratingValue'] ?? '0'));
+                    $this->Entity->update(new EntityParams('rating', (string) ($value['ratingValue'] ?? '0')));
                     break;
                     // STATUS
                 case 'creativeWorkStatus':
-                    $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($entityType, $value)));
+                    $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $value)));
                     break;
                     // STEPS
                 case 'step':

@@ -62,9 +62,9 @@ abstract class AbstractImport implements ImportInterface
 
     protected function getStatusId(EntityType $type, string $status): int
     {
-        if ($type === EntityType::Experiments) {
+        if ($type === EntityType::Experiments || $type === EntityType::Templates) {
             $Status = new ExperimentsStatus($this->Teams);
-        } else { // items
+        } else { // items or resources categories
             $Status = new ItemsStatus($this->Teams);
         }
         return $Status->getIdempotentIdFromTitle($status);
@@ -72,7 +72,7 @@ abstract class AbstractImport implements ImportInterface
 
     protected function getCategoryId(EntityType $type, Users $author, string $category, ?string $color = null): int
     {
-        if ($type === EntityType::Experiments) {
+        if ($type === EntityType::Experiments || $type === EntityType::Templates) {
             $Category = new ExperimentsCategories($this->Teams);
         } else { // items
             $Category = new ItemsTypes($author);

@@ -1,0 +1,109 @@
+{# Modal for calendar feeds #}
+<div class='modal fade' id='calendarModal' tabindex='-1' role='dialog' aria-labelledby='calendarModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='calendarModalLabel'>{{ 'Create a calendar feed'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <label for='calendarTitle'>{{ 'Title'|trans }}</label>
+        <input class='form-control' type='text' id='calendarTitle' />
+        <hr>
+        <div class='form-check form-check-inline'>
+          <label class='form-check-label mr-2' for='calendarTeam'>{{ 'Subscribe to all events of the team'|trans }}</label>
+          <input class='form-check-input' type='checkbox' id='calendarTeam'>
+        </div>
+        <br>
+        <strong>{{ 'or'|trans }}</strong>
+        <div class='mt-2 mb-2'>
+          <label for='calendarSelectCat'>{{ 'Select the categories you want to include in the feed:'|trans }}</label>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+          {%- endif %}
+          <select
+            aria-label='{{ 'Select categories'|trans }}'
+            class='form-control'
+            id='calendarSelectCat'
+            multiple
+          >
+            <option value=''>{{ 'Select categories'|trans }}</option>
+            {% for category in bookableItemsTypes %}
+              <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+                {{ category.title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class='mt-2 mb-2'>
+          <label for='calendarSelectItem'>{{ 'Select the resources you want to include in the feed:'|trans }}</label>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+          {%- endif %}
+          <select
+            aria-label='{{ 'Select resources'|trans }}'
+            class='form-control'
+            id='calendarSelectItem'
+            multiple
+          >
+            <option value=''>{{ 'Select resources'|trans }}</option>
+            {% for item in itemsArr %}
+              {# data-color is used to set the background during initial drag #}
+              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
+                {{ item.category_title }} - {{ item.title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {% if App.Request.getScriptName|split('/')|last == 'profile.php' %}
+          <hr>
+          <div class='mt-2 mb-2'>
+            <div class='form-check form-check-inline'>
+              <label class='form-check-label mr-2' for='calendarTodo'>{{ 'Include my todolist'|trans }}</label>
+              <input class='form-check-input' type='checkbox' id='calendarTodo'>
+            </div>
+          </div>
+          <div class='mt-2 mb-2'>
+            <div class='form-check form-check-inline'>
+              <label class='form-check-label mr-2' for='calendarUnfinishedStepsUser'>{{ 'Include unfinished steps for '|trans }}</label>
+              <input class='form-check-input' type='radio' name='calendarUnfinishedSteps' id='calendarUnfinishedStepsUser' value='user'>
+              <label class='form-check-label' for='calendarUnfinishedStepsUser'>{{ 'myself'|trans }}</label>
+            </div>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='calendarUnfinishedSteps' id='calendarUnfinishedStepsTeam' value='team'>
+              <label class='form-check-label' for='calendarUnfinishedStepsTeam'>{{ 'my team'|trans }}</label>
+            </div>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='calendarUnfinishedSteps' id='calendarUnfinishedStepsDisabled' value='none' checked='checked'>
+              <label class='form-check-label' for='calendarUnfinishedStepsDisabled'>{{ 'Do not include'|trans }}</label>
+            </div>
+          </div>
+        {% endif %}
+
+        <hr>
+        <button type='button' class='btn btn-primary' data-action='create-calendar'>
+          {{ 'Get a link for this calendar feed'|trans }}
+        </button>
+        <div hidden id='calendarUrlDisplay' class='mt-2 mb-2'>
+          <label>{{ 'You can access the calendar with the following public link:'|trans }}</label>
+          <div class='input-group mt-1'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button'
+                data-action='copy-to-clipboard' data-target='calendarFeedUrl'>
+                <i class='fas fa-clone'></i>
+              </button>
+            </div>
+            <input type='text' class='form-control' id='calendarFeedUrl' readonly='readonly'>
+          </div>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

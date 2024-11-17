@@ -107,11 +107,23 @@
   </div>
 </div>
 
+{% include 'calendar-modal.html' %}
+
 {# TAB 1 SCHEDULER #}
 <div data-tabcontent='1' hidden>
   <div class='d-flex mb-2'>
     <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
     <div class='ml-auto'>
+      <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'
+        title='{{ 'Get a calendar feed'|trans }}' aria-label='{{ 'Get a calendar feed'|trans }}'
+        data-action='toggle-modal' data-target='calendarModal'
+      >
+        <span class='fa-stack'>
+          <i class='far fa-calendar fa-stack-2x'></i>
+          <i class='fas fa-right-long fa-stack-1x' style='top:4px'></i>
+        </span>
+      </button>
+
       {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
     </div>
   </div>
@@ -120,63 +132,63 @@
     {% if itemsArr|length == 0 %}
       {{ 'No bookable items.'|trans|msg('warning', false) }}
     {% else %}
-    <div class='row mb-3'>
-      <div class='col-md-3'>
-        {# CATEGORY #}
-        <form aria-label='{{ 'Filter by category'|trans }}'>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Filter by category'|trans }}'
-            class='autosubmit mr-1 form-control'
-            id='schedulerSelectCat'
-            name='cat'
-          >
-            <option value=''>{{ 'Filter by category'|trans }}</option>
-            {% for category in bookableItemsTypes %}
-              <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-                {{ category.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </form>
-      </div>
-
-      <div class='col-md-3'>
-        {# ITEM LIST #}
-        <form aria-label='{{ 'Select a resource'|trans }}'>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Select a resource'|trans }}'
-            class='autosubmit mr-1 form-control'
-            id='itemSelect'
-            name='item'
-          >
-            <option value=''>{{ 'Select a resource'|trans }}</option>
-            {% for item in itemsArr %}
-              {# data-color is used to set the background during initial drag #}
-              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-                {{ item.category_title }} - {{ item.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </form>
-      </div>
-
-      {% if bookableItemData %}
-        <div class='col-md-3 ml-auto'>
-          <div class='input-group justify-content-end flex-nowrap'>
-            <div class='input-group-prepend'>
-              <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
-            </div>
-            <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
-          </div>
+      <div class='row mb-3'>
+        <div class='col-md-3'>
+          {# CATEGORY #}
+          <form aria-label='{{ 'Filter by category'|trans }}'>
+            {% if App.Config.configArr.debug -%}
+              <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+            {%- endif %}
+            <select
+              aria-label='{{ 'Filter by category'|trans }}'
+              class='autosubmit mr-1 form-control'
+              id='schedulerSelectCat'
+              name='cat'
+            >
+              <option value=''>{{ 'Filter by category'|trans }}</option>
+              {% for category in bookableItemsTypes %}
+                <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
+                  {{ category.title }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
         </div>
-      {% endif %}
-    </div>
+
+        <div class='col-md-3'>
+          {# ITEM LIST #}
+          <form aria-label='{{ 'Select a resource'|trans }}'>
+            {% if App.Config.configArr.debug -%}
+              <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+            {%- endif %}
+            <select
+              aria-label='{{ 'Select a resource'|trans }}'
+              class='autosubmit mr-1 form-control'
+              id='itemSelect'
+              name='item'
+            >
+              <option value=''>{{ 'Select a resource'|trans }}</option>
+              {% for item in itemsArr %}
+                {# data-color is used to set the background during initial drag #}
+                <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
+                  {{ item.category_title }} - {{ item.title }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
+        </div>
+
+        {% if bookableItemData %}
+            <div class='col-md-3 ml-auto'>
+              <div class='input-group justify-content-end flex-nowrap'>
+                <div class='input-group-prepend'>
+                  <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
+                </div>
+                <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
+              </div>
+            </div>
+        {% endif %}
+      </div>
     {% endif %}
   </div>
   <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>

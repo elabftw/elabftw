@@ -23,8 +23,10 @@ use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
@@ -258,7 +260,13 @@ class Eln extends AbstractZip
             }
             $this->Entity->patch(Action::Update, array('date' => $date));
         } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            $this->Entity->setId($this->Entity->create(title: $title));
+            if ($this->Entity instanceof ItemsTypes) {
+                // we need to check if an existing items_types exists with same name, and avoid recreating one
+                $cat = new ItemsTypes($Author);
+                $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
+            } else {
+                $this->Entity->setId($this->Entity->create(title: $title, category: $categoryId));
+            }
         }
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
@@ -272,7 +280,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->patch(Action::Update, array('category' => (string) $categoryId));
+                    $this->Entity->update(new EntityParams('category', (string) $categoryId));
                     break;
                     // CUSTOM ID
                 case 'alternateName':
@@ -331,7 +339,7 @@ class Eln extends AbstractZip
                     foreach ($value ?? array() as $propval) {
                         // we look for the special elabftw_metadata property and that's what we import
                         if ($propval['propertyID'] === 'elabftw_metadata') {
-                            $this->Entity->patch(Action::Update, array('metadata' => $propval['value']));
+                            $this->Entity->update(new EntityParams('metadata', $propval['value']));
                         }
                         break;
                     }
@@ -339,11 +347,11 @@ class Eln extends AbstractZip
 
                     // RATING
                 case 'aggregateRating':
-                    $this->Entity->patch(Action::Update, array('rating' => $value['ratingValue'] ?? '0'));
+                    $this->Entity->update(new EntityParams('rating', (string) ($value['ratingValue'] ?? '0')));
                     break;
                     // STATUS
                 case 'creativeWorkStatus':
-                    $this->Entity->patch(Action::Update, array('status' => (string) $this->getStatusId($entityType, $value)));
+                    $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $value)));
                     break;
                     // STEPS
                 case 'step':

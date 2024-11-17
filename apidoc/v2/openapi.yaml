@@ -878,6 +878,8 @@ components:
           type: string
         lastname:
           type: string
+        initials:
+          type: string
         email:
           type: string
         validated:

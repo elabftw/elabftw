@@ -9,7 +9,7 @@ import { collectForm, notif, notifError, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
+import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -329,5 +329,5 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('ts_urldiv').removeAttribute('hidden');
     }
   }
-  tinymce.init(getTinymceBaseConfig('sysconfig'));
+  getEditor().init('sysconfig');
 });

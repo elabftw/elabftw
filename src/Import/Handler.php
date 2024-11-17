@@ -58,7 +58,8 @@ class Handler implements RestInterface
         $Importer->import();
         $inserted = $Importer->getInserted();
         if ($inserted > self::AUDIT_THRESHOLD) {
-            AuditLogs::create(new AuditEventImport($this->requester->userid ?? 0, $inserted));
+            /** @psalm-suppress RedundantCast had an error during eln import where userid was a string for some reason... */
+            AuditLogs::create(new AuditEventImport((int) ($this->requester->userid ?? 0), $inserted));
         }
         return $inserted;
     }

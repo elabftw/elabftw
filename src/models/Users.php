@@ -236,6 +236,10 @@ class Users implements RestInterface
             users.firstname, users.lastname, users.created_at, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            CONCAT(
+                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
+                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
+            ) AS initials,
             users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
             FROM users
             LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
@@ -578,7 +582,11 @@ class Users implements RestInterface
     protected function readOneFull(): array
     {
         $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+            CONCAT(
+                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
+                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
+            ) AS initials
             FROM users
             LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             WHERE users.userid = :userid";

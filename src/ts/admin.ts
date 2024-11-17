@@ -23,7 +23,6 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
 import Tab from './Tab.class';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -37,11 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   const editor = getEditor();
-  if (editor.type === 'tiny') {
-    tinymce.init(getTinymceBaseConfig('admin'));
-  } else {
-    editor.init();
-  }
+  editor.init('admin');
 
   function collectSelectable(name: string) {
     const collected = [];

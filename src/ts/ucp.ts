@@ -14,8 +14,6 @@ import {
   saveStringAsFile,
   updateCatStat,
 } from './misc';
-import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
 import i18next from 'i18next';
 import { Action, Model, Target } from './interfaces';
 import Templates from './Templates.class';
@@ -47,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
-  editor.init();
+  editor.init('ucp');
 
   // CATEGORY SELECT
   $(document).on('change', '.catstatSelect', function() {
@@ -96,8 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else if (el.matches('[data-action="patch-account"]')) {
       const params = collectForm(document.getElementById('ucp-account-form'), false);
-      if (params['orcid'] === '') {
-        delete params['orcid'];
+      // Allow clearing the field when sending empty orcid param
+      if (!params['orcid']) {
+        params['orcid'] = null;
       }
       ApiC.patch(`${Model.User}/me`, params);
 
@@ -145,7 +144,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-
-  // TinyMCE
-  tinymce.init(getTinymceBaseConfig('ucp'));
 });

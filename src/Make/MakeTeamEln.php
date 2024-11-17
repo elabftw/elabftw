@@ -21,7 +21,7 @@ use ZipStream\ZipStream;
  */
 class MakeTeamEln extends AbstractMakeEln
 {
-    public function __construct(ZipStream $Zip, protected int $teamId)
+    public function __construct(ZipStream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
     {
         parent::__construct($Zip);
     }
@@ -44,14 +44,22 @@ class MakeTeamEln extends AbstractMakeEln
 
     private function gatherSlugs(): array
     {
+        $usersAnd = '';
+        if ($this->users) {
+            $usersAnd .= sprintf(' AND userid IN (%s)', implode(',', $this->users));
+        }
+        $resourcesCategoriesAnd = '';
+        if ($this->resourcesCategories) {
+            $resourcesCategoriesAnd .= sprintf(' AND category IN (%s)', implode(',', $this->resourcesCategories));
+        }
         // we don't grab the deleted ones
-        $sql = 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid AND state IN (1, 2)
+        $sql = sprintf('SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid AND state IN (1, 2) %1$s
             UNION All
-            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2)
+            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2) %2$s
             UNION All
-            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2)
+            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2) %1$s
             UNION All
-            SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :teamid AND state IN (1, 2)';
+            SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :teamid AND state IN (1, 2)', $usersAnd, $resourcesCategoriesAnd);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':teamid', $this->teamId, PDO::PARAM_INT);
         $this->Db->execute($req);

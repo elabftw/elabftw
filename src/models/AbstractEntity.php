@@ -273,10 +273,6 @@ abstract class AbstractEntity implements RestInterface
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
 
-        if ($this->alwaysShowOwned) {
-            $sql .= ' OR entity.userid = :userid';
-        }
-
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
@@ -555,6 +551,56 @@ abstract class AbstractEntity implements RestInterface
         return $this->readOne();
     }
 
+    /**
+     * Update an entity. The revision is saved before so it can easily compare old and new body.
+     */
+    public function update(ContentParamsInterface $params): bool
+    {
+        $content = $params->getContent();
+        switch ($params->getTarget()) {
+            case 'bodyappend':
+                $content = $this->readOne()['body'] . $content;
+                break;
+            case 'canread':
+            case 'canwrite':
+                if ($this->bypassWritePermission === false) {
+                    $this->checkTeamPermissionsEnforced($params->getTarget());
+                }
+                break;
+        }
+
+        // save a revision for body target
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            $Config = Config::getConfig();
+            $Revisions = new Revisions(
+                $this,
+                (int) $Config->configArr['max_revisions'],
+                (int) $Config->configArr['min_delta_revisions'],
+                (int) $Config->configArr['min_days_revisions'],
+            );
+            $Revisions->create((string) $content);
+        }
+
+        $Changelog = new Changelog($this);
+        $Changelog->create($params);
+        // getColumn cannot be malicious here because of the previous switch
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $content);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        // custom_id could be used twice unintentionally
+        try {
+            return $this->Db->execute($req);
+        } catch (DatabaseErrorException $e) {
+            $PdoException = $e->getPrevious();
+            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
+                throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
+            }
+            throw $e;
+        }
+    }
+
     protected function checkToggleLockPermissions(): void
     {
         $this->getPermissions();
@@ -604,56 +650,6 @@ abstract class AbstractEntity implements RestInterface
         }
 
         return (new Permissions($this->Users, $this->entityData))->forEntity();
-    }
-
-    /**
-     * Update an entity. The revision is saved before so it can easily compare old and new body.
-     */
-    protected function update(ContentParamsInterface $params): bool
-    {
-        $content = $params->getContent();
-        switch ($params->getTarget()) {
-            case 'bodyappend':
-                $content = $this->readOne()['body'] . $content;
-                break;
-            case 'canread':
-            case 'canwrite':
-                if ($this->bypassWritePermission === false) {
-                    $this->checkTeamPermissionsEnforced($params->getTarget());
-                }
-                break;
-        }
-
-        // save a revision for body target
-        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
-            $Config = Config::getConfig();
-            $Revisions = new Revisions(
-                $this,
-                (int) $Config->configArr['max_revisions'],
-                (int) $Config->configArr['min_delta_revisions'],
-                (int) $Config->configArr['min_days_revisions'],
-            );
-            $Revisions->create((string) $content);
-        }
-
-        $Changelog = new Changelog($this);
-        $Changelog->create($params);
-        // getColumn cannot be malicious here because of the previous switch
-        $sql = 'UPDATE ' . $this->entityType->value . ' SET ' . $params->getColumn() . ' = :content, lastchangeby = :userid WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $content);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        // custom_id could be used twice unintentionally
-        try {
-            return $this->Db->execute($req);
-        } catch (DatabaseErrorException $e) {
-            $PdoException = $e->getPrevious();
-            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
-                throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
-            }
-            throw $e;
-        }
     }
 
     protected function getFullnameFromUserid(int $userid): string

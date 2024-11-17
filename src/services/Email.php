@@ -112,7 +112,13 @@ class Email
 
         // send emails one by one
         foreach ($addresses as $address) {
-            $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
+            // use a try catch so we finish the loop even if errors are encountered
+            try {
+                $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
+                // this will be thrown by send() method
+            } catch (ImproperActionException) {
+                continue;
+            }
         }
         return $addressesCount;
     }

@@ -19,6 +19,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZipStream\ZipStream;
 
@@ -37,7 +38,9 @@ class ExportEln extends Command
     {
         $this->setDescription('Export data in ELN file format')
             ->setHelp('This command allows you to create a .eln file containing data from a whole team. Use verbose flags (-v or -vv) to get more information about what is happening.')
-            ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID');
+            ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
+            ->addOption('users', 'u', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only include these userids', array())
+            ->addOption('rcat', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only include these categories of resources', array());
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,7 +57,9 @@ class ExportEln extends Command
         }
 
         $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
-        $Maker = new MakeTeamEln($ZipStream, $teamid);
+        $users = array_map('intval', $input->getOption('users'));
+        $resourcesCategories = array_map('intval', $input->getOption('rcat'));
+        $Maker = new MakeTeamEln($ZipStream, $teamid, $users, $resourcesCategories);
         $Maker->getStreamZip();
 
         fclose($fileStream);

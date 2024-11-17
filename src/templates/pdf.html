@@ -60,7 +60,7 @@
 
     {% for link in entityData.experiments_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category_title }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&amp;id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category_title }}</span> - <a href='{{ linkBaseUrl.experiments }}?mode=view&amp;id={{ link.entityid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>
@@ -75,7 +75,7 @@
 
     {% for link in entityData.items_links %}
       <p class='pdf-ul'>
-        <span style='color:#{{ link.color }}'>{{ link.category_title }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&amp;id={{ link.itemid }}'>{{ link.title }}</a>
+        <span style='color:#{{ link.color }}'>{{ link.category_title }}</span> - <a href='{{ linkBaseUrl.items }}?mode=view&amp;id={{ link.entityid }}'>{{ link.title }}</a>
       </p>
     {% endfor %}
   </section>

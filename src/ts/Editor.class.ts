@@ -7,6 +7,7 @@
  */
 import $ from 'jquery';
 import tinymce from 'tinymce/tinymce';
+import { getTinymceBaseConfig } from './tinymce';
 import { marked } from 'marked';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import { Entity, Target } from './interfaces';
@@ -16,7 +17,7 @@ declare const MathJax: MathJaxObject;
 interface EditorInterface {
   type: string;
   typeAsInt: number;
-  init(): void;
+  init(page: string): void;
   getContent(): string;
   setContent(content: string): void;
   switch(entity: Entity): Promise<Response>;
@@ -39,8 +40,8 @@ class TinyEditor extends Editor implements EditorInterface {
     this.type = 'tiny';
     this.typeAsInt = 1;
   }
-  init(): void {
-    return;
+  init(page: string = 'edit'): void {
+    tinymce.init(getTinymceBaseConfig(page));
   }
   getContent(): string {
     return tinymce.activeEditor.getContent();

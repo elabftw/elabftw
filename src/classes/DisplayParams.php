@@ -94,7 +94,6 @@ class DisplayParams extends BaseQueryParams
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
         if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
-            // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
         }
         if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {

@@ -31,6 +31,48 @@
   "datePublished": "2012-03-03",
   "dateCreated": "2012-01-01",
   "description": "A free and open source electronic laboratory notebook for research labs.",
+  "funder": [
+    {
+      "@type": "Organization",
+      "name": "CNRS",
+      "url": "https://www.cnrs.fr/"
+    },
+    {
+      "@type": "Organization",
+      "name": "Institut Curie - Centre de Recherche",
+      "url": "https://curie.fr/"
+    },
+    {
+      "@type": "Organization",
+      "name": "Atelier de la donnée ADOC Lorraine (projet financé avec le soutien du Fonds national pour la Science ouverte)",
+      "url": "https://scienceouverte.univ-lorraine.fr/donnees-de-la-recherche-ul/donnees-de-la-recherche/"
+    },
+    {
+      "@type": "Organization",
+      "name": "Vrije Universiteit Brussel",
+      "url": "https://www.vub.be/en"
+    },
+    {
+      "@type": "Organization",
+      "name": "Institute of Medical Biometry and Statistics, Faculty of Medicine and Medical Center – University of Freiburg, Germany",
+      "url": "https://www.uniklinik-freiburg.de/imbi-en.html"
+    },
+    {
+      "@type": "Organization",
+      "name": "Georg-August-University Goettingen - Institute of Inorganic Chemistry",
+      "url": "https://www.uni-goettingen.de/en/institute+of+inorganic+chemistry/28446.html"
+    },
+    {
+      "@type": "Organization",
+      "name": "Deltablot",
+      "url": "https://www.deltablot.com/"
+    },
+    {
+      "@type": "Organization",
+      "name": "Department for the Development of Innovative Digital Use – French National Research Institute for Sustainable Development",
+      "url": "https://www.ird.fr/"
+    }
+  ],
   "keywords": "eln, notebook, laboratory, lims, research, science, free, opensource, timestamp, legal proof",
   "license": "https://github.com/elabftw/elabftw/blob/master/LICENSE",
   "name": "eLabFTW, Deltablot",

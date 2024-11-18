@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_slice;
-use function strlen;
 use function strtolower;
 
 class CalendarTest extends \PHPUnit\Framework\TestCase
@@ -35,17 +34,6 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/calendars/', $this->Calendar->getApiPath());
-    }
-
-    public function testRandomAlphaNumericString(): void
-    {
-        $length = 10;
-        $this->assertEquals($length, strlen($this->Calendar::randomAlphaNumericString($length)));
-    }
-
-    public function testTokenLength(): void
-    {
-        $this->assertEquals(60, $this->Calendar::TOKEN_LENGTH);
     }
 
     public function testPostAction(): void

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CalendarKeys;
 use Elabftw\Enums\EntityType;
@@ -53,7 +54,8 @@ class Calendar implements RestInterface
 {
     use SetIdTrait;
 
-    public const int TOKEN_LENGTH = 60;
+    // UUID version 4 are 36 characters long
+    public const int TOKEN_LENGTH = 36;
 
     private Db $Db;
 
@@ -69,7 +71,7 @@ class Calendar implements RestInterface
                     VALUES (:title, :token, :team, :created_by, :all_events, :todo, :unfinished_steps_scope)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $reqBody['title']);
-        $req->bindValue(':token', $this::randomAlphaNumericString(self::TOKEN_LENGTH));
+        $req->bindValue(':token', Tools::getUuidv4());
         $req->bindParam(':team', $this->User->team, PDO::PARAM_INT);
         $req->bindParam(':all_events', $reqBody['all_events']);
         $req->bindParam(':todo', $reqBody['todo']);

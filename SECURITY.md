@@ -100,7 +100,7 @@ Only exposing the eLabFTW service is a good way to avoid having the whole world 
 
 ### Add a reverse proxy
 
-A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using external authentication in conjunction with eg `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further, while allowing the login information to propagate.
+A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using eLabFTW's external authentication mechanism in conjunction with eg `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further (while allowing authentication information to propagate).
 
 ### Enable 2FA
 

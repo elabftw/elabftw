@@ -469,20 +469,23 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
-    // specifying custom CSS for properly rendering MathJax in TinyMCE instance
-    content_style: 'mjx-assistive-mml { position: absolute !important; top: 0px; left: 0px; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0px 0px 0px !important; border: 0px !important; display: block !important; width: auto !important; overflow: hidden !important; user-select: none; } g[data-mml-node="merror"] > rect[data-background] { fill: yellow; stroke: none; } g[data-mml-node="merror"] > g { fill: red; stroke: red; }',
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {
         if (e.command == "mcePreview") {
           const iframe = (document.querySelector("iframe.tox-dialog__iframe") as HTMLIFrameElement);
           if (iframe) {
-            const htmlString = iframe.srcdoc;
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(htmlString);
-            iframeDoc.close();
-            MathJax.typeset([iframeDoc.body]);
+            iframe.onload = () => {
+              const tinyDiv = document.createElement('div');
+              tinyDiv.setAttribute('id', 'tinymce-preview');
+              tinyDiv.setAttribute('class', 'mce-content-body');
+              iframe.contentDocument.body.childNodes.forEach((node) => {
+                tinyDiv.append(node);
+              });
+              // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
+              iframe.replaceWith(tinyDiv);
+              MathJax.typesetPromise();
+            };
           }
         }
       });

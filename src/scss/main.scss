@@ -111,15 +111,25 @@ body {
 }
 
 /* little shadow on top of the screen for no reasons */
-body::before {
+/* TinyMCE selector for body in preview excluded to prevent flashing */
+body:not(#tinymce:not([contenteditable='true']))::before,
+#tinymce-preview::before {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   content: '';
-  height: 10px;
   left: 0;
-  position: fixed;
   top: -10px;
   width: 100%;
+}
+
+body:not(#tinymce:not([contenteditable='true']))::before {
+  height: 10px;
+  position: fixed;
   z-index: 100;
+}
+
+#tinymce-preview::before {
+  height: 4rem;
+  position: absolute;
 }
 
 /* this is the big white thing that holds everything */
@@ -1261,6 +1271,20 @@ figure figcaption {
 /* make the markdown editor full width */
 .markdown-textarea {
   width: 100%;
+}
+
+/* styling TinyMCE preview */
+.tox-dialog__header {
+  padding: 8px 16px 16px !important;
+}
+
+.tox-dialog__body-content {
+  padding: 0px 16px 16px !important;
+}
+
+/* hide text in TinyMCE iframe preview to prevent flashing */
+body#tinymce:not([contenteditable='true']) * {
+  color: rgba(0,0,0,0);
 }
 
 /* stylelint-disable-next-line selector-no-qualifying-type */

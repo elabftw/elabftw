@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\UserParams;
 use DateTime;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;

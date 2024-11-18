@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
-use function strtolower;
-
 enum Scope: int
 {
     case User = 1;
@@ -26,19 +24,6 @@ enum Scope: int
             Scope::User => 'user',
             Scope::Team => 'users',
             Scope::Everything => 'globe',
-        };
-    }
-
-    /**
-     * Get a string representation of a case
-     * "user", "team", or "everything"
-     */
-    public function toString(): string
-    {
-        return match ($this) {
-            Scope::User => strtolower(Scope::User->name),
-            Scope::Team => strtolower(Scope::Team->name),
-            Scope::Everything => strtolower(Scope::Everything->name),
         };
     }
 }

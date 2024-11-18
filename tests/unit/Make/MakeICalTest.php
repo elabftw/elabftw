@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use function array_column;
 use function array_slice;
 use function str_repeat;
+use function strtolower;
 
 class MakeICalTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,7 +49,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     public function testGetFileName(): void
     {
         $this->assertEquals(
-            'eLabFTW-calendar.ics',
+            'elabftw-calendar.ics',
             (new MakeICal('notARealToken'))->getFileName(),
         );
     }
@@ -118,7 +119,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     public function testTodoUnfinishedStepsUser(): void
     {
         $iCalString = $this->getICalString(array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::User->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::User->name),
         ));
         $this->assertIsCalendar($iCalString, 'VTODO');
     }
@@ -126,7 +127,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     public function testTodoUnfinishedStepsTeam(): void
     {
         $iCalString = $this->getICalString(array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
         ));
         $this->assertIsCalendar($iCalString, 'VTODO');
     }
@@ -136,7 +137,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
         $iCalString = $this->getICalString(array(
             CalendarKeys::AllEvents->value => true,
             CalendarKeys::Todo->value => true,
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
         ));
         $this->assertIsCalendar($iCalString, 'VTODO');
         $this->assertIsCalendar($iCalString, 'VEVENT');

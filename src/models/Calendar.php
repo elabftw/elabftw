@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CalendarKeys;
 use Elabftw\Enums\EntityType;
@@ -39,11 +40,12 @@ use function explode;
 use function is_array;
 use function is_string;
 use function json_decode;
+use function random_int;
 use function sprintf;
 use function str_repeat;
 use function strlen;
+use function strtolower;
 use function strtoupper;
-use function random_int;
 
 /**
  * All about calendars - iCal feeds of team events
@@ -52,7 +54,8 @@ class Calendar implements RestInterface
 {
     use SetIdTrait;
 
-    public const int TOKEN_LENGTH = 60;
+    // UUID version 4 are 36 characters long
+    public const int TOKEN_LENGTH = 36;
 
     private Db $Db;
 
@@ -68,7 +71,7 @@ class Calendar implements RestInterface
                     VALUES (:title, :token, :team, :created_by, :all_events, :todo, :unfinished_steps_scope)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $reqBody['title']);
-        $req->bindValue(':token', $this::randomAlphaNumericString(self::TOKEN_LENGTH));
+        $req->bindValue(':token', Tools::getUuidv4());
         $req->bindParam(':team', $this->User->team, PDO::PARAM_INT);
         $req->bindParam(':all_events', $reqBody['all_events']);
         $req->bindParam(':todo', $reqBody['todo']);
@@ -93,8 +96,8 @@ class Calendar implements RestInterface
                     CalendarKeys::Todo->value,
                     CalendarKeys::AllEvents->value => Filter::toBinary($reqBody[$key]),
                     CalendarKeys::UnfinishedStepsScope->value => match ($reqBody[$key]) {
-                        Scope::User->toString() => Scope::User->value,
-                        Scope::Team->toString() => Scope::Team->value,
+                        strtolower(Scope::User->name) => Scope::User->value,
+                        strtolower(Scope::Team->name) => Scope::Team->value,
                         default => 0,
                     },
                     CalendarKeys::Categories->value,
@@ -114,7 +117,7 @@ class Calendar implements RestInterface
 
     public function getApiPath(): string
     {
-        return 'api/v2/calendar/';
+        return 'api/v2/calendars/';
     }
 
     public function readAll(): array

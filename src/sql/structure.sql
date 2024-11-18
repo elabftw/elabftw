@@ -1357,7 +1357,7 @@ CREATE TABLE `items_types2experiments` (
 CREATE TABLE `calendars` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
-  `token` varchar(60) NOT NULL,
+  `token` varchar(36) NOT NULL,
   `team` int UNSIGNED NOT NULL,
   `created_by` int UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

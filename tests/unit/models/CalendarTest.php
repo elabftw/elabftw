@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_slice;
-use function strlen;
+use function strtolower;
 
 class CalendarTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,18 +33,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/calendar/', $this->Calendar->getApiPath());
-    }
-
-    public function testRandomAlphaNumericString(): void
-    {
-        $length = 10;
-        $this->assertEquals($length, strlen($this->Calendar::randomAlphaNumericString($length)));
-    }
-
-    public function testTokenLength(): void
-    {
-        $this->assertEquals(60, $this->Calendar::TOKEN_LENGTH);
+        $this->assertEquals('api/v2/calendars/', $this->Calendar->getApiPath());
     }
 
     public function testPostAction(): void
@@ -90,13 +79,13 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($todo);
 
         $user_steps = $this->Calendar->postAction(Action::Create, array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::User->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::User->name),
             CalendarKeys::Title->value => 'Unfinished steps of user',
         ));
         $this->assertIsInt($user_steps);
 
         $team_steps = $this->Calendar->postAction(Action::Create, array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
             CalendarKeys::Title->value => 'Unfinished steps of team',
 
         ));
@@ -105,7 +94,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $all = $this->Calendar->postAction(Action::Create, array(
             CalendarKeys::AllEvents->value => true,
             CalendarKeys::Todo->value => true,
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
             CalendarKeys::Title->value => 'Events and todos',
         ));
         $this->assertIsInt($all);

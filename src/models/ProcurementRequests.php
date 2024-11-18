@@ -46,7 +46,7 @@ class ProcurementRequests implements RestInterface
             pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.qty_received,
             pr.body, pr.quote, pr.email_sent, pr.state, items.title AS entity_title,
             pr.qty_ordered * items.proc_price_tax AS total,
-            items.proc_currency
+            items.proc_currency, items.proc_pack_qty, items.proc_price_notax, items.proc_price_tax
             FROM procurement_requests AS pr
             LEFT JOIN users ON (pr.requester_userid = users.userid)
             LEFT JOIN items ON (pr.entity_id = items.id)
@@ -59,7 +59,8 @@ class ProcurementRequests implements RestInterface
             $ProcurementState = ProcurementState::from($request['state']);
             $request['state_human'] = $ProcurementState->toHuman();
             $Currency = Currency::from($request['proc_currency']);
-            $request['symbol'] = $Currency->toSymbol();
+            $request['currency_symbol'] = $Currency->toSymbol();
+            $request['currency_human'] = $Currency->toHuman();
             return $request;
         }, $req->fetchAll());
     }
@@ -75,12 +76,14 @@ class ProcurementRequests implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readForEntity(int $entityId): array
+    public function readActiveForEntity(int $entityId): array
     {
         $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.body, pr.quote, pr.email_sent, pr.state
-            FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id";
+            FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id AND state NOT IN (:state_received, :state_archived)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $entityId, PDO::PARAM_INT);
+        $req->bindValue(':state_received', ProcurementState::Received->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', ProcurementState::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -119,13 +122,11 @@ class ProcurementRequests implements RestInterface
         return 'api/v2/teams/current/procurement_requests/';
     }
 
+    // destroy is soft delete to prevent destructive actions on procurement requests so we can trust its log
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        $sql = 'DELETE FROM procurement_requests WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));
     }
 
     private function update(ProcurementRequestParams $params): bool

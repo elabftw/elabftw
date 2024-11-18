@@ -283,7 +283,10 @@ final class Config implements RestInterface
                 $req->bindParam(':value', $value);
                 $req->bindParam(':name', $name);
                 $this->Db->execute($req);
-                AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
+                // don't bother with ts_balance: will pollute the logs especially with automatic timestamping
+                if ($name !== 'ts_balance') {
+                    AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
+                }
                 $this->configArr[$name] = (string) $value;
             }
         }

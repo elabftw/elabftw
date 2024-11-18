@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ProcurementState;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +30,7 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($id);
         $this->pr->setId($id);
         $this->assertIsArray($this->pr->readOne());
-        $this->assertIsArray($this->pr->readForEntity($entityId));
+        $this->assertIsArray($this->pr->readActiveForEntity($entityId));
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
     }
 
@@ -48,6 +49,8 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
+        $this->pr->setId(1);
         $this->assertTrue($this->pr->destroy());
+        $this->assertEquals(ProcurementState::Cancelled->value, $this->pr->readOne()['state']);
     }
 }

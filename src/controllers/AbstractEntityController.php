@@ -218,7 +218,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
-            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
+            'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'itemsCategoryArr' => $itemsCategoryArr,
             'mode' => 'view',
@@ -286,7 +286,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
             'entityData' => $this->Entity->entityData,
-            'entityProcurementRequestsArr' => $ProcurementRequests->readForEntity($this->Entity->id ?? 0),
+            'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => $Metadata->getDisplayMainText(),

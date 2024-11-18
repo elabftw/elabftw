@@ -14,10 +14,10 @@ namespace Elabftw\Commands;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,7 +37,8 @@ class ExperimentsTimestamp extends Command
              ->setHelp('Look at experiments modified since a certain time and timestamp them with RFC3161 timestamping.')
              ->addArgument('user', InputArgument::REQUIRED, 'Userid of the user doing the timestamp action.')
              ->addOption('modified-since', 'm', InputOption::VALUE_REQUIRED, 'How long back in time we look for modified experiments to timestamp.', '1 week')
-             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, "Just count the number of experiments but don't actually timestamp them. Use with -vv.");
+             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, "Just count the number of experiments but don't actually timestamp them. Use with -vv.")
+             ->addOption('teams', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only timestamp experiments from these teams', array());
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -54,7 +55,12 @@ class ExperimentsTimestamp extends Command
             $output->writeln(sprintf('Computed origin date: %s', $dateTimeImmutable->format('Y-m-d H:i:s')));
         }
         $Db = Db::getConnection();
-        $sql = 'SELECT id FROM experiments WHERE modified_at > :m AND timestamped_at != modified_at';
+        $sql = 'SELECT id FROM experiments WHERE modified_at > :m AND IFNULL(timestamped_at, NOW()) != modified_at';
+        $teams = $input->getOption('teams');
+        if ($teams) {
+            $sql .= sprintf(' AND team IN (%s)', implode(',', $teams));
+        }
+
         $req = $Db->prepare($sql);
         $req->bindValue(':m', $dateTimeImmutable->format('Y-m-d H:i:s'));
         $req->execute();
@@ -72,7 +78,12 @@ class ExperimentsTimestamp extends Command
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            $Experiments->patch(Action::Timestamp, array());
+            try {
+                $Experiments->timestamp();
+            } catch (Exception $e) {
+                $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
+            }
+
         }
 
         return 0;

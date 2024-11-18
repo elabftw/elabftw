@@ -81,7 +81,7 @@ class EntitySqlBuilder
             $sql .= ' AND ' . $this->canAnon($can);
         }
         $sql .= sprintf(
-            ' AND (%s)',
+            ' AND (%s %s)',
             implode(' OR ', array(
                 $this->canBasePub($can),
                 $this->canBaseOrg($can),
@@ -92,6 +92,7 @@ class EntitySqlBuilder
                 $this->canTeamGroups($can),
                 $this->canUsers($can),
             )),
+            $this->entity->alwaysShowOwned ? 'OR entity.userid = :userid' : '',
         );
 
         return $sql;
@@ -256,7 +257,12 @@ class EntitySqlBuilder
                 DISTINCT team_events.start
                 ORDER BY team_events.start
                 SEPARATOR '|'
-            ) AS events_start";
+            ) AS events_start,
+            GROUP_CONCAT(
+                DISTINCT team_events.item
+                ORDER BY team_events.start
+                SEPARATOR '|'
+            ) AS events_start_itemid";
 
 
         // only select events from the future

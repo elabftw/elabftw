@@ -8,6 +8,8 @@
 import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
+import i18next from 'i18next';
+import type { DropzoneFile } from 'dropzone';
 import 'tinymce/models/dom';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
@@ -58,15 +60,13 @@ import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
-import { EntityType } from './interfaces';
-import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody } from './misc';
+import { EntityType, Model } from './interfaces';
+import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 
-
-const ApiC = new Api();
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
 
@@ -106,12 +106,98 @@ function doneTyping(): void {
   updateEntityBody();
 }
 
+// Object to hold control data for selected image
+const tinymceEditImage = {
+  selected: false,
+  uploadId: 0,
+  filename: 'unknown.png',
+  reset: function(): void {
+    this.selected = false;
+    this.uploadId = 0;
+    this.filename = 'unknown.png';
+  },
+};
+
+// see issue about adding an interface for this object: https://github.com/tinymce/tinymce/issues/7982
+interface TinyMCEBlobInfo {
+  blob(): Blob;
+  name(): string;
+}
+
+/**
+ * This function handles image uploads dropped in the editor or uploaded with the Image plugin
+ */
+const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve, reject) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
+  const dropZone = dropzoneEl.dropzone;
+  // when a file is added to dropZone (and uploaded), hook into the "complete" event
+  // and reload uploadsDiv so we can grab the image url to replace the blob in the editor
+  dropZone.on('complete', () => {
+    if (dropZone.getUploadingFiles().length === 0 && dropZone.getQueuedFiles().length === 0) {
+      reloadElements(['uploadsDiv']).then(() => {
+        resolve(document.getElementById('last-uploaded-link').dataset.url);
+      });
+    }
+  });
+  const entity = getEntity();
+  // Edgecase for editing an image using tinymce ImageTools
+  // Check if it was selected. This is set by an event hook below
+  if (tinymceEditImage.selected === true) {
+    // Note: confirm will trigger the SelectionChange event hook below again
+    if (confirm(i18next.t('replace-edited-file'))) {
+      const formData = new FormData();
+      const newfilecontent = new File(
+        [blobInfo.blob()],
+        tinymceEditImage.filename,
+        { lastModified: new Date().getTime(), type: blobInfo.blob().type },
+      );
+      formData.set('file', newfilecontent);
+      // prevent the browser from redirecting us
+      formData.set('extraParam', 'noRedirect');
+      // because the upload id is set this will replace the file directly
+      fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
+        method: 'POST',
+        body: formData,
+      }).then(resp => {
+        const newId = getNewIdFromPostRequest(resp);
+        // fetch info about the newly created upload
+        const ApiC = new Api();
+        return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
+      }).then(json => {
+        resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+        // save here because using the old real_name will not return anything from the db (status is archived now)
+        updateEntityBody();
+        reloadElements(['uploadsDiv']);
+      });
+    } else {
+      // Revert changes if confirm is cancelled
+      // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
+      tinymce.activeEditor.undoManager.undo();
+      reject('Action cancelled');
+    }
+  // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
+  } else if (typeof blobInfo.name() === 'undefined') {
+    const filename = prompt('Enter filename with extension e.g. .jpeg');
+    if (typeof filename !== 'undefined' && filename !== null) {
+      const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
+      dropZone.addFile(file);
+    } else {
+      // Just disregard the edit if the name prompt is cancelled
+      tinymce.activeEditor.undoManager.undo();
+      reject('Action cancelled');
+    }
+  } else {
+    dropZone.addFile(blobInfo.blob());
+  }
+});
+
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
-  if (page === 'edit') {
+  if (page === 'edit' || page === 'ucp') {
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
@@ -119,6 +205,7 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
+  const ApiC = new Api();
 
   return {
     selector: '.mceditable',
@@ -144,8 +231,23 @@ export function getTinymceBaseConfig(page: string): object {
     image_caption: true,
     images_reuse_filename: false, // if set to true the src url gets a date appended
     images_upload_credentials: true,
+    images_upload_handler: imagesUploadHandler,
+    // use undocumented callback function to asynchronously get the templates
+    // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
+    templates: (callback): void => {
+      ApiC.getJson(`${EntityType.Template}`).then(json => {
+        const res = [];
+        json.forEach(tpl => {
+          // only display pinned templates
+          if (tpl.is_pinned) {
+            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+          }
+        });
+        callback(res);
+      });
+    },
     contextmenu: false,
-    paste_data_images: Boolean(page === 'edit'),
+    paste_data_images: Boolean(page === 'edit' || page === 'ucp'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
@@ -213,7 +315,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      plugins: [ 'save', 'lists', 'link', 'autolink' ],
+      plugins: [ 'autolink', 'image', 'link', 'lists', 'save' ],
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
@@ -223,6 +325,39 @@ export function getTinymceBaseConfig(page: string): object {
       let typingTimer;
       // make the edges round
       editor.on('init', () => editor.getContainer().className += ' rounded');
+      // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
+      editor.on('blur', () => {
+        // this will trigger the images_upload_handler event hook defined further above
+        editor.uploadImages();
+      });
+      // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
+      editor.on('SelectionChange', () => {
+        // Check if the user has selected an image
+        if (editor.selection.getNode().tagName === 'IMG') {
+          tinymceEditImage.selected = true;
+          // Save all the details needed for replacing upload
+          // Then check for and get those details when you are handling file uploads
+          const selectedImage = (editor.selection.getNode() as HTMLImageElement);
+          const searchParams = new URL(selectedImage.src).searchParams;
+          // Get all the uploads from that entity
+          ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
+            // Now find the one corresponding to the image selected in the body
+            const upload = json.find(upload => upload.long_name === searchParams.get('f'));
+            if (!upload) {
+              return;
+            }
+            // Get id and filename (real_name) from this
+            // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
+            tinymceEditImage.uploadId = upload.id;
+            tinymceEditImage.filename = upload.real_name;
+          });
+        } else if (tinymceEditImage.selected === true) {
+          // delay reset a bit so that images_upload_handler gets called first and can finish
+          setTimeout(() => {
+            tinymceEditImage.reset();
+          }, 50);
+        }
+      });
 
       // floppy disk icon from COLLECTION: Zest Interface Icons LICENSE: MIT License AUTHOR: zest
       editor.ui.registry.addIcon('customSave', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 5a1 1 0 0 1 1-1h2v3a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4h.172a1 1 0 0 1 .707.293l2.828 2.828a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1h-1v-7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v7H5a1 1 0 0 1-1-1V5Zm4 15h8v-6H8v6Zm6-16H9v2h5V4ZM5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7.828a3 3 0 0 0-.879-2.12l-2.828-2.83A3 3 0 0 0 16.172 2H5Z" /></svg>'),

@@ -42,20 +42,20 @@ class UserNotifications implements RestInterface
 
     public function readAll(): array
     {
-        // for step deadline only select notifications where deadline is in the next hour
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications
             WHERE userid = :userid
-                AND ((category != :deadline AND category NOT IN (:need_validation, :is_validated, :onboarding_email))
-                     OR (category = :deadline AND body->>"$.deadline" > (NOW() - INTERVAL 1 HOUR)))
+                AND ((category != :step_deadline AND category NOT IN (:need_validation, :is_validated, :onboarding_email))
+                     OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL :notif_lead_time MINUTE) >= body->>"$.deadline"))
             ORDER BY created_at DESC
             LIMIT 10';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
+        $req->bindValue(':step_deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $req->bindValue(':need_validation', Notifications::SelfNeedValidation->value, PDO::PARAM_INT);
         $req->bindValue(':is_validated', Notifications::SelfIsValidated->value, PDO::PARAM_INT);
         $req->bindValue(':onboarding_email', Notifications::OnboardingEmail->value, PDO::PARAM_INT);
+        $req->bindValue(':notif_lead_time', StepDeadline::NOTIFLEADTIME, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $notifs = $req->fetchAll();

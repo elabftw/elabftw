@@ -19,6 +19,7 @@ enum ProcurementState: int
     case PartiallyReceived = 30;
     case Received = 40;
     case Archived = 50;
+    case Cancelled = 60;
 
     public function toHuman(): string
     {
@@ -28,6 +29,7 @@ enum ProcurementState: int
             self::PartiallyReceived => _('Partially received'),
             self::Received => _('Received'),
             self::Archived => _('Archived'),
+            self::Cancelled => _('Cancelled'),
         };
     }
 }

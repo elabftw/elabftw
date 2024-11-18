@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Services\Check;
 
 use function date;
@@ -84,6 +85,30 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         $this->assertEquals($category, $this->Items->entityData['category']);
+    }
+
+    // make sure the item inherits the permissions from the template target permissions
+    public function testTemplatePermissionsReported(): void
+    {
+        $ItemsTypes = new ItemsTypes($this->Items->Users);
+        $category = $ItemsTypes->create(title: 'Used in tests');
+        $ItemsTypes->setId($category);
+        // set permissions on template
+        $canreadTarget = BasePermissions::Organization->toJson();
+        $canwriteTarget = BasePermissions::UserOnly->toJson();
+        $ItemsTypes->patch(Action::Update, array(
+            'canread_target' => $canreadTarget,
+            'canwrite_target' => $canwriteTarget,
+        ));
+        // now create an item from that template
+        $newId = $this->Items->create(template: $category);
+        $this->assertIsInt($newId);
+        $this->Items->setId($newId);
+        // have to decode the json because the keys won't be in the same order, so assertEquals fails
+        $actualCanread = json_decode($this->Items->entityData['canread'], true);
+        $actualCanwrite = json_decode($this->Items->entityData['canwrite'], true);
+        $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
+        $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
     }
 
     public function testToggleLock(): void

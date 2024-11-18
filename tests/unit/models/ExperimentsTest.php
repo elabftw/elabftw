@@ -120,11 +120,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->ExperimentsLinks->setId(1);
         $this->Experiments->canOrExplode('read');
+        // add specific permissions so we can check it later in the duplicated entry
+        $canread = BasePermissions::Organization->toJson();
+        $canwrite = BasePermissions::UserOnly->toJson();
+        $this->Experiments->patch(Action::Update, array('canread' => $canread, 'canwrite' => $canwrite));
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
-        $this->assertIsInt($this->Experiments->postAction(Action::Duplicate, array()));
+        $id = $this->Experiments->postAction(Action::Duplicate, array());
+        $this->assertIsInt($id);
+        $new = new Experiments($this->Users, $id);
+        $actualCanread = json_decode($new->entityData['canread'], true);
+        $actualCanwrite = json_decode($new->entityData['canwrite'], true);
+        $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
+        $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
     }
 
     public function testInsertTags(): void

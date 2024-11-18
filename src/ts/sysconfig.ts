@@ -9,7 +9,7 @@ import { collectForm, notif, notifError, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
-import { getTinymceBaseConfig } from './tinymce';
+import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -245,15 +245,22 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="save-idp"]')) {
       // prevent form submission
       event.preventDefault();
-      const params = collectForm(document.getElementById('idpForm'));
-      if (el.dataset.id) { // PATCH IDP
-        ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {
-          reloadElements(['idpsDiv']);
-        });
-      } else { // CREATE IDP
-        ApiC.post(Model.Idp, params).then(() => {
-          reloadElements(['idpsDiv']);
-        });
+      try {
+        const params = collectForm(document.getElementById('idpForm'));
+        if (el.dataset.id) { // PATCH IDP
+          // remove the id from the modal so clicking "Add new" won't edit the previously edited IDP
+          ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {
+            document.getElementById('idpModalSaveButton').dataset.id = '';
+            reloadElements(['idpsDiv']);
+          });
+        } else { // CREATE IDP
+          ApiC.post(Model.Idp, params).then(() => {
+            reloadElements(['idpsDiv']);
+          });
+        }
+      } catch (e) {
+        notifError(e);
+        return;
       }
 
     } else if (el.matches('[data-action="save-idps-source"]')) {
@@ -322,5 +329,5 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('ts_urldiv').removeAttribute('hidden');
     }
   }
-  tinymce.init(getTinymceBaseConfig('sysconfig'));
+  getEditor().init('sysconfig');
 });

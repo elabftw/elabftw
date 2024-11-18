@@ -31,7 +31,7 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
     public function getEmail(): array
     {
         $commenter = new Users($this->commenterId);
-        $url = sprintf('%s/%s.php?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->page, $this->entityId);
+        $url = sprintf('%s/%s?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->page, $this->entityId);
 
         $body = sprintf(
             _('Hi. %s left a comment on your entry. Have a look: %s'),

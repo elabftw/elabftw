@@ -48,7 +48,8 @@ class ImportEln extends Command
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
             ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Force entity type. Values: ' . implode(', ', array_map(fn($case) => $case->value, EntityType::cases())))
             ->addOption('category', 'c', InputOption::VALUE_REQUIRED, 'Force category: provide a category ID that belongs to the team')
-            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done');
+            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done')
+            ->addOption('checksum', 'k', InputOption::VALUE_NEGATABLE, 'Verify file integrity before import', true);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -82,6 +83,7 @@ class ImportEln extends Command
             $entityType,
             $input->getOption('dry-run'),
             category: $defaultCategory,
+            verifyChecksum: (bool) $input->getOption('checksum'),
         );
         $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));

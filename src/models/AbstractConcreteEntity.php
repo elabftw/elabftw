@@ -20,7 +20,6 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\RequestableAction;
@@ -61,8 +60,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $Teams = new Teams($this->Users, $this->Users->team);
         $teamConfigArr = $Teams->readOne();
         // enforce the permissions if the admin has set them
-        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : BasePermissions::Team->toJson();
-        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : BasePermissions::User->toJson();
+        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : null;
+        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : null;
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
@@ -191,36 +190,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);
     }
 
-    protected function bloxberg(): array
-    {
-        $configArr = Config::getConfig()->configArr;
-        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
-        $Maker = new MakeBloxberg(
-            $this->Users,
-            $this,
-            $configArr,
-            $HttpGetter,
-        );
-        $Maker->timestamp();
-        return $this->readOne();
-    }
-
-    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
-    {
-        //$entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
-        return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
-            'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
-            'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
-            'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
-            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
-            'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
-            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
-        };
-    }
-
-    protected function timestamp(): array
+    public function timestamp(): array
     {
         $Config = Config::getConfig();
 
@@ -258,6 +228,35 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $RequestActions->remove(RequestableAction::Timestamp);
 
         return $this->readOne();
+    }
+
+    protected function bloxberg(): array
+    {
+        $configArr = Config::getConfig()->configArr;
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
+        $Maker = new MakeBloxberg(
+            $this->Users,
+            $this,
+            $configArr,
+            $HttpGetter,
+        );
+        $Maker->timestamp();
+        return $this->readOne();
+    }
+
+    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
+    {
+        //$entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
+        return match ($config['ts_authority']) {
+            'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
+            'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
+            'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
+            'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
+            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
+            'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
+            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
+        };
     }
 
     protected function sign(string $passphrase, Meaning $meaning): array

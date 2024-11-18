@@ -13,6 +13,11 @@ namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit\Framework\TestCase
 {
+    public function testGetUuidv4(): void
+    {
+        $this->assertIsString(Tools::getUuidv4());
+    }
+
     public function testFormatBytes(): void
     {
         $this->assertEquals('0.98 KiB', Tools::formatBytes(1000));

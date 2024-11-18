@@ -15,12 +15,9 @@ import {
   updateCatStat,
   updateEntityBody,
 } from './misc';
-import { getTinymceBaseConfig } from './tinymce';
-import { EntityType, Target, Upload, Model, Action } from './interfaces';
+import { Target, Upload, Model, Action } from './interfaces';
 import './doodle';
-import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import type { DropzoneFile } from 'dropzone';
 import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -41,11 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
-  editor.init();
-
+  editor.init('edit');
   // initialize the file uploader
-  const uploader = new Uploader();
-  const dropZone = await uploader.init();
+  (new Uploader()).init();
 
   ////////////////
   // DATA RECOVERY
@@ -297,127 +292,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   $(document).on('change', '.catstatSelect', function() {
     updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
-
-  // no tinymce stuff when md editor is selected
-  if (editor.type === 'tiny') {
-    // Object to hold control data for selected image
-    const tinymceEditImage = {
-      selected: false,
-      uploadId: 0,
-      filename: 'unknown.png',
-      reset: function(): void {
-        this.selected = false;
-        this.uploadId = 0;
-        this.filename = 'unknown.png';
-      },
-    };
-
-    const tinyConfig = getTinymceBaseConfig('edit');
-
-    const imagesUploadHandler = (blobInfo): Promise<string> => new Promise((resolve, reject) => {
-      // Edgecase for editing an image using tinymce ImageTools
-      // Check if it was selected. This is set by an event hook below
-      if (tinymceEditImage.selected === true) {
-        // Note: confirm will trigger the SelectionChange event hook below again
-        if (confirm(i18next.t('replace-edited-file'))) {
-          const formData = new FormData();
-          const newfilecontent = new File(
-            [blobInfo.blob()],
-            tinymceEditImage.filename,
-            { lastModified: new Date().getTime(), type: blobInfo.blob().type },
-          );
-          formData.set('file', newfilecontent);
-          // prevent the browser from redirecting us
-          formData.set('extraParam', 'noRedirect');
-          // because the upload id is set this will replace the file directly
-          fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${tinymceEditImage.uploadId}`, {
-            method: 'POST',
-            body: formData,
-          }).then(resp => {
-            const newId = getNewIdFromPostRequest(resp);
-            // fetch info about the newly created upload
-            return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
-          }).then(json => {
-            resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
-            // save here because using the old real_name will not return anything from the db (status is archived now)
-            updateEntityBody();
-            reloadElements(['uploadsDiv']);
-          });
-        } else {
-          // Revert changes if confirm is cancelled
-          // ToDo: several times undo, e.g. if user rotated twice 90° but does not confirm the change
-          tinymce.activeEditor.undoManager.undo();
-          reject('Action cancelled');
-        }
-      // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-      } else if (typeof blobInfo.blob().name === 'undefined') {
-        const filename = prompt('Enter filename with extension e.g. .jpeg');
-        if (typeof filename !== 'undefined' && filename !== null) {
-          const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
-          dropZone.addFile(file);
-          uploader.tinyImageSuccess = resolve;
-        } else {
-          // Just disregard the edit if the name prompt is cancelled
-          tinymce.activeEditor.undoManager.undo();
-          reject('Action cancelled');
-        }
-      } else {
-        dropZone.addFile(blobInfo.blob());
-        uploader.tinyImageSuccess = resolve;
-      }
-    });
-
-    // TODO move this to tinymce.ts so it can be used for templates too
-    const tinyConfigForEdit = {
-      images_upload_handler: imagesUploadHandler,
-      // use undocumented callback function to asynchronously get the templates
-      // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
-      templates: (callback): void => {
-        ApiC.getJson(`${EntityType.Template}`).then(json => {
-          const res = [];
-          json.forEach(tpl => {
-            // only display pinned templates
-            if (tpl.is_pinned) {
-              res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
-            }
-          });
-          callback(res);
-        });
-      },
-    };
-
-    tinymce.init(Object.assign(tinyConfig, tinyConfigForEdit));
-    // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
-    tinymce.activeEditor.on('blur', () => {
-      // this will trigger the images_upload_handler event hook defined further above
-      tinymce.activeEditor.uploadImages();
-    });
-    // Hook into the SelectionChange event - This is to make sure we reset our control variable correctly
-    tinymce.activeEditor.on('SelectionChange', () => {
-      // Check if the user has selected an image
-      if (tinymce.activeEditor.selection.getNode().tagName === 'IMG') {
-        // Save all the details needed for replacing upload
-        // Then check for and get those details when you are handling file uploads
-        const selectedImage = (tinymce.activeEditor.selection.getNode() as HTMLImageElement);
-        const searchParams = new URL(selectedImage.src).searchParams;
-        // Get all the uploads from that entity
-        ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
-          // Now find the one corresponding to the image selected in the body
-          const upload = json.find(upload => upload.long_name === searchParams.get('f'));
-          tinymceEditImage.selected = true;
-          // Get id and filename (real_name) from this
-          // this allows us to know which corresponding upload is selected so we can replace it if needed (after a crop for instance)
-          tinymceEditImage.uploadId = upload.id;
-          tinymceEditImage.filename = upload.real_name;
-        });
-      } else if (tinymceEditImage.selected === true) {
-        // delay reset a bit so that images_upload_handler gets called first and can finish
-        setTimeout(() => {
-          tinymceEditImage.reset();
-        }, 50);
-      }
-    });
-  }
 
   // REPLACE UPLOADED FILE
   // this should be in uploads but there is no good way so far to interact with the two editors there

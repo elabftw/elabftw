@@ -112,6 +112,9 @@
   <div class='d-flex mb-2'>
     <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
     <div class='ml-auto'>
+      <a href='ucp.php?tab=1#schedulerSettings' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+        <i class='fas fa-cogs fa-fw'></i>
+      </a>
       {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
     </div>
   </div>
@@ -179,7 +182,7 @@
     </div>
     {% endif %}
   </div>
-  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }} data-weekends='{{ App.Users.userData.show_weekends }}'></div>
 </div>
 
 {# TAB 2 INFO #}

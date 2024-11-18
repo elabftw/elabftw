@@ -26,11 +26,6 @@ enum CalendarKeys: string
     case Todo = 'todo';
     case UnfinishedStepsScope = 'unfinished_steps_scope';
 
-    public static function toArray(): array
-    {
-        return array_map(fn(self $case): string => $case->value, self::cases());
-    }
-
     public static function getDefaultValues(): array
     {
         return array(

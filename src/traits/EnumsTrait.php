@@ -26,10 +26,25 @@ trait EnumsTrait
         return $all;
     }
 
-    // create a comma separated list of values
+    /**
+     * Get an array with the values
+     *
+     * @return (string|int)[]
+     */
+    public static function toArray(): array
+    {
+        return array_map(
+            /** @phpstan-ignore return.unusedType */
+            fn(self $case): string|int => $case->value,
+            self::cases(),
+        );
+    }
+
+    /**
+     * Get a comma separated list of values
+     */
     public static function toCsList(): string
     {
-        $values = array_map(fn($case) => $case->value, self::cases());
-        return implode(', ', $values);
+        return implode(', ', self::toArray());
     }
 }

@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
@@ -38,6 +37,7 @@ use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;

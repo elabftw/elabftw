@@ -14,8 +14,6 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -28,6 +26,8 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\TagParam;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;

@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TRANSFER OWNERSHIP
     } else if (el.matches('[data-action="transfer-ownership"]')) {
-      const value = (document.getElementById('new_owner') as HTMLInputElement).value;
+      const value = (document.getElementById('target_owner') as HTMLInputElement).value;
       const entity = getEntity();
       const params = {};
       params[Target.UserId] = value;

@@ -109,6 +109,9 @@
       "Elabftw\\Models\\Notifications\\": [
         "src/models/notifications"
       ],
+      "Elabftw\\Params\\": [
+        "src/Params"
+      ],
       "Elabftw\\Services\\": [
         "src/services"
       ],

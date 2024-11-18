@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @package elabftw
  */
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Params;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderable;

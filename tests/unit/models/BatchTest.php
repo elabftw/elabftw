@@ -19,23 +19,54 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 {
     private Batch $Batch;
 
+    private array $baseReqBody;
+
     protected function setUp(): void
     {
         $this->Batch = new Batch(new Users(1, 1));
+        // Default values for $reqBody
+        $this->baseReqBody = array(
+            'action' => Action::Create->value,
+            'items_types' => array(),
+            'items_status' => array(),
+            'experiments_categories' => array(),
+            'experiments_status' => array(),
+            'tags' => array(),
+            'users' => array(),
+            // Only used if Action::UpdateOwner
+            'target_owner' => null,
+        );
     }
 
     public function testPostAction(): void
     {
-        $reqBody = array(
-            'action' => Action::ForceUnlock->value,
-            'items_types' => array(1, 2),
-            'items_status' => array(1, 2),
-            'experiments_categories' => array(1, 2),
-            'experiments_status' => array(1, 2),
-            'tags' => array(1, 2),
-            'users' => array(1, 2),
-        );
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::ForceUnlock->value;
+        $reqBody['items_types'] = array(1, 2);
+        $reqBody['items_status'] = array(1, 2);
+        $reqBody['experiments_categories'] = array(1, 2);
+        $reqBody['experiments_status'] = array(1, 2);
+        $reqBody['tags'] = array(1, 2);
+        $reqBody['users'] = array(1, 2);
         $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
+    }
+
+    public function testPostActionWithOwnershipUpdate(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['target_owner'] = 2;
+        $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
+    }
+
+    public function testInvalidPostAction(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['users'] = array(1, 2);
+        // On batch, cannot update owner action without 'target_owner'
+        $this->expectException(ImproperActionException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }
 
     public function testGetApiPath(): void

@@ -49,6 +49,7 @@ interface Selected {
   items_types: number[];
   tags: number[];
   users: number[];
+  target_owner: number;
   can: string;
 }
 
@@ -83,6 +84,8 @@ enum Action {
   Duplicate = 'duplicate',
   ExclusiveEditMode = 'exclusiveeditmode',
   Finish = 'finish',
+  ForceLock = 'forcelock',
+  ForceUnlock = 'forceunlock',
   Lock = 'lock',
   Notif = 'notif',
   NotifDestroy = 'notifdestroy',

@@ -49,7 +49,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     public function testGetFileName(): void
     {
         $this->assertEquals(
-            'eLabFTW-calendar.ics',
+            'elabftw-calendar.ics',
             (new MakeICal('notARealToken'))->getFileName(),
         );
     }

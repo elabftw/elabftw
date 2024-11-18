@@ -74,7 +74,7 @@ class MakeICal extends AbstractMake implements StringMakerInterface
      */
     public function getFileName(): string
     {
-        return 'eLabFTW-calendar.ics';
+        return 'elabftw-calendar.ics';
     }
 
     private function getCalendarProperties(): array

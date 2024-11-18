@@ -115,7 +115,7 @@ class Calendar implements RestInterface
 
     public function getApiPath(): string
     {
-        return 'api/v2/calendar/';
+        return 'api/v2/calendars/';
     }
 
     public function readAll(): array

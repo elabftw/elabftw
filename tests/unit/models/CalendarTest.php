@@ -34,7 +34,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/calendar/', $this->Calendar->getApiPath());
+        $this->assertEquals('api/v2/calendars/', $this->Calendar->getApiPath());
     }
 
     public function testRandomAlphaNumericString(): void

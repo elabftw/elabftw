@@ -39,11 +39,12 @@ use function explode;
 use function is_array;
 use function is_string;
 use function json_decode;
+use function random_int;
 use function sprintf;
 use function str_repeat;
 use function strlen;
+use function strtolower;
 use function strtoupper;
-use function random_int;
 
 /**
  * All about calendars - iCal feeds of team events
@@ -93,8 +94,8 @@ class Calendar implements RestInterface
                     CalendarKeys::Todo->value,
                     CalendarKeys::AllEvents->value => Filter::toBinary($reqBody[$key]),
                     CalendarKeys::UnfinishedStepsScope->value => match ($reqBody[$key]) {
-                        Scope::User->toString() => Scope::User->value,
-                        Scope::Team->toString() => Scope::Team->value,
+                        strtolower(Scope::User->name) => Scope::User->value,
+                        strtolower(Scope::Team->name) => Scope::Team->value,
                         default => 0,
                     },
                     CalendarKeys::Categories->value,

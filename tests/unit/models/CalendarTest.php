@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use function array_column;
 use function array_slice;
 use function strlen;
+use function strtolower;
 
 class CalendarTest extends \PHPUnit\Framework\TestCase
 {
@@ -90,13 +91,13 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($todo);
 
         $user_steps = $this->Calendar->postAction(Action::Create, array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::User->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::User->name),
             CalendarKeys::Title->value => 'Unfinished steps of user',
         ));
         $this->assertIsInt($user_steps);
 
         $team_steps = $this->Calendar->postAction(Action::Create, array(
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
             CalendarKeys::Title->value => 'Unfinished steps of team',
 
         ));
@@ -105,7 +106,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $all = $this->Calendar->postAction(Action::Create, array(
             CalendarKeys::AllEvents->value => true,
             CalendarKeys::Todo->value => true,
-            CalendarKeys::UnfinishedStepsScope->value => Scope::Team->toString(),
+            CalendarKeys::UnfinishedStepsScope->value => strtolower(Scope::Team->name),
             CalendarKeys::Title->value => 'Events and todos',
         ));
         $this->assertIsInt($all);

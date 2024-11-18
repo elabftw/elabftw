@@ -70,6 +70,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 
+use function implode;
+use function json_decode;
+use function sprintf;
+use function str_starts_with;
+use function strtolower;
+use function trim;
+
 /**
  * For API V2 requests
  */
@@ -293,7 +300,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Todolist => new Todolist($this->requester->userData['userid'], $this->id),
             ApiEndpoint::UnfinishedSteps => new UnfinishedSteps(
                 $this->requester,
-                $this->Request->query->get('scope') === Scope::Team->toString(),
+                $this->Request->query->get('scope') === strtolower(Scope::Team->name),
             ),
             ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
         };

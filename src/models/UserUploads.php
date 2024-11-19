@@ -67,22 +67,22 @@ class UserUploads implements RestInterface
         $queryParams ??= $this->getQueryParams();
         $idFilter = '';
         if ($this->id) {
-            $idFilter = sprintf('AND uploads.id = %d', $this->id);
+            $idFilter = sprintf('AND entity.id = %d', $this->id);
         }
-        $sql = 'SELECT uploads.id, uploads.real_name, uploads.long_name, uploads.created_at, uploads.filesize, uploads.type, uploads.comment,
+        $sql = 'SELECT entity.id, entity.real_name, entity.long_name, entity.created_at, entity.filesize, entity.type, entity.comment,
             COALESCE(experiments.id, items.id, experiments_templates.id) AS entity_id,
             COALESCE(experiments.title, items.title, experiments_templates.title) AS entity_title,
             CASE
-                WHEN uploads.type = "experiments" THEN "experiments"
-                WHEN uploads.type = "items" THEN "database"
-                WHEN uploads.type = "experiments_templates" THEN "ucp"
+                WHEN entity.type = "experiments" THEN "experiments"
+                WHEN entity.type = "items" THEN "database"
+                WHEN entity.type = "experiments_templates" THEN "ucp"
                 ELSE ""
             END AS page
-            FROM uploads
-            LEFT JOIN experiments ON (uploads.item_id = experiments.id AND uploads.type = "experiments")
-            LEFT JOIN items ON (uploads.item_id = items.id AND uploads.type = "items")
-            LEFT JOIN experiments_templates ON (uploads.item_id = experiments_templates.id AND uploads.type = "experiments_templates")
-            WHERE uploads.userid = :userid AND (uploads.state = :state_normal OR uploads.state = :state_archived) '
+            FROM uploads As entity
+            LEFT JOIN experiments ON (entity.item_id = experiments.id AND entity.type = "experiments")
+            LEFT JOIN items ON (entity.item_id = items.id AND entity.type = "items")
+            LEFT JOIN experiments_templates ON (entity.item_id = experiments_templates.id AND entity.type = "experiments_templates")
+            WHERE entity.userid = :userid AND (entity.state = :state_normal OR entity.state = :state_archived) '
             . $idFilter . $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);

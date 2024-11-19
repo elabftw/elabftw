@@ -100,7 +100,7 @@ Only exposing the eLabFTW service is a good way to avoid having the whole world 
 
 ### Add a reverse proxy
 
-A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using eLabFTW's external authentication mechanism in conjunction with eg `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further (while allowing authentication information to propagate).
+A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using eLabFTW's external authentication mechanism in conjunction with _e.g._ `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further (while allowing authentication information to propagate).
 
 ### Enable 2FA
 
@@ -108,11 +108,11 @@ You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins,
 
 ### Using single sign-on? Turn off local user (password) registration and login
 
-If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in- or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
+If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
 
 ### Turn on optional features only if required
 
-There are multiple optional features in eLabFTW. In a conservative setup, do consider not turning them on (eg to not allowing link-sharing).
+There are multiple optional features in eLabFTW. In a conservative setup, do consider keeping them disabled (_e.g._ prevent link-sharing unless you have investigated the ramifications of allowing it).
 
 ### Segment at the system level, not just teams
 

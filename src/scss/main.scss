@@ -113,7 +113,7 @@ body {
 /* little shadow on top of the screen for no reasons */
 /* TinyMCE selector for body in preview excluded to prevent flashing */
 body::before,
-#tinymce-preview::before {
+.mce-preview-body::before {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   content: '';
   left: 0;
@@ -127,7 +127,7 @@ body::before {
   z-index: 100;
 }
 
-#tinymce-preview::before {
+.mce-preview-body::before {
   height: 4rem;
   position: absolute;
 }

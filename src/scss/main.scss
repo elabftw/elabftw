@@ -112,7 +112,7 @@ body {
 
 /* little shadow on top of the screen for no reasons */
 /* TinyMCE selector for body in preview excluded to prevent flashing */
-body:not(#tinymce:not([contenteditable='true']))::before,
+body::before,
 #tinymce-preview::before {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   content: '';
@@ -121,7 +121,7 @@ body:not(#tinymce:not([contenteditable='true']))::before,
   width: 100%;
 }
 
-body:not(#tinymce:not([contenteditable='true']))::before {
+body::before {
   height: 10px;
   position: fixed;
   z-index: 100;
@@ -1290,11 +1290,6 @@ figure figcaption {
 
 .tox-dialog__body-content {
   padding: 0px 16px 16px !important;
-}
-
-/* hide text in TinyMCE iframe preview to prevent flashing */
-body#tinymce:not([contenteditable='true']) * {
-  color: rgba(0,0,0,0);
 }
 
 /* stylelint-disable-next-line selector-no-qualifying-type */

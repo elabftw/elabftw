@@ -32,10 +32,8 @@ class ExperimentsController extends AbstractEntityController
 
         $Teams = new Teams($this->App->Users, $this->App->Users->team);
         $Category = new ExperimentsCategories($Teams);
-        $queryParams = $Category->getQueryParams($this->App->Request->query);
-        $this->categoryArr = $Category->readAll($queryParams);
+        $this->categoryArr = $Category->readAll();
         $Status = new ExperimentsStatus($Teams);
-        $queryParams = $Status->getQueryParams($this->App->Request->query);
-        $this->statusArr = $Status->readAll($queryParams);
+        $this->statusArr = $Status->readAll();
     }
 }

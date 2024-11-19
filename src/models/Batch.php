@@ -20,7 +20,6 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Params\DisplayParams;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Process a single request targeting multiple entities
@@ -103,8 +102,13 @@ class Batch implements RestInterface
     {
         $allEntries = array();
         foreach ($idArr as $id) {
-            $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
-            $DisplayParams->limit = 100000;
+            $DisplayParams = new DisplayParams(
+                requester: $this->requester,
+                // this is needed so psalm is happy (might be a bug in psalm)
+                query: null,
+                entityType: $model->entityType,
+                limit: 100000,
+            );
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);
             $allEntries = array_merge($allEntries, $entries);

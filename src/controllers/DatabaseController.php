@@ -28,10 +28,8 @@ class DatabaseController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         $Category = new ItemsTypes($this->App->Users);
-        $queryParams = $Category->getQueryParams($this->App->Request->query);
-        $this->categoryArr = $Category->readAll($queryParams);
+        $this->categoryArr = $Category->readAll();
         $Status = new ItemsStatus(new Teams($this->App->Users, $this->App->Users->team));
-        $queryParams = $Status->getQueryParams($this->App->Request->query);
-        $this->statusArr = $Status->readAll($queryParams);
+        $this->statusArr = $Status->readAll();
     }
 }

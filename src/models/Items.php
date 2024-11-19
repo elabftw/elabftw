@@ -105,7 +105,7 @@ class Items extends AbstractConcreteEntity
     public function readBookable(): array
     {
         $Request = Request::createFromGlobals();
-        $DisplayParams = new DisplayParams($this->Users, $Request, EntityType::Items);
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
         // make limit very big because we want to see ALL the bookable items here

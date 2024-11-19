@@ -45,6 +45,7 @@ use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
@@ -162,10 +163,15 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->entityData;
     }
 
+    public function getQueryParams(?InputBag $query = null): DisplayParams
+    {
+        return new DisplayParams($this->Users, $this->entityType, $query);
+    }
+
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // TODO use $queryParams
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
+        $Request = Request::createFromGlobals();
+        return $this->readShow($this->getQueryParams($Request->query), true);
     }
 
     public function destroy(): bool

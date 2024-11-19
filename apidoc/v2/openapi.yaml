@@ -1065,12 +1065,32 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
+                body:
+                  type: string
+                  description: The main text content (HTML or Markdown)
+                  default: null
+                category:
+                  type: integer
+                  description: The experiment category ID
+                  default: null
+                status:
+                  type: integer
+                  description: The experiment status ID
+                  default: null
+                metadata:
+                  type: string
+                  description: The experiment status ID
+                  default: null
+                template:
                   type: integer
                   description: |
                     The template id to use, or 0 to use the common team
                     template, or -1 to have an empty body.
                   default: -1
+                title:
+                  type: string
+                  description: The title of the entry
+                  default: Untitled
                 tags:
                   type: array
                   description: |

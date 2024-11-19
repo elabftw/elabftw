@@ -18,11 +18,12 @@ use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Override;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
 use function trim;
@@ -43,14 +44,23 @@ class DisplayParams extends BaseQueryParams
 
     public ?EntityType $relatedOrigin = null;
 
-    public function __construct(private Users $Users, Request $Request, public EntityType $entityType)
-    {
-        // load user's preferences first
-        $this->limit = $Users->userData['limit_nb'] ?? $this->limit;
-        $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
-        $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
+    public function __construct(
+        private Users $requester,
+        public EntityType $entityType,
+        protected ?InputBag $query = null,
+        public Orderby $orderby = Orderby::Lastchange,
+        public Sort $sort = Sort::Desc,
+        public int $limit = 15,
+        public int $offset = 0,
+        public bool $includeArchived = false,
+        public array $states = array(State::Normal),
+    ) {
+        parent::__construct($query);
+        // load user's preferences
+        $this->limit = $requester->userData['limit_nb'] ?? $this->limit;
+        $this->orderby = Orderby::tryFrom($requester->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
+        $this->sort = Sort::tryFrom($requester->userData['sort'] ?? $this->sort->value) ?? $this->sort;
         // then load from query
-        parent::__construct($Request->query);
         $this->adjust();
     }
 
@@ -87,7 +97,7 @@ class DisplayParams extends BaseQueryParams
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param
-        $scope = $this->Users->userData['scope_' . $this->entityType->value];
+        $scope = $this->requester->userData['scope_' . $this->entityType->value];
         if (Check::id($query->getInt('scope')) !== false) {
             $scope = $query->getInt('scope');
         }
@@ -97,10 +107,10 @@ class DisplayParams extends BaseQueryParams
         // same with an extended search: we show all
         if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
             // Note: the cast to int is necessary here (not sure why)
-            $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
+            $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
-        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
-            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team ?? 0);
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+            $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH
         if (!empty(($query->all('tags'))[0])) {

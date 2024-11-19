@@ -106,8 +106,6 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function show(bool $isSearchPage = false): Response
     {
-        // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 
@@ -116,12 +114,21 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->isAnon = true;
         }
 
-        // must be before the call to getItemsArr
+        // must be before the call to readShow
         if ($this->App->Users->userData['always_show_owned'] === 1) {
             $this->Entity->alwaysShowOwned = true;
         }
 
-        $itemsArr = $this->getItemsArr();
+        // read all based on query parameters or defaults
+        $DisplayParams = new DisplayParams(
+            requester: $this->App->Users,
+            query: $this->App->Request->query,
+            entityType: $this->Entity->entityType,
+        );
+        $itemsArr = $this->Entity->readShow($DisplayParams);
+
+
+        // TODO remove, it's weird behavior
         // if there is only one result, redirect to the entry directly
         if ($isSearchPage && count($itemsArr) === 1) {
             return new RedirectResponse(sprintf(
@@ -176,14 +183,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->setContent($this->App->render($template, $renderArr));
 
         return $Response;
-    }
-
-    /**
-     * Get the items
-     */
-    protected function getItemsArr(): array
-    {
-        return $this->Entity->readShow(new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType));
     }
 
     /**

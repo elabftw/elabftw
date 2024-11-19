@@ -127,17 +127,6 @@ abstract class AbstractEntityController implements ControllerInterface
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
 
-
-        // TODO remove, it's weird behavior
-        // if there is only one result, redirect to the entry directly
-        if ($isSearchPage && count($itemsArr) === 1) {
-            return new RedirectResponse(sprintf(
-                '%s?mode=view&id=%d',
-                $this->Entity->entityType->toPage(),
-                $itemsArr[0]['id']
-            ));
-        }
-
         // get tags separately
         $tagsArr = array();
         if (!empty($itemsArr)) {

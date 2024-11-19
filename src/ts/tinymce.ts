@@ -485,7 +485,7 @@ export function getTinymceBaseConfig(page: string): object {
             iframe.onload = () => {
               const tinyDiv = document.createElement('div');
               tinyDiv.setAttribute('id', 'tinymce-preview');
-              tinyDiv.setAttribute('class', 'mce-content-body');
+              tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
               iframe.contentDocument.body.childNodes.forEach((node) => {
                 tinyDiv.append(node);
               });

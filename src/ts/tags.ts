@@ -87,7 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const json = await resp.json();
       // the response contains all the tags, so we need to find the correct one to display the updated value
       const tag = json.find((tag: Record<string, string|number>) => tag.id === parseInt(original.dataset.id, 10));
-      return tag?.tag ?? 'Tag has been merged with an existing one';
+      if (!tag) {
+        document.querySelector(`tr[data-id="${original.dataset.id}"]`).remove();
+        return '';
+      }
+      return tag?.tag;
     },
     listenOn: '.tag.editable',
     returnedValueIsTrustedHtml: false,

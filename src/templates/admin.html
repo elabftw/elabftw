@@ -665,7 +665,8 @@
         <tbody id='tagManagerTable'>
           {# for this table, sort the tags by popularity (item_count) #}
           {% for tag in tagsArr|sort((a, b) => b.item_count <=> a.item_count) %}
-            <tr>
+            {# id data attribute is repeated from the editable tag button so we can grab it to remove the row after update lead to deduplicate #}
+            <tr data-id='{{ tag.id }}'>
               <th data-label='{{ 'Tag'|trans }}' scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
               <td data-label='{{ 'Occurence'|trans }}' class='align-middle'>{{ tag.item_count }}</td>
               <td data-label='{{ 'Show tagged experiments'|trans }}'>

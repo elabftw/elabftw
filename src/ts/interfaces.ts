@@ -79,7 +79,6 @@ enum Action {
   Add = 'add',
   Archive = 'archive',
   Bloxberg = 'bloxberg',
-  Deduplicate = 'deduplicate',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
   ExclusiveEditMode = 'exclusiveeditmode',

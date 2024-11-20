@@ -627,7 +627,7 @@
 
 {# TAB 7 TAG MANAGER #}
 <div data-tabcontent='7' hidden>
-  <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it. Then click the deduplicate button to merge similar tags.'|trans }}</p>
+  <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it.'|trans }}</p>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
     {% include 'binary-setting.html' with {'model': model, 'src': src,
@@ -650,7 +650,6 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Manage tags of the team'|trans }}</h3>
   <div class='pl-3'>
 
-    <button type='button' class='btn btn-primary' data-action='deduplicate-tag'><i class='fas fa-clone mr-1 text-white'></i>{{ 'Deduplicate'|trans }}</button>
     <div class='mt-2' id='tagMgrDiv'>
       {% include 'filter-input-snippet.html' with {'target': 'tagManagerTable'} %}
       <table class='table' aria-label='{{ 'Tags of the team'|trans }}' data-table-sort='true'>

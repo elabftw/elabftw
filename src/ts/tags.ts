@@ -105,11 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // MAIN ACTION LISTENER
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // DEDUPLICATE (from admin panel/tag manager)
-    if (el.matches('[data-action="deduplicate-tag"]')) {
-      ApiC.patch(`${Model.Team}/current/${Model.Tag}`, {'action': Action.Deduplicate}).then(() => reloadElements(['tagMgrDiv']));
     // UNREFERENCE (remove link between tag and entity)
-    } else if (el.matches('[data-action="unreference-tag"]')) {
+    if (el.matches('[data-action="unreference-tag"]')) {
       if (confirm(i18next.t('tag-delete-warning'))) {
         ApiC.patch(`${entity.type}/${entity.id}/${Model.Tag}/${el.dataset.tagid}`, {'action': Action.Unreference}).then(() => reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]));
       }

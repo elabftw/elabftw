@@ -2810,31 +2810,6 @@ paths:
               description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
               schema:
                 type: string
-    patch:
-      tags: ['Team tags']
-      summary: |
-        Actions on tags.
-      operationId: patch-tags
-      requestBody:
-        description: Parameters for modifying team tags.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['deduplicate']
-              description: Find all duplicate tags and deduplicate them.
-      responses:
-        '200':
-          description: The team tag has been modified.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/tag'
   /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:

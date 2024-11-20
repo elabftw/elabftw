@@ -136,7 +136,8 @@ export function collectForm(form: HTMLElement, blank = true): object {
       if (el.dataset.ignore !== '1' && el.disabled === false) {
         params = Object.assign(params, {[input.name]: value});
       }
-      if (blank) {
+      // allow escaping blank if data-no-blank is present
+      if (blank && el.dataset.noBlank !== '1') {
         el.value = '';
       }
     });

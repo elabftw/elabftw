@@ -44,19 +44,25 @@ class DashboardController implements ControllerInterface
     {
         $template = 'dashboard.html';
 
-        $DisplayParamsExp = new DisplayParams($this->App->Users, EntityType::Experiments, $this->App->Request->query);
-        $DisplayParamsExp->limit = self::SHOWN_NUMBER;
-        $DisplayParamsExp->orderby = Orderby::Lastchange;
+        $DisplayParamsExp = new DisplayParams(
+            $this->App->Users,
+            EntityType::Experiments,
+            limit: self::SHOWN_NUMBER,
+            orderby: Orderby::Lastchange,
+        );
         $Experiments = new Experiments($this->App->Users);
         $Items = new Items($this->App->Users);
         $Templates = new Templates($this->App->Users);
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $now = new DateTimeImmutable();
-        $Scheduler = new Scheduler($Items, null, $now->format(DateTimeImmutable::ATOM));
+        $Scheduler = new Scheduler($Items, start: $now->format(DateTimeImmutable::ATOM));
         // for items we need to create a new DisplayParams object, otherwise the scope setting will also apply here
-        $DisplayParamsItems = new DisplayParams($this->App->Users, EntityType::Items, $this->App->Request->query);
-        $DisplayParamsItems->limit = self::SHOWN_NUMBER;
-        $DisplayParamsItems->orderby = Orderby::Lastchange;
+        $DisplayParamsItems = new DisplayParams(
+            $this->App->Users,
+            EntityType::Items,
+            limit: self::SHOWN_NUMBER,
+            orderby: Orderby::Lastchange,
+        );
         $PermissionsHelper = new PermissionsHelper();
         $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
         $ExperimentsStatus = new ExperimentsStatus(new Teams($this->App->Users));

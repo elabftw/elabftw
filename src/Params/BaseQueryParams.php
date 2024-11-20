@@ -35,6 +35,7 @@ class BaseQueryParams implements QueryParamsInterface
     ) {
         if ($query !== null) {
             if ($query->has('limit')) {
+
                 $this->limit = Check::limit($query->getInt('limit'));
             }
             if ($query->has('offset') && Check::id($query->getInt('offset')) !== false) {

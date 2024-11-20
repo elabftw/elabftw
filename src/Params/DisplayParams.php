@@ -56,7 +56,7 @@ class DisplayParams extends BaseQueryParams
         public array $states = array(State::Normal),
     ) {
         // query parameters will override user defaults
-        parent::__construct($query);
+        parent::__construct($query, $orderby, $sort, $limit, $offset, $states);
         $this->adjust();
     }
 

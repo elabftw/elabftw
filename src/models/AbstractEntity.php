@@ -278,7 +278,6 @@ abstract class AbstractEntity implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);

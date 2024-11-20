@@ -58,14 +58,14 @@ try {
     $PermissionsHelper = new PermissionsHelper();
     $teamStats = $Teams->getStats($App->Users->userData['team']);
 
-    $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query));
+    $itemsCategoryArr = $ItemsTypes->readAll();
     $ExperimentsCategories = new ExperimentsCategories($Teams);
-    $experimentsCategoriesArr = $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams($App->Request->query));
+    $experimentsCategoriesArr = $ExperimentsCategories->readAll();
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
     }
-    $statusArr = $Status->readAll($Status->getQueryParams($App->Request->query));
+    $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
@@ -122,7 +122,7 @@ try {
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
-        'itemsStatusArr' => $ItemsStatus->readAll($ItemsStatus->getQueryParams($App->Request->query)),
+        'itemsStatusArr' => $ItemsStatus->readAll(),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'teamGroupsArr' => $teamGroupsArr,

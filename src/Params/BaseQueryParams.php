@@ -15,6 +15,7 @@ namespace Elabftw\Params;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -30,12 +31,9 @@ class BaseQueryParams implements QueryParamsInterface
         public Sort $sort = Sort::Desc,
         public int $limit = 15,
         public int $offset = 0,
-        public bool $includeArchived = false,
         public array $states = array(State::Normal),
     ) {
         if ($query !== null) {
-            // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
-            $this->includeArchived = $query->has('archived');
             if ($query->has('limit')) {
                 $this->limit = Check::limit($query->getInt('limit'));
             }
@@ -44,13 +42,17 @@ class BaseQueryParams implements QueryParamsInterface
             }
             $this->sort = Sort::tryFrom($query->getAlpha('sort')) ?? $this->sort;
             $this->orderby = Orderby::tryFrom($query->getAlpha('order')) ?? $this->orderby;
-        }
-    }
 
-    public function setStates(array $states): QueryParamsInterface
-    {
-        $this->states = $states;
-        return $this;
+            // STATE
+            // example: ?state=1,2 to include normal and archived
+            if ($query->get('state')) {
+                $states = array();
+                foreach (explode(',', $query->getString('state')) as $state) {
+                    $states[] = State::tryFrom((int) $state) ?? throw new ImproperActionException(sprintf('Invalid state parameter. Must be one of: %s', State::toCsListVerbose()));
+                }
+                $this->states = $states;
+            }
+        }
     }
 
     public function getQuery(): InputBag
@@ -58,23 +60,11 @@ class BaseQueryParams implements QueryParamsInterface
         return $this->query ?? new InputBag();
     }
 
-    public function setSort(Sort $sort): QueryParamsInterface
-    {
-        $this->sort = $sort;
-        return $this;
-    }
-
-    public function setOrderby(Orderby $orderby): QueryParamsInterface
-    {
-        $this->orderby = $orderby;
-        return $this;
-    }
-
     public function getSql(): string
     {
         return sprintf(
             '%s ORDER BY %s %s LIMIT %d OFFSET %d',
-            $this->getStatesSql(),
+            $this->getStatesSql('entity'),
             $this->orderby->toSql(),
             $this->sort->value,
             $this->limit,
@@ -82,8 +72,8 @@ class BaseQueryParams implements QueryParamsInterface
         );
     }
 
-    protected function getStatesSql(): string
+    public function getStatesSql(string $tableName): string
     {
-        return ' AND entity.state IN (' . implode(', ', array_map(fn($state) => $state->value, $this->states)) . ')';
+        return sprintf(' AND %s.states IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $this->states)));
     }
 }

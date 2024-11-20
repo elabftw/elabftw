@@ -162,6 +162,7 @@
       {%- endif %}
 
       {# ARCHIVED filter #}
+      {# TODO make this something where you can select any number of states #}
       <div class='input-group mr-1 mb-2'>
         <div class='input-group-text'>
           <input id='filterArchived' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1'>

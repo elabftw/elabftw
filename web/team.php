@@ -51,7 +51,7 @@ try {
     // only the bookable categories
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
-    $allItemsTypes = $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query));
+    $allItemsTypes = $ItemsTypes->readAll();
     $bookableItemsTypes = array_filter(
         $allItemsTypes,
         fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),

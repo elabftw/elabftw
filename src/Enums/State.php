@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 enum State: int
 {
+    use EnumsTrait;
+
     case Normal = 1;
     case Archived = 2;
     case Deleted = 3;

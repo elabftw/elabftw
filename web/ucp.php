@@ -81,7 +81,7 @@ try {
 
     // the items categoryArr for add link input
     $ItemsTypes = new ItemsTypes($App->Users);
-    $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query));
+    $itemsCategoryArr = $ItemsTypes->readAll();
 
     // Notifications
     $notificationsSettings = array(
@@ -124,7 +124,7 @@ try {
     $renderArr = array(
         'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
-        'categoryArr' => $Category->readAll($Category->getQueryParams($App->Request->query)),
+        'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
@@ -135,8 +135,8 @@ try {
         'notificationsSettings' => $notificationsSettings,
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
-        'statusArr' => $Status->readAll($Status->getQueryParams($App->Request->query)),
-        'teamTagsArr' => $TeamTags->readAll($TeamTags->getQueryParams($App->Request->query)),
+        'statusArr' => $Status->readAll(),
+        'teamTagsArr' => $TeamTags->readAll(),
         'templatesArr' => $Templates->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,

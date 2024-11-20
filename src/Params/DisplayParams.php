@@ -25,6 +25,7 @@ use Elabftw\Services\Check;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function explode;
 use function sprintf;
 use function trim;
 
@@ -52,15 +53,10 @@ class DisplayParams extends BaseQueryParams
         public Sort $sort = Sort::Desc,
         public int $limit = 15,
         public int $offset = 0,
-        public bool $includeArchived = false,
         public array $states = array(State::Normal),
     ) {
+        // query parameters will override user defaults
         parent::__construct($query);
-        // load user's preferences
-        $this->limit = $requester->userData['limit_nb'] ?? $this->limit;
-        $this->orderby = Orderby::tryFrom($requester->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
-        $this->sort = Sort::tryFrom($requester->userData['sort'] ?? $this->sort->value) ?? $this->sort;
-        // then load from query
         $this->adjust();
     }
 
@@ -126,17 +122,36 @@ class DisplayParams extends BaseQueryParams
             $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
-        if (Check::id($query->getInt('cat')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Category, $query->getInt('cat'));
-        }
+        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
         // STATUS FILTER
-        if (Check::id($query->getInt('status')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Status, $query->getInt('status'));
-        }
-
+        $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER
-        if (Check::id($query->getInt('owner')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Owner, $query->getInt('owner'));
+        $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+    }
+
+    /**
+     * Create an SQL string to add a filter from a comma separated list of int
+     * possibly including null value. Ugly but works.
+     */
+    private function getSqlIn(string $column, string $input): string
+    {
+        if (empty($input)) {
+            return '';
         }
+        $exploded = explode(',', $input);
+        $numbers = array();
+        $sql = ' AND';
+        foreach ($exploded as $value) {
+            // we need to treat null specially, it cannot be part of the IN()
+            if (strtolower($value) === 'null') {
+                $sql = sprintf(' AND %s IS NULL OR', $column);
+                continue;
+            }
+            $numbers[] = (int) $value;
+        }
+        if ($numbers) {
+            return $sql . sprintf(' %s IN (%s)', $column, implode(', ', $numbers));
+        }
+        return rtrim($sql, ' OR');
     }
 }

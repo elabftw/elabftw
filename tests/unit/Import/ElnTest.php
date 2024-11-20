@@ -188,7 +188,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
-        $Import = new Eln(
+        $this->expectException(ImproperActionException::class);
+        new Eln(
             new Users(1, 1),
             BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
@@ -198,8 +199,6 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             EntityType::Experiments,
             category: 1,
         );
-        $this->expectException(ImproperActionException::class);
-        $Import->import();
     }
 
     public function testInvalidShasum(): void

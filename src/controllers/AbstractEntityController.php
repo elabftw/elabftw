@@ -18,7 +18,9 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
+use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -119,11 +121,14 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->alwaysShowOwned = true;
         }
 
-        // read all based on query parameters or defaults
+        // read all based on query parameters or user defaults
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
             query: $this->App->Request->query,
             entityType: $this->Entity->entityType,
+            limit: $this->App->Users->userData['limit_nb'],
+            orderby: Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange,
+            sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
 
@@ -142,7 +147,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($this->App->Request->query));
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         $template = 'show.html';
         $UserRequestActions = new UserRequestActions($this->App->Users);
@@ -194,8 +199,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $queryParams = $ItemsTypes->getQueryParams($this->App->Request->query);
-        $itemsCategoryArr = $ItemsTypes->readAll($queryParams);
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         $Teams = new Teams($this->Entity->Users);
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
@@ -263,7 +267,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll($ItemsTypes->getQueryParams($this->App->Request->query));
+        $itemsCategoryArr = $ItemsTypes->readAll();
 
         $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);

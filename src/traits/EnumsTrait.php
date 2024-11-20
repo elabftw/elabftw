@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use function array_map;
+
 trait EnumsTrait
 {
     /**
@@ -31,5 +33,14 @@ trait EnumsTrait
     {
         $values = array_map(fn($case) => $case->value, self::cases());
         return implode(', ', $values);
+    }
+
+    // create a comma separated list of values with name
+    public static function toCsListVerbose(): string
+    {
+        return implode(', ', array_map(
+            fn($case) => sprintf('%d (%s)', $case->value, $case->name),
+            self::cases()
+        ));
     }
 }

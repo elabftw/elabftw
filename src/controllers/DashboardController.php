@@ -63,15 +63,13 @@ class DashboardController implements ControllerInterface
         $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
         $UserRequestActions = new UserRequestActions($this->App->Users);
 
-        $itemsTypesQueryParams = $ItemsTypes->getQueryParams($this->App->Request->query);
-        $itemsStatusQueryParams = $ItemsStatus->getQueryParams($this->App->Request->query);
         $renderArr = array(
             'bookingsArr' => $Scheduler->readAll(),
-            'itemsCategoryArr' => $ItemsTypes->readAll($itemsTypesQueryParams),
-            'itemsStatusArr' => $ItemsStatus->readAll($itemsStatusQueryParams),
+            'itemsCategoryArr' => $ItemsTypes->readAll(),
+            'itemsStatusArr' => $ItemsStatus->readAll(),
             'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-            'experimentsCategoryArr' => $ExperimentsCategory->readAll($itemsTypesQueryParams),
-            'experimentsStatusArr' => $ExperimentsStatus->readAll($itemsStatusQueryParams),
+            'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
+            'experimentsStatusArr' => $ExperimentsStatus->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),

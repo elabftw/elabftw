@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await ApiC.patch(`${Model.Team}/current/${Model.Tag}/${original.dataset.id}`, {'action': Action.UpdateTag, 'tag': value});
       const json = await resp.json();
       // the response contains all the tags, so we need to find the correct one to display the updated value
-      return json.find((tag: Record<string, string|number>) => tag.id === parseInt(original.dataset.id, 10)).tag;
+      const tag = json.find((tag: Record<string, string|number>) => tag.id === parseInt(original.dataset.id, 10));
+      return tag?.tag ?? 'Tag has been merged with an existing one';
     },
     listenOn: '.tag.editable',
     returnedValueIsTrustedHtml: false,

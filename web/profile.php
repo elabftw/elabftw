@@ -60,10 +60,10 @@ try {
     $PermissionsHelper = new PermissionsHelper();
 
     $renderArr = array(
-        'attachedFiles' => $UserUploads->readAll($UserUploads->getQueryParams($App->Request->query)),
+        'attachedFiles' => $UserUploads->readAll(),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
-        'experimentsCategoryArr' => $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams($App->Request->query)),
+        'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
         'maxUploadSizeRaw' => ini_get('post_max_size'),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),

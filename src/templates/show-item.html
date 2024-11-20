@@ -42,6 +42,10 @@
       {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
+      {# deleted icon #}
+      {% if item.state == constant('Elabftw\\Enums\\State::Deleted').value %}
+        <i class='fas fa-ban fa-fw color-danger'></i>
+      {% endif %}
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}

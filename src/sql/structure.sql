@@ -1897,7 +1897,7 @@ ALTER TABLE `sig_keys`
 -- Constraints for table `tags`
 --
 ALTER TABLE `tags`
-  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
 
 --

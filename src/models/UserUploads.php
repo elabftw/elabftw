@@ -67,9 +67,10 @@ class UserUploads implements RestInterface
         $queryParams ??= $this->getQueryParams();
         $idFilter = '';
         if ($this->id) {
-            $idFilter = sprintf('AND entity.id = %d', $this->id);
+            $idFilter = sprintf(' AND entity.id = %d', $this->id);
         }
-        $sql = 'SELECT entity.id, entity.real_name, entity.long_name, entity.created_at, entity.filesize, entity.type, entity.comment,
+        $sql = 'SELECT entity.id, entity.real_name, entity.long_name, entity.created_at, entity.filesize, entity.type, entity.comment, entity.state,
+            entity.hash, entity.hash_algorithm, entity.storage, entity.immutable,
             COALESCE(experiments.id, items.id, experiments_templates.id) AS entity_id,
             COALESCE(experiments.title, items.title, experiments_templates.title) AS entity_title,
             CASE
@@ -82,12 +83,10 @@ class UserUploads implements RestInterface
             LEFT JOIN experiments ON (entity.item_id = experiments.id AND entity.type = "experiments")
             LEFT JOIN items ON (entity.item_id = items.id AND entity.type = "items")
             LEFT JOIN experiments_templates ON (entity.item_id = experiments_templates.id AND entity.type = "experiments_templates")
-            WHERE entity.userid = :userid AND (entity.state = :state_normal OR entity.state = :state_archived) '
+            WHERE entity.userid = :userid'
             . $idFilter . $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);
-        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

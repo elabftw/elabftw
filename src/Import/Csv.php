@@ -50,12 +50,12 @@ class Csv extends AbstractCsv
      */
     public function import(): int
     {
+        $entity = $this->entityType->toInstance($this->requester);
         foreach ($this->reader->getRecords() as $row) {
             // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
-            $entity = $this->entityType->toInstance($this->requester);
             $body = $this->getBodyFromRow($row);
             $date = empty($row['date']) ? null : new DateTimeImmutable($row['date']);
             $category = $this->category;

@@ -44,15 +44,20 @@ class TeamTags implements RestInterface
         return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);
     }
 
-    // look if the tag exists already
-    public function exists(TagParam $params): bool
+    private function getTagIdFromTag(TagParam $params): int
     {
         $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':tag', $params->getContent());
         $this->Db->execute($req);
-        return (bool) $req->fetch();
+        return (int) $req->fetchColumn();
+    }
+
+    // look if the tag exists already
+    public function exists(TagParam $params): bool
+    {
+        return (bool) $this->getTagIdFromTag($params);
     }
 
     /**
@@ -121,7 +126,6 @@ class TeamTags implements RestInterface
             throw new IllegalActionException('Only an admin can do this!');
         }
         return match ($action) {
-            Action::Deduplicate => $this->deduplicate(),
             Action::UpdateTag => $this->updateTag(new TagParam($params['tag'])),
             default => throw new ImproperActionException('Invalid action for tags.'),
         };
@@ -146,29 +150,6 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * If we have the same tag (after correcting a typo),
-     * remove the tags that are the same and reference only one
-     */
-    private function deduplicate(): array
-    {
-        // first get the ids of all the tags that are duplicated in the team
-        $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
-            SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) AND team = :team GROUP BY tag;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        $idsToDelete = $req->fetchAll();
-        // loop on each tag that needs to be deduplicated and do the work
-        foreach ($idsToDelete as $idsList) {
-            $this->deduplicateFromIdsList($idsList['id_list']);
-        }
-
-        return $this->readAll();
     }
 
     /**
@@ -203,6 +184,14 @@ class TeamTags implements RestInterface
 
     private function updateTag(TagParam $params): array
     {
+        // if the tag exists already the SQL Update statement will throw an error because of the unique key tag/team
+        // what we want to do is to assign entries with the old tag to the new tag id, and then delete the old tag
+        $id = $this->getTagIdFromTag($params);
+        if ($id > 0) {
+            $this->deduplicateFromIdsList(sprintf('%d,%d', $this->id ?? throw new ImproperActionException('Missing id for tag'), $id));
+            return $this->readAll();
+        }
+
         // use the team in the sql query to prevent one admin from editing tags from another team
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);

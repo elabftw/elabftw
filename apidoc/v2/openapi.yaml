@@ -1122,7 +1122,7 @@ paths:
             Search for a term in title, body or elabid.
           examples:
             first:
-              summary: Search for all experiments with the word "test".
+              summary: Search for all results with the word "test".
               value: test
         - name: extended
           in: query
@@ -1161,9 +1161,29 @@ paths:
         - name: cat
           in: query
           schema:
-            type: integer
+            type: string
           description: |
-            The status id of the experiments.
+            Add a filter on the Category. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with category ID 2
+              value: "2"
+            second:
+              summary: Display results with category ID 3 or 4 or not set (null)
+              value: "3,4,null"
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: |
+            Add a filter on the Status. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with status ID 2
+              value: "2"
+            second:
+              summary: Display results with status ID 3 or 4 or not set (null)
+              value: "3,4,null"
         - name: tags[]
           in: query
           schema:
@@ -1197,13 +1217,16 @@ paths:
         - name: owner
           in: query
           schema:
-            type: integer
+            type: string
           description: |
             Filter results by author (user id)
           examples:
             first:
               summary: Only display results from user with id 2
-              value: 2
+              value: "2"
+            second:
+              summary: Only display results from user with id 2 or 3
+              value: "2,3"
         - name: scope
           in: query
           schema:
@@ -1232,6 +1255,21 @@ paths:
             enum: ["asc", "desc"]
           description: |
             Change the sorting of results: ascending or descending.
+        - name: state
+          in: query
+          schema:
+            type: string
+            default: "1"
+          examples:
+            first:
+              summary: Display only archived entries
+              value: "2"
+            second:
+              summary: Display archived and deleted entries
+              value: "2,3"
+          description: |
+            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
+      # END need to copy part to items/
       responses:
         '200':
           description: A list of experiments
@@ -1511,7 +1549,7 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
-      # start duplicate from GET /experiments (except related)
+      # start duplicate from GET /experiments
       parameters:
         - name: q
           in: query
@@ -1521,7 +1559,7 @@ paths:
             Search for a term in title, body or elabid.
           examples:
             first:
-              summary: Search for all items with the word "test".
+              summary: Search for all results with the word "test".
               value: test
         - name: extended
           in: query
@@ -1557,13 +1595,32 @@ paths:
             experiments:
               summary: The related entry is an experiment.
               value: experiments
-        # This one is not exactly copy paste
         - name: cat
           in: query
           schema:
-            type: integer
+            type: string
           description: |
-            The category id of the items.
+            Add a filter on the Category. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with category ID 2
+              value: "2"
+            second:
+              summary: Display results with category ID 3 or 4 or not set (null)
+              value: "3,4,null"
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: |
+            Add a filter on the Status. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with status ID 2
+              value: "2"
+            second:
+              summary: Display results with status ID 3 or 4 or not set (null)
+              value: "3,4,null"
         - name: tags[]
           in: query
           schema:
@@ -1597,13 +1654,16 @@ paths:
         - name: owner
           in: query
           schema:
-            type: integer
+            type: string
           description: |
             Filter results by author (user id)
           examples:
             first:
               summary: Only display results from user with id 2
-              value: 2
+              value: "2"
+            second:
+              summary: Only display results from user with id 2 or 3
+              value: "2,3"
         - name: scope
           in: query
           schema:
@@ -1632,6 +1692,20 @@ paths:
             enum: ["asc", "desc"]
           description: |
             Change the sorting of results: ascending or descending.
+        - name: state
+          in: query
+          schema:
+            type: string
+            default: "1"
+          examples:
+            first:
+              summary: Display only archived entries
+              value: "2"
+            second:
+              summary: Display archived and deleted entries
+              value: "2,3"
+          description: |
+            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
       # end duplicate from GET /experiments
       responses:
         '200':

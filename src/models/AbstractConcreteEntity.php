@@ -170,8 +170,11 @@ abstract class AbstractConcreteEntity extends AbstractEntity
 
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $Request = Request::createFromGlobals();
-        return $this->readShow($this->getQueryParams($Request->query), true);
+        if (!$queryParams instanceof DisplayParams) {
+            $Request = Request::createFromGlobals();
+            $queryParams = $this->getQueryParams($Request->query);
+        }
+        return $this->readShow($queryParams, true);
     }
 
     public function destroy(): bool

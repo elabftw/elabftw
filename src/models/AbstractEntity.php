@@ -255,12 +255,7 @@ abstract class AbstractEntity implements RestInterface
             $displayParams->relatedOrigin,
         );
 
-        // first WHERE is the state, possibly including archived
-        $stateSql = 'entity.state = :normal';
-        if ($displayParams->includeArchived) {
-            $stateSql = '(entity.state = :normal OR entity.state = :archived)';
-        }
-        $sql .= ' WHERE ' . $stateSql;
+        $sql .= ' WHERE 1=1 ';
 
         // add externally added filters
         $sql .= $this->filterSql;
@@ -274,6 +269,7 @@ abstract class AbstractEntity implements RestInterface
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
+            $displayParams->getStatesSql('entity'),
             'GROUP BY id',
             $displayParams->getSql(),
         );
@@ -283,9 +279,6 @@ abstract class AbstractEntity implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
-        if ($displayParams->includeArchived) {
-            $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);

@@ -56,10 +56,10 @@ $usersArr = $App->Users->readAllFromTeam();
 // RENDER THE FIRST PART OF THE PAGE (search form)
 $renderArr = array(
     'Request' => $App->Request,
-    'experimentsCategoriesArr' => $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams($App->Request->query)),
-    'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams($App->Request->query)),
-    'itemsTypesArr' => $ItemsTypes->readAll($ItemsTypes->getQueryParams($App->Request->query)),
-    'itemsStatusArr' => $ItemsStatus->readAll($ItemsStatus->getQueryParams($App->Request->query)),
+    'experimentsCategoriesArr' => $ExperimentsCategories->readAll(),
+    'experimentsStatusArr' => $ExperimentsStatus->readAll(),
+    'itemsTypesArr' => $ItemsTypes->readAll(),
+    'itemsStatusArr' => $ItemsStatus->readAll(),
     'usersArr' => $usersArr,
     'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     'teamGroups' => array_column($teamGroupsArr, 'name'),

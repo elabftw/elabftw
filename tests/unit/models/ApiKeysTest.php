@@ -18,10 +18,18 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
     private ApiKeys $ApiKeys;
 
+    private Users2Teams $Users2Teams;
+
     protected function setUp(): void
     {
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
+        $this->Users2Teams = new Users2Teams(new Users(1, 1));
     }
+    //    protected function tearDown(): void
+    //    {
+    //        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, [1, 2, 3, 4]);
+    //        $this->ApiKeys->destroy((new Users(1, 1))->userid);
+    //    }
 
     public function testCreateAndGetApiPathAndDestroy(): void
     {
@@ -68,5 +76,18 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($res);
         $this->assertSame('known key used from db:populate command', $res[1]['name']);
         $this->assertSame(1, $res[1]['can_write']);
+    }
+
+    public function testDestroyKeyOnCascade(): void
+    {
+        $this->Users2Teams->addUserToTeams((new Users(1, 1))->userid, array(1,2,3,4));
+        $this->ApiKeys->createKnown('phpunit');
+        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, array(1));
+        // test apikey is deleted on cascade when user is removed from team
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->readFromApiKey('phpunit');
+        // re add user to team else all tests messed up
+        $this->Users2Teams->addUserToTeams((new Users(1, 1))->userid, array(1));
+        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, array(2,3,4));
     }
 }

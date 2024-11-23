@@ -2765,6 +2765,60 @@ paths:
         '204':
           description: The favorite tag was removed.
 
+  # REPORTS
+  /reports:
+    summary: Generate usage reports
+    get:
+      tags: ['Reports']
+      summary: Get usage reports
+      description: Get usage reports at the instance or team level.
+      operationId: get-reports
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: ['csv', 'json']
+            default: json
+          description: |
+            Select the output format
+          examples:
+            csv:
+              summary: Generate a CSV
+              value: csv
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum: ['instance', 'team']
+            default: json
+          description: |
+            Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
+          examples:
+            instance:
+              summary: Get instance level report
+              value: instance
+            team:
+              summary: Get team level report
+              value: team
+      responses:
+        '200':
+          description: Get usage reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_parameters:
+                    type: object
+                    properties:
+                      format:
+                        type: array
+                      scope:
+                        type: array
+            text/csv:
+              schema:
+                type: string
   # TEAM TAGS
   /teams/{id}/tags:
     summary: Manage tags at the team level.

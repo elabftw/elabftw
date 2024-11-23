@@ -1289,7 +1289,12 @@ figure figcaption {
 }
 
 .tox-dialog__body-content {
-  padding: 0px 16px 16px !important;
+  padding: 0 16px 16px !important;
+}
+
+/* setting the height as 'auto' results in the footer element being rendered below the preview popup */
+.tox-dialog__content-js {
+  height: 0 !important;
 }
 
 /* stylelint-disable-next-line selector-no-qualifying-type */

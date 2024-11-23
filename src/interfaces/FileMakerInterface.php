@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * For classes that can make a file
  */
@@ -22,4 +24,8 @@ interface FileMakerInterface
     public function getFileName(): string;
 
     public function getContentSize(): int;
+
+    public function getResponse(): Response;
+
+    public function getFileContent(): string;
 }

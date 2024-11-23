@@ -25,6 +25,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
+use Elabftw\Make\ReportsHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
@@ -288,6 +289,7 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            ApiEndpoint::Reports => new ReportsHandler($this->requester),
             ApiEndpoint::StorageUnits => new StorageUnits($this->requester, $this->id),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),

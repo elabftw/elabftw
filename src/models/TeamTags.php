@@ -44,16 +44,6 @@ class TeamTags implements RestInterface
         return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);
     }
 
-    private function getTagIdFromTag(TagParam $params): int
-    {
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $params->getContent());
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
     // look if the tag exists already
     public function exists(TagParam $params): bool
     {
@@ -150,6 +140,16 @@ class TeamTags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function getTagIdFromTag(TagParam $params): int
+    {
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

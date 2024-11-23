@@ -20,8 +20,7 @@ class MakeReportTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $requester = new Users(1, 1);
-        $users = $requester->readFromQuery('', teamId: 1);
-        $this->Make = new MakeReport($users);
+        $this->Make = new MakeReport($requester);
     }
 
     public function testGetFileName(): void

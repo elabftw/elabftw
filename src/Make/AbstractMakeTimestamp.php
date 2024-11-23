@@ -49,6 +49,11 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         return date('YmdHis') . '-timestamped.zip';
     }
 
+    public function getFileContent(): string
+    {
+        return '';
+    }
+
     /**
      * Get the data that will be timestamped and saved in the timestamp archive
      */

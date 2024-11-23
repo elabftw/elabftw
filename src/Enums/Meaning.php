@@ -23,6 +23,7 @@ enum Meaning: int
 
     case Approval = 10;
     case Authorship = 20;
+    case Disapproval = 11;
     case Responsibility = 30;
     case Review = 40;
     case Safety = 50;

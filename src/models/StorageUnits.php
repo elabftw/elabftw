@@ -12,30 +12,25 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * All about storage_units
  */
-class StorageUnits implements RestInterface
+class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     public function __construct(private Users $requester, ?int $id = null)
     {
+        parent::__construct();
         $this->setId($id);
-        $this->Db = Db::getConnection();
     }
 
     public function getApiPath(): string
@@ -43,6 +38,7 @@ class StorageUnits implements RestInterface
         return 'api/v2/storage_units/';
     }
 
+    #[Override]
     public function readOne(): array
     {
         // Recursive CTE to find the full path of a specific id
@@ -96,6 +92,7 @@ class StorageUnits implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "WITH RECURSIVE storage_hierarchy AS (
@@ -164,12 +161,14 @@ class StorageUnits implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->update(new CommentParam($params['comment']));
         return $this->readOne();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create($reqBody['unit_name'], Filter::intOrNull($reqBody['parent_id']));
@@ -204,6 +203,7 @@ class StorageUnits implements RestInterface
          */
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

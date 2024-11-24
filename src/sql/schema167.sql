@@ -43,21 +43,29 @@ CREATE TABLE IF NOT EXISTS compounds (
 CREATE TABLE `compounds2experiments` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`compound_id`, `entity_id`)
 );
 CREATE TABLE `compounds2experiments_templates` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`compound_id`, `entity_id`)
 );
 CREATE TABLE `compounds2items` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`compound_id`, `entity_id`)
 );
 CREATE TABLE `compounds2items_types` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`compound_id`, `entity_id`)
 );
 
@@ -95,50 +103,76 @@ CREATE TABLE IF NOT EXISTS compounds_fingerprints (
   fp29 INT UNSIGNED NOT NULL,
   fp30 INT UNSIGNED NOT NULL,
   fp31 INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   primary key(`id`),
   FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
 );
 
+-- STORAGE UNITS
 CREATE TABLE IF NOT EXISTS storage_units (
     id INT unsigned NOT NULL AUTO_INCREMENT,
-    level_name VARCHAR(255),
     unit_name VARCHAR(255),
     parent_id INT unsigned,
     FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
     PRIMARY KEY(`id`)
 );
--- EXPERIMENTS STORAGE
-ALTER TABLE `experiments` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD CONSTRAINT `fk_experiments_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
 
--- EXPERIMENTS TEMPLATES STORAGE
-ALTER TABLE `experiments_templates` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD CONSTRAINT `fk_experiments_templates_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
+-- CONTAINERS TO EXPERIMENTS
+CREATE TABLE containers2experiments (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO experiments_templates
+CREATE TABLE containers2experiments_templates (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments_templates(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO items
+CREATE TABLE containers2items (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO ITEMS_TYPES
+CREATE TABLE containers2items_types (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items_types(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
 
--- ITEMS STORAGE
-ALTER TABLE `items` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `items` ADD CONSTRAINT `fk_items_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
-
--- ITEMS TYPES STORAGE
-ALTER TABLE `items_types` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
-
+-- TAGS
+-- cleanup tags with same tag and team column values
 WITH cte AS (
     SELECT id, ROW_NUMBER() OVER (PARTITION BY team, tag ORDER BY id) AS rn
     FROM tags
@@ -147,6 +181,7 @@ DELETE FROM tags
 WHERE id IN (
     SELECT id FROM cte WHERE rn > 1
 );
+-- now add UNIQUE on team and tag columns
 ALTER TABLE `tags`
   ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
 

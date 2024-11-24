@@ -12,30 +12,25 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Params\TagParam;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * All about the tag but seen from a team perspective, not an entity
  */
-class TeamTags implements RestInterface
+class TeamTags extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
@@ -66,6 +61,7 @@ class TeamTags implements RestInterface
     /**
      * Create a new tag in that team
      */
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         if (!$this->Users->isAdmin) {
@@ -75,6 +71,7 @@ class TeamTags implements RestInterface
         return $this->create(new TagParam($tag));
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
@@ -93,6 +90,7 @@ class TeamTags implements RestInterface
     /**
      * Read all the tags from team. This one can be called from api and will filter based on q param in query
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
@@ -110,6 +108,7 @@ class TeamTags implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         if (!$this->Users->isAdmin) {
@@ -124,6 +123,7 @@ class TeamTags implements RestInterface
     /**
      * Destroy a tag completely. Unreference it from everywhere and then delete it
      */
+    #[Override]
     public function destroy(): bool
     {
         if (!$this->Users->isAdmin) {

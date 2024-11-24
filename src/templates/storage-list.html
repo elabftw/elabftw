@@ -17,7 +17,7 @@
                 <button type='button' class='btn btn-secondary btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add children to %s'|trans|format(item.unit_name) }}</button>
                 <button type='button' class='btn btn-danger btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1 color-white'></i>{{ 'Delete %s and its children'|trans|format(item.unit_name) }}</button>
               {% else %}
-              <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-entity-id='{{ Entity.id }}' data-dismiss='modal' data-action='add-to-storage'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.unit_name) }}</button>
+              <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.unit_name) }}</button>
               {% endif %}
             </div>
           </details>

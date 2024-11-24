@@ -12,31 +12,24 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
-use Elabftw\Traits\QueryParamsTrait;
+use Override;
 use PDO;
 
 /**
  * Request action for users
  */
-class UserRequestActions implements RestInterface
+class UserRequestActions extends AbstractRest
 {
-    use QueryParamsTrait;
-
-    protected Db $Db;
-
     public function __construct(protected Users $requester)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $tables = array(
@@ -82,28 +75,8 @@ class UserRequestActions implements RestInterface
         }, $this->readAll());
     }
 
-    public function readOne(): array
-    {
-        throw new ImproperActionException('This endpoint does not allow targeting one request.');
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('This endpoint does not allow creating a request.');
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No patch action for this endpoint.');
-    }
-
     public function getApiPath(): string
     {
         return 'api/v2/users/me/request_actions/';
-    }
-
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('No delete action for this endpoint.');
     }
 }

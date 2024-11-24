@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Compound;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -25,30 +24,28 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
+use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * Read chemical compounds from linked with an entity
  */
-class Compounds implements RestInterface
+class Compounds extends AbstractRest
 {
     use SetIdTrait;
-
-    protected Db $Db;
 
     protected HttpGetter $httpGetter;
 
     public function __construct(private Users $requester, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
         $Config = Config::getConfig();
         $this->httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
@@ -93,6 +90,7 @@ class Compounds implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
@@ -136,11 +134,13 @@ class Compounds implements RestInterface
 
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Lastchange);
     }
 
+    #[Override]
     public function readOne(): array
     {
         // check permission
@@ -152,6 +152,7 @@ class Compounds implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canOrExplode(AccessType::Write);
@@ -170,6 +171,7 @@ class Compounds implements RestInterface
         return $this->Db->execute($req);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         // TODO add action fromCid or fromSmiles
@@ -189,6 +191,7 @@ class Compounds implements RestInterface
         };
     }
 
+    #[Override]
     public function destroy(): bool
     {
         //$this->entity->canOrExplode('write');

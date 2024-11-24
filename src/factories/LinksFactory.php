@@ -14,6 +14,7 @@ namespace Elabftw\Factories;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\AbstractCompoundsLinks;
+use Elabftw\Models\AbstractContainersLinks;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractExperimentsLinks;
 use Elabftw\Models\AbstractItemsLinks;
@@ -21,6 +22,10 @@ use Elabftw\Models\Compounds2ExperimentsLinks;
 use Elabftw\Models\Compounds2ExperimentsTemplatesLinks;
 use Elabftw\Models\Compounds2ItemsLinks;
 use Elabftw\Models\Compounds2ItemsTypesLinks;
+use Elabftw\Models\Containers2ExperimentsLinks;
+use Elabftw\Models\Containers2ItemsLinks;
+use Elabftw\Models\Containers2ItemsTypesLinks;
+use Elabftw\Models\Containers2TemplatesLinks;
 use Elabftw\Models\Experiments2ExperimentsLinks;
 use Elabftw\Models\Experiments2ItemsLinks;
 use Elabftw\Models\ExperimentsTemplates2ExperimentsLinks;
@@ -39,6 +44,16 @@ class LinksFactory
             EntityType::Items => new Items2ExperimentsLinks($entity, $id),
             EntityType::Templates => new ExperimentsTemplates2ExperimentsLinks($entity, $id),
             EntityType::ItemsTypes => new ItemsTypes2ExperimentsLinks($entity, $id),
+        };
+    }
+
+    public static function getContainersLinks(AbstractEntity $entity, ?int $id = null): AbstractContainersLinks
+    {
+        return match ($entity->entityType) {
+            EntityType::Experiments => new Containers2ExperimentsLinks($entity, $id),
+            EntityType::Items => new Containers2ItemsLinks($entity, $id),
+            EntityType::Templates => new Containers2TemplatesLinks($entity, $id),
+            EntityType::ItemsTypes => new Containers2ItemsTypesLinks($entity, $id),
         };
     }
 

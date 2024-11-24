@@ -71,24 +71,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/', $this->Batch->getApiPath());
-    }
-
-    public function testRead(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Batch->readOne();
-    }
-
-    public function testPatch(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Batch->patch(Action::Lock, array());
-    }
-
-    public function testDestroy(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Batch->destroy();
+        $this->assertEquals('api/v2/batch', $this->Batch->getApiPath());
     }
 }

@@ -12,31 +12,26 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\TeamsHelper;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * All about the tag
  */
-class Tags implements RestInterface
+class Tags extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
@@ -45,6 +40,7 @@ class Tags implements RestInterface
         return sprintf('%s%d/tags/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         // check if we can actually create tags (for non-admins)
@@ -54,11 +50,13 @@ class Tags implements RestInterface
         return $this->create(new TagParam($reqBody['tag'] ?? ''), $canCreate);
     }
 
+    #[Override]
     public function readOne(): array
     {
         return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT DISTINCT tag, tags2entity.tag_id, (tags_id IS NOT NULL) AS is_favorite FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id) LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
@@ -96,6 +94,7 @@ class Tags implements RestInterface
         }
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         return match ($action) {
@@ -109,6 +108,7 @@ class Tags implements RestInterface
      * Here the tag are not destroyed because it might be nice to keep the tags in memory
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
      */
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';

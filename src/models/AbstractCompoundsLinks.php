@@ -12,28 +12,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * Compounds linking to entities
  */
-abstract class AbstractCompoundsLinks implements RestInterface
+abstract class AbstractCompoundsLinks extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     public function __construct(private AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         // this field corresponds to the target id (link_id)
         $this->setId($id);
     }
@@ -43,14 +38,10 @@ abstract class AbstractCompoundsLinks implements RestInterface
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        return array();
-    }
-
     /**
      * Get links for an entity
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT compound_id AS id FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
@@ -61,11 +52,7 @@ abstract class AbstractCompoundsLinks implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
@@ -75,6 +62,7 @@ abstract class AbstractCompoundsLinks implements RestInterface
         };
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');

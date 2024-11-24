@@ -22,10 +22,12 @@ use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Containers2ExperimentsLinks;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
@@ -205,9 +207,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         $ProcurementRequests = new ProcurementRequests($Teams);
 
+        $containers = LinksFactory::getContainersLinks($this->Entity);
+
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
+            'containers' => $containers->readAll(),
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,

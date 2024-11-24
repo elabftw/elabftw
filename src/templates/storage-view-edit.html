@@ -1,13 +1,26 @@
-{# hide the storage interface for experiments #}
-{% if Entity.entityType.value == 'items' %}
-  <div class='d-flex mb-2 align-items-center'>
-    <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-warehouse mr-1' title='{{ 'Storage'|trans }}'></i>{{ 'Storage'|trans }}</label>
-    {% if not Entity.isReadOnly %}
-      <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn border-0 lh-normal' data-action='toggle-modal' data-target='storageModal'>
-        <i class='fas fa-fw fa-square-plus fa-2x'></i>
-      </button>
-    {% endif %}
-    <div class='vertical-separator'></div>
-    <span id='entityStoragePath'>{% if Entity.entityData.qty_stored > 0 %}{{ Entity.entityData.qty_stored }} {{ Entity.entityData.qty_unit }} {{ 'in'|trans }} {% endif %}{{ Entity.entityData.storage_path|default('Not set'|trans) }}</span>
+<div class='d-flex mb-2 align-items-center'>
+  <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-warehouse mr-1' title='{{ 'Storage'|trans }}'></i>{{ 'Storage'|trans }}</label>
+  {% if not Entity.isReadOnly %}
+    <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn border-0 lh-normal hl-hover-gray' data-action='toggle-modal' data-target='storageModal'>
+      <i class='fas fa-fw fa-square-plus fa-2x'></i>
+    </button>
+  {% endif %}
+  <div class='vertical-separator'></div>
+  <div id='entityStoragePath'>
+    {% if containers %}
+    <details >
+    <summary>{{ containers|length }} {% trans %}container stored{% plural containers|length %}containers stored{% endtrans %}</summary>
+      <ul class='list-group'>
+        {% for container in containers %}
+          <li class='list-group-item'>
+            <div class='d-flex flex align-items-center'>
+              <span class='mr-2'>{{ container.qty_stored }} {{ container.qty_unit }} {{ 'in'|trans }} {{ container.full_path }}</span>
+              <span data-action='destroy-container' data-id='{{ container.storage_id }}'class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </details>
+  {% endif %}
   </div>
-{% endif %}
+</div>

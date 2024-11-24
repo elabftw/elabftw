@@ -12,39 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\BaseQueryParams;
+use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
-class UserUploads implements RestInterface
+class UserUploads extends AbstractRest
 {
-    protected Db $Db;
-
     public function __construct(private Users $owner, private ?int $id = null)
     {
-        $this->Db = Db::getConnection();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('No POST action for this endpoint');
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No PATCH action for this endpoint');
+        parent::__construct();
     }
 
     public function getApiPath(): string
@@ -52,16 +32,12 @@ class UserUploads implements RestInterface
         return sprintf('api/v2/user/%d/uploads/', $this->owner->userid ?? 'me');
     }
 
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('No DELETE action for this endpoint');
-    }
-
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::CreatedAt, limit: 42);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();

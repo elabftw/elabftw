@@ -516,7 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = prompt('Name');
       const params = {};
       params['parent_id'] = el.dataset.parentId;
-      params['level_name'] = el.dataset.levelName;
       params['unit_name'] = name;
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
@@ -529,14 +528,16 @@ document.addEventListener('DOMContentLoaded', () => {
       params['parent_id'] = el.dataset.parentId;
       params['unit_name'] = unitName;
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
-    } else if (el.matches('[data-action="add-to-storage"]')) {
+    } else if (el.matches('[data-action="create-container"]')) {
       const entity = getEntity();
-      ApiC.patch(`${entity.type}/${entity.id}`, {storage: el.dataset.id}).then(() => reloadElements(['entityStoragePath']));
+      const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
+      const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
+      ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {qty_stored: qty_stored, qty_unit: qty_unit}).then(() => reloadElements(['entityStoragePath']));
+    } else if (el.matches('[data-action="destroy-container"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['entityStoragePath']));
     } else if (el.matches('[data-action="destroy-storage"]')) {
       ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
-    } else if (el.matches('[data-action="clear-storage"]')) {
-      const entity = getEntity();
-      ApiC.patch(`${entity.type}/${entity.id}`, {storage: ''}).then(() => reloadElements(['entityStoragePath']));
 
     // REPLACE WITH NEXT ACTION
     } else if (el.matches('[data-action="replace-with-next"]')) {

@@ -19,11 +19,8 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 
 use function array_map;
@@ -32,14 +29,10 @@ use function urlencode;
 /**
  * The general config table
  */
-final class Config implements RestInterface
+final class Config extends AbstractRest
 {
-    use QueryParamsTrait;
-
     // the array with all config
     public array $configArr = array();
-
-    protected Db $Db;
 
     // store the single instance of the class
     private static ?Config $instance = null;
@@ -51,7 +44,7 @@ final class Config implements RestInterface
      */
     private function __construct()
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->configArr = $this->readAll();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
@@ -225,11 +218,6 @@ final class Config implements RestInterface
         return (string) getenv($confName);
     }
 
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
     public function decrementTsBalance(): array
     {
         $tsBalance = (int) $this->configArr['ts_balance'];
@@ -323,11 +311,6 @@ final class Config implements RestInterface
             $this->configArr['smtp_port'],
             $this->configArr['smtp_verify_cert'],
         );
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('No POST action for Config endpoint.');
     }
 
     /**

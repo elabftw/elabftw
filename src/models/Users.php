@@ -29,7 +29,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
@@ -43,7 +42,6 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -52,10 +50,8 @@ use function trim;
 /**
  * Users
  */
-class Users implements RestInterface
+class Users extends AbstractRest
 {
-    use QueryParamsTrait;
-
     public bool $needValidation = false;
 
     public array $userData = array();
@@ -64,11 +60,9 @@ class Users implements RestInterface
 
     public bool $isAdmin = false;
 
-    protected Db $Db;
-
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         if ($team !== null && $userid !== null) {
             $TeamsHelper = new TeamsHelper($this->team ?? 0);
             $this->isAdmin = $TeamsHelper->isAdmin($userid);

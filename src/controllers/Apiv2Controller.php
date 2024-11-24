@@ -309,6 +309,7 @@ class Apiv2Controller extends AbstractApiController
             $Config = Config::getConfig();
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
+                ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
                 ApiSubModels::Compounds => new Compounds($this->requester, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),

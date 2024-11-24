@@ -12,33 +12,28 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\CommentCreated;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * All about the comments
  */
-class Comments implements RestInterface
+class Comments extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     protected int $immutable = 0;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
@@ -47,6 +42,7 @@ class Comments implements RestInterface
         return sprintf('%s%d/comments/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
+    #[Override]
     public function readOne(): array
     {
         $this->Entity->canOrExplode('read');
@@ -63,6 +59,7 @@ class Comments implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->Entity->canOrExplode('read');
@@ -79,12 +76,14 @@ class Comments implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->update(new CommentParam($params['comment']));
         return $this->readOne();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create(new CommentParam($reqBody['comment'] ?? throw new ImproperActionException('Missing comment field.')));
@@ -106,6 +105,7 @@ class Comments implements RestInterface
         return $this->Db->execute($req);
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

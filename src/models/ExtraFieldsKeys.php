@@ -13,27 +13,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
-use Elabftw\Traits\QueryParamsTrait;
+use Override;
 use PDO;
 
 /**
  * Get extra fields keys of items and experiments used for autocomplete on search page.
  */
-class ExtraFieldsKeys implements RestInterface
+class ExtraFieldsKeys extends AbstractRest
 {
-    use QueryParamsTrait;
-
-    private Db $Db;
-
     public function __construct(private Users $Users, private string $searchTerm, private int $limit = 0)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->limit = $this->limit < -1 || $this->limit === 0 ? $this->Users->userData['limit_nb'] : $this->limit;
     }
 
@@ -42,24 +35,10 @@ class ExtraFieldsKeys implements RestInterface
         return 'api/v2/extra_fields_keys';
     }
 
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return 0;
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        return $this->readAll();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
     /**
      * Get all exta fields keys of a team from experiments and items
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = array();
@@ -110,10 +89,5 @@ class ExtraFieldsKeys implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    public function destroy(): bool
-    {
-        return false;
     }
 }

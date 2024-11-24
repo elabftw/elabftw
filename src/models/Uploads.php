@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -27,12 +26,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
-use Elabftw\Traits\QueryParamsTrait;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
+use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,10 +40,8 @@ use function hash_file;
 /**
  * All about the file uploads
  */
-class Uploads implements RestInterface
+class Uploads extends AbstractRest
 {
-    use QueryParamsTrait;
-
     public const string HASH_ALGORITHM = 'sha256';
 
     // size of a file in bytes above which we don't process it (50 Mb)
@@ -53,11 +49,9 @@ class Uploads implements RestInterface
 
     public array $uploadData = array();
 
-    protected Db $Db;
-
     public function __construct(public AbstractEntity $Entity, public ?int $id = null, public bool $includeArchived = false)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         if ($this->id !== null) {
             $this->readOne();
         }
@@ -196,6 +190,7 @@ class Uploads implements RestInterface
     /**
      * Read from current id
      */
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
@@ -236,6 +231,7 @@ class Uploads implements RestInterface
     /**
      * Read only the normal ones (not archived/deleted)
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         if ($this->includeArchived) {
@@ -252,6 +248,7 @@ class Uploads implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -266,6 +263,7 @@ class Uploads implements RestInterface
         return $this->readOne();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $this->Entity->touch();
@@ -302,6 +300,7 @@ class Uploads implements RestInterface
     /**
      * Make a body check and then remove upload
      */
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

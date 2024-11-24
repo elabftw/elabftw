@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
@@ -28,7 +27,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -38,7 +36,6 @@ use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
-use Elabftw\Traits\QueryParamsTrait;
 use PDO;
 use PDOStatement;
 
@@ -56,10 +53,9 @@ use const JSON_THROW_ON_ERROR;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements RestInterface
+abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
-    use QueryParamsTrait;
 
     public const int CONTENT_HTML = 1;
 
@@ -107,7 +103,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);

@@ -12,34 +12,29 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
+use Override;
 use PDO;
 
 /**
  * All about the steps
  */
-class Steps implements RestInterface
+class Steps extends AbstractRest
 {
     use SortableTrait;
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    protected Db $Db;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
@@ -93,6 +88,7 @@ class Steps implements RestInterface
         $this->import($stepArr);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE item_id = :id ORDER BY ordering';
@@ -103,6 +99,7 @@ class Steps implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
@@ -141,6 +138,7 @@ class Steps implements RestInterface
         }
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode('write');
@@ -164,6 +162,7 @@ class Steps implements RestInterface
         return $this->readOne();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $this->Entity->canOrExplode('write');
@@ -173,6 +172,7 @@ class Steps implements RestInterface
         return $this->create($reqBody['body'] ?? 'RTFM');
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');

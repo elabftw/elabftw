@@ -12,15 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\UsersHelper;
-use Elabftw\Traits\QueryParamsTrait;
+use Override;
 use PDO;
 
 /**
@@ -28,15 +25,11 @@ use PDO;
  * By default the unfinished steps of a user are returned.
  * $teamScoped provides a switch to return unfinished steps of the entire team.
  */
-class UnfinishedSteps implements RestInterface
+class UnfinishedSteps extends AbstractRest
 {
-    use QueryParamsTrait;
-
-    private Db $Db;
-
     public function __construct(private Users $Users, private bool $teamScoped = false)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
     }
 
     public function getApiPath(): string
@@ -44,32 +37,12 @@ class UnfinishedSteps implements RestInterface
         return 'api/v2/unfinished_steps';
     }
 
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return 0;
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        return $this->readAll();
-    }
-
-    public function readOne(): array
-    {
-        // not used
-        return array();
-    }
-
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $experimentsSteps = $this->cleanUpResult($this->getSteps(EntityType::Experiments));
         $itemsSteps = $this->cleanUpResult($this->getSteps(EntityType::Items));
         return array('experiments' => $experimentsSteps, 'items' => $itemsSteps);
-    }
-
-    public function destroy(): bool
-    {
-        return false;
     }
 
     private function getSteps(EntityType $model): array

@@ -136,9 +136,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds'] = $CompoundsLinks->readAll();
-        if ($this->entityData['storage'] !== null) {
-            $this->entityData['storage_path'] = (new StorageUnits($this->Users, $this->entityData['storage']))->readOne()['full_path'];
-        }
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),

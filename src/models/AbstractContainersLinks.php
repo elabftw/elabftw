@@ -2,7 +2,7 @@
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012, 2022 Nicolas CARPi
+ * @copyright 2024 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -18,7 +18,6 @@ use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
@@ -26,19 +25,10 @@ use function intval;
 use function json_encode;
 
 /**
- * All about Links
+ * All about containers links with entities
  */
-abstract class AbstractLinks extends AbstractRest
+abstract class AbstractContainersLinks extends AbstractLinks
 {
-    use SetIdTrait;
-
-    public function __construct(public AbstractEntity $Entity, ?int $id = null)
-    {
-        parent::__construct();
-        // this field corresponds to the target id (link_id)
-        $this->setId($id);
-    }
-
     public function getApiPath(): string
     {
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
@@ -50,33 +40,33 @@ abstract class AbstractLinks extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // main category table
-        $sql = 'SELECT entity.id AS entityid,
-            entity.title,
-            entity.custom_id,
-            entity.elabid,
-            "' . $this->getTargetType()->toPage() . '" AS page,
-            "' . $this->getTargetType()->value . '" AS type,
-            categoryt.title AS category_title,
-            categoryt.color AS category_color,
-            statust.title AS status_title,
-            statust.color AS status_color,
-            ' . ($this instanceof AbstractItemsLinks ? 'entity.is_bookable,' : '') . '
-            entity.state AS link_state
-            FROM ' . $this->getTable() . '
-            LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
-            LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)
-            LEFT JOIN ' . $this->getStatusTable() . ' AS statust ON (entity.status = statust.id)
-            WHERE ' . $this->getTable() . '.item_id = :id AND (entity.state = :state OR entity.state = :statearchived)
-            ORDER by categoryt.title ASC, entity.date ASC, entity.title ASC';
+        $sql = 'SELECT
+            main.qty_stored,
+            main.qty_unit,
+            main.storage_id,
+            main.item_id,
+            main.created_at,
+            main.modified_at,
+            storage_units.id AS storage_id,
+            storage_units.unit_name AS storage_name
+            FROM ' . $this->getTable() . ' AS main
+            LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (main.item_id = entity.id)
+            LEFT JOIN storage_units ON (main.storage_id = storage_units.id)
+            WHERE main.item_id = :item_id AND entity.state IN (1,2)
+            ORDER by main.created_at, entity.date ASC, entity.title ASC';
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $results = $req->fetchAll();
+        // Note: currently it's easier to loop on the storage and do a readOne() rather than include the full_path here
+        $StorageUnits = new StorageUnits($this->Entity->Users);
+        foreach ($results as &$result) {
+            $StorageUnits->setId($result['storage_id']);
+            $result['full_path'] = $StorageUnits->readOne()['full_path'];
+        }
+        return $results;
     }
 
     /**
@@ -84,17 +74,16 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, entity.custom_id,
-            "' . $this->getTargetType()->toPage() . '" AS page,
-            "' . $this->getTargetType()->value . '" AS type,
-            categoryt.title AS category_title, categoryt.color AS category_color,
-            statust.title AS status_title, statust.color AS status_color, entity.state AS link_state';
-
-        if ($this instanceof AbstractItemsLinks) {
-            $sql .= ', entity.is_bookable';
-        }
-
-        $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links
+        $sql = 'SELECT
+            main.qty_stored,
+            main.qty_unit,
+            main.storage_id,
+            main.item_id,
+            main.created_at,
+            main.modified_at,
+            storage_units.id AS storage_id,
+            storage_units.unit_name AS storage_name
+            FROM ' . $this->getTable() . ' AS main
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (entity_links.item_id = entity.id)
             LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)
             LEFT JOIN ' . $this->getStatusTable() . ' AS statust ON (entity.status = statust.id)';
@@ -137,7 +126,7 @@ abstract class AbstractLinks extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create(),
+            Action::Create => $this->createWithQuantity((int) $reqBody['qty_stored'], $reqBody['qty_unit']),
             Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
@@ -149,9 +138,9 @@ abstract class AbstractLinks extends AbstractRest
         $this->Entity->canOrExplode('write');
         $this->Entity->touch();
 
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE storage_id = :storage_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':storage_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -187,18 +176,30 @@ abstract class AbstractLinks extends AbstractRest
 
     abstract protected function getTable(): string;
 
-    abstract protected function getRelatedTable(): string;
-
-    abstract protected function getTemplateTable(): string;
-
     abstract protected function getImportTargetTable(): string;
+
+    protected function getTemplateTable(): string
+    {
+        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
+            return 'containers2items_types';
+        }
+        return 'containers2experiments_templates';
+    }
+
+    protected function getRelatedTable(): string
+    {
+        if ($this->Entity instanceof Experiments) {
+            return 'containers2experiments';
+        }
+        return 'containers2items';
+    }
 
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function create(): int
+    protected function createWithQuantity(int $qty, string $unit): int
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
@@ -207,10 +208,13 @@ abstract class AbstractLinks extends AbstractRest
         $this->Entity->touch();
 
         // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
+            VALUES(:item_id, :storage, :qty_stored, :qty_unit)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':qty_stored', $qty, PDO::PARAM_INT);
+        $req->bindParam(':qty_unit', $unit);
 
         $this->Db->execute($req);
 

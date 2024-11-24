@@ -14,14 +14,12 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Filter;
-use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 use function bin2hex;
@@ -32,12 +30,9 @@ use function random_bytes;
 /**
  * Api keys CRUD class
  */
-class ApiKeys implements RestInterface
+class ApiKeys extends AbstractRest
 {
     use SetIdTrait;
-    use QueryParamsTrait;
-
-    private Db $Db;
 
     private string $key = '';
 
@@ -45,18 +40,14 @@ class ApiKeys implements RestInterface
 
     public function __construct(private Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create($reqBody['name'] ?? 'RTFM', $reqBody['canwrite'] ?? 0);
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No patch action for apikeys.');
     }
 
     public function getApiPath(): string
@@ -78,6 +69,7 @@ class ApiKeys implements RestInterface
     /**
      * Read all keys for current user
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.hash, ak.can_write, ak.team, teams.name AS team_name
@@ -89,11 +81,6 @@ class ApiKeys implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
     }
 
     /**
@@ -128,6 +115,7 @@ class ApiKeys implements RestInterface
         throw new ImproperActionException('No corresponding API key found!');
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';

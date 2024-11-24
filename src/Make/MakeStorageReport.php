@@ -20,12 +20,13 @@ use function date;
 /**
  * Make a CSV file with all the storage
  */
-class MakeStorageUnitsCsv extends AbstractMakeCsv
+class MakeStorageReport extends AbstractMakeCsv
 {
     private array $rows;
 
     public function __construct(StorageUnits $storageUnits)
     {
+        parent::__construct();
         $this->rows = $storageUnits->readAllForCsv();
         if (empty($this->rows)) {
             throw new ImproperActionException(_('Nothing to export!'));

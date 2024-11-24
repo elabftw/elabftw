@@ -152,9 +152,9 @@ class StorageUnits extends AbstractRest
 
     public function readAllForCsv(): array
     {
-        $sql = 'SELECT su.id, su.unit_name, su.parent_id, items.title, items.id AS item_id, items.qty_stored, items.qty_unit
-            FROM storage_units AS su
-            LEFT JOIN items ON (items.storage = su.id)';
+        // TODO join the containers
+        $sql = 'SELECT su.id, su.unit_name, su.parent_id
+            FROM storage_units AS su';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

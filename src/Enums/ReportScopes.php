@@ -19,5 +19,6 @@ enum ReportScopes: string
     use EnumsTrait;
 
     case Instance = 'instance';
+    case Storage = 'storage';
     case Team = 'team';
 }

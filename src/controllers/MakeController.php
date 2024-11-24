@@ -37,7 +37,6 @@ use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
@@ -77,10 +76,6 @@ class MakeController extends AbstractController
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
                     return (new MakeProcurementRequestsCsv($ProcurementRequests))->getResponse();
-                }
-                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/storage_units')) {
-                    $StorageUnits = new StorageUnits($this->requester);
-                    return (new MakeStorageUnitsCsv($StorageUnits))->getResponse();
                 }
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/reports')) {
                     return (new ReportsHandler($this->requester))->getResponse(

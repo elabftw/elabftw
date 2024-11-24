@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
   <div class='pl-3 mb-5'>
-    <div><button class='btn btn-secondary' data-action='get-storage-csv'>{{ 'Generate report'|trans }}</button></div>
+    <div>
+      <a href='/api/v2/reports?scope=storage&format=csv'>
+        <button class='btn btn-secondary' data-action='get-storage-csv'>{{ 'Generate report'|trans }}</button>
+      </a>
+    </div>
     {% include 'storage-list.html' with {'storage_editable': true} %}
   </div>
 {% endblock body %}

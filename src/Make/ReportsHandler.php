@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Enums\ReportScopes;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,7 @@ class ReportsHandler extends AbstractRest
         $Reporter = match ($scope) {
             ReportScopes::Instance => (new MakeReport($this->requester)),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),
+            ReportScopes::Storage => (new MakeStorageReport(new StorageUnits($this->requester))),
         };
         return $Reporter->getResponse();
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
@@ -186,14 +187,17 @@ class StorageUnits extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->update(new CommentParam($params['comment']));
+        $this->update(new CommentParam($params['name']));
         return $this->readOne();
     }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create($reqBody['name'], Filter::intOrNull($reqBody['parent_id']));
+        return $this->create(
+            $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
+            Filter::intOrNull($reqBody['parent_id']),
+        );
     }
 
     public function create(string $unitName, ?int $parentId = null): int
@@ -208,21 +212,13 @@ class StorageUnits extends AbstractRest
 
     public function update(CommentParam $params): bool
     {
-        return true;
-        /*
-        $this->Entity->canOrExplode('read');
-        $this->canWriteOrExplode();
-        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_comments SET
-            comment = :content
-            WHERE id = :id AND userid = :userid AND item_id = :item_id';
+        $sql = 'UPDATE storage_units SET
+            name = :name
+            WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':name', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-
         return $this->Db->execute($req);
-         */
     }
 
     #[Override]
@@ -234,16 +230,5 @@ class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
-    }
-
-    protected function canWriteOrExplode(): void
-    {
-        return;
-        /*
-        $comment = $this->readOne();
-        if ($comment['immutable'] === 1) {
-            throw new ImproperActionException(Tools::error(true));
-        }
-         */
     }
 }

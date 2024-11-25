@@ -18,12 +18,9 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
     private ApiKeys $ApiKeys;
 
-    private Users2Teams $Users2Teams;
-
     protected function setUp(): void
     {
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
-        $this->Users2Teams = new Users2Teams(new Users(1, 1));
     }
 
     public function testCreateAndGetApiPathAndDestroy(): void
@@ -75,13 +72,15 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyKeyOnCascade(): void
     {
-        $tata = new Users(4, 2);
-        $this->Users2Teams->addUserToTeams($tata->userData['userid'], array(3,4));
-        $this->ApiKeys->createKnown('phpunit');
-        $this->Users2Teams->rmUserFromTeams($tata->userData['userid'], array(3,4));
+        $tataId = 4;
+        $Users2Teams = new Users2Teams(new Users(1, 1));
+        $Users2Teams->addUserToTeams($tataId, array(3,4));
+        // create new ApiKeys with user in team 3
+        $ApiKeys = new ApiKeys(new Users(4, 3));
+        $ApiKeys->createKnown('in team 3');
+        $Users2Teams->rmUserFromTeams($tataId, array(3,4));
         // Ensure apikey is removed as well
         $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->readFromApiKey('phpunit');
-        $tata->destroy();
+        $ApiKeys->readFromApiKey('in team 3');
     }
 }

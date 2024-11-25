@@ -110,6 +110,10 @@ You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins,
 
 If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
 
+### Prevent users from changing their identity
+
+Users used to be able to change their name and email address freely. This can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. An option to block this was introduced in 5.1.0. Do check if this option is currently enabled on your system, and consider if it is strictly required.
+
 ### Turn on optional features only if required
 
 There are multiple optional features in eLabFTW. In a conservative setup, do consider keeping them disabled (_e.g._ prevent link-sharing unless you have investigated the ramifications of allowing it).

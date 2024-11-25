@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = prompt('Name');
       const params = {};
       params['parent_id'] = el.dataset.parentId;
-      params['unit_name'] = name;
+      params['name'] = name;
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const params = {};
       params['parent_id'] = el.dataset.parentId;
-      params['unit_name'] = unitName;
+      params['name'] = unitName;
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
     } else if (el.matches('[data-action="create-container"]')) {
       const entity = getEntity();

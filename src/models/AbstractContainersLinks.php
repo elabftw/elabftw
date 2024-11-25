@@ -48,7 +48,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
             main.created_at,
             main.modified_at,
             storage_units.id AS storage_id,
-            storage_units.unit_name AS storage_name
+            storage_units.name AS storage_name
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (main.item_id = entity.id)
             LEFT JOIN storage_units ON (main.storage_id = storage_units.id)
@@ -82,7 +82,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
             main.created_at,
             main.modified_at,
             storage_units.id AS storage_id,
-            storage_units.unit_name AS storage_name
+            storage_units.name AS storage_name
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (entity_links.item_id = entity.id)
             LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)

@@ -47,9 +47,9 @@ class StorageUnits extends AbstractRest
                 -- Base case: Start with the given id
                 SELECT
                     id,
-                    unit_name,
+                    name,
                     parent_id,
-                    CAST(unit_name AS CHAR(1000)) AS full_path,
+                    CAST(name AS CHAR(1000)) AS full_path,
                     0 AS level_depth
                 FROM
                     storage_units
@@ -61,9 +61,9 @@ class StorageUnits extends AbstractRest
                 -- Recursive case: Trace the path upwards by finding parent units
                 SELECT
                     parent.id,
-                    child.unit_name,
+                    child.name,
                     parent.parent_id,
-                    CAST(CONCAT(parent.unit_name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
+                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
                     child.level_depth + 1
                 FROM
                     storage_units AS parent
@@ -74,7 +74,7 @@ class StorageUnits extends AbstractRest
             -- Get the full path from the root to the given id
             SELECT
                 id,
-                unit_name,
+                name,
                 full_path,
                 parent_id,
                 level_depth
@@ -99,9 +99,9 @@ class StorageUnits extends AbstractRest
             -- Base case: Select all top-level units (those with no parent)
             SELECT
                 id,
-                unit_name,
+                name,
                 parent_id,
-                unit_name AS full_path,
+                name AS full_path,
                 0 AS level_depth,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
             FROM
@@ -114,9 +114,9 @@ class StorageUnits extends AbstractRest
             -- Recursive case: Select child units and append them to the parent's path
             SELECT
                 child.id,
-                child.unit_name,
+                child.name,
                 child.parent_id,
-                CONCAT(parent.full_path, ' > ', child.unit_name) AS full_path,
+                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
                 parent.level_depth + 1,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
             FROM
@@ -130,7 +130,7 @@ class StorageUnits extends AbstractRest
         -- Query to view the full hierarchy
         SELECT
             id,
-            unit_name,
+            name,
             full_path,
             parent_id,
             level_depth,
@@ -152,7 +152,7 @@ class StorageUnits extends AbstractRest
 
     public function readAllForCsv(): array
     {
-        $sql = 'SELECT su.id, su.unit_name, su.parent_id, data.qty_stored, data.qty_unit, data.item_id, data.created_at, data.modified_at, data.title
+        $sql = 'SELECT su.id, su.name, su.parent_id, data.qty_stored, data.qty_unit, data.item_id, data.created_at, data.modified_at, data.title
             FROM storage_units AS su
             LEFT JOIN (
                 SELECT
@@ -193,15 +193,15 @@ class StorageUnits extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create($reqBody['unit_name'], Filter::intOrNull($reqBody['parent_id']));
+        return $this->create($reqBody['name'], Filter::intOrNull($reqBody['parent_id']));
     }
 
     public function create(string $unitName, ?int $parentId = null): int
     {
-        $sql = 'INSERT INTO storage_units(parent_id, unit_name) VALUES(:parent_id, :unit_name)';
+        $sql = 'INSERT INTO storage_units(parent_id, name) VALUES(:parent_id, :name)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
-        $req->bindParam(':unit_name', $unitName);
+        $req->bindParam(':name', $unitName);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }

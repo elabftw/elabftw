@@ -987,14 +987,6 @@ CREATE TABLE IF NOT EXISTS `sig_keys` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS storage_units (
-    id INT unsigned NOT NULL AUTO_INCREMENT,
-    unit_name VARCHAR(255),
-    parent_id INT unsigned,
-    FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
-    PRIMARY KEY(`id`)
-);
-
 --
 -- Table structure for table `tags`
 --
@@ -1988,7 +1980,7 @@ CREATE TABLE IF NOT EXISTS compounds_fingerprints (
 -- STORAGE UNITS
 CREATE TABLE IF NOT EXISTS storage_units (
     id INT unsigned NOT NULL AUTO_INCREMENT,
-    unit_name VARCHAR(255),
+    name VARCHAR(255),
     parent_id INT unsigned,
     FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
     PRIMARY KEY(`id`)

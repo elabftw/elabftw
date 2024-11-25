@@ -25,11 +25,6 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
         $this->Users2Teams = new Users2Teams(new Users(1, 1));
     }
-    //    protected function tearDown(): void
-    //    {
-    //        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, [1, 2, 3, 4]);
-    //        $this->ApiKeys->destroy((new Users(1, 1))->userid);
-    //    }
 
     public function testCreateAndGetApiPathAndDestroy(): void
     {
@@ -80,14 +75,13 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyKeyOnCascade(): void
     {
-        $this->Users2Teams->addUserToTeams((new Users(1, 1))->userid, array(1,2,3,4));
+        $tata = new Users(4, 2);
+        $this->Users2Teams->addUserToTeams($tata->userData['userid'], array(3,4));
         $this->ApiKeys->createKnown('phpunit');
-        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, array(1));
+        $this->Users2Teams->rmUserFromTeams($tata->userData['userid'], array(3,4));
         // test apikey is deleted on cascade when user is removed from team
         $this->expectException(ImproperActionException::class);
         $this->ApiKeys->readFromApiKey('phpunit');
-        // re add user to team else all tests messed up
-        $this->Users2Teams->addUserToTeams((new Users(1, 1))->userid, array(1));
-        $this->Users2Teams->rmUserFromTeams((new Users(1, 1))->userid, array(2,3,4));
+        $tata->destroy();
     }
 }

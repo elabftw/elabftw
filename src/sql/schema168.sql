@@ -1,4 +1,4 @@
--- schema 168 - fix discrepencies due to invalid user-team combinations
+-- schema 168 - fix discrepancies due to invalid user-team combinations
 WITH cte AS (
     SELECT id, userid, team FROM `api_keys`
     WHERE (userid, team) NOT IN (
@@ -6,7 +6,7 @@ WITH cte AS (
     )
 )
 DELETE FROM `api_keys` WHERE id IN (SELECT id FROM cte);
--- add constraint to remove associated apikey when user is removed from a team
+-- Add constraint to remove associated apikey when user is removed from a team
 ALTER TABLE `api_keys` ADD CONSTRAINT `fk_api_keys_user_team` FOREIGN KEY (`userid`, `team`)
     REFERENCES `users2teams` (`users_id`, `teams_id`)
     ON DELETE CASCADE ON UPDATE CASCADE;

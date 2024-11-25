@@ -79,7 +79,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->addUserToTeams($tata->userData['userid'], array(3,4));
         $this->ApiKeys->createKnown('phpunit');
         $this->Users2Teams->rmUserFromTeams($tata->userData['userid'], array(3,4));
-        // test apikey is deleted on cascade when user is removed from team
+        // Ensure apikey is removed as well
         $this->expectException(ImproperActionException::class);
         $this->ApiKeys->readFromApiKey('phpunit');
         $tata->destroy();

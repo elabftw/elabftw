@@ -112,7 +112,7 @@ If eLabFTW is set up to use some external source of identity information (such a
 
 ### Prevent users from changing their identity
 
-Users used to be able to change their name and email address freely. This can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. An option to block this was introduced in 5.1.0. Do check if this option is currently enabled on your system, and consider if it is strictly required.
+Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. Since version 5.1.0, sysadmins can control if users are allowed to change these pieces of information. Check if it is currently allowed on your system, and consider if it is strictly required.
 
 ### Turn on optional features only if required
 

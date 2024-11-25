@@ -38,7 +38,9 @@ export class JsonEditorActions {
         } else if (el.matches('[data-action="json-save-file"]')) {
           JsonEditorHelperC.saveNewFile();
         } else if (el.matches('[data-action="json-saveas-file"]')) {
-          saveStringAsFile(JsonEditorHelperC.askFilename(), JSON.stringify(JsonEditorHelperC.editor.get()));
+          const realName = JsonEditorHelperC.askFilename();
+          if (!realName) return;
+          saveStringAsFile(realName, JSON.stringify(JsonEditorHelperC.editor.get()));
         } else if (el.matches('[data-action="json-save"]')) {
           JsonEditorHelperC.save();
           // make the save button stand out if the content is changed

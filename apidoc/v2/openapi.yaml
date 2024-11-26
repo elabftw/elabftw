@@ -1350,7 +1350,7 @@ paths:
       summary: Modify an experiment
       operationId: patch-experiment
       requestBody:
-        description: Parameters for patching an item
+        description: Parameters for patching an experiment
         content:
           application/json:
             schema:
@@ -1364,11 +1364,42 @@ paths:
                         'exclusiveeditmode',
                         'lock',
                         'pin',
+                        'sign',
                         'timestamp',
                         'updatemetadatafield',
                         'update',
                       ]
+                    passphrase:
+                      type: string
+                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
+                      example: hunter2
+                    meaning:
+                      type: integer
+                      enum: [ 10, 20, 30, 40, 50 ]
+                      description: |
+                        Meaning of the signature. This parameter is required when Action is "sign"
+                        - 10: Approval
+                        - 20: Authorship
+                        - 30: Responsibility
+                        - 40: Review
+                        - 50: Safety
+                      example: 40
                 - $ref: '#/components/schemas/experiment'
+            examples:
+              signature:
+                summary: Sign an entry with meaning "Approval"
+                value:
+                  action: sign
+                  passphrase: hunter2
+                  meaning: 10
+              bloxberg:
+                summary: Create a Bloxberg blockchain timestamp
+                value:
+                  action: bloxberg
+              timestamp:
+                summary: Create a timestamp archive
+                value:
+                  action: timestamp
       responses:
         '200':
           description: The patched experiment
@@ -1763,13 +1794,46 @@ paths:
                     action:
                       type: string
                       enum: [
+                        'bloxberg',
                         'exclusiveeditmode',
                         'lock',
                         'pin',
+                        'sign',
                         'updatemetadatafield',
                         'update',
                       ]
+                      example: sign
+                    passphrase:
+                      type: string
+                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
+                      example: hunter2
+                    meaning:
+                      type: integer
+                      enum: [ 10, 20, 30, 40, 50 ]
+                      description: |
+                        Meaning of the signature. This parameter is required when Action is "sign"
+                        - 10: Approval
+                        - 20: Authorship
+                        - 30: Responsibility
+                        - 40: Review
+                        - 50: Safety
+                      example: 40
                 - $ref: '#/components/schemas/item'
+            examples:
+              signature:
+                summary: Sign an entry with meaning "Approval"
+                value:
+                  action: sign
+                  passphrase: hunter2
+                  meaning: 10
+              bloxberg:
+                summary: Create a Bloxberg blockchain timestamp
+                value:
+                  action: bloxberg
+              timestamp:
+                summary: Create a timestamp archive
+                value:
+                  action: timestamp
       responses:
         '200':
           description: The patched item

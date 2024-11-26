@@ -1350,7 +1350,7 @@ paths:
       summary: Modify an experiment
       operationId: patch-experiment
       requestBody:
-        description: Parameters for patching an item
+        description: Parameters for patching an experiment
         content:
           application/json:
             schema:
@@ -1784,9 +1784,11 @@ paths:
                         'updatemetadatafield',
                         'update',
                       ]
+                      example: sign
                     passphrase:
                       type: string
                       description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
+                      example: hunter
                     meaning:
                       type: integer
                       enum: [ 10, 20, 30, 40, 50 ]
@@ -1797,6 +1799,7 @@ paths:
                         - 30: Responsibility
                         - 40: Review
                         - 50: Safety
+                      example: 40
                 - $ref: '#/components/schemas/item'
       responses:
         '200':

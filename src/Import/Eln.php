@@ -263,6 +263,7 @@ class Eln extends AbstractZip
             if ($this->Entity instanceof ItemsTypes) {
                 // we need to check if an existing items_types exists with same name, and avoid recreating one
                 $cat = new ItemsTypes($Author);
+                $cat->bypassWritePermission = true;
                 $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
             } else {
                 $this->Entity->setId($this->Entity->create(title: $title, category: $categoryId));

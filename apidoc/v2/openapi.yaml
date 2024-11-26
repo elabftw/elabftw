@@ -1360,25 +1360,23 @@ paths:
                     action:
                       type: string
                       enum: [
+                        'sign',
                         'bloxberg',
                         'exclusiveeditmode',
                         'lock',
                         'pin',
-                        'sign',
                         'timestamp',
                         'updatemetadatafield',
                         'update',
                       ]
-                      default: 'sign'
                     passphrase:
                       type: string
-                      default: 'your-passphrase'
-                      description: Required when action is 'sign'
+                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
                     meaning:
                       type: integer
                       enum: [ 10, 20, 30, 40, 50 ]
                       description: |
-                        Required when action is 'sign'. Meaning of the signature:
+                        Meaning of the signature. This parameter is required when Action is "sign"
                         - 10: Approval
                         - 20: Authorship
                         - 30: Responsibility
@@ -1779,23 +1777,21 @@ paths:
                     action:
                       type: string
                       enum: [
+                        'sign',
                         'exclusiveeditmode',
                         'lock',
                         'pin',
-                        'sign',
                         'updatemetadatafield',
                         'update',
                       ]
-                      default: 'sign'
                     passphrase:
                       type: string
-                      default: 'your-passphrase'
-                      description: Required when action is 'sign'
+                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
                     meaning:
                       type: integer
                       enum: [ 10, 20, 30, 40, 50 ]
                       description: |
-                        Required when action is 'sign'. Meaning of the signature:
+                        Meaning of the signature. This parameter is required when Action is "sign"
                         - 10: Approval
                         - 20: Authorship
                         - 30: Responsibility

@@ -1364,10 +1364,26 @@ paths:
                         'exclusiveeditmode',
                         'lock',
                         'pin',
+                        'sign',
                         'timestamp',
                         'updatemetadatafield',
                         'update',
                       ]
+                      default: 'sign'
+                    passphrase:
+                      type: string
+                      default: 'your-passphrase'
+                      description: Required when action is 'sign'
+                    meaning:
+                      type: integer
+                      enum: [ 10, 20, 30, 40, 50 ]
+                      description: |
+                        Required when action is 'sign'. Meaning of the signature:
+                        - 10: Approval
+                        - 20: Authorship
+                        - 30: Responsibility
+                        - 40: Review
+                        - 50: Safety
                 - $ref: '#/components/schemas/experiment'
       responses:
         '200':
@@ -1766,9 +1782,25 @@ paths:
                         'exclusiveeditmode',
                         'lock',
                         'pin',
+                        'sign',
                         'updatemetadatafield',
                         'update',
                       ]
+                      default: 'sign'
+                    passphrase:
+                      type: string
+                      default: 'your-passphrase'
+                      description: Required when action is 'sign'
+                    meaning:
+                      type: integer
+                      enum: [ 10, 20, 30, 40, 50 ]
+                      description: |
+                        Required when action is 'sign'. Meaning of the signature:
+                        - 10: Approval
+                        - 20: Authorship
+                        - 30: Responsibility
+                        - 40: Review
+                        - 50: Safety
                 - $ref: '#/components/schemas/item'
       responses:
         '200':

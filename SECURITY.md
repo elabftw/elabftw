@@ -112,7 +112,7 @@ If eLabFTW is set up to use some external source of identity information (such a
 
 ### Prevent users from changing their identity
 
-Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. As of version 5.1.0, sysadmins can restrict these identity changes. Check if it is currently allowed on your system. Unless it is strictly required, consider disabling it.
+Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. As of [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), sysadmins can restrict these identity changes. Check if it is currently allowed on your system. Unless it is strictly required, consider disabling it.
 
 ### Turn on optional features only if required
 

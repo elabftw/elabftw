@@ -329,8 +329,22 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
-      // make the edges round
-      editor.on('init', () => editor.getContainer().className += ' rounded');
+      editor.on('init', () => {
+        // make the edges round
+        editor.getContainer().className += ' rounded';
+        // prevent skin.min.css from changing appearance of .mce-preview-body element
+        const skinNode = document.getElementById('mce-u0') as HTMLLinkElement;
+        const skinCSS = skinNode.sheet;
+        Array.from(skinCSS.cssRules).forEach((rule, index) => {
+          if (rule instanceof CSSStyleRule) {
+            const selectors = rule.selectorText.split(',');
+            const modifiedSelectors = selectors.map((selector) => selector.trim() + 'not:(.mce-preview-body)').join(',');
+            rule.selectorText = modifiedSelectors;
+            skinCSS.deleteRule(index);
+            skinCSS.insertRule(rule.cssText, index);
+          }
+        });
+      });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
         // this will trigger the images_upload_handler event hook defined further above

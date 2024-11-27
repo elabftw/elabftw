@@ -43,21 +43,8 @@ module.exports = {
               targetName = typeof targetName === 'string' && targetName !== ''
                 ? targetName
                 : sourceName;
-              const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;
-
-              // exclude elements that are descendants of elements with the class .mce-preview-body only for skin.min.css
-              // without this modification, preview elements will appear with large padding and won't properly render elements past the second child of .mce-preview-body
-              let fileContent = crossFs.readFileSync(requestedFile);
-              if (Buffer.isBuffer(fileContent)) {
-                fileContent = fileContent.toString('utf8');
-              }
-              if (sourceName === 'skin.min.css') {
-                //RegExp that adds :not(.mce-preview-body *) after each selector
-                const modifiedContent = fileContent.replace(/(\.tox[^,{]*) ?(?={|,)/gm,'$1:not(.mce-preview-body *)');
-                crossFs.writeFileSync(pathToAssets + targetName, modifiedContent, 'utf8');
-              } else {
-                crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
-              }
+              const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;const fileContent = crossFs.readFileSync(requestedFile);
+              crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 
             crossFs.mkdirSync(`${pathToAssets}tinymce_skins`, { recursive: true });

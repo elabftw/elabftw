@@ -43,7 +43,8 @@ module.exports = {
               targetName = typeof targetName === 'string' && targetName !== ''
                 ? targetName
                 : sourceName;
-              const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;const fileContent = crossFs.readFileSync(requestedFile);
+              const requestedFile = `${locatorPath}/node_modules/${nodeModulesPath}${sourceName}`;
+              const fileContent = crossFs.readFileSync(requestedFile);
               crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 

@@ -19,7 +19,7 @@
         {# SELECT USER #}
         <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
         <select id='requestActionUserSelect' class='form-control'>
-          {% for user in Entity.Users.readAllFromTeam %}
+          {% for user in Entity.Users.readAllActiveFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}
             >{{ user.fullname }}</option>

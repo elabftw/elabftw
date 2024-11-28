@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
@@ -29,47 +27,47 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * For dashboard.php
  */
-class DashboardController implements ControllerInterface
+class DashboardController extends AbstractHtmlController
 {
     private const int SHOWN_NUMBER = 5;
 
-    public function __construct(private App $App) {}
-
-    public function getResponse(): Response
+    protected function getTemplate(): string
     {
-        $template = 'dashboard.html';
+        return 'dashboard.html';
+    }
 
+    protected function getData(): array
+    {
         $DisplayParamsExp = new DisplayParams(
-            $this->App->Users,
+            $this->app->Users,
             EntityType::Experiments,
             limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
         );
-        $Experiments = new Experiments($this->App->Users);
-        $Items = new Items($this->App->Users);
-        $Templates = new Templates($this->App->Users);
-        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $Experiments = new Experiments($this->app->Users);
+        $Items = new Items($this->app->Users);
+        $Templates = new Templates($this->app->Users);
+        $ItemsTypes = new ItemsTypes($this->app->Users);
         $now = new DateTimeImmutable();
         $Scheduler = new Scheduler($Items, start: $now->format(DateTimeImmutable::ATOM));
         // for items we need to create a new DisplayParams object, otherwise the scope setting will also apply here
         $DisplayParamsItems = new DisplayParams(
-            $this->App->Users,
+            $this->app->Users,
             EntityType::Items,
             limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
         );
         $PermissionsHelper = new PermissionsHelper();
-        $ExperimentsCategory = new ExperimentsCategories(new Teams($this->App->Users));
-        $ExperimentsStatus = new ExperimentsStatus(new Teams($this->App->Users));
-        $ItemsStatus = new ItemsStatus(new Teams($this->App->Users));
-        $UserRequestActions = new UserRequestActions($this->App->Users);
+        $ExperimentsCategory = new ExperimentsCategories(new Teams($this->app->Users));
+        $ExperimentsStatus = new ExperimentsStatus(new Teams($this->app->Users));
+        $ItemsStatus = new ItemsStatus(new Teams($this->app->Users));
+        $UserRequestActions = new UserRequestActions($this->app->Users);
 
-        $renderArr = array(
+        return array(
             'bookingsArr' => $Scheduler->readAll(),
             'itemsCategoryArr' => $ItemsTypes->readAll(),
             'itemsStatusArr' => $ItemsStatus->readAll(),
@@ -79,13 +77,8 @@ class DashboardController implements ControllerInterface
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'templatesArr' => $Templates->Pins->readAllSimple(),
-            'usersArr' => $this->App->Users->readAllActiveFromTeam(),
+            'usersArr' => $this->app->Users->readAllActiveFromTeam(),
             'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         );
-        $Response = new Response();
-        $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render($template, $renderArr));
-
-        return $Response;
     }
 }

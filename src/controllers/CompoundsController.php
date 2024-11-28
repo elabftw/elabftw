@@ -12,26 +12,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\App;
-use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Compounds;
-use Symfony\Component\HttpFoundation\Response;
 
-class CompoundsController implements ControllerInterface
+class CompoundsController extends AbstractHtmlController
 {
-    public function __construct(protected App $app) {}
-
-    public function getResponse(): Response
+    protected function getTemplate(): string
     {
-        $template = 'compounds.html';
+        return 'compounds.html';
+    }
+
+    protected function getData(): array
+    {
         $Compounds = new Compounds($this->app->Users);
-
-        $Response = new Response();
-        $Response->prepare($this->app->Request);
-        $Response->setContent($this->app->render($template, array(
+        return array(
             'compoundsArr' => $Compounds->readAll($Compounds->getQueryParams($this->app->Request->query)),
-        )));
-
-        return $Response;
+        );
     }
 }

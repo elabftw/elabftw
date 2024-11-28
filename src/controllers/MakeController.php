@@ -30,7 +30,6 @@ use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
 use Elabftw\Make\MakeSchedulerReport;
-use Elabftw\Make\MakeStorageUnitsCsv;
 use Elabftw\Make\MakeStreamZip;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Models\AuditLogs;

@@ -224,7 +224,7 @@ class StorageUnits extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->canWriteOrExplode();
+        //$this->canWriteOrExplode();
         $sql = 'DELETE FROM storage_units WHERE id = :id OR parent_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

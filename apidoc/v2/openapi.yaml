@@ -285,6 +285,7 @@ components:
         category:
           type: integer
           nullable: true
+          description: Cannot be negative nor empty string. Can be reset with "0" and null.
         category_color:
           type: string
           nullable: true
@@ -371,6 +372,7 @@ components:
         status:
           type: integer
           nullable: true
+          description: Cannot be negative nor empty string. Can be reset with "0" and null.
         status_color:
           type: string
           nullable: true

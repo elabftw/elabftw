@@ -349,12 +349,10 @@ abstract class AbstractEntity implements RestInterface
             'Content type' => $params['content_type'] ?? null,
             'Custom Id' => $params['customId'] ?? null,
         );
-
         foreach ($fieldsToValidate as $fieldName => $fieldValue) {
-            if (isset($fieldValue)) {
-                $this->validateField($fieldValue, $fieldName);
-            }
+            $this->validateField((int) $fieldValue, $fieldName);
         }
+
         // if there is an active exclusive edit mode, entity cannot be modified
         // only user who locked can do everything
         // (sys)admin can remove locks
@@ -759,9 +757,9 @@ abstract class AbstractEntity implements RestInterface
         }
     }
 
-    private function validateField(int $fieldValue, string $fieldName): void
+    private function validateField(?int $fieldValue, string $fieldName): void
     {
-        if ($fieldValue < 0) {
+        if ($fieldValue !== null && $fieldValue < 0) {
             throw new IllegalActionException("$fieldName must be a non-negative integer.");
         }
     }

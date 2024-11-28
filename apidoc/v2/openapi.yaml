@@ -303,6 +303,7 @@ components:
           type: string
         custom_id:
           type: integer
+          description: Cannot be negative. Can be reset with "0", null or empty string.
         date:
           type: string
         elabid:

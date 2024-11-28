@@ -15,6 +15,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
 
+use function array_column;
+use function array_combine;
+use function count;
 use function json_decode;
 use function json_encode;
 
@@ -76,7 +79,12 @@ class Metadata
     {
         if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value])) {
             $groups = $this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value];
-            return array_combine(array_column($groups, 'id'), $groups);
+            // if a group definition is missing the 'id' key, the array_combine will not work because arrays must be the same size
+            // so only combine them if they are the same size, see #5369
+            $withId = array_column($groups, 'id');
+            if (count($groups) === count($withId)) {
+                return array_combine($withId, $groups);
+            }
         }
         return array(-1 => array('id' => -1, 'name' => _('Undefined group')));
     }

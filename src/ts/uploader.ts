@@ -12,12 +12,7 @@ import { Api } from './Apiv2.class';
 
 export class Uploader
 {
-  // holds the resolve function of tinymce image handler
-  tinyImageSuccess: (value: string | PromiseLike<string>) => void;
-
   async getOptions() {
-    /* eslint-disable-next-line @typescript-eslint/no-this-alias */
-    const that = this;
     const importInfo = await (new Api()).getJson('import');
     const sizeInMb = sizeToMb(importInfo.max_upload_size);
     return {
@@ -29,20 +24,7 @@ export class Uploader
         // once upload is finished
         this.on('complete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            reloadElements(['uploadsDiv']).then(() => {
-              // Now grab the url of the image to give it to tinymce if needed
-              // first make sure the success function is set by tinymce and we are dealing with an image drop and not a regular upload
-              if (typeof that.tinyImageSuccess !== 'undefined' && that.tinyImageSuccess !== null) {
-                // Uses the newly updated HTML element for the uploads section to find the last file uploaded and use that to get the remote url for the image.
-                // This gives TinyMCE the actual url of the uploaded image. TinyMce updates its editor to link to this rather than the temp location it sets up initially.
-                // fun fact: if the upload failed for some reason, the blob in the text will get replaced by the previous image. So if you're looking at this code wondering why from time to time dropping image B in the text makes image A appear, that's because image B failed to upload and the code looks for the last upload!
-                that.tinyImageSuccess(document.getElementById('last-uploaded-link').dataset.url);
-                // This is to make sure that we do not end up adding a file to TinyMCE if a previous file was pasted and a consecutive file was uploaded using Dropzone.
-                // The 'undefined' check is not enough. That is just for before any file was pasted.
-                that.tinyImageSuccess = null;
-              }
-              this.init();
-            });
+            reloadElements(['uploadsDiv']);
           }
         });
       },

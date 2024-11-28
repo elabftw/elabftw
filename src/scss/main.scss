@@ -1559,3 +1559,10 @@ input:checked + .slider::before {
     }
   }
 }
+
+/* top right button */
+.initials {
+  font-weight: bold;
+  color: $secondlevel;
+  font-size: 1.5rem;
+}

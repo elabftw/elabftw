@@ -63,6 +63,15 @@ abstract class AbstractMakeEln extends AbstractMakeZip
             ),
         );
         $this->dataArr['@graph'][] = array(
+            '@id' => 'https://www.deltablot.com',
+            '@type' => 'Organization',
+            'areaServed' => 'Laniakea Supercluster',
+            'name' => 'Deltablot',
+            'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
+            'slogan' => 'Open Source software for research labs.',
+            'url' => 'https://www.deltablot.com',
+        );
+        $this->dataArr['@graph'][] = array(
             '@id' => '#publisher',
             '@type' => 'Organization',
             'areaServed' => 'Laniakea Supercluster',
@@ -70,13 +79,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
             'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
             'slogan' => 'A free and open source electronic lab notebook.',
             'url' => 'https://www.elabftw.net',
-            'parentOrganization' => array(
-                '@type' => 'Organization',
-                'name' => 'Deltablot',
-                'logo' => 'https://www.deltablot.com/img/logos/deltablot.svg',
-                'slogan' => 'Open Source software for research labs.',
-                'url' => 'https://www.deltablot.com',
-            ),
+            'parentOrganization' => array('@id' => 'https://www.deltablot.com'),
         );
     }
 

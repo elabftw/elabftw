@@ -341,18 +341,6 @@ abstract class AbstractEntity implements RestInterface
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
         }
-
-        // Integer fields that need validation (cannot be negative)
-        $fieldsToValidate = array(
-            'Category' => $params['category'] ?? null,
-            'Status' => $params['status'] ?? null,
-            'Content type' => $params['content_type'] ?? null,
-            'Custom Id' => $params['customId'] ?? null,
-        );
-        foreach ($fieldsToValidate as $fieldName => $fieldValue) {
-            $this->validateField((int) $fieldValue, $fieldName);
-        }
-
         // if there is an active exclusive edit mode, entity cannot be modified
         // only user who locked can do everything
         // (sys)admin can remove locks
@@ -754,13 +742,6 @@ abstract class AbstractEntity implements RestInterface
         $searchError = $advancedQuery->getException();
         if (!empty($searchError)) {
             throw new ImproperActionException('Error with extended search: ' . $searchError);
-        }
-    }
-
-    private function validateField(?int $fieldValue, string $fieldName): void
-    {
-        if ($fieldValue !== null && $fieldValue < 0) {
-            throw new IllegalActionException("$fieldName must be a non-negative integer.");
         }
     }
 }

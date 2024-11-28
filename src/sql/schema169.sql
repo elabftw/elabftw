@@ -1,4 +1,4 @@
--- schema 167
+-- schema 169
 CREATE TABLE IF NOT EXISTS compounds (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -185,4 +185,4 @@ WHERE id IN (
 ALTER TABLE `tags`
   ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
 
-UPDATE config SET conf_value = 167 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 169 WHERE conf_name = 'schema';

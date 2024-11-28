@@ -43,6 +43,9 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     {
         $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "id": 1, "name": "my group"} ] }}');
         $this->assertEquals(1, count($metadata->getGroups()));
+        // now with missing id (#5369)
+        $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "iiid": 1, "name": "my group"}, { "name": "group2"}, { "id": 1, "name": "group3"} ] }}');
+        $this->assertEquals(1, count($metadata->getGroups()));
     }
 
     public function testGetGroupedExtraFields(): void

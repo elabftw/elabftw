@@ -44,7 +44,10 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT compound_id AS id FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
+        $sql = 'SELECT compound_id AS id, compounds.*
+            FROM ' . $this->getTable() . ' AS main
+            LEFT JOIN compounds ON compounds.id = main.compound_id
+            WHERE main.entity_id = :entity_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -83,7 +86,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     protected function create(): int
     {
         // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:item_id, :link_id)';
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);

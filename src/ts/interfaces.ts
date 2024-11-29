@@ -107,6 +107,7 @@ enum Action {
 enum Model {
   Apikey = 'apikeys',
   Comment = 'comments',
+  Compounds = 'compounds',
   Config = 'config',
   FavTag = 'favtags',
   Idp = 'idps',

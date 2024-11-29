@@ -454,6 +454,21 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
+export function addAutocompleteToCompoundsInputs(): void {
+  const ApiC = new Api();
+  $('[data-autocomplete="compounds"]').autocomplete({
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(cpd => {
+          res.push(`${cpd.id} - ${cpd.name}`);
+        });
+        response(res);
+      });
+    },
+  });
+}
+
 export function addAutocompleteToExtraFieldsKeyInputs(): void {
   const ApiC = new Api();
   $('[data-autocomplete="extraFieldsKeys"]').autocomplete({

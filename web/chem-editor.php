@@ -17,10 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Fingerprints;
-use Elabftw\Services\HttpGetter;
 use Exception;
-use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -33,13 +30,6 @@ $App->pageTitle = _('Chemical Structure Editor');
 $Response = new Response();
 $Response->prepare($Request);
 $template = 'error.html';
-
-// tmp code
-/*
-$HttpGetter = new HttpGetter(new Client());
-$fp = new Fingerprints($HttpGetter, 'http://fingerprinter:8000');
-$fp->calculate('CC(OC1C(C(O)=O)=CC=CC=1)=O');
- */
 
 try {
     $Controller = new ChemEditorController($App);

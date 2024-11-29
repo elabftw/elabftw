@@ -137,7 +137,7 @@ class CanSqlBuilder
                 implode(', ', $teamsOfUser),
             );
         }
-        return '0';
+        return '1=1';
     }
 
     /**
@@ -156,7 +156,7 @@ class CanSqlBuilder
                 implode(', ', $teamgroupsOfUser),
             );
         }
-        return '0';
+        return '1=1';
     }
 
     /**

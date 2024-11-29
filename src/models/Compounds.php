@@ -121,13 +121,45 @@ class Compounds extends AbstractRest
                 ON (users2teams.users_id = users.userid
                     AND users2teams.teams_id = %d)', $this->requester->team ?? 0);
 
-        // first WHERE is the state, possibly including archived
-        $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
+        $sql .= ' WHERE 1=1';
         // add the json permissions
         $builder = new CanSqlBuilder($this->requester, AccessType::Read);
         $sql .= $builder->getCanFilter();
+        if ($queryParams->getQuery()->get('q')) {
+            $sql .= ' AND (
+                entity.cas_number LIKE :query OR
+                entity.ec_number LIKE :query OR
+                entity.chebi_id LIKE :query OR
+                entity.chembl_id LIKE :query OR
+                entity.dea_number LIKE :query OR
+                entity.drugbank_id LIKE :query OR
+                entity.dsstox_id LIKE :query OR
+                entity.hmdb_id LIKE :query OR
+                entity.inchi LIKE :query OR
+                entity.inchi_key LIKE :query OR
+                entity.iupac_name LIKE :query OR
+                entity.kegg_id LIKE :query OR
+                entity.metabolomics_wb_id LIKE :query OR
+                entity.molecular_formula LIKE :query OR
+                entity.molecular_weight LIKE :query OR
+                entity.name LIKE :query OR
+                entity.nci_code LIKE :query OR
+                entity.nikkaji_number LIKE :query OR
+                entity.pharmgkb_id LIKE :query OR
+                entity.pharos_ligand_id LIKE :query OR
+                entity.pubchem_cid LIKE :query OR
+                entity.rxcui LIKE :query OR
+                entity.smiles LIKE :query OR
+                entity.unii LIKE :query OR
+                entity.wikidata LIKE :query OR
+                entity.wikipedia LIKE :query
+            )';
+        }
         $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
+        if ($queryParams->getQuery()->get('q')) {
+            $req->bindValue(':query', '%' . $queryParams->getQuery()->get('q') . '%');
+        }
         $this->Db->execute($req);
 
         return $req->fetchAll();

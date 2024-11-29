@@ -27,11 +27,12 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // Default values for $reqBody
         $this->baseReqBody = array(
             'action' => Action::Create->value,
+            'items_tags' => array(),
             'items_types' => array(),
             'items_status' => array(),
             'experiments_categories' => array(),
             'experiments_status' => array(),
-            'tags' => array(),
+            'experiments_tags' => array(),
             'users' => array(),
             // Only used if Action::UpdateOwner
             'target_owner' => null,
@@ -42,11 +43,12 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::ForceUnlock->value;
+        $reqBody['items_tags'] = array(1, 2);
         $reqBody['items_types'] = array(1, 2);
         $reqBody['items_status'] = array(1, 2);
         $reqBody['experiments_categories'] = array(1, 2);
         $reqBody['experiments_status'] = array(1, 2);
-        $reqBody['tags'] = array(1, 2);
+        $reqBody['experiments_tags'] = array(1, 2);
         $reqBody['users'] = array(1, 2);
         $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
     }

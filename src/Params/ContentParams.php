@@ -64,9 +64,9 @@ class ContentParams implements ContentParamsInterface
         return (int) $this->content;
     }
 
-    protected function getIntOrNull(): ?int
+    protected function getPositiveIntOrNull(): ?int
     {
-        return $this->getInt() === 0 ? null : $this->getInt();
+        return $this->getInt() <= 0 ? null : $this->getInt();
     }
 
     protected function getUrl(): string

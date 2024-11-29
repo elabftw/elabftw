@@ -99,6 +99,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
     }
 
+    public function testUpdateWithNegativeInt(): void
+    {
+        $this->Experiments->setId(1);
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '-3', 'custom_id' => '-5')));
+        $this->assertNull($this->Experiments->entityData['category']);
+        $this->assertNull($this->Experiments->entityData['custom_id']);
+    }
+
     public function testSign(): void
     {
         $this->Experiments->setId(1);

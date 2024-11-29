@@ -283,13 +283,11 @@ document.addEventListener('DOMContentLoaded', () => {
         MetadataC.save(metadata).then(() => {
           const newGroup = document.createElement('li');
           newGroup.innerHTML = `
-              <li>
                 <option value='${groupId}' class='d-flex justify-content-between'>
                   ${grpOption.text}
                   <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
                 </option>
                 <hr>
-              </li>
               `;
           fieldsGroup.appendChild(newGroup);
         });

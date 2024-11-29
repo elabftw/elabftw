@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use BackedEnum;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Filter;
+use InvalidArgumentException;
 
 use function mb_strlen;
 
@@ -75,5 +77,16 @@ class ContentParams implements ContentParamsInterface
             throw new ImproperActionException('Invalid URL format.');
         }
         return $this->content;
+    }
+
+    protected function getEnum(string $enumClass, int|string $input): BackedEnum
+    {
+        if (!is_subclass_of($enumClass, BackedEnum::class)) {
+            throw new InvalidArgumentException(sprintf(
+                'Provided class %s is not a valid BackedEnum.',
+                $enumClass
+            ));
+        }
+        return $enumClass::tryFrom($input) ?? throw new ImproperActionException(sprintf('Invalid value for enum %s.', $enumClass));
     }
 }

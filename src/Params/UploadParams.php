@@ -15,6 +15,7 @@ namespace Elabftw\Params;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\State;
 
 final class UploadParams extends ContentParams
 {
@@ -23,7 +24,7 @@ final class UploadParams extends ContentParams
         return match ($this->target) {
             'real_name' => $this->getRealName(),
             'comment' => Filter::title($this->content),
-            'state' => $this->getInt(),
+            'state' => $this->getEnum(State::class, (int) $this->content)->value,
             default => throw new ImproperActionException('Incorrect upload parameter.'),
         };
     }

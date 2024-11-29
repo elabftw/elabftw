@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use Elabftw\Enums\Currency;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
@@ -30,7 +31,8 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             'body', 'bodyappend' => $this->getBody(),
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => Check::visibility($this->content),
             'color' => Check::color($this->content),
-            'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid', 'state' => $this->getInt(),
+            'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid' => $this->getInt(),
+            'state' => $this->getEnum(State::class, (int) $this->content)->value,
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getIntOrNull(),
             'qty_unit' => Check::unit($this->content),
             default => throw new ImproperActionException('Invalid update target.'),

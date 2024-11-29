@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -24,7 +25,7 @@ final class StatusParams extends ContentParams
             'color' => Check::color($this->content),
             'is_default' => Filter::toBinary($this->content),
             'title' => parent::getContent(),
-            'state' => $this->getInt(),
+            'state' => $this->getEnum(State::class, (int) $this->content)->value,
             default => throw new ImproperActionException('Incorrect parameter for status.'),
         };
     }

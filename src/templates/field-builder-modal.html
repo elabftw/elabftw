@@ -14,40 +14,40 @@
         </div>
         <div class='modal-body'>
             <label for='newFieldGroupSelect'>{{ 'Group'|trans }}</label>
-            <span class='p-1 rounded hl-hover-gray' data-toggle-plus-icon='1' data-action='toggle-next' title='{{ 'Add group'|trans }}'>
+            <span class='p-1 rounded hl-hover-gray' data-action='toggle-next' title='{{ 'Edit'|trans }}'>
               <i class='fas fa-pencil-alt fa-fw'></i>
             </span>
             <div hidden class='mb-3'>
-              {# NEW GROUP NAME #}
               <label for='newFieldsGroupKeyInput'>{{ 'Add group'|trans }}</label>
+              {# NEW GROUP NAME #}
               <div class='input-group'>
                 <input type='text' autocomplete='off' placeholder='{{ 'New group name'|trans }}' id='newFieldsGroupKeyInput' class='form-control'>
                 <div class='input-group-append'>
                   <button class='btn btn-primary' aria-label='{{ 'Save'|trans }}' type='button' data-action='save-new-fields-group'><i class='fas fa-save text-white'></i></button>
                 </div>
               </div>
-              {# TODO delete a group #}
               <hr>
+              {# DELETE GROUP #}
+              <p>{{ 'Delete group'|trans }}</p>
+              <div>
+                {# We can not delete the undefined group so remove from the list #}
+                <ul id="fieldsGroup">
+                  {% if metadataGroups|filter(group => group.id == -1) %}
+                    <li>{{ 'No groups'|trans }}</li>
+                  {% endif %}
+                  {% for group in metadataGroups|filter(group => group.id != -1) %}
+                    <li>
+                      <option value='{{ group.id }}' class="d-flex justify-content-between">
+                        {{ group.name }}
+                        <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                      </option>
+                      <hr>
+                    </li>
+                  {% endfor %}
+                </ul>
+                <hr>
+              </div>
             </div>
-
-          <div class="mb-3">
-            <p>{{ 'Delete group'|trans }}</p>
-            {# We can not delete the undefined group so remove from the list #}
-            <ul>
-              {% if metadataGroups|filter(group => group.id == -1) %}
-                <li>{{ 'No groups'|trans }}</li>
-              {% endif %}
-              {% for group in metadataGroups|filter(group => group.id != -1) %}
-                <li>
-                  <option value='{{ group.id }}'>
-                    {{ group.name }}
-                    <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
-                  </option>
-                </li>
-              {% endfor %}
-            </ul>
-            <hr>
-          </div>
 
             <select id='newFieldGroupSelect' class='form-control' autocomplete='off'>
               {% if not metadataGroups or metadataGroups|filter(group => group.id == -1)|length == 0 %}

@@ -276,11 +276,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // save the new group in metadata
         metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
+        // Update existing groups div
+        const fieldsGroup = document.getElementById('fieldsGroup') as HTMLUListElement;
+        // TODO: get the same array everywhere so that it updates on create & delete fluidly
         // don't use the update method because we don't need to refresh the inputs
-        MetadataC.save(metadata);
+        MetadataC.save(metadata).then(() => {
+          const newGroup = document.createElement('li');
+          newGroup.innerHTML = `
+              <li>
+                <option value='${groupId}' class='d-flex justify-content-between'>
+                  ${grpOption.text}
+                  <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                </option>
+                <hr>
+              </li>
+              `;
+          fieldsGroup.appendChild(newGroup);
+        });
+
         // clear input value
         nameInput.value = '';
       });
+      // DELETE GROUP
     } else if (el.matches('[data-action="metadata-rm-group"]')) {
       if (!confirm(i18next.t('generic-delete-warning'))) {
         return;
@@ -303,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delete metadata.extra_fields[key].group_id;
           }
         }
-        // Delete the array when no group exists or else it will try to reduce empty array on create cf l.262
+        // Delete the elabftw array when no data persists
         if (metadata.elabftw.extra_fields_groups.length == 0) {
           delete metadata.elabftw;
         }
@@ -314,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
           // Remove group from UI
           groupElement.closest('li').remove();
         });
-
       });
     }
   });

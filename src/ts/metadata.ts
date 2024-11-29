@@ -281,6 +281,41 @@ document.addEventListener('DOMContentLoaded', () => {
         // clear input value
         nameInput.value = '';
       });
+    } else if (el.matches('[data-action="metadata-rm-group"]')) {
+      if (!confirm(i18next.t('generic-delete-warning'))) {
+        return;
+      }
+      MetadataC.read().then((metadata: ValidMetadata) => {
+        // Retrieve the group ID to delete
+        const groupElement  = el.closest('li').querySelector('option');
+        const groupId = parseInt(groupElement.value, 10);
+        // Check if group exists
+        const groupIndex = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
+        if (groupIndex === -1) {
+          notifError(new Error(i18next.t('Group not found')));
+          return;
+        }
+        // Remove the group from `extra_fields_groups`
+        metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
+        // Update associated extra fields by moving them back to Undefined group
+        for (const key in metadata.extra_fields) {
+          if (metadata.extra_fields[key].group_id === groupId) {
+            delete metadata.extra_fields[key].group_id;
+          }
+        }
+        // Delete the array when no group exists or else it will try to reduce empty array on create cf l.262
+        if (metadata.elabftw.extra_fields_groups.length == 0) {
+          delete metadata.elabftw;
+        }
+
+        MetadataC.save(metadata).then(() => {
+          // Refresh the display
+          MetadataC.display('edit');
+          // Remove group from UI
+          groupElement.closest('li').remove();
+        });
+
+      });
     }
   });
 });

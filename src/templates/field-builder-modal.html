@@ -15,7 +15,7 @@
         <div class='modal-body'>
             <label for='newFieldGroupSelect'>{{ 'Group'|trans }}</label>
             <span class='p-1 rounded hl-hover-gray' data-toggle-plus-icon='1' data-action='toggle-next' title='{{ 'Add group'|trans }}'>
-              <i class='fas fa-square-plus fa-fw'></i>
+              <i class='fas fa-pencil-alt fa-fw'></i>
             </span>
             <div hidden class='mb-3'>
               {# NEW GROUP NAME #}
@@ -29,6 +29,26 @@
               {# TODO delete a group #}
               <hr>
             </div>
+
+          <div class="mb-3">
+            <p>{{ 'Delete group'|trans }}</p>
+            {# We can not delete the undefined group so remove from the list #}
+            <ul>
+              {% if metadataGroups|filter(group => group.id == -1) %}
+                <li>{{ 'No groups'|trans }}</li>
+              {% endif %}
+              {% for group in metadataGroups|filter(group => group.id != -1) %}
+                <li>
+                  <option value='{{ group.id }}'>
+                    {{ group.name }}
+                    <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                  </option>
+                </li>
+              {% endfor %}
+            </ul>
+            <hr>
+          </div>
+
             <select id='newFieldGroupSelect' class='form-control' autocomplete='off'>
               {% if not metadataGroups or metadataGroups|filter(group => group.id == -1)|length == 0 %}
                 <option value='-1'>{{ 'Undefined group'|trans }}</option>

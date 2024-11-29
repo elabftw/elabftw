@@ -532,10 +532,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const entity = getEntity();
       const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
       const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {qty_stored: qty_stored, qty_unit: qty_unit}).then(() => reloadElements(['entityStoragePath']));
+      ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {qty_stored: qty_stored, qty_unit: qty_unit}).then(() => reloadElements(['storageDivContent']));
     } else if (el.matches('[data-action="destroy-container"]')) {
       const entity = getEntity();
-      ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['entityStoragePath']));
+      ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
     } else if (el.matches('[data-action="destroy-storage"]')) {
       ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
 

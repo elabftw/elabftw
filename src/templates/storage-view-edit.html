@@ -1,28 +1,30 @@
-<div class='d-flex mb-2 align-items-center'>
-  <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-warehouse mr-1' title='{{ 'Storage'|trans }}'></i>{{ 'Storage'|trans }}</label>
-  {% if not Entity.isReadOnly %}
-    <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn border-0 lh-normal hl-hover-gray' data-action='toggle-modal' data-target='storageModal'>
-      <i class='fas fa-fw fa-square-plus fa-2x'></i>
-    </button>
-  {% endif %}
-  <div class='vertical-separator'></div>
-  <div id='entityStoragePath'>
-    {% if containers %}
-    <details >
-    <summary>{{ containers|length }} {% trans %}container stored{% plural containers|length %}containers stored{% endtrans %}</summary>
-      <ul class='list-group'>
-        {% for container in containers %}
-          <li class='list-group-item'>
-            <div class='d-flex flex align-items-center'>
-              <span class='mr-2'>{{ container.qty_stored }} {{ container.qty_unit }} {{ 'in'|trans }} {{ container.full_path }}</span>
-              <span data-action='destroy-container' data-id='{{ container.storage_id }}'class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
-            </div>
-          </li>
-        {% endfor %}
-      </ul>
-    </details>
-  {% else %}
-  {{ 'No containers stored'|trans }}
-  {% endif %}
+{# STORAGE #}
+<div id='storageDiv'>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Containers'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
+  <div class='row mt-2' id='storageDivContent' data-save-hidden='storageDivContent' data-count-for='containersCount'>
+    <div class='ml-3 mt-3 col-md-12'>
+        {% if Entity.entityData.containers %}
+          <ul class='list-group' id='containersDiv'>
+            {% for container in Entity.entityData.containers %}
+              <li class='list-group-item countable'>
+                <div class='d-flex flex align-items-center'>
+                  <span class='mr-2'>{{ container.qty_stored }} {{ container.qty_unit }} {{ 'in'|trans }} {{ container.full_path }}</span>
+                  <span data-action='destroy-container' data-id='{{ container.storage_id }}'class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+      {% else %}
+      {{ 'No containers stored'|trans }}
+      {% endif %}
+      {% if not Entity.isReadOnly %}
+        <div>
+          <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn btn-ghost my-2' data-action='toggle-modal' data-target='storageModal'>
+            <i class='fas fa-fw fa-square-plus mr-2'></i>{{ 'Add container'|trans }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
   </div>
+  <hr>
 </div>

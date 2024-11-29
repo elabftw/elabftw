@@ -126,7 +126,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->createWithQuantity((int) $reqBody['qty_stored'], $reqBody['qty_unit']),
+            Action::Create => $this->createWithQuantity((float) $reqBody['qty_stored'], $reqBody['qty_unit']),
             Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
@@ -199,7 +199,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function createWithQuantity(int $qty, string $unit): int
+    protected function createWithQuantity(float $qty, string $unit): int
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
@@ -213,7 +213,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':qty_stored', $qty, PDO::PARAM_INT);
+        $req->bindParam(':qty_stored', $qty);
         $req->bindParam(':qty_unit', $unit);
 
         $this->Db->execute($req);

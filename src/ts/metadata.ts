@@ -278,9 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
         metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
         // Update existing groups div
         const fieldsGroup = document.getElementById('fieldsGroup') as HTMLUListElement;
-        // TODO: get the same array everywhere so that it updates on create & delete fluidly
         // don't use the update method because we don't need to refresh the inputs
         MetadataC.save(metadata).then(() => {
+          if (document.getElementById('noGroup')) {
+            document.getElementById('noGroup').remove();
+          }
           const newGroup = document.createElement('li');
           newGroup.innerHTML = `
                 <option value='${groupId}' class='d-flex justify-content-between'>
@@ -291,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
               `;
           fieldsGroup.appendChild(newGroup);
         });
-
         // clear input value
         nameInput.value = '';
       });
@@ -310,8 +311,12 @@ document.addEventListener('DOMContentLoaded', () => {
           notifError(new Error(i18next.t('Group not found')));
           return;
         }
-        // Remove the group from `extra_fields_groups`
+        // Remove the group from `extra_fields_groups` AND from select options
         metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
+        const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
+        if (optionToRemove) {
+          optionToRemove.remove();
+        }
         // Update associated extra fields by moving them back to Undefined group
         for (const key in metadata.extra_fields) {
           if (metadata.extra_fields[key].group_id === groupId) {
@@ -322,7 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metadata.elabftw.extra_fields_groups.length == 0) {
           delete metadata.elabftw;
         }
-
         MetadataC.save(metadata).then(() => {
           // Refresh the display
           MetadataC.display('edit');

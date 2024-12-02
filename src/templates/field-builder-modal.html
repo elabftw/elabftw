@@ -31,13 +31,13 @@
               <p>{{ 'Delete group'|trans }}</p>
               <div>
                 {# We can not delete the undefined group so remove from the list #}
-                <ul id="fieldsGroup">
+                <ul id='fieldsGroup'>
                   {% if metadataGroups|filter(group => group.id == -1) %}
-                    <li>{{ 'No groups'|trans }}</li>
+                    <li id='noGroup'>{{ 'No groups'|trans }}</li>
                   {% endif %}
                   {% for group in metadataGroups|filter(group => group.id != -1) %}
                     <li>
-                      <option value='{{ group.id }}' class="d-flex justify-content-between">
+                      <option value='{{ group.id }}' class='d-flex justify-content-between'>
                         {{ group.name }}
                         <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
                       </option>

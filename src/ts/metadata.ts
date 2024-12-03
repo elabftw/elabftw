@@ -284,13 +284,24 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('noGroup').remove();
           }
           const newGroup = document.createElement('li');
-          newGroup.innerHTML = `
-                <div class='d-flex justify-content-between' data-target='group-item' data-group-id='${groupId}'>
-                  ${grpOption.text}
-                  <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='remove-fields-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
-                </div>
-                <hr>
-              `;
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'd-flex justify-content-between';
+          groupDiv.setAttribute('data-target', 'group-item');
+          groupDiv.setAttribute('data-group-id', String(groupId));
+          const groupText = document.createTextNode(grpOption.text);
+          groupDiv.appendChild(groupText);
+          const deleteButton = document.createElement('button');
+          deleteButton.type = 'button';
+          deleteButton.className = 'btn hl-hover-gray lh-normal p-1 my-n1';
+          deleteButton.setAttribute('data-action', 'remove-fields-group');
+          deleteButton.title = i18next.t('Delete');
+          deleteButton.setAttribute('aria-label', i18next.t('Delete'));
+          const deleteIcon = document.createElement('i');
+          deleteIcon.className = 'fas fa-trash-alt';
+          deleteButton.appendChild(deleteIcon);
+          groupDiv.appendChild(deleteButton);
+          newGroup.appendChild(groupDiv);
+          newGroup.appendChild(document.createElement('hr'));
           fieldsGroup.appendChild(newGroup);
         });
         // clear input value

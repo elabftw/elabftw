@@ -37,15 +37,14 @@
                   {% endif %}
                   {% for group in metadataGroups|filter(group => group.id != -1) %}
                     <li>
-                      <option value='{{ group.id }}' class='d-flex justify-content-between'>
+                      <div class='d-flex justify-content-between' data-target='group-item' data-group-id='{{ group.id }}'>
                         {{ group.name }}
-                        <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
-                      </option>
+                        <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='remove-fields-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                      </div>
                       <hr>
                     </li>
                   {% endfor %}
                 </ul>
-                <hr>
               </div>
             </div>
 

@@ -285,10 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           const newGroup = document.createElement('li');
           newGroup.innerHTML = `
-                <option value='${groupId}' class='d-flex justify-content-between'>
+                <div class='d-flex justify-content-between' data-target='group-item' data-group-id='${groupId}'>
                   ${grpOption.text}
-                  <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='metadata-rm-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
-                </option>
+                  <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='remove-fields-group' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                </div>
                 <hr>
               `;
           fieldsGroup.appendChild(newGroup);
@@ -297,42 +297,45 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.value = '';
       });
       // DELETE GROUP
-    } else if (el.matches('[data-action="metadata-rm-group"]')) {
+    } else if (el.matches('[data-action="remove-fields-group"]')) {
       if (!confirm(i18next.t('generic-delete-warning'))) {
         return;
       }
       MetadataC.read().then((metadata: ValidMetadata) => {
-        // Retrieve the group ID to delete
-        const groupElement  = el.closest('li').querySelector('option');
-        const groupId = parseInt(groupElement.value, 10);
-        // Check if group exists
+        // Retrieve the field group element
+        const liElement: HTMLLIElement  = el.closest('li');
+        const groupDiv: HTMLDivElement = liElement.querySelector('[data-target="group-item"]');
+        const groupId = parseInt(groupDiv.dataset.groupId, 10);
+
+        // Check if group exists in metadata
         const groupIndex = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
           notifError(new Error(i18next.t('Group not found')));
           return;
         }
-        // Remove the group from `extra_fields_groups` AND from select options
+
+        // Remove the group from `extra_fields_groups`
         metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
+        // Remove the group from the <select> dropdown
         const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
         if (optionToRemove) {
           optionToRemove.remove();
         }
-        // Update associated extra fields by moving them back to Undefined group
+
+        // Update extra fields from deleted group by moving them to 'Undefined group'
         for (const key in metadata.extra_fields) {
           if (metadata.extra_fields[key].group_id === groupId) {
             delete metadata.extra_fields[key].group_id;
           }
         }
-        // Delete the elabftw array when no data persists
-        if (metadata.elabftw.extra_fields_groups.length == 0) {
+
+        // Remove the elabftw property if no groups remain
+        if (metadata.elabftw.extra_fields_groups.length === 0) {
           delete metadata.elabftw;
         }
-        MetadataC.save(metadata).then(() => {
-          // Refresh the display
-          MetadataC.display('edit');
-          // Remove group from UI
-          groupElement.closest('li').remove();
-        });
+
+        MetadataC.update(metadata as ValidMetadata);
+        liElement.remove();
       });
     }
   });

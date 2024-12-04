@@ -283,26 +283,45 @@ document.addEventListener('DOMContentLoaded', () => {
           if (document.getElementById('noGroup')) {
             document.getElementById('noGroup').remove();
           }
-          const newGroup = document.createElement('li');
-          const groupDiv = document.createElement('div');
-          groupDiv.className = 'd-flex justify-content-between';
-          groupDiv.setAttribute('data-target', 'group-item');
-          groupDiv.setAttribute('data-group-id', String(groupId));
-          const groupText = document.createTextNode(grpOption.text);
-          groupDiv.appendChild(groupText);
+          // Add option to create / edit groups
+          const newInputGroup: HTMLDivElement = document.createElement('div');
+          newInputGroup.className = 'input-group mb-1';
+          newInputGroup.setAttribute('data-target', 'group-item');
+          newInputGroup.setAttribute('data-group-id', String(groupId));
+          // input element
+          const inputEl: HTMLInputElement = document.createElement('input');
+          inputEl.className = 'form-control group-name-input';
+          inputEl.setAttribute('value', grpOption.text);
+          inputEl.setAttribute('data-target', 'group-item');
+          // input-group-append
+          const appendDiv = document.createElement('div');
+          appendDiv.className = 'input-group-append';
+          // Delete and save button
           const deleteButton = document.createElement('button');
           deleteButton.type = 'button';
-          deleteButton.className = 'btn hl-hover-gray lh-normal p-1 my-n1';
+          deleteButton.className = 'btn btn-secondary';
           deleteButton.setAttribute('data-action', 'remove-fields-group');
-          deleteButton.title = i18next.t('Delete');
+          deleteButton.title = i18next.t('Delete'); // Localized title
           deleteButton.setAttribute('aria-label', i18next.t('Delete'));
-          const deleteIcon = document.createElement('i');
-          deleteIcon.className = 'fas fa-trash-alt';
-          deleteButton.appendChild(deleteIcon);
-          groupDiv.appendChild(deleteButton);
-          newGroup.appendChild(groupDiv);
-          newGroup.appendChild(document.createElement('hr'));
-          fieldsGroup.appendChild(newGroup);
+          deleteButton.textContent = '-'; // Button label
+
+          const saveButton = document.createElement('button');
+          saveButton.type = 'button';
+          saveButton.className = 'btn btn-primary';
+          saveButton.setAttribute('data-action', 'save-new-fields-group');
+          saveButton.title = i18next.t('Save'); // Localized title
+          saveButton.setAttribute('aria-label', i18next.t('Save'));
+          const saveIcon = document.createElement('i');
+          saveIcon.className = 'fas fa-save text-white';
+          saveButton.appendChild(saveIcon);
+          // Append buttons to the appendDiv
+          appendDiv.appendChild(deleteButton);
+          appendDiv.appendChild(saveButton);
+          // Append input and appendDiv to the main groupDiv
+          newInputGroup.appendChild(inputEl);
+          newInputGroup.appendChild(appendDiv);
+          // Append the groupDiv to the parent container
+          fieldsGroup.appendChild(newInputGroup);
         });
         // clear input value
         nameInput.value = '';
@@ -314,8 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       MetadataC.read().then((metadata: ValidMetadata) => {
         // Retrieve the field group element
-        const liElement: HTMLLIElement  = el.closest('li');
-        const groupDiv: HTMLDivElement = liElement.querySelector('[data-target="group-item"]');
+        const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
         const groupId = parseInt(groupDiv.dataset.groupId, 10);
 
         // Check if group exists in metadata
@@ -346,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         MetadataC.update(metadata as ValidMetadata);
-        liElement.remove();
+        groupDiv.remove();
       });
     }
   });

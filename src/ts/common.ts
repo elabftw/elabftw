@@ -11,6 +11,7 @@ import { Malle } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
+  collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
@@ -586,6 +587,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resultTableDiv.innerHTML = '';
         const importBtn = document.querySelector('[data-action="import-cid"]');
         importBtn.setAttribute('disabled', 'disabled');
+      });
+    // CREATE COMPOUND MANUALLY
+    } else if (el.matches('[data-action="create-compound"]')) {
+      const params = collectForm(document.getElementById('createCompoundInputs'));
+      ApiC.post('compounds', params).then(() => {
+        document.dispatchEvent(new CustomEvent('dataReload'));
       });
 
 

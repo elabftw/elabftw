@@ -9,7 +9,7 @@
               <li class='list-group-item countable'>
                 <div class='d-flex flex align-items-center'>
                   <span class='mr-2'>{{ container.qty_stored }} {{ container.qty_unit }} {{ 'in'|trans }} {{ container.full_path }}</span>
-                  <span data-action='destroy-container' data-id='{{ container.storage_id }}'class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+                  <span data-action='destroy-container' data-id='{{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
                 </div>
               </li>
             {% endfor %}
@@ -26,5 +26,4 @@
       </div>
     </div>
   </div>
-  <hr>
-</div>
+<hr>

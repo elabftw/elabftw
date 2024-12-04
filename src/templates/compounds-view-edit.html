@@ -9,7 +9,7 @@
             <div class='input-group-prepend'>
               <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
             </div>
-            <input readonly class='form-control' id='{{ key }}' value='{{ value }}'></input>
+            <input readonly class='form-control' id='{{ key }}' value='{{ value }}' />
           </div>
         </li>
       {% endmacro %}

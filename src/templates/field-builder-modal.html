@@ -14,21 +14,38 @@
         </div>
         <div class='modal-body'>
             <label for='newFieldGroupSelect'>{{ 'Group'|trans }}</label>
-            <span class='p-1 rounded hl-hover-gray' data-toggle-plus-icon='1' data-action='toggle-next' title='{{ 'Add group'|trans }}'>
-              <i class='fas fa-square-plus fa-fw'></i>
+            <span class='p-1 rounded hl-hover-gray' data-action='toggle-next' title='{{ 'Edit'|trans }}'>
+              <i class='fas fa-pencil-alt fa-fw'></i>
             </span>
             <div hidden class='mb-3'>
-              {# NEW GROUP NAME #}
               <label for='newFieldsGroupKeyInput'>{{ 'Add group'|trans }}</label>
+              {# NEW GROUP NAME #}
               <div class='input-group'>
                 <input type='text' autocomplete='off' placeholder='{{ 'New group name'|trans }}' id='newFieldsGroupKeyInput' class='form-control'>
                 <div class='input-group-append'>
                   <button class='btn btn-primary' aria-label='{{ 'Save'|trans }}' type='button' data-action='save-new-fields-group'><i class='fas fa-save text-white'></i></button>
                 </div>
               </div>
-              {# TODO delete a group #}
               <hr>
+              {# MANAGE GROUPS #}
+              <p>{{ 'Manage groups'|trans }}</p>
+              <div id='fieldsGroup'>
+                {% if metadataGroups|filter(group => group.id == -1) %}
+                  <p id='noGroup'>{{ 'No groups'|trans }}</p>
+                {% endif %}
+                {% for group in metadataGroups|filter(group => group.id != -1) %}
+                  <div class='input-group mb-1' data-target='group-item' data-group-id='{{ group.id }}'>
+                    <input class='form-control group-name-input' value='{{ group.name }}' data-target='group-item'>
+                    <div class='input-group-append'>
+                      <button type='button' data-action='remove-fields-group' class='btn btn-secondary' title='{{ 'Delete'|trans }}'>-</button>
+                      <button type='button' data-action='update-fields-group' class='btn btn-primary' title='{{ 'Update'|trans }}'><i class='fas fa-save text-white'></i></button>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
+          <hr>
+
             <select id='newFieldGroupSelect' class='form-control' autocomplete='off'>
               {% if not metadataGroups or metadataGroups|filter(group => group.id == -1)|length == 0 %}
                 <option value='-1'>{{ 'Undefined group'|trans }}</option>

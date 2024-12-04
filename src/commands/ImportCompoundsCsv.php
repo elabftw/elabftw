@@ -45,7 +45,8 @@ class ImportCompoundsCsv extends Command
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /elabftw/exports folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
-            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done');
+            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
+            ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -61,9 +62,14 @@ class ImportCompoundsCsv extends Command
             $user = new Users((int) $input->getOption('userid'), $teamid);
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
         }
+        $resourceCategory = null;
+        if ($input->getOption('create-resource')) {
+            $resourceCategory = (int) $input->getOption('create-resource');
+        }
         $Importer = new CompoundsCsv(
             $user,
             $UploadedFile,
+            $resourceCategory,
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info

@@ -76,14 +76,12 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    abstract protected function getTable(): string;
-
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function create(): int
+    public function create(): int
     {
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
@@ -95,4 +93,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
 
         return $this->id;
     }
+
+    abstract protected function getTable(): string;
 }

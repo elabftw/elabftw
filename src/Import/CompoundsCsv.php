@@ -13,18 +13,31 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Models\Compounds;
+use Elabftw\Models\Compounds2ItemsLinks;
+use Elabftw\Models\Items;
+use Elabftw\Models\Users;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import a CSV into compounds
  */
 class CompoundsCsv extends AbstractCsv
 {
+    public function __construct(
+        protected Users $requester,
+        protected UploadedFile $UploadedFile,
+        protected ?int $resourceCategory = null,
+    ) {
+        parent::__construct($requester, $UploadedFile);
+    }
+
     public function import(): int
     {
         // now loop the rows and do the import
         $Compounds = new Compounds($this->requester);
+        $Items = new Items($this->requester);
         foreach ($this->reader->getRecords() as $row) {
-            $Compounds->create(
+            $id = $Compounds->create(
                 smiles: $row['smiles'] ?? null,
                 name: $row['name'] ?? null,
                 casNumber: $row['cas'] ?? null,
@@ -34,6 +47,12 @@ class CompoundsCsv extends AbstractCsv
                 molecularFormula: $row['molecularformula'] ?? null,
                 iupacName: $row['iupacname'] ?? null,
             );
+            if ($this->resourceCategory !== null) {
+                $resource = $Items->create(template: $this->resourceCategory, title: $row['name']);
+                $Items->setId($resource);
+                $Compounds2ItemsLinks = new Compounds2ItemsLinks($Items, $id);
+                $Compounds2ItemsLinks->create();
+            }
         }
         return $this->getCount();
     }

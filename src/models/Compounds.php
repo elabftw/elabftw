@@ -293,7 +293,7 @@ class Compounds extends AbstractRest
         $compoundId = $this->Db->lastInsertId();
 
         if ($withFingerprint && !empty($smiles)) {
-            return $this->fingerprintCompound($smiles, $compoundId);
+            $this->fingerprintCompound($smiles, $compoundId);
         }
         return $compoundId;
     }

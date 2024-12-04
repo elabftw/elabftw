@@ -27,8 +27,8 @@
                 </div>
               </div>
               <hr>
-              {# DELETE GROUP #}
-              <p>{{ 'Edit groups'|trans }}</p>
+              {# MANAGE GROUPS #}
+              <p>{{ 'Manage groups'|trans }}</p>
               <div id='fieldsGroup'>
                 {% if metadataGroups|filter(group => group.id == -1) %}
                   <p id='noGroup'>{{ 'No groups'|trans }}</p>
@@ -36,11 +36,10 @@
                 {% for group in metadataGroups|filter(group => group.id != -1) %}
                   <div class='input-group mb-1' data-target='group-item' data-group-id='{{ group.id }}'>
                     <input class='form-control group-name-input' value='{{ group.name }}' data-target='group-item'>
-                      <div class='input-group-append'>
-                        <button type='button' data-action='remove-fields-group' class='btn btn-secondary' title='{{ 'Delete'|trans }}'>-</button>
-                        <button type='button' data-action='update-fields-group' class='btn btn-primary' title='{{ 'Update'|trans }}'
-                          aria-label='{{ 'Save'|trans }}'><i class='fas fa-save text-white'></i></button>
-                      </div>
+                    <div class='input-group-append'>
+                      <button type='button' data-action='remove-fields-group' class='btn btn-secondary' title='{{ 'Delete'|trans }}'>-</button>
+                      <button type='button' data-action='update-fields-group' class='btn btn-primary' title='{{ 'Update'|trans }}'><i class='fas fa-save text-white'></i></button>
+                    </div>
                   </div>
                 {% endfor %}
               </div>

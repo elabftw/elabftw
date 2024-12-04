@@ -37,6 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const MetadataC = new Metadata(entity, JsonEditorHelperC);
   MetadataC.display('edit');
+
+  function createButton(action: string, btnType: string, content?: string): HTMLButtonElement {
+    const btn: HTMLButtonElement = document.createElement('button');
+    btn.setAttribute('type', 'button');
+    btn.dataset.action = action;
+    btn.classList.add('btn', btnType);
+    btn.textContent = content ?? '';
+    return btn;
+  }
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -232,11 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
       newInput.classList.add('form-control', 'is-extra-input');
       const appendDiv = document.createElement('div');
       appendDiv.classList.add('input-group-append');
-      const btn = document.createElement('button');
-      btn.setAttribute('type', 'button');
-      btn.dataset.action = 'remove-self';
-      btn.classList.add('btn', 'btn-secondary');
-      btn.textContent = '−';
+      const btn = createButton('remove-self','btn-secondary','-');
       appendDiv.appendChild(btn);
 
       newGroup.appendChild(newInput);
@@ -276,47 +282,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // save the new group in metadata
         metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
-        // Update existing groups div
+        // Display new groups and allow editing/deleting them
         const fieldsGroup = document.getElementById('fieldsGroup') as HTMLUListElement;
         // don't use the update method because we don't need to refresh the inputs
         MetadataC.save(metadata).then(() => {
           if (document.getElementById('noGroup')) {
             document.getElementById('noGroup').remove();
           }
-          // Add option to create / edit groups
           const newInputGroup: HTMLDivElement = document.createElement('div');
-          newInputGroup.className = 'input-group mb-1';
+          newInputGroup.classList.add('input-group', 'mb-1');
           newInputGroup.setAttribute('data-target', 'group-item');
           newInputGroup.setAttribute('data-group-id', String(groupId));
           // input element
           const inputEl: HTMLInputElement = document.createElement('input');
-          inputEl.className = 'form-control group-name-input';
+          inputEl.classList.add('form-control', 'group-name-input');
           inputEl.setAttribute('value', grpOption.text);
           inputEl.setAttribute('data-target', 'group-item');
           // input-group-append
           const appendDiv = document.createElement('div');
-          appendDiv.className = 'input-group-append';
+          appendDiv.classList.add('input-group-append');
           // Delete and save button
-          const deleteButton = document.createElement('button');
-          deleteButton.type = 'button';
-          deleteButton.className = 'btn btn-secondary';
-          deleteButton.setAttribute('data-action', 'remove-fields-group');
-          deleteButton.title = i18next.t('Delete');
-          deleteButton.setAttribute('aria-label', i18next.t('Delete'));
-          deleteButton.textContent = '-';
-
-          const saveButton = document.createElement('button');
-          saveButton.type = 'button';
-          saveButton.className = 'btn btn-primary';
-          saveButton.setAttribute('data-action', 'save-new-fields-group');
-          saveButton.title = i18next.t('Save');
-          saveButton.setAttribute('aria-label', i18next.t('Save'));
+          const deleteButton = createButton('remove-fields-group', 'btn-secondary', '-');
+          const updateButton = createButton('update-fields-group', 'btn-primary');
           const saveIcon = document.createElement('i');
-          saveIcon.className = 'fas fa-save text-white';
-          saveButton.appendChild(saveIcon);
+          saveIcon.classList.add('fas', 'fa-save', 'text-white');
+          updateButton.appendChild(saveIcon);
           // Append buttons to the appendDiv
           appendDiv.appendChild(deleteButton);
-          appendDiv.appendChild(saveButton);
+          appendDiv.appendChild(updateButton);
           // Append input and appendDiv to the main groupDiv
           newInputGroup.appendChild(inputEl);
           newInputGroup.appendChild(appendDiv);
@@ -337,20 +330,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const group: ExtraFieldsGroup = metadata.elabftw.extra_fields_groups.find(group => group.id === groupId);
         group.name = updatedGroupName;
 
+        // Update the group in the <select> dropdown
+        const optionToUpdate = grpSel.querySelector(`option[value="${groupId}"]`);
+        if (optionToUpdate) {
+          optionToUpdate.textContent = updatedGroupName; // Update the displayed text
+        }
+
         MetadataC.update(metadata as ValidMetadata);
       });
       // DELETE GROUP
     } else if (el.matches('[data-action="remove-fields-group"]')) {
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
-      }
+      if (!confirm(i18next.t('generic-delete-warning'))) return;
+
       MetadataC.read().then((metadata: ValidMetadata) => {
         // Retrieve the field group element
         const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
-        const groupId = parseInt(groupDiv.dataset.groupId, 10);
+        const groupId: number = parseInt(groupDiv.dataset.groupId, 10);
 
         // Check if group exists in metadata
-        const groupIndex = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
+        const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
           notifError(new Error(i18next.t('Group not found')));
           return;

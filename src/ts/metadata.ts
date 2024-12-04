@@ -11,7 +11,7 @@ import {
   addAutocompleteToExtraFieldsKeyInputs,
 } from './misc';
 import { Metadata } from './Metadata.class';
-import { ValidMetadata, ExtraFieldInputType, ExtraFieldsGroup } from './metadataInterfaces';
+import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
@@ -293,15 +293,15 @@ document.addEventListener('DOMContentLoaded', () => {
           newInputGroup.classList.add('input-group', 'mb-1');
           newInputGroup.setAttribute('data-target', 'group-item');
           newInputGroup.setAttribute('data-group-id', String(groupId));
-          // input element
+
           const inputEl: HTMLInputElement = document.createElement('input');
           inputEl.classList.add('form-control', 'group-name-input');
           inputEl.setAttribute('value', grpOption.text);
           inputEl.setAttribute('data-target', 'group-item');
-          // input-group-append
+
           const appendDiv = document.createElement('div');
           appendDiv.classList.add('input-group-append');
-          // Delete and save button
+
           const deleteButton = createButton('remove-fields-group', 'btn-secondary', '-');
           const updateButton = createButton('update-fields-group', 'btn-primary');
           const saveIcon = document.createElement('i');
@@ -327,13 +327,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const updatedGroupName = nameInput.value.trim();
 
       MetadataC.read().then((metadata: ValidMetadata) => {
-        const group: ExtraFieldsGroup = metadata.elabftw.extra_fields_groups.find(group => group.id === groupId);
+        const group = metadata.elabftw.extra_fields_groups.find(group => group.id === groupId);
         group.name = updatedGroupName;
 
         // Update the group in the <select> dropdown
         const optionToUpdate = grpSel.querySelector(`option[value="${groupId}"]`);
         if (optionToUpdate) {
-          optionToUpdate.textContent = updatedGroupName; // Update the displayed text
+          optionToUpdate.textContent = updatedGroupName;
         }
 
         MetadataC.update(metadata as ValidMetadata);
@@ -343,7 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm(i18next.t('generic-delete-warning'))) return;
 
       MetadataC.read().then((metadata: ValidMetadata) => {
-        // Retrieve the field group element
         const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
         const groupId: number = parseInt(groupDiv.dataset.groupId, 10);
 

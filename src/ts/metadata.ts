@@ -11,7 +11,7 @@ import {
   addAutocompleteToExtraFieldsKeyInputs,
 } from './misc';
 import { Metadata } from './Metadata.class';
-import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
+import { ValidMetadata, ExtraFieldInputType, ExtraFieldsGroup } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
@@ -301,15 +301,15 @@ document.addEventListener('DOMContentLoaded', () => {
           deleteButton.type = 'button';
           deleteButton.className = 'btn btn-secondary';
           deleteButton.setAttribute('data-action', 'remove-fields-group');
-          deleteButton.title = i18next.t('Delete'); // Localized title
+          deleteButton.title = i18next.t('Delete');
           deleteButton.setAttribute('aria-label', i18next.t('Delete'));
-          deleteButton.textContent = '-'; // Button label
+          deleteButton.textContent = '-';
 
           const saveButton = document.createElement('button');
           saveButton.type = 'button';
           saveButton.className = 'btn btn-primary';
           saveButton.setAttribute('data-action', 'save-new-fields-group');
-          saveButton.title = i18next.t('Save'); // Localized title
+          saveButton.title = i18next.t('Save');
           saveButton.setAttribute('aria-label', i18next.t('Save'));
           const saveIcon = document.createElement('i');
           saveIcon.className = 'fas fa-save text-white';
@@ -325,6 +325,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // clear input value
         nameInput.value = '';
+      });
+      // EDIT GROUP
+    } else if (el.matches('[data-action="update-fields-group"]')) {
+      const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
+      const groupId: number = parseInt(groupDiv.dataset.groupId, 10);
+      const nameInput = groupDiv.querySelector('.group-name-input') as HTMLInputElement;
+      const updatedGroupName = nameInput.value.trim();
+
+      MetadataC.read().then((metadata: ValidMetadata) => {
+        const group: ExtraFieldsGroup = metadata.elabftw.extra_fields_groups.find(group => group.id === groupId);
+        group.name = updatedGroupName;
+
+        MetadataC.update(metadata as ValidMetadata);
       });
       // DELETE GROUP
     } else if (el.matches('[data-action="remove-fields-group"]')) {

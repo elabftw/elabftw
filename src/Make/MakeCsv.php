@@ -37,7 +37,7 @@ class MakeCsv extends AbstractMakeCsv
      */
     protected function getHeader(): array
     {
-        return array('id', 'date', 'title', 'body', 'category', 'category_title', 'category_color', 'status', 'status_title', 'status_color', 'custom_id', 'elabid', 'rating', 'url', 'metadata', 'tags');
+        return array('id', 'date', 'title', 'userid', 'fullname', 'body', 'category', 'category_title', 'category_color', 'status', 'status_title', 'status_color', 'custom_id', 'elabid', 'rating', 'url', 'metadata', 'tags');
     }
 
     /**
@@ -51,6 +51,8 @@ class MakeCsv extends AbstractMakeCsv
                 $entity->entityData['id'],
                 $entity->entityData['date'],
                 htmlspecialchars_decode((string) $entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
+                $entity->entityData['userid'],
+                $entity->entityData['fullname'],
                 html_entity_decode(strip_tags(htmlspecialchars_decode((string) $entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                 (string) $entity->entityData['category'],
                 htmlspecialchars_decode((string) $entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),

@@ -64,7 +64,7 @@ class Compounds extends AbstractRest
     public function searchFingerprintFromSmiles(string $smiles): array
     {
         $fp = $this->getFingerprintFromSmiles($smiles);
-        $sql = 'SELECT id, (BIT_COUNT(';
+        $sql = 'SELECT cf.id, c.name, c.cas_number, (BIT_COUNT(';
 
         // Calculate A ∩ B (bitwise AND) and A + B (bitwise OR) in SQL
         foreach ($fp['data'] as $key => $value) {
@@ -75,7 +75,9 @@ class Compounds extends AbstractRest
         }
         $sql = rtrim($sql, '| ') . ')) AS similarity_score ';
 
-        $sql .= 'FROM compounds_fingerprints WHERE 1=1';
+        $sql .= 'FROM compounds_fingerprints AS cf
+            LEFT JOIN compounds AS c ON cf.id = c.id';
+        $sql .= ' WHERE 1=1';
         foreach ($fp['data'] as $key => $value) {
             if ($value == 0) {
                 continue;

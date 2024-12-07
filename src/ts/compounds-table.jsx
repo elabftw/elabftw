@@ -17,6 +17,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
+import { notif } from './misc';
 
 const ApiC = new Api();
 
@@ -62,8 +63,15 @@ if (document.getElementById('compounds-table')) {
 
     // all the compounds are loaded in the table, which does client side pagination
     const fetchData = async () => {
-        const compounds = await ApiC.getJson('compounds?limit=999999');
-        setRowData(compounds);
+      let searchString = '';
+      if (document.getElementById('substructureSearchInput')) {
+        const subInput = document.getElementById('substructureSearchInput');
+        if (subInput.value) {
+          searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}`;
+        }
+      }
+      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}`);
+      setRowData(compounds);
     };
 
       const defaultColDef = useMemo(() => {
@@ -86,6 +94,13 @@ if (document.getElementById('compounds-table')) {
       console.log(event.api.getSelectedRows());
     };
 
+    const cellDoubleClicked = (event) => {
+      if (event.value && event.column.colId !== 'name') {
+        navigator.clipboard.writeText(event.value);
+        notif({res:true, msg:'Copied to clipboard'});
+      }
+    };
+
     return (
       <div
         className={'ag-theme-quartz-dark'}
@@ -96,6 +111,7 @@ if (document.getElementById('compounds-table')) {
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection={rowSelection}
+        onCellDoubleClicked={cellDoubleClicked}
         onRowClicked={rowClicked}
         onSelectionChanged={selectionChanged}
         pagination={true}

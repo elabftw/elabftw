@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const res of json) {
               const li = document.createElement('li');
               li.classList.add('list-group-item');
-              li.innerText = res.name;
+              li.innerText = `${res.id} - ${res.name}`;
               resultsDiv.appendChild(li);
             }
           });

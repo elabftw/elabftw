@@ -89,9 +89,14 @@ if (document.getElementById('compounds-table')) {
     const rowClicked = (event) => {
       console.log(event.data);
     };
+
+    // when a row is selected with the checkbox
     const selectionChanged = (event) => {
-      console.log(event);
-      console.log(event.api.getSelectedRows());
+      // we store the selected rows as data-target string on the delete button
+      const btn = document.getElementById('deleteCompoundsBtn');
+      btn.removeAttribute('disabled');
+      const selectedRows = event.api.getSelectedRows();
+      btn.dataset.target = selectedRows.map(c => c.id).join(',');
     };
 
     const cellDoubleClicked = (event) => {

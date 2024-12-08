@@ -1,6 +1,8 @@
 {# var: storage_editable bool #}
 {# var: storageUnitsArr array #}
-<a href='#' data-action='expand-all-storage'>{{ 'Expand all'|trans }}</a>
+<div class='mb-2'>
+  <a href='#' data-action='expand-all-storage'>{{ 'Expand all'|trans }}</a>
+</div>
 <div id='storageDiv'>
   {% macro render_items(items, groupedItems, storage_editable) %}
     <ul class='list-group'>

@@ -160,7 +160,7 @@ class Compounds extends AbstractRest
         $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         if ($queryParams->getQuery()->get('q')) {
-            $req->bindValue(':query', '%' . $queryParams->getQuery()->get('q') . '%');
+            $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }
         $this->Db->execute($req);
 

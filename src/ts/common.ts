@@ -594,7 +594,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post('compounds', params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
       });
-
+    // DELETE SELECTED COMPOUNDS
+    } else if (el.matches('[data-action="delete-compounds"]')) {
+      const btn = document.getElementById('deleteCompoundsBtn');
+      const idList = btn.dataset.target.split(',');
+      idList.forEach(id => {
+        ApiC.delete(`compounds/${id}`);
+      });
+      document.dispatchEvent(new CustomEvent('dataReload'));
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {

@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import { createRoot } from 'react-dom/client'
-import { Api } from './Apiv2.class'
 import KetcherEditor from './ketcher';
 import {notifError} from './misc';
 
@@ -25,18 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
             notifError(new Error('No structure found!'));
             return;
           }
-          const ApiC = new Api();
-          const resultsDiv = document.getElementById('searchFpSmiList');
+          const smilesInput = document.getElementById('substructureSearchInput');
+          smilesInput.value = s;
           const resultsParentDiv = document.getElementById('searchFpResultsDiv');
           resultsParentDiv.removeAttribute('hidden');
-          ApiC.getJson(`compounds?search_fp_smi=${encodeURIComponent(s)}`).then(json => {
-            for (const res of json) {
-              const li = document.createElement('li');
-              li.classList.add('list-group-item');
-              li.innerText = `${res.id} - ${res.name}`;
-              resultsDiv.appendChild(li);
-            }
-          });
+          // reload the table
+          document.dispatchEvent(new CustomEvent('dataReload'));
         });
       }
     });

@@ -159,6 +159,10 @@ class Compounds extends AbstractRest
         }
         $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
+        // FIXME: dumb but working fix: user throws error, admin/sysadmin doesn't because sql query might have :userid or not
+        if (str_contains($sql, ':userid')) {
+            $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
+        }
         if ($queryParams->getQuery()->get('q')) {
             $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }

@@ -64,6 +64,10 @@ class Compounds extends AbstractRest
     public function searchFingerprintFromSmiles(string $smiles): array
     {
         $fp = $this->getFingerprintFromSmiles($smiles);
+        // if all values of FP are 0, we cannot check for it, so return early
+        if (array_sum($fp['data']) === 0) {
+            return array();
+        }
         $sql = 'SELECT cf.id, c.name, c.cas_number, c.smiles, c.inchi, c.inchi_key, c.iupac_name, c.molecular_formula, c.pubchem_cid,
             (BIT_COUNT(';
 

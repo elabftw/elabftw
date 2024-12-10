@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
@@ -37,7 +38,6 @@ use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
-use Elabftw\Params\DisplayParams;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
@@ -79,7 +79,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
                 defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
             ),
-            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }

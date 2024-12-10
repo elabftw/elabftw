@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @package elabftw
  */
 
-namespace Elabftw\Params;
+namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -35,7 +35,7 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($orcid, $params->getContent());
     }
 
-    public function testInvalidOrcidFormat(): void
+    public function testInvalidOrcidForamt(): void
     {
         $orcid = '1234-5678-1212-001';
         $params = new UserParams('orcid', $orcid);

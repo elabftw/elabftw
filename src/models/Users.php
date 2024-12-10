@@ -20,6 +20,7 @@ use Elabftw\Auth\Local;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
@@ -34,7 +35,6 @@ use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
-use Elabftw\Params\UserParams;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
@@ -236,10 +236,6 @@ class Users implements RestInterface
             users.firstname, users.lastname, users.created_at, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
             users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            CONCAT(
-                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
-                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
-            ) AS initials,
             users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
             FROM users
             LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
@@ -582,11 +578,7 @@ class Users implements RestInterface
     protected function readOneFull(): array
     {
         $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            CONCAT(
-                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
-                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
-            ) AS initials
+            CONCAT(users.firstname, ' ', users.lastname) AS fullname
             FROM users
             LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             WHERE users.userid = :userid";

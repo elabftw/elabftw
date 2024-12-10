@@ -10,11 +10,10 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Params;
+namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
-use Elabftw\Elabftw\Tools;
 
 final class UploadParams extends ContentParams
 {

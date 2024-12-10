@@ -47,10 +47,8 @@ interface Selected {
   experiments_status: number[];
   items_status: number[];
   items_types: number[];
-  items_tags: number[];
-  experiments_tags: number[];
+  tags: number[];
   users: number[];
-  target_owner: number;
   can: string;
 }
 
@@ -85,8 +83,6 @@ enum Action {
   Duplicate = 'duplicate',
   ExclusiveEditMode = 'exclusiveeditmode',
   Finish = 'finish',
-  ForceLock = 'forcelock',
-  ForceUnlock = 'forceunlock',
   Lock = 'lock',
   Notif = 'notif',
   NotifDestroy = 'notifdestroy',

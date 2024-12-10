@@ -98,14 +98,14 @@ class Templates extends AbstractTemplateEntity
         // now pin the newly created template so it directly appears in Create menu
         $fresh = new self($this->Users, $id);
         $Pins = new Pins($fresh);
-        $Pins->addToPinned();
+        $Pins->togglePin();
         return $id;
     }
 
     /**
      * Duplicate a template from someone else
      */
-    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
+    public function duplicate(bool $copyFiles = false): int
     {
         $this->canOrExplode('read');
         $title = $this->entityData['title'] . ' I';
@@ -142,9 +142,9 @@ class Templates extends AbstractTemplateEntity
             $this->Uploads->duplicate($fresh);
         }
 
-        // pin the newly created template so it directly appears in Create menu
+        // now pin the newly created template so it directly appears in Create menu
         $Pins = new Pins($fresh);
-        $Pins->addToPinned();
+        $Pins->togglePin();
 
         return $newId;
     }

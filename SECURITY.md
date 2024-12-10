@@ -96,31 +96,15 @@ Here is a list of steps you should follow to increase the security of your insta
 
 ### Prevent external access
 
-Only exposing the eLabFTW service is a good way to avoid having the whole world attacking it.
+Exposing the eLabFTW service only internally is a good way to avoid having the whole world attacking it.
 
 ### Add a reverse proxy
 
-A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using eLabFTW's external authentication mechanism in conjunction with _e.g._ `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further (while allowing authentication information to propagate).
+A reverse proxy in front of the eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall.
 
 ### Enable 2FA
 
-You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins, Admins or all users. It is also important to educate users on the importance of password managers and the use of unique and long passwords.
-
-### Using single sign-on? Turn off local user (password) registration and login
-
-If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
-
-### Prevent users from changing their identity
-
-Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. As of [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), sysadmins can restrict these identity changes. Check if it is currently allowed on your system. Unless it is strictly required, consider disabling it.
-
-### Turn on optional features only if required
-
-There are multiple optional features in eLabFTW. In a conservative setup, do consider keeping them disabled (_e.g._ prevent link-sharing unless you have investigated the ramifications of allowing it).
-
-### Segment at the system level, not just teams
-
-The eLabFTW model makes it easy to spin up new and separate systems (instances). Consider if sensitive research needs to coexist with ephemeral student projects in a single system, or if different research groups need to share an instance. Segmenting at the instance level limits the damage in case security relevant bugs are found, but also allows for more varied settings, different levels of access restriction, and different settings for logging and backups.
+You can enforce multi factors authentication (with TOTP mechanism) for Sysadmins, Admins or all users. It is also important to educate users on the importance of password managers and the use of unique and long passwords.
 
 ### Stay updated
 

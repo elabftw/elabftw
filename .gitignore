@@ -15,7 +15,6 @@ config.php*
 *.js.map
 *.bundle.js
 .pnp.*
-exports/
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg

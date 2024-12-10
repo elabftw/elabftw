@@ -1566,8 +1566,8 @@ ALTER TABLE `items_types2experiments`
 --
 ALTER TABLE `api_keys`
   ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_api_keys_user_team` FOREIGN KEY (`userid`, `team`) REFERENCES `users2teams` (`users_id`, `teams_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Constraints for table `experiments`
 --

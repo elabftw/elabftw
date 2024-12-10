@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Params\UserParams;
 
 class UserCreator
 {

@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -64,9 +64,9 @@ class ContentParams implements ContentParamsInterface
         return (int) $this->content;
     }
 
-    protected function getIntOrNull(): ?int
+    protected function getPositiveIntOrNull(): ?int
     {
-        return $this->getInt() === 0 ? null : $this->getInt();
+        return $this->getInt() <= 0 ? null : $this->getInt();
     }
 
     protected function getUrl(): string

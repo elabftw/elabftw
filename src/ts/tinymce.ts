@@ -32,6 +32,7 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/preview';
 import 'tinymce/plugins/save';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
@@ -63,6 +64,8 @@ import { EntityType, Model } from './interfaces';
 import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -191,8 +194,8 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons';
-  let toolbar1 = 'custom-save | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
+  let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit' || page === 'ucp') {
     plugins += ' autosave';
@@ -206,6 +209,12 @@ export function getTinymceBaseConfig(page: string): object {
 
   return {
     selector: '.mceditable',
+    table_default_styles: {
+      'min-width':'25%',
+      'width':'auto',
+    },
+    // The table width is changed when manipulating columns, the size of other columns is maintained.
+    table_column_resizing: 'resizetable',
     browser_spellcheck: true,
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',
@@ -466,5 +475,32 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
+    // specifying custom CSS for properly rendering MathJax in TinyMCE instance
+    // CSS properties obtained from inspecting the inline CSS for MathJax elements displayed in view mode (MathJax 3.2.2)
+    content_style: 'mjx-assistive-mml { position: absolute !important; top: 0px; left: 0px; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0px 0px 0px !important; border: 0px !important; display: block !important; width: auto !important; overflow: hidden !important; user-select: none; }' +
+      'g[data-mml-node="merror"] > rect[data-background] { fill: yellow; stroke: none; }' +
+      'g[data-mml-node="merror"] > g { fill: red; stroke: red; }',
+    // render MathJax for TinyMCE preview
+    init_instance_callback: (editor) => {
+      editor.on('ExecCommand', (e) => {
+        if (e.command == 'mcePreview') {
+          // declaration as iFrame element required to avoid errors with getting srcdoc property
+          const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
+          if (iframe) {
+            const htmlString = iframe.srcdoc;
+            // reload iFrame container text
+            iframe.srcdoc = '';
+            iframe.srcdoc = htmlString;
+            // parse text with MathJax once iFrame has been fully loaded
+            iframe.onload = () => {
+              // parse text only when iFrame is finished being loaded
+              if (iframe.contentDocument && iframe.contentDocument.body) {
+                MathJax.typesetPromise([iframe.contentDocument.body]);
+              }
+            };
+          }
+        }
+      });
+    },
   };
 }

@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -129,7 +129,7 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -153,10 +153,12 @@ class Items extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous resource
-        $ItemsLinks = new Items2ItemsLinks($fresh);
-        $ItemsLinks->setId($this->id);
-        $ItemsLinks->postAction(Action::Create, array());
+        // also add a link to the original resource
+        if ($linkToOriginal) {
+            $ItemsLinks = new Items2ItemsLinks($fresh);
+            $ItemsLinks->setId($this->id);
+            $ItemsLinks->postAction(Action::Create, array());
+        }
         if ($copyFiles) {
             $this->Uploads->duplicate($fresh);
         }

@@ -25,6 +25,30 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(date('Y-m-d'), Filter::kdate("\n"));
     }
 
+    public function testFormatLocalDate(): void
+    {
+        $input = '2024-10-16 17:12:47';
+        $expected = array(
+            'date' => '2024-10-16',
+            'time' => '17:12:47',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
+
+        $input = '2024-10-16';
+        $expected = array(
+            'date' => '2024-10-16',
+            'time' => '',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
+
+        $input = '';
+        $expected = array(
+            'date' => '',
+            'time' => '',
+        );
+        $this->assertEquals($expected, Filter::separateDateAndTime($input));
+    }
+
     public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));

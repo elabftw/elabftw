@@ -1222,6 +1222,7 @@ CREATE TABLE `users` (
   `valid_until` date NULL DEFAULT NULL,
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `always_show_owned` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `show_weekends` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1565,8 +1566,8 @@ ALTER TABLE `items_types2experiments`
 --
 ALTER TABLE `api_keys`
   ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_api_keys_user_team` FOREIGN KEY (`userid`, `team`) REFERENCES `users2teams` (`users_id`, `teams_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Constraints for table `experiments`
 --

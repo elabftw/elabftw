@@ -10,8 +10,9 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Params;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;

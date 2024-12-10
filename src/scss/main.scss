@@ -422,6 +422,16 @@ button:disabled {
     }
   }
 
+  td {
+    width: fit-content;
+
+    img {
+      object-fit: contain;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
   th {
     border-top: 0;
     white-space: nowrap;
@@ -1548,4 +1558,11 @@ input:checked + .slider::before {
       top: 4px;
     }
   }
+}
+
+/* top right button */
+.initials {
+  font-weight: bold;
+  color: $secondlevel;
+  font-size: 1.5rem;
 }

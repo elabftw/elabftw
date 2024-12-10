@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TeamGroupParams;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -21,6 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\TeamGroupParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -105,7 +105,7 @@ class TeamGroups implements RestInterface
             FROM team_groups AS tg
             LEFT JOIN users2team_groups AS utg ON tg.id = utg.groupid
             LEFT JOIN teams ON (tg.team = teams.id)
-            WHERE utg.userid = :userid ORDER BY tg.name ASC';
+            WHERE utg.userid = :userid ORDER BY teams.name, tg.name ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -115,7 +115,7 @@ class TeamGroups implements RestInterface
     public function readAllTeam(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name
-            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) WHERE team_groups.team = :team ORDER BY team_groups.name ASC';
+            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) WHERE team_groups.team = :team ORDER BY teams.name, team_groups.name ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -125,7 +125,7 @@ class TeamGroups implements RestInterface
     public function readAllEverything(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name
-            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) ORDER BY team_groups.name ASC';
+            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) ORDER BY teams.name, team_groups.name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();

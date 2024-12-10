@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;

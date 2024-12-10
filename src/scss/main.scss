@@ -1293,7 +1293,7 @@ figure figcaption {
 }
 
 /* setting the height as 'auto' results in the footer element being rendered below the preview popup */
-is:(.tox-dialog__content-js):has(.mce-preview-body) {
+:is(.tox-dialog__content-js):has(.mce-preview-body) {
   height: 0 !important;
 }
 

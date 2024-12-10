@@ -1284,16 +1284,16 @@ figure figcaption {
 }
 
 /* styling TinyMCE preview */
-.tox-dialog__header {
+div[class^='tox-dialog'][class$='header'] {
   padding: 8px 16px 16px !important;
 }
 
-.tox-dialog__body-content {
+div[class^='tox-dialog'][class$='body-content'] {
   padding: 0 16px 16px !important;
 }
 
 /* setting the height as 'auto' results in the footer element being rendered below the preview popup */
-.tox-dialog__content-js {
+div[class^='tox-dialog'][class$='content-js'] {
   height: 0 !important;
 }
 

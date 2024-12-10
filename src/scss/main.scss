@@ -1284,16 +1284,16 @@ figure figcaption {
 }
 
 /* styling TinyMCE preview */
-:is(.tox-dialog__header):has(+ div .mce-preview-body) {
+.tox-dialog.tox-dialog--width-lg > div:has(> button > .tox-icon):has(+ div .mce-preview-body) {
   padding: 8px 16px 16px !important;
 }
 
-:is(.tox-dialog__body-content):has(.mce-preview-body) {
+.tox-dialog.tox-dialog--width-lg div:has(> .tox-form):has(.mce-preview-body) {
   padding: 0 16px 16px !important;
 }
 
 /* setting the height as 'auto' results in the footer element being rendered below the preview popup */
-:is(.tox-dialog__content-js):has(.mce-preview-body) {
+.tox-dialog.tox-dialog--width-lg > div:has(.tox-form):has(.mce-preview-body) {
   height: 0 !important;
 }
 

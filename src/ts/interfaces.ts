@@ -47,7 +47,8 @@ interface Selected {
   experiments_status: number[];
   items_status: number[];
   items_types: number[];
-  tags: number[];
+  items_tags: number[];
+  experiments_tags: number[];
   users: number[];
   target_owner: number;
   can: string;

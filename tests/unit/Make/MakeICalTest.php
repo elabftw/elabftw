@@ -15,7 +15,6 @@ namespace Elabftw\Make;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CalendarKeys;
 use Elabftw\Enums\Scope;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Calendar;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
@@ -23,6 +22,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use DateTime;
 use DateInterval;
+use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
@@ -65,7 +65,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     public function testNonExistingToken(): void
     {
         $token = str_repeat('0aA', 20);
-        $this->expectException(ResourceNotFoundException::class);
+        $this->expectException(ImproperActionException::class);
         (new MakeICal($token))->getFileContent();
     }
 

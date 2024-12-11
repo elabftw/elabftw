@@ -2176,37 +2176,6 @@ ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
--- EXPERIMENTS STORAGE
-ALTER TABLE `experiments` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `experiments` ADD CONSTRAINT `fk_experiments_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
-
--- EXPERIMENTS TEMPLATES STORAGE
-ALTER TABLE `experiments_templates` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD CONSTRAINT `fk_experiments_templates_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
-
--- ITEMS STORAGE
-ALTER TABLE `items` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `items` ADD CONSTRAINT `fk_items_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
-
--- ITEMS TYPES STORAGE
-ALTER TABLE `items_types` ADD `storage` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD `qty_stored` INT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD `qty_unit` VARCHAR(10) NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD CONSTRAINT `fk_items_types_storage`
-FOREIGN KEY (`storage`) REFERENCES `storage_units`(`id`)
-ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

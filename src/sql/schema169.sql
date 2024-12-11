@@ -6,7 +6,6 @@ CREATE TABLE `calendars` (
   `team` int UNSIGNED NOT NULL,
   `created_by` int UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `state` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `all_events` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `todo` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `unfinished_steps_scope` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -15,7 +14,6 @@ CREATE TABLE `calendars` (
   KEY `fk_calendars_team` (`team`),
   KEY `idx_calendars_todo` (`todo`),
   KEY `idx_calendars_unfinished_steps_scope` (`unfinished_steps_scope`),
-  KEY `idx_calendars_state` (`state`),
   KEY `fk_calendars_created_by` (`created_by`),
   CONSTRAINT `fk_calendars_team`
     FOREIGN KEY (`team`) REFERENCES `teams` (`id`)

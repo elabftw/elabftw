@@ -172,11 +172,8 @@ class Calendar implements RestInterface
     public function destroy(): bool
     {
         $this->canOrExplode();
-        $sql = 'UPDATE calendars
-                  SET state = :state
-                  WHERE id = :id';
+        $sql = 'DELETE FROM calendars WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -206,11 +203,9 @@ class Calendar implements RestInterface
         }
 
         $sql = 'SELECT created_by FROM calendars
-                    WHERE state = :state
-                        AND team = :team
+                    WHERE team = :team
                         AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $req->bindParam(':team', $this->User->team, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

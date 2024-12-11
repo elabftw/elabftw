@@ -164,9 +164,9 @@ class Calendar implements RestInterface
             $req->bindParam(':user', $this->User->userid, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
-        $result = $req->fetchAll();
+        $result = array($this->Db->fetch($req));
         $this->postProcessRead($result);
-        return $result[0];
+        return $result;
     }
 
     public function destroy(): bool

@@ -22,12 +22,12 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\Users;
 use DateTime;
 use DateInterval;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_slice;
-use function str_repeat;
 use function strtolower;
 
 class MakeICalTest extends \PHPUnit\Framework\TestCase
@@ -38,11 +38,15 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
 
     private int $calId = 0;
 
+    private string $token;
+
     protected function setUp(): void
     {
         $this->Calendar = new Calendar(new Users(1, 1));
         // Mock a request with canbook parameter
         $this->Request = Request::create('/database.php', 'GET', array('canbook' => '1'));
+        // a valid token
+        $this->token = Tools::getUuidv4();
 
     }
 
@@ -50,7 +54,7 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             'elabftw-calendar.ics',
-            (new MakeICal('notARealToken'))->getFileName(),
+            (new MakeICal($this->token))->getFileName(),
         );
     }
 
@@ -58,15 +62,14 @@ class MakeICalTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             'text/calendar; charset=utf-8',
-            (new MakeICal('notARealToken'))->getContentType(),
+            (new MakeICal($this->token))->getContentType(),
         );
     }
 
     public function testNonExistingToken(): void
     {
-        $token = str_repeat('0aA', 20);
         $this->expectException(ImproperActionException::class);
-        (new MakeICal($token))->getFileContent();
+        (new MakeICal($this->token))->getFileContent();
     }
 
     public function testAllOfTeam(): void

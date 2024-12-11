@@ -19,7 +19,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\CalendarKeys;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\RestInterface;
@@ -132,7 +131,6 @@ class Calendar implements RestInterface
                 : '',
         );
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $req->bindParam(':team', $this->User->team, PDO::PARAM_INT);
         if (!$this->User->isAdmin || $isProfile) {
             $req->bindParam(':user', $this->User->userid, PDO::PARAM_INT);
@@ -157,7 +155,6 @@ class Calendar implements RestInterface
                 : '',
         );
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $req->bindParam(':team', $this->User->team, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         if (!$this->User->isAdmin) {
@@ -176,24 +173,6 @@ class Calendar implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Generate a random alphanumeric string
-     */
-    public static function randomAlphaNumericString(int $length): string
-    {
-        $usedChars  = 'abcdefghijklmnopqrstuvwxyz';
-        $usedChars .= strtoupper($usedChars);
-        $usedChars .= '0123456789';
-        $randomMax = strlen($usedChars) - 1;
-
-        $token = str_repeat(' ', $length);
-        for ($i = 0; $i < $length; $i++) {
-            $token[$i] = $usedChars[random_int(0, $randomMax)];
-        }
-
-        return $token;
     }
 
     private function canOrExplode(): void
@@ -313,7 +292,6 @@ class Calendar implements RestInterface
             LEFT JOIN agg_items ON calendars.id = agg_items.calendar
             LEFT JOIN agg_items_types ON calendars.id = agg_items_types.calendar
             LEFT JOIN users ON calendars.created_by = users.userid
-            WHERE calendars.state = :state
-                AND calendars.team = :team';
+            WHERE calendars.team = :team';
     }
 }

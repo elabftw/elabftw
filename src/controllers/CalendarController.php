@@ -31,6 +31,7 @@ class CalendarController implements ControllerInterface
         return $this->getFileResponse(new MakeICal($this->Request->query->getString('token')));
     }
 
+    // TODO after merge ketcher branch: extend abstract controller so we don't need to implement this
     private function getFileResponse(StringMakerInterface $Maker): Response
     {
         return new Response(

@@ -21,7 +21,9 @@ use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\StringMakerInterface;
+use Elabftw\Models\Calendar as ModelsCalendar;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
@@ -57,6 +59,9 @@ class MakeICal extends AbstractMake implements StringMakerInterface
     public function __construct(protected string $calendarToken)
     {
         parent::__construct();
+        if (strlen($calendarToken) !== ModelsCalendar::TOKEN_LENGTH) {
+            throw new ImproperActionException('Invalid calendar token!');
+        }
     }
 
     /**

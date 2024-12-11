@@ -14,13 +14,12 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\CalendarController;
-use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Calendar;
+use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Create an account
+ * Handle calendar feeds
  */
 require_once 'app/init.inc.php';
 
@@ -30,18 +29,10 @@ $Response->prepare($App->Request);
 
 // calendar.php?token={alpha numeric string 60 characters}
 try {
-    if (!$App->Request->query->has('token')
-        || strlen($App->Request->query->getString('token')) !== Calendar::TOKEN_LENGTH
-    ) {
-        throw new ResourceNotFoundException('Missing or invalid calendar token');
-    }
-
     $Response = (new CalendarController($App->Request))->getResponse();
 
-} catch (ResourceNotFoundException $e) {
-    // log error
-    $App->Log->error('', array('Exception' => $e));
-    $Response->setStatusCode(Response::HTTP_NOT_FOUND);
+} catch (ImproperActionException $e) {
+    $Response->setStatusCode(Response::HTTP_BAD_REQUEST);
 } catch (Exception $e) {
     // log error
     $App->Log->error('', array('Exception' => $e));

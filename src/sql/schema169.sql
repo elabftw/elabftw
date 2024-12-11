@@ -1,4 +1,4 @@
--- schema 167
+-- schema 169
 CREATE TABLE `calendars` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
@@ -67,4 +67,4 @@ ALTER TABLE `team_events`
     FOREIGN KEY (`item_link`) REFERENCES `items` (`id`)
     ON DELETE SET NULL ON UPDATE CASCADE;
 
-UPDATE config SET conf_value = 167 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 169 WHERE conf_name = 'schema';

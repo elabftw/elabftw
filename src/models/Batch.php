@@ -32,6 +32,9 @@ class Batch implements RestInterface
     public function postAction(Action $action, array $reqBody): int
     {
         $action = Action::from($reqBody['action']);
+        if ($reqBody['items_tags']) {
+            $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
+        }
         if ($reqBody['items_types']) {
             $model = new Items($this->requester);
             $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody);
@@ -48,13 +51,8 @@ class Batch implements RestInterface
             $model = new Experiments($this->requester);
             $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
         }
-        if ($reqBody['tags']) {
-            $model = new Experiments($this->requester);
-            $Tags2Entity = new Tags2Entity($model->entityType);
-            $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $reqBody['tags']);
-            // Format tags as associative array to be processed same way as other entries
-            $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
-            $this->loopOverEntries($tagEntries, $model, $action, $reqBody);
+        if ($reqBody['experiments_tags']) {
+            $this->processTags($reqBody['experiments_tags'], new Experiments($this->requester), $action, $reqBody);
         }
         if ($reqBody['users']) {
             // only process experiments
@@ -93,6 +91,15 @@ class Batch implements RestInterface
     {
         $entries = $this->getEntriesByIds($idArr, $model, $column);
         $this->loopOverEntries($entries, $model, $action, $params);
+    }
+
+    private function processTags(array $tags, AbstractConcreteEntity $model, Action $action, array $params): void
+    {
+        $Tags2Entity = new Tags2Entity($model->entityType);
+        $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $tags);
+        // Format tags as associative array to be processed the same way as other entries
+        $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
+        $this->loopOverEntries($tagEntries, $model, $action, $params);
     }
 
     private function getEntriesByIds(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column): array

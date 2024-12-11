@@ -60,13 +60,28 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateAccount(): void
     {
+        // A user SHOULD NOT be able to update their own address (under default settings)
         $params = array(
             'email' => 'tatabis@yopmail.com',
             'firstname' => 'Tata',
             'lastname' => 'Yep',
             'orcid' => '0000-0002-7494-5555',
         );
-        $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
+        $this->expectException(ImproperActionException::class);
+        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
+    }
+
+    public function testUpdateAccountAsSysadmin(): void
+    {
+        // A sysadmin SHOULD be able to update any email address.
+        $sysadminUser = new Users(1, 1);
+        $params = array(
+            'email' => 'tatabis@yopmail.com',
+            'firstname' => 'Tata',
+            'lastname' => 'Yep',
+            'orcid' => '0000-0002-7494-5555',
+        );
+        $result = (new Users(4, 2, $sysadminUser))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
     }

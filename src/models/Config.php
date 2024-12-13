@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
@@ -216,6 +215,11 @@ final class Config extends AbstractRest
     public static function fromEnv(string $confName): string
     {
         return (string) getenv($confName);
+    }
+
+    public static function boolFromEnv(string $confName): bool
+    {
+        return getenv($confName) !== 'false';
     }
 
     public function decrementTsBalance(): array

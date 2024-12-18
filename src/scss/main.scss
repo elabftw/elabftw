@@ -1284,18 +1284,18 @@ figure figcaption {
 }
 
 /* styling TinyMCE preview */
-/* stylelint-disable-next-line selector-class-pattern */
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
 .tox-dialog__header:has(+ .tox-dialog__content-js .mce-preview-body) {
   padding: 8px 16px 16px !important;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
 .tox-dialog__body-content:has(.mce-preview-body) {
   padding: 0 16px 16px !important;
 }
 
 /* setting the height as 'auto' results in the footer element being rendered below the preview popup */
-/* stylelint-disable-next-line selector-class-pattern */
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
 .tox-dialog__content-js:has(.mce-preview-body) {
   height: 0 !important;
 }

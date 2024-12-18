@@ -333,12 +333,13 @@ export function getTinymceBaseConfig(page: string): object {
         // make the edges round
         editor.getContainer().className += ' rounded';
         // prevent skin.min.css from changing appearance of .mce-preview-body element
-        const skinNode = document.getElementById('mce-u0') as HTMLLinkElement;
+        const skinNode = document.querySelector('[rel=stylesheet][href$="/skin.min.css"]') as HTMLLinkElement;
         const skinCSS = skinNode.sheet;
         Array.from(skinCSS.cssRules).forEach((rule, index) => {
           if (rule instanceof CSSStyleRule) {
             const selectors = rule.selectorText.split(',');
-            const modifiedSelectors = selectors.map((selector) => selector.trim() + 'not:(.mce-preview-body)').join(',');
+            const modifiedSelectors = selectors.map((selector) => selector.trim() + ':not(.mce-preview-body *)').join(',');
+            console.log(modifiedSelectors);
             rule.selectorText = modifiedSelectors;
             skinCSS.deleteRule(index);
             skinCSS.insertRule(rule.cssText, index);

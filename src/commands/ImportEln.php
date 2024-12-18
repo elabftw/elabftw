@@ -61,9 +61,11 @@ class ImportEln extends Command
         $UploadedFile = new UploadedFile($filePath, 'input.eln', test: true);
         $user = new UltraAdmin(team: $teamid);
         $infoTrailer = '';
+        $requesterIsAuthor = false;
         if ($input->getOption('userid')) {
             $user = new Users((int) $input->getOption('userid'), $teamid);
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
+            $requesterIsAuthor = true;
         }
         $entityType = null;
         if ($input->getOption('type')) {
@@ -85,6 +87,7 @@ class ImportEln extends Command
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),
         );
+        $Importer->requesterIsAuthor = $requesterIsAuthor;
         $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         $helper = $this->getHelper('question');

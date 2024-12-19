@@ -168,12 +168,6 @@ class Tags implements RestInterface
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        // tag is removed from tags table if no other entity is referencing it
-        $sql = 'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (SELECT tag_id FROM tags2entity)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
         return $this->Entity->readOne();
     }
 }

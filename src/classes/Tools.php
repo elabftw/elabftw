@@ -30,6 +30,9 @@ use function trim;
  */
 class Tools
 {
+    /**
+     * Generate a random UUID (version 4)
+     */
     public static function getUuidv4(): string
     {
         // 16 bytes = 128 bits of random data

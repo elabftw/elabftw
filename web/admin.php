@@ -17,6 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Calendar;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
@@ -111,6 +112,8 @@ try {
     }
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
+    $Calendar = new Calendar($App->Users);
+
     $template = 'admin.html';
     $renderArr = array(
         'Entity' => $ItemsTypes,
@@ -134,6 +137,7 @@ try {
         'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
+        'calendars' => $Calendar->readAll(),
     );
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));

@@ -18,6 +18,7 @@ use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Scope;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -30,6 +31,7 @@ use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
+use Elabftw\Models\Calendar;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
@@ -67,6 +69,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
+
+use function implode;
+use function json_decode;
+use function sprintf;
+use function str_starts_with;
+use function strtolower;
+use function trim;
 
 /**
  * For API V2 requests
@@ -259,6 +268,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Batch => new Batch($this->requester),
             ApiEndpoint::Config => Config::getConfig(),
+            ApiEndpoint::Calendars => new Calendar($this->requester, $this->id),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
@@ -290,7 +300,7 @@ class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Todolist => new Todolist($this->requester->userData['userid'], $this->id),
             ApiEndpoint::UnfinishedSteps => new UnfinishedSteps(
                 $this->requester,
-                $this->Request->query->get('scope') === 'team',
+                $this->Request->query->get('scope') === strtolower(Scope::Team->name),
             ),
             ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
         };

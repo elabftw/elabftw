@@ -5788,7 +5788,6 @@ __metadata:
     jsoneditor: "npm:^10.1.0"
     ketcher-core: "npm:^2.24.0"
     ketcher-react: "npm:^2.24.0"
-    ketcher-standalone: "npm:^2.24.0"
     lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
     marked: "npm:^14.0.0"
@@ -7173,13 +7172,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.25.0":
-  version: 1.25.0
-  resolution: "indigo-ketcher@npm:1.25.0"
-  checksum: 10c0/b8ecb4885b1d6ce472194c22025b1cfb8fb058abff4cf9c364f9c57304228d0b17e7792b9afec1360fe5267d8105cf3b66ad1ecb1b9d48a978693734faab5bb7
-  languageName: node
-  linkType: hard
-
 "inflight@npm:^1.0.4":
   version: 1.0.6
   resolution: "inflight@npm:1.0.6"
@@ -7879,17 +7871,6 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
   checksum: 10c0/09a14e780ec90f7447f525087484adb3e058613b94b604431832b135e43c29805229e5407b2e137264901aff80f19e54ee29a6f649bc733fa5084dc4c2595e60
-  languageName: node
-  linkType: hard
-
-"ketcher-standalone@npm:^2.24.0":
-  version: 2.26.0
-  resolution: "ketcher-standalone@npm:2.26.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.17.9"
-    indigo-ketcher: "npm:1.25.0"
-    ketcher-core: "npm:*"
-  checksum: 10c0/faa084d8522f4f861f1c56687c1b3294e49ff1c615b2e75c7314d955ad5b2c20d36b521856ccd23b5fb0b11c27e333d512d424a921294909bdabfb839f3e9174
   languageName: node
   linkType: hard
 

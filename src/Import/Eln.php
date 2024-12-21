@@ -38,6 +38,7 @@ use function basename;
 use function hash_file;
 use function json_decode;
 use function sprintf;
+use function strtr;
 
 /**
  * Import a .eln file.
@@ -438,6 +439,8 @@ class Eln extends AbstractZip
     {
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
+        // fix for bloxberg attachments containing : character
+        $filepath = strtr($filepath, ':', '_');
 
         // CHECKSUM
         if ($this->verifyChecksum) {

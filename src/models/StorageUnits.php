@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -93,8 +95,107 @@ class StorageUnits extends AbstractRest
         return $this->Db->fetch($req);
     }
 
+    public function readCount(): array
+    {
+        $sql = 'SELECT
+            (SELECT COUNT(id) FROM containers2experiments) AS experiments,
+            (SELECT COUNT(id) FROM containers2items) AS items';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetch();
+
+    }
+
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
+        $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
+        $canFilter = $CanSqlBuilder->getCanFilter();
+        $sql = sprintf(
+            "
+            WITH RECURSIVE storage_hierarchy AS (
+                SELECT
+                    su.id AS storage_id,
+                    su.parent_id,
+                    su.name AS full_path
+                FROM storage_units AS su
+                WHERE su.parent_id IS NULL -- Root-level units
+
+                UNION ALL
+
+                SELECT
+                    su.id AS storage_id,
+                    su.parent_id,
+                    CONCAT(parent.full_path, ' > ', su.name) AS full_path
+                FROM storage_units AS su
+                INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
+            )
+
+                SELECT
+                    entity.id AS entity_id,
+                    entity.title AS entity_title,
+                    'database' AS page,
+                    c2i.qty_stored,
+                    c2i.qty_unit,
+                    sh.storage_id AS storage_id,
+                    sh.full_path
+                FROM
+                    containers2items AS c2i
+                LEFT JOIN
+                    storage_hierarchy AS sh ON c2i.storage_id = sh.storage_id
+                LEFT JOIN
+                    items AS entity ON c2i.item_id = entity.id
+                LEFT JOIN
+                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                WHERE
+                    -- can sql
+                    1=1 %s
+                    AND
+                    (entity.title LIKE :query OR sh.full_path LIKE :query)
+
+            UNION ALL
+                SELECT
+                    entity.id AS entity_id,
+                    entity.title AS entity_title,
+                    'experiments' AS page,
+                    c2e.qty_stored,
+                    c2e.qty_unit,
+                    sh.storage_id AS storage_id,
+                    sh.full_path
+                FROM
+                    containers2experiments AS c2e
+                LEFT JOIN
+                    storage_hierarchy AS sh ON c2e.storage_id = sh.storage_id
+                LEFT JOIN
+                    experiments AS entity ON c2e.item_id = entity.id
+                LEFT JOIN
+                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                WHERE
+                    -- can sql
+                    1=1 %s
+                    AND
+                    (entity.title LIKE :query OR sh.full_path LIKE :query)
+
+            ORDER BY storage_id, entity_title LIMIT %d",
+            $this->requester->userData['userid'],
+            $this->requester->userData['team'],
+            $canFilter,
+            $this->requester->userData['userid'],
+            $this->requester->userData['team'],
+            $canFilter,
+            $queryParams->getLimit(),
+        );
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    public function readAllRecursive(): array
     {
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)

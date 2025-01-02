@@ -19,4 +19,6 @@ interface QueryParamsInterface
     public function getSql(): string;
 
     public function getQuery(): InputBag;
+
+    public function getLimit(): int;
 }

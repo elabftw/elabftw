@@ -12,6 +12,24 @@
 
 {% block body %}
   <div class='pl-3 mb-5'>
+    <label for='storageSearchInput'>{{ 'Search containers or places'|trans }}</label>
+    <form class='input-group' method='get'>
+      <input class='form-control' name='q' id='storageSearchInput' value='{{ App.Request.query.getString('q') }}' />
+      <div class='input-group-append'>
+        <button class='btn btn-primary' type='submit' data-action='search-storage'>{{ 'Search'|trans }}</button>
+      </div>
+    </form>
+    {{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}
+    <ul class='list-group mt-2'>
+    {% for container in containersArr %}
+      <li class='list-group-item'>
+        <a href='{{ container.page }}.php?mode=view&id={{ container.entity_id }}'>{{ container.entity_title }}</a> {{ container.qty_stored }} {{ container.qty_unit }} in {{ container.full_path }}
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+  <div class='pl-3 mb-5'>
     {% include 'storage-list.html' with {'storage_editable': true} %}
   </div>
 {% endblock body %}

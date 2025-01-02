@@ -61,6 +61,11 @@ class BaseQueryParams implements QueryParamsInterface
         return $this->query ?? new InputBag();
     }
 
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
     public function getSql(): string
     {
         return sprintf(

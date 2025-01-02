@@ -227,7 +227,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -298,7 +298,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAll(),
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

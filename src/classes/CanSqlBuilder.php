@@ -100,7 +100,7 @@ class CanSqlBuilder
             BasePermissions::User->value,
             $this->requester->isAdmin
                 ? 'users2teams.users_id'
-                : ':userid',
+                : $this->requester->userid ?? 0,
         );
     }
 
@@ -137,7 +137,7 @@ class CanSqlBuilder
                 implode(', ', $teamsOfUser),
             );
         }
-        return '1=1';
+        return '1=2';
     }
 
     /**
@@ -156,7 +156,7 @@ class CanSqlBuilder
                 implode(', ', $teamgroupsOfUser),
             );
         }
-        return '1=1';
+        return '1=2';
     }
 
     /**

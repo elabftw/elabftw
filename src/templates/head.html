@@ -57,7 +57,7 @@
     <div class='collapse navbar-collapse' id='main-nav'>
         <div class='navbar-nav'>
             <a class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
-                href='dashboard.php'><i class='fas fa-house'></i></a>
+                href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
             <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
                 href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
             <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
@@ -71,9 +71,9 @@
             <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
             <div class='nav-item dropdown'>
-              <a class='nav-link dropdown-toggle' href='#' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle' href='#' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
-              </a>
+              </div>
               <div class='dropdown-menu'>
                 <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>

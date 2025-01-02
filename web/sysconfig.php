@@ -153,7 +153,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
-        'storageUnitsArr' => (new StorageUnits($App->Users))->readAll(),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,

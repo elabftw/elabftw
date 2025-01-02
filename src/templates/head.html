@@ -71,6 +71,9 @@
             <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
             <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
               <div class='nav-link dropdown-toggle' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </div>

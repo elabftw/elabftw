@@ -70,7 +70,7 @@
 
             <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
-            <li class='nav-item dropdown'>
+            <div class='nav-item dropdown'>
               <a class='nav-link dropdown-toggle' href='#' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </a>
@@ -79,9 +79,8 @@
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
                 <a class='dropdown-item' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
                 <a class='dropdown-item' href='storage.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Storage browser'|trans }}</a>
-            </li>
-
-
+              </div>
+            </div>
         </div>
 
         {# SEARCH BAR #}

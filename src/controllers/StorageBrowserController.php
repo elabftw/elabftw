@@ -24,9 +24,14 @@ class StorageBrowserController extends AbstractHtmlController
     protected function getData(): array
     {
         $StorageUnits = new StorageUnits($this->app->Users);
+        $containersArr = array();
+        // only make a query if we do a search
+        if ($this->app->Request->query->has('q')) {
+            $containersArr = $StorageUnits->readAll($StorageUnits->getQueryParams($this->app->Request->query));
+        }
         return array(
             'containersCount' => $StorageUnits->readCount(),
-            'containersArr' => $StorageUnits->readAll($StorageUnits->getQueryParams($this->app->Request->query)),
+            'containersArr' => $containersArr,
             'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         );
     }

@@ -12,14 +12,20 @@
 
 {% block body %}
   <div class='pl-3 mb-5'>
-    <label for='storageSearchInput'>{{ 'Search containers or places'|trans }}</label>
+    <h4><label for='storageSearchInput'>{{ 'Search containers or places'|trans }}</label></h4>
     <form class='input-group' method='get'>
-      <input class='form-control' name='q' id='storageSearchInput' value='{{ App.Request.query.getString('q') }}' />
+      {% set containerSearchPlaceholder = ['Sodium', 'Saccharose', 'Acetone', 'CK-666', 'Fibronectin'] %}
+      <input class='form-control' name='q' id='storageSearchInput' placeholder='{{ random(containerSearchPlaceholder) }}' value='{{ App.Request.query.getString('q') }}' />
       <div class='input-group-append'>
         <button class='btn btn-primary' type='submit' data-action='search-storage'>{{ 'Search'|trans }}</button>
       </div>
     </form>
     {{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}
+
+    {% if containersArr|length == 0 and App.Request.query.has('q') %}
+      {{ 'No results found'|trans|msg('warning', false) }}
+    {% endif %}
+
     <ul class='list-group mt-2'>
     {% for container in containersArr %}
       <li class='list-group-item'>

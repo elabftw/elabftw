@@ -14,8 +14,11 @@ namespace Elabftw\Import;
 
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Compounds2ItemsLinks;
+use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use Elabftw\Services\HttpGetter;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -34,7 +37,9 @@ class CompoundsCsv extends AbstractCsv
     public function import(): int
     {
         // now loop the rows and do the import
-        $Compounds = new Compounds($this->requester);
+        $Config = Config::getConfig();
+        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
+        $Compounds = new Compounds($httpGetter, $this->requester);
         $Items = new Items($this->requester);
         foreach ($this->reader->getRecords() as $row) {
             $id = $Compounds->create(

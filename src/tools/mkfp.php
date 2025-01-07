@@ -106,9 +106,10 @@ $smiles = array(
 $startTime = microtime(true);
 $requester = new Users(1, 1);
 foreach ($smiles as $mol) {
-    $fp = new Fingerprinter(new HttpGetter(new Client(), verifyTls: false));
+    $httpGetter = new HttpGetter(new Client(), verifyTls: false);
+    $fp = new Fingerprinter($httpGetter);
     $fingerprint = $fp->calculate('smi', $mol['smiles']);
-    $Compounds = new Compounds($requester);
+    $Compounds = new Compounds($httpGetter, $requester);
     $compound = $Compounds->create(smiles: $mol['smiles'], name: $mol['name']);
     $Fingerprints = new Fingerprints($compound);
     $Fingerprints->create($fingerprint['data']);

@@ -29,6 +29,9 @@ class StorageBrowserController extends AbstractHtmlController
         if ($this->app->Request->query->has('q')) {
             $containersArr = $StorageUnits->readAll($StorageUnits->getQueryParams($this->app->Request->query));
         }
+        if ($this->app->Request->query->has('storage_unit')) {
+            $containersArr = $StorageUnits->readAllFromStorage($this->app->Request->query->getInt('storage_unit'));
+        }
         return array(
             'containersCount' => $StorageUnits->readCount(),
             'containersArr' => $containersArr,

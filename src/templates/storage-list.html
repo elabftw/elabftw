@@ -21,6 +21,7 @@
               {% else %}
               <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
               {% endif %}
+              <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
             </div>
           </details>
         </li>

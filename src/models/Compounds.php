@@ -28,7 +28,6 @@ use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
-use GuzzleHttp\Client;
 use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -40,14 +39,10 @@ class Compounds extends AbstractRest
 {
     use SetIdTrait;
 
-    protected HttpGetter $httpGetter;
-
-    public function __construct(private Users $requester, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, private Users $requester, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
-        $Config = Config::getConfig();
-        $this->httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
     }
 
     public function getApiPath(): string

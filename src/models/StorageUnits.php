@@ -87,9 +87,8 @@ class StorageUnits extends AbstractRest
                 level_depth DESC LIMIT 1;  -- This ensures the path is ordered from root to the given id
         ";
 
-        // Prepare and execute the query with the specific id
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);  // Bind the given id to the SQL query
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
         return $this->Db->fetch($req);
@@ -107,84 +106,32 @@ class StorageUnits extends AbstractRest
 
     }
 
+    /**
+     * Get containers from a given storage unit id
+     */
+    public function readAllFromStorage(int $storageId): array
+    {
+        $sql = $this->getRecursiveSql(
+            (int) $this->requester->userData['userid'],
+            (int) $this->requester->userData['team'],
+            ' sh.storage_id = :storage_id',
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll();
+    }
+
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
-        $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
-        $canFilter = $CanSqlBuilder->getCanFilter();
-        $sql = sprintf(
-            "
-            WITH RECURSIVE storage_hierarchy AS (
-                SELECT
-                    su.id AS storage_id,
-                    su.parent_id,
-                    su.name AS full_path
-                FROM storage_units AS su
-                WHERE su.parent_id IS NULL -- Root-level units
-
-                UNION ALL
-
-                SELECT
-                    su.id AS storage_id,
-                    su.parent_id,
-                    CONCAT(parent.full_path, ' > ', su.name) AS full_path
-                FROM storage_units AS su
-                INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
-            )
-
-                SELECT
-                    entity.id AS entity_id,
-                    entity.title AS entity_title,
-                    'database' AS page,
-                    c2i.qty_stored,
-                    c2i.qty_unit,
-                    sh.storage_id AS storage_id,
-                    sh.full_path
-                FROM
-                    containers2items AS c2i
-                LEFT JOIN
-                    storage_hierarchy AS sh ON c2i.storage_id = sh.storage_id
-                LEFT JOIN
-                    items AS entity ON c2i.item_id = entity.id
-                LEFT JOIN
-                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
-                WHERE
-                    -- can sql
-                    1=1 %s
-                    AND
-                    (entity.title LIKE :query OR sh.full_path LIKE :query)
-
-            UNION ALL
-                SELECT
-                    entity.id AS entity_id,
-                    entity.title AS entity_title,
-                    'experiments' AS page,
-                    c2e.qty_stored,
-                    c2e.qty_unit,
-                    sh.storage_id AS storage_id,
-                    sh.full_path
-                FROM
-                    containers2experiments AS c2e
-                LEFT JOIN
-                    storage_hierarchy AS sh ON c2e.storage_id = sh.storage_id
-                LEFT JOIN
-                    experiments AS entity ON c2e.item_id = entity.id
-                LEFT JOIN
-                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
-                WHERE
-                    -- can sql
-                    1=1 %s
-                    AND
-                    (entity.title LIKE :query OR sh.full_path LIKE :query)
-
-            ORDER BY storage_id, entity_title LIMIT %d",
-            $this->requester->userData['userid'],
-            $this->requester->userData['team'],
-            $canFilter,
-            $this->requester->userData['userid'],
-            $this->requester->userData['team'],
-            $canFilter,
+        $sql = $this->getRecursiveSql(
+            (int) $this->requester->userData['userid'],
+            (int) $this->requester->userData['team'],
+            '(entity.title LIKE :query OR sh.full_path LIKE :query)',
+        ) . sprintf(
+            ' ORDER BY storage_id, entity_title LIMIT %d',
             $queryParams->getLimit(),
         );
 
@@ -331,5 +278,79 @@ class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function getRecursiveSql(int $userid, int $team, string $discriminator): string
+    {
+        $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
+        $canFilter = $CanSqlBuilder->getCanFilter();
+        return sprintf(
+            "WITH RECURSIVE storage_hierarchy AS (
+                SELECT
+                    su.id AS storage_id,
+                    su.parent_id,
+                    su.name AS full_path
+                FROM storage_units AS su
+                WHERE su.parent_id IS NULL -- Root-level units
+
+                UNION ALL
+
+                SELECT
+                    su.id AS storage_id,
+                    su.parent_id,
+                    CONCAT(parent.full_path, ' > ', su.name) AS full_path
+                FROM storage_units AS su
+                INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
+            )
+
+                SELECT
+                    entity.id AS entity_id,
+                    entity.title AS entity_title,
+                    'database' AS page,
+                    c2i.qty_stored,
+                    c2i.qty_unit,
+                    sh.storage_id AS storage_id,
+                    sh.full_path
+                FROM
+                    containers2items AS c2i
+                LEFT JOIN
+                    storage_hierarchy AS sh ON c2i.storage_id = sh.storage_id
+                LEFT JOIN
+                    items AS entity ON c2i.item_id = entity.id
+                LEFT JOIN
+                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                WHERE
+                    -- can sql AND query or storage_id
+                    1=1 %s AND %s
+
+            UNION ALL
+                SELECT
+                    entity.id AS entity_id,
+                    entity.title AS entity_title,
+                    'experiments' AS page,
+                    c2e.qty_stored,
+                    c2e.qty_unit,
+                    sh.storage_id AS storage_id,
+                    sh.full_path
+                FROM
+                    containers2experiments AS c2e
+                LEFT JOIN
+                    storage_hierarchy AS sh ON c2e.storage_id = sh.storage_id
+                LEFT JOIN
+                    experiments AS entity ON c2e.item_id = entity.id
+                LEFT JOIN
+                    users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                WHERE
+                    -- can sql AND query or storage_id
+                    1=1 %s AND %s",
+            $userid,
+            $team,
+            $canFilter,
+            $discriminator,
+            $userid,
+            $team,
+            $canFilter,
+            $discriminator,
+        );
     }
 }

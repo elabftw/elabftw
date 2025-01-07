@@ -33,7 +33,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 /**
- * Read chemical compounds from linked with an entity
+ * Compounds are chemical entities stored in the `compounds` SQL table
  */
 class Compounds extends AbstractRest
 {
@@ -50,41 +50,6 @@ class Compounds extends AbstractRest
         return 'api/v2/compounds/';
     }
 
-    public function searchFingerprintFromSmiles(string $smiles): array
-    {
-        $fp = $this->getFingerprintFromSmiles($smiles);
-        // if all values of FP are 0, we cannot check for it, so return early
-        if (array_sum($fp['data']) === 0) {
-            return array();
-        }
-        $sql = 'SELECT cf.id, c.name, c.cas_number, c.smiles, c.inchi, c.inchi_key, c.iupac_name, c.molecular_formula, c.pubchem_cid,
-            (BIT_COUNT(';
-
-        // Calculate A ∩ B (bitwise AND) and A + B (bitwise OR) in SQL
-        foreach ($fp['data'] as $key => $value) {
-            if ($value == 0) {
-                continue;
-            }
-            $sql .= sprintf('(fp%d & %d) | ', $key, $value);
-        }
-        $sql = rtrim($sql, '| ') . ')) AS similarity_score ';
-
-        $sql .= 'FROM compounds_fingerprints AS cf
-            LEFT JOIN compounds AS c ON cf.id = c.id';
-        $sql .= ' WHERE 1=1';
-        foreach ($fp['data'] as $key => $value) {
-            if ($value == 0) {
-                continue;
-            }
-            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
-        }
-
-        $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';
-        $req = $this->Db->prepare($sql);
-        $req->execute();
-        return $req->fetchAll();
-    }
-
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
@@ -93,7 +58,7 @@ class Compounds extends AbstractRest
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
         }
         if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
-            return $this->searchFingerprintFromSmiles($queryParams->getQuery()->getString('search_fp_smi'));
+            return $this->searchFingerprint($this->getFingerprintFromSmiles($queryParams->getQuery()->getString('search_fp_smi')));
         }
         $sql = sprintf('SELECT entity.*,
             CONCAT(
@@ -311,6 +276,40 @@ class Compounds extends AbstractRest
         $Permissions = new Permissions($this->requester, $compound);
         $perms = $Permissions->forEntity();
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
+    }
+
+    private function searchFingerprint(array $fp): array
+    {
+        // if all values of FP are 0, we cannot check for it, so return early
+        if (array_sum($fp['data']) === 0) {
+            return array();
+        }
+        $sql = 'SELECT cf.id, c.name, c.cas_number, c.smiles, c.inchi, c.inchi_key, c.iupac_name, c.molecular_formula, c.pubchem_cid,
+            (BIT_COUNT(';
+
+        // Calculate A ∩ B (bitwise AND) and A + B (bitwise OR) in SQL
+        foreach ($fp['data'] as $key => $value) {
+            if ($value == 0) {
+                continue;
+            }
+            $sql .= sprintf('(fp%d & %d) | ', $key, $value);
+        }
+        $sql = rtrim($sql, '| ') . ')) AS similarity_score ';
+
+        $sql .= 'FROM compounds_fingerprints AS cf
+            LEFT JOIN compounds AS c ON cf.id = c.id';
+        $sql .= ' WHERE 1=1';
+        foreach ($fp['data'] as $key => $value) {
+            if ($value == 0) {
+                continue;
+            }
+            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
+        }
+
+        $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';
+        $req = $this->Db->prepare($sql);
+        $req->execute();
+        return $req->fetchAll();
     }
 
     private function searchPubChem(int $cid): Compound

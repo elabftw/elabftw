@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
+use Elabftw\Enums\Storage;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -43,7 +45,41 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
             smiles: 'CCC(=O)N(C1CCN(CC1)CCC2=CC=CC=C2)C3=CC=CC=C3',
             withFingerprint: false,
         );
+        $this->Compounds->setId($compoundId);
+        $this->assertIsArray($this->Compounds->readAll());
+        $this->assertIsArray($this->Compounds->readOne());
+        $name = 'yep';
+        $new = $this->Compounds->patch(Action::Update, array('name' => $name));
+        $this->assertIsArray($new);
+        $this->assertEquals($new['name'], $name);
         $this->assertIsInt($compoundId);
+    }
+
+    public function testPostAction(): void
+    {
+        $fixturesFs = Storage::FIXTURES->getStorage()->getFs();
+        $testCompound = $fixturesFs->read('cid-3345.json');
+        // what the /fingerprinter will reply if sent the corresponding smiles
+        $fpResponse = '{"data": [128, 67108864, 0, 524288, 2148007936, 4194304, 0, 2, 16, 35840, 512, 0, 1, 0, 0, 4194304, 0, 1, 0, 67272704, 1073745920, 0, 1048576, 64, 1024, 64, 0, 0, 32, 0, 16777216, 0]}';
+        $mock = new MockHandler(array(
+            new Response(200, array(), $testCompound),
+            new Response(200, array(), $fpResponse),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $httpGetter = new HttpGetter($client);
+        $Compounds = new Compounds($httpGetter, new Users(1, 1));
+        // https://pubchem.ncbi.nlm.nih.gov/compound/3345
+        $cid = 3345;
+        $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
+        $Compounds->setId($compoundId);
+        $compound = $Compounds->readOne();
+        $this->assertEquals($cid, $compound['pubchem_cid']);
+        $this->assertEquals('N-phenyl-N-[1-(2-phenylethyl)piperidin-4-yl]propanamide', $compound['iupac_name']);
+        $this->assertEquals('InChI=1S/C22H28N2O/c1-2-22(25)24(20-11-7-4-8-12-20)21-14-17-23(18-15-21)16-13-19-9-5-3-6-10-19/h3-12,21H,2,13-18H2,1H3', $compound['inchi']);
+        $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
+        $this->assertEquals('CCC(=O)N(C1CCN(CC1)CCC2=CC=CC=C2)C3=CC=CC=C3', $compound['smiles']);
+        $this->assertEquals('437-38-7', $compound['cas_number']);
     }
 
     public function testGetApiPath(): void

@@ -50,12 +50,6 @@ class Compounds extends AbstractRest
         return 'api/v2/compounds/';
     }
 
-    public function searchPubChem(int $cid): Compound
-    {
-        $Importer = new PubChemImporter($this->httpGetter);
-        return $Importer->fromPugView($cid);
-    }
-
     public function searchFingerprintFromSmiles(string $smiles): array
     {
         $fp = $this->getFingerprintFromSmiles($smiles);
@@ -214,7 +208,7 @@ class Compounds extends AbstractRest
         // TODO add action fromCid or fromSmiles
         // and use fingerprinter
         return match ($action) {
-            Action::Duplicate => $this->createFromCid((int) $reqBody['cid']),
+            Action::Duplicate => $this->createFromCompound($this->searchPubChem((int) $reqBody['cid'])),
             default => $this->create(
                 name: $reqBody['name'] ?? null,
                 inchi: $reqBody['inchi'] ?? null,
@@ -319,6 +313,12 @@ class Compounds extends AbstractRest
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
     }
 
+    private function searchPubChem(int $cid): Compound
+    {
+        $Importer = new PubChemImporter($this->httpGetter);
+        return $Importer->fromPugView($cid);
+    }
+
     private function getFingerprintFromSmiles(string $smiles): array
     {
         $Fingerprinter = new Fingerprinter($this->httpGetter);
@@ -332,10 +332,8 @@ class Compounds extends AbstractRest
         return $Fingerprints->create($fp['data']);
     }
 
-    private function createFromCid(int $cid): int
+    private function createFromCompound(Compound $compound): int
     {
-        $compound = $this->searchPubChem($cid);
-        // idea: create from Compound
         return $this->create(
             casNumber: $compound->cas,
             name: $compound->name,
@@ -343,7 +341,7 @@ class Compounds extends AbstractRest
             inchiKey: $compound->inChIKey,
             smiles: $compound->smiles,
             iupacName: $compound->iupacName,
-            pubchemCid: $cid,
+            pubchemCid: $compound->cid,
             molecularFormula: $compound->molecularFormula,
         );
     }

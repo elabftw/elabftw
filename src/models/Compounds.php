@@ -198,20 +198,6 @@ class Compounds extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    public function search(array $fp): array
-    {
-        $sql = 'SELECT entity_id, entity_type FROM compounds WHERE 1=1';
-        foreach ($fp as $key => $value) {
-            if ($value == 0) {
-                continue;
-            }
-            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
-        }
-        $req = $this->Db->prepare($sql . ' LIMIT 2');
-        $req->execute();
-        return $req->fetchAll();
-    }
-
     public function create(
         ?string $canread = null,
         ?string $canwrite = null,

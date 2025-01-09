@@ -1466,11 +1466,11 @@ __metadata:
   linkType: hard
 
 "@deltablot/dropzone@npm:^7.1.5":
-  version: 7.1.6
-  resolution: "@deltablot/dropzone@npm:7.1.6"
+  version: 7.2.0
+  resolution: "@deltablot/dropzone@npm:7.2.0"
   dependencies:
     "@swc/helpers": "npm:^0.5.13"
-  checksum: 10c0/e4ae6282f1219d08b43f3664ba6cea39f4d994c8a471eece6200c0defc8c5e6255d18412a220c24e3f20bbe83cbc6c450d616af9989cc50f40b558a7407448fd
+  checksum: 10c0/e8189e3f5c37d827719212d1d77d160f846553f46684d9f30633957a7419af455602806aad4615d9ced262cf25d1a7f63eaa1278509d5ce5a36bd239b6180638
   languageName: node
   linkType: hard
 

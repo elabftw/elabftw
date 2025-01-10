@@ -25,40 +25,42 @@ if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
   const rowSelection = {
-      mode: 'multiRow',
-      headerCheckbox: false,
+    mode: 'multiRow',
+    headerCheckbox: false,
   };
 
 
   const GridExample = () => {
-      const [rowData, setRowData] = useState([]);
+    const [rowData, setRowData] = useState([]);
 
-      const [columnDefs, setColumnDefs] = useState([
-          { field: 'id', type: 'numericColumn' },
-          {
-            field: 'name',
-            editable: true,
-            cellEditor: 'agTextCellEditor',
-            pinned: 'left',
-          },
-          { field: 'iupac_name' },
-          { field: 'smiles' },
-          { field: 'inchi' },
-          { field: 'inchi_key' },
-          { field: 'molecular_formula' },
-          { field: 'cas_number' },
-          { field: 'pubchem_cid' },
-          { field: 'has_fingerprint', headerName: 'Has fingerprint' },
-          { field: 'created_by', headerName: 'Created by' },
-          { field: 'modified_at', headerName: 'Modified at' },
-          { field: 'modified_by', headerName: 'Modified by' },
-          { field: 'userid_human', headerName: 'Owner' },
-          { field: 'team' },
-      ]);
+    // disable for the time being, i'll check if the usestate is needed, else we just initiate the array as usual
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [columnDefs, setColumnDefs] = useState([
+      { field: 'id', type: 'numericColumn' },
+      {
+        field: 'name',
+        editable: true,
+        cellEditor: 'agTextCellEditor',
+        pinned: 'left',
+      },
+      { field: 'iupac_name' },
+      { field: 'smiles' },
+      { field: 'inchi' },
+      { field: 'inchi_key' },
+      { field: 'molecular_formula' },
+      { field: 'cas_number' },
+      { field: 'pubchem_cid' },
+      { field: 'has_fingerprint', headerName: 'Has fingerprint' },
+      { field: 'created_by', headerName: 'Created by' },
+      { field: 'modified_at', headerName: 'Modified at' },
+      { field: 'modified_by', headerName: 'Modified by' },
+      { field: 'userid_human', headerName: 'Owner' },
+      { field: 'team' },
+    ]);
 
     // Load data on component mount
     useEffect(() => {
-        fetchData();
+      fetchData();
     }, []);
 
     // all the compounds are loaded in the table, which does client side pagination
@@ -74,17 +76,17 @@ if (document.getElementById('compounds-table')) {
       setRowData(compounds);
     };
 
-      const defaultColDef = useMemo(() => {
-          return {
-              filter: 'agTextColumnFilter',
-              floatingFilter: true,
-              onCellValueChanged: (event) => {
-                const params = {};
-                params[event.column.colId] = event.newValue;
-                ApiC.patch(`compounds/${event.data.id}`, params);
-              }
-          };
-      }, []);
+    const defaultColDef = useMemo(() => {
+      return {
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        onCellValueChanged: (event) => {
+          const params = {};
+          params[event.column.colId] = event.newValue;
+          ApiC.patch(`compounds/${event.data.id}`, params);
+        },
+      };
+    }, []);
 
     const rowClicked = (event) => {
       console.log(event.data);
@@ -111,18 +113,18 @@ if (document.getElementById('compounds-table')) {
         className={'ag-theme-quartz-dark'}
         style={{ height: 650 }}
       >
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        rowSelection={rowSelection}
-        onCellDoubleClicked={cellDoubleClicked}
-        onRowClicked={rowClicked}
-        onSelectionChanged={selectionChanged}
-        pagination={true}
-        paginationPageSize={15}
-        paginationPageSizeSelector={[15, 50, 100, 500]}
-      />
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          rowSelection={rowSelection}
+          onCellDoubleClicked={cellDoubleClicked}
+          onRowClicked={rowClicked}
+          onSelectionChanged={selectionChanged}
+          pagination={true}
+          paginationPageSize={15}
+          paginationPageSizeSelector={[15, 50, 100, 500]}
+        />
       </div>
     );
   };
@@ -138,6 +140,6 @@ if (document.getElementById('compounds-table')) {
 
   const root = createRoot(document.getElementById('compounds-table'));
   root.render(
-    <App />
+    <App />,
   );
 }

@@ -25,9 +25,9 @@ module.exports = (env) => {
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
-        './src/ts/ketcher.jsx',
-        './src/ts/ketcher-editor.jsx',
-        './src/ts/compounds-table.jsx',
+        './src/ts/ketcher.tsx',
+        './src/ts/ketcher-editor.tsx',
+        './src/ts/compounds-table.tsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -108,7 +108,7 @@ module.exports = (env) => {
       }),
     ],
     resolve: {
-      extensions: ['.ts', '.js', '.jsx'],
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
       fallback: {
         // required by react 18
         process: require.resolve('process/browser'),
@@ -135,9 +135,13 @@ module.exports = (env) => {
           ],
         },
         {
-        test: /\.jsx?$/,
-        use: ["babel-loader"]
+          test: /\.jsx?$/,
+          use: ["babel-loader"]
         },
+        // {
+        //   test: /\.tsx?$/,
+        //   use: ["ts-loader"],
+        // },
         { // SASS loader
           test: /\.scss$/,
           type: 'asset/resource',

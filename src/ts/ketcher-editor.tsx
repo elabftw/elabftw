@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
 import KetcherEditor from './ketcher';
 import {notifError} from './misc';
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const root = createRoot(document.getElementById('ketcher-root'));
     // Note: use <StrictMode> in dev to spot errors
     root.render(
-      <KetcherEditor />
+      <KetcherEditor />,
     );
     document.getElementById('ketcher-actions').addEventListener('click', async (event) => {
       const el = event.target;

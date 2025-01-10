@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": "../..",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
     "module": "es6",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strict": false,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
+    "baseUrl": ".",
     "lib": ["es2022", "dom"],
-    "jsx": "react"
+    "types": [],
   },
   "include": [
-    "."
-  ]
+    "../../src/**/*.tsx",
+  ],
 }

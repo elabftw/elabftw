@@ -5,8 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Editor } from 'ketcher-react';
-import 'ketcher-react/dist/index.css';
+import { Editor } from '@moustaphacamara/ketcher-react';
+import '@moustaphacamara/ketcher-react/dist/index.css';
 import React from 'react';
 //import { useEffect } from 'react';
 //import { Ketcher, ketcherProvider } from 'ketcher-core';
@@ -38,8 +38,7 @@ const KetcherEditor = () => {
       <Editor
         staticResourcesUrl={JSON.stringify('/')}
         structServiceProvider={structServiceProvider}
-
-        onInit={(ketcher: Ketcher) => {window.ketcher = ketcher;}}
+        onInit={(ketcher) => {window.ketcher = ketcher;}}
         errorHandler={(message) => {console.error(message);}}
       />
     </div>

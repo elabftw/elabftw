@@ -24,24 +24,25 @@ const ApiC = new Api();
 if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+  // type string not assignable to type "multirow" so i guess it needs to be this specifically.. ?
+  const modeValue = 'multiRow' as const;
   const rowSelection = {
-    mode: 'multiRow',
-    headerCheckbox: false,
+    mode: modeValue,
+    headerCheckbox: true,
   };
 
 
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
 
-    // disable for the time being, i'll check if the usestate is needed, else we just initiate the array as usual
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [columnDefs, setColumnDefs] = useState([
+    const pinnedValue: 'left' | 'right' = 'left';
+    const columnDefs = [
       { field: 'id', type: 'numericColumn' },
       {
         field: 'name',
         editable: true,
         cellEditor: 'agTextCellEditor',
-        pinned: 'left',
+        pinned: pinnedValue,
       },
       { field: 'iupac_name' },
       { field: 'smiles' },
@@ -56,7 +57,7 @@ if (document.getElementById('compounds-table')) {
       { field: 'modified_by', headerName: 'Modified by' },
       { field: 'userid_human', headerName: 'Owner' },
       { field: 'team' },
-    ]);
+    ];
 
     // Load data on component mount
     useEffect(() => {

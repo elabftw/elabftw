@@ -14,6 +14,8 @@ import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import EntityClass from './Entity.class';
 import $ from 'jquery';
+import 'jquery-ui/ui/widgets/sortable';
+import 'jquery-ui/ui/widgets/autocomplete';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 //import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
@@ -253,6 +255,7 @@ export function insertParamAndReload(key: string, value: string): void {
 // SORTABLE ELEMENTS
 export function makeSortableGreatAgain(): void {
   // need an axis and a table via data attribute
+  // @ts-ignore
   $('.sortable').sortable({
     // limit to horizontal dragging
     axis : $(this).data('axis'),
@@ -269,6 +272,7 @@ export function makeSortableGreatAgain(): void {
         attribute = 'data-name';
       }
       // send the order as an array
+      // @ts-ignore
       const params = {table: $(this).data('table'), entity: getEntity(), ordering: $(this).sortable('toArray', {attribute: attribute})};
       fetch('app/controllers/SortableAjaxController.php', {
         method: 'POST',
@@ -402,6 +406,7 @@ export function addAutocompleteToLinkInputs(): void {
       filterEl.addEventListener('change', () => {
         cache[object.selectElid] = {};
       });
+      // @ts-ignore
       $(`#${object.inputElId}`).autocomplete({
         source: function(request: Record<string, string>, response: (data) => void): void {
           const term = request.term;
@@ -441,6 +446,7 @@ export function addAutocompleteToLinkInputs(): void {
 
 export function addAutocompleteToTagInputs(): void {
   const ApiC = new Api();
+  // @ts-ignore
   $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
@@ -456,6 +462,7 @@ export function addAutocompleteToTagInputs(): void {
 
 export function addAutocompleteToCompoundsInputs(): void {
   const ApiC = new Api();
+  // @ts-ignore
   $('[data-autocomplete="compounds"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
@@ -471,6 +478,7 @@ export function addAutocompleteToCompoundsInputs(): void {
 
 export function addAutocompleteToExtraFieldsKeyInputs(): void {
   const ApiC = new Api();
+  // @ts-ignore
   $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
     appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
     source: function(request: Record<string, string>, response: (data) => void): void {
